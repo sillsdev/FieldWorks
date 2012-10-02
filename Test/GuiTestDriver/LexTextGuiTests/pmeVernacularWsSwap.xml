@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Changes the vernacular default ws font.to Abyssincia  (the first one) -->
+ <!-- Changes the vernacular default ws font.to Times New Roman -->
+
+<accil on-fail="assert">
+
+	<goal>Changes the vernacular default ws font</goal>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+
+		<var id="AttrOpen" set="tabs:NAMELESS/9:Attributes/$NL;$NL;combobox:NAMELESS/button:Open"/>
+
+   <click select="menubar/view/lexicon/lexicon-edit"/>
+   <click select="menubar/file/project-management/fieldworks-project-properties"/>
+
+   <var id="fld" set="English"/><!-- needed in fonts tab paths -->
+ <!-- Changes the vernacular default ws font to Webdings  (the last one) -->
+   <on-dialog select="fw-project-properties[@role='dialog']" title="FieldWorks Project Properties" on-fail="assert">
+	 <click select="writing-systems/tab"/>
+	 <click select="writing-systems/vernacular-ws/modify"/>
+	 <on-dialog select="//writing-system-properties[@role='dialog']" on-fail="assert">
+			<click select="fonts/tab"/>
+			<click select="fonts/default/drop"/>
+			<insert>w</insert> <!-- Webdings  (the last one)  -->
+			<insert wait="1000">~</insert>
+			<click  select="ok"/>
+	 </on-dialog>
+	 <click wait="1000" select="ok"/>
+   </on-dialog>
+
+ <!-- Changes the vernacular default ws font.to Times New Roman -->
+   <click wait="2000" select="menubar/file/project-management/fieldworks-project-properties"/>
+   <on-dialog select="fw-project-properties[@role='dialog']" title="FieldWorks Project Properties" on-fail="assert">
+	 <click select="writing-systems/tab"/>
+	 <click select="writing-systems/vernacular-ws/modify"/>
+	 <on-dialog select="//writing-system-properties[@role='dialog']" on-fail="assert">
+			<click select="fonts/tab"/>
+			<click select="fonts/default/drop"/>
+			<insert pause="200">tt</insert> <!-- Times New Roman -->
+			<insert wait="1000">~</insert>
+			<click  select="ok"/>
+	 </on-dialog>
+	 <click wait="1000" select="ok"/>
+   </on-dialog>
+
+  <!-- Get the cursor off the toolbar so the next test won't die! -->
+   <var id="ind" set="*"/>
+   <click select="lexicon-edit[@role='view']/entry/slice/lexeme-form/data"/>
+
+ </on-application>
+</accil>

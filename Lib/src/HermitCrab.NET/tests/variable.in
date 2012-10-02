@@ -1,0 +1,159 @@
+;Test setting of variables
+;Open a new language for testing purposes:
+(open_language message Phonology Test Language)
+;Don't let abort make us quit:
+(morpher_set message (*quit_on_error* false))
+;First we test error msg 6032 by passing
+; morpher_set an object it doesn't know what to do with:
+(morpher_set foobar)
+;Then we test morpher_show command by asking it for the value of
+; *pfeatures*, which hasn't been set yet; error msg 6003:
+(morpher_show pretty_print *pfeatures*)
+;Then a morpher_set command for *pfeatures*, msg 6502:
+(morpher_set message
+  (*pfeatures*
+		(voc     (+ -)
+		 cons    (+ -)
+		 high    (+ -)
+		 low     (+ -)
+		 back    (+ -)
+		 round   (+ -)
+		 vd      (+ -)
+		 poa     (bilabial alveolar velar)
+		 asp     (+ -)
+		 del_rel (+ -)
+		)
+	)
+)
+;Now we'll try morpher_show again, and this time should get the list of
+; possible features back in the msg 6503:
+(morpher_show pretty_print *pfeatures*)
+;Ensure we can set a Boolean var; we should get msg 6502:
+(morpher_set message (*trace_inputs* true))
+;Now we try to set a nonexistent var, error msg 6001:
+(morpher_set message (foobar 1))
+;Try to set the a var to an inappropriate value; err msg 6002:
+(morpher_set message (*trace_inputs* 1))
+;Try setting the *pfeatures* var to a list of feature values that's
+; just one value too long (64 is the max). Error msg 6303:
+(morpher_set message
+  (*pfeatures*
+   (f01       (v0  v1)
+		f23       (v2  v3)
+		f45       (v4  v5)
+		f67       (v6  v7)
+		f89       (v8  v9)
+		f1011     (v10 v11)
+		f1213     (v12 v13)
+		f1415     (v14 v15)
+		f1617     (v16 v17)
+		f1819     (v18 v19)
+		f2021     (v20 v21)
+		f2223     (v22 v23)
+		f2425     (v24 v25)
+		f2627     (v26 v27)
+		f2829     (v28 v29)
+		f3031     (v30 v31)
+		f3233     (v32 v33)
+		f3435     (v34 v35)
+		f3637     (v36 v37)
+		f3839     (v38 v39)
+		f4041     (v40 v41)
+		f4243     (v42 v43)
+		f4445     (v44 v45)
+		f4647     (v46 v47)
+		f4849     (v48 v49)
+		f5051     (v50 v51)
+		f5253     (v52 v53)
+		f5455     (v54 v55)
+		f5657     (v56 v57)
+		f5859     (v58 v59)
+		f6061     (v60 v61)
+		f6263     (v62 v63 v64)
+	 )
+	)
+)
+
+;Now try setting the *pfeatures* var to a list of features that's
+; just one value too long (32 is the max). Error msg 6306:
+(morpher_set message
+  (*pfeatures*
+   (f1       (v0  v1)
+		f2       (v2  v3)
+		f3       (v4  v5)
+		f4       (v6  v7)
+		f5       (v8  v9)
+		f6       (v10 v11)
+		f7       (v12 v13)
+		f8       (v14 v15)
+		f9       (v16 v17)
+		f10      (v18 v19)
+		f11      (v20 v21)
+		f12      (v22 v23)
+		f13      (v24 v25)
+		f14      (v26 v27)
+		f15      (v28 v29)
+		f16      (v30 v31)
+		f17      (v32 v33)
+		f18      (v34 v35)
+		f19      (v36 v37)
+		f20      (v38 v39)
+		f21      (v40 v41)
+		f22      (v42 v43)
+		f23      (v44 v45)
+		f24      (v46 v47)
+		f25      (v48 v49)
+		f26      (v50 v51)
+		f27      (v52 v53)
+		f28      (v54 v55)
+		f29      (v56 v57)
+		f30      (v58 v59)
+		f31      (v60 v61)
+		f32      (v62 v63)
+		f33      (v62 v63)
+	 )
+	)
+)
+
+;Set the *strata* var (msg m6502):
+(morpher_set message
+  (*strata* (morphophonemic allophonic)))
+;Set the properties of the strata with some erroneous settings:
+;A nonexistent stratum (m6021):
+(set_stratum message <stratum_setting nm no_stratum type cyclicity value cyclic>)
+;An invalid ctable name (msg m6004):
+(set_stratum message <stratum_setting nm morphophonemic type ctable value no_ctable>)
+;An invalid value for cyclicity (msg m6034):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value foobar>)
+;An invalid value for prule order (msg m6034):
+(set_stratum message <stratum_setting nm morphophonemic type prule value foo>)
+;...and an invalid value for mrule order (msg m6034):
+(set_stratum message <stratum_setting nm morphophonemic type mrule value fum>)
+;Since we don't have any char tables loaded, we can't really test the loading
+; of appropriate values for ctable, but we can for cyclic application (m6551):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value cyclic>)
+;...and noncyclic application (m6552):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value noncyclic>)
+;...and linearly ordered prules (m6555):
+(set_stratum message <stratum_setting nm morphophonemic type prule value linear>)
+;...and simultaneously ordered prules (m6553):
+(set_stratum message <stratum_setting nm morphophonemic type prule value simultaneous>)
+;...and linearly ordered mrules (m6556):
+(set_stratum message <stratum_setting nm morphophonemic type mrule value linear>)
+;...and unordered mrules (m6554):
+(set_stratum message <stratum_setting nm morphophonemic type mrule value unordered>)
+
+;Show the strata names:
+(morpher_show pretty_print *strata*)
+;...and the prules and mrules assigned to one stratum (should be MT):
+(show_stratum_prules pretty_print allophonic)
+(show_stratum_prules pretty_print morphophonemic)
+
+;Try show_stratum with a nonexistent stratum (msg 6021):
+(show_stratum pretty_print nonesuch)
+;Since we haven't loaded any ctables, asking for a stratum's settings
+; will give us error msg 6048:
+(show_stratum message allophonic)
+
+;Done; morpher will now terminate:
+(terminate_morpher x)

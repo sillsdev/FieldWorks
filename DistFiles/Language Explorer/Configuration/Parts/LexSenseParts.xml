@@ -1,0 +1,1033 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Manually created Parts for LexSense. -->
+<PartInventory>
+	<bin class="LexSense">
+		<part id="LexSense-Jt-Summary" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<style value="UiElement"/>
+					<bold value="on" />
+				</properties>
+				<lit>Sense </lit>
+				<string field="LexSenseOutline"></string>
+			</para>
+		</part>
+		<part id="LexSense-Jt-MLHeadWord" type="jtview">
+			<string field="MLOwnerOutlineName"  ws="$ws=vernacular"/>
+		</part>
+		<part id="LexSense-Jt-SummaryCollapsed" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<bold value="on" />
+				</properties>
+				<span>
+					<properties>
+						<style value="UiElement"/>
+					</properties>
+					<lit>Sense </lit>
+					<string field="LexSenseOutline"></string>
+					<lit> - </lit>
+				</span>
+				<choice>
+					<where field="Definition" stringaltequals="" ws="all analysis">
+						<string field="Gloss" ws="best analysis"/>
+					</where>
+					<otherwise>
+						<string field="Definition" ws="best analysis"/>
+					</otherwise>
+				</choice>
+				<lit> - </lit>
+				<obj field="MorphoSyntaxAnalysis" layout="Basic"/>
+			</para>
+		</part>
+		<part id="LexSense-Jt-publicationPictures" type="jtview">
+			<seq field="Pictures" layout="publication" sep="  " />
+		</part>
+		<part id="CmPossibility-Jt-BoldItalicAbbr" type="jtview">
+			<span>
+				<properties>
+					<italic value="on" />
+					<bold value="on" />
+				</properties>
+				<string field="Abbreviation" ws="analysis" />
+				<lit>.</lit>
+			</span>
+		</part>
+		<part id="LexSense-Detail-ExampleList" type="Detail">
+			<seq field="Examples" layout="ExampleAllV" ghost="Example" ghostWs="vernacular" />
+		</part>
+		<part id="LexSense-Jt-DefAnalysisInPara" type="jtview">
+			<para>
+				<string field="Gloss" ws="analysis" />
+			</para>
+		</part>
+		<part id="LexSense-Jt-DefinitionInPara" type="jtview">
+			<para>
+				<string field="Definition" ws="analysis" />
+			</para>
+		</part>
+		<part id="LexSense-Jt-OwningEntry" type="jtview">
+			<obj class="LexSense" field="OwningEntry"/>
+		</part>
+	<part id="LexSense-Jt-DomainsAbbrAndName" type="jtview">
+	  <span>
+		<properties>
+		  <editable value="false"/>
+		</properties>
+		<seq field="SemanticDomains" layout="AbbrAndName" sep="; "/>
+	  </span>
+	</part>
+		<part id="LexSense-Jt-Gloss" type="jtview">
+			<string field="Gloss" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-Definition" type="jtview">
+			<string field="Definition" ws="analysis"/>
+		</part>
+	<!-- ForEntryOrSense parts -->
+		<!-- Generic Fields for PartGenerator -->
+		<!-- Sense -> Entry custom field path part -->
+		<part id="LexSense-Jt-$fieldName" type="jtview">
+			<obj class="LexSense" field="OwningEntry" layout="$fieldName"/>
+		</part>
+		<!-- Sense custom field parts -->
+		<part id="LexSense-Jt-CustomMultiStringForSense_$fieldName" type="jtview">
+			<string field="$fieldName" ws="$wsName"/>
+		</part>
+		<part id="LexSense-Jt-CustomSimpleStringForSense_$fieldName" type="jtview">
+			<string field="$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomIntegerForSense_$fieldName" type="jtview">
+			<int field="$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomGenDateForSense_$fieldName" type="jtview">
+			<gendate field="$fieldName" format="short"/>
+		</part>
+		<part id="LexSense-Jt-CustomStTextForSense_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="FullText"/>
+		</part>
+		<part id="LexSense-Jt-CustomPossVectorForSense_$fieldName" type="jtview">
+			<seq field="$fieldName" layout="PossibilityName"/>
+		</part>
+		<part id="LexSense-Jt-CustomPossAtomForSense_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="Name"/>
+		</part>
+		<!-- Sense -> Example Sentence custom field path parts -->
+		<part id="LexSense-Jt-CustomMultiStringForExample_$fieldName" type="jtview">
+			<seq field="Examples" layout="CustomMultiStringForExample_$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomSimpleStringForExample_$fieldName" type="jtview">
+			<seq field="Examples" layout="CustomSimpleStringForExample_$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomIntegerForExample_$fieldName" type="jtview">
+			<seq field="Examples" layout="CustomIntegerForExample_$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomGenDateForExample_$fieldName" type="jtview">
+			<seq field="Examples" layout="CustomGenDateForExample_$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomStTextForExample_$fieldName" type="jtview">
+			<seq field="Examples" layout="CustomStTextForExample_$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomPossVectorForExample_$fieldName" type="jtview">
+			<seq field="Examples" layout="CustomPossVectorForExample_$fieldName"/>
+		</part>
+		<part id="LexSense-Jt-CustomPossAtomForExample_$fieldName" type="jtview">
+			<seq field="Examples" layout="CustomPossAtomForExample_$fieldName"/>
+		</part>
+
+		<!-- Specified Fields -->
+		<part id="LexSense-Jt-SenseHeadwordForSense" type="jtview">
+			<para>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<string field="MLOwnerOutlineName" ws="$ws=vernacular"/>
+			</para>
+		</part>
+		<part id="LexSense-Jt-GrammaticalInfoFullForSense" type="jtview">
+			<obj field="MorphoSyntaxAnalysis" layout="Browse" />
+		</part>
+		<part id="LexSense-Jt-GrammaticalInfoAbbrForSense" type="jtview">
+			<obj field="MorphoSyntaxAnalysis" layout="BrowseAbbr" />
+		</part>
+		<part id="LexSense-Jt-GrammaticalCategoryForSense" type="jtview">
+			<para>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<obj class="LexSense" field="MorphoSyntaxAnalysis" layout="empty">
+					<if is="MoStemMsa">
+						<obj class="MoStemMsa" field="PartOfSpeech" layout="empty">
+							<string class="CmPossibility" field="Name" ws="$ws=best analysis"/>
+						</obj>
+					</if>
+					<ifnot is="MoStemMsa">
+						<lit>n/a</lit>
+					</ifnot>
+				</obj>
+			</para>
+		</part>
+		<part id="LexSense-Jt-GlossesForSense" type="jtview">
+			<para>
+				<string class="LexSense" field="Gloss" ws="analysis"/>
+			</para>
+		</part>
+		<part id="LexSense-Jt-DefinitionsForSense" type="jtview">
+			<para>
+				<string class="LexSense" field="Definition" ws="analysis"/>
+			</para>
+		</part>
+		<part id="LexSense-Jt-ReversalsForSense" type="jtview">
+			<string field="ReversalEntriesBulkText" ws="$ws=reversal"/>
+		</part>
+		<part id="LexSense-Jt-InflectionClassForStem" type="jtview">
+			<obj class="LexSense" field="MorphoSyntaxAnalysis" layout="empty">
+				<if is="MoStemMsa">
+					<obj class="MoStemMsa" field="InflectionClass" layout="empty">
+						<string class="MoInflClass" field="Name" ws="$ws=best analysis"/>
+					</obj>
+				</if>
+				<ifnot is="MoStemMsa">
+					<lit>n/a</lit>
+				</ifnot>
+			</obj>
+		</part>
+		<part id="LexSense-Jt-InflectionFeaturesForSense" type="jtview">
+			<obj class="LexSense" field="MorphoSyntaxAnalysis" layout="empty">
+				<if is="MoStemMsa">
+					<obj class="MoStemMsa" field="MsFeatures" layout="empty">
+						<string field="ChooserNameTS"/>
+					</obj>
+				</if>
+				<ifnot is="MoStemMsa">
+					<lit>n/a</lit>
+				</ifnot>
+			</obj>
+		</part>
+		<part id="LexSense-Jt-ExceptionFeatures" type="jtview">
+			<obj class="LexSense" field="MorphoSyntaxAnalysis" layout="empty">
+				<if is="MoStemMsa">
+					<seq class="MoStemMsa" field="ProdRestrict" layout="Name"/>
+				</if>
+				<if is="MoDerivAffMsa">
+					<seq class="MoDerivAffMsa" field="FromProdRestrict"
+					layout="Name"/>
+					<if lengthatleast="1" field="FromProdRestrict">
+						<lit>&gt;</lit>
+					</if>
+					<ifnot lengthatleast="1" field="FromProdRestrict">
+						<if lengthatleast="1" field="ToProdRestrict">
+							<lit>&gt;</lit>
+						</if>
+					</ifnot>
+					<seq class="MoDerivAffMsa" field="ToProdRestrict" layout="Name"/>
+				</if>
+				<if is="MoInflAffMsa">
+					<seq class="MoInflAffMsa" field="FromProdRestrict" layout="Name"/>
+				</if>
+				<ifnot is="MoStemMsa">
+					<ifnot is="MoDerivAffMsa">
+						<ifnot is="MoInflAffMsa">
+							<lit>n/a</lit>
+						</ifnot>
+					</ifnot>
+				</ifnot>
+			</obj>
+		</part>
+		<part id="LexSense-Jt-PictureCaptionForSense" type="jtview">
+			<seq field="Pictures" layout="empty">
+				<para>
+					<string field="Caption" ws="vernacular analysis"/>
+				</para>
+			</seq>
+		</part>
+		<part id="LexSense-Jt-PictureFileNameForSense" type="jtview">
+			<seq field="Pictures" layout="empty">
+				<para>
+					<string field="PathNameTSS" ws="$ws=analysis"/>
+				</para>
+			</seq>
+		</part>
+		<part id="LexSense-Jt-StatusForSense" type="jtview">
+			<obj class="LexSense" field="Status" layout="empty">
+				<string field="Name" ws="best analysis"/>
+			</obj>
+		</part>
+		<part id="LexSense-Jt-AnthropologyNoteForSense" type="jtview">
+			<string class="LexSense" field="AnthroNote" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-BibliographyForSense" type="jtview">
+			<string field="Bibliography" ws="$ws=analysis"/>
+		</part>
+		<part id="LexSense-Jt-DiscourseNoteForSense" type="jtview">
+			<string class="LexSense" field="DiscourseNote" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-EncyclopedicInfoForSense" type="jtview">
+			<string class="LexSense" field="EncyclopedicInfo" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-GeneralNoteForSense" type="jtview">
+			<string class="LexSense" field="GeneralNote" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-GrammarNoteForSense" type="jtview">
+			<string class="LexSense" field="GrammarNote" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-ImportResidueSense" type="jtview">
+			<string class="LexSense" field="ImportResidue" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-PhonologyNoteForSense" type="jtview">
+			<string class="LexSense" field="PhonologyNote" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-RestrictionsForSense" type="jtview">
+			<string class="LexSense" field="Restrictions" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-ScientificNameForSense" type="jtview">
+			<string class="LexSense" field="ScientificName"/>
+		</part>
+		<part id="LexSense-Jt-SemanticsNoteForSense" type="jtview">
+			<string class="LexSense" field="SemanticsNote" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-SociolinguisticsNoteForSense" type="jtview">
+			<string class="LexSense" field="SocioLinguisticsNote" ws="analysis"/>
+		</part>
+		<part id="LexSense-Jt-SourceForSense" type="jtview">
+			<string class="LexSense" field="Source"/>
+		</part>
+		<part id="LexSense-Jt-AnthropologyCategoriesForSense" type="jtview">
+			<seq field="AnthroCodes" layout="AbbrAndName" sep="; "/>
+		</part>
+		<part id="LexSense-Jt-AcademicDomainsForSense" type="jtview">
+			<seq field="DomainTypes" layout="Name" sep=", "/>
+		</part>
+		<part id="LexSense-Jt-SenseTypeForSense" type="jtview">
+			<obj class="LexSense" field="SenseType" layout="empty">
+				<string field="Name" ws="best analysis"/>
+			</obj>
+		</part>
+		<part id="LexSense-Jt-UsagesForSense" type="jtview">
+			<seq field="UsageTypes" layout="Name" sep=", "/>
+		</part>
+		<part id="LexSense-Jt-PublishInForSenses" type="JtView">
+			<seq field="PublishIn" layout="Name" />
+		</part>
+		<part id="LexSense-Jt-PublishInForExamples" type="JtView">
+			<seq field="Examples" layout="PublishInForExamples"/>
+		</part>
+		<part id="LexSense-Jt-Example" type="jtview">
+			<seq field="Examples" layout="Example"/>
+		</part>
+		<part id="LexSense-Jt-ExampleReference" type="jtview">
+			<seq field="Examples" layout="ExampleReference"/>
+		</part>
+		<part id="LexSense-Jt-ExampleTranslation" type="jtview">
+			<seq field="Examples" layout="ExampleTranslation"/>
+		</part>
+		<part id="LexSense-Jt-ExampleTranslationType">
+			<seq field="Examples" layout="ExampleTranslationType"/>
+		</part>
+		<part id="LexSense-Jt-LexicalRelationsForSense" type="jtview">
+			<seq field="MinimalLexReferences" layout="ShowInPara"/>
+		</part>
+		<part id="LexSense-Jt-DomainsOfSensesForSense" type="jtview">
+			<para>
+				<seq field="SemanticDomains" layout="AbbrAndName" sep="; "/>
+			</para>
+		</part>
+		<part id="LexSense-Jt-ReversalEntriesForSense" type="jtview">
+			<para>
+		<seq field="ReversalEntries" layout="ReversalForm" sep="; " checkForEmptyItems="true"/>
+			</para>
+		</part>
+	<part id="LexSense-Jt-ReversalEntriesForSenseEdit" type="jtview">
+	  <para>
+		<string field="ReversalEntriesBulkText" ws="$ws=reversal"/>
+	  </para>
+	</part>
+	<!-- end of ForEntryOrSense parts -->
+
+		<part id="LexSense-Jt-MsaInPara" type="jtview">
+			<obj field="MorphoSyntaxAnalysis" layout="Browse" />
+		</part>
+		<part id="LexSense-Jt-MsaInParaAbbr" type="jtview">
+			<obj field="MorphoSyntaxAnalysis" layout="BrowseAbbr" />
+		</part>
+
+	<part id="LexSense-Jt-PictureCaption" type="jtview">
+	  <seq field="Pictures" layout="empty">
+		<para>
+		  <string field="Caption" ws="best analysis"/>
+		</para>
+	  </seq>
+	</part>
+	<part id="LexSense-Jt-PictureFileName" type="jtview">
+	  <seq field="Pictures" layout="empty">
+		<para>
+		  <string field="PathNameTSS" ws="$ws=analysis"/>
+		</para>
+	  </seq>
+	</part>
+
+	<!-- *********************************************************************************** -->
+		<!-- Overrides of otherwise generated parts -->
+		<!-- *********************************************************************************** -->
+		<!-- force indent for subsenses because same time of major object -->
+		<part id="LexSense-Detail-Senses" type="Detail">
+			<seq field="Senses" indent="true" />
+		</part>
+		<part id="LexSense-Detail-UsageTypes" type="Detail">
+			<slice field="UsageTypes" label="Usages" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the list of Usages." tool="usageTypeEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-ReversalEntries" type="detail">
+			<slice field="ReversalEntries" label="Reversal Entries" editor="Custom" assemblyPath="LexEdDll.dll"
+				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-SenseType" type="Detail">
+			<slice field="SenseType" label="Sense Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Sense Types" tool="senseTypeEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-DomainTypes" type="Detail">
+			<slice field="DomainTypes" label="Academic Domains" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Academic Domains" tool="domainTypeEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-SemanticDomains" type="Detail">
+			<slice field="SemanticDomains" label="Semantic Domains" editor="defaultVectorReference"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="AbbrAndNameTSS" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Semantic Domains" tool="semanticDomainEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-PublishIn" type="Detail">
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this sense from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-AnthroCodes" type="Detail">
+			<slice field="AnthroCodes" label="Anthropology Categories" editor="defaultVectorReference"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="LongName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		><part id="LexSense-Detail-Status" type="Detail">
+			<slice field="Status" label="Status" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analysis" />
+				<chooserInfo title="Choose Status">
+					<chooserLink type="goto" label="Edit the Status list" tool="statusEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-Source" type="Detail">
+			<slice field="Source" label="Source" editor="String" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-ScientificName" type="Detail">
+			<slice field="ScientificName" label="ScientificName" editor="String" menu="mnuDataTree-Help" />
+		</part>
+		<!-- *********************************************************************************** -->
+		<part id="LexSense-Detail-SenseSummary" type="detail">
+			<slice id="LexSenseId" editor="jtview" expansion="expanded" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-GlossAllA" type="detail">
+			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" sideEffectMethod="AdjustDerivedAnalysis">
+				<properties>
+					<bold value="on" />
+					<fontsize value="100%" />
+				</properties>
+			</slice>
+		</part>
+
+		<part id="LexSense-Jt-GlossIfNoDefn" type="detail">
+			<if field="Definition" stringaltequals="" ws="analysis">
+				<ifnot field="Gloss" stringaltequals="" ws="analysis">
+					<string field="Gloss" ws="analysis" />
+				</ifnot>
+			</if>
+		</part>
+
+		<part id="LexSense-Detail-DefinitionAllA" type="detail">
+			<slice field="Definition" label="Definition" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-MsaCombo" type="detail">
+			<slice field="MorphoSyntaxAnalysis" label="Grammatical Info." abrev="gfn" editor="msaReferenceComboBox"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-AnthroNoteAllA" type="detail">
+			<slice field="AnthroNote" label="Anthropology Note" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-BibliographyAllA" type="detail">
+			<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-DiscourseNoteAllA" type="detail">
+			<slice field="DiscourseNote" label="Discourse Note" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-EncyclopedicInfoAllA" type="detail">
+			<slice field="EncyclopedicInfo" label="Encyclopedic Info" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-GeneralNoteAllA" type="detail">
+			<slice field="GeneralNote" label="General Note" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-GrammarNoteAllA" type="detail">
+			<slice field="GrammarNote" label="Grammar Note" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-ComplexFormEntries" type="Detail">
+			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuDataTree-Help"
+				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				<deParams displayProperty="HeadWord"/>
+			</slice>
+		</part>
+		<part id="LexSense-Jt-ComplexFormsNotSubentries">
+			<seq field="ComplexFormsNotSubentries" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
+		</part>
+		<part id="LexSense-Detail-VisibleComplexFormEntries" type="Detail">
+			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true"
+				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-EntryLevel">
+				<deParams displayProperty="HeadWord"/>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-Subentries" type="Detail">
+			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary views." menu="mnuDataTree-Help"
+				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				<deParams displayProperty="HeadWord"/>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-VariantForms" type="Detail">
+			<slice field="VariantFormEntries" label="Variants of Sense" editable="no" menu="mnuDataTree-Help"
+				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				<deParams displayProperty="HeadWord"/>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-PhonologyNoteAllA" type="detail">
+			<slice field="PhonologyNote" label="Phonology Note" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-RestrictionsAllA" type="detail">
+			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-SemanticsNoteAllA" type="detail">
+			<slice field="SemanticsNote" label="Semantics Note" editor="multistring" ws="all analysis"
+				menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-SocioLinguisticsNoteAllA" type="detail">
+			<slice field="SocioLinguisticsNote" label="Sociolinguistics Note" editor="multistring"
+				ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexSense-Detail-Examples" type="detail">
+			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex"
+				menu="mnuDataTree-Examples"/>
+		</part>
+		<part id="LexSense-Jt-HeadWord" type="jtview">
+			<string field="HeadWord"/>
+		</part>
+		<part id="LexSense-Jt-MorphoSyntaxAnalysisPub">
+			<obj field="MorphoSyntaxAnalysis" layout="publication" />
+		</part>
+		<part id="LexSense-Jt-SenseType">
+			<obj field="SenseType" />
+		</part>
+		<part id="LexSense-Jt-Status">
+			<obj field="Status" layout="ShortNameTSS"/>
+		</part>
+		<part id="LexSense-Jt-SmartDefinitionPub">
+			<ifnot field="Definition" stringaltequals="" ws="configure">
+				<configureMlString field="Definition" />
+			</ifnot>
+			<if field="Definition" stringaltequals="" ws="configure">
+				<configureMlString field="Gloss" />
+			</if>
+		</part>
+		<part id="LexSense-Jt-DefinitionPub">
+			<configureMlString field="Definition" />
+		</part>
+		<part id="LexSense-Jt-ExamplesPub">
+			<seq field="Examples" layout="publicationNew" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-Subentries">
+			<seq field="Subentries" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-EncyclopedicInfoPub">
+			<configureMlString field="EncyclopedicInfo" />
+		</part>
+		<part id="LexSense-Jt-RestrictionsPub">
+			<configureMlString field="Restrictions" />
+		</part>
+		<part id="LexSense-Jt-LexReferencesPub">
+			<seq class="LexSense" field="LexSenseReferences" layout="publication" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-SensesPub">
+			<seq class="LexSense" field="Senses" layout="publicationNew" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-AnthroNotePub">
+			<configureMlString field="AnthroNote" />
+		</part>
+		<part id="LexSense-Jt-BibliographyPub">
+			<configureMlString field="Bibliography" />
+		</part>
+		<part id="LexSense-Jt-DiscourseNotePub">
+			<configureMlString field="DiscourseNote" />
+		</part>
+		<part id="LexSense-Jt-GeneralNotePub">
+			<configureMlString field="GeneralNote" />
+		</part>
+		<part id="LexSense-Jt-GlossPub">
+			<configureMlString field="Gloss" />
+		</part>
+		<part id="LexSense-Jt-GrammarNotePub">
+			<configureMlString field="GrammarNote" />
+		</part>
+		<part id="LexSense-Jt-PhonologyNotePub">
+			<configureMlString field="PhonologyNote" />
+		</part>
+		<part id="LexSense-Jt-ScientificName" type="JtView">
+			<string field="ScientificName" />
+		</part>
+		<part id="LexSense-Jt-SemanticsNotePub">
+			<configureMlString field="SemanticsNote" />
+		</part>
+		<part id="LexSense-Jt-SocioLinguisticsNotePub">
+			<configureMlString field="SocioLinguisticsNote" />
+		</part>
+		<part id="LexSense-Jt-Source" type="JtView">
+			<string field="Source" />
+		</part>
+		<part id="LexSense-Jt-AnthroCodesPub">
+			<seq field="AnthroCodes" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-SemanticDomainsPub">
+			<seq field="SemanticDomains" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-DomainTypesPub">
+			<seq field="DomainTypes" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-ThesaurusItemsPub">
+			<seq field="ThesaurusItems" inheritSeps="true" />
+		</part>
+		<part id="LexSense-Jt-UsageTypesPub">
+			<seq field="UsageTypes" inheritSeps="true" />
+		</part>
+		<part id="LexExampleSentence-Jt-ExamplePub">
+			<configureMlString field="Example" />
+		</part>
+		<part id="LexExampleSentence-Jt-TranslationsPub">
+			<seq class="LexExampleSentence" field="Translations" layout="publicationNew" inheritSeps="true" />
+		</part>
+		<part id="CmTranslation-Jt-TranslationPub">
+			<configureMlString field="Translation" />
+		</part>
+		<part id="CmTranslation-Jt-TypePub">
+			<ifnot field="Translation" stringaltequals="" ws="all analysis">
+				<obj class="CmTranslation" field="Type" layout="bestAbbrSpace" />
+			</ifnot>
+		</part>
+		<part id="LexSense-Jt-CrossRefName" type="jtview">
+			<span>
+				<properties>
+					<bold value="on" />
+				</properties>
+				<string field="OwnerOutlineName" ws="$ws=vernacular" />
+			</span>
+		</part>
+		<part id="LexSense-Jt-OwnerOutlinePub" type="jtview">
+			<configureMlString field="MLOwnerOutlineName" />
+		</part>
+		<part id="LexSense-Detail-CurrentLexReferences" type="detail">
+			<slice label="Lexical Relations" field="LexSenseReferences" editor="custom" assemblyPath="LexEdDll.dll"
+				class="SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice" />
+		</part>
+		<part id="LexSense-Jt-StemComplexFormsConfig">
+			<seq field="VisibleComplexFormBackRefs" layout="publishStemSenseComplexFormRef" inheritSeps="true" targetclass="LexEntryRef"/>
+		</part>
+	</bin>
+	<bin class="LexExampleSentence">
+		<part id="LexExampleSentence-Detail-ExampleAllV" type="Detail">
+			<slice field="Example" label="Example" abrev="eg" editor="multistring" ws="all vernacular"
+				menu="mnuDataTree-Example"></slice>
+		</part>
+		<part id="LexExampleSentence-Detail-TranslationsAllA" type="Detail">
+			<seq field="Translations" ghost="Translation" ghostWs="analysis" ghostLabel="Translation"
+				ghostInitMethod="SetTypeToFreeTrans" />
+		</part>
+		<part id="LexExampleSentence-Detail-Reference" type="Detail">
+			<slice field="Reference" label="Reference" editor="String" weight="light" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexExampleSentence-Detail-PublishIn" type="Detail">
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this example from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+	</bin>
+	<bin class="CmTranslation">
+		<part id="CmTranslation-Detail-TranslationAllA" type="Detail">
+			<slice field="Translation" label="Translation" editor="multistring" ws="all analysis" menu="mnuDataTree-Translation"
+				weight="light" />
+		</part>
+		<part id="CmTranslation-Detail-Type" type="Detail">
+			<slice field="Type" label="Type" editor="ReferenceComboBox" menu="mnuDataTree-Help" />
+		</part>
+	</bin>
+	<bin class="LexReference">
+		<part id="LexReference-Jt-AbbreviationPub" type="jtview">
+			<choice>
+				<where field="Targets" lengthatleast="1">
+					<choice>
+						<where target="owner" field="MappingType" intmemberof="0,1,5,6,10,11,4,9,14">
+							<!-- Collections and simple pairs, Sequences -->
+							<configureMlString target="owner" field="Abbreviation" />
+						</where>
+						<where target="owner" field="MappingType" intmemberof="2,3,7,8,12,13">
+							<!-- Trees and assymetrical pairs  -->
+							<if field="Targets" index="0" hvoequals="$ParentHvo">
+								<configureMlString target="owner" field="Abbreviation" />
+							</if>
+							<ifnot field="Targets" index="0" hvoequals="$ParentHvo">
+								<configureMlString target="owner" field="ReverseAbbreviation" />
+							</ifnot>
+						</where>
+					</choice>
+				</where>
+			</choice>
+		</part>
+		<part id="LexReference-Jt-NamePub" type="jtview">
+			<choice>
+				<where field="Targets" lengthatleast="1">
+					<choice>
+						<where target="owner" field="MappingType" intmemberof="0,1,5,6,10,11,4,9,14">
+							<!-- Collections and simple pairs, Sequences -->
+							<configureMlString target="owner" field="Name" />
+						</where>
+						<where target="owner" field="MappingType" intmemberof="2,3,7,8,12,13">
+							<!-- Trees and assymetrical pairs  -->
+							<if field="Targets" index="0" hvoequals="$ParentHvo">
+								<configureMlString target="owner" field="Name" />
+							</if>
+							<ifnot field="Targets" index="0" hvoequals="$ParentHvo">
+								<configureMlString target="owner" field="ReverseName" />
+							</ifnot>
+						</where>
+					</choice>
+				</where>
+			</choice>
+		</part>
+		<part id="LexReference-Jt-TargetsPub" type="jtview">
+			<choice>
+				<where field="Targets" lengthatleast="2">
+					<choice>
+						<where target="owner" field="MappingType" intmemberof="0,1,5,6,10,11">
+							<!-- Collections and simple pairs, leave out the current item -->
+							<seq field="Targets" layout="CrossRefPub" inheritSeps="true" excludeHvo="parent" />
+						</where>
+						<where target="owner" field="MappingType" intmemberof="2,3,7,8,12,13">
+							<!-- Trees and assymetrical pairs  -->
+							<if field="Targets" index="0" hvoequals="$ParentHvo">
+								<!-- the first entry in Targets (root) is the current object, so exclude it -->
+								<seq field="Targets" layout="CrossRefPub" inheritSeps="true" excludeHvo="parent" />
+							</if>
+							<ifnot field="Targets" index="0" hvoequals="$ParentHvo">
+								<!-- The current one is not the first, so show only the first -->
+								<seq field="Targets" layout="CrossRefPub" firstOnly="true" />
+							</ifnot>
+						</where>
+						<where target="owner" field="MappingType" intmemberof="4,9,14">
+							<!-- Sequences; show everything, including the current one. -->
+							<seq field="Targets" layout="CrossRefPub" inheritSeps="true" />
+						</where>
+					</choice>
+				</where>
+				<where field="Targets" lengthatleast="1" lengthatmost="1">
+					<if target="owner" field="MappingType" intmemberof="4,9,14">
+						<!-- Sequences -->
+						<span>
+							<properties>
+								<italic value="on" />
+							</properties>
+							<string target="owner" field="Abbreviation" ws="analysis" />
+							<lit>: </lit>
+						</span>
+						<seq field="Targets" layout="CrossRefName" sep=", " />
+					</if>
+				</where>
+			</choice>
+		</part>
+	</bin>
+	<bin class="CmFile">
+		<part id="CmFile-Detail-FileName" type="detail">
+			<slice field="InternalPath" label="File" editor="string" ws="analysis" menu="mnuDataTree-Picture" />
+		</part>
+	</bin>
+	<bin class="CmPicture">
+		<part id="CmPicture-Detail-FileName" type="detail">
+			<slice label="File" editor="jtview" layout="PathName" editable="no" menu="mnuDataTree-Picture" />
+			<!-- Using this makes the path name editable, which is not appropriate-->
+			<!--slice field="PathNameTSS" label="File" editor="string" menu="mnuDataTree-Picture" /-->
+			<!-- Using this makes Delete command delete the file instead of the picture-->
+			<!--obj field="PictureFile" layout="Normal" /-->
+		</part>
+		<part id="CmPicture-Jt-PathName" type="jtview">
+			<para>
+				<properties>
+					<editable value="no" />
+					<forecolor value="GrayText"/>
+				</properties>
+				<string field="PathNameTSS"/>
+			</para>
+		</part>
+		<part id="CmPicture-Detail-CaptionA" type="detail">
+			<slice field="Caption" label="Caption" editor="multistring" ws="vernacular analysis" menu="mnuDataTree-Picture" />
+		</part>
+		<part id="CmPicture-Detail-Picture" type="detail">
+			<slice label="Picture" editor="picture" menu="mnuDataTree-Picture" />
+		</part>
+		<part id="CmPicture-Detail-Thumbnail" type="detail">
+			<slice label="Picture" editor="picture" thumbnail="true" menu="mnuDataTree-Picture" />
+		</part>
+	</bin>
+	<bin class="CmSemanticDomain">
+		<part id="CmSemanticDomain-Jt-ReferringSenses">
+			<seq field="ReferringSenses" inheritSeps="true" />
+		</part>
+	</bin>
+
+	<!-- STUFF ADDED FOR NEW CONFIGURATION -->
+
+	<bin class="LexSense">
+		<part id="LexSense-Jt-StemPicturesConfig">
+			<seq field="Pictures" layout="publishStem" inheritSeps="true" />
+			<seq field="Senses" layout="publishStemPictures" sep="  "/><!-- collects pictures from subsenses -->
+		</part>
+		<part id="LexSense-Jt-RootPicturesConfig">
+			<seq field="Pictures" layout="publishRoot" inheritSeps="true" />
+			<seq field="Senses" layout="publishRootPictures" sep="  "/><!-- collects pictures from subsenses -->
+		</part>
+
+		<part id="LexSense-Jt-MorphoSyntaxAnalysisConfig">
+			<obj field="MorphoSyntaxAnalysis" layout="publishStem" />
+		</part>
+
+		<part id="LexSense-Jt-SenseTypeConfig">
+			<obj field="SenseType" layout="publishStemSenseType" />
+		</part>
+
+		<part id="LexSense-Jt-ExamplesConfig">
+			<seq field="Examples" layout="publishStem" inheritSeps="true" />
+		</part>
+
+		<part id="LexSense-Jt-LexReferencesConfig">
+			<seq class="LexSense" field="LexSenseReferences" targetclass="LexReference" layout="publishStemSenseRef" inheritSeps="true" />
+		</part>
+
+		<part id="LexSense-Jt-VariantFormsConfig">
+			<seq field="VariantFormEntryBackRefs" layout="publishStemSenseVariantRef" inheritSeps="true" targetclass="LexEntryRef"/>
+		</part>
+
+<part id="LexSense-Jt-SensesConfig">
+			<seq class="LexSense" field="Senses" layout="publishStem" inheritSeps="true" />
+		</part>
+
+		<part id="LexSense-Jt-SemanticDomainsConfig">
+			<seq field="SemanticDomains" inheritSeps="true" layout="publishStemSemDom" />
+		</part>
+
+		<part id="LexSense-Jt-AnthroCodesConfig">
+			<seq field="AnthroCodes" inheritSeps="true" layout="publishStemAnthro" />
+		</part>
+
+		<part id="LexSense-Jt-DomainTypesConfig">
+			<seq field="DomainTypes" inheritSeps="true" layout="publishStemDomainType" />
+		</part>
+
+		<part id="LexSense-Jt-UsageTypesConfig">
+			<seq field="UsageTypes" inheritSeps="true" layout="publishStemUsageType" />
+		</part>
+
+		<part id="LexSense-Jt-StatusConfig">
+			<obj field="Status" inheritSeps="true" layout="publishStemStatus" />
+		</part>
+	</bin>
+
+	<bin class="LexExampleSentence">
+		<part id="LexExampleSentence-Jt-TranslationsConfig">
+			<seq class="LexExampleSentence" field="Translations" layout="publishStem" inheritSeps="true" />
+		</part>
+		<part id="LexExampleSentence-Jt-Example" type="jtview">
+			<string field="Example" ws="$ws=vernacular"/>
+		</part>
+		<part id="LexExampleSentence-Jt-ExampleReference" type="jtview">
+			<string field="Reference" />
+		</part>
+		<part id="LexExampleSentence-Jt-ExampleTranslation" type="jtview">
+			<seq field="Translations" layout="ExampleTranslation"/>
+		</part>
+		<part id="LexExampleSentence-Jt-ExampleTranslationType" type="jtview">
+			<seq field="Translations" layout="ExampleTranslationType"/>
+		</part>
+		<part id="LexExampleSentence-Jt-ReferencePub" type="jtview">
+			<string field="Reference"/>
+		</part>
+		<part id="LexExampleSentence-Jt-PublishInForExamples">
+			<seq class="LexExampleSentence" field="PublishIn" layout="Name" />
+		</part>
+		<!-- Example Sentence -> Sense custom field path part -->
+		<part id="LexExampleSentence-Jt-$fieldName" type="jtview">
+			<obj class="LexExampleSentence" field="OwningSense" layout="$fieldName"/>
+		</part>
+		<!-- Example Sentence custom field parts -->
+		<part id="LexExampleSentence-Jt-CustomMultiStringForExample_$fieldName" type="jtview">
+			<string field="$fieldName" ws="$wsName"/>
+		</part>
+		<part id="LexExampleSentence-Jt-CustomSimpleStringForExample_$fieldName" type="jtview">
+			<string field="$fieldName"/>
+		</part>
+		<part id="LexExampleSentence-Jt-CustomIntegerForExample_$fieldName" type="jtview">
+			<int field="$fieldName"/>
+		</part>
+		<part id="LexExampleSentence-Jt-CustomGenDateForExample_$fieldName" type="jtview">
+			<gendate field="$fieldName" format="short"/>
+		</part>
+		<part id="LexExampleSentence-Jt-CustomStTextForExample_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="FullText"/>
+		</part>
+		<part id="LexExampleSentence-Jt-CustomPossVectorForExample_$fieldName" type="jtview">
+			<seq field="$fieldName" layout="PossibilityName"/>
+		</part>
+		<part id="LexExampleSentence-Jt-CustomPossAtomForExample_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="Name"/>
+		</part>
+	</bin>
+
+	<bin class="LexReference">
+		<part id="LexReference-Jt-SenseTargetsConfig" type="jtview">
+			<choice>
+				<where field="Targets" lengthatleast="2">
+					<choice>
+						<where target="owner" field="MappingType" intmemberof="0,1,5,6,10,11">
+							<!-- Collections and simple pairs, leave out the current item -->
+							<seq field="Targets" layout="publishStemCrossRef" targetclass="LexSense" inheritSeps="true" excludeHvo="parent" />
+						</where>
+						<where target="owner" field="MappingType" intmemberof="2,3,7,8,12,13">
+							<!-- Trees and assymetrical pairs  -->
+							<if field="Targets" index="0" hvoequals="$ParentHvo">
+								<!-- the first entry in Targets (root) is the current object, so exclude it -->
+								<seq field="Targets" layout="publishStemCrossRef" targetclass="LexSense" inheritSeps="true" excludeHvo="parent" />
+							</if>
+							<ifnot field="Targets" index="0" hvoequals="$ParentHvo">
+								<!-- The current one is not the first, so show only the first -->
+								<seq field="Targets" layout="publishStemCrossRef" targetclass="LexSense" firstOnly="true" />
+							</ifnot>
+						</where>
+						<where target="owner" field="MappingType" intmemberof="4,9,14">
+							<!-- Sequences; show everything, including the current one. -->
+							<seq field="Targets" layout="publishStemCrossRef" targetclass="LexSense" inheritSeps="true" />
+						</where>
+					</choice>
+				</where>
+				<where field="Targets" lengthatleast="1" lengthatmost="1">
+					<if target="owner" field="MappingType" intmemberof="4,9,14">
+						<!-- Sequences -->
+						<seq field="Targets" layout="publishStemCrossRef" targetclass="LexSense" sep=", " />
+					</if>
+				</where>
+			</choice>
+		</part>
+	</bin>
+
+	<bin class="CmAnthroItem">
+		<part id="CmAnthroItem-Jt-AbbreviationPub">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="CmAnthroItem-Jt-NamePub">
+			<configureMlString field="Name"/>
+		</part>
+	</bin>
+
+	<bin class="CmPicture">
+		<part id="CmPicture-Jt-ThumbnailRef" type="jtview">
+			<innerpile>
+				<picture height="96000" /> <!--max height in millipoints; use negative for absolute -->
+				<para>
+					<properties>
+						<alignment value="center" />
+					</properties>
+					<string field="Caption" ws="analysis" />
+				</para>
+			</innerpile>
+		</part>
+		<part id="CmPicture-Jt-ThumbnailPub" type="jtview">
+			<picture height="72000" /> <!--max height in millipoints; use negative for absolute -->
+		</part>
+		<part id="CmPicture-Jt-FullSizePub" type="jtview">
+			<picture /> <!--max height in millipoints; use negative for absolute -->
+		</part>
+		<part id="CmPicture-Jt-CaptionPub" type="jtview">
+			<configureMlString field="Caption" />
+		</part>
+		<part id="CmPicture-Jt-SenseNumber" type="jtview">
+			<string field="SenseNumberTSS" />
+		</part>
+	</bin>
+
+	<bin class="CmPossibility">
+		<part id="CmPossibility-Jt-NamePub" type="jtview">
+			<configureMlString field="Name"/>
+		</part>
+		<part id="CmPossibility-Jt-AbbreviationPub" type="jtview">
+			<configureMlString field="Abbreviation"/>
+		</part>
+	</bin>
+
+	<bin class="CmSemanticDomain">
+		<part id="CmSemanticDomain-Jt-AbbreviationPub">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="CmSemanticDomain-Jt-NamePub">
+			<configureMlString field="Name"/>
+		</part>
+	</bin>
+
+	<bin class="CmTranslation">
+		<part id="CmTranslation-Jt-$fieldName" type="jtview">
+			<obj class="CmTranslation" field="OwningExample" layout="$fieldName"/>
+		</part>
+		<part id="CmTranslation-Jt-TypeConfig">
+			<obj class="CmTranslation" field="Type" layout="publishStemTransType" />
+		</part>
+		<part id="CmTranslation-Jt-ExampleTranslation">
+			<string field="Translation" ws="$ws=analysis"/>
+		</part>
+		<part id="CmTranslation-Jt-ExampleTranslationType">
+			<obj field="Type" layout="Abbreviation"/>
+		</part>
+	</bin>
+
+</PartInventory>

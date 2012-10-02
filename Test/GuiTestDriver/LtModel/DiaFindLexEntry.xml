@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<find-entry role="dialog" title="Find Lexical Entry" root="yes">
+
+  <find name="Find:" path="$NL;9:$name">
+	<label name="Find:" path="/41:$name"/>
+	<data path="[2]/20:RootSite/$Text"/>
+  </find>
+
+  <ws ak="w">
+	<label name="Writing System:" path="9:$name;/41:$name"/>
+	<data path="9:Lexical Entries[2]/41:Lexical Entries"/>
+	<open name="Open" ak="{DOWN}" path="9:Lexical Entries[2]/43:$name"/>
+  </ws>
+
+  <entries name="Lexical Entries" path="9:$name;/">
+	 <label name="Lexical Entries" path="41:$name"/>
+	 <col path="9:MatchingEntries/9:XCoreUserControl/$nl" root="yes" >
+		<changer path="[3]/43:NAMELESS"/>
+		<heading path="/9:HeaderListView/33:HeaderListView/$NL;25:"/> <!-- path="name of heading" -->
+		<entry path="/20:RootSite/24:Table[$row;]/28:Row/29:Cell[$col;]/$Text"/>
+	 </col>
+	 <scroll path="9:MatchingEntries/9:XCoreUserControl/$nl" root="yes" >
+		<up name="Page up" path="[2]/43:$name"/>
+		<down name="Page down" path="[2]/43:$name"/>
+	 </scroll>
+  </entries>
+
+  <go-to name="Go To" ak="g" path="9:$name;/43:$name"/>
+  <create name="Create" ak="c" path="9:$name;.../43:$name;...">
+	 <dialog name="New Entry"/>
+  </create>
+  <cancel name="Cancel" path="9:$name;/43:$name"/>
+  <help name="Help" ak="h" path="9:$name;.../43:$name;...">
+	 <dialog name="FieldWorks Language Explorer Help"/>
+  </help>
+
+</find-entry>

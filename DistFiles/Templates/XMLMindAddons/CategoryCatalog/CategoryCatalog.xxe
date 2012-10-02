@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration name="CategoryCatalog" xsi:schemaLocation="http://www.xmlmind.com/xmleditor/schema/configuration                 ../../../../addon/config/configuration/xsd/configuration.xsd" xmlns="http://www.xmlmind.com/xmleditor/schema/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cfg="http://www.xmlmind.com/xmleditor/schema/configuration">
+	<!-- XMLMind XML Editor configuration file for Category Catalog -->
+	<detect>
+		<dtdPublicId>-//XMLmind//DTD CategoryCatalog//EN</dtdPublicId>
+	</detect>
+	<css location="CategoryCatalog.css" name="Style sheet"/>
+	<template location="CategoryCatalogTemplate.xml" name="English, French, Spanish and some other languages"/>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="i"/>
+		<command name="insertNewLanguage"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="r"/>
+		<command name="removeLanguage"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="s"/>
+		<command name="createInitialSetOfCategories"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="S"/>
+		<command name="createInitialSetOfCategories70"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="c"/>
+		<command name="createCategoryCatalog"/>
+	</binding>
+	<menu label="_Category Catalog">
+		<item command="insertNewLanguage" label="_Insert New Language    ESC+i"/>
+		<item command="removeLanguage" label="_Remove Language    ESC+r"/>
+		<separator/>
+		<item command="createInitialSetOfCategories" label="Create Initial _Set of Categories    ESC+s"/>
+		<item command="createInitialSetOfCategories70" label="Create Initial _Set of Categories 7.0   ESC+S"/>
+		<item command="createCategoryCatalog" label="_Create Category Catalog    ESC+c"/>
+	</menu>
+	<command name="insertNewLanguage">
+		<macro>
+			<sequence>
+				<command name="prompt" parameter="LangCode &quot;Enter code of new language:&quot;"/>
+				<command name="insertNewLanguageTransform" parameter="%_"/>
+				<command name="XXE.open" parameter="%D"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="insertNewLanguageTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform cacheStylesheet="true" file="in.xml" stylesheet="InsertNewLanguage.xsl" to="%D">
+				<parameter name="sLangCode">%0</parameter>
+			</transform>
+		</process>
+	</command>
+	<command name="removeLanguage">
+		<macro>
+			<sequence>
+				<command name="prompt" parameter="LangCode &quot;Enter code of language to remove:&quot;"/>
+				<set expression="%_" plainString="true" variable="lc"/>
+				<command name="prompt" parameter="LangCode &quot;Are you sure you want to remove this language from *every* category?&quot;"/>
+				<get expression="$lc"/>
+				<command name="removeLanguageTransform" parameter="%_"/>
+				<command name="XXE.open" parameter="%D"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="removeLanguageTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform cacheStylesheet="true" file="in.xml" stylesheet="RemoveLanguage.xsl" to="%D">
+				<parameter name="sLangCode">%0</parameter>
+			</transform>
+		</process>
+	</command>
+	<command name="createInitialSetOfCategories">
+		<macro>
+			<sequence>
+				<command name="createInitialSetOfCategoriesTransform"/>
+				<command name="alert" parameter="File %{P}\POS.xml has just been created.  You can copy it to FieldWorksInstallDirectory\templates"/>
+				<!--                <command name="XXE.open" parameter="%{P}/%{R}Initial.%E"/> -->
+			</sequence>
+		</macro>
+	</command>
+	<command name="createInitialSetOfCategoriesTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform cacheStylesheet="true" file="in.xml" stylesheet="CreateInitialSetOfCategories.xsl" to="%{P}/POS.xml"/>
+		</process>
+	</command>
+	<command name="createInitialSetOfCategories70">
+		<macro>
+			<sequence>
+				<command name="createInitialSetOfCategoriesTransform70"/>
+				<command name="alert" parameter="File %{P}\POS.xml has just been created.  You can copy it to FieldWorksInstallDirectory\templates"/>
+				<!--                <command name="XXE.open" parameter="%{P}/%{R}Initial.%E"/> -->
+			</sequence>
+		</macro>
+	</command>
+	<command name="createInitialSetOfCategoriesTransform70">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform cacheStylesheet="true" file="in.xml" stylesheet="CreateInitialSetOfCategories7.0.xsl" to="%{P}/POS.xml"/>
+		</process>
+	</command>
+	<command name="createCategoryCatalog">
+		<macro>
+			<sequence>
+				<command name="createCategoryCatalogTransform"/>
+				<command name="alert" parameter="File %{P}\GOLDEtic.xml has just been created.  You can copy it to FieldWorksInstallDirectory\templates"/>
+				<!--                <command name="XXE.open" parameter="%{P}/%{R}Catalog.%E"/> -->
+			</sequence>
+		</macro>
+	</command>
+	<command name="createCategoryCatalogTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform cacheStylesheet="true" file="in.xml" stylesheet="CreateCategoryCatalog.xsl" to="%{P}/GOLDEtic.xml"/>
+		</process>
+	</command>
+</configuration>

@@ -1,0 +1,12 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="XML\Editor.xml">
+ <title tag="xmlEd">What is a text editor?</title>
+ <index>
+  <li>editor</li>
+  <li>text editor</li>
+  <li>document editor</li>
+ </index>
+ <definition>
+  <p>A text editor, by today's standard, is a simple program that allows typing of text, usually 8-bit ASCII or UTF-8, and its display. The text is mostly all printable roman characters. The display may allow changing of text size, but usually not bolding or other enhancements. On Windows systems, Notepad is a good example. <i>Document editors</i> are typically more complicated and allow the insertion of codings into the text or store the text in proprietary structures or formats that are not easily displayed in simple text editors. However, most document editors can export their content into a plain text form in which most of its structure is lost.</p>
+ </definition>
+</concept>

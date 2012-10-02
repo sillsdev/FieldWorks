@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksAlternateForms" xml:space="preserve">
+	<value>Select the form to merge the current allomorph into:</value>
+  </data>
+  <data name="ksAnalyses" xml:space="preserve">
+	<value>Analyses</value>
+  </data>
+  <data name="ksBUG" xml:space="preserve">
+	<value>BUG!</value>
+	<comment>title for message box</comment>
+  </data>
+  <data name="ksCannotFindObject" xml:space="preserve">
+	<value>Could not find the correct object to jump to.</value>
+	<comment>error message displayed in message box</comment>
+  </data>
+  <data name="ksCannotMoveObjectToCopy" xml:space="preserve">
+	<value>Do not know how to move this object to a new copy of its owner.</value>
+	<comment>error message displayed in message box</comment>
+  </data>
+  <data name="ksDeletedObject" xml:space="preserve">
+	<value>A deleted object</value>
+	<comment>displayed in status bar</comment>
+  </data>
+  <data name="ksDeleteX" xml:space="preserve">
+	<value>Delete {0}</value>
+	<comment>Title of delete confirmation dialog box</comment>
+  </data>
+  <data name="ksEntries" xml:space="preserve">
+	<value>Select the entry to merge the current entry into:</value>
+  </data>
+  <data name="ksErrorCaption" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <data name="ksFind_" xml:space="preserve">
+	<value>Find...</value>
+  </data>
+  <data name="ksFindInDictionary" xml:space="preserve">
+	<value>Find in Dictionary</value>
+  </data>
+  <data name="ksFindRelatedWords" xml:space="preserve">
+	<value>Find related words</value>
+	<comment>message box title</comment>
+  </data>
+  <data name="ksGlosses" xml:space="preserve">
+	<value>Select the gloss to merge the current gloss into:</value>
+  </data>
+  <data name="ksMergeAllomorph" xml:space="preserve">
+	<value>Merge Allomorph</value>
+  </data>
+  <data name="ksMergeAnalysis" xml:space="preserve">
+	<value>Merge Analysis</value>
+  </data>
+  <data name="ksMergeReversalEntry" xml:space="preserve">
+	<value>Merge Reversal Entry</value>
+  </data>
+  <data name="ksMergeSense" xml:space="preserve">
+	<value>Merge Sense</value>
+  </data>
+  <data name="ksMergeWordGloss" xml:space="preserve">
+	<value>Merge Word Gloss</value>
+  </data>
+  <data name="ksMergeXIntoSelection" xml:space="preserve">
+	<value>"{0}" will be merged into what you select above,{1}resulting in one item.</value>
+	<comment>{1} is a line separator character</comment>
+  </data>
+  <data name="ksMergeXIntoY" xml:space="preserve">
+	<value>"{0}" will be merged into "{1}",{2}resulting in one item.</value>
+	<comment>{2} is a line separator character</comment>
+  </data>
+  <data name="ksNoEntriesWithSameSemanticDomain" xml:space="preserve">
+	<value>Sorry, no other entries were found with the same semantic domain(s) as that entry.</value>
+  </data>
+  <data name="ksNoSemanticDomainsListedForEntry" xml:space="preserve">
+	<value>Sorry, no semantic domains are listed for any of the senses of that entry, and no lexical relations (or cross references) include that entry or any of its senses.
+Without these, we cannot find related entries.</value>
+  </data>
+  <data name="ksProgramError" xml:space="preserve">
+	<value>Program error</value>
+	<comment>title for message box</comment>
+  </data>
+  <data name="ksQuestions" xml:space="preserve">
+	<value>???</value>
+  </data>
+  <data name="ksRedoBEInflClass" xml:space="preserve">
+	<value>Redo Bulk Edit Inflection Class</value>
+  </data>
+  <data name="ksRedoBulkEditPOS" xml:space="preserve">
+	<value>Redo Bulk Edit POS</value>
+  </data>
+  <data name="ksRedoCommand" xml:space="preserve">
+	<value>Redo {0}</value>
+  </data>
+  <data name="ksRedoDelete" xml:space="preserve">
+	<value>Redo Delete</value>
+  </data>
+  <data name="ksRedoInsert" xml:space="preserve">
+	<value>Redo Insert</value>
+  </data>
+  <data name="ksRedoInsertSense" xml:space="preserve">
+	<value>Redo Insert Sense</value>
+  </data>
+  <data name="ksRedoMerge" xml:space="preserve">
+	<value>Redo Merge</value>
+  </data>
+  <data name="ksSenses" xml:space="preserve">
+	<value>Select the sense to merge the current sense into:</value>
+  </data>
+  <data name="ksShow" xml:space="preserve">
+	<value>Show</value>
+	<comment>button text</comment>
+  </data>
+  <data name="ksTemplateTooDeep" xml:space="preserve">
+	<value>A discourse chart template can only have three levels (template, column group, and column).</value>
+  </data>
+  <data name="kstidFindRelWordsNotInDict" xml:space="preserve">
+	<value>Sorry, that entry is not yet in the dictionary</value>
+	<comment>Displayed in message box when Find Related Words can't find any related words</comment>
+  </data>
+  <data name="kstidFindRelWordsTitle" xml:space="preserve">
+	<value>Find related words</value>
+	<comment>Title for message box when Find Related Words can't find any related words</comment>
+  </data>
+  <data name="ksUndoBEInflClass" xml:space="preserve">
+	<value>Undo Bulk Edit Inflection Class</value>
+  </data>
+  <data name="ksUndoBulkEditPOS" xml:space="preserve">
+	<value>Undo Bulk Edit POS</value>
+  </data>
+  <data name="ksUndoCommand" xml:space="preserve">
+	<value>Undo {0}</value>
+  </data>
+  <data name="ksUndoDelete" xml:space="preserve">
+	<value>Undo Delete</value>
+  </data>
+  <data name="ksUndoInsert" xml:space="preserve">
+	<value>Undo Insert</value>
+  </data>
+  <data name="ksUndoInsertSense" xml:space="preserve">
+	<value>Undo Insert Sense</value>
+  </data>
+  <data name="ksUndoMerge" xml:space="preserve">
+	<value>Undo Merge</value>
+  </data>
+  <data name="ksWordsRelatedBySemanticDomain" xml:space="preserve">
+	<value>Words related by semantic domain to {0}:</value>
+	<comment>{0} is a vernacular word</comment>
+  </data>
+  <data name="ksLexicallyRelatedWords" xml:space="preserve">
+	<value>These words are lexically related to {0}:</value>
+	<comment>{0} is a vernacular word</comment>
+  </data>
+  <data name="ksMarkupTagsTooDeep" xml:space="preserve">
+	<value>The Text Markup Tags list can only have two levels (tag types and tags).</value>
+  </data>
+  <data name="ksHierarchyLimit" xml:space="preserve">
+	<value>Hierarchical Limit</value>
+	<comment>Title for Chart Template or Markup Tag list warnings</comment>
+  </data>
+  <data name="ksDuplicateWordformsCaption" xml:space="preserve">
+	<value>Duplicate Wordforms</value>
+  </data>
+  <data name="ksDuplicateWordformsMsg" xml:space="preserve">
+	<value>FieldWorks has detected that there are two wordforms with the form {0}. This is not supposed to happen! If you can figure out how it came about please let the developers know. It would be good to manually delete all but one of them. In the meantime, here is the information on the first of them.</value>
+  </data>
+</root>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 1 -->
+
+<accil on-fail="assert">
+
+  <bug id="LT-6457"/>
+  <bug id="LT-6558"/>
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+   <var id="changeIt" set="Select the target field and the list choice to change it to"/>
+
+<!-- Go to Lexicon/Bulk Edit Entries -->
+   <click path="$menuLEXICON;menu:Bulk Edit Entries"/>
+<!-- The List Choice tab is always open when Bulk Edit Entries is opened -->
+   <click path="$beeFilter;[5]"/><!-- Entry Type filter -->
+   <insert>f~</insert>
+   <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>Main Entry</insert>
+	 <click path="$ok"/>
+   </on-dialog>
+   <!--glimpse path="9:StatusBar/41:StatusBar[3]"/--><!-- Can't get "Filtered" -->
+   <glimpse id="1449inStatBar" path="9:StatusBar/41:1//1449">
+	  Wrong column filtered? Number of entries in database changed? Status bar path <data of="$.path"/> not found.
+   </glimpse>
+
+<!-- Entry Type filtered by ^(?!Main Entry) -->
+   <click path="$beeFilter;[5]"/><!-- Entry Type filter -->
+   <insert>f~</insert>
+   <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>{^}{(}?!Main Entry{)}</insert>
+	 <insert>%r</insert>
+	 <!--click path="9:Match for regular expression/45:Match for regular expression"/-->
+	 <click path="$ok"/>
+   </on-dialog>
+   <glimpse id="10inStatBar" path="9:StatusBar/41:1//10">
+	  Wrong column filtered? Number of entries in database changed? Status bar path <data of="$.path"/> not found.
+   </glimpse>
+<!-- Uncheck all -->
+   <click path="$beeChecks"/>
+   <insert>{DOWN 2}~</insert>
+<!-- Check all but the ones starting with a -->
+   <glimpse id="unchecked1"  path="$beeRec;[1]/$Col;/40:Picture" prop="checked" expect="False"/>
+   <glimpse id="unchecked2"  path="$beeRec;[2]/$Col;/40:Picture" prop="checked" expect="False"/>
+   <glimpse id="unchecked3"  path="$beeRec;[3]/$Col;/40:Picture" prop="checked" expect="False"/>
+   <click  path="$beeRec;[3]/$Col;/40:Picture"/>
+   <click  path="$beeRec;[4]/$Col;/40:Picture"/>
+   <click  path="$beeRec;[5]/$Col;/40:Picture"/>
+   <click  path="$beeRec;[6]/$Col;/40:Picture"/>
+   <click  path="$beeRec;[7]/$Col;/40:Picture"/>
+   <click  path="$beeRec;[8]/$Col;/40:Picture"/>
+   <click  path="$beeRec;[9]/$Col;/40:Picture"/>
+   <click  path="$beeRec;[10]/$Col;/40:Picture"/>
+
+<!-- Change Entry Type to "Saying"  -->
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Change To:[*]/$NL;43:NAMELESS"/>
+   <insert>s~</insert>
+   <click  path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click  path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+
+<!-- Verify only the selected items changed -->
+   <glimpse  id="Saying1" path="$beeRec;[1]/$Col;[6]/$Text" prop="value" expect="Saying" on-pass="assert"/>
+   <glimpse  id="Saying2"  path="$beeRec;[2]/$Col;[6]/$Text" prop="value" expect="Saying" on-pass="assert"/>
+   <glimpse  id="Saying3"  path="$beeRec;[3]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying4"  path="$beeRec;[4]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying5"  path="$beeRec;[5]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying6"  path="$beeRec;[6]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying7"  path="$beeRec;[7]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying8"  path="$beeRec;[8]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying9"  path="$beeRec;[9]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying10"  path="$beeRec;[10]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+
+   <insert>^z</insert><!-- Undo -->
+   <!--insert wait="1000">{F5}</insert--><!-- refresh -->
+<!-- Verify none changed to Saying -->
+   <glimpse  id="noSaying" path="$beeRec;[*]/$Col;[6]/$Text/value:Saying" prop="value" expect="Saying" on-pass="assert" on-fail="skip"/>
+
+   <insert wait="2000">^y</insert><!-- Redo -->
+
+<!-- Verify only the previously selected items changed -->
+   <glimpse  id="Saying1a" path="$beeRec;[1]/$Col;[6]/$Text" prop="value" expect="Saying" on-pass="assert"/>
+   <glimpse  id="Saying2a"  path="$beeRec;[2]/$Col;[6]/$Text" prop="value" expect="Saying" on-pass="assert"/>
+   <glimpse  id="Saying3a"  path="$beeRec;[3]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying4a"  path="$beeRec;[4]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying5a"  path="$beeRec;[5]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying6a"  path="$beeRec;[6]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying7a"  path="$beeRec;[7]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying8a"  path="$beeRec;[8]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying9a"  path="$beeRec;[9]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+   <glimpse  id="Saying10a"  path="$beeRec;[10]/$Col;[6]/$Text" prop="value" expect="Saying"/>
+
+<!-- Change Entry Type to "Main Entry"  -->
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Change To:[*]/$NL;43:NAMELESS"/>
+   <insert>m~</insert>
+   <click  path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <var id="arrow" set="  "/>
+   <glimpse  id="arrow1"  path="$beeRec;[1]/$Col;[6]/$Text" prop="value" expect="Compound $arrow; Main Entry"/>
+   <click  path="$beeRec;[1]/$Col;/40:Picture"/>
+   <glimpse  id="arrow1a"  path="$beeRec;[1]/$Col;[6]/$Text" prop="value" expect="Compound"/>
+   <glimpse  id="arrow2"  path="$beeRec;[2]/$Col;[6]/$Text" prop="value" expect="Compound $arrow; Main Entry"/>
+   <click  path="$beeRec;[2]/$Col;/40:Picture"/>
+   <glimpse  id="arrow2a"  path="$beeRec;[2]/$Col;[6]/$Text" prop="value" expect="Compound"/>
+
+   <glimpse  id="arrow3"  path="$beeRec;[3]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+   <glimpse  id="arrow4"  path="$beeRec;[4]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+   <glimpse  id="arrow5"  path="$beeRec;[5]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+   <glimpse  id="arrow6"  path="$beeRec;[6]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+   <glimpse  id="arrow7"  path="$beeRec;[7]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+   <glimpse  id="arrow8"  path="$beeRec;[8]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+   <glimpse  id="arrow9"  path="$beeRec;[9]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+   <glimpse  id="arrow10"  path="$beeRec;[10]/$Col;[6]/$Text" prop="value" expect="Saying $arrow; Main Entry"/>
+
+   <click  path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+
+<!-- Change Entry Type to "Idiom"  -->
+   <click path="$BEE;9:$changeIt;[2]/60:$changeIt;/9:List Choice/9:Main Entry/$NL;43:NAMELESS"/>
+   <insert>i~</insert>
+   <click  path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+
+<!-- Verify only the previously selected items changed -->
+   <glimpse  id="NotIdiom1" path="$beeRec;[1]/$Col;[6]/$Text" prop="value" expect="Idiom" on-pass="assert"/>
+   <glimpse  id="NotIdiom2"  path="$beeRec;[2]/$Col;[6]/$Text" prop="value" expect="Idiom" on-pass="assert"/>
+   <glimpse  id="Idiom3"  path="$beeRec;[3]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <glimpse  id="Idiom4"  path="$beeRec;[4]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <glimpse  id="Idiom5"  path="$beeRec;[5]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <glimpse  id="Idiom6"  path="$beeRec;[6]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <glimpse  id="Idiom7"  path="$beeRec;[7]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <glimpse  id="Idiom8"  path="$beeRec;[8]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <glimpse  id="Idiom9"  path="$beeRec;[9]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <glimpse  id="Idiom10"  path="$beeRec;[10]/$Col;[6]/$Text" prop="value" expect="Idiom"/>
+   <insert>^z</insert><!-- Undo -->
+
+  <click path="$NoFilters"/><!-- Turn off all filters -->
+<!-- Uncheck all -->
+   <click path="$beeChecks"/>
+   <insert>{DOWN 2}~</insert>
+
+ </on-application>
+</accil>

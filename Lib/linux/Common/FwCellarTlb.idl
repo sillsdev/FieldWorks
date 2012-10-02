@@ -1,0 +1,337 @@
+#line 1 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\src\\Cellar\\FwCellarTlb.idl"
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+
+#line 1 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\src\\Generic\\common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 15 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\src\\Cellar\\FwCellarTlb.idl"
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("2F0FCCC0-C160-11d3-8DA2-005004DEFEC4") cpp_quote(",") cpp_quote("FwCellarLib") cpp_quote(");") [ uuid(2F0FCCC0-C160-11d3-8DA2-005004DEFEC4), version(1.0), helpstring("FieldWorks Cellar") ] library FwCellarLib
+{
+	#line 1 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\cellar\\Cellar.idh"
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum CellarModuleDefns
+{
+
+	#line 1 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\src\\Cellar\\Lib\\CmTypes.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	kcptNil = 0,
+	kcptMin = 1,
+	kcptBoolean = 1,
+	kcptInteger = 2,
+	kcptNumeric = 3,
+	kcptFloat = 4,
+	kcptTime = 5,
+	kcptGuid = 6,
+	kcptImage = 7,
+	kcptGenDate = 8,
+	kcptBinary = 9,
+
+	kcptString = 13,
+	kcptMultiString = 14,
+	kcptUnicode = 15,
+	kcptMultiUnicode = 16,
+	kcptBigString = 17,
+	kcptMultiBigString = 18,
+	kcptBigUnicode = 19,
+	kcptMultiBigUnicode = 20,
+
+	kcptMinObj = 23,
+	kcptOwningAtom = 23,
+	kcptReferenceAtom = 24,
+	kcptOwningCollection = 25,
+	kcptReferenceCollection = 26,
+	kcptOwningSequence = 27,
+	kcptReferenceSequence = 28,
+	kcptLim = 29,
+	kcptVirtual	= 32,
+
+
+	kfcptOwningAtom = 8388608,
+	kfcptReferenceAtom = 16777216,
+	kfcptOwningCollection = 33554432,
+	kfcptReferenceCollection = 67108864,
+	kfcptOwningSequence = 134217728,
+	kfcptReferenceSequence = 268435456,
+	kgrfcptOwning = 176160768,
+	kgrfcptReference = 352321536,
+	kgrfcptAll = 528482304,
+
+
+
+
+
+
+	kwsAnal = 0xffffffff,
+	kwsVern = 0xfffffffe,
+	kwsAnals = 0xfffffffd,
+	kwsVerns = 0xfffffffc,
+	kwsAnalVerns = 0xfffffffb,
+	kwsVernAnals = 0xfffffffa,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	kwsLim = 0xfffffff9,
+
+#line 169 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\src\\Cellar\\Lib\\CmTypes.h"
+#line 14 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\cellar\\Cellar.idh"
+
+
+
+
+
+
+
+
+
+	kflidStartDummyFlids = 1000000000,
+} CellarModuleDefns;
+
+
+
+
+
+
+
+typedef enum CmObjectFields
+{
+	kflidCmObject_Id = 100,
+	kflidCmObject_Guid,
+	kflidCmObject_Class,
+	kflidCmObject_Owner,
+	kflidCmObject_OwnFlid,
+	kflidCmObject_OwnOrd,
+} CmObjectFields;
+#line 20 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\src\\Cellar\\FwCellarTlb.idl"
+};

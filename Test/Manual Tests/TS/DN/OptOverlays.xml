@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="optovrl" num="2.7.9.4" abbr="opov" file="DN\OptOverlays.xml">
+ <title tag="optovrl">Tools-Options-Overlays Dialog Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The <i>Overlays</i> tab of the <i>Tools-Options</i> dialog is the place to create and define new overlays, or named sets of tags for marking up data. These tests exercise this tab of the Options dialog.</p>
+   <p name="Specification">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" type="doc">Tools-Options-Overlays</link>.</p>
+   <p name="todo">This script may not completely cover the dialog.</p>
+   <p name="todo">A reference is needed for the Choices List dialog and the results in 2.4 deleted.</p>
+  </introduction>
+  <context>
+   <p>Many setting combinations are possible from dialog. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Overlays Dialog".</p>
+  </context>
+
+ <case id="opov" num="0" order="any">
+  <title tag="opovAct">Activation</title>
+  <context>
+<p>When the application is running</p>
+</context>
+
+  <step name="0.1" link="Bug">Select the Tools-Options menu item.
+   <r>Options dialog appears.</r>
+   <p name="bug">Options dialog does not appear</p>
+   <p name="Note">The Options dialog can be invoked in various other ways. These are tested in other test scripts, such as <link uri="../FW/VwOverlay.xml">2.3.4 View-Overlays</link> and <link uri="http://lsdev.sil.org/intranet/Test/Manual Tests/TS/FW/OverlaysUsage.xml">7.1 Overlays Usage</link>.</p>
+  </step>
+  <step name="0.2" link="Bug">View the image at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm">Tools-Options-Overlays</link> under the heading "Setting up Overlays."
+   <r>Up to approximate size and position the two should be the same - especially the controls.</r>
+   <p name="bug">Tools-Options-Overlays dialog layout incorrect</p>
+  </step>
+
+ </case>
+
+ <case id="opovLPan" num="1" order="any">
+  <title tag="opovLPan">Left Panel: Overlays</title>
+  <context>
+<p>When the Tools-Options-Overlays dialog is displayed</p>
+</context>
+
+  <step name="1.1" link="Bug">Execute the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;L&gt; to test the <b>Overlays</b> list box.
+   <r>
+<ul>
+	<li>Side effects: For the selected overlay, the Overlay Settings group box displays the tags defined for that overlay.</li>
+	<li>Report any failures using "Overlays dialog Overlays list box" as the name of the control.</li>
+</ul>
+</r>
+   <p name="bug">Overlays dialog Overlays list box is missing tags</p>
+   <p name="bug">Overlays dialog Overlays list box shows more tags</p>
+  </step>
+
+  <step name="1.2" link="Bug">Execute the <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;a&gt; to test the <b>Add</b> button.
+   <r>
+<ul>
+	<li>Side effects: The New Overlay dialog appears, with the name "New Overlay" in the edit box.</li>
+	<li>See Step 4.0 for full testing of this dialog.</li>
+	<li>Report any failures using "Overlays dialog New button" as the name of the control.</li>
+   </ul>
+</r>
+   <p name="bug">Overlay dialog New button does not launch dialog</p>
+  </step>
+
+  <step name="1.3" link="Bug">Execute the <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;c&gt; to test the <b>Copy</b> button.
+   <r>The side effects of this button are:
+   <ul>
+	<li>A new overlay called "Copy of [currently selected overlay]" appears in the list in alphabetical order.</li>
+	<li>Its name is selected in edit mode.</li>
+	<li>Its settings, shown on the right, should match exactly the current settings of the original (even if the original has changed since the last OK-clicking on this dialog).</li>
+	<li>Report any failures using "Overlays dialog New button" as the name of the control.</li>
+   </ul>
+</r>
+   <p name="bug">Overlay dialog Copy failed to create a copy</p>
+   <p name="bug">Overlay dialog Copy failed to select copy name</p>
+   <p name="bug">Overlay dialog Copy failed to match copy content</p>
+  </step>
+
+  <step name="1.4.1" link="Bug">Execute the <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;d&gt; to test the <b>Delete</b> button.
+   <r>The side effect of this button is:
+   <ul>
+	<li>A confirmation dialog pops up, with Yes / No / Help buttons, and a message such as <i>Are you sure you want to delete this overlay?</i>
+</li>
+	<li>Report any failures using "Overlays dialog Delete button" as the name of the control.</li>
+   </ul>
+</r>
+   <p name="bug">Overlays dialog Delete Confirmation dialog does not appear</p>
+  </step>
+
+  <step name="1.4.2">When the <b>Overlay Delete Confirmation</b> dialog is open, execute the <link uri="../StdCtrls/Dialog.xml" type="module">Dialog Tests</link>.
+   <r>The actions for the dialog are:
+   <ul>
+<li>The selected overlay is deleted.</li>
+	<li>The Overlay list is updated.</li>
+	<li>The View Bar, if displaying overlays, does not update until the Options dialog is exited with "OK."</li>
+	<li>Report any failures using "Overlay Delete Confirmation" as the name of the dialog.</li>
+   </ul>
+</r>
+  </step>
+ </case>
+
+ <case id="opovRPan" num="2" order="any">
+  <title tag="opovRPan">Right Panel: Overlay Settings</title>
+  <context>
+<p>When the Tools-Options-Overlays dialog is displayed</p>
+</context>
+
+  <step name="2.1" link="Bug">Execute the <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link> to test the <b>Tag</b> edit box at the top of the Tag list.
+   <r>
+<ul>
+	<li>This is a type-ahead edit box which scrolls through the Tag list below.</li>
+	<li>As the user types, the Tag list highlights the current match to the text in the Tag edit box.</li>
+	<li>Report any failures using "Overlay Settings Tag text box" as the name of the control.</li>
+   </ul>
+</r>
+   <p name="bug">Overlay Settings Tag text box type-ahead fails</p>
+  </step>
+
+  <step name="2.2" link="Bug">Inspect the <b>Tag list</b>.
+   <r>
+<ul>
+	<li>The Tag list shows which Tags are available in the current Overlay.</li>
+	<li>This list shows the same tags that appear in this Overlay's floating toolbar Palette.</li>
+   </ul>
+</r>
+   <p name="bug">Overlay Settings Tag list does not match Overlay's tags</p>
+  </step>
+  <step name="2.3">Execute the <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;v&gt; to test the <b>Advanced...</b> button.
+   <r>
+<ul>
+	<li>Side effects: The Advanced Global Overlay Settings dialog appears.</li>
+	<li>See Step 5.0 for full testing of this dialog.</li>
+	<li>Report any failures using "Overlays dialog Advanced button" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+
+  <step name="2.4">Execute the <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the <b>Choose Tags</b> button.
+   <r>The Choices List dialog appears to allow the user to select which tags to include in this Overlay.
+   <ul>
+	<li>Each tag in the Overlay is marked in the Choices List dialog with a checked box.</li>
+	<li>Unchecked items in the Choices List dialog indicate which tags are not selected for the current Overlay.</li>
+	<li>Only those branches in the Choices List which contain checked tags open when the tree is first displayed.</li>
+	<li>In most Choices Lists, major nodes can also be checked. This would give a higher level of tagging, e.g. "Social Groups" or "58 Marriage" could be tags that someone would want to put on text at an early stage of analysis. On a second pass, these could be refined.</li>
+	<li>The user goes through the list checking all of the choices that s/he needs and unchecking the ones s/he doesn't need for that Overlay.</li>
+	<li>Clicking OK sends a new list of selected tags back to the Overlay dialog box.</li>
+	<li>This then refreshes and reconfigures the Overlay and Palette with the tags the user has selected and removed.</li>
+	<li>If this Overlay is on, then what tags showing on the text would change too.</li>
+	<li>Report any failures using "Overlay Settings Choose Tags button" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+
+ </case>
+
+ <case id="opovTagS" num="3" order="any">
+  <title tag="opovTagS">Right Panel: Tag Settings</title>
+  <context>
+<p>When the Tools-Options-Overlays dialog is displayed</p>
+</context>
+
+  <step name="3.1">Execute the <link uri="../StdCtrls/ColorPal.xml" type="module">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;f&gt; to test the <b>Foreground Color</b> combo box.
+   <r>The selected color appears in the combo box. Report any failures using "Overlays dialog foreground color combo box" as the name of the control.</r>
+  </step>
+
+  <step name="3.2">Execute the <link uri="../StdCtrls/ColorPal.xml" type="module">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;b&gt; to test the <b>Background Color</b> combo box.
+   <r>The selected color appears in the combo box. Report any failures using "Overlays dialog background color combo box" as the name of the control.</r>
+  </step>
+
+  <step name="3.3">Execute the <link uri="../StdCtrls/UndlStyle.xml" type="module">Underline Style Tests</link> and use the shortcut &lt;Alt&gt;&lt;y&gt; to test the <b>Underline Style</b> combo box.
+   <r>The selected underline style appears in the combo box. Report any failures as suggested using "Overlays dialog underline style combo box" as the name of the control.</r>
+   <p name="todo">
+<i>The Underline Style tests have not been written yet. The above link is looking for the nonexistent UndlStyle.xml file in the ..\StdCtrls folder. Check the link and remove this todo when it works.</i>
+</p>
+  </step>
+
+  <step name="3.4">Execute the <link uri="../StdCtrls/ColorPal.xml" type="module">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;o&gt; to test the <b>Underline Color</b> combo box.
+   <r>The selected color appears in the combo box. Report any failures using "Overlays dialog underline color combo box" as the name of the control.</r>
+  </step>
+
+  <step name="3.5" link="Bug">Execute the <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;H&gt; to test the <b>Hide tag in display</b> check box.
+   <r>
+<ul>
+  <li>When checked, the tag selected in the Overlay settings list is grayed out in the overlay pallet for this category.</li>
+  <li>Report any failures using "Overlays dialog underline color combo box" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+
+ </case>
+
+ <case id="opovNewO" num="4" order="any">
+  <title tag="opovNewO">New Overlay</title>
+  <context>
+<p>When the Tools-Options-Overlays-New Overlay dialog is displayed</p>
+</context>
+
+  <step name="4.1">Execute the <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;n&gt; to test the <b>New overlay name</b> text box.
+   <r>Selected name appears in the text box. Clicking "OK", will exit the dialog. Check that:
+	<ul>
+	 <li> On "OK", if there is no name specified ... <p name="todo">Need spec for this case.</p>
+</li>
+	 <li> On "OK", a unique name is validated. If name is not unique, an info message "A unique name must be give for each overlay. Please provide a unique name." is displayed. Returns to New Overlay dialog.</li>
+	 <li> Else, new overlay with selected association list is created.</li>
+	</ul>
+	Report any failures using "Overlays New Overlay dialog New overlay text box" as the name of the control.</r>
+  </step>
+
+  <step name="4.2">Execute the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;a&gt; to test the <b>Associated list</b> list box.
+   <r>The selected list is highlighted. At least one list is always selected, the default being the first one on the list. Report any failures using "Overlays New Overlay dialog Associated list box" as the name of the control.</r>
+  </step>
+
+  <step name="4.3">Execute the <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> to test the <b>Include all items in the list</b> check box.
+   <r>Check box is checked by default. Unchecking the box excludes all the items from the list and they need to be included to appear on the list. Report any failures using "Overlays New Overlay dialog Include check box" as the name of the control.<p name="todo">Need to check if spec has changed.</p>
+</r>
+  </step>
+
+ </case>
+
+
+ <case id="opovAdvS" num="5" order="any">
+  <title tag="opovAdvS">Advanced Global Overlay Settings</title>
+  <context>
+<p>When the Tools-Options-Overlays-Advanced dialog is displayed</p>
+</context>
+
+  <step name="5.1">Execute the <link uri="../StdCtrls/ListBox.xml" type="module">List Box / Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;f&gt; to test the <b>Font</b> combo box.
+   <r>The selected font appears in the combo box and the preview area is updated to use the selected font. Report any failures using "Advanced Global Overlays Settings dialog font combo box" as the name of the control.</r>
+  </step>
+
+  <step name="5.2">Execute the <link uri="../StdCtrls/ListBox.xml" type="module">List Box / Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;s&gt; to test the <b>Size</b> combo box.
+   <r>The selected size appears in the combo box and the preview area is updated to use the selected font size. Report any failures using "Advanced Global Overlays Settings dialog size combo box" as the name of the control.</r>
+  </step>
+
+  <step name="5.3">Execute the <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> and use the shortcuts &lt;Alt&gt;&lt;o&gt;, &lt;Alt&gt;&lt;c&gt;, &lt;Alt&gt;&lt;t&gt;, &lt;Alt&gt;&lt;b&gt;, and &lt;Alt&gt;&lt;r&gt; to test the <b>Show</b> check boxes.
+   <r>The preview area is updated to show the tags and brackets as dictated by the selected check boxes. Preview should be as dictated in the specifications. Report any failures using "Advanced Global Overlays Settings Show check boxes" as the name of the control.</r>
+  </step>
+
+  <step name="5.4">Execute the <link uri="../StdCtrls/ListBox.xml" type="module">List Box / Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;h&gt; to test the <b>Show up to this many tags at a boundary</b> combo box.
+   <r>The selected number of tags appears in the combo box and the preview area is updated to show the selected number of tags. Report any failures using "Advanced Global Overlays Settings dialog size combo box" as the name of the control.</r>
+  </step>
+ </case>
+
+
+ <update date="May-05-01" author="JanetW">Test created.</update>
+ <update date="Jul-16-01" author="MikeL">Changed some bug text and cut out structure reserved for further work.</update>
+ <update date="May-22-02" author="JoelC">Added cases 4 and 5; moved 2.3 to 2.4; added step at 2.3.</update>
+ <update date="May-28-02" author="JoelC">Updated link to Test 7.1.</update>
+
+
+</test>

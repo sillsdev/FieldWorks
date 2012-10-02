@@ -1,0 +1,1950 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+	<interlinear-text>
+		<item type="title" lang="en">Lesson 2 text</item>
+		<item type="title-abbreviation" lang="en">***</item>
+		<paragraphs>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="punct" lang="nlv">"</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">Nikan</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">nikan</item>
+										<item type="cf" lang="nlv">nikan</item>
+										<item type="gls" lang="en">here</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">Rafael</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">Rafael</item>
+										<item type="cf" lang="nlv">Rafael</item>
+										<item type="gls" lang="en">Rafael</item>
+										<item type="msa" lang="en">NProp </item>
+									</morph>
+								</morphemes>
+								<item type="pos" lang="en">NProp</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">Delgado</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">Delgado</item>
+										<item type="cf" lang="nlv">Delgado</item>
+										<item type="gls" lang="en">Delgado</item>
+										<item type="msa" lang="en">NProp </item>
+									</morph>
+								</morphemes>
+								<item type="pos" lang="en">NProp</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">"</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">n</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">n</item>
+										<item type="cf" lang="nlv">n</item>
+										<item type="gls" lang="en">the</item>
+										<item type="msa" lang="en">Def Art </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">the</item>
+								<item type="pos" lang="en">Def Art</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ihkuak</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">ihkuak</item>
+										<item type="cf" lang="nlv">ihkuak</item>
+										<item type="gls" lang="en">when</item>
+										<item type="msa" lang="en">Advlizer </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikilliah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">illia</item>
+										<item type="cf" lang="nlv">llia</item>
+										<item type="gls" lang="en">to tell</item>
+										<item type="msa" lang="en">Vd  (III) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">Todos</item>
+								<morphemes>
+									<morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">todos</item>
+										<item type="cf" lang="nlv">todos</item>
+										<item type="gls" lang="en">all</item>
+										<item type="msa" lang="en">Adj </item>
+									</morph>
+								</morphemes>
+								<item type="pos" lang="en">Adj</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">Santos</item>
+								<morphemes>
+									<morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">santo</item>
+										<item type="cf" lang="nlv">santo</item>
+										<item type="gls" lang="en">saint</item>
+										<item type="msa" lang="en">NLoan  (s) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-s</item>
+										<item type="cf" lang="nlv">-meh</item>
+										<item type="gls" lang="en">PL</item>
+										<item type="msa" lang="en">N:(Loan Plural)</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,"</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ihkíh</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">ihkíh</item>
+										<item type="cf" lang="nlv">ihkín</item>
+										<item type="gls" lang="en">like this</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikichivah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ki-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">chiva</item>
+										<item type="cf" lang="nlv">chiva</item>
+										<item type="gls" lang="en">to make</item>
+										<item type="msa" lang="en">Vt  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">Treinta</item>
+								<morphemes>
+									<morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">treinta</item>
+										<item type="cf" lang="nlv">treinta</item>
+										<item type="gls" lang="en">thirty</item>
+										<item type="msa" lang="en">Card Num </item>
+									</morph>
+								</morphemes>
+								<item type="pos" lang="en">Card Num</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">y</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">y</item>
+										<item type="cf" lang="nlv">y</item>
+										<item type="gls" lang="en">and</item>
+										<item type="msa" lang="en">Prt </item>
+									</morph>
+								</morphemes>
+								<item type="pos" lang="en">Prt</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">uno</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">uno</item>
+										<item type="cf" lang="nlv">uno</item>
+										<item type="gls" lang="en">one</item>
+										<item type="msa" lang="en">Card Num </item>
+									</morph>
+								</morphemes>
+								<item type="pos" lang="en">Card Num</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">de</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">de</item>
+										<item type="cf" lang="nlv">de</item>
+										<item type="gls" lang="en">of</item>
+										<item type="msa" lang="en">PostLoan </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">oktubre</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">oktubre</item>
+										<item type="cf" lang="nlv">oktubre</item>
+										<item type="gls" lang="en">October</item>
+										<item type="msa" lang="en">NLoan </item>
+									</morph>
+								</morphemes>
+								<item type="pos" lang="en">NLoan</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikonihtova</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">1</item>
+										<item type="gls" lang="en">SUBJ:2.SG</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">on-</item>
+										<item type="cf" lang="nlv">on-</item>
+										<item type="gls" lang="en">DIST</item>
+										<item type="msa" lang="en">V:(Directional)</item>
+									</morph>
+									<morph type="bound stem" guid="d7f713e7-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ihtova</item>
+										<item type="cf" lang="nlv">ihtova</item>
+										<item type="gls" lang="en">to say</item>
+										<item type="msa" lang="en">Vt  (III) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-*0</item>
+										<item type="cf" lang="nlv">-*0</item>
+										<item type="hn" lang="en">1</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:SG</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">yeh</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">yeh</item>
+										<item type="cf" lang="nlv">yeh</item>
+										<item type="gls" lang="en">he</item>
+										<item type="msa" lang="en">Pro </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">n</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">n</item>
+										<item type="cf" lang="nlv">n</item>
+										<item type="gls" lang="en">the</item>
+										<item type="msa" lang="en">Def Art </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">the</item>
+								<item type="pos" lang="en">Def Art</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">akin</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">akin</item>
+										<item type="cf" lang="nlv">akin</item>
+										<item type="gls" lang="en">the ones who</item>
+										<item type="msa" lang="en">Rel </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">omomihmikilihkeh</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">o-</item>
+										<item type="cf" lang="nlv">o-</item>
+										<item type="gls" lang="en">PAST</item>
+										<item type="msa" lang="en">Vi:Past</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">mo-</item>
+										<item type="cf" lang="nlv">mo-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">REFL</item>
+										<item type="msa" lang="en">Vt:Object</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">[C^1][V^1]h-</item>
+										<item type="cf" lang="nlv">reduplication-</item>
+										<item type="gls" lang="en">REDUP</item>
+										<item type="msa" lang="en">V&gt;V</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">miki</item>
+										<item type="cf" lang="nlv">miki</item>
+										<item type="gls" lang="en">to die</item>
+										<item type="msa" lang="en">Vi  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-li</item>
+										<item type="cf" lang="nlv">-lia</item>
+										<item type="gls" lang="en">APPLC-lia</item>
+										<item type="msa" lang="en">Vi&gt;Vt</item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-hkeh</item>
+										<item type="cf" lang="nlv">-keh</item>
+										<item type="gls" lang="en">PERFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Perfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ok</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">ok</item>
+										<item type="cf" lang="nlv">ok</item>
+										<item type="gls" lang="en">still, yet</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">kookoneh</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">kookone</item>
+										<item type="cf" lang="nlv">kone</item>
+										<item type="gls" lang="en">baby</item>
+										<item type="msa" lang="en">NNat  (h) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-meh</item>
+										<item type="gls" lang="en">PL</item>
+										<item type="msa" lang="en">N:Abs/Plural</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">babies</item>
+								<item type="pos" lang="en">NNat</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikinchiah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">in-</item>
+										<item type="cf" lang="nlv">in-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">OBJ:3.PL</item>
+										<item type="msa" lang="en">V:(3rdPluralObject)</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">chia</item>
+										<item type="cf" lang="nlv">chia</item>
+										<item type="gls" lang="en">to hope for</item>
+										<item type="msa" lang="en">Vt  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="punct" lang="nlv">"</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">Tikinchiah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">in-</item>
+										<item type="cf" lang="nlv">in-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">OBJ:3.PL</item>
+										<item type="msa" lang="en">V:(3rdPluralObject)</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">chia</item>
+										<item type="cf" lang="nlv">chia</item>
+										<item type="gls" lang="en">to hope for</item>
+										<item type="msa" lang="en">Vt  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">itech</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">tech</item>
+										<item type="cf" lang="nlv">tech</item>
+										<item type="gls" lang="en">in, next to</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">in, next to</item>
+								<item type="pos" lang="en">PostNat</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">altar</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikintzahtziliah</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikintlaliliah</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">chikolatzintli</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">pan</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tlakeh</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ichpokatzin</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">itlah</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">itlah</item>
+										<item type="cf" lang="nlv">itlah</item>
+										<item type="gls" lang="en">something</item>
+										<item type="msa" lang="en">Pro </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">something</item>
+								<item type="pos" lang="en">Pro</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">mamavilantzin</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ikah</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">ikah</item>
+										<item type="cf" lang="nlv">ikah</item>
+										<item type="gls" lang="en">someone</item>
+										<item type="msa" lang="en">Pro </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">someone</item>
+								<item type="pos" lang="en">Pro</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">chokotzin</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">itlah</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">itlah</item>
+										<item type="cf" lang="nlv">itlah</item>
+										<item type="gls" lang="en">something</item>
+										<item type="msa" lang="en">Pro </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">something</item>
+								<item type="pos" lang="en">Pro</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">taatanahtzin</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">itlah</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">itlah</item>
+										<item type="cf" lang="nlv">itlah</item>
+										<item type="gls" lang="en">something</item>
+										<item type="msa" lang="en">Pro </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">something</item>
+								<item type="pos" lang="en">Pro</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ahawilli</item>
+								<morphemes>
+									<morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ahawil</item>
+										<item type="cf" lang="nlv">ahawil</item>
+										<item type="gls" lang="en">toy</item>
+										<item type="msa" lang="en">NNat </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-li</item>
+										<item type="cf" lang="nlv">-tl</item>
+										<item type="gls" lang="en">ABS</item>
+										<item type="msa" lang="en">NNat:Abs/Plural</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">toy</item>
+								<item type="pos" lang="en">NNat</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">induudulse</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ihkón</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">ihkón</item>
+										<item type="cf" lang="nlv">ihkón</item>
+										<item type="gls" lang="en">like that</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">like that</item>
+								<item type="pos" lang="en">Adv</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">noso</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">noso</item>
+										<item type="cf" lang="nlv">noso</item>
+										<item type="gls" lang="en">then</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">but</item>
+								<item type="pos" lang="en">Adv</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tanahtih</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikonintlaliliah</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">n</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">n</item>
+										<item type="cf" lang="nlv">n</item>
+										<item type="gls" lang="en">the</item>
+										<item type="msa" lang="en">Def Art </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">the</item>
+								<item type="pos" lang="en">Def Art</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">xochitl</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">xochi</item>
+										<item type="cf" lang="nlv">xochi</item>
+										<item type="gls" lang="en">flower</item>
+										<item type="msa" lang="en">NNat </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-tl</item>
+										<item type="cf" lang="nlv">-tl</item>
+										<item type="gls" lang="en">ABS</item>
+										<item type="msa" lang="en">NNat:Abs/Plural</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">flower</item>
+								<item type="pos" lang="en">NNat</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">Tikintlaliliah</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">itlah</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">itlah</item>
+										<item type="cf" lang="nlv">itlah</item>
+										<item type="gls" lang="en">something</item>
+										<item type="msa" lang="en">Pro </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">something</item>
+								<item type="pos" lang="en">Pro</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">istakxochitzintli</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">gladiola</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">o</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">itlah</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">itlah</item>
+										<item type="cf" lang="nlv">itlah</item>
+										<item type="gls" lang="en">something</item>
+										<item type="msa" lang="en">Pro </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">something</item>
+								<item type="pos" lang="en">Pro</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ok</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">ok</item>
+										<item type="cf" lang="nlv">ok</item>
+										<item type="gls" lang="en">still, yet</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tlamantli</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">tlaman</item>
+										<item type="cf" lang="nlv">tlaman</item>
+										<item type="gls" lang="en">thing</item>
+										<item type="msa" lang="en">NNat </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-tli</item>
+										<item type="cf" lang="nlv">-tl</item>
+										<item type="gls" lang="en">ABS</item>
+										<item type="msa" lang="en">NNat:Abs/Plural</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">thing</item>
+								<item type="pos" lang="en">NNat</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">with</item>
+								<item type="pos" lang="en">Post</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">seki</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">seki</item>
+										<item type="cf" lang="nlv">seki</item>
+										<item type="gls" lang="en">some</item>
+										<item type="msa" lang="en">Quant </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">some</item>
+								<item type="pos" lang="en">Quant</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">kakachopin</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">Ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">with</item>
+								<item type="pos" lang="en">Post</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tos</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">tos</item>
+										<item type="cf" lang="nlv">tos</item>
+										<item type="gls" lang="en">then</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">then</item>
+								<item type="pos" lang="en">Adv</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">mostlatipah</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">sekaachivah</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">inon</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">inon</item>
+										<item type="cf" lang="nlv">inon</item>
+										<item type="gls" lang="en">that</item>
+										<item type="msa" lang="en">Dem </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tlen</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">tlen</item>
+										<item type="cf" lang="nlv">tlen</item>
+										<item type="gls" lang="en">that which</item>
+										<item type="msa" lang="en">Rel </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">that which</item>
+								<item type="pos" lang="en">Rel</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">otikintlalilihka</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">Ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">with</item>
+								<item type="pos" lang="en">Post</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">nehki</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">dia</item>
+								<morphemes>
+									<morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">dia</item>
+										<item type="cf" lang="nlv">dia</item>
+										<item type="gls" lang="en">day</item>
+										<item type="msa" lang="en">NLoan </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">day</item>
+								<item type="pos" lang="en">NLoan</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">primero</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">de</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">de</item>
+										<item type="cf" lang="nlv">de</item>
+										<item type="gls" lang="en">of</item>
+										<item type="msa" lang="en">PostLoan </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">noviembre</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">yon</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">yon</item>
+										<item type="cf" lang="nlv">yon</item>
+										<item type="gls" lang="en">this</item>
+										<item type="msa" lang="en">Dem </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">that</item>
+								<item type="pos" lang="en">Dem</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikompensarovah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">om-</item>
+										<item type="cf" lang="nlv">on-</item>
+										<item type="gls" lang="en">DIST</item>
+										<item type="msa" lang="en">V:(Directional)</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">pensar</item>
+										<item type="cf" lang="nlv">pensar</item>
+										<item type="gls" lang="en">to think</item>
+										<item type="msa" lang="en">SpInfVt </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-ova</item>
+										<item type="cf" lang="nlv">-ova</item>
+										<item type="gls" lang="en">NativizerVt</item>
+										<item type="msa" lang="en">SpInfVt&gt;Vt</item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">yen</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">yen</item>
+										<item type="cf" lang="nlv">yen</item>
+										<item type="gls" lang="en">it is he</item>
+										<item type="msa" lang="en">PredNom </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">keh</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">wehweyihtzitzin</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikinchiah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">in-</item>
+										<item type="cf" lang="nlv">in-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">OBJ:3.PL</item>
+										<item type="msa" lang="en">V:(3rdPluralObject)</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">chia</item>
+										<item type="cf" lang="nlv">chia</item>
+										<item type="gls" lang="en">to hope for</item>
+										<item type="msa" lang="en">Vt  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">akin</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">akin</item>
+										<item type="cf" lang="nlv">akin</item>
+										<item type="gls" lang="en">the ones who</item>
+										<item type="msa" lang="en">Rel </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">yi</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">yi</item>
+										<item type="cf" lang="nlv">yi</item>
+										<item type="gls" lang="en">already</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">already</item>
+								<item type="pos" lang="en">Adv</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">wehweyin</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">omomikilihkeh</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">o-</item>
+										<item type="cf" lang="nlv">o-</item>
+										<item type="gls" lang="en">PAST</item>
+										<item type="msa" lang="en">Vi:Past</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">mo-</item>
+										<item type="cf" lang="nlv">mo-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">REFL</item>
+										<item type="msa" lang="en">Vt:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">miki</item>
+										<item type="cf" lang="nlv">miki</item>
+										<item type="gls" lang="en">to die</item>
+										<item type="msa" lang="en">Vi  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-li</item>
+										<item type="cf" lang="nlv">-lia</item>
+										<item type="gls" lang="en">APPLC-lia</item>
+										<item type="msa" lang="en">Vi&gt;Vt</item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-hkeh</item>
+										<item type="cf" lang="nlv">-keh</item>
+										<item type="gls" lang="en">PERFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Perfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">Tos</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">tos</item>
+										<item type="cf" lang="nlv">tos</item>
+										<item type="gls" lang="en">then</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">then</item>
+								<item type="pos" lang="en">Adv</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">yon</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">yon</item>
+										<item type="cf" lang="nlv">yon</item>
+										<item type="gls" lang="en">this</item>
+										<item type="msa" lang="en">Dem </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">that</item>
+								<item type="pos" lang="en">Dem</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">no</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">no</item>
+										<item type="cf" lang="nlv">no</item>
+										<item type="gls" lang="en">also</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikoninchiah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">on-</item>
+										<item type="cf" lang="nlv">on-</item>
+										<item type="gls" lang="en">DIST</item>
+										<item type="msa" lang="en">V:(Directional)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">in-</item>
+										<item type="cf" lang="nlv">in-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">OBJ:3.PL</item>
+										<item type="msa" lang="en">V:(3rdPluralObject)</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">chia</item>
+										<item type="cf" lang="nlv">chia</item>
+										<item type="gls" lang="en">to hope for</item>
+										<item type="msa" lang="en">Vt  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">keh</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">yon</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">yon</item>
+										<item type="cf" lang="nlv">yon</item>
+										<item type="gls" lang="en">this</item>
+										<item type="msa" lang="en">Dem </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">that</item>
+								<item type="pos" lang="en">Dem</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">nikan</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">nikan</item>
+										<item type="cf" lang="nlv">nikan</item>
+										<item type="gls" lang="en">here</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikipiah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ki-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">pia</item>
+										<item type="cf" lang="nlv">pia</item>
+										<item type="gls" lang="en">to have</item>
+										<item type="msa" lang="en">Vt  (II) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">n</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">n</item>
+										<item type="cf" lang="nlv">n</item>
+										<item type="gls" lang="en">the</item>
+										<item type="msa" lang="en">Def Art </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">the</item>
+								<item type="pos" lang="en">Def Art</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">kostumbre</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">antiguahkapa</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikivalih</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">no</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">no</item>
+										<item type="cf" lang="nlv">no</item>
+										<item type="gls" lang="en">also</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">iqual</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">machok</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">machok</item>
+										<item type="cf" lang="nlv">machok</item>
+										<item type="gls" lang="en">no longer</item>
+										<item type="msa" lang="en">Prt </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">nochi</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">nochi</item>
+										<item type="cf" lang="nlv">nochi</item>
+										<item type="gls" lang="en">all</item>
+										<item type="msa" lang="en">Quant </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">all</item>
+								<item type="pos" lang="en">Quant</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikineltokah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ti-</item>
+										<item type="cf" lang="nlv">ti-</item>
+										<item type="hn" lang="en">2</item>
+										<item type="gls" lang="en">SUBJ:1.PL</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">ki-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">nel</item>
+										<item type="cf" lang="nlv">nel</item>
+										<item type="gls" lang="en">truth</item>
+										<item type="msa" lang="en">NNat </item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">toka</item>
+										<item type="cf" lang="nlv">toka</item>
+										<item type="gls" lang="en">to follow</item>
+										<item type="msa" lang="en">Vt  (I) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">sino</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">san</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">san</item>
+										<item type="cf" lang="nlv">san</item>
+										<item type="gls" lang="en">only</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">kostumbre</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikinkoviliah</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">seki</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">seki</item>
+										<item type="cf" lang="nlv">seki</item>
+										<item type="gls" lang="en">some</item>
+										<item type="msa" lang="en">Quant </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">some</item>
+								<item type="pos" lang="en">Quant</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">xochitl</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">xochi</item>
+										<item type="cf" lang="nlv">xochi</item>
+										<item type="gls" lang="en">flower</item>
+										<item type="msa" lang="en">NNat </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-tl</item>
+										<item type="cf" lang="nlv">-tl</item>
+										<item type="gls" lang="en">ABS</item>
+										<item type="msa" lang="en">NNat:Abs/Plural</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">flower</item>
+								<item type="pos" lang="en">NNat</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">sempoalxochitl</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">no</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">no</item>
+										<item type="cf" lang="nlv">no</item>
+										<item type="gls" lang="en">also</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">with</item>
+								<item type="pos" lang="en">Post</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">no</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">no</item>
+										<item type="cf" lang="nlv">no</item>
+										<item type="gls" lang="en">also</item>
+										<item type="msa" lang="en">Adv </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikintlaliliah</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">itech</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">tech</item>
+										<item type="cf" lang="nlv">tech</item>
+										<item type="gls" lang="en">in, next to</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">in, next to</item>
+								<item type="pos" lang="en">PostNat</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">n</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">n</item>
+										<item type="cf" lang="nlv">n</item>
+										<item type="gls" lang="en">the</item>
+										<item type="msa" lang="en">Def Art </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">the</item>
+								<item type="pos" lang="en">Def Art</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">altar</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">with</item>
+								<item type="pos" lang="en">Post</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">insera</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">with</item>
+								<item type="pos" lang="en">Post</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">seki</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">seki</item>
+										<item type="cf" lang="nlv">seki</item>
+										<item type="gls" lang="en">some</item>
+										<item type="msa" lang="en">Quant </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">some</item>
+								<item type="pos" lang="en">Quant</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">hente</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">todavia</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">kintlaliliah</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">molli</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">mol</item>
+										<item type="cf" lang="nlv">mol</item>
+										<item type="gls" lang="en">mole (Mexican dish)</item>
+										<item type="msa" lang="en">NNat </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-li</item>
+										<item type="cf" lang="nlv">-tl</item>
+										<item type="gls" lang="en">ABS</item>
+										<item type="msa" lang="en">NNat:Abs/Plural</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">mole (Mexican dish)</item>
+								<item type="pos" lang="en">NNat</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">de</item>
+								<morphemes>
+									<morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="nlv">de</item>
+										<item type="cf" lang="nlv">de</item>
+										<item type="gls" lang="en">of</item>
+										<item type="msa" lang="en">PostLoan </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">totolih</item>
+								<morphemes>
+									<morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">totolih</item>
+										<item type="cf" lang="nlv">totolih</item>
+										<item type="gls" lang="en">turkey</item>
+										<item type="msa" lang="en">NExc </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">turkey</item>
+								<item type="pos" lang="en">NExc</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">with</item>
+								<item type="pos" lang="en">Post</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">seki</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">seki</item>
+										<item type="cf" lang="nlv">seki</item>
+										<item type="gls" lang="en">some</item>
+										<item type="msa" lang="en">Quant </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">some</item>
+								<item type="pos" lang="en">Quant</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">chikolatl</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="nlv">ivan</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">i-</item>
+										<item type="cf" lang="nlv">i-</item>
+										<item type="gls" lang="en">OBJ:3SG</item>
+										<item type="msa" lang="en">PostNat:Object</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">van</item>
+										<item type="cf" lang="nlv">van</item>
+										<item type="gls" lang="en">with</item>
+										<item type="msa" lang="en">PostNat </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">se</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">se</item>
+										<item type="cf" lang="nlv">se</item>
+										<item type="gls" lang="en">a</item>
+										<item type="msa" lang="en">Indef Art </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">a</item>
+								<item type="pos" lang="en">Indef Art</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">atolli</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">killiah</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">k-</item>
+										<item type="cf" lang="nlv">k-</item>
+										<item type="gls" lang="en">OBJ:3</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">illia</item>
+										<item type="cf" lang="nlv">llia</item>
+										<item type="gls" lang="en">to tell</item>
+										<item type="msa" lang="en">Vd  (III) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-h</item>
+										<item type="cf" lang="nlv">-h</item>
+										<item type="gls" lang="en">IMPFV.SUBJ:PL</item>
+										<item type="msa" lang="en">V:Imperfective/Number</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">kakavatolli</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">miek</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">miek</item>
+										<item type="cf" lang="nlv">miek</item>
+										<item type="gls" lang="en">many</item>
+										<item type="msa" lang="en">Quant </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">many</item>
+								<item type="pos" lang="en">Quant</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tlamantli</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">tlaman</item>
+										<item type="cf" lang="nlv">tlaman</item>
+										<item type="gls" lang="en">thing</item>
+										<item type="msa" lang="en">NNat </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="nlv">-tli</item>
+										<item type="cf" lang="nlv">-tl</item>
+										<item type="gls" lang="en">ABS</item>
+										<item type="msa" lang="en">NNat:Abs/Plural</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">thing</item>
+								<item type="pos" lang="en">NNat</item>
+							</word>
+							<word>
+								<item type="txt" lang="nlv">tikintlaliliah</item>
+							</word>
+							<word>
+								<item type="punct" lang="nlv">."</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+		</paragraphs>
+		<languages>
+			<language lang="en" font="Times New Roman"/>
+			<language lang="nlv" font="Times New Roman" vernacular="true"/>
+		</languages>
+	</interlinear-text>
+</document>

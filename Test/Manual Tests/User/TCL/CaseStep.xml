@@ -1,0 +1,20 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="TCL\CaseStep.xml">
+ <title tag="tclStep">What is a test case step?</title>
+ <index>
+  <li>test step: definition</li>
+ </index>
+ <definition>
+  <p>An atomic action that has a specific reuslt. It is executed in the larger context of a <i>Test Case</i>.</p>
+ </definition>
+ <partsAndFunctions>
+  <p>Here are the parts of a test case step:</p>
+  <table>
+   <tr><td>Step number</td><td>A number that is unique in the test script among all steps in its test cases.</td></tr>
+   <tr><td><link uri="Action.xml" type="module">Action</link></td><td>A command or gesture needed to invoke the expected result.</td></tr>
+   <tr><td><link uri="Result.xml" type="module">Result</link></td><td>An expected result.</td></tr>
+   <tr><td><link uri="..\Bugs\Pattern.xml" type="module">Bug Patterns</link></td><td>When testing finds a bug, these patterns show how the bug is to be reported.</td></tr>
+   <tr><td>Discussion</td><td>Instruction or explanation that would detract from clarity in the other parts of the step. An optional part.</td></tr>
+  </table>
+ </partsAndFunctions>
+</concept>

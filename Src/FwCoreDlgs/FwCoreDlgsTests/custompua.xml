@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LanguageDefinition SYSTEM "LanguageDefinition.dtd">
+<LanguageDefinition>
+<LgWritingSystem>
+<Locale24><Integer val="13321"/></Locale24>
+<DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
+<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+<DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
+<ICULocale24><Uni>tl</Uni></ICULocale24>
+<Name24>
+<AUni ws="ENG">Tagalog</AUni>
+</Name24>
+<Abbr24>
+<AUni ws="ENG">TGL</AUni>
+</Abbr24>
+<Description24>
+<AStr ws="ENG">
+<Run ws="ENG">The standard alphabetic representation of Tagalog (Philippines).</Run>
+</AStr>
+</Description24>
+<Collations24>
+<LgCollation>
+<WinLCID30><Integer val="1033"/></WinLCID30>
+<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+<Name30>
+<AUni ws="ENG">Default Collation</AUni>
+</Name30>
+</LgCollation>
+</Collations24>
+</LgWritingSystem>
+<BaseLocale></BaseLocale>
+<NewLocale>tl</NewLocale>
+<LocaleName>Tagalog</LocaleName>
+<LocaleCountry></LocaleCountry>
+<LocaleVariant></LocaleVariant>
+<!-- This LCID is for English in the Philippines. Microsoft has not defined one for Tagalog. -->
+<LocaleWinLCID>13321</LocaleWinLCID>
+<CollationElements>"&amp; B &lt; ċ &lt;&lt;&lt; Ċ" // ċ  Ċ
+"    &lt; c&lt;&lt;&lt;C"
+</CollationElements>
+<LocaleResources>
+	zoneStrings {
+		{
+			"Europe/London",
+			"Greenwich Mean Time",
+			"GMT",
+			"British Summer Time",
+			"BST",
+		}
+	}
+</LocaleResources>
+<PuaDefinitions>
+<!-- These codes are intentionally out of order -->
+<CharDef code="E136" data="PIGDASH;Mn;214;NSM;;;;;N;;;;;"/>
+<CharDef code="E137" data="PIG CURLYTAIL;Lo;0;R;;;;;N;;;2603;6105;069A"/>
+<CharDef code="E139" data="PIG JUMP;Ll;0;L;;;;;N;;;;;"/>
+<CharDef code="E171" data="PIGCHARACTER UGLY;Ll;0;R;;;;;N;;;;;"/>
+<!-- Tests all the fields:
+2: Sm (Mathematical symbol)
+3: 0 (is an ordinary spacing character)
+4: R ( is a right-to-left character )
+5: <compat> 0050 (is a decomposition of "P")
+6,7,8: Number field are not applicable for letter
+9: Y (mirrored in Bi-directional text)
+10: OLD NAME OF JIBBERISH (the "unicode 1.0" name of this character)
+11: NO COMMENT (ISO comment, technically it should be <none> but this is being used to test)
+12,13,14: 0050;0070;0050 (this character has an upper-case equivalent 0050, a lower-case equivelent 0070, and a title-case equivelent: 0050)
+-->
+<CharDef code="E16F" data="JIBBERISH SMALL LETTER P WITH TWO STROKES;Ll;0;EN;&lt;compat&gt; 0050;;;;Y;OLD NAME OF JIBBERISH;NO COMMENT;0050;0070;0050"/>
+<CharDef code="E001" data="PIG NUMERAL ONE;Nl;0;NSM;;;1;1;N;;;;;"/>
+<CharDef code="E002" data="PIG NUMERAL TWO;Nd;0;L;;2;2;2;N;;;;;"/>
+<CharDef code="E0EE" data="PIG VULGAR FRACTION ONE SIXTH;No;0;L;;;;1/6;N;;;;;"/>
+<!-- Tests all the fields:
+2: Nd (Number decimal digit)
+3: 228 (canonical combining: above left)
+4: EN ( Bidi Class value: is a European number character )
+5: <small> 0034 (is a decomposition of "4")
+6,7,8: 4;4;4; (Numeric equivalent is "4")
+9: N (Not mirrored in Bi-directional text)
+10: PIGGY 4 (the "unicode 1.0" name of this character)
+11: <none> (ISO comment)
+12,13,14: ;;; (no upper case equivelant)
+-->
+<!--<OldCharDef code="F00E" data="PIG NUMERAL FOUR;Nd;228;EN;&lt;small&gt; 0034;4;4;4;N;PIGGY 4;&lt;none&gt;;;;"/> -->
+<CharDef code="E00E" data="PIG NUMERAL FOUR;Nd;0;L;&lt;small&gt; 0034;4;4;4;N;PIGGY 4;&lt;none&gt;;;;"/>
+<CharDef code="E00D" data="PIG NUMERAL THREE;Nd;0;EN;0033;3;3;3;N;PIGGY 3;&lt;none&gt;;;;"/>
+<CharDef code="E0ED" data="PIG VULGAR FRACTION ONE FIFTH;No;0;L;;;;1/5;N;;;;;"/>
+<CharDef code="E12F" data="PIG NUMERAL EIGHT;Nl;0;R;;;;8;N;;;;;"/>
+<CharDef code="E12E" data="PIG NUMERAL NINE;Nd;0;L;;7;7;7;N;;;;;"/>
+</PuaDefinitions>
+<Fonts>
+<Font file="arial.ttf"/>
+<Font file="arialbd.ttf"/>
+<Font file="ariali.ttf"/>
+<Font file="arialbi.ttf"/>
+<Font file="times.ttf"/>
+<Font file="timesbd.ttf"/>
+<Font file="timesbi.ttf"/>
+<Font file="timesi.ttf"/>
+</Fonts>
+<Keyboard file="Tagalog.kmx"/>
+<EncodingConverter install="SIL_IPA93.tec.vbs" file="SIL-IPA93.tec"/>
+</LanguageDefinition>

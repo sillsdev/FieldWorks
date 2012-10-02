@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE modularbook ..\..\XSL\ModularBook.dtd" []-->
+<?xml-stylesheet type="text/xsl" href="..\XSL\TCLlist.xsl"?>
+<modularbook file="DN\DataNotebook.tcl">
+
+<titlePage file="DN\DataNotebook.tcl">
+ <title tag="tp">Data Notebook Test Library</title>
+ <index>
+  <li>all title page</li>
+ </index>
+ <authors>
+  <div>Michael Lastufka (creator, drudge)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="maintask.xml" type="module">No link</link>
+ <shortcuts>
+  <link uri="maintask.xml" type="module">Testing the Data Notebook</link>
+ </shortcuts>
+</titlePage>
+
+<!-- Test Scripts defined in files -->
+
+<include-test>InsertSubentry.xml</include-test>
+<include-test>InsertEvent.xml</include-test>
+<include-test>InsertAnalysis.xml</include-test>
+<include-test>OptOverlays.xml</include-test>
+<include-test>OptVwDoc.xml</include-test>
+<include-test>OptVwDE.xml</include-test>
+<include-test>OptVwBrowse.xml</include-test>
+<include-test>FilePropsDN.xml</include-test>
+
+<include-test>..\FW\StartUp.xml</include-test>
+<include-test>..\FW\FileNewProject.xml</include-test>
+<include-test>..\FW\FileOpenProject.xml</include-test>
+<include-test>..\FW\FileSave.xml</include-test>
+<include-test>..\FW\PgSetup.xml</include-test>
+<include-test>..\FW\FilePrtPrev.xml</include-test>
+<include-test>..\StdCtrls\PrintDlg.xml</include-test>
+<include-test>..\FW\FileImport.xml</include-test>
+<include-test>..\FW\FileImportStandard.xml</include-test>
+<include-test>..\FW\FileExport.xml</include-test>
+<include-test>..\FW\FileProps.xml</include-test>
+<include-test>..\FW\FilePropsProj.xml</include-test>
+<include-test>..\FW\FileNewLang.xml</include-test>
+<include-test>..\FW\WritSysProp.xml</include-test>
+<include-test>..\FW\FileExit.xml</include-test>
+<include-test>..\FW\EdtUndo.xml</include-test>
+<include-test>..\FW\EdtRedo.xml</include-test>
+<include-test>..\FW\Edtccp.xml</include-test>
+<include-test>..\FW\EdtSelectAll.xml</include-test>
+<include-test>..\FW\EdtFind.xml</include-test>
+<include-test>..\FW\EdtNxtMat.xml</include-test>
+<include-test>..\FW\EdtPrvMat.xml</include-test>
+<include-test>..\FW\EdtReplace.xml</include-test>
+<include-test>..\FW\EdtDel.xml</include-test>
+<include-test>..\FW\EdtDelEffDiag.xml</include-test>
+<include-test>..\FW\VwViews.xml</include-test>
+<include-test>..\FW\VwFilter.xml</include-test>
+<include-test>..\FW\VwSortM.xml</include-test>
+<include-test>..\FW\VwOverlay.xml</include-test>
+<include-test>..\FW\VwToolbar.xml</include-test>
+<include-test>..\FW\VwSideBar.xml</include-test>
+<include-test>..\FW\VwStatusBar.xml</include-test>
+<include-test>..\FW\DataNav.xml</include-test>
+<include-test>..\FW\DataHistory.xml</include-test>
+<include-test>..\FW\DatOrgFav.xml</include-test>
+<include-test>..\FW\DatModTemp.xml</include-test>
+<include-test>..\FW\InsComment.xml</include-test>
+<include-test>..\FW\InsExtLink.xml</include-test>
+<include-test>..\FW\InsTable.xml</include-test>
+<include-test>..\FW\InsSound.xml</include-test>
+<include-test>..\FW\InsVideo.xml</include-test>
+<include-test>..\FW\InsPicture.xml</include-test>
+<include-test>..\FW\InsObject.xml</include-test>
+<include-test>..\FW\FmtFont.xml</include-test>
+<include-test>..\FW\FmtWS.xml</include-test>
+<include-test>..\FW\FmtPara.xml</include-test>
+<include-test>..\FW\FmtBnN.xml</include-test>
+<include-test>..\FW\FmtBrdr.xml</include-test>
+<include-test>..\FW\FmtStyle.xml</include-test>
+<include-test>..\FW\TlsSpell.xml</include-test>
+<include-test>..\FW\TlsReport.xml</include-test>
+<include-test>..\FW\TlsList.xml</include-test>
+<include-test>..\FW\TlsExplore.xml</include-test>
+<include-test>..\FW\TlsShoSelUse.xml</include-test>
+<include-test>..\FW\OptGen.xml</include-test>
+<include-test>..\FW\OptCFields.xml</include-test>
+<include-test>..\FW\OptFilters.xml</include-test>
+<include-test>..\FW\OptOverlays.xml</include-test>
+<include-test>..\FW\OptSortMeth.xml</include-test>
+<include-test>..\FW\OverlaysUsage.xml</include-test>
+<include-test>..\FW\TlsCustomize.xml</include-test>
+<include-test>..\FW\Window.xml</include-test>
+<include-test>..\FW\FwHelp.xml</include-test>
+<include-test>..\FW\HlpApp.xml</include-test>
+<include-test>..\FW\HlpHow.xml</include-test>
+<include-test>..\FW\HlpTutor.xml</include-test>
+<include-test>..\FW\HlpAbout.xml</include-test>
+<include-test>..\FW\Install.xml</include-test>
+<include-test>..\FW\BarSide.xml</include-test>
+<include-test>..\FW\TbStandard.xml</include-test>
+<include-test>..\FW\TbFormat.xml</include-test>
+<include-test>..\FW\TbWindow.xml</include-test>
+<include-test>..\FW\TbData.xml</include-test>
+<include-test>..\FW\TbInsert.xml</include-test>
+<include-test>..\FW\TbTools.xml</include-test>
+<include-test>..\FW\BarStatus.xml</include-test>
+<include-test>..\FW\ChcList.xml</include-test>
+<include-test>..\FW\DragDrop.xml</include-test>
+<include-test>..\FW\DataEntryView.xml</include-test>
+<include-test>..\FW\BrowseView.xml</include-test>
+<include-test>..\FW\DocumentView.xml</include-test>
+<include-test>..\FW\FilterUsage.xml</include-test>
+<include-test>..\FW\SortUsage.xml</include-test>
+<include-test>..\FW\BackupRestoreDlg.xml</include-test>
+<include-test>..\FW\BackupScheduleDlg.xml</include-test>
+<include-test>..\FW\BackupReminderDlg.xml</include-test>
+<include-test>..\FW\BackupPasswordDlg.xml</include-test>
+
+</modularbook>

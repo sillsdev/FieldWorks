@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Andy Black's demo section J -->
+
+<!-- This test creates the natural class "nasal", lex "an" and creates Environments for "an". Delete these to run a second time. -->
+
+ <on-application args="-db Kalaba" title="Kalaba - FieldWorks Harvest" run="ok" on-fail="assert">
+
+  <var id="Sketch" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:SIL.FieldWorks.XWorks.FxtViewer/window:panelBottom/window:HtmlControl/window:SHDocVw.WebBrowser_V1"/>
+  <var id="goSketch" set="window:MenuBar/menu:View /menu:Grammar/menu:Grammar Sketch"/>
+<!-- J.	Allomorphy-->
+<!-- 1.	Go to Allomorphy section of Grammar Sketch.-->
+  <click wait="3000" path="$goSketch" />
+  <click wait="3000" path="$Sketch" />
+  <insert>{PGDN 30}</insert>
+
+<!-- 2.	Talk about how Stage 1 only has simple allomorphy, no rules; can use environment statements to condition allomorphs (before a particular segment/phoneme or a consonant, e.g.).  Latter implies need natural classes.-->
+<!-- 3.	Natural classes.  Let's add the class of nasals.-->
+<!-- a.	Go to Grammar / Natural Classes.-->
+  <click path="window:MenuBar/menu:View /menu:Grammar/menu:Natural Classes" />
+
+<!-- b.	Click on Insert menu item / Natural Class.-->
+  <click wait="3000" path="window:MenuBar/menu:Insert/menu:Natural Class" />
+
+<!-- c.	In the Name slice, type "nasal"-->
+  <var id="NaturalClass" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:RecordEditView/window:RecordEditView.DataTree"/>
+  <click path="$NaturalClass;/window:string/group:Name/para:0/line:0"/>
+  <insert>nasal</insert>
+
+<!-- d.	In the Description slice, type "All nasal consonants."-->
+  <click path="$NaturalClass;/window:string[2]/group:Description/para:0/line:0"/>
+  <insert>All nasal consonants.</insert>
+
+<!-- e.	In the Abbreviation slice, type "+nas"-->
+  <click path="$NaturalClass;/window:string[3]/group:Abbreviation/para:0/line:0"/>
+  <insert>+nas</insert>
+
+<!-- f.	Click on the chooser in the Segments slice.-->
+  <click path="$NaturalClass;/window:defaultvectorreference/window:Phonemes"/>
+  <insert>{TAB}~</insert>
+
+<!-- 1.	Select "m", then "n", then the eng.-->
+  <on-dialog wait="30000" title="Choose Segments">
+   <click wait="1000" repeat="1" path="window:Edit the Phonemes[3]/sbar:Vertical/button:Page down"/>
+   <click dx="-10" path="window:Edit the Phonemes[3]/oline:Edit the Phonemes/chkbox:m"/>
+   <click dx="-10" path="window:Edit the Phonemes[3]/oline:Edit the Phonemes/chkbox:n"/>
+   <!--click path="window:Edit the Phonemes[3]/oline:Edit the Phonemes/chkbox:?"/--><!-- eng? -->
+   <click path="window:OK"/>
+  </on-dialog>
+
+<!-- 2.	Note that the current chooser doesn't allow multiple selections, but that's on the list of things to do.-->
+<!-- g.	Go to Grammar Sketch and regenerate.-->
+  <click wait="3000" path="$goSketch" />
+  <var id="doSketch" set="window:xWindow.mainPanel/window:xWindow.contentPanel/button:btnGenerate"/>
+
+  <click path="$doSketch" />
+
+<!-- h.	Note the addition of the new class.-->
+  <click wait="3000" path="$Sketch" />
+  <insert>{PGDN 30}</insert>
+<!-- 4.	Environments-->
+<!-- a.	Note the two sets: one for conditioning allomorphs and one for conditioning infix locations.  A user or a consultant can look at these, note the counts, and perhaps look for generalizations or errors.-->
+<!-- b.	Some orthographies in some Oto-Manguean languages of Mexico represent a nasalized vowel by writing an /n/ after the vowel, unless the vowel is preceded by a nasal. [Syllables are CV or V - i.e. there are no coda consonants, so this works. If the syllable begins with a nasal, then that nasal causes the vowel to be nasalized, so there's no need to write a redundant /n/ after the vowel.]  Let's create a suffix entry that has this kind of allomorphy: /an/ normally, but /a/ when there's a nasal before it. Let's say it is a future tense morpheme-->
+<!-- c.	Go to Lexicon / Lexicon.-->
+  <var id="goLex" set="window:MenuBar/menu:View /menu:Lexicon/menu:Lexicon Edit"/>
+  <click path="$goLex"/>
+
+<!-- 1.	Insert major entry-->
+  <click wait="2000" log="all" path="window:ParentOfMenuBar/window:Insert/toolbar:Insert/button:Entry..."/>
+
+<!-- 2.	In the Form field, type "-an"-->
+  <on-dialog wait="30000" title="New Entry">
+   <insert>-an</insert>
+
+<!-- 3.	In the Gloss field, type "Fut" (for future)-->
+   <insert>{TAB 2}Fut</insert>
+
+<!-- 4.	Click on "Inflectional Affix"-->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Affix Type:[2]/button:NAMELESS"/>
+   <insert>{DOWN}~</insert>
+
+<!-- 5.	Open the chooser for Category-->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Attaches to Category:[2]/button:NAMELESS"/>
+
+<!-- a.	Open up verb.-->
+   <insert>v~</insert>
+
+<!-- b.	Open the chooser for Slot - Select "Tense"-->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Fills Slot:[2]/button:NAMELESS"/>
+   <insert>t~</insert>
+
+<!-- 6.	Click on Create-->
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- d.	Let's add the /a/ allomorph: -->
+<!-- 1.	Right click on Allomorphs-->
+  <var id="Entry" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:LexItemsAndDetailMultiPane/window:TestEditMulti/window:normalEdit/window:RecordEditView.DataTree/"/>
+  <click side="right" path="$Entry;window:summary[2]"/>
+
+<!-- 2.	Select "Insert Affix Allomorph"-->
+   <insert>{DOWN 2}~</insert>
+
+<!-- 3.	Type "a" in the Affix Allomorph slice-->
+   <insert>a</insert>
+
+<!-- 4.	Select "suffix" for the morph type (already have a plan for how to make this be automatic)-->
+   <insert>{TAB 4}~ss~</insert>
+
+<!-- 5.	In the environment slice, type "/ [nasal] _"-->
+  <click path="$Entry;window:phoneenvreference/window:Environments"/>
+   <insert>/ [nasal] _</insert>
+
+<!-- 6.	Hit tab or click to the right of the grey vertical bar (which indicates the end of one environment and beginning of another).-->
+   <insert wait="1000">{RIGHT}</insert>
+
+<!-- 7.	Environment  syntax:-->
+<!-- a.	Currently have a balloon help to tell you where to go to get help.-->
+<!-- b.	Will have online Help eventually - it's in process.-->
+<!-- c.	What happens when type something wrong, though?-->
+<!-- d.	Type "/ a _ b _" - get red squiggle because two underscores-->
+   <insert wait="1000">/ a _ b _</insert>
+   <insert wait="1000">{RIGHT}</insert>
+
+<!-- e.	Type "/ [lksdj] _" - get red squiggle because there is no class named lksdj-->
+   <insert wait="1000">/ [lksdj] _</insert>
+   <insert wait="1000">{RIGHT}</insert>
+
+<!-- f.	Type "/ q _" - get red squiggle because "q" is not a phoneme.-->
+   <insert wait="1000">/ q _</insert>
+
+<!-- see broken test for 2-10-2006  need to click in another field to persist the environments. -->
+   <click side="right" path="$Entry;window:summary[2]"/>
+
+<!-- g.	So we have a syntax checking tool.-->
+<!-- h.	Go to Grammar / Problems and note how these errors show up here.-->
+  <click wait="1000" path="window:MenuBar/menu:View /menu:Grammar/menu:Problems" />
+
+<!-- 8.	Also use environment chooser.-->
+<!-- 9.	Back to Lexicon / Lexicon, "-an" entry.-->
+  <click path="$goLex"/>
+
+<!-- 10.	Affix ordering-->
+<!-- a.	Discuss issue of "elsewhere" condition and what that would mean here-->
+<!-- b.	Drag and drop "an" allomorph to end of list.-->
+  <!-- can't do this yet -->
+
+<!-- c.	Talk about this ordering means that the "a" allomorph is conditioned to occur after a nasal and the "an" is automatically conditioned to not occur after a nasal. This is for the parser.-->
+<!-- 11.	Go to Grammar Sketch and regenerate-->
+  <click wait="1000" path="$goSketch" />
+  <click path="$doSketch" />
+
+<!-- 12.	Go to allomorphy section and note the new environments, including the lack of name.-->
+  <click wait="3000" path="$Sketch" />
+  <insert>{PGDN 30}</insert>
+
+<!-- 13.	Go to Grammar / Environments-->
+  <click log="all" path="window:MenuBar/menu:View /menu:Grammar/menu:Environments" />
+
+<!-- a.	Delete the ill-formed environments-->
+<!-- b.	For the nasal one, type "after a nasal" in the Name field.-->
+  <var id="EnvBrowse" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:EnvironmentItemsAndDetailMultiPane/window:EnvironmentList/window:EnvironmentList/window:NAMELESS/group:Root"/>
+  <click path="$EnvBrowse;/table:Table/row:Row/cell:Cell[3]/text:Paragraph/value:// [nasal] _[-4]"/>
+  <var id="Environ" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:RecordEditView/window:RecordEditView.DataTree/"/>
+  <click wait="2000" path="$Environ;window:string/view:Name"/>
+  <insert>after a nasal</insert>
+
+<!-- c.	In the description field, type "Used when conditioning a nasalized vowel allomorph."-->
+  <click path="$Environ;window:string[2]/view:Description"/>
+  <insert>Used when conditioning a nasalized vowel allomorph.</insert>
+
+<!-- 14.	Back to Grammar Sketch; regenerate; go to Allomorphy section-->
+  <click path="$goSketch" />
+  <click wait="3000" path="window:xWindow.mainPanel/window:xWindow.contentPanel/button:btnGenerate" />
+<!-- e.	Show infix section.-->
+  <click wait="3000" path="$Sketch" />
+  <insert>{PGDN 39}</insert>
+
+<!-- f.	Infix location-->
+<!-- 1.	Go to Lexicon / Lexicon and find the -ul- entry.-->
+  <click path="$goLex"/>
+  <click wait="1000" path="window:ParentOfMenuBar/window:Insert/toolbar:Insert/button:Find lexical entry..."/>
+  <on-dialog wait="30000" title="Find Lexical Entry">
+   <insert wait="2000">ul</insert>
+   <!--click path="window:Find Matches"/-->
+   <click path="window:Go To"/>
+  </on-dialog>
+
+<!-- 2.	Note the Infix Position slice and talk about what it means - also show the balloon help.-->
+<!-- g.	Reduplication-->
+<!-- 1.	Go to Lexicon / Lexicon and find the CV reduplication entry-->
+  <!--click wait="3000" path="window:MenuBar/menu:View /menu:Lexicon/menu:Lexicon Edit"/-->
+  <click path="window:ParentOfMenuBar/window:Insert/toolbar:Insert/button:Find lexical entry..."/>
+  <on-dialog wait="30000" title="Find Lexical Entry">
+   <insert wait="2000">CV reduplication</insert>
+   <!--click path="window:Find Matches"/-->
+   <click path="window:Go To"/>
+  </on-dialog>
+
+<!-- 2.	Discuss what the notation means-->
+<!-- 5.	Inflection Classes-->
+<!-- a.	Stage 1 does allow for inflection classes. Talk about what these are.-->
+<!-- b.	Go to Grammar / Categories+ and click on noun.-->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Category Edit" />
+  <var id="recList" set="window:xWindow.mainPanel/window:xWindow.leftPanel/window:XCore.RecordBar/outline:NAMELESS"/>
+  <click path="$recList"/>
+  <click path="$recList;/olitem:noun"/>
+
+<!-- 1.	Open up Inflectional Class Info-->
+<!-- 2.	Talk about what's here-->
+<!-- 3.	Set the default to noun class I.-->
+
+<!-- c.	Go to Lexicon / Lexicon-->
+  <click path="$goLex"/>
+
+<!-- 1.	Go the "ing" entry. (ing)-->
+  <click wait="2000" path="window:ParentOfMenuBar/window:Insert/toolbar:Insert/button:Find lexical entry..."/>
+  <on-dialog wait="30000" title="Find Lexical Entry">
+   <insert wait="2000">i&#x14B;</insert>
+   <!--click path="window:Find Matches"/-->
+   <click path="window:Go To"/>
+  </on-dialog>
+
+<!-- a.	Note the Function section and the Stem analysis, including the inflection class of this stem-->
+<!-- 2.	Go to the "ni" entry-->
+  <click wait="2000" path="window:ParentOfMenuBar/window:Insert/toolbar:Insert/button:Find lexical entry..."/>
+  <on-dialog wait="30000" title="Find Lexical Entry">
+   <insert wait="2000">ni</insert>
+   <!--click path="window:Find Matches"/-->
+   <click path="window:Go To"/>
+  </on-dialog>
+
+<!-- a.	Note the allomorphs and their conditioning based on inflection class.-->
+<!-- b.	Note that a given allomorph may be for more than one inflection class.-->
+
+ </on-application>
+</accil>

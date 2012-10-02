@@ -1,0 +1,2108 @@
+(message (
+ <hc6508 fname C:\DATA\HC\MORPHER\TESTS\TURKISH\TURKISH.IN > ) )
+;$Id: turkish.in 1.5 1996/01/11 11:45:50 Mike_Maxwell Exp $
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\turkish\tursetup.in > ) )
+;$Id: tursetup.in 1.18 1996/01/11 11:45:51 Mike_Maxwell Exp $
+;File of Turkish data (modelled after TURKISH.RUL in PCKIMMO's files)
+;Loads pfeatures def, char def tables, and rules, but NOT dictionary
+(message (
+ <hc6510 lname Turkish > ) )
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Ff from Hyman "Phonology: Theory and Analysis", Holt, Rinehart and Winston, pg. 241-244
+;bilabial =     [-back -high -low +ant -cor]
+;alveolar =     [-back -high -low +ant +cor]
+;alveopalatal = [-back +high -low -ant +cor]
+;velar =        [+back +high -low -ant -cor]
+;Table1 has surface segments, table2 has these + archiphonemes + boundary markers
+;Also assume "n" is alveolar, although perhaps it's velar before "k".
+;The palatalized "L" is treated as alveopalatal, the "h" as a velar fricative, and the "w" as bilabial.
+;In place of PC-KIMMO's use of diacritically marked long vowels, we use a VV notation; in place of the
+; "dummy" vowels that delete after conditioning harmony, we use ordinary vowels that assimilate to an
+; immediately preceding vowel after conditioning harmony.
+(message (
+ <hc6501 table_name table1 > ) )
+;Note that we use the diacritic feature [+var_voice] to distinguish /D/ from /d/ and /t/
+(message (
+ <hc6501 table_name table2 > ) )
+;Now set the strata (just one):
+(message (
+ <hc6502 var_name '*strata*' > ) )
+;...and set their ctables (msg 6550):
+(message (
+ <hc6550 sname morphophonemic ctable_name table2 > ) )
+(message (
+ <hc6550 sname '*surface*' ctable_name table1 > ) )
+;...and the cyclicity of the morphophonemic stratum (msg 6552):
+(message (
+ <hc6552 sname morphophonemic > ) )
+;...and the order of the prules and mrules:
+(message (
+ <hc6555 sname morphophonemic > ) )
+(message (
+ <hc6556 sname morphophonemic > ) )
+;Load the natural classes:
+(message (
+ <hc6541 nat_class_name null > ) )
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6541 nat_class_name vowel > ) )
+(message (
+ <hc6541 nat_class_name nonvowel > ) )
+(message (
+ <hc6541 nat_class_name lateral > ) )
+(message (
+ <hc6541 nat_class_name obstruent > ) )
+(message (
+ <hc6541 nat_class_name voiced > ) )
+(message (
+ <hc6541 nat_class_name voiceless > ) )
+(message (
+ <hc6541 nat_class_name nonvoiced_obstr > ) )
+(message (
+ <hc6541 nat_class_name palatalized > ) )
+(message (
+ <hc6541 nat_class_name back_v > ) )
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name sy > ) )
+(message (
+ <hc6541 nat_class_name k > ) )
+(message (
+ <hc6541 nat_class_name 'D' > ) )
+(message (
+ <hc6541 nat_class_name e > ) )
+;Load the rules
+;RULE 1 "Consonant defaults" and RULE 2 "Vowel defaults" are not needed
+;RULE "Palatalization, l:L <= V[-bk]:___" 2 4
+;The KIMMO palatalization rule is based on underlying vowel quality, hence the HC version is ordered before
+; the vowel harmony rule (cf. palatalization2, ordered after vowel harmony)
+(message (
+ <hc6505 rname palatalization1 > ) )
+;Vowel harmony rules
+;Using disjunctive alpha vars, we combine the ff KIMMO rules into two rules.
+; KIMMO has to have two sets of rules, one for [+low] vowels (which assimilate in backness only),
+; and one for [-low] (= [+high]) vowels (which assimilate in both backness and rounding.
+;KIMMO's low vowel harmony:
+;RULE 3 "A:a <=> V[+bk]: C* +:0 C*__"
+; [V -high] --> [+low +back] / [V +back] C* + C*__
+;RULE 4 "A:e <=> V[-bk]: C* (+:0) C*__"
+; [V -high] --> [-low -back] / [V -back] C* + C*__
+;Note that this would also change e-->a.  Presumably an [e] could appear after a +back vowel root-internal
+; (thereby violating vowel harmony), but not across morpheme boundaries.
+;KIMMO's high vowel harmony:
+;RULE "5 H:u <=> V[+bk+rd]: C* (+:0) __"
+; [V +high] --> [+back +round] / [V +back +round] C* + C* __
+;We allow more Cs after the "+".  See also remarks re low_V_harmony (this will also turn e.g. i --> u across morph bdry)
+;RULE "6 H:ü <=> V[-bk+rd]: C* (+:0) __"
+; [V +high] --> [-back +round] / [V -back +round] C* + C* __
+; (this will also turn e.g. i --> ü across morph bdry)
+;RULE "7 H:i <=> [:V[-bk-rd] | V[-bk-rd]:] C* (+:0) __"
+; [V +high] --> [-back -round] / [V -back -round] C* + C* __
+; (this will also turn e.g. u --> i across morph bdry)
+;RULE "8 H:ï <=> :V[+bk-rd] C* (+:0) __"
+; [V +high] --> [+back -round] / [V +back -round] C* + C* __
+; (this will also turn e.g. u --> ï across morph bdry)
+; Because we work at the level of features, we have two rules: one for backness harmony (which all
+; vowels undergo), and one for rounding harmony (which only [+high] vowels undergo).  Note that we
+; allow [-syll] segs (the natural class nonvowel) to intervene--they need NOT be [+cons], e.g. /y/ is
+; [-cons], but does not block or condition harmony.
+(message (
+ <hc6505 rname backness_harmony > ) )
+(message (
+ <hc6505 rname rounding_harmony > ) )
+;RULE "Palatalization, l:L <= ___:e"
+; [+lateral] --> [+alveopalatal] / __ e
+; no instance in data of this change occurring across morpheme boundary (IAW PC-KIMMO file)
+;RULE "Palatalization, l:L => [V[-bk]:___ | ___:e]"
+;This rule is just the combination of the other two palatalization rules, with the => operator
+;The KIMMO rule is based on surface context, hence the HC version is ordered after the vowel harmony rule
+; (critically, after the a-->e rule) (cf. palatalization1)
+(message (
+ <hc6505 rname palatalization2 > ) )
+; Consonant Deletion
+; LR: at+sH  at+yA
+; SR: at00ï  at00a
+;RULE "S:0 correspondences"
+;Above PC-KIMMO rule doesn't correspond directly to anything in HC
+; S = s y
+;RULE "Deletion, S:0 <=> C (+:0)___"
+; [-syll +cor +cont -nasal -lateral] --> 0 / [-syll] __
+; As written, also applies to /z/, /sh/, and /r/.  Bleeds v-shortening.
+(message (
+ <hc6505 rname sy_del > ) )
+; Œ:a rule
+; LR: saŒt  saŒt+sH
+; SR: saat  saat00i
+;Bleeds vowel deletion by becoming [+low]
+;RULE "Œ:a <= #CV___C[+|#]"
+;RULE "Œ:a => #CV___C[+|#]"
+; Vowel Deletion and Assimilation
+; LR: kaŒlb+sH  usu–l+sH  kira¦+sH  huku§k+sH
+; SR: ka0Lb00i  us£0L00ü  kir 00sï  huk£0k00u
+; LR: kira¦
+; SR: kir 0
+;RULE "Q:0"
+; Œ --> 0 / V __ C* [V -back -round]
+; – --> 0 / V __ C* [V -back +round]
+; ¦ --> 0 / V __ C* [V +back -round]
+; § --> 0 / V __ C* [V +back +round]
+; include A and H?
+; V[-lng]:V[+lng] word-finally
+;RULE "Lengthening, V[-lng]:V[+lng] <= ___Q:0#"
+; V[-lng]:V[+lng] in open syllable
+;RULE "Lengthening, V[-lng]:V[+lng] <= ___Q:0 C (+:0) C:0 V"
+; V[-lng]:V[+lng] prohibited in word-final closed syllable
+;RULE "Lengthening, V[-lng]:V[+lng] => ___Q:0 [# | C (+:0) C:0 V]"
+;RULE "Lengthening, V[-lng]:V[+lng] /<= ___Q:0 C#"
+; Under the PC-KIMMO analysis, the vowels Œ – ¦ § do not surface as such,
+; but they condition vowel harmony.  In the underlying forms, they appear immediately after
+; another vowel.  If they are in an open syllable after affixation, they coalesce with that
+; preceding vowel; otherwise they delete (except that the Œ vowel can escape deletion by becoming "a",
+; see rule v_change).
+; For Hermit Crab, we have a different analysis.  We treat the vowels Œ – ¦ § as ordinary vowels
+; i u a o, which appear immediately after another vowel.  After conditioning vowel harmony,
+; the "extra" vowels delete in closed syllables, or assimilate to the preceding vowel in open sylls.
+; The rule is ordered after sy_deletion (underlying /Cs/ or /Cy/ becomes /C/, and the vowel deletion
+; subrule doesn't apply then).
+; /sait/ is a lexical counterexample to the first two subrules (it surfaces as [saat]).
+; Our rules:
+; V --> 0 / V __ C#
+;       0 / V __ CC
+;       [V alpha back beta high gamma low delta round] / __ [V alpha back beta high gamma low delta round]
+(message (
+ <hc6505 rname rm_dummy_vs > ) )
+; k-deletion
+; LR: inek+sH
+; SR: ine000i
+; S = s y
+;RULE "k-deletion, k:0 <=> V[-lng]___(+:0)S:"
+; Here reanalyzed as follows:
+; [+cons -cont +back -vd] --> 0 / CV __ + V
+; (Note that we are treating long vowels as VV, hence the CV in the above rather than [V +long])
+; Counterfeeds vowel deletion (rule "rm_dummy_vs"), hence ordered after that rule;
+; fed by sy-deletion, hence ordered after that rule.
+(message (
+ <hc6505 rname k_delete > ) )
+; Devoicing
+; LR: kab  kab+DAn
+; SR: kap  kap0tan
+;RULE "O[+vc]:O[-vc] correspondences"
+;This doesn't correspond directly to anything in HC
+;RULE "Devoicing, O[+vc]:O[-vc] => [___# | ___(+:0)C]"
+;This encodes the => of the ff 2 PC-KIMMO rules; we collapse the two rules into a disjunctive pair
+; (note the addition of [-nasal]):
+;RULE "Devoicing, O[+vc]:O[-vc] <= ___#"
+;RULE "Devoicing, O[+vc]:O[-vc] <= ___(+:0)C"
+; [-cont -nasal] --> [-vd] / __ C
+;                    [-vd] / __#
+(message (
+ <hc6505 rname devoicing > ) )
+; D:t rule
+; LR: kep+DAn
+; SR: kep0ten
+;RULE "D:t <=> :O[-vc] (+:0)___"
+; We distinguish /D/ from /d/ and /t/ by the diacritic feature [+var_voice], with which only /D/ is marked
+; [+cons alveolar -strident -sonorant +var_voiced] --> [-vd] / [-cont -vd] __
+;                                                      [+vd] /
+; Ordered after devoicing, which feeds this rule (e.g. kurd+Dan --> kurttan)
+(message (
+ <hc6505 rname 'D' > ) )
+;Morphological rules.  Unclear whether case suffixes go inside or outside of other two.
+(message (
+ <hc6505 rname dative > ) )
+(message (
+ <hc6505 rname ablative > ) )
+(message (
+ <hc6505 rname plural > ) )
+(message (
+ <hc6505 rname possessive > ) )
+;(trace_morpher_rule message (true true dative))
+;(trace_morpher_rule message (true true ablative))
+;(trace_morpher_rule message (true true plural))
+;(trace_morpher_rule message (true true possessive))
+;(trace_morpher_rule message (true true palatalization1))
+;(trace_morpher_rule message (true true rm_dummy_vs))
+;(trace_morpher_rule message (true true D))
+;(trace_lexical_lookup message true)
+;(trace_morpher_strata message (true true))
+;(morpher_show pretty_print *prules*)
+;Don't let errors stop us:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\turkish\tursetup.in > ) )
+;ff small dict is from PC-KIMMO:
+(message (
+ <hc6515 n 33 fname c:\data\hc\morpher\tests\turkish\turkish.dic > ) )
+;ff large dict is from Jorge Hankamer, and is used to compare timing with a large dict.
+; (about 3400 entries)  All dupes have been commented out from it:
+;(merge_in_dictionary_file message
+;	c:\data\lang\turkish\tlex.dic)
+; following taken from PC-KIMMO's TURKISH.REC
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.020
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.049
+Timer: test_derivation: 0.019
+Timer: generate_and_test: 0.073
+Timer: morph_and_lookup_word: 0.090
+(message (word_analysis
+ <lex_entry lex_id 3 shape oda family '*null*' gloss room morphing oda pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.027
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.060
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.125
+Timer: morph_and_lookup_word: 0.144
+(message (word_analysis
+ <lex_entry lex_id 3 shape odasï family '*null*' gloss room POSS morphing [oda]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.024
+Timer: lookup_pshape: 0.065
+Timer: generate_derivation: 0.100
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.134
+Timer: morph_and_lookup_word: 0.154
+(message (word_analysis
+ <lex_entry lex_id 3 shape odaya family '*null*' gloss room DAT morphing [oda]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.044
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.075
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.112
+Timer: morph_and_lookup_word: 0.137
+(message (word_analysis
+ <lex_entry lex_id 3 shape odadan family '*null*' gloss room ABL morphing [oda]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.074
+Timer: test_derivation: 0.061
+Timer: generate_and_test: 0.145
+Timer: morph_and_lookup_word: 0.162
+(message (word_analysis
+ <lex_entry lex_id 3 shape odalar family '*null*' gloss room PLURAL morphing [oda]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.034
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.067
+Timer: test_derivation: 0.039
+Timer: generate_and_test: 0.115
+Timer: morph_and_lookup_word: 0.135
+(message (word_analysis
+ <lex_entry lex_id 3 shape odalarï family '*null*' gloss room PLURAL POSS morphing [[oda]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.026
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.059
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.086
+Timer: morph_and_lookup_word: 0.103
+(message (word_analysis
+ <lex_entry lex_id 4 shape dere family '*null*' gloss river morphing dere pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.035
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.065
+Timer: test_derivation: 0.059
+Timer: generate_and_test: 0.133
+Timer: morph_and_lookup_word: 0.153
+(message (word_analysis
+ <lex_entry lex_id 4 shape deresi family '*null*' gloss river POSS morphing [dere]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.029
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.059
+Timer: test_derivation: 0.032
+Timer: generate_and_test: 0.099
+Timer: morph_and_lookup_word: 0.118
+(message (word_analysis
+ <lex_entry lex_id 4 shape dereye family '*null*' gloss river DAT morphing [dere]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.051
+Timer: lookup_pshape: 0.033
+Timer: generate_derivation: 0.093
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.134
+Timer: morph_and_lookup_word: 0.154
+(message (word_analysis
+ <lex_entry lex_id 4 shape dereden family '*null*' gloss river ABL morphing [dere]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.048
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.084
+Timer: test_derivation: 0.062
+Timer: generate_and_test: 0.153
+Timer: morph_and_lookup_word: 0.170
+(message (word_analysis
+ <lex_entry lex_id 4 shape dereLer family '*null*' gloss river PLURAL morphing [dere]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.005
+Timer: unapply_prules: 0.041
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.076
+Timer: test_derivation: 0.043
+Timer: generate_and_test: 0.130
+Timer: morph_and_lookup_word: 0.151
+(message (word_analysis
+ <lex_entry lex_id 4 shape dereLeri family '*null*' gloss river PLURAL POSS morphing [[dere]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.057
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.086
+Timer: test_derivation: 0.026
+Timer: generate_and_test: 0.119
+Timer: morph_and_lookup_word: 0.136
+(message (word_analysis
+ <lex_entry lex_id 5 shape tiLki family '*null*' gloss fox morphing tilki pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.121
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.174
+Timer: morph_and_lookup_word: 0.192
+(message (word_analysis
+ <lex_entry lex_id 5 shape tiLkisi family '*null*' gloss fox POSS morphing [tilki]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.064
+Timer: lookup_pshape: 0.047
+Timer: generate_derivation: 0.121
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.166
+Timer: morph_and_lookup_word: 0.185
+(message (word_analysis
+ <lex_entry lex_id 5 shape tiLkiye family '*null*' gloss fox DAT morphing [tilki]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.083
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.116
+Timer: test_derivation: 0.044
+Timer: generate_and_test: 0.170
+Timer: morph_and_lookup_word: 0.190
+(message (word_analysis
+ <lex_entry lex_id 5 shape tiLkiden family '*null*' gloss fox ABL morphing [tilki]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.087
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.149
+Timer: test_derivation: 0.040
+Timer: generate_and_test: 0.197
+Timer: morph_and_lookup_word: 0.211
+(message (word_analysis
+ <lex_entry lex_id 5 shape tiLkiLer family '*null*' gloss fox PLURAL morphing [tilki]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.075
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.113
+Timer: test_derivation: 0.051
+Timer: generate_and_test: 0.175
+Timer: morph_and_lookup_word: 0.191
+(message (word_analysis
+ <lex_entry lex_id 5 shape tiLkiLeri family '*null*' gloss fox PLURAL POSS morphing [[tilki]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.020
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.051
+Timer: test_derivation: 0.017
+Timer: generate_and_test: 0.073
+Timer: morph_and_lookup_word: 0.090
+(message (word_analysis
+ <lex_entry lex_id 6 shape arï family '*null*' gloss bee morphing arï pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.035
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.062
+Timer: test_derivation: 0.058
+Timer: generate_and_test: 0.127
+Timer: morph_and_lookup_word: 0.144
+(message (word_analysis
+ <lex_entry lex_id 6 shape arïsï family '*null*' gloss bee POSS morphing [arï]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.028
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.062
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.102
+Timer: morph_and_lookup_word: 0.122
+(message (word_analysis
+ <lex_entry lex_id 6 shape arïya family '*null*' gloss bee DAT morphing [arï]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.047
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.075
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.113
+Timer: morph_and_lookup_word: 0.126
+(message (word_analysis
+ <lex_entry lex_id 6 shape arïdan family '*null*' gloss bee ABL morphing [arï]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.046
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.083
+Timer: test_derivation: 0.060
+Timer: generate_and_test: 0.153
+Timer: morph_and_lookup_word: 0.166
+(message (word_analysis
+ <lex_entry lex_id 6 shape arïlar family '*null*' gloss bee PLURAL morphing [arï]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.039
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.072
+Timer: test_derivation: 0.040
+Timer: generate_and_test: 0.120
+Timer: morph_and_lookup_word: 0.135
+(message (word_analysis
+ <lex_entry lex_id 6 shape arïlarï family '*null*' gloss bee PLURAL POSS morphing [[arï]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.027
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.053
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.081
+Timer: morph_and_lookup_word: 0.096
+(message (word_analysis
+ <lex_entry lex_id 7 shape boru family '*null*' gloss pipe morphing boru pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.036
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.067
+Timer: test_derivation: 0.066
+Timer: generate_and_test: 0.140
+Timer: morph_and_lookup_word: 0.159
+(message (word_analysis
+ <lex_entry lex_id 7 shape borusu family '*null*' gloss pipe POSS morphing [boru]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.036
+Timer: lookup_pshape: 0.030
+Timer: generate_derivation: 0.073
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.116
+Timer: morph_and_lookup_word: 0.135
+(message (word_analysis
+ <lex_entry lex_id 7 shape boruya family '*null*' gloss pipe DAT morphing [boru]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.089
+Timer: test_derivation: 0.036
+Timer: generate_and_test: 0.134
+Timer: morph_and_lookup_word: 0.148
+(message (word_analysis
+ <lex_entry lex_id 7 shape borudan family '*null*' gloss pipe ABL morphing [boru]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.050
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.079
+Timer: test_derivation: 0.066
+Timer: generate_and_test: 0.155
+Timer: morph_and_lookup_word: 0.170
+(message (word_analysis
+ <lex_entry lex_id 7 shape borular family '*null*' gloss pipe PLURAL morphing [boru]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.044
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.081
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.135
+Timer: morph_and_lookup_word: 0.151
+(message (word_analysis
+ <lex_entry lex_id 7 shape borularï family '*null*' gloss pipe PLURAL POSS morphing [[boru]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.041
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.071
+Timer: test_derivation: 0.017
+Timer: generate_and_test: 0.092
+Timer: morph_and_lookup_word: 0.105
+(message (word_analysis
+ <lex_entry lex_id 8 shape kep family '*null*' gloss cap morphing kep pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.054
+Timer: test_derivation: 0.054
+Timer: generate_and_test: 0.115
+Timer: morph_and_lookup_word: 0.127
+(message (word_analysis
+ <lex_entry lex_id 8 shape kepi family '*null*' gloss cap POSS morphing [kep]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.036
+Timer: generate_derivation: 0.067
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.102
+Timer: morph_and_lookup_word: 0.115
+(message (word_analysis
+ <lex_entry lex_id 8 shape kepe family '*null*' gloss cap DAT morphing [kep]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.064
+Timer: lookup_pshape: 0.035
+Timer: generate_derivation: 0.109
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.145
+Timer: lookup_pshape: 0.020
+Timer: morph_and_lookup_word: 0.184
+(message (word_analysis
+ <lex_entry lex_id 8 shape kepten family '*null*' gloss cap ABL morphing [kep]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.098
+Timer: test_derivation: 0.060
+Timer: generate_and_test: 0.166
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.205
+(message (word_analysis
+ <lex_entry lex_id 8 shape kepLer family '*null*' gloss cap PLURAL morphing [kep]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.093
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.139
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.178
+(message (word_analysis
+ <lex_entry lex_id 8 shape kepLeri family '*null*' gloss cap PLURAL POSS morphing [[kep]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.007
+Timer: unapply_prules: 0.030
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.053
+Timer: test_derivation: 0.013
+Timer: generate_and_test: 0.069
+Timer: morph_and_lookup_word: 0.087
+(message (word_analysis
+ <lex_entry lex_id 9 shape at family '*null*' gloss horse morphing at pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.021
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.049
+Timer: test_derivation: 0.050
+Timer: generate_and_test: 0.106
+Timer: morph_and_lookup_word: 0.116
+(message (word_analysis
+ <lex_entry lex_id 9 shape atï family '*null*' gloss horse POSS morphing [at]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.020
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.054
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.081
+Timer: morph_and_lookup_word: 0.095
+(message (word_analysis
+ <lex_entry lex_id 9 shape ata family '*null*' gloss horse DAT morphing [at]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.005
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.088
+Timer: test_derivation: 0.024
+Timer: generate_and_test: 0.119
+Timer: lookup_pshape: 0.033
+Timer: morph_and_lookup_word: 0.172
+(message (word_analysis
+ <lex_entry lex_id 9 shape attan family '*null*' gloss horse ABL morphing [at]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.084
+Timer: test_derivation: 0.054
+Timer: generate_and_test: 0.145
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.183
+(message (word_analysis
+ <lex_entry lex_id 9 shape atlar family '*null*' gloss horse PLURAL morphing [at]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.048
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.079
+Timer: test_derivation: 0.034
+Timer: generate_and_test: 0.124
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.170
+(message (word_analysis
+ <lex_entry lex_id 9 shape atlarï family '*null*' gloss horse PLURAL POSS morphing [[at]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.048
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.079
+Timer: test_derivation: 0.020
+Timer: generate_and_test: 0.103
+Timer: morph_and_lookup_word: 0.117
+(message (word_analysis
+ <lex_entry lex_id 10 shape kurt family '*null*' gloss worm morphing kurd pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.084
+Timer: test_derivation: 0.060
+Timer: generate_and_test: 0.150
+Timer: morph_and_lookup_word: 0.164
+(message (word_analysis
+ <lex_entry lex_id 10 shape kurdu family '*null*' gloss worm POSS morphing [kurd]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.054
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.086
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.122
+Timer: morph_and_lookup_word: 0.136
+(message (word_analysis
+ <lex_entry lex_id 10 shape kurda family '*null*' gloss worm DAT morphing [kurd]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.078
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.113
+Timer: test_derivation: 0.035
+Timer: generate_and_test: 0.157
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.203
+(message (word_analysis
+ <lex_entry lex_id 10 shape kurttan family '*null*' gloss worm ABL morphing [kurd]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.072
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.103
+Timer: test_derivation: 0.069
+Timer: generate_and_test: 0.183
+Timer: lookup_pshape: 0.032
+Timer: morph_and_lookup_word: 0.236
+(message (word_analysis
+ <lex_entry lex_id 10 shape kurtlar family '*null*' gloss worm PLURAL morphing [kurd]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.099
+Timer: test_derivation: 0.047
+Timer: generate_and_test: 0.155
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.201
+(message (word_analysis
+ <lex_entry lex_id 10 shape kurtlarï family '*null*' gloss worm PLURAL POSS morphing [[kurd]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.037
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.062
+Timer: test_derivation: 0.015
+Timer: generate_and_test: 0.083
+Timer: morph_and_lookup_word: 0.094
+(message (word_analysis
+ <lex_entry lex_id 11 shape sac family '*null*' gloss hair morphing sac pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.057
+Timer: test_derivation: 0.056
+Timer: generate_and_test: 0.119
+Timer: morph_and_lookup_word: 0.131
+(message (word_analysis
+ <lex_entry lex_id 11 shape sacï family '*null*' gloss hair POSS morphing [sac]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.022
+Timer: lookup_pshape: 0.054
+Timer: generate_derivation: 0.086
+Timer: test_derivation: 0.025
+Timer: generate_and_test: 0.117
+Timer: morph_and_lookup_word: 0.129
+(message (word_analysis
+ <lex_entry lex_id 11 shape saca family '*null*' gloss hair DAT morphing [sac]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.067
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.098
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.133
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.177
+(message (word_analysis
+ <lex_entry lex_id 11 shape sactan family '*null*' gloss hair ABL morphing [sac]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.061
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.095
+Timer: test_derivation: 0.055
+Timer: generate_and_test: 0.163
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.208
+(message (word_analysis
+ <lex_entry lex_id 11 shape saclar family '*null*' gloss hair PLURAL morphing [sac]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.054
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.086
+Timer: test_derivation: 0.040
+Timer: generate_and_test: 0.135
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.180
+(message (word_analysis
+ <lex_entry lex_id 11 shape saclarï family '*null*' gloss hair PLURAL POSS morphing [[sac]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.041
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.067
+Timer: test_derivation: 0.018
+Timer: generate_and_test: 0.090
+Timer: morph_and_lookup_word: 0.102
+(message (word_analysis
+ <lex_entry lex_id 12 shape sarp family '*null*' gloss steep morphing sarp pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.049
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.087
+Timer: test_derivation: 0.058
+Timer: generate_and_test: 0.152
+Timer: morph_and_lookup_word: 0.164
+(message (word_analysis
+ <lex_entry lex_id 12 shape sarpï family '*null*' gloss steep POSS morphing [sarp]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.045
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.078
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.118
+Timer: morph_and_lookup_word: 0.133
+(message (word_analysis
+ <lex_entry lex_id 12 shape sarpa family '*null*' gloss steep DAT morphing [sarp]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.097
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.134
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.180
+(message (word_analysis
+ <lex_entry lex_id 12 shape sarptan family '*null*' gloss steep ABL morphing [sarp]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.064
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.099
+Timer: test_derivation: 0.059
+Timer: generate_and_test: 0.166
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.212
+(message (word_analysis
+ <lex_entry lex_id 12 shape sarplar family '*null*' gloss steep PLURAL morphing [sarp]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.061
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.093
+Timer: test_derivation: 0.042
+Timer: generate_and_test: 0.144
+Timer: lookup_pshape: 0.027
+Timer: morph_and_lookup_word: 0.191
+(message (word_analysis
+ <lex_entry lex_id 12 shape sarplarï family '*null*' gloss steep PLURAL POSS morphing [[sarp]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.038
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.062
+Timer: test_derivation: 0.017
+Timer: generate_and_test: 0.083
+Timer: morph_and_lookup_word: 0.096
+(message (word_analysis
+ <lex_entry lex_id 13 shape son family '*null*' gloss end morphing son pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.026
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.063
+Timer: test_derivation: 0.053
+Timer: generate_and_test: 0.122
+Timer: morph_and_lookup_word: 0.133
+(message (word_analysis
+ <lex_entry lex_id 13 shape sonu family '*null*' gloss end POSS morphing [son]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.030
+Timer: generate_derivation: 0.064
+Timer: test_derivation: 0.024
+Timer: generate_and_test: 0.096
+Timer: morph_and_lookup_word: 0.111
+(message (word_analysis
+ <lex_entry lex_id 13 shape sona family '*null*' gloss end DAT morphing [son]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.092
+Timer: test_derivation: 0.025
+Timer: generate_and_test: 0.127
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.164
+(message (word_analysis
+ <lex_entry lex_id 13 shape sondan family '*null*' gloss end ABL morphing [son]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.012
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.093
+Timer: test_derivation: 0.055
+Timer: generate_and_test: 0.156
+Timer: lookup_pshape: 0.021
+Timer: morph_and_lookup_word: 0.205
+(message (word_analysis
+ <lex_entry lex_id 13 shape sonlar family '*null*' gloss end PLURAL morphing [son]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.059
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.036
+Timer: generate_and_test: 0.136
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.176
+(message (word_analysis
+ <lex_entry lex_id 13 shape sonlarï family '*null*' gloss end PLURAL POSS morphing [[son]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.017
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.016
+Timer: generate_and_test: 0.063
+Timer: morph_and_lookup_word: 0.076
+(message (word_analysis
+ <lex_entry lex_id 14 shape köy family '*null*' gloss village morphing köy pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.056
+Timer: test_derivation: 0.055
+Timer: generate_and_test: 0.117
+Timer: morph_and_lookup_word: 0.133
+(message (word_analysis
+ <lex_entry lex_id 14 shape köyü family '*null*' gloss village POSS morphing [köy]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.064
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.099
+Timer: morph_and_lookup_word: 0.113
+(message (word_analysis
+ <lex_entry lex_id 14 shape köye family '*null*' gloss village DAT morphing [köy]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.044
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.078
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.114
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.151
+(message (word_analysis
+ <lex_entry lex_id 14 shape köyden family '*null*' gloss village ABL morphing [köy]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.047
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.076
+Timer: test_derivation: 0.059
+Timer: generate_and_test: 0.142
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.188
+(message (word_analysis
+ <lex_entry lex_id 14 shape köyLer family '*null*' gloss village PLURAL morphing [köy]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.036
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.073
+Timer: test_derivation: 0.042
+Timer: generate_and_test: 0.123
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.170
+(message (word_analysis
+ <lex_entry lex_id 14 shape köyLeri family '*null*' gloss village PLURAL POSS morphing [[köy]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.046
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.071
+Timer: test_derivation: 0.018
+Timer: generate_and_test: 0.094
+Timer: morph_and_lookup_word: 0.106
+(message (word_analysis
+ <lex_entry lex_id 15 shape güc family '*null*' gloss power morphing güj pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.035
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.063
+Timer: test_derivation: 0.056
+Timer: generate_and_test: 0.127
+Timer: morph_and_lookup_word: 0.139
+(message (word_analysis
+ <lex_entry lex_id 15 shape güjü family '*null*' gloss power POSS morphing [güj]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.028
+Timer: lookup_pshape: 0.054
+Timer: generate_derivation: 0.089
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.123
+Timer: morph_and_lookup_word: 0.137
+(message (word_analysis
+ <lex_entry lex_id 15 shape güje family '*null*' gloss power DAT morphing [güj]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.076
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.109
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.144
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.188
+(message (word_analysis
+ <lex_entry lex_id 15 shape gücten family '*null*' gloss power ABL morphing [güj]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.074
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.104
+Timer: test_derivation: 0.059
+Timer: generate_and_test: 0.170
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.214
+(message (word_analysis
+ <lex_entry lex_id 15 shape gücLer family '*null*' gloss power PLURAL morphing [güj]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.067
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.101
+Timer: test_derivation: 0.039
+Timer: generate_and_test: 0.148
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.193
+(message (word_analysis
+ <lex_entry lex_id 15 shape gücLeri family '*null*' gloss power PLURAL POSS morphing [[güj]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.037
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.064
+Timer: test_derivation: 0.016
+Timer: generate_and_test: 0.085
+Timer: morph_and_lookup_word: 0.097
+(message (word_analysis
+ <lex_entry lex_id 16 shape sap family '*null*' gloss stalk morphing sap pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.026
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.055
+Timer: test_derivation: 0.056
+Timer: generate_and_test: 0.116
+Timer: morph_and_lookup_word: 0.128
+(message (word_analysis
+ <lex_entry lex_id 16 shape sapï family '*null*' gloss stalk POSS morphing [sap]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.038
+Timer: generate_derivation: 0.070
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.104
+Timer: morph_and_lookup_word: 0.116
+(message (word_analysis
+ <lex_entry lex_id 16 shape sapa family '*null*' gloss stalk DAT morphing [sap]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.094
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.129
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.175
+(message (word_analysis
+ <lex_entry lex_id 16 shape saptan family '*null*' gloss stalk ABL morphing [sap]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.006
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.094
+Timer: test_derivation: 0.056
+Timer: generate_and_test: 0.156
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.205
+(message (word_analysis
+ <lex_entry lex_id 16 shape saplar family '*null*' gloss stalk PLURAL morphing [sap]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.058
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.136
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.182
+(message (word_analysis
+ <lex_entry lex_id 16 shape saplarï family '*null*' gloss stalk PLURAL POSS morphing [[sap]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.031
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.055
+Timer: test_derivation: 0.017
+Timer: generate_and_test: 0.077
+Timer: morph_and_lookup_word: 0.088
+(message (word_analysis
+ <lex_entry lex_id 17 shape alt family '*null*' gloss bottom morphing alt pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.039
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.070
+Timer: test_derivation: 0.054
+Timer: generate_and_test: 0.129
+Timer: morph_and_lookup_word: 0.141
+(message (word_analysis
+ <lex_entry lex_id 17 shape altï family '*null*' gloss bottom POSS morphing [alt]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.039
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.081
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.120
+Timer: morph_and_lookup_word: 0.134
+(message (word_analysis
+ <lex_entry lex_id 17 shape alta family '*null*' gloss bottom DAT morphing [alt]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.058
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.089
+Timer: test_derivation: 0.028
+Timer: generate_and_test: 0.123
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.170
+(message (word_analysis
+ <lex_entry lex_id 17 shape alttan family '*null*' gloss bottom ABL morphing [alt]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.057
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.085
+Timer: test_derivation: 0.057
+Timer: generate_and_test: 0.150
+Timer: lookup_pshape: 0.020
+Timer: morph_and_lookup_word: 0.190
+(message (word_analysis
+ <lex_entry lex_id 17 shape altlar family '*null*' gloss bottom PLURAL morphing [alt]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.007
+Timer: unapply_prules: 0.052
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.084
+Timer: test_derivation: 0.037
+Timer: generate_and_test: 0.130
+Timer: lookup_pshape: 0.021
+Timer: morph_and_lookup_word: 0.174
+(message (word_analysis
+ <lex_entry lex_id 17 shape altlarï family '*null*' gloss bottom PLURAL POSS morphing [[alt]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.040
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.070
+Timer: test_derivation: 0.018
+Timer: generate_and_test: 0.093
+Timer: morph_and_lookup_word: 0.106
+(message (word_analysis
+ <lex_entry lex_id 18 shape renk family '*null*' gloss color morphing reng pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.046
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.075
+Timer: test_derivation: 0.061
+Timer: generate_and_test: 0.143
+Timer: morph_and_lookup_word: 0.156
+(message (word_analysis
+ <lex_entry lex_id 18 shape rengi family '*null*' gloss color POSS morphing [reng]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.044
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.078
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.113
+Timer: morph_and_lookup_word: 0.132
+(message (word_analysis
+ <lex_entry lex_id 18 shape renge family '*null*' gloss color DAT morphing [reng]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.067
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.098
+Timer: test_derivation: 0.031
+Timer: generate_and_test: 0.136
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.180
+(message (word_analysis
+ <lex_entry lex_id 18 shape renkten family '*null*' gloss color ABL morphing [reng]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.068
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.098
+Timer: test_derivation: 0.064
+Timer: generate_and_test: 0.172
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.217
+(message (word_analysis
+ <lex_entry lex_id 18 shape renkLer family '*null*' gloss color PLURAL morphing [reng]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.058
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.039
+Timer: generate_and_test: 0.139
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.186
+(message (word_analysis
+ <lex_entry lex_id 18 shape renkLeri family '*null*' gloss color PLURAL POSS morphing [[reng]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.049
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.075
+Timer: morph_and_lookup_word: 0.090
+(message (word_analysis
+ <lex_entry lex_id 19 shape balo family '*null*' gloss ball morphing balo pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.033
+Timer: lookup_pshape: 0.053
+Timer: generate_derivation: 0.100
+Timer: test_derivation: 0.068
+Timer: generate_and_test: 0.175
+Timer: morph_and_lookup_word: 0.191
+(message (word_analysis
+ <lex_entry lex_id 19 shape balosu family '*null*' gloss ball POSS morphing [balo]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.005
+Timer: unapply_prules: 0.029
+Timer: lookup_pshape: 0.029
+Timer: generate_derivation: 0.067
+Timer: test_derivation: 0.032
+Timer: generate_and_test: 0.106
+Timer: morph_and_lookup_word: 0.127
+(message (word_analysis
+ <lex_entry lex_id 19 shape baloya family '*null*' gloss ball DAT morphing [balo]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.051
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.081
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.121
+Timer: morph_and_lookup_word: 0.134
+(message (word_analysis
+ <lex_entry lex_id 19 shape balodan family '*null*' gloss ball ABL morphing [balo]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.047
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.076
+Timer: test_derivation: 0.066
+Timer: generate_and_test: 0.151
+Timer: morph_and_lookup_word: 0.164
+(message (word_analysis
+ <lex_entry lex_id 19 shape balolar family '*null*' gloss ball PLURAL morphing [balo]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.039
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.078
+Timer: test_derivation: 0.044
+Timer: generate_and_test: 0.132
+Timer: morph_and_lookup_word: 0.146
+(message (word_analysis
+ <lex_entry lex_id 19 shape balolarï family '*null*' gloss ball PLURAL POSS morphing [[balo]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.036
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.066
+Timer: test_derivation: 0.016
+Timer: generate_and_test: 0.085
+Timer: morph_and_lookup_word: 0.099
+(message (word_analysis
+ <lex_entry lex_id 20 shape kap family '*null*' gloss container morphing kab pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.055
+Timer: test_derivation: 0.055
+Timer: generate_and_test: 0.115
+Timer: morph_and_lookup_word: 0.128
+(message (word_analysis
+ <lex_entry lex_id 20 shape kabï family '*null*' gloss container POSS morphing [kab]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.027
+Timer: lookup_pshape: 0.030
+Timer: generate_derivation: 0.067
+Timer: test_derivation: 0.026
+Timer: generate_and_test: 0.100
+Timer: morph_and_lookup_word: 0.113
+(message (word_analysis
+ <lex_entry lex_id 20 shape kaba family '*null*' gloss container DAT morphing [kab]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.062
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.094
+Timer: test_derivation: 0.028
+Timer: generate_and_test: 0.133
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.177
+(message (word_analysis
+ <lex_entry lex_id 20 shape kaptan family '*null*' gloss container ABL morphing [kab]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.061
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.092
+Timer: test_derivation: 0.057
+Timer: generate_and_test: 0.155
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.201
+(message (word_analysis
+ <lex_entry lex_id 20 shape kaplar family '*null*' gloss container PLURAL morphing [kab]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.088
+Timer: test_derivation: 0.039
+Timer: generate_and_test: 0.134
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.181
+(message (word_analysis
+ <lex_entry lex_id 20 shape kaplarï family '*null*' gloss container PLURAL POSS morphing [[kab]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.070
+Timer: test_derivation: 0.014
+Timer: generate_and_test: 0.090
+Timer: morph_and_lookup_word: 0.102
+(message (word_analysis
+ <lex_entry lex_id 21 shape tat family '*null*' gloss taste morphing tad pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.026
+Timer: lookup_pshape: 0.052
+Timer: generate_derivation: 0.086
+Timer: test_derivation: 0.060
+Timer: generate_and_test: 0.155
+Timer: morph_and_lookup_word: 0.169
+(message (word_analysis
+ <lex_entry lex_id 21 shape tadï family '*null*' gloss taste POSS morphing [tad]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.024
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.061
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.093
+Timer: morph_and_lookup_word: 0.107
+(message (word_analysis
+ <lex_entry lex_id 21 shape tada family '*null*' gloss taste DAT morphing [tad]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.095
+Timer: test_derivation: 0.028
+Timer: generate_and_test: 0.130
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.173
+(message (word_analysis
+ <lex_entry lex_id 21 shape tattan family '*null*' gloss taste ABL morphing [tad]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.057
+Timer: generate_and_test: 0.156
+Timer: lookup_pshape: 0.028
+Timer: morph_and_lookup_word: 0.206
+(message (word_analysis
+ <lex_entry lex_id 21 shape tatlar family '*null*' gloss taste PLURAL morphing [tad]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.089
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.134
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.179
+(message (word_analysis
+ <lex_entry lex_id 21 shape tatlarï family '*null*' gloss taste PLURAL POSS morphing [[tad]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.080
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.108
+Timer: morph_and_lookup_word: 0.120
+(message (word_analysis
+ <lex_entry lex_id 22 shape ahmet family '*null*' gloss Ahmed morphing Ahmed pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.045
+Timer: lookup_pshape: 0.089
+Timer: generate_derivation: 0.145
+Timer: test_derivation: 0.034
+Timer: generate_and_test: 0.185
+Timer: morph_and_lookup_word: 0.200
+(message (word_analysis
+ <lex_entry lex_id 22 shape ahmedi family '*null*' gloss Ahmed POSS morphing [Ahmed]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.081
+Timer: test_derivation: 0.032
+Timer: generate_and_test: 0.120
+Timer: morph_and_lookup_word: 0.132
+(message (word_analysis
+ <lex_entry lex_id 22 shape ahmede family '*null*' gloss Ahmed DAT morphing [Ahmed]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.006
+Timer: unapply_prules: 0.080
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.110
+Timer: test_derivation: 0.034
+Timer: generate_and_test: 0.151
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.198
+(message (word_analysis
+ <lex_entry lex_id 22 shape ahmetten family '*null*' gloss Ahmed ABL morphing [Ahmed]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.081
+Timer: lookup_pshape: 0.051
+Timer: generate_derivation: 0.143
+Timer: test_derivation: 0.035
+Timer: generate_and_test: 0.189
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.233
+(message (word_analysis
+ <lex_entry lex_id 22 shape ahmetLer family '*null*' gloss Ahmed PLURAL morphing [Ahmed]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.075
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.109
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.165
+Timer: lookup_pshape: 0.028
+Timer: morph_and_lookup_word: 0.215
+(message (word_analysis
+ <lex_entry lex_id 22 shape ahmetLeri family '*null*' gloss Ahmed PLURAL POSS morphing [[Ahmed]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.040
+Timer: lookup_pshape: 0.030
+Timer: generate_derivation: 0.080
+Timer: test_derivation: 0.019
+Timer: generate_and_test: 0.105
+Timer: morph_and_lookup_word: 0.119
+(message (word_analysis
+ <lex_entry lex_id 23 shape genc family '*null*' gloss young morphing genj pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.047
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.077
+Timer: test_derivation: 0.058
+Timer: generate_and_test: 0.140
+Timer: morph_and_lookup_word: 0.153
+(message (word_analysis
+ <lex_entry lex_id 23 shape genji family '*null*' gloss young POSS morphing [genj]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.075
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.108
+Timer: morph_and_lookup_word: 0.125
+(message (word_analysis
+ <lex_entry lex_id 23 shape genje family '*null*' gloss young DAT morphing [genj]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.068
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.105
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.142
+Timer: lookup_pshape: 0.020
+Timer: morph_and_lookup_word: 0.182
+(message (word_analysis
+ <lex_entry lex_id 23 shape gencten family '*null*' gloss young ABL morphing [genj]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.064
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.098
+Timer: test_derivation: 0.059
+Timer: generate_and_test: 0.167
+Timer: lookup_pshape: 0.020
+Timer: morph_and_lookup_word: 0.209
+(message (word_analysis
+ <lex_entry lex_id 23 shape gencLer family '*null*' gloss young PLURAL morphing [genj]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.062
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.094
+Timer: test_derivation: 0.040
+Timer: generate_and_test: 0.142
+Timer: lookup_pshape: 0.048
+Timer: morph_and_lookup_word: 0.216
+(message (word_analysis
+ <lex_entry lex_id 23 shape gencLeri family '*null*' gloss young PLURAL POSS morphing [[genj]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.041
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.070
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.097
+Timer: morph_and_lookup_word: 0.111
+(message (word_analysis
+ <lex_entry lex_id 24 shape ayak family '*null*' gloss foot morphing ayak pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.029
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.065
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.172
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.208
+Timer: morph_and_lookup_word: 0.228
+(message (word_analysis
+ <lex_entry lex_id 24 shape ayaï family '*null*' gloss foot POSS morphing [ayak]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.030
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.069
+Timer: test_derivation: 0.034
+Timer: generate_and_test: 0.109
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.146
+Timer: morph_and_lookup_word: 0.203
+(message (word_analysis
+ <lex_entry lex_id 24 shape ayaa family '*null*' gloss foot DAT morphing [ayak]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.062
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.096
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.140
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.181
+(message (word_analysis
+ <lex_entry lex_id 24 shape ayaktan family '*null*' gloss foot ABL morphing [ayak]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.061
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.063
+Timer: generate_and_test: 0.165
+Timer: lookup_pshape: 0.060
+Timer: morph_and_lookup_word: 0.246
+(message (word_analysis
+ <lex_entry lex_id 24 shape ayaklar family '*null*' gloss foot PLURAL morphing [ayak]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.054
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.095
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.149
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.192
+(message (word_analysis
+ <lex_entry lex_id 24 shape ayaklarï family '*null*' gloss foot PLURAL POSS morphing [[ayak]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.037
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.068
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.095
+Timer: morph_and_lookup_word: 0.108
+(message (word_analysis
+ <lex_entry lex_id 25 shape inek family '*null*' gloss cow morphing inek pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.030
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.065
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.160
+Timer: test_derivation: 0.031
+Timer: generate_and_test: 0.197
+Timer: morph_and_lookup_word: 0.214
+(message (word_analysis
+ <lex_entry lex_id 25 shape inei family '*null*' gloss cow POSS morphing [inek]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.007
+Timer: unapply_prules: 0.032
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.069
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.106
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.147
+Timer: morph_and_lookup_word: 0.205
+(message (word_analysis
+ <lex_entry lex_id 25 shape inee family '*null*' gloss cow DAT morphing [inek]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.062
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.033
+Timer: generate_and_test: 0.132
+Timer: lookup_pshape: 0.057
+Timer: morph_and_lookup_word: 0.211
+(message (word_analysis
+ <lex_entry lex_id 25 shape inekten family '*null*' gloss cow ABL morphing [inek]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.097
+Timer: test_derivation: 0.064
+Timer: generate_and_test: 0.171
+Timer: lookup_pshape: 0.027
+Timer: morph_and_lookup_word: 0.218
+(message (word_analysis
+ <lex_entry lex_id 25 shape inekLer family '*null*' gloss cow PLURAL morphing [inek]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.056
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.088
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.141
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.188
+(message (word_analysis
+ <lex_entry lex_id 25 shape inekLeri family '*null*' gloss cow PLURAL POSS morphing [[inek]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+;Next one should be 2x ambig:
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.082
+Timer: test_derivation: 0.026
+Timer: generate_and_test: 0.114
+Timer: lookup_pshape: 0.076
+Timer: generate_derivation: 0.137
+Timer: test_derivation: 0.032
+Timer: generate_and_test: 0.176
+Timer: morph_and_lookup_word: 0.187
+(message (word_analysis
+ <lex_entry lex_id 26 shape hukuk family '*null*' gloss law.school morphing hukuk pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false >
+ <lex_entry lex_id 27 shape hukuk family '*null*' gloss law morphing hukuuk pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.048
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.085
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.165
+Timer: test_derivation: 0.036
+Timer: generate_and_test: 0.236
+Timer: morph_and_lookup_word: 0.253
+(message (word_analysis
+ <lex_entry lex_id 26 shape hukuu family '*null*' gloss law.school POSS morphing [hukuk]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.044
+Timer: lookup_pshape: 0.053
+Timer: generate_derivation: 0.114
+Timer: test_derivation: 0.037
+Timer: generate_and_test: 0.158
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.197
+Timer: morph_and_lookup_word: 0.256
+(message (word_analysis
+ <lex_entry lex_id 26 shape hukua family '*null*' gloss law.school DAT morphing [hukuk]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+;Next one should be 2x ambig:
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.079
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.110
+Timer: test_derivation: 0.042
+Timer: generate_and_test: 0.160
+Timer: lookup_pshape: 0.086
+Timer: generate_derivation: 0.176
+Timer: test_derivation: 0.048
+Timer: generate_and_test: 0.232
+Timer: lookup_pshape: 0.024
+Timer: lookup_pshape: 0.045
+Timer: morph_and_lookup_word: 0.303
+(message (word_analysis
+ <lex_entry lex_id 26 shape hukuktan family '*null*' gloss law.school ABL morphing [hukuk]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false >
+ <lex_entry lex_id 27 shape hukuktan family '*null*' gloss law ABL morphing [hukuuk]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+;Next one should be 2x ambig:
+Timer: get_applic_prules: 0.007
+Timer: unapply_prules: 0.074
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.107
+Timer: test_derivation: 0.041
+Timer: generate_and_test: 0.183
+Timer: lookup_pshape: 0.095
+Timer: generate_derivation: 0.183
+Timer: test_derivation: 0.046
+Timer: generate_and_test: 0.263
+Timer: lookup_pshape: 0.021
+Timer: lookup_pshape: 0.047
+Timer: morph_and_lookup_word: 0.335
+(message (word_analysis
+ <lex_entry lex_id 26 shape hukuklar family '*null*' gloss law.school PLURAL morphing [hukuk]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false >
+ <lex_entry lex_id 27 shape hukuklar family '*null*' gloss law PLURAL morphing [hukuuk]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+;Next one should be 2x ambig:
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.067
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.111
+Timer: test_derivation: 0.051
+Timer: generate_and_test: 0.173
+Timer: lookup_pshape: 0.109
+Timer: generate_derivation: 0.193
+Timer: test_derivation: 0.055
+Timer: generate_and_test: 0.260
+Timer: lookup_pshape: 0.021
+Timer: lookup_pshape: 0.041
+Timer: morph_and_lookup_word: 0.324
+(message (word_analysis
+ <lex_entry lex_id 26 shape hukuklarï family '*null*' gloss law.school PLURAL POSS morphing [[hukuk]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false >
+ <lex_entry lex_id 27 shape hukuklarï family '*null*' gloss law PLURAL POSS morphing [[hukuuk]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.054
+Timer: generate_and_test: 0.153
+Timer: morph_and_lookup_word: 0.166
+(message (word_analysis
+ <lex_entry lex_id 28 shape mesLek family '*null*' gloss profession morphing meslek pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.063
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.104
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.177
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.224
+Timer: morph_and_lookup_word: 0.241
+(message (word_analysis
+ <lex_entry lex_id 28 shape mesLei family '*null*' gloss profession POSS morphing [meslek]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.060
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.102
+Timer: test_derivation: 0.035
+Timer: generate_and_test: 0.145
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.177
+Timer: morph_and_lookup_word: 0.237
+(message (word_analysis
+ <lex_entry lex_id 28 shape mesLee family '*null*' gloss profession DAT morphing [meslek]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.005
+Timer: unapply_prules: 0.092
+Timer: lookup_pshape: 0.054
+Timer: generate_derivation: 0.182
+Timer: test_derivation: 0.042
+Timer: generate_and_test: 0.233
+Timer: lookup_pshape: 0.031
+Timer: morph_and_lookup_word: 0.289
+(message (word_analysis
+ <lex_entry lex_id 28 shape mesLekten family '*null*' gloss profession ABL morphing [meslek]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.093
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.130
+Timer: test_derivation: 0.043
+Timer: generate_and_test: 0.181
+Timer: lookup_pshape: 0.027
+Timer: morph_and_lookup_word: 0.230
+(message (word_analysis
+ <lex_entry lex_id 28 shape mesLekLer family '*null*' gloss profession PLURAL morphing [meslek]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.082
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.120
+Timer: test_derivation: 0.054
+Timer: generate_and_test: 0.184
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.238
+(message (word_analysis
+ <lex_entry lex_id 28 shape mesLekLeri family '*null*' gloss profession PLURAL POSS morphing [[meslek]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.069
+Timer: test_derivation: 0.058
+Timer: generate_and_test: 0.138
+Timer: morph_and_lookup_word: 0.179
+(message (word_analysis
+ <lex_entry lex_id 29 shape kiraa family '*null*' gloss rent morphing kiraa pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.052
+Timer: lookup_pshape: 0.057
+Timer: generate_derivation: 0.122
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.174
+Timer: morph_and_lookup_word: 0.208
+(message (word_analysis
+ <lex_entry lex_id 29 shape kiraasï family '*null*' gloss rent POSS morphing [kiraa]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.052
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.093
+Timer: test_derivation: 0.042
+Timer: generate_and_test: 0.144
+Timer: morph_and_lookup_word: 0.168
+(message (word_analysis
+ <lex_entry lex_id 29 shape kiraaya family '*null*' gloss rent DAT morphing [kiraa]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.071
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.127
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.182
+Timer: morph_and_lookup_word: 0.208
+(message (word_analysis
+ <lex_entry lex_id 29 shape kiraadan family '*null*' gloss rent ABL morphing [kiraa]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.071
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.106
+Timer: test_derivation: 0.043
+Timer: generate_and_test: 0.158
+Timer: morph_and_lookup_word: 0.186
+(message (word_analysis
+ <lex_entry lex_id 29 shape kiraalar family '*null*' gloss rent PLURAL morphing [kiraa]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.059
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.092
+Timer: test_derivation: 0.052
+Timer: generate_and_test: 0.155
+Timer: morph_and_lookup_word: 0.188
+(message (word_analysis
+ <lex_entry lex_id 29 shape kiraalarï family '*null*' gloss rent PLURAL POSS morphing [[kiraa]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.061
+Timer: lookup_pshape: 0.079
+Timer: generate_derivation: 0.147
+Timer: test_derivation: 0.036
+Timer: generate_and_test: 0.190
+Timer: morph_and_lookup_word: 0.237
+(message (word_analysis
+ <lex_entry lex_id 30 shape maazii family '*null*' gloss past morphing maazii pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.075
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.107
+Timer: test_derivation: 0.046
+Timer: generate_and_test: 0.164
+Timer: morph_and_lookup_word: 0.198
+(message (word_analysis
+ <lex_entry lex_id 30 shape maaziisi family '*null*' gloss past POSS morphing [maazii]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.113
+Timer: test_derivation: 0.047
+Timer: generate_and_test: 0.169
+Timer: morph_and_lookup_word: 0.192
+(message (word_analysis
+ <lex_entry lex_id 30 shape maaziiye family '*null*' gloss past DAT morphing [maazii]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.087
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.154
+Timer: test_derivation: 0.049
+Timer: generate_and_test: 0.211
+Timer: morph_and_lookup_word: 0.239
+(message (word_analysis
+ <lex_entry lex_id 30 shape maaziiden family '*null*' gloss past ABL morphing [maazii]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.088
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.126
+Timer: test_derivation: 0.049
+Timer: generate_and_test: 0.186
+Timer: morph_and_lookup_word: 0.217
+(message (word_analysis
+ <lex_entry lex_id 30 shape maaziiLer family '*null*' gloss past PLURAL morphing [maazii]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.078
+Timer: lookup_pshape: 0.031
+Timer: generate_derivation: 0.126
+Timer: test_derivation: 0.060
+Timer: generate_and_test: 0.199
+Timer: morph_and_lookup_word: 0.232
+(message (word_analysis
+ <lex_entry lex_id 30 shape maaziiLeri family '*null*' gloss past PLURAL POSS morphing [[maazii]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.041
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.067
+Timer: test_derivation: 0.057
+Timer: generate_and_test: 0.129
+Timer: morph_and_lookup_word: 0.146
+(message (word_analysis
+ <lex_entry lex_id 31 shape merak family '*null*' gloss curiosity morphing meraak pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.047
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.082
+Timer: test_derivation: 0.043
+Timer: generate_and_test: 0.133
+Timer: morph_and_lookup_word: 0.145
+(message (word_analysis
+ <lex_entry lex_id 31 shape meraakï family '*null*' gloss curiosity POSS morphing [meraak]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.030
+Timer: generate_derivation: 0.083
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.130
+Timer: morph_and_lookup_word: 0.142
+(message (word_analysis
+ <lex_entry lex_id 31 shape meraaka family '*null*' gloss curiosity DAT morphing [meraak]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.069
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.126
+Timer: test_derivation: 0.041
+Timer: generate_and_test: 0.179
+Timer: lookup_pshape: 0.053
+Timer: morph_and_lookup_word: 0.253
+(message (word_analysis
+ <lex_entry lex_id 31 shape meraktan family '*null*' gloss curiosity ABL morphing [meraak]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.069
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.107
+Timer: test_derivation: 0.043
+Timer: generate_and_test: 0.163
+Timer: lookup_pshape: 0.020
+Timer: morph_and_lookup_word: 0.202
+(message (word_analysis
+ <lex_entry lex_id 31 shape meraklar family '*null*' gloss curiosity PLURAL morphing [meraak]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.058
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.097
+Timer: test_derivation: 0.057
+Timer: generate_and_test: 0.164
+Timer: lookup_pshape: 0.022
+Timer: morph_and_lookup_word: 0.210
+(message (word_analysis
+ <lex_entry lex_id 31 shape meraklarï family '*null*' gloss curiosity PLURAL POSS morphing [[meraak]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.055
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.118
+Timer: test_derivation: 0.046
+Timer: generate_and_test: 0.172
+Timer: morph_and_lookup_word: 0.185
+(message (word_analysis
+ <lex_entry lex_id 27 shape hukuuku family '*null*' gloss law POSS morphing [hukuuk]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.052
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.086
+Timer: test_derivation: 0.044
+Timer: generate_and_test: 0.140
+Timer: morph_and_lookup_word: 0.154
+(message (word_analysis
+ <lex_entry lex_id 27 shape hukuuka family '*null*' gloss law DAT morphing [hukuuk]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.041
+Timer: lookup_pshape: 0.059
+Timer: generate_derivation: 0.106
+Timer: test_derivation: 0.028
+Timer: generate_and_test: 0.140
+Timer: morph_and_lookup_word: 0.151
+(message (word_analysis
+ <lex_entry lex_id 32 shape sevap family '*null*' gloss good.deed morphing sevaab pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.046
+Timer: lookup_pshape: 0.052
+Timer: generate_derivation: 0.107
+Timer: test_derivation: 0.041
+Timer: generate_and_test: 0.160
+Timer: morph_and_lookup_word: 0.174
+(message (word_analysis
+ <lex_entry lex_id 32 shape sevaabï family '*null*' gloss good.deed POSS morphing [sevaab]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.076
+Timer: test_derivation: 0.040
+Timer: generate_and_test: 0.127
+Timer: morph_and_lookup_word: 0.142
+(message (word_analysis
+ <lex_entry lex_id 32 shape sevaaba family '*null*' gloss good.deed DAT morphing [sevaab]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.070
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.103
+Timer: test_derivation: 0.039
+Timer: generate_and_test: 0.150
+Timer: lookup_pshape: 0.020
+Timer: morph_and_lookup_word: 0.190
+(message (word_analysis
+ <lex_entry lex_id 32 shape sevaptan family '*null*' gloss good.deed ABL morphing [sevaab]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.068
+Timer: lookup_pshape: 0.053
+Timer: generate_derivation: 0.131
+Timer: test_derivation: 0.040
+Timer: generate_and_test: 0.180
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.219
+(message (word_analysis
+ <lex_entry lex_id 32 shape sevaplar family '*null*' gloss good.deed PLURAL morphing [sevaab]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.059
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.094
+Timer: test_derivation: 0.054
+Timer: generate_and_test: 0.156
+Timer: lookup_pshape: 0.056
+Timer: morph_and_lookup_word: 0.237
+(message (word_analysis
+ <lex_entry lex_id 32 shape sevaplarï family '*null*' gloss good.deed PLURAL POSS morphing [[sevaab]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.072
+Timer: test_derivation: 0.028
+Timer: generate_and_test: 0.106
+Timer: morph_and_lookup_word: 0.120
+(message (word_analysis
+ <lex_entry lex_id 33 shape usuL family '*null*' gloss method morphing usuül pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.046
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.107
+Timer: test_derivation: 0.041
+Timer: generate_and_test: 0.157
+Timer: morph_and_lookup_word: 0.169
+(message (word_analysis
+ <lex_entry lex_id 33 shape usuuLü family '*null*' gloss method POSS morphing [usuül]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.042
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.081
+Timer: test_derivation: 0.042
+Timer: generate_and_test: 0.132
+Timer: morph_and_lookup_word: 0.146
+(message (word_analysis
+ <lex_entry lex_id 33 shape usuuLe family '*null*' gloss method DAT morphing [usuül]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.096
+Timer: test_derivation: 0.041
+Timer: generate_and_test: 0.147
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.191
+(message (word_analysis
+ <lex_entry lex_id 33 shape usuLden family '*null*' gloss method ABL morphing [usuül]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.050
+Timer: generate_derivation: 0.125
+Timer: test_derivation: 0.041
+Timer: generate_and_test: 0.174
+Timer: lookup_pshape: 0.058
+Timer: morph_and_lookup_word: 0.254
+(message (word_analysis
+ <lex_entry lex_id 33 shape usuLLer family '*null*' gloss method PLURAL morphing [usuül]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.060
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.096
+Timer: test_derivation: 0.052
+Timer: generate_and_test: 0.158
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.204
+(message (word_analysis
+ <lex_entry lex_id 33 shape usuLLeri family '*null*' gloss method PLURAL POSS morphing [[usuül]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.040
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.068
+Timer: test_derivation: 0.026
+Timer: generate_and_test: 0.098
+Timer: morph_and_lookup_word: 0.113
+(message (word_analysis
+ <lex_entry lex_id 34 shape kaLp family '*null*' gloss heart morphing kailb pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features ( ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.048
+Timer: lookup_pshape: 0.052
+Timer: generate_derivation: 0.108
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.152
+Timer: morph_and_lookup_word: 0.165
+(message (word_analysis
+ <lex_entry lex_id 34 shape kaLbi family '*null*' gloss heart POSS morphing [kailb]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.045
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.074
+Timer: test_derivation: 0.034
+Timer: generate_and_test: 0.115
+Timer: morph_and_lookup_word: 0.129
+(message (word_analysis
+ <lex_entry lex_id 34 shape kaLbe family '*null*' gloss heart DAT morphing [kailb]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.066
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.096
+Timer: test_derivation: 0.038
+Timer: generate_and_test: 0.144
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.183
+(message (word_analysis
+ <lex_entry lex_id 34 shape kaLpten family '*null*' gloss heart ABL morphing [kailb]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.069
+Timer: lookup_pshape: 0.049
+Timer: generate_derivation: 0.128
+Timer: test_derivation: 0.071
+Timer: generate_and_test: 0.208
+Timer: lookup_pshape: 0.023
+Timer: morph_and_lookup_word: 0.252
+(message (word_analysis
+ <lex_entry lex_id 34 shape kaLpLer family '*null*' gloss heart PLURAL morphing [kailb]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.065
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.102
+Timer: test_derivation: 0.050
+Timer: generate_and_test: 0.163
+Timer: lookup_pshape: 0.029
+Timer: morph_and_lookup_word: 0.211
+(message (word_analysis
+ <lex_entry lex_id 34 shape kaLpLeri family '*null*' gloss heart PLURAL POSS morphing [[kailb]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.053
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.086
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.112
+Timer: morph_and_lookup_word: 0.125
+(message (word_analysis
+ <lex_entry lex_id 35 shape saat family '*null*' gloss watch morphing sait pos 'N' subcat ( ) mrules ( ) stratum '*surface*' mp_rule_features (no_v_short ) h_features ( ) f_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.045
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.103
+Timer: test_derivation: 0.031
+Timer: generate_and_test: 0.141
+Timer: morph_and_lookup_word: 0.153
+(message (word_analysis
+ <lex_entry lex_id 35 shape saati family '*null*' gloss watch POSS morphing [sait]N -sH pos 'N' subcat ( ) mrules (possessive ) stratum '*surface*' mp_rule_features (no_v_short ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.006
+Timer: unapply_prules: 0.043
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.081
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.115
+Timer: morph_and_lookup_word: 0.133
+(message (word_analysis
+ <lex_entry lex_id 35 shape saate family '*null*' gloss watch DAT morphing [sait]N -yA pos 'N' subcat ( ) mrules (dative ) stratum '*surface*' mp_rule_features (no_v_short ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.079
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.117
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.155
+Timer: lookup_pshape: 0.056
+Timer: morph_and_lookup_word: 0.232
+(message (word_analysis
+ <lex_entry lex_id 35 shape saatten family '*null*' gloss watch ABL morphing [sait]N -DAn pos 'N' subcat ( ) mrules (ablative ) stratum '*surface*' mp_rule_features (no_v_short ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.080
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.146
+Timer: test_derivation: 0.034
+Timer: generate_and_test: 0.189
+Timer: lookup_pshape: 0.027
+Timer: morph_and_lookup_word: 0.239
+(message (word_analysis
+ <lex_entry lex_id 35 shape saatLer family '*null*' gloss watch PLURAL morphing [sait]N -lAr pos 'N' subcat ( ) mrules (plural ) stratum '*surface*' mp_rule_features (no_v_short ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.004
+Timer: unapply_prules: 0.072
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.117
+Timer: test_derivation: 0.042
+Timer: generate_and_test: 0.168
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.213
+(message (word_analysis
+ <lex_entry lex_id 35 shape saatLeri family '*null*' gloss watch PLURAL POSS morphing [[sait]N -lAr]N -sH pos 'N' subcat ( ) mrules (plural possessive ) stratum '*surface*' mp_rule_features (no_v_short ) oblig_features ( ) pseudo false > ) )
+((
+ <hc6521 fname C:\DATA\HC\MORPHER\TESTS\TURKISH\TURKISH.IN > ) )

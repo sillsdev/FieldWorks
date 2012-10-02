@@ -1,0 +1,1354 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="about this manual">
+		<param name="Name" value="Welcome to the FieldWorks Test Manual">
+		<param name="Local" value="Welcome.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="abstract of this manual">
+		<param name="Name" value="Welcome to the FieldWorks Test Manual">
+		<param name="Local" value="Welcome.htm">
+		</OBJECT>
+</UL>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="action: definition">
+	<param name="Name" value="What is an action?">
+	<param name="Local" value="TCL\Action.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Analysis">
+	<param name="Name" value="Insert-Analysis Tests">
+	<param name="Local" value="DN\InsertAnalysis.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="application testing">
+	<param name="Name" value="Testing a FieldWorks application">
+	<param name="Local" value="Apps\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="application: download">
+	<param name="Name" value="How to download a FieldWorks application">
+	<param name="Local" value="Starting\dldApp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="attributes">
+	<param name="Name" value="What is markup?">
+	<param name="Local" value="XML\MarkUp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="batch file">
+	<param name="Name" value="What is a batch file?">
+	<param name="Local" value="XML\Batch.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Browse View Usage Test">
+	<param name="Name" value="Browse View Usage Tests">
+	<param name="Local" value="FW\BrowseView.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug description">
+	<param name="Name" value="Describing bugs">
+	<param name="Local" value="Using\Describe.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug links">
+	<param name="Name" value="How to link related bugs">
+	<param name="Local" value="Using\Related.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug pattern title">
+	<param name="Name" value="Writing a bug pattern">
+	<param name="Local" value="Writing\BugPattern.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug pattern: definition">
+	<param name="Name" value="What is a bug pattern?">
+	<param name="Local" value="Bugs\Pattern.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug pattern: list of">
+	<param name="Name" value="Bug pattern list">
+	<param name="Local" value="Bugs\PatList.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug report">
+	<param name="Name" value="What is a bug report?">
+	<param name="Local" value="Bugs\Report.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug submission">
+	<param name="Name" value="How to submit a bug">
+	<param name="Local" value="Using\Submit.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Bug: data">
+	<param name="Name" value="Bug Report Data">
+	<param name="Local" value="Using\Fields.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bug: definition">
+	<param name="Name" value="What is a bug?">
+	<param name="Local" value="Bugs\Bug.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Bugs">
+	<param name="Name" value="Software Bugs">
+	<param name="Local" value="Bugs\overview.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="bugs: reporting">
+	<param name="Name" value="Creating a bug report">
+	<param name="Local" value="Using\Report.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="category of a bug">
+	<param name="Name" value="Categorizing bugs">
+	<param name="Local" value="Using\Category.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="changing bug data">
+	<param name="Name" value="Bug Report Data">
+	<param name="Local" value="Using\Fields.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="creating XML test scripts">
+	<param name="Name" value="Test scripts in XML">
+	<param name="Local" value="Writing\XML.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Data Entry View Usage Test">
+	<param name="Name" value="Data Entry View Usage Tests">
+	<param name="Local" value="FW\DataEntryView.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Delete">
+	<param name="Name" value="Edit-Delete Tests">
+	<param name="Local" value="FW\EdtDel.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Delete Effects">
+	<param name="Name" value="Edit-Delete Effects Dialog Tests">
+	<param name="Local" value="FW\EdtDelEffDiag.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="description of bug">
+	<param name="Name" value="Describing bugs">
+	<param name="Local" value="Using\Describe.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="descriptive markup">
+	<param name="Name" value="What is markup?">
+	<param name="Local" value="XML\MarkUp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="document editor">
+	<param name="Name" value="What is a text editor?">
+	<param name="Local" value="XML\Editor.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Document View Usage Test">
+	<param name="Name" value="Document View Usage Tests">
+	<param name="Local" value="FW\DocumentView.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="download application">
+	<param name="Name" value="How to download a FieldWorks application">
+	<param name="Local" value="Starting\dldApp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="download this manual">
+	<param name="Name" value="How to download the FieldWorks Test Manual">
+	<param name="Local" value="Starting\dldTestMan.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="drag">
+	<param name="Name" value="Drag and Drop Tests">
+	<param name="Local" value="FW\DragDrop.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="drop">
+	<param name="Name" value="Drag and Drop Tests">
+	<param name="Local" value="FW\DragDrop.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Edit: Delete">
+	<param name="Name" value="Edit-Delete Tests">
+	<param name="Local" value="FW\EdtDel.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Edit: Delete Effects">
+	<param name="Name" value="Edit-Delete Effects Dialog Tests">
+	<param name="Local" value="FW\EdtDelEffDiag.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="editing bug data">
+	<param name="Name" value="Bug Report Data">
+	<param name="Local" value="Using\Fields.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="editor">
+	<param name="Name" value="What is a text editor?">
+	<param name="Local" value="XML\Editor.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="encoding">
+	<param name="Name" value="What is markup?">
+	<param name="Local" value="XML\MarkUp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Event">
+	<param name="Name" value="Insert-Event Tests">
+	<param name="Local" value="DN\InsertEvent.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="exit">
+	<param name="Name" value="File-Exit Tests">
+	<param name="Local" value="FW\FileExit.htm">
+	</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="expectations of this manual">
+		<param name="Name" value="Welcome to the FieldWorks Test Manual">
+		<param name="Local" value="Welcome.htm">
+		</OBJECT>
+</UL>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="finding test objects in specs">
+	<param name="Name" value="Breaking specifications into objects">
+	<param name="Local" value="Writing\BreakSpecs.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="FW application installation">
+	<param name="Name" value="How to install a FieldWorks application">
+	<param name="Local" value="Starting\InstallApp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="FW Test Manual: download">
+	<param name="Name" value="How to download the FieldWorks Test Manual">
+	<param name="Local" value="Starting\dldTestMan.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="generate manual">
+	<param name="Name" value="Use batch files to generate all HTML content">
+	<param name="Local" value="Building\Generate.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="infelicity">
+	<param name="Name" value="What is a bug?">
+	<param name="Local" value="Bugs\Bug.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="info for new testers">
+	<param name="Name" value="Getting started">
+	<param name="Local" value="Starting\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Insert: Analysis">
+	<param name="Name" value="Insert-Analysis Tests">
+	<param name="Local" value="DN\InsertAnalysis.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Insert: Event">
+	<param name="Name" value="Insert-Event Tests">
+	<param name="Local" value="DN\InsertEvent.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Insert: Subentry">
+	<param name="Name" value="Insert-Subentry Tests">
+	<param name="Local" value="DN\InsertSubentry.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="install a FW application">
+	<param name="Name" value="How to install a FieldWorks application">
+	<param name="Local" value="Starting\InstallApp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Intranet">
+	<param name="Name" value="What is the SIL Intranet?">
+	<param name="Local" value="Milestone\SilIntranet.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Language Software Test Department">
+	<param name="Name" value="What is the Language Software Test Department?">
+	<param name="Local" value="Milestone\LSTD.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="library">
+	<param name="Name" value="What is a test case library?">
+	<param name="Local" value="TCL\TestCaseLib.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="library">
+	<param name="Name" value="What is a test script?">
+	<param name="Local" value="TCL\TestScript.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="links between bugs">
+	<param name="Name" value="How to link related bugs">
+	<param name="Local" value="Using\Related.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="list of bugs">
+	<param name="Name" value="Bug pattern list">
+	<param name="Local" value="Bugs\PatList.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="making a test script">
+	<param name="Name" value="How to write a test script">
+	<param name="Local" value="Writing\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="making bug reports">
+	<param name="Name" value="Creating a bug report">
+	<param name="Local" value="Using\Report.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="making test cases">
+	<param name="Name" value="Identifying test cases">
+	<param name="Local" value="Writing\IdTestCases.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="making test objects from specs">
+	<param name="Name" value="Breaking specifications into objects">
+	<param name="Local" value="Writing\BreakSpecs.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="making this manual">
+	<param name="Name" value="How to build this manual">
+	<param name="Local" value="Building\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="making XML test scripts">
+	<param name="Name" value="Test scripts in XML">
+	<param name="Local" value="Writing\XML.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="manual files: check in">
+	<param name="Name" value="Check in manual files">
+	<param name="Local" value="Building\CheckIn.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="manual files: folders">
+	<param name="Name" value="Set up directory structures">
+	<param name="Local" value="Building\Dir.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="manual: building">
+	<param name="Name" value="How to build this manual">
+	<param name="Local" value="Building\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="manual: compile">
+	<param name="Name" value="Compile the TestHelp manual">
+	<param name="Local" value="Building\Compile.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: document control">
+	<param name="Name" value="What is the document control system?">
+	<param name="Local" value="Source\DocControl.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="manual: generate">
+	<param name="Name" value="Use batch files to generate all HTML content">
+	<param name="Local" value="Building\Generate.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: HelpFile directory">
+	<param name="Name" value="HelpFile directory structure">
+	<param name="Local" value="Source\HelpFile.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: project files">
+	<param name="Name" value="HTML Help project files">
+	<param name="Local" value="Source\ProjFiles.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: source overview">
+	<param name="Name" value="Manual source">
+	<param name="Local" value="Source\overview.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: structure">
+	<param name="Name" value="Test manual structure">
+	<param name="Local" value="Source\Structure.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: test case content">
+	<param name="Name" value="What is test case content?">
+	<param name="Local" value="Source\TcContent.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: user content">
+	<param name="Name" value="What is user content?">
+	<param name="Local" value="Source\UserContent.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Manual: XML source">
+	<param name="Name" value="Test case library XML">
+	<param name="Local" value="XML\overview.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="markup">
+	<param name="Name" value="What is markup?">
+	<param name="Local" value="XML\MarkUp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Milestones">
+	<param name="Name" value="Milestone testing">
+	<param name="Local" value="Milestone\overview.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="names of bugs">
+	<param name="Name" value="Naming bugs">
+	<param name="Local" value="Using\Name.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="offsite tester">
+	<param name="Name" value="What is an off-site tester?">
+	<param name="Local" value="Milestone\Offsite.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="priority of a bug">
+	<param name="Name" value="Choosing a priority level">
+	<param name="Local" value="Using\Priority.htm">
+	</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="purpose of this manual">
+		<param name="Name" value="Welcome to the FieldWorks Test Manual">
+		<param name="Local" value="Welcome.htm">
+		</OBJECT>
+</UL>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report">
+	<param name="Name" value="What is a bug report?">
+	<param name="Local" value="Bugs\Report.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report: category">
+	<param name="Name" value="Categorizing bugs">
+	<param name="Local" value="Using\Category.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report: description of bug">
+	<param name="Name" value="Describing bugs">
+	<param name="Local" value="Using\Describe.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report: naming">
+	<param name="Name" value="Naming bugs">
+	<param name="Local" value="Using\Name.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report: priority">
+	<param name="Name" value="Choosing a priority level">
+	<param name="Local" value="Using\Priority.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report: related bugs">
+	<param name="Name" value="How to link related bugs">
+	<param name="Local" value="Using\Related.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report: severity">
+	<param name="Name" value="Choosing a severity level">
+	<param name="Local" value="Using\Severity.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="report: submit">
+	<param name="Name" value="How to submit a bug">
+	<param name="Local" value="Using\Submit.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="reporting bugs">
+	<param name="Name" value="Creating a bug report">
+	<param name="Local" value="Using\Report.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="responsibility: testing">
+	<param name="Name" value="What is the Language Software Test Department?">
+	<param name="Local" value="Milestone\LSTD.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="result: definition">
+	<param name="Name" value="What is a Result?">
+	<param name="Local" value="TCL\Result.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="script library">
+	<param name="Name" value="What is a test script?">
+	<param name="Local" value="TCL\TestScript.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="script library">
+	<param name="Name" value="What is a test case library?">
+	<param name="Local" value="TCL\TestCaseLib.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="selecting test cases">
+	<param name="Name" value="Identifying test cases">
+	<param name="Local" value="Writing\IdTestCases.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="setting category of a bug">
+	<param name="Name" value="Categorizing bugs">
+	<param name="Local" value="Using\Category.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="setting names of bugs">
+	<param name="Name" value="Naming bugs">
+	<param name="Local" value="Using\Name.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="setting priority of a bug">
+	<param name="Name" value="Choosing a priority level">
+	<param name="Local" value="Using\Priority.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="setting severity of a bug">
+	<param name="Name" value="Choosing a severity level">
+	<param name="Local" value="Using\Severity.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="severity of a bug">
+	<param name="Name" value="Choosing a severity level">
+	<param name="Local" value="Using\Severity.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="SIL Intranet">
+	<param name="Name" value="What is the SIL Intranet?">
+	<param name="Local" value="Milestone\SilIntranet.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="SIL Intranet: connect">
+	<param name="Name" value="Connecting to the SIL Intranet">
+	<param name="Local" value="Starting\Connect.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="software failure">
+	<param name="Name" value="What is a bug?">
+	<param name="Local" value="Bugs\Bug.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="specifications: breaking up">
+	<param name="Name" value="Breaking specifications into objects">
+	<param name="Local" value="Writing\BreakSpecs.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="starting to test">
+	<param name="Name" value="Getting started">
+	<param name="Local" value="Starting\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Statusbar">
+	<param name="Name" value="View-Status bar Tests">
+	<param name="Local" value="FW\VwStatusbar.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Subentry">
+	<param name="Name" value="Insert-Subentry Tests">
+	<param name="Local" value="DN\InsertSubentry.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="submit a bug report">
+	<param name="Name" value="How to submit a bug">
+	<param name="Local" value="Using\Submit.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="tags">
+	<param name="Name" value="What is markup?">
+	<param name="Local" value="XML\MarkUp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File-Save and Save As Tests">
+	<param name="Local" value="WorldPad\FileSave.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Data-Modify Templates Tests">
+	<param name="Local" value="FW\DatModTemp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="View-Side Bar Tests">
+	<param name="Local" value="FW\VwSideBar.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tree Control Tests">
+	<param name="Local" value="StdCtrls\Tree.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Toolbar Tests">
+	<param name="Local" value="StdCtrls\ToolBar.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Splash Screen Tests">
+	<param name="Local" value="StdCtrls\Splash.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Taskbar Button Tests">
+	<param name="Local" value="StdCtrls\TaskbarBtn.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Date Picker Tests">
+	<param name="Local" value="StdCtrls\DatePicker.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Standard Print Dialog Tests">
+	<param name="Local" value="StdCtrls\PrintDlg.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Data-Organize Favorites Tests">
+	<param name="Local" value="FW\DatOrgFav.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Dialog Basic Tests">
+	<param name="Local" value="StdCtrls\Dialog.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="View-Filters Tests">
+	<param name="Local" value="FW\VwFilter.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert Toolbar Tests (TLE)">
+	<param name="Local" value="TLE\TbInsertTLE.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="View-Sort Methods Tests">
+	<param name="Local" value="FW\VwSortM.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Previous Match Tests">
+	<param name="Local" value="FW\EdtPrvMat.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Replace Tests">
+	<param name="Local" value="FW\EdtReplace.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Backup Schedule Dialog Tests">
+	<param name="Local" value="FW\BackupScheduleDlg.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Sort Usage Tests">
+	<param name="Local" value="FW\SortUsage.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Color Pallet Tests">
+	<param name="Local" value="StdCtrls\ColorPal.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Spin Control Tests">
+	<param name="Local" value="StdCtrls\SpinCtrl.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Window Basic Tests">
+	<param name="Local" value="StdCtrls\Window.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File-Open Tests">
+	<param name="Local" value="WorldPad\FileOpen.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File New and Close Tests">
+	<param name="Local" value="WorldPad\FileNewClose.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Scroll Bar Tests">
+	<param name="Local" value="StdCtrls\ScrollBar.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="IPA Graphite Font Tests">
+	<param name="Local" value="WorldPad\fntIPA.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Writing System Properties Tests">
+	<param name="Local" value="WorldPad\ToolsWS.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options Tests">
+	<param name="Local" value="WorldPad\ToolsOptions.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Topics List Properties Test">
+	<param name="Local" value="TLE\FilePropsTLE.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Open Topics List Tests">
+	<param name="Local" value="TLE\FileOpenTLE.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="List Box / Combo Box Tests">
+	<param name="Local" value="StdCtrls\ListBox.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Text Box Tests">
+	<param name="Local" value="StdCtrls\TextBox.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Menu Button Tests">
+	<param name="Local" value="StdCtrls\MenuBtn.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Data-History Tests">
+	<param name="Local" value="FW\DataHistory.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Overlays Dialog Tests">
+	<param name="Local" value="DN\OptOverlays.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Views-Document View Tests">
+	<param name="Local" value="DN\OptVwDoc.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Views-Data Entry Tests">
+	<param name="Local" value="DN\OptVwDE.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Views-Browse View Tests">
+	<param name="Local" value="DN\OptVwBrowse.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Data Notebook Properties Test">
+	<param name="Local" value="DN\FilePropsDN.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert-Comment Tests">
+	<param name="Local" value="FW\InsComment.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Backup Reminder Dialog Tests">
+	<param name="Local" value="FW\BackupReminderDlg.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Status Bar Tests">
+	<param name="Local" value="FW\BarStatus.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Toggle Tests">
+	<param name="Local" value="StdCtrls\Toggle.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Toolbar Button Tests">
+	<param name="Local" value="StdCtrls\TlbButton.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Button Tests">
+	<param name="Local" value="StdCtrls\Button.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert Item Tests">
+	<param name="Local" value="TLE\InsertItem.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Radio Button Tests">
+	<param name="Local" value="StdCtrls\RadioBtn.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="SideBar List Item Tests">
+	<param name="Local" value="TLE\SideBarList.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Synchronization Tests">
+	<param name="Local" value="FW\Sync.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Check Box Tests">
+	<param name="Local" value="StdCtrls\CheckBox.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Start up and No Entry Condition Tests">
+	<param name="Local" value="FW\StartUp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File-Backup/Restore Tests">
+	<param name="Local" value="FW\BackupRestore.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - New Language Project Wizard Tests">
+	<param name="Local" value="FW\FileNewProject.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Open Language Project Tests">
+	<param name="Local" value="FW\FileOpenProject.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File-Save Tests">
+	<param name="Local" value="FW\FileSave.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File-Page Setup Dialog Tests">
+	<param name="Local" value="FW\PgSetup.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File-Print Preview Tests">
+	<param name="Local" value="FW\FilePrtPrev.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Import > XML Format Tests">
+	<param name="Local" value="FW\FileImport.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Import > Standard Format Tests">
+	<param name="Local" value="FW\FileImportStandard.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Export Tests">
+	<param name="Local" value="FW\FileExport.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="General Properties Test">
+	<param name="Local" value="FW\FileProps.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - Project Properties Test">
+	<param name="Local" value="FW\FilePropsProj.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="File - New Language Definition Wizard Tests">
+	<param name="Local" value="FW\FileNewLang.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Writing System Properties Tests">
+	<param name="Local" value="FW\WritSysProp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Undo Tests">
+	<param name="Local" value="FW\EdtUndo.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Redo Tests">
+	<param name="Local" value="FW\EdtRedo.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Cut, Copy and Paste Tests">
+	<param name="Local" value="FW\Edtccp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Select All Tests">
+	<param name="Local" value="FW\EdtSelectAll.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Find Tests">
+	<param name="Local" value="FW\EdtFind.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Edit-Next Match Tests">
+	<param name="Local" value="FW\EdtNxtMat.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Filter Usage Tests">
+	<param name="Local" value="FW\FilterUsage.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Drag and Drop Tests">
+	<param name="Local" value="FW\DragDrop.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="View-Views Tests">
+	<param name="Local" value="FW\VwViews.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Backup Password Tests">
+	<param name="Local" value="FW\BackupPasswordDlg.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Backup/Restore Dialog Tests">
+	<param name="Local" value="FW\BackupRestoreDlg.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="View-Overlays Tests">
+	<param name="Local" value="FW\VwOverlay.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Message Box Tests">
+	<param name="Local" value="StdCtrls\MsgBox.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Data First, Previous, Next, Last Tests">
+	<param name="Local" value="FW\DataNav.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="List Chooser Dialog Tests">
+	<param name="Local" value="FW\ChcList.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Standard Cursor Tests">
+	<param name="Local" value="StdCtrls\Cursor.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Custom Fields Tab Tests">
+	<param name="Local" value="FW\OptCFields.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-General tests">
+	<param name="Local" value="FW\OptGen.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert-External Link Tests">
+	<param name="Local" value="FW\InsExtLink.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert-Table Tests">
+	<param name="Local" value="FW\InsTable.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert-Sound Tests">
+	<param name="Local" value="FW\InsSound.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert-Video Tests">
+	<param name="Local" value="FW\InsVideo.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert-Picture Tests">
+	<param name="Local" value="FW\InsPicture.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert-Object Tests">
+	<param name="Local" value="FW\InsObject.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Format-Font Dialog Tests">
+	<param name="Local" value="FW\FmtFont.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Format-Writing system Tests">
+	<param name="Local" value="FW\FmtWS.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Format-Paragraph Dialog Tests">
+	<param name="Local" value="FW\FmtPara.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Format-Bullets and Numbering Tests">
+	<param name="Local" value="FW\FmtBnN.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Format-Border Dialog Tests">
+	<param name="Local" value="FW\FmtBrdr.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Format-Style Dialog Tests">
+	<param name="Local" value="FW\FmtStyle.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Spelling Tests">
+	<param name="Local" value="FW\tlsspell.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Reports Tests">
+	<param name="Local" value="FW\TlsReport.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Lists Tests">
+	<param name="Local" value="FW\TlsList.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-FieldWorks Explorer Tests">
+	<param name="Local" value="FW\TlsExplore.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Show Selection Using Tests">
+	<param name="Local" value="FW\TlsShoSelUse.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Insert Toolbar Tests">
+	<param name="Local" value="FW\TbInsert.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools Toolbar Tests">
+	<param name="Local" value="FW\TbTools.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Filters Tab Tests">
+	<param name="Local" value="FW\OptFilters.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Overlays Tab Tests">
+	<param name="Local" value="FW\OptOverlays.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Options-Sort Methods Tab Tests">
+	<param name="Local" value="FW\OptSortMeth.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Overlays Usage Tests">
+	<param name="Local" value="FW\OverlaysUsage.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Tools-Customize Tests">
+	<param name="Local" value="FW\TlsCustomize.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Window Menu Tests">
+	<param name="Local" value="FW\Window.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Help Menu Tests">
+	<param name="Local" value="FW\FwHelp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Help-(Application) Tests">
+	<param name="Local" value="FW\HlpApp.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Help-How Do I Tests">
+	<param name="Local" value="FW\HlpHow.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Help-Tutorials Tests">
+	<param name="Local" value="FW\HlpTutor.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Help-About (AppName) Tests">
+	<param name="Local" value="FW\HlpAbout.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Installation Program Tests">
+	<param name="Local" value="FW\Install.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Side Bar Tests">
+	<param name="Local" value="FW\BarSide.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Standard Toolbar Tests">
+	<param name="Local" value="FW\TbStandard.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Format Toolbar Tests">
+	<param name="Local" value="FW\TbFormat.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Window Toolbar Tests">
+	<param name="Local" value="FW\TbWindow.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test">
+	<param name="Name" value="Data Toolbar Tests">
+	<param name="Local" value="FW\TbData.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test case library">
+	<param name="Name" value="What is a test script?">
+	<param name="Local" value="TCL\TestScript.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test case library">
+	<param name="Name" value="What is a test case library?">
+	<param name="Local" value="TCL\TestCaseLib.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="Test case library">
+	<param name="Name" value="Test case library">
+	<param name="Local" value="TCL\overview.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test case: definition">
+	<param name="Name" value="What is a test case?">
+	<param name="Local" value="TCL\TestCase.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test cases: identifying">
+	<param name="Name" value="Identifying test cases">
+	<param name="Local" value="Writing\IdTestCases.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test cases: specifying">
+	<param name="Name" value="Specifying a test case">
+	<param name="Local" value="Writing\SpecTestCases.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test cases: writing Actions">
+	<param name="Name" value="Writing an action">
+	<param name="Local" value="Writing\Action.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test cases: writing bug patterns">
+	<param name="Name" value="Writing a bug pattern">
+	<param name="Local" value="Writing\BugPattern.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test cases: writing Results">
+	<param name="Name" value="Writing a result">
+	<param name="Local" value="Writing\Result.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test cases: writing steps">
+	<param name="Name" value="Writing test case steps">
+	<param name="Local" value="Writing\Steps.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test department">
+	<param name="Name" value="What is the Language Software Test Department?">
+	<param name="Local" value="Milestone\LSTD.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test failure">
+	<param name="Name" value="What is a bug?">
+	<param name="Local" value="Bugs\Bug.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test objects from specs">
+	<param name="Name" value="Breaking specifications into objects">
+	<param name="Local" value="Writing\BreakSpecs.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test report">
+	<param name="Name" value="What is a bug report?">
+	<param name="Local" value="Bugs\Report.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test script: reporting">
+	<param name="Name" value="Creating a bug report">
+	<param name="Local" value="Using\Report.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test script: use">
+	<param name="Name" value="How to use a test script">
+	<param name="Local" value="Using\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test script: writing">
+	<param name="Name" value="How to write a test script">
+	<param name="Local" value="Writing\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test step: action">
+	<param name="Name" value="What is an action?">
+	<param name="Local" value="TCL\Action.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test step: bug pattern">
+	<param name="Name" value="What is a bug pattern?">
+	<param name="Local" value="Bugs\Pattern.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test step: definition">
+	<param name="Name" value="What is a test case step?">
+	<param name="Local" value="TCL\CaseStep.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="test step: result">
+	<param name="Name" value="What is a Result?">
+	<param name="Local" value="TCL\Result.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="testing milestones">
+	<param name="Name" value="Milestone testing">
+	<param name="Local" value="Milestone\overview.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="testing offsite">
+	<param name="Name" value="What is an off-site tester?">
+	<param name="Local" value="Milestone\Offsite.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="testing overview">
+	<param name="Name" value="Testing a FieldWorks application">
+	<param name="Local" value="Apps\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="text editor">
+	<param name="Name" value="What is a text editor?">
+	<param name="Local" value="XML\Editor.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="using test scripts">
+	<param name="Name" value="How to use a test script">
+	<param name="Local" value="Using\maintask.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="View: Statusbar">
+	<param name="Name" value="View-Status bar Tests">
+	<param name="Local" value="FW\VwStatusbar.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="View: Toolbars">
+	<param name="Name" value="View-Toolbars Tests">
+	<param name="Local" value="FW\VwToolbar.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="web address">
+	<param name="Name" value="Connecting to the SIL Intranet">
+	<param name="Local" value="Starting\Connect.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="writing test cases">
+	<param name="Name" value="Specifying a test case">
+	<param name="Local" value="Writing\SpecTestCases.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML">
+	<param name="Name" value="What is XML?">
+	<param name="Local" value="XML\XML.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: authoring tools">
+	<param name="Name" value="Using the XML authoring tools">
+	<param name="Local" value="Writing\tools.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: test case">
+	<param name="Name" value="Rendering a test case in XML">
+	<param name="Local" value="Writing\xtestcase.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: test script">
+	<param name="Name" value="Rendering a test script in XML">
+	<param name="Local" value="Writing\xtestscript.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: test script library">
+	<param name="Name" value="Setting up a test script library in XML">
+	<param name="Local" value="Writing\xlibrary.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: test scripts">
+	<param name="Name" value="Test scripts in XML">
+	<param name="Local" value="Writing\XML.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: test step">
+	<param name="Name" value="Rendering a test step in XML">
+	<param name="Local" value="Writing\xteststep.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: trouble-shooting">
+	<param name="Name" value="Trouble-shooting your XML test script">
+	<param name="Local" value="Writing\trouble.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XML: validation">
+	<param name="Name" value="Validating your XML test script - Did I get it right?">
+	<param name="Local" value="Writing\validlib.htm">
+	</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+	<param name="Name" value="XSL">
+	<param name="Name" value="What is XSL?">
+	<param name="Local" value="XML\XSL.htm">
+	</OBJECT>
+</UL>
+</BODY></HTML>

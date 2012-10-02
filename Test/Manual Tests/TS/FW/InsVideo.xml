@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="insvid" num="2.5.6" abbr="invid" file="FW\InsVideo.xml" ready="V2">
+<title tag="insvid">Insert-Video Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Inserts a video or some other animation file into the current text cursor position. This menu item brings up a dialog which offers choices between inserting a new video file or making use of an existing one. It also makes it possible to just reference a portion of the video as opposed to the entire video.</p>
+<p name="Specification">See the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Video" type="doc">Insert-Video menu item</link>
+	and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/Video/InsertVideo.html" type="doc">Insert Video dialog</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert-Video"</p>
+</context>
+<case id="invidAct" num="0" order="any">
+<title tag="invidAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Insert-Video. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/Video/InsertVideo.html" type="doc">Insert-Video specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video dialog fails to open</p>
+<p name="bug">Insert-Video dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The Insert... From Language Project Video Corpus is dotted.</li>
+<li>The the Language Project Video Corpus folders and video files are displayed.</li>
+</ul>
+</r>
+<p name="bug">Insert-VideoInsert-Video Insert... From Language Project Video Corpus is dotted failed</p>
+<p name="bug">Insert-VideoInsert-Video the Language Project Video Corpus folders and video files are displayed failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The video icon appears at the insertion point in the text.</li>
+<li>Report any failures as suggested using "Insert-Video" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video dialog remains after OK</p>
+<p name="bug">Insert-Video video icon appears at the insertion point in the text failed</p>
+</step>
+</case>
+<case id="invidcorpus" num="1" order="any">
+<title tag="invidcorpus">From Language Project Video Corpus Radio Button</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="1.1" link="Bug">
+	Use the <link uri="../StdCtrls/radiobtn.xml">Radio Button Tests</link> to test the From Language Project Video Corpus radio button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video From Language Project Video Corpus".</li>
+</ul>
+</r>
+</step>
+<step name="0.1" link="Bug">When dotted:
+  <r>From File is undotted.</r>
+<p name="bug">Insert-Video  From Language Project Video Corpus not in sync with From File</p>
+</step>
+</case>
+<case id="invidfile" num="2" order="any">
+<title tag="invidfile">From File Radio Button</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/radiobtn.xml">Radio Button Tests</link> to test the From File radio button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video From File".</li>
+</ul>
+</r>
+</step>
+<step name="0.1" link="Bug">When dotted:
+  <r>From Language Project Video Corpus is undotted.</r>
+<p name="bug">Insert-Video  From File not in sync with From Language Project Video Corpus</p>
+</step>
+</case>
+<case id="invidfname" num="3" order="any">
+<title tag="invidfname">Filename Text Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Filename text box.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Filename".</li>
+</ul>
+</r>
+</step>
+<step name="3.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is empty.</li>
+	<li>The value is a file name.</li>
+	<li>The value is editable text that persists.</li>
+   </ul>
+</r>
+<p name="bug">Insert-Video default vaule is not empty</p>
+	<p name="bug">Insert-VideoFilename value is not a file name</p>
+	<p name="bug">Insert-VideoFilename value is not editable text that persists</p>
+   </step>
+</case>
+<case id="invidbrow" num="4" order="any">
+<title tag="invidbrow">Browse Button</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="4.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Browse button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Browse".</li>
+</ul>
+</r>
+</step>
+<step name="4.2" link="Bug">
+	Click the Browse button to test its action.
+	<r>
+<ul>
+<li>Brings up the system file browser dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to brings up the system file browser dialog</p>
+</step>
+</case>
+<case id="invidvw" num="5" order="any">
+<title tag="invidvw">Video Window Pallet</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="5.1" link="Bug">
+	Exercise the Video Window pallet.<r>
+<ul>
+</ul>
+</r>
+</step>
+<step name="5.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is &lt;a frame from the video clip&gt;.</li>
+</ul>
+</r>
+<p name="bug">Insert-VideoVideo Window default vaule is not &lt;a frame from the video clip&gt;</p>
+</step>
+<step name="0.1" link="Bug">When a video is selected:
+  <r>The vidio window matches the selected (video clip)..</r>
+<p name="bug">Insert-Video  Video Window not in sync with video clip</p>
+</step>
+<step name="0.2" link="Bug">When the clip buttons are dragged by mouse:
+  <r>Only the section between them can play.</r>
+<p name="bug">Insert-Video  Video Window not in sync with play</p>
+</step>
+</case>
+<case id="invidplay" num="6" order="any">
+<title tag="invidplay">Play Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="6.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Play button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Play".</li>
+</ul>
+</r>
+</step>
+<step name="6.2" link="Bug">
+	Click the Play button to test its action.
+	<r>
+<ul>
+<li>Plays the video within the sliding clip buttons.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to plays the video within the sliding clip buttons</p>
+</step>
+</case>
+<case id="invidpause" num="7" order="any">
+<title tag="invidpause">Pause Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="7.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Pause button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Pause".</li>
+</ul>
+</r>
+</step>
+<step name="7.2" link="Bug">
+	Click the Pause button to test its action.
+	<r>
+<ul>
+<li>Pauses the video.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to pauses the video</p>
+</step>
+</case>
+<case id="invidstop" num="8" order="any">
+<title tag="invidstop">Stop Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="8.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Stop button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Stop".</li>
+</ul>
+</r>
+</step>
+<step name="8.2" link="Bug">
+	Click the Stop button to test its action.
+	<r>
+<ul>
+<li>Stops playback.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to stops playback</p>
+</step>
+</case>
+<case id="invidback" num="9" order="any">
+<title tag="invidback">Back Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="9.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Back button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Back".</li>
+</ul>
+</r>
+</step>
+<step name="9.2" link="Bug">
+	Click the Back button to test its action.
+	<r>
+<ul>
+<li>Moves the left clip button to the beginning of the video.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to moves the left clip button to the beginning of the video</p>
+</step>
+</case>
+<case id="invidrwd" num="10" order="any">
+<title tag="invidrwd">Rwd Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="10.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Rwd button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Rwd".</li>
+</ul>
+</r>
+</step>
+<step name="10.2" link="Bug">
+	Click the Rwd button to test its action.
+	<r>
+<ul>
+<li>Moves the left clip button left 10% of the video.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to moves the left clip button left 10% of the video</p>
+</step>
+</case>
+<case id="invidfwd" num="11" order="any">
+<title tag="invidfwd">Fwd Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="11.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Fwd button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Fwd".</li>
+</ul>
+</r>
+</step>
+<step name="11.2" link="Bug">
+	Click the Fwd button to test its action.
+	<r>
+<ul>
+<li>Moves the right clip button right 10% of the video.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to moves the right clip button right 10% of the video</p>
+</step>
+</case>
+<case id="invidend" num="12" order="any">
+<title tag="invidend">End Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="12.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the End button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video End".</li>
+</ul>
+</r>
+</step>
+<step name="12.2" link="Bug">
+	Click the End button to test its action.
+	<r>
+<ul>
+<li>Moves the right clip button to the end of the video.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to moves the right clip button to the end of the video</p>
+</step>
+</case>
+<case id="invidvol" num="13" order="any">
+<title tag="invidvol">Volume Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="13.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Volume button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video Volume".</li>
+</ul>
+</r>
+</step>
+<step name="13.2" link="Bug">
+	Click the Volume button to test its action.
+	<r>
+<ul>
+<li>Raises or lowers the volume during playback.</li>
+</ul>
+</r>
+<p name="bug">Insert-Video fails to raises or lowers the volume during playback</p>
+</step>
+</case>
+<case id="inviddesc" num="6" order="any">
+<title tag="inviddesc">Name Or Description Text Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="6.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the name or description text box.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Video name or description".</li>
+</ul>
+</r>
+</step>
+<step name="6.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is empty.</li>
+	<li>The value is a short name or description of the video.</li>
+	<li>The value is editable text that persists.</li>
+   </ul>
+</r>
+<p name="bug">Insert-Video default vaule is not empty</p>
+	<p name="bug">Insert-Videoname or description value is not a short name or description of the video</p>
+	<p name="bug">Insert-Videoname or description value is not editable text that persists</p>
+   </step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+
+</test>

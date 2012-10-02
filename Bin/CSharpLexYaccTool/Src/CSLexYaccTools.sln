@@ -1,0 +1,79 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{1EC55D3B-5F12-41EA-AB6F-75A8949F888A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lg", "lg\lg.csproj", "{FB18675E-FBFC-4E54-8110-3586BD8BB51B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A} = {1EC55D3B-5F12-41EA-AB6F-75A8949F888A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pg", "pg\pg.csproj", "{5947269E-1408-42AB-A801-4049A6C89BB2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A} = {1EC55D3B-5F12-41EA-AB6F-75A8949F888A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhonEnvValidatorTests", "..\..\..\Src\WW-PhonEnvValidator\PhonEnvValidatorTests\PhonEnvValidatorTests.csproj", "{764F5510-4AF0-47C4-9152-ECC96F6F01A0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhonEnvValidator", "..\..\..\Src\WW-PhonEnvValidator\PhonEnvValidator.csproj", "{F01029D7-3709-465A-B855-B3FC2BD70F4D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccProjectUniqueName0 = ..\\..\\..\\Src\\WW-PhonEnvValidator\\PhonEnvValidatorTests\\PhonEnvValidatorTests.csproj
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = ..\\..\\..\\Src
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		CanCheckoutShared = true
+		SccProjectFilePathRelativizedFromConnection0 = WW-PhonEnvValidator\\PhonEnvValidatorTests\\
+		SccProjectUniqueName1 = ..\\..\\..\\Src\\WW-PhonEnvValidator\\PhonEnvValidator.csproj
+		SccProjectName1 = Perforce\u0020Project
+		SccLocalPath1 = ..\\..\\..\\Src
+		SccProvider1 = MSSCCI:Perforce\u0020SCM
+		CanCheckoutShared = true
+		SccProjectFilePathRelativizedFromConnection1 = WW-PhonEnvValidator\\
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Bounds = Bounds
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A}.Bounds.ActiveCfg = Release|.NET
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A}.Bounds.Build.0 = Release|.NET
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A}.Debug.ActiveCfg = Debug|.NET
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A}.Debug.Build.0 = Debug|.NET
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A}.Release.ActiveCfg = Release|.NET
+		{1EC55D3B-5F12-41EA-AB6F-75A8949F888A}.Release.Build.0 = Release|.NET
+		{FB18675E-FBFC-4E54-8110-3586BD8BB51B}.Bounds.ActiveCfg = Release|.NET
+		{FB18675E-FBFC-4E54-8110-3586BD8BB51B}.Bounds.Build.0 = Release|.NET
+		{FB18675E-FBFC-4E54-8110-3586BD8BB51B}.Debug.ActiveCfg = Debug|.NET
+		{FB18675E-FBFC-4E54-8110-3586BD8BB51B}.Debug.Build.0 = Debug|.NET
+		{FB18675E-FBFC-4E54-8110-3586BD8BB51B}.Release.ActiveCfg = Release|.NET
+		{FB18675E-FBFC-4E54-8110-3586BD8BB51B}.Release.Build.0 = Release|.NET
+		{5947269E-1408-42AB-A801-4049A6C89BB2}.Bounds.ActiveCfg = Release|.NET
+		{5947269E-1408-42AB-A801-4049A6C89BB2}.Bounds.Build.0 = Release|.NET
+		{5947269E-1408-42AB-A801-4049A6C89BB2}.Debug.ActiveCfg = Debug|.NET
+		{5947269E-1408-42AB-A801-4049A6C89BB2}.Debug.Build.0 = Debug|.NET
+		{5947269E-1408-42AB-A801-4049A6C89BB2}.Release.ActiveCfg = Release|.NET
+		{5947269E-1408-42AB-A801-4049A6C89BB2}.Release.Build.0 = Release|.NET
+		{764F5510-4AF0-47C4-9152-ECC96F6F01A0}.Bounds.ActiveCfg = Bounds|.NET
+		{764F5510-4AF0-47C4-9152-ECC96F6F01A0}.Bounds.Build.0 = Bounds|.NET
+		{764F5510-4AF0-47C4-9152-ECC96F6F01A0}.Debug.ActiveCfg = Debug|.NET
+		{764F5510-4AF0-47C4-9152-ECC96F6F01A0}.Release.ActiveCfg = Release|.NET
+		{764F5510-4AF0-47C4-9152-ECC96F6F01A0}.Release.Build.0 = Release|.NET
+		{F01029D7-3709-465A-B855-B3FC2BD70F4D}.Bounds.ActiveCfg = Bounds|.NET
+		{F01029D7-3709-465A-B855-B3FC2BD70F4D}.Bounds.Build.0 = Bounds|.NET
+		{F01029D7-3709-465A-B855-B3FC2BD70F4D}.Debug.ActiveCfg = Debug|.NET
+		{F01029D7-3709-465A-B855-B3FC2BD70F4D}.Release.ActiveCfg = Release|.NET
+		{F01029D7-3709-465A-B855-B3FC2BD70F4D}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

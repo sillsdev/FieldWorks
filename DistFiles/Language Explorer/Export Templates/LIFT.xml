@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template type="LIFT">
+	<FxtDocumentDescription dataLabel="Full Lexicon" formatLabel="LIFT 0.13 XML" defaultExtension="lift" filter="LIFT files (*.lift)|*.lift|XML files (*.xml)|*.xml|All files (*.*)|*.*">
+Export the lexicon in the Lexicon Interchange FormaT (LIFT) version 0.13.  See http://code.google.com/p/lift-standard for more information about LIFT. The export dumps all entries.
+
+***Be sure you use this export if you are using LiftBridge to collaborate with another FLEx or WeSay user.</FxtDocumentDescription>
+</template>

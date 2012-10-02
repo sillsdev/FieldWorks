@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Visits the lexicon tool views. -->
+
+<accil on-fail="assert">
+   <goal>Visits each Lexicon view</goal>
+
+  <bug id="LT-9822" desc="Click Bulk Edit Reversal Entries and crash!"/>
+  <bug id="LT-6044" desc="Click Bulk Edit Entries, crash!" />
+
+<var id="projectName" set="Kalaba"/>
+<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+
+   <model select="menubar/view/lexicon/*">
+	 <!--do-once until="9999999"-->
+	   <click until="9999999" path="$guiPath"/>
+	 <!--/do-once-->
+	 <on-dialog wait="1000" until="2000" title="Information" name="MessageBoxExForm" on-fail="skip">
+		 <click path="$ok"/>
+	 </on-dialog>
+	 <!-- not all views have tabs, so skip if there arn't any -->
+	 <model select="/fwuiml/$nodeName;[@role='view']/*/tab" on-fail="skip">
+	   <click path="$guiPath"/>
+	 </model>
+   </model>
+
+</on-application>
+</accil>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="SAG CC table converter between Annapurna and Unicode">
+			<autoInstall mappingName="Annapurna&lt;&gt;UNICODE" converterSpec="MapsTables\ann2unicode.cct" IsConverterSpecAFile="true" implementType="SIL.cc" conversionType="LegacyToUnicode" leftEncoding="SIL-ANNAPURNA-05" rightEncoding="UNICODE" processType="UnicodeEncodingConversion" sampleData="/éLƒç¢/ means 'book' in Hindi"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\ann2unicode.cct"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between Annapurna font and Unicode">
+			<scriptInstall filename="MapsTables\Annapurna.tec.vbs" mappingName="Annapurna&lt;&gt;UNICODE" converterSpec="MapsTables\Annapurna.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="/éLƒç¢/ means 'book' in Hindi"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\Annapurna.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\Annapurna.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between SAG IPA font and Unicode">
+			<scriptInstall filename="MapsTables\SAGIPA2Uni.tec.vbs" mappingName="SAG IPA&lt;&gt;UNICODE" converterSpec="MapsTables\SAGIPA2Uni.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\SAGIPA2Uni.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\SAGIPA2Uni.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between SAG IPA Super font and Unicode">
+			<scriptInstall filename="MapsTables\SAGIPS2Uni.tec.vbs" mappingName="SAG IPA Super&lt;&gt;UNICODE" converterSpec="MapsTables\SAGIPS2Uni.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\SAGIPS2Uni.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\SAGIPS2Uni.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between WinDTS Devanagari font and Unicode">
+			<autoInstall mappingName="WinDTS Devanagari&lt;&gt;Unicode" converterSpec="MapsTables\WinDTS.tec" IsConverterSpecAFile="true" implementType="SIL.tec" conversionType="LegacyToFromUnicode" sampleData="/„’¶‚Ì/ means 'book' in Hindi"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\WinDTS.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\WinDTS.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between TransRoman font and Unicode">
+			<scriptInstall filename="MapsTables\TRom2Uni.tec.vbs" mappingName="TransRoman&lt;&gt;UNICODE" converterSpec="MapsTables\TRom2Uni.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\TRom2Uni.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\TRom2Uni.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between AkrutiOriSarala-99 font and Unicode">
+			<scriptInstall filename="MapsTables\Ori2Uni_AkrutiOriSarala99.tec.vbs" mappingName="AkrutiOriSarala99&lt;&gt;UNICODE" converterSpec="MapsTables\Ori2Uni_AkrutiOriSarala99.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="IWÿò@û"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\Ori2Uni_AkrutiOriSarala99.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\Ori2Uni_AkrutiOriSarala99.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

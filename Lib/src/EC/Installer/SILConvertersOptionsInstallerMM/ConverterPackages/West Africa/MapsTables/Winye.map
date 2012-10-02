@@ -1,0 +1,83 @@
+; TECkit mapping table to convert the Winye font to and from Unicode.
+
+EncodingName			"SIL-Burkina_Winye_Unknown_Font-2005"
+DescriptiveName		"SIL-Burkina Winye Unknown Font to Unicode mapping"
+Version			"2005"
+Contact			"mailto:Doug_Higby@sil.org"
+RegistrationAuthority	"(SIL)"
+RegistrationName		"Burkina Faso Winye-2003"
+
+pass ( Byte )  ; c Switch combining diacritics BEFORE <> AFTER the character
+
+Class [Overstrike] = ( 0xec 0xf8 0xfb )
+Class [nonOverstrike] = (0x20..0xeb 0xed..0xf7 0xf9..0xfa 0xfc..0xff )
+
+[Overstrike]=x [Overstrike]=y [nonOverstrike]=z	<>	@z  @x  @y
+[Overstrike]=x [nonOverstrike]=y	<>	@y @x
+
+pass ( Byte_Unicode )
+
+ByteDefault		'?'
+UniDefault		replacement_character
+
+ByteClass [ascii] = ( 0x00 .. 0x7f )
+UniClass [ascii] = ( 0x0000 .. 0x007f )
+ByteClass [latin1] = ( 0xa4 .. 0xa7 0xa9 0xb0 .. 0xbd 0xbf .. 0xc6 0xc8 .. 0xce 0xd4 0xd6 0xd9 ..0xe1 0xe3 .. 0xeb 0xed .. 0xf7 0xf9 .. 0xfa 0xfc .. 0xff )
+UniClass [latin1] = ( 0x00a4 .. 0x00a7 0x00a9 0x00b0 .. 0x00bd 0x00bf .. 0x00c6 0x00c8 .. 0x00ce 0x00d4 0x00d6 0x00d9 ..0x00e1 0x00e3 .. 0x00eb 0x00ed .. 0x00f7 0x00f9 .. 0x00fa 0x00fc .. 0x00ff )
+
+[ascii]	<>	[ascii]
+[latin1]	<>	[latin1]
+
+0x80	<>	euro_sign
+;0x81	undefined
+0x82	<>	single_low_9_quotation_mark
+0x83	<>	latin_small_letter_f_with_hook
+0x84	<>	double_low_9_quotation_mark
+0x85	<>	horizontal_ellipsis
+0x86	<>	dagger
+0x87	<>	double_dagger
+0x88	<>	modifier_letter_circumflex_accent
+0x89	<>	per_mille_sign
+0x8a	<>	latin_capital_letter_s_with_caron
+0x8b	<>	single_left_pointing_angle_quotation_mark
+0x8c	<>	latin_capital_ligature_oe
+;0x8d	undefined
+0x8e	<>	latin_capital_letter_z_with_caron
+;0x8f	undefined
+;0x90	undefined
+0x91	<>	LATIN_SMALL_LETTER_OPEN_E
+0x92	<>	LATIN_CAPITAL_LETTER_OPEN_E
+0x93	<>	left_double_quotation_mark
+0x94	<>	right_double_quotation_mark
+0x95	<>	LATIN_SMALL_LETTER_IOTA
+0x96	<>	en_dash
+0x97	<>	em_dash
+0x98	<>	LATIN_CAPITAL_LETTER_IOTA
+0x99	<>	trade_mark_sign
+0x9a	<>	latin_small_letter_s_with_caron
+0x9b	<>	single_right_pointing_angle_quotation_mark
+0x9c	<>	latin_small_ligature_oe
+0x9d	<>	LATIN_SMALL_LETTER_OPEN_O
+0x9e	<>	LATIN_CAPITAL_LETTER_OPEN_O
+0x9f	<>	LATIN_SMALL_LETTER_V_WITH_HOOK
+0xa0	<>	LATIN_CAPITAL_LETTER_V_WITH_HOOK
+0xa1	<>	LATIN_SMALL_LETTER_A COMBINING_TILDE
+0xa2	<>	LATIN_CAPITAL_LETTER_A COMBINING_TILDE
+0xa3	<>	POUND_SIGN ; Need to determine what character goes here.
+0xa8	<>	LATIN_SMALL_LETTER_I COMBINING_TILDE
+0xae	<>	LEFT_POINTING_DOUBLE_ANGLE_QUOTATION_MARK
+0xaf	<>	RIGHT_POINTING_DOUBLE_ANGLE_QUOTATION_MARK
+0xbe	<>	LATIN_SMALL_LETTER_E COMBINING_TILDE
+0xc7	<>	LATIN_SMALL_LETTER_OPEN_E COMBINING_TILDE
+0xcf	<>	LATIN_SMALL_LETTER_B_WITH_HOOK
+0xd0	<>	LATIN_CAPITAL_LETTER_OPEN_E COMBINING_TILDE
+0xd1	<>	LATIN_SMALL_LETTER_IOTA COMBINING_TILDE
+0xd2	<>	LATIN_CAPITAL_LETTER_IOTA COMBINING_TILDE
+0xd3	<>	LATIN_SMALL_LETTER_OPEN_O COMBINING_TILDE
+0xd5	<>	LATIN_SMALL_LETTER_V_WITH_HOOK COMBINING_TILDE
+0xd7	<>	MULTIPLICATION_SIGN ; ERRONEOUS CHARACTER
+0xd8	<>	LATIN_CAPITAL_LETTER_B_WITH_HOOK
+0xe2	<>	LATIN_SMALL_LETTER_A_WITH_CIRCUMFLEX ;ERRONEOUS CHARACTER
+0xec	<>	LATIN_SMALL_LETTER_I_WITH_GRAVE ; ERRONEOUS CHARACTER
+0xf8	<>	COMBINING_TILDE
+0xfb	<>	COMBINING_ACUTE_ACCENT

@@ -1,0 +1,33 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\BugPattern.xml">
+ <title tag="wrtbp">Writing a bug pattern</title>
+ <index>
+  <li>test cases: writing bug patterns</li>
+  <li>bug pattern title</li>
+ </index>
+ <introduction>
+  <p>You have already written most of what you need for this step's bug patterns.</p>
+  <ul>
+   <li>A step has as many bug patterns as it has potential failure points.</li>
+   <li>Each result item indicates a possible failure point.</li>
+   <li>Each detectible change indicates a bug when the change is not detected.</li>
+   <li>Each potentially detectible change indicates a bug when the change is detected.</li>
+   <li>Bug patterns are generated based on the other information in the step and a title pattern you must specify.</li>
+  </ul>
+ </introduction>
+ <prerequisites>
+  <p>Before attempting to write a bug pattern, you should be in the process of</p>
+  <ul>
+   <li>writing test steps for a specific test case.</li>
+   <li>reviewing <link uri="..\TCL\CaseStep.xml" type="module">test step structure</link>.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps for writing a bug pattern title:</p>
+  <step>Begin with the name of the interface object the test script was exercizing. If in a standard control test, write "&lt;Name of containing interface object>".</step>
+  <step>If the failure was found in another interface object (even one of its own), put a colon (:) followed by the qualified name of the interface object where the failure was found.</step>
+  <step>A short description using the previous name as a subject follows.</step>
+  <step>When error messages result, use the message number or a short indication rather than the message text, unless it is only two or three words.
+   <p name="Example">Format Font: Data Entry-Sources blink when bold and dashed underline are applied</p></step>
+ </steps>
+</task>

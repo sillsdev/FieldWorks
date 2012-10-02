@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks/>
+	<tools>
+		<tool id="LexBrowse" label="Browse" value="lexiconBrowse" icon="BrowseView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="EntriesList">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+						<parameters area="lexicon" id="EntriesList" clerk="entries" field="Entries" filterBar="true" altTitleId="LexEntry-Plural">
+							<columns generate="childPartsForParentLayouts">
+								<include path="../browseDialogColumns.xml" query="doc/browseColumns/column">
+									<overrides>
+										<column layout="CitationFormForEntry" visibility="menu"/>
+										<column layout="GrammaticalInfoAbbrForSense" visibility="menu"/>
+										<column layout="DomainsOfSensesForSense" visibility="menu"/>
+									</overrides>
+								</include>
+								<!-- include common custom field definitions -->
+								<include path="../browseDialogColumns.xml" query="doc/browseColumns/generate"/>
+							</columns>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

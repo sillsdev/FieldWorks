@@ -1,0 +1,57 @@
+;Windows-Symbolfont.map
+;Copyright (c) 2004 SIL International.
+
+; Windows SymbolFont to Latin1 transliterator
+
+LHSName	'WINDOWS-SymbolEncodedFont'
+RHSName	'WINDOWS-1252
+DescriptiveName	'Windows SymbolEncodedFont to cp1252 transliterator'
+Version	'1.0'
+Contact 'Bob Hallissy at SIL'
+
+
+RHSFlags		(ExpectsNFC)
+
+pass(Unicode)
+
+
+UniClass [asciiPUA]  = ( U+F000 .. U+F07F )
+UniClass [ascii]     = ( U+0000 .. U+007F )
+UniClass [latin1PUA] = ( U+F0A0 .. U+F0FF )
+UniClass [latin1]    = ( U+00A0 .. U+00FF )
+
+[asciiPUA]  <> [ascii]
+[latin1PUA] <> [latin1]
+
+U+F080	<>	euro_sign
+U+F081	<>	U+0081		;0x81	undefined
+U+F082	<>	single_low_9_quotation_mark
+U+F083	<>	latin_small_letter_f_with_hook
+U+F084	<>	double_low_9_quotation_mark
+U+F085	<>	horizontal_ellipsis
+U+F086	<>	dagger
+U+F087	<>	double_dagger
+U+F088	<>	modifier_letter_circumflex_accent
+U+F089	<>	per_mille_sign
+U+F08a	<>	latin_capital_letter_s_with_caron
+U+F08b	<>	single_left_pointing_angle_quotation_mark
+U+F08c	<>	latin_capital_ligature_oe
+U+F08d	<>	U+008d		;0x8d	undefined
+U+F08e	<>	latin_capital_letter_z_with_caron
+U+F08f	<>	U+008f		;0x8f	undefined
+U+F090	<>	U+0090		;0x90	undefined
+U+F091	<>	left_single_quotation_mark
+U+F092	<>	right_single_quotation_mark
+U+F093	<>	left_double_quotation_mark
+U+F094	<>	right_double_quotation_mark
+U+F095	<>	bullet
+U+F096	<>	en_dash
+U+F097	<>	em_dash
+U+F098	<>	small_tilde
+U+F099	<>	trade_mark_sign
+U+F09a	<>	latin_small_letter_s_with_caron
+U+F09b	<>	single_right_pointing_angle_quotation_mark
+U+F09c	<>	latin_small_ligature_oe
+U+F09d	<>	U+009d		;0x9d	undefined
+U+F09e	<>	latin_small_letter_z_with_caron
+U+F09f	<>	latin_capital_letter_y_with_diaeresis

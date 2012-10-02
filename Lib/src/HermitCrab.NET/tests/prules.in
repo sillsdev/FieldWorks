@@ -1,0 +1,17 @@
+;Test morpher rules.
+; Most of the tests are contained in separate files, which are loaded individually.
+(morpher_input_from_file message startup.in)
+(morpher_input_from_file message prule1.in)
+(morpher_input_from_file message prule2.in)
+(morpher_input_from_file message prule3.in)
+(morpher_input_from_file message prule4.in)
+(morpher_input_from_file message prule5.in)
+(morpher_input_from_file message prule6.in)
+(morpher_input_from_file message prule7.in)
+(morpher_input_from_file message vrule1.in)
+(morpher_input_from_file message epenth.in)
+(morpher_input_from_file message delet.in)
+(morpher_input_from_file message disjunc.in)
+(morpher_input_from_file message multapp.in)
+;Done; morpher will now terminate
+(terminate_morpher x)

@@ -1,0 +1,37 @@
+﻿<LayoutInventory>
+  <layout class="MoMorphSynAnalysis" type="jtview" name="publishStem" version="9">
+	<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech" wsType="analysis" sep=" " />
+	<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStem" css="slots" wsType="analysis" />
+	<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis" wsType="analysis" sep=" " />
+	<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" " />
+	<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" " />
+  </layout>
+  <layout class="MoMorphSynAnalysis" type="jtview" name="publishStemMinor" version="9">
+	<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor" wsType="analysis" sep=" " />
+	<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStemMinor" css="slots-minor" wsType="analysis" />
+	<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis" wsType="analysis" sep=" " />
+	<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" " />
+	<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" " />
+  </layout>
+  <layout class="MoMorphSynAnalysis" type="jtview" name="publishRoot" version="9">
+	<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech" wsType="analysis" sep=" " />
+	<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRoot" css="slots" wsType="analysis" />
+	<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis" wsType="analysis" sep=" " />
+	<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" " />
+	<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" " />
+  </layout>
+  <layout class="MoMorphSynAnalysis" type="jtview" name="publishRootSub" version="9">
+	<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-sub" wsType="analysis" sep=" " />
+	<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRootSub" css="slots-sub" wsType="analysis" />
+	<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis" wsType="analysis" sep=" " />
+	<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" " />
+	<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" " />
+  </layout>
+  <layout class="MoMorphSynAnalysis" type="jtview" name="publishRootMinor" version="9">
+	<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor" wsType="analysis" sep=" " />
+	<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishRootMinor" css="slots-minor" wsType="analysis" />
+	<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis" wsType="analysis" sep=" " />
+	<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" " />
+	<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" " />
+  </layout>
+</LayoutInventory>

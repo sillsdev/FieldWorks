@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbtools" num="3.7" abbr="tbtl" file="FW\TbTools.xml">
+<title tag="tbtools">Tools Toolbar Tests</title>
+<index>
+<li>test</li>
+</index>
+
+<introduction>
+<p>Provides quick access to the various tools offered by the application
+The individual application will customize this toolbar to provide buttons
+for the various tools and reports it offers.</p>
+<p>See generic spec at
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#Tools Toolbar" type="doc">Tools Toolbar</link> and DN spec at
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Toolbars/Toolbars.html" type="doc">DN Toolbars</link>
+<p name="todo">
+<ul>
+<li>dragging toolbar around</li>
+<li>toolbar settings persist (location and on/off-ness)</li>
+<li>checkbox on menu stays in sync</li>
+<li>keyboard access to toolbar?</li>
+<li>any state indicators on toolbars?</li>
+<li>some toolbuttons disabled - when?</li>
+</ul>
+</p>
+</p>
+
+
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools Toolbar".</p>
+</context>
+
+<case id="tbtlAct" num="0" order="any">
+<title tag="tbtlAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">When the Tools toolbar is not present, inspect the View -
+Toolbars - Tools menu item.
+<r>The menu item is not checked.</r>
+<p name="bug">Tools toolbar menu item checked when toolbar absent</p>
+</step>
+
+<step name="0.1" link="Bug">When the Tools toolbar is not present, select the View -
+Toolbars - Tools menu item.
+<r>Tools toolbar appears. Main window area shrinks if necessary
+to accommodate new toolbar.</r>
+<p name="bug">Tools Toolbar doesn't appear</p>
+</step>
+
+</case>
+
+<case id="tbtlDiac" num="1" order="any">
+<title tag="tbtlDiac">Exercise dialog controls</title>
+<context>
+<p>When the Tools Toolbar is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Tools Toolbar. Use
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#Tools Toolbar" type="doc">Tools Toolbar specification</link>
+to visually inspect the dialog layout.
+	<r>
+<ul>
+<li>See the application-specific toolbar test script to check application-specific toolbuttons.  Application tools are to the left, followed by application reports.</li>
+<li>Up to approximate size and position the application should match the spec - especially any text and icons.</li>
+</ul>
+</r>
+<p name="bug">Tools Toolbar layout incorrect</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Toolbar.xml">Basic Toolbar Tests</link> to test basic functionality.
+   <r>Report any failures as suggested using "Tools Toolbar" as the name of the dialog.</r>
+</step>
+<step name="1.3" link="Bug">Use <link uri="TlsList.xml">Tools-Lists Tests</link>, <link uri="TlsExplore.xml">Tools-FieldWorks Explorer Tests</link>, <link uri="TlsShoSelUse.xml">Tools-Show Selection using Tests</link>, <link uri="TlsOptions.xml">Tools-Options Tests</link> and <link uri="TlsCustomize.xml">Tools-Customize Tests</link> to test icon functionality.
+   <r>
+<ul>
+<li>Each icon launches its associated dialog.</li>
+<li>Report failures for Each dialog as "Insert Toolbar &lt;icon/dialog&gt;".</li>
+</ul>
+</r>
+<p name="bug">Tools Toolbar ..</p>
+<p name="Note">Only Tools-Topics List and Tools-Options are currently implemented (Jun-14-2002)</p>
+</step>
+
+</case>
+
+<case id="tbtl??" num="2" order="any">
+<title tag="tbtl??">Other controls</title>
+<context>
+<p>When the Tools Toolbar is displayed: (Currently no other controls implemented)</p>
+</context>
+
+<step name="2.1">
+<link uri="../StdCtrls/??.xml" type="module">?? control</link> and use the shortcut &lt;Alt&gt;&lt;?&gt; to test the ?? control.
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Report any failures as suggested using "Tools Toolbar ??" as the name of the control.</li>
+</ul>
+</r>
+</step>
+</case>
+
+<case id="tbtlSe" num="3" order="any">
+<title tag="tbtlSe">Side effects</title>
+<context>
+<p>When the Tools Toolbar is displayed:</p>
+</context>
+
+<step name="3.1" link="Bug">Click the Tools-Topics List icon on the toolbar
+ <r>The Topics List Dialog appears.</r>
+<p name="bug">Tools Toolbar Cannot launch Topics List Dialog</p>
+</step>
+<step name="3.2" link="Bug">Click the Tools-Options icon on the toolbar
+ <r>The Options dialog appears</r>
+<p name="bug">Tools Toolbar Cannot Launch Options Dialog</p>
+</step>
+
+</case>
+
+
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-31-01" author="LarsH">worked template into a test script</update>
+<update date="Oct-01-01" author="MikeL">Put guts in test</update>
+<update date="Jun-14-02" author="JoelC">Updated</update>
+
+</test>

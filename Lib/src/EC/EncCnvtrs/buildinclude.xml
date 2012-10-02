@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<include>
+  <post-build>
+	<copy todir="${fwroot}\output\common" failonerror="false" verbose="true">
+	  <fileset>
+		<include name="${dir.buildOutput}\EncCnvtrs.tlb"/>
+	  </fileset>
+	</copy>
+  </post-build>
+  <pre-clean>
+	<delete file="${fwroot}\output\common\EncCnvtrs.tlb" verbose="true" failonerror="false"/>
+  </pre-clean>
+</include>

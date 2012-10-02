@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- This script requires the Doulos SIL IPA font and Keyman keyboard IME --><!-- Generate grammar sketch -->
+<!-- Check that turning on the parser predicts analysies -->
+<!-- Add another text  -->
+<!-- Check that "big" has a predicted analysis -->
+<!-- Interlinearize the new text -->
+<!-- Check that tu1 and tu2 were added to the lexicon -->
+<!-- Check that the parser predicts new analysies -->
+
+<accil on-fail="assert">
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+  <var id="projectName" set="&quot;English IPA&quot;"/>
+
+  <on-application run="ok" args="-db  $projectName"  on-fail="assert">
+
+  <!--  6.	Re-examine grammar sketch: Go to Grammar / Grammar Sketch  -->
+	<click select="menubar/view/grammar/grammar-sketch"/>
+  <!--  a.	Click on the Generate button  -->
+	<click select="grammar-sketch/generate"/>
+  <!--  b.	Navigate to Section 5 Inflection (click on the link#x0329;  -->
+	<insert wait="2000">{PGDN 5}</insert>
+  <!--  c.	Notice that now the templates we’ve entered are listed.  -->
+
+  <!--  7.	Examine Word analyses: Go to Words / Analyses  -->
+<click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+
+  <!--  a.	Notice the Predicted Analyses column is all zeroes.   -->
+	<click wait="2000" select="wordforms/col/changer"/>
+	<insert wait="300">w</insert><!-- turn off Word Gloss column -->
+	<click select="wordforms/col/changer"/>
+	<insert wait="300">p</insert><!-- turn on Predicted Analyses column -->
+
+	<var id="row" set="1"/>
+	<var id="col" set="1"/>
+	<click wait="2000" select="wordforms/record/col"/>
+	<var id="col" set="2"/>
+	<glimpse wait="1000" id="-1" select="wordforms/record/col" prop="value" expect="1"/>
+	<var id="col" set="3"/>
+	<glimpse wait="1000" id="0" select="wordforms/record/col" prop="value" expect="0"/>
+
+  <!--  b.	Parser / Start Parser  -->
+<click select="//menubar/parser/start-parser"/>
+
+  <!--  c.	(It's supposed to update the numbers in the Predicted Analyses column and also what shows in the right pane, but it may not: click on refresh).  -->
+
+<click wait="30000" select="//toolbar/refresh"/><!-- give it a chance to parse -->
+
+  <!--  d.	Result should look like this:    -->
+	<var id="col" set="1"/>
+<click wait="5000" select="wordforms/record/col"/>
+	<var id="col" set="2"/>
+<glimpse wait="500" id="1" select="wordforms/record/col" prop="value" expect="1"/>
+	<var id="col" set="3"/>
+<glimpse wait="500" id="2" select="wordforms/record/col" prop="value" expect="1"/>
+
+</model>
+
+<!-- refresh turns the parser off, so start it again to help in interlinearization -->
+<click select="menubar/parser/start-parser"/>
+
+  <!--  8.	Add another text and interlinearize: go to Texts / Edit  -->
+<click select="menubar/view/texts-words/interlinear-texts"/>
+<click select="toolbar/new-text"/>
+
+<model select="interlinear-texts[@role='view']/text">
+
+  <!--  c.	Title: The dogs  -->
+   <var id="row" set="1"/>
+   <click select="Title/data"/>
+	<insert wait="500">go da=gz go</insert>
+   <var id="row" set="2"/>
+   <click select="Title/data"/>
+	<insert wait="300">Go Dogs Go</insert>
+  <!--  a.	Click on Baseline tab  -->
+<click select="baseline/tab"/>
+
+  <!--  b.	Go to the end of the text and hit return.  Over ruled; it's too unreliable -->
+<click select="baseline/empty"/>
+
+  <!--  c.	Paste in this: The masters shouted at the big, slow dogs to hurry to their homes.  -->
+<!-- The masters shouted at the big, slow dogs to hurry to their homes. -->
+	<insert wait="700" pause="300">d=e= ma</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300">ste=r=z s=a=u</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300">ti=d a</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300">t d=e= bi=g slou</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300"> da=gz tu he=r=i tu d=ei=r= hou</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300">mz</insert>
+  <!--  d.	Hit Home so the cursor is before the first word of the second sentence.  -->
+	<insert wait="1000">{HOME}</insert>
+	<!-- select the first word "da" in the 2nd sentance -->
+	<insert wait="500">{RIGHT}</insert>
+	<insert wait="500">{RIGHT}</insert>
+	<insert wait="500">+{HOME}</insert>
+
+  <!--  e.	Click on the Interlinearize tab.  -->
+  <click select="analyze/tab"/>
+
+</model>
+
+  <!--  f.	Notice that words which have been analyzed before (by hand) have an aqua background: #x00f0;y mæsty#x0279;z #x00f0;y da#x0261;z #x00f0;e#x026a;#x0279;   -->
+  <!--  g.	Parser / Reparse all words.  -->
+  <click select="menubar/parser/reparse-all-words"/>
+
+  <!--  h.	(I think it's supposed to refresh automatically, but it does not, so hit Refresh).  -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+
+   <var id="row" set="2"/>
+   <var id="col" set="1"/>
+   <click wait="20000" select="wordforms/record/col"/><!-- big  --><!-- give it a chance to parse -->
+   <var id="col" set="2"/>
+   <glimpse wait="1000" id="3" select="wordforms/record/col" prop="value" expect="1"/>
+   <var id="col" set="3"/>
+   <glimpse wait="1000" id="4" select="wordforms/record/col" prop="value" expect="1"/>
+
+</model>
+
+  <!--  i.	Now notice that b#x026a;#x0261;, slo#x028a;, and ho#x028a;mz have a tan background to indicate that the parser has produced these guesses.  -->
+  <!--  j.	GO BACK TO POWERPOINT  -->
+  <!--  k.	#x00f0;y   -->
+  <click select="menubar/view/texts-words/interlinear-texts"/>
+
+  <click select="interlinear-texts[@role='view']/text/analyze/tab"/>
+
+  <!--click  select="toolbar/free-translation"/-->
+
+<model log="all" select="new-entry[@role='dialog']">
+
+  <!--  i.	CTRL-right arrow  -->
+   <insert wait="1000">^{HOME}</insert> <!-- open the focus box to the right -->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  l.	mæsty#x0279;z   -->
+  <!--  i.	Down arrow and notice possible analyses  -->
+	<insert wait="200">{DOWN}</insert>
+
+  <!--  ii.	Select the one with –z PL  -->
+	<insert wait="200">mm</insert>
+	<insert wait="200">~</insert>
+
+  <!--  iii.	Change the word gloss to 'masters'  -->
+	<insert wait="200">{TAB}</insert>
+	<insert wait="200">{TAB}</insert>
+	<insert wait="200">{TAB}</insert>
+	<insert wait="200">{TAB}</insert>
+	<insert wait="200">{TAB}</insert>
+	<insert wait="200">{TAB}</insert>
+	<insert wait="200">masters</insert>
+
+  <!--  iv.	Change word category to Noun  -->
+	<insert wait="200">{TAB}</insert>
+	<insert wait="200">{DOWN}</insert>
+	<insert wait="200">n</insert>
+	<insert wait="200">~</insert>
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  m.	ʃa#x028a;t#x026a;d  -->
+  <!--  i.	Split into ʃa#x028a;t -#x026a;d  -->
+   <!--insert wait="100">{TAB}</insert--> <!-- get to the morphemes field -->
+	<insert wait="200">{RIGHT 4}-</insert>
+  <!--  ii.	Create new entry for ʃa#x028a;t; root, to shout, verb  -->
+   <insert wait="1000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select Root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">to shout</insert> <!-- gloss 'the' -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">v~</insert> <!-- click Pronoun -->
+	 <click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+  <!--  iii.	Change word gloss to 'shouted'  -->
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">+{END}</insert>
+   <insert wait="500">shouted</insert>
+
+  <!--  iv.	CTRL-right arrow  -->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  n.	æt  -->
+  <!--  i.	Create new entry for æt; particle, at, More… Preposition  -->
+   <insert wait="1000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">at</insert> <!-- gloss 'the' -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">m~</insert> <!-- click More ... -->
+	 <on-dialog title="Add from Catalog">
+	   <insert wait="500">{HOME}a</insert>
+	   <insert wait="500">{RIGHT}pp~</insert> <!-- select Preposition -->
+	 </on-dialog>
+	 <click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+
+  <!--  ii.	CTRL-right arrow  pass over "the"-->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+
+<sound wait="500" frequency="800" duration="500"/>
+
+  <!--  o.	#x00f0;y  Open "big"-->
+  <!--  i.	CTRL-right arrow  -->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+  <!--  ii.	Notice that the color changed: we have now officially 'approved' the guess.  -->
+
+  <!--  p.	b#x026a;#x0261;  "big" -->
+  <!--  i.	Change word gloss to 'big'  -->
+   <insert wait="1000">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">big</insert>
+  <!--  ii.	Change word cat to 'Adj'  -->
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">aa~</insert>
+
+  <!--  iii.	CTRL-right arrow  -->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  q.	slo#x028a; "slow"  -->
+  <!--  i.	Change word gloss to 'slow'  -->
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">slow</insert>
+  <!--  ii.	Change word cat to 'Adj'  -->
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">aa~</insert>
+
+ <!--  iii.	CTRL-right arrow   to "dogs"-->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  r.	da#x0261;z  -->
+  <!--  i.	CTRL-right arrow  to "to"-->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  s.	tu  -->
+  <!--  i.	Create new entry for tu; particle, Inf (for infinitive), More… Particle  -->
+   <insert wait="1000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">to</insert> <!-- gloss 'the' -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">m~</insert> <!-- click More ... -->
+	 <on-dialog title="Add from Catalog">
+	   <insert wait="500">{HOME}pp</insert>
+	   <insert wait="500">{RIGHT}v~</insert> <!-- select infinitive : it's not on the list?? so use Verbal particle-->
+	 </on-dialog>
+	 <click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+
+  <!--  ii.	CTRL-right arrow  to "hurry"-->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  t.	hy#x0279;i   -->
+  <!--  i.	Create new entry for hy#x0279;i; root, to hurry, Verb  -->
+   <insert wait="1000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select Root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">to hurry</insert> <!-- gloss '' -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">v~</insert> <!-- click Verb -->
+	 <click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+  <!--  ii.	Change word gloss to 'hurry'  -->
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">+{END}</insert>
+   <insert wait="500">hurry</insert>
+
+  <!--  iii.	CTRL-right arrow  to "to" before "their"-->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  u.	tu   -->
+  <!--  i.	Create new entry for tu; particle, Dir:to, Preposition   -->
+   <insert wait="1000">{TAB 3}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <click path="9:to/20:RootSite"/><!-- default is "to" not "not sure" -->
+	 <!--insert wait="500">to</insert--> <!-- gloss already there, so skip -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="200">pp~</insert>
+	 <click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+  <!--  ii.	Change word gloss to 'to'  -->
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">+{END}</insert>
+   <insert wait="500">to</insert>
+
+  <!--  iii.	CTRL-right arrow  to "their"-->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  v.	#x00f0;e#x026a;#x0279;   -->
+  <!--  i.	CTRL-right arrow  to "homes"-->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  w.	ho#x028a;mz  -->
+  <!--  i.	Down arrow and notice possible analyses  -->
+   <insert wait="500">{DOWN}</insert>
+
+  <!--  ii.	Select the one with –z PL  -->
+   <insert wait="500">h~</insert>
+  <!--  iii.	Change the word gloss to 'homes'  -->
+   <insert wait="500">+{END}</insert>
+   <insert wait="500">+{TAB}</insert>
+   <insert wait="500">homes</insert>
+  <!--  iv.	Change word category to Noun  -->
+   <insert wait="500">{TAB}</insert>
+   <insert wait="500">n~</insert>
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+</model>
+
+  <!--  x.	Click in the Free field and type: The masters shouted at the big, slow dogs to hurry to their homes.  -->
+  <click dx="50" select="interlinear-texts[@role='view']/text/analyze/free-trans/empty"/>
+   <insert wait="500">The masters shouted at the big, slow dogs to hurry to their homes.</insert>
+
+  <!--  9.	Re-examine the Lexicon: go to Lexicon / Lexicon Edit  -->
+
+   <click select="menubar/view/lexicon/lexicon-edit"/>
+
+<model select="lexicon-edit[@role='view']">
+
+  <!--  a.	Notice that now the inflectional affixes (e.g. –d) includes the slot name in the Gram. Func. Column in browse view.  -->
+  <!--  b.	Notice homograph numbers on the two tus in the browse view.  -->
+  <var id="row" set="*"/>
+  <var id="col" set="1"/>
+  <click select="entries/record/col" path="/value:tu1"/>
+  <var id="row" set="*"/>
+  <click select="entries/record/col" path="/value:tu2"/>
+
+</model>
+
+  <!--  10.	Re-examine Words: go to Words / Analyses  -->
+   <click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+
+  <!--  a.	Should show new words with their analyses. (e.g. ho#x028a;mz should have two parser ones) -->
+  <var id="row" set="12"/>
+  <var id="col" set="1"/>
+	<click wait="3000" select="wordforms/record/col"/><!-- homes ho#x028a;mz -->
+  <var id="col" set="2"/>
+	<glimpse wait="1000" id="5" select="wordforms/record/col" prop="value" expect="1"/>
+  <var id="col" set="3"/>
+   <glimpse id="6" select="wordforms/record/col" prop="value" expect="2"/>
+
+</model>
+
+   </on-application>
+</accil>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LanguageDefinition SYSTEM "LanguageDefinition.dtd">
+<LanguageDefinition>
+  <LgWritingSystem id="fr" language="fr" type="ISO-639-1">
+	<Name24>
+	  <AUni ws="en">French</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Frn</AUni>
+	</Abbr24>
+	<Locale24><Integer val="1036"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<BodyFontFeatures24><Uni>1051=0</Uni></BodyFontFeatures24>
+	<DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
+	<ValidChars24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;ValidCharacters&gt;
+  &lt;WordForming&gt;-￼'￼a￼A￼á￼à￼À￼â￼Â￼æ￼Æ￼b￼B￼c￼C￼ç￼Ç￼d￼D￼e￼E￼é￼É￼è￼È￼ê￼Ê￼ë￼Ë￼f￼F￼g￼G￼h￼H￼i￼I￼î￼Î￼ï￼Ï￼j￼J￼k￼K￼l￼L￼m￼M￼n￼N￼o￼O￼ô￼Ô￼œ￼Œ￼p￼P￼q￼Q￼r￼R￼s￼S￼t￼T￼u￼U￼ù￼Ù￼û￼Û￼ü￼Ü￼v￼V￼w￼W￼x￼X￼y￼Y￼ÿ￼Ÿ￼z￼Z&lt;/WordForming&gt;
+  &lt;Numeric&gt;0￼1￼2￼3￼4￼5￼6￼7￼8￼9&lt;/Numeric&gt;
+  &lt;Other&gt;U+0020￼,￼;￼:￼!￼?￼.￼‘￼’￼&quot;￼“￼”￼(￼)￼[￼]￼{￼}￼¶￼*￼/￼&amp;amp;￼%￼+￼&amp;gt;&lt;/Other&gt;
+&lt;/ValidCharacters&gt;</Uni></ValidChars24>
+	<MatchedPairs24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;MatchedPairs&gt;
+  &lt;pair open=&quot;(&quot; close=&quot;)&quot; permitParaSpanning=&quot;false&quot; /&gt;
+  &lt;pair open=&quot;[&quot; close=&quot;]&quot; permitParaSpanning=&quot;false&quot; /&gt;
+&lt;/MatchedPairs&gt;</Uni></MatchedPairs24>
+	<PunctuationPatterns24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;PunctuationPatterns&gt;
+  &lt;pattern value=&quot;’ &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; ‘&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; “&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;” &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;.” &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;., &quot; context=&quot;WordFinal&quot; valid=&quot;false&quot; /&gt;
+  &lt;pattern value=&quot;,, &quot; context=&quot;WordFinal&quot; valid=&quot;false&quot; /&gt;
+  &lt;pattern value=&quot;,! &quot; context=&quot;WordFinal&quot; valid=&quot;false&quot; /&gt;
+  &lt;pattern value=&quot; , &quot; context=&quot;Isolated&quot; valid=&quot;false&quot; /&gt;
+  &lt;pattern value=&quot;- &quot; context=&quot;WordFinal&quot; valid=&quot;false&quot; /&gt;
+  &lt;pattern value=&quot;) &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; *&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;-&quot; context=&quot;WordMedial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;? &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; -&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; (&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;), &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;; &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;&amp;#x27;&quot; context=&quot;WordMedial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;: &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;. &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;, &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;! &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+&lt;/PunctuationPatterns&gt;</Uni></PunctuationPatterns24>
+	<QuotationMarks24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;QuotationMarks LangUsedFrom=&quot;fr&quot; ContinuationType=&quot;RequireAll&quot; ContinuationMark=&quot;Opening&quot;&gt;
+  &lt;Levels&gt;
+	&lt;Pair Opening=&quot;“&quot; Closing=&quot;”&quot; /&gt;
+	&lt;Pair Opening=&quot;‘&quot; Closing=&quot;’&quot; /&gt;
+  &lt;/Levels&gt;
+&lt;/QuotationMarks&gt;</Uni></QuotationMarks24>
+	<ICULocale24><Uni>fr</Uni></ICULocale24>
+	<SpellCheckDictionary24><Uni>fr</Uni></SpellCheckDictionary24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1036"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1036"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+</LanguageDefinition>

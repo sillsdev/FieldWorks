@@ -1,0 +1,354 @@
+﻿; This file was created by Bob Eaton using TECkitMappingEditorU.exe v3.0.1.0 on 5/21/2008.
+;   Conversion Type = Legacy_to_from_Unicode
+;   Left-hand side font = GujaratiLS;14.25
+;   Right-hand side font = Arial Unicode MS;14.25
+;   Main Window Position = 0,0,650,1007
+;   Left-hand side Character Map Window Position = 649,0,530,625
+;   Right-hand side Character Map Window Position = 650,561,636,459
+
+EncodingName            "GujaratiLS"
+DescriptiveName         "This is the defining map for the GujaratiLS font"
+Version                 "1.0"
+Contact                 "mailto:silconverters_support@sil.org"
+RegistrationAuthority   "SIL International"
+RegistrationName        "GujaratiLS"
+Copyright               "Copyright © 2008. SIL. All rights reserved."
+LHSFlags                ()
+RHSFlags                ()
+
+; a few definitions so we can use them in classes below
+Define IKAR     55
+Define REPH     57
+Define AAKAR    50
+
+; all full-consonant forms:
+;                   ka  kha ga  gha nga ca cha ja  jha Ta Tha Da Dha Na
+;                   ta  tha da  dha na  pa  pha ba bha ma  ya  ra  la  lla va
+;                   sa  sha ha  Sha
+Define  DefFCall    99  107 103 71  192 67 75  106 202 84 87  68 73  78 \
+					116 119 100 105 110 112 102 98 66  109 117 114 108 88  118 \
+					83  115 104 92
+
+; all consonant stack forms:
+;                   tta shra phra hya tra pra ksha shrca bhra kka DDa jja kra TTha
+;                   dhra shrna shrTa Thya jra ghra dma ThTha TTa gna mra gya Tra Dra
+;                   wra kya dwa shwa stra nna dra Dya hma jya hra
+Define  DefFSCall   255 65   70   72  90  91  120  123   129  130 132 139 141 142 \
+					144  146   150   153  155 156  171 172   175 180 181 185 191 194 \
+					195 196 207 215 229 231 235 236 238 239 250
+
+; all half consonant stack forms:
+;                   tr- ksh- shr-
+Define  DefHFSCall  189 197  203
+
+; consonant+vowel conjuncts
+;                   jaa ru shrii jii
+Define  DefCVall    74  82 168   198
+
+; Half consonants that also have corresponding full forms
+;                       l- m- p- ss- y- w- ll- t-  sh- g-  n-  b-  th- s-  N-  kh-
+;                       bh- gh- dh- c-
+Define  DefHCalsoFForms 76 77 80 81  85 86 254 122 167 169 184 186 227 234 247 251 \
+						140 135 137 206
+
+; Corresponding full forms
+;                       la  ma  pa  ssa ya  wa  lla ta  sha ga  na  ba tha sa Na kha
+;                       bha gha dha ca
+Define  DefFCalsoHForms 108 109 112 92  117 118 88  116 115 103 110 98 119 83 78 107 \
+						66  71  105 67
+
+; dependent vowels
+;                   aa ii u  uu e  ai o  au
+Define  DefDepVowel 50 54 89 56 59 52 51 53
+
+; Nasals
+;                   anusvar chandra
+Define  DefNall     113     62
+
+; extended chars
+
+; extikar = consonants which want to go with the extended ikar
+;                   kha bha
+Define  DefExtIkar  107 66
+
+; 2nd sh-: letters that are preceded by the 204 version of sh-
+;                   na  wa  ca
+Define  Def2ndSha   110 118 67
+
+pass(Byte)
+
+class [Sha2] = ( Def2ndSha )
+
+class [ExtIkar] = ( DefExtIkar )
+
+; these first rules have to do with multiple forms for sha and ikar
+; the environment on the right side is used to make sure the right
+; side version is used with those other characters in the environment
+; class
+204     <>  167 / _ [Sha2]
+
+48      <>  IKAR / _ [ExtIkar]      ; ikar has two forms
+188     <>  IKAR 113  / _ [ExtIkar] ; ikar/anusvar = ikar + anusvar
+226     <>  IKAR REPH / _ [ExtIkar] ; ikar/reph = ikar + reph
+
+; these rules have to do with glyphs which have ikar, iikar, anusvar and reph
+; combined into a single glyph. They break these apart into the separate
+; forms
+47      <>  54 113                  ; iikar/anusvar = iikar + anusvar
+95      <>  89 REPH                 ; ukar/reph = ukar + reph
+96      <>  IKAR 113                ; ikar/anusvar = ikar + anusvar
+121     <>  89 113
+126     <>  IKAR REPH               ; ikar/reph = ikar + reph
+161     <>  56 REPH                 ; uukar/reph = uukar + reph
+162     <>  52 113                  ; aikar/anusvar = aikar + anusvar
+163     <>  51 113                  ; okar/anusvar = okar + anusvar
+165     <>  56 113                  ; uukar/anusvar = uukar + anusvar
+170     <>  AAKAR 113               ; aakar/anusvar = aakar + anusvar
+176     <>  53 113                  ; aukar/anusvar = aukar + anusvar
+193     <>  59 113                  ; ekar/anusvar = ekar + anusvar
+218     <>  59 REPH                 ; ekar/reph = ekar + reph
+219     <>  AAKAR REPH              ; aakar/reph = aakar + reph
+220     <>  51 REPH                 ; okar/reph
+221     <>  52 REPH                 ; aikar/reph
+222     <>  53 REPH                 ; aukar/reph
+223     <>  54 REPH                 ; iikar/reph
+
+; reorder (just to clean up)
+113 57  > 57 113
+
+; turn any half-consonant plus a following vertical bar into the corresponding
+; full consonant form (only in the forward direction)
+class [HC] = ( DefHCalsoFForms )
+class [FC] = ( DefFCalsoHForms )
+[HC] AAKAR  >   [FC]
+
+; Reorder pass: This is to get reph and nasal characters from the last pass
+; to be on the same side of the consonant that they would otherwise be if they
+; hadn't been combined in the above forms.
+pass(Byte)
+
+; Full-consonant forms
+class [FC] = ( DefFCall DefFSCall )
+
+; Nasal forms
+class [N] =( DefNall )
+
+; this reorder rule will make the order "ikar, cons, reph, nasal", which is what
+; the order would be if not using the combined forms from the last pass. This rule
+; only triggers if there's an ikar (i.e. not optional)
+IKAR=ikar REPH?=reph [N]?=nas [FC]=cons \
+		<> @ikar @cons @reph @nas
+
+
+; Reorder Pass 2: this is the pass that reorders the ikar to a post-consonantal
+; position and a reph to its preconsonantal position.
+pass(Byte)
+
+class [HC] = ( DefHCalsoFForms DefHFSCall )
+
+class [FC] = ( DefFCall DefFSCall )
+
+class [DepVowel] = ( DefDepVowel )
+
+; Nasal forms
+class [N] =( DefNall )
+
+IKAR?=ikar ([HC]* [FC])=cons [DepVowel]?=vwl REPH?=reph [N]?=nas \
+	<> @reph @cons @ikar @vwl @nas
+
+; Main conversion pass to Unicode
+pass(Byte_Unicode)
+
+ByteClass[HCalso]   = ( DefHCalsoFForms )
+
+; these are the full Unicode forms of the half characters defined above (i.e. don't
+; add to this class without also adding to DefHCalsoFForms above, and vise-versa)
+UniClass[FCalso]    = ( gujarati_letter_la      gujarati_letter_ma      \
+						gujarati_letter_pa      gujarati_letter_ssa     \
+						gujarati_letter_ya      gujarati_letter_va      \
+						gujarati_letter_lla     gujarati_letter_ta      \
+						gujarati_letter_sha     gujarati_letter_ga      \
+						gujarati_letter_na      gujarati_letter_ba      \
+						gujarati_letter_tha     gujarati_letter_sa      \
+						gujarati_letter_nna     gujarati_letter_kha     \
+						gujarati_letter_bha     gujarati_letter_gha     \
+						gujarati_letter_dha     gujarati_letter_ca      )
+
+; any of the half consonants defined above become the full forms followed by a
+;
+[HCalso]            <>      [FCalso] gujarati_sign_virama / _ ^ zero_width_non_joiner
+
+32      <>  space
+33      <>  gujarati_digit_one
+34      <>  modifier_letter_apostrophe
+35      <>  gujarati_digit_three
+36      <>  gujarati_digit_four
+37      <>  gujarati_digit_five
+94      <>  gujarati_digit_six
+38      <>  gujarati_digit_seven
+39      <>  modifier_letter_reversed_comma
+40      <>  gujarati_digit_nine
+41      <>  gujarati_digit_zero
+42      <>  gujarati_digit_eight
+43      <>  plus_sign
+44      <>  comma
+45      <>  hyphen_minus
+46      <>  full_stop
+49      <>  exclamation_mark
+50      <>  gujarati_vowel_sign_aa
+51      <>  gujarati_vowel_sign_o
+52      <>  gujarati_vowel_sign_ai
+53      <>  gujarati_vowel_sign_au
+54      <>  gujarati_vowel_sign_ii
+55      <>  gujarati_vowel_sign_i
+56      <>  gujarati_vowel_sign_uu
+57      <>  gujarati_letter_ra gujarati_sign_virama
+58      <>  colon
+59      <>  gujarati_vowel_sign_e
+60      <>  gujarati_vowel_sign_vocalic_r
+61      <>  equals_sign
+62      <>  gujarati_vowel_sign_candra_e
+63      <>  question_mark
+64      <>  gujarati_digit_two
+65      <>  gujarati_letter_sha gujarati_sign_virama gujarati_letter_ra
+66      <>  gujarati_letter_bha
+67      <>  gujarati_letter_ca
+68      <>  gujarati_letter_dda
+69      <>  gujarati_letter_ii
+70      <>  gujarati_letter_pha gujarati_sign_virama gujarati_letter_ra
+71      <>  gujarati_letter_gha
+72      <>  gujarati_letter_ha gujarati_letter_ya
+73      <>  gujarati_letter_ddha
+74      <>  gujarati_letter_ja gujarati_vowel_sign_aa
+75      <>  gujarati_letter_cha
+78      <>  gujarati_letter_nna
+79      <>  gujarati_letter_uu
+82      <>  gujarati_letter_ra gujarati_vowel_sign_u
+83      <>  gujarati_letter_sa
+84      <>  gujarati_letter_tta
+87      <>  gujarati_letter_ttha
+88      <>  gujarati_letter_lla
+89      <>  gujarati_vowel_sign_u
+90      <>  gujarati_letter_ta gujarati_sign_virama gujarati_letter_ra
+91      <>  gujarati_letter_pa gujarati_sign_virama gujarati_letter_ra
+92      <>  gujarati_letter_ssa
+93      <>  gujarati_rupee_sign
+97      <>  gujarati_letter_a
+97 50   <>  gujarati_letter_aa
+97 51   <>  gujarati_letter_o
+97 52   <>  gujarati_letter_ai
+97 53   <>  gujarati_letter_au
+97 59   <>  gujarati_letter_e
+98      <>  gujarati_letter_ba
+99      <>  gujarati_letter_ka
+100     <>  gujarati_letter_da
+101     <>  gujarati_letter_i
+102     <>  gujarati_letter_pha
+103     <>  gujarati_letter_ga
+104     <>  gujarati_letter_ha
+105     <>  gujarati_letter_dha
+106     <>  gujarati_letter_ja
+107     <>  gujarati_letter_kha
+108     <>  gujarati_letter_la
+109     <>  gujarati_letter_ma
+110     <>  gujarati_letter_na
+111     <>  gujarati_letter_u
+112     <>  gujarati_letter_pa
+113     <>  gujarati_sign_anusvara
+114     <>  gujarati_letter_ra
+115     <>  gujarati_letter_sha
+116     <>  gujarati_letter_ta
+117     <>  gujarati_letter_ya
+118     <>  gujarati_letter_va
+119     <>  gujarati_letter_tha
+120     <>  gujarati_letter_ka gujarati_sign_virama gujarati_letter_ssa
+123     <>  gujarati_letter_sha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama gujarati_letter_ca
+124     <>  bullet
+125     <>  gujarati_letter_vocalic_rr
+128     <>  trade_mark_sign
+129     <>  gujarati_letter_bha gujarati_sign_virama gujarati_letter_ra
+130     <>  gujarati_letter_ka gujarati_sign_virama gujarati_letter_ka
+131     <>  U+5350
+132     <>  gujarati_letter_dda gujarati_sign_virama gujarati_letter_dda
+133     <>  section_sign
+134     <>  gujarati_letter_da gujarati_sign_virama gujarati_letter_ra
+138     <>  dagger
+139     <>  gujarati_letter_ja gujarati_sign_virama gujarati_letter_ja
+141     <>  gujarati_letter_ka gujarati_sign_virama gujarati_letter_ra
+142     <>  gujarati_letter_tta gujarati_sign_virama gujarati_letter_ttha ; this doesn't seem to work
+144     <>  gujarati_letter_gha gujarati_sign_virama gujarati_letter_ra
+145     <>  double_dagger
+146     <>  gujarati_letter_sha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama gujarati_letter_na
+148     <>  gujarati_letter_da gujarati_sign_virama gujarati_letter_ya
+149     <>  dollar_sign
+150     <>  gujarati_letter_ssa gujarati_sign_virama gujarati_letter_tta
+151      >  gujarati_letter_ka  ; also at 99
+153     <>  gujarati_letter_ttha gujarati_sign_virama gujarati_letter_ya
+154     <>  cent_sign
+155     <>  gujarati_letter_ja gujarati_sign_virama gujarati_letter_ra
+156     <>  gujarati_letter_gha gujarati_sign_virama gujarati_letter_ra
+158     <>  tilde
+159     <>  copyright_sign
+160     <>  no_break_space
+164     <>  devanagari_danda
+166     <>  teardrop_spoked_asterisk
+168     <>  gujarati_letter_sha gujarati_sign_virama gujarati_letter_ra gujarati_vowel_sign_ii
+171     <>  gujarati_letter_da gujarati_sign_virama gujarati_letter_ma
+172     <>  gujarati_letter_ttha gujarati_sign_virama gujarati_letter_ttha
+173     <>  division_sign
+174     <>  right_double_quotation_mark
+175     <>  gujarati_letter_tta gujarati_sign_virama gujarati_letter_tta
+177     <>  number_sign
+178     <>  gujarati_sign_virama zero_width_non_joiner
+179     <>  horizontal_ellipsis
+180     <>  gujarati_letter_ga gujarati_sign_virama gujarati_letter_na
+181     <>  gujarati_letter_ma gujarati_sign_virama gujarati_letter_ra
+182     <>  pilcrow_sign
+183     <>  middle_dot
+185     <>  gujarati_letter_ja gujarati_sign_virama gujarati_letter_nya
+187     <>  left_curly_bracket
+189     <>  gujarati_letter_ta gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+190     <>  left_double_quotation_mark
+191     <>  gujarati_letter_tta gujarati_sign_virama gujarati_letter_ra
+192     <>  gujarati_letter_nga
+194     <>  gujarati_letter_dda gujarati_sign_virama gujarati_letter_ra
+195     <>  gujarati_letter_va gujarati_sign_virama gujarati_letter_ra
+196     <>  gujarati_letter_ka gujarati_sign_virama gujarati_letter_ya
+197     <>  gujarati_letter_ka gujarati_sign_virama gujarati_letter_ssa gujarati_sign_virama
+198     <>  gujarati_letter_ja gujarati_vowel_sign_ii
+199     <>  less_than_sign
+200     <>  greater_than_sign
+201     <>  semicolon
+202     <>  gujarati_letter_jha
+203     <>  gujarati_letter_sha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+204     <>  gujarati_letter_sha gujarati_sign_virama
+207     <>  gujarati_letter_da gujarati_sign_virama gujarati_letter_va
+208     <>  solidus
+209     <>  reverse_solidus
+210     <>  left_parenthesis
+211     <>  left_square_bracket
+212     <>  right_parenthesis
+213     <>  right_square_bracket
+214     <>  percent_sign
+215     <>  gujarati_letter_sha gujarati_sign_virama gujarati_letter_va
+216     <>  registered_sign
+224     <>  multiplication_sign
+225     <>  right_curly_bracket
+228     <>  gujarati_om
+229     <>  gujarati_letter_sa gujarati_sign_virama gujarati_letter_ta gujarati_sign_virama gujarati_letter_ra
+231     <>  gujarati_letter_na gujarati_sign_virama gujarati_letter_na
+235     <>  gujarati_letter_da gujarati_sign_virama gujarati_letter_ra
+236     <>  gujarati_letter_dda gujarati_letter_ya
+238     <>  gujarati_letter_ha gujarati_sign_virama gujarati_letter_ma
+239     <>  gujarati_letter_ja gujarati_sign_virama gujarati_letter_ya
+240     <>  gujarati_letter_kha gujarati_sign_virama gujarati_letter_ra
+241     <>  pound_sign
+242     <>  ampersand
+245     <>  gujarati_letter_ba gujarati_sign_virama gujarati_letter_ra
+246     <>  gujarati_letter_ddha gujarati_sign_virama gujarati_letter_ddha
+248     <>  em_dash
+249     <>  degree_sign
+250     <>  gujarati_letter_ha gujarati_sign_virama gujarati_letter_ra
+; 252     <>  gujarati_letter_za
+253     <>  gujarati_letter_ga gujarati_sign_virama gujarati_letter_ra
+255     <>  gujarati_letter_ta gujarati_sign_virama gujarati_letter_ta

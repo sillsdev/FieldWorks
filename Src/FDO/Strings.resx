@@ -1,0 +1,952 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksActualDelete" xml:space="preserve">
+	<value>Actual delete</value>
+  </data>
+  <data name="ksAffixAttachesToAny" xml:space="preserve">
+	<value>Affix which attaches to any category</value>
+  </data>
+  <data name="ksAffixChangesAny" xml:space="preserve">
+	<value>Affix which changes the meaning of any category</value>
+  </data>
+  <data name="ksAffixChangesX" xml:space="preserve">
+	<value>Affix which changes the meaning of {0}</value>
+  </data>
+  <data name="ksAffixConvertsAnyToX" xml:space="preserve">
+	<value>Affix which converts any category to {0}</value>
+  </data>
+  <data name="ksAffixConvertsXtoAny" xml:space="preserve">
+	<value>Affix which converts {0} to any category</value>
+  </data>
+  <data name="ksAffixConvertsXtoY" xml:space="preserve">
+	<value>Affix which converts {0} to {1}</value>
+  </data>
+  <data name="ksAffixFoundOnX" xml:space="preserve">
+	<value>Affix found on {0}</value>
+  </data>
+  <data name="ksAffixInflectsAny" xml:space="preserve">
+	<value>Affix which inflects any category</value>
+  </data>
+  <data name="ksAffixInflectsX" xml:space="preserve">
+	<value>Affix which inflects {0}</value>
+  </data>
+  <data name="ksAffixInXInflectsY" xml:space="preserve">
+	<value>Affix in {0} slot which inflects {1}</value>
+  </data>
+  <data name="ksAffixInXInflectsYPlural" xml:space="preserve">
+	<value>Affix in {0} slots which inflects {1}</value>
+  </data>
+  <data name="ksAlloConstraintFailure" xml:space="preserve">
+	<value>Need to have at least one "Other Allomorph(s)" and one "Key Allomorph"</value>
+  </data>
+  <data name="ksAlloUsedHere" xml:space="preserve">
+	<value>The allomorph is used in these contexts.</value>
+  </data>
+  <data name="ksAny" xml:space="preserve">
+	<value>Any</value>
+  </data>
+  <data name="ksAttachesToAnyCat" xml:space="preserve">
+	<value>Attaches to any category</value>
+  </data>
+  <data name="ksAX" xml:space="preserve">
+	<value>A {0}</value>
+	<comment>for instance "A CmObject" or "A ScrWidget"</comment>
+  </data>
+  <data name="ksBackgroundIsX" xml:space="preserve">
+	<value>Background is {0}</value>
+	<comment>text background color</comment>
+  </data>
+  <data name="ksBadClassInEnv" xml:space="preserve">
+	<value>The abbreviation for the class '{0}' was not found in the set of Natural Classes.</value>
+  </data>
+  <data name="ksBadEnv" xml:space="preserve">
+	<value>There is a problem with this environment string '{0}': </value>
+  </data>
+  <data name="ksBadEnvSyntax" xml:space="preserve">
+	<value>There is some kind of error somewhere around here: '{0}'.  It may be a missing underscore _, two or more underscores, a missing slash /, something beyond a word boundary symbol #, or two or more word boundary symbols at the same edge.</value>
+  </data>
+  <data name="ksBadPhonemeInEnv" xml:space="preserve">
+	<value>The phoneme which begins '{0}' was not found in the set of representations for any Phoneme.</value>
+  </data>
+  <data name="ksBold" xml:space="preserve">
+	<value>Bold</value>
+  </data>
+  <data name="ksCategUsedHere" xml:space="preserve">
+	<value>The category is used in these contexts:</value>
+  </data>
+  <data name="ksColorUnderline" xml:space="preserve">
+	<value>{0} Underline</value>
+  </data>
+  <data name="ksContainsOneLexRef" xml:space="preserve">
+	<value>It contains 1 lexical relation or cross reference.</value>
+  </data>
+  <data name="ksContainsXLexRefs" xml:space="preserve">
+	<value>It contains {0} lexical relations or cross references.</value>
+  </data>
+  <data name="ksDashedColorUnderline" xml:space="preserve">
+	<value>Dashed {0} Underline</value>
+  </data>
+  <data name="ksDashedUnderline" xml:space="preserve">
+	<value>Dashed Underline</value>
+  </data>
+  <data name="ksDefinition" xml:space="preserve">
+	<value>Definition</value>
+  </data>
+  <data name="ksDelAlloDelThese" xml:space="preserve">
+	<value>Deleting the allomorph will also delete them.</value>
+  </data>
+  <data name="ksDelAnalysisUsedOnce" xml:space="preserve">
+	<value>{0}. Any texts that used it will need more analysis work, as it is being used 1 time in your texts.</value>
+	<comment>{0} is a number (for showing a numbered list).</comment>
+  </data>
+  <data name="ksDelAnalysisUsedXTimes" xml:space="preserve">
+	<value>{0}. Any texts that used it will need more analysis work, as it is being used {1} times in your texts.</value>
+	<comment>{0} is a number (for showing a numbered list). {1} is the count (a number).</comment>
+  </data>
+  <data name="ksDelEntryDelThese" xml:space="preserve">
+	<value>Deleting the entry will also delete them.</value>
+  </data>
+  <data name="ksDelParserAnalysis" xml:space="preserve">
+	<value>{0}. It may be recreated when the parser runs again.</value>
+	<comment>{0} is a number (for showing a numbered list).</comment>
+  </data>
+  <data name="ksDelWfGlossUsedOnce" xml:space="preserve">
+	<value>{0}. Any texts that use it will need more analysis work, as it is used 1 time in your texts.</value>
+	<comment>{0} is a number (for showing a numbered list).</comment>
+  </data>
+  <data name="ksDelWfGlossUsedXTimes" xml:space="preserve">
+	<value>{0}. Any texts that use it will need more analysis work, as it is used {1} times in your texts.</value>
+	<comment>{0} is a number (for showing a numbered list).</comment>
+  </data>
+  <data name="ksDottedColorUnderline" xml:space="preserve">
+	<value>Dotted {0} Underline</value>
+  </data>
+  <data name="ksDottedUnderline" xml:space="preserve">
+	<value>Dotted Underline</value>
+  </data>
+  <data name="ksDoubleColorUnderline" xml:space="preserve">
+	<value>Double {0} Underline</value>
+  </data>
+  <data name="ksDoubleUnderline" xml:space="preserve">
+	<value>Double Underline</value>
+  </data>
+  <data name="ksEmpty" xml:space="preserve">
+	<value>&lt;empty&gt;</value>
+  </data>
+  <data name="ksEntryUsedHere" xml:space="preserve">
+	<value>The entry is used in these contexts.</value>
+  </data>
+  <data name="ksEnvUsedOnceByAllos" xml:space="preserve">
+	<value>The environment is being used 1 time{0}by your allomorphs.</value>
+	<comment>{0} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksEnvUsedXTimesByAllos" xml:space="preserve">
+	<value>The environment is being used {0} times{1}by your allomorphs.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksGatheringInfo" xml:space="preserve">
+	<value>Gathering info</value>
+  </data>
+  <data name="ksInflectsAnyCat" xml:space="preserve">
+	<value>Inflects any category</value>
+  </data>
+  <data name="ksInvalidateOneEnvIfDelNatClass" xml:space="preserve">
+	<value>1 environment will be invalid if you delete the natural class.</value>
+  </data>
+  <data name="ksInvalidateXEnvsIfDelNatClass" xml:space="preserve">
+	<value>{0} environments will be invalid if you delete the natural class.</value>
+  </data>
+  <data name="ksIsUsedOnceByAlloAdhoc" xml:space="preserve">
+	<value>{0}. Is being used 1 time by{1}    allomorph adhoc co-prohibitions.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksIsUsedOnceByAllos" xml:space="preserve">
+	<value>{0}. Is being used 1 time by{1}    allomorphs.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksIsUsedOnceByAnalyses" xml:space="preserve">
+	<value>{0}. Is being used 1 time by analyses.</value>
+  </data>
+  <data name="ksIsUsedOnceByEntries" xml:space="preserve">
+	<value>{0}. Is being used 1 time by major entries.</value>
+  </data>
+  <data name="ksIsUsedOnceByFuncs" xml:space="preserve">
+	<value>{0}. Is being used 1 time by{1}    functions/analyses.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksIsUsedOnceByMorphAdhoc" xml:space="preserve">
+	<value>{0}. Is being used 1 time by{1}    morpheme adhoc co-prohibitions.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksIsUsedOnceByRevEntries" xml:space="preserve">
+	<value>{0}. Is being used 1 time by{1}    reversal entries.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksIsUsedOnceBySubentries" xml:space="preserve">
+	<value>{0}. Is being used 1 time by subentries.</value>
+  </data>
+  <data name="ksIsUsedOnceByWFAnals" xml:space="preserve">
+	<value>{0}. Is being used 1 time by wordform analyses.</value>
+  </data>
+  <data name="ksIsUsedOnceInAnalyses" xml:space="preserve">
+	<value>{0}. Is being used 1 time in analyses.</value>
+  </data>
+  <data name="ksIsUsedXTimesByAlloAdhoc" xml:space="preserve">
+	<value>{0}. Is being used {1} times by{2}    allomorph adhoc co-prohibitions.</value>
+	<comment>{2} is a line separator character.  it is optional.</comment>
+  </data>
+  <data name="ksIsUsedXTimesByAllos" xml:space="preserve">
+	<value>{0}. Is being used {1} times by{2}    allomorphs.</value>
+	<comment>{2} is a line separator character.  it is optional.</comment>
+  </data>
+  <data name="ksIsUsedXTimesByAnalyses" xml:space="preserve">
+	<value>{0}. Is being used {1} times by analyses.</value>
+  </data>
+  <data name="ksIsUsedXTimesByEntries" xml:space="preserve">
+	<value>{0}. Is being used {1} times by major entries.</value>
+  </data>
+  <data name="ksIsUsedXTimesByFuncs" xml:space="preserve">
+	<value>{0}. Is being used {1} times by{2}    functions/analyses.</value>
+	<comment>{2} is a line separator character.  it is optional.</comment>
+  </data>
+  <data name="ksIsUsedXTimesByMorphAdhoc" xml:space="preserve">
+	<value>{0}. Is being used {1} times by{2}    morpheme adhoc co-prohibitions.</value>
+	<comment>{2} is a line separator character.  it is optional.</comment>
+  </data>
+  <data name="ksIsUsedXTimesByRevEntries" xml:space="preserve">
+	<value>{0}. Is being used {1} times by{2}    reversal entries.</value>
+	<comment>{2} is a line separator character.  it is optional.</comment>
+  </data>
+  <data name="ksIsUsedXTimesBySubentries" xml:space="preserve">
+	<value>{0}. Is being used {1} times by subentries.</value>
+  </data>
+  <data name="ksIsUsedXTimesByWFAnals" xml:space="preserve">
+	<value>{0}. Is being used {1} times by wordform analyses.</value>
+  </data>
+  <data name="ksIsUsedXTimesInAnalyses" xml:space="preserve">
+	<value>{0}. Is being used {1} times in analyses.</value>
+  </data>
+  <data name="ksItalic" xml:space="preserve">
+	<value>Italic</value>
+  </data>
+  <data name="ksLexRefUsedHere" xml:space="preserve">
+	<value>The lexical reference type is used in this context:</value>
+  </data>
+  <data name="ksListSep" xml:space="preserve">
+	<value>, </value>
+	<comment>separate items in a list (comma space)</comment>
+  </data>
+  <data name="ksLoweredXpt" xml:space="preserve">
+	<value>Lowered by {0} pt</value>
+	<comment>Font lowered by X points</comment>
+  </data>
+  <data name="ksMissingCloseBracketInEnv" xml:space="preserve">
+	<value>There is a missing closing square bracket ']' somewhere around here: '{0}'.</value>
+  </data>
+  <data name="ksMissingCloseParenInEnv" xml:space="preserve">
+	<value>There is a missing closing parenthesis ')' somewhere around here: '{0}'.</value>
+  </data>
+  <data name="ksMissingOpenBracketInEnv" xml:space="preserve">
+	<value>There is a missing opening square bracket '[' somewhere around here: '{0}'.</value>
+  </data>
+  <data name="ksMissingOpenParenInEnv" xml:space="preserve">
+	<value>There is a missing opening parenthesis '(' somewhere around here: '{0}'.</value>
+  </data>
+  <data name="ksMorphConstraintFailure" xml:space="preserve">
+	<value>Need to have at least one "Other Morpheme(s)" and a "Key Morpheme"</value>
+  </data>
+  <data name="ksNameAbbrSep" xml:space="preserve">
+	<value> - </value>
+	<comment>separate name and abbreviation (space dash space)</comment>
+  </data>
+  <data name="ksNoColorUnderline" xml:space="preserve">
+	<value>No ({0}) Underline</value>
+	<comment>nonsense, but a possibility</comment>
+  </data>
+  <data name="ksNoExplanation" xml:space="preserve">
+	<value>No explanation available.</value>
+  </data>
+  <data name="ksNoSuperSubscript" xml:space="preserve">
+	<value>No Super/Subscript</value>
+  </data>
+  <data name="ksNotBold" xml:space="preserve">
+	<value>Not Bold</value>
+  </data>
+  <data name="ksNotEvalYet" xml:space="preserve">
+	<value>not evaluated yet</value>
+  </data>
+  <data name="ksNotItalic" xml:space="preserve">
+	<value>Not Italic</value>
+  </data>
+  <data name="ksNotRaisedLowered" xml:space="preserve">
+	<value>Not Raised/Lowered</value>
+  </data>
+  <data name="ksNotSure" xml:space="preserve">
+	<value>&lt;Not Sure&gt;</value>
+  </data>
+  <data name="ksNoUnderline" xml:space="preserve">
+	<value>No Underline</value>
+  </data>
+  <data name="ksOrphanAnnotation" xml:space="preserve">
+	<value>*Orphan Annotation</value>
+  </data>
+  <data name="ksPhonemeUsedHere" xml:space="preserve">
+	<value>If you delete the phoneme, it will be removed from:</value>
+  </data>
+  <data name="ksProgError" xml:space="preserve">
+	<value>Programming Error</value>
+  </data>
+  <data name="ksQuestions" xml:space="preserve">
+	<value>???</value>
+	<comment>default for an unknown/unrecognized/undefined value</comment>
+  </data>
+  <data name="ksRaisedXpt" xml:space="preserve">
+	<value>Raised by {0} pt</value>
+	<comment>Font raised by X points</comment>
+  </data>
+  <data name="ksRedoCreateEntry" xml:space="preserve">
+	<value>Redo Create Entry</value>
+  </data>
+  <data name="ksRedoMakeRevEntries" xml:space="preserve">
+	<value>Redo Make Reversal Entries</value>
+  </data>
+  <data name="ksRedoSettingFunc" xml:space="preserve">
+	<value>Redo Setting Function</value>
+  </data>
+  <data name="ksRequiredItem" xml:space="preserve">
+	<value>This item is required by the program, so it can't be deleted.</value>
+  </data>
+  <data name="ksSenseUsedHere" xml:space="preserve">
+	<value>The sense is being used in these contexts:</value>
+  </data>
+  <data name="ksSingleColorUnderline" xml:space="preserve">
+	<value>Single {0} Underline</value>
+	<comment>insert explicit color</comment>
+  </data>
+  <data name="ksSingleUnderline" xml:space="preserve">
+	<value>Single Underline</value>
+  </data>
+  <data name="ksStars" xml:space="preserve">
+	<value>***</value>
+	<comment>indicates a missing value</comment>
+  </data>
+  <data name="ksStemNoCatInfo" xml:space="preserve">
+	<value>Stem/root of unknown category; takes any affix</value>
+  </data>
+  <data name="ksSubscript" xml:space="preserve">
+	<value>Subscript</value>
+  </data>
+  <data name="ksSuperscript" xml:space="preserve">
+	<value>Superscript</value>
+  </data>
+  <data name="ksTextIsX" xml:space="preserve">
+	<value>Text is {0}</value>
+	<comment>text foreground color</comment>
+  </data>
+  <data name="ksTextIsXonY" xml:space="preserve">
+	<value>Text is {0} on {1}</value>
+	<comment>text foreground and background colors</comment>
+  </data>
+  <data name="ksTodayAtX" xml:space="preserve">
+	<value>today at {0}</value>
+  </data>
+  <data name="ksUndoCreateEntry" xml:space="preserve">
+	<value>Undo Create Entry</value>
+  </data>
+  <data name="ksUndoMakeRevEntries" xml:space="preserve">
+	<value>Undo Make Reversal Entries</value>
+  </data>
+  <data name="ksUndoSettingFunc" xml:space="preserve">
+	<value>Undo Setting Function</value>
+  </data>
+  <data name="ksUNK" xml:space="preserve">
+	<value>UNK</value>
+	<comment>short for unknown (writing system)</comment>
+  </data>
+  <data name="ksUnnamed" xml:space="preserve">
+	<value>(unnamed)</value>
+  </data>
+  <data name="ksUntitled" xml:space="preserve">
+	<value>(untitled)</value>
+  </data>
+  <data name="ksUsedOnceByAlloAdhoc" xml:space="preserve">
+	<value>{0}. Used 1 time by{1}    allomorph adhoc co-prohibitions.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksUsedOnceByAnalyses" xml:space="preserve">
+	<value>{0}. Used 1 time by analyses.</value>
+  </data>
+  <data name="ksUsedOnceInNatClasses" xml:space="preserve">
+	<value>{0}. Being used 1 time in your natural classes.</value>
+  </data>
+  <data name="ksUsedXTimesByAlloAdhoc" xml:space="preserve">
+	<value>{0}. Used {1} times by{2}    allomorph adhoc co-prohibitions.</value>
+	<comment>{2} is a line separator character.  it is optional.</comment>
+  </data>
+  <data name="ksUsedXTimesByAnalyses" xml:space="preserve">
+	<value>{0}. Used {1} times by analyses.</value>
+  </data>
+  <data name="ksUsedXTimesInNatClasses" xml:space="preserve">
+	<value>{0}. Being used {1} times in your natural classes.</value>
+  </data>
+  <data name="ksWarningDelAnalysis" xml:space="preserve">
+	<value>Warning, once you delete this analysis, the following problems may arise:</value>
+  </data>
+  <data name="ksWarningDelWfGloss" xml:space="preserve">
+	<value>Warning: once you delete this word gloss:</value>
+  </data>
+  <data name="ksWord" xml:space="preserve">
+	<value>Word</value>
+  </data>
+  <data name="ksWordformUsedOnce" xml:space="preserve">
+	<value>Sorry, FieldWorks cannot delete this wordform{0}because it is used 1 time in your texts.</value>
+	<comment>{0} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksWordformUsedXTimes" xml:space="preserve">
+	<value>Sorry, FieldWorks cannot delete this wordform{1}because it is used {0} times in your texts.</value>
+	<comment>{1} is a line separator character. it is optional.</comment>
+  </data>
+  <data name="ksXPt" xml:space="preserve">
+	<value>{0} pt</value>
+	<comment>size in "points"</comment>
+  </data>
+  <data name="ksWordOrPhraseIsTooLong" xml:space="preserve">
+	<value>The word or phrase is too long so the interlinearized wordform has been
+truncated to the maximum length.  Try using the Tools/Guess Word Breaks tool
+on the baseline text, or insert word breaks into the text manually.</value>
+  </data>
+  <data name="ksWarning" xml:space="preserve">
+	<value>Warning</value>
+  </data>
+  <data name="ksInvalidBackendProviderType" xml:space="preserve">
+	<value>The FDOBackendProviderType is not supported.</value>
+  </data>
+  <data name="ksLexRelation" xml:space="preserve">
+	<value>  relation</value>
+  </data>
+  <data name="ksDeletePhEnvironment" xml:space="preserve">
+	<value>Environment: {0}</value>
+  </data>
+  <data name="ksDeleteLexEntry" xml:space="preserve">
+	<value>Entry: {0}</value>
+  </data>
+  <data name="ksDeleteLexExampleSentence" xml:space="preserve">
+	<value>Example</value>
+  </data>
+  <data name="ksDeleteLexPronunciation" xml:space="preserve">
+	<value>Pronunciation</value>
+  </data>
+  <data name="ksDeleteLexSense" xml:space="preserve">
+	<value>Sense: {0}</value>
+  </data>
+  <data name="ksDeleteNaturalClass" xml:space="preserve">
+	<value>Natural class: {0}</value>
+  </data>
+  <data name="ksDeletePhoneme" xml:space="preserve">
+	<value>Phoneme: {0}</value>
+  </data>
+  <data name="ksDeletePhRepresentation" xml:space="preserve">
+	<value>Grapheme: {0}</value>
+  </data>
+  <data name="ksCliticNoCatInfo" xml:space="preserve">
+	<value>Clitic of unknown category</value>
+  </data>
+  <data name="ksDeleteAffixSlot" xml:space="preserve">
+	<value>Affix slot {0}</value>
+  </data>
+  <data name="ksDeleteAffixTemplate" xml:space="preserve">
+	<value>Affix Template</value>
+  </data>
+  <data name="ksDeleteFeatureSet" xml:space="preserve">
+	<value>Feature set  {0}</value>
+  </data>
+  <data name="ksDeleteInflectionClass" xml:space="preserve">
+	<value>Inflection class {0}</value>
+  </data>
+  <data name="ksDeleteStemName" xml:space="preserve">
+	<value>Stem name</value>
+  </data>
+  <data name="ksTruncatingGloss" xml:space="preserve">
+	<value>Truncating the gloss to the first 256 characters.</value>
+  </data>
+  <data name="ksTruncatedToXXXChars" xml:space="preserve">
+	<value>The value is too long to store, so it has been truncated to the first {0} characters.</value>
+	<comment>{0} is the maximum number of characters allowed</comment>
+  </data>
+  <data name="ksTruncatedXXXToYYYChars" xml:space="preserve">
+	<value>The {0} is too long to store, so it has been truncated to the first {1} characters.</value>
+  </data>
+  <data name="ksLexemeForm" xml:space="preserve">
+	<value>lexeme form</value>
+  </data>
+  <data name="ksAllomorph" xml:space="preserve">
+	<value>allomorph</value>
+  </data>
+  <data name="ksInvalidUnmarkedForm0" xml:space="preserve">
+	<value>Invalid unmarked form ({0}).</value>
+  </data>
+  <data name="ksInvalidForm0Trailing1" xml:space="preserve">
+	<value>Invalid form ({0}) marked with trailing '{1}'.</value>
+  </data>
+  <data name="ksInvalidForm0Leading1" xml:space="preserve">
+	<value>Invalid form ({0}) marked with leading '{1}'.</value>
+  </data>
+  <data name="ksInvalidForm0Leading1Trailing2" xml:space="preserve">
+	<value>Invalid form ({0}) marked with leading '{1}' and trailing '{2}'.</value>
+  </data>
+  <data name="ksZero" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="ksCantPromoteOrMoveTemplateColumn" xml:space="preserve">
+	<value>You cannot move, delete, or promote a discourse chart column when there is a chart that has data in the column. One text that has such a chart is {0}</value>
+	<comment>{0} is a text name.</comment>
+  </data>
+  <data name="ksErrorCaption" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <data name="ksCantPromoteOrMoveGroupInUse" xml:space="preserve">
+	<value>You cannot promote or move a column group when there are charts using the template. One text that has such a chart is {0}.</value>
+	<comment>{0} is (one) text that prevents the move.</comment>
+  </data>
+  <data name="ksNoForm" xml:space="preserve">
+	<value>no form available</value>
+  </data>
+  <data name="ksNothingToRedo" xml:space="preserve">
+	<value>(Nothing to Redo.)</value>
+  </data>
+  <data name="ksNothingToUndo" xml:space="preserve">
+	<value>(Nothing to Undo.)</value>
+  </data>
+  <data name="ksNotRedoable" xml:space="preserve">
+	<value>Not redoable</value>
+  </data>
+  <data name="ksNotUndoable" xml:space="preserve">
+	<value>Not undoable</value>
+  </data>
+  <data name="ksCantDeleteDefaultDiscourseTemplate" xml:space="preserve">
+	<value>The default discourse chart template cannot be deleted, moved or promoted.</value>
+	<comment>Error message attempting to delete the one and only discourse chart template. Same message is used for moving or promoting.</comment>
+  </data>
+  <data name="ksDeletingCharts" xml:space="preserve">
+	<value>Deleting discourse charts for this text.</value>
+  </data>
+  <data name="ksNatClassUsedHere" xml:space="preserve">
+	<value>If you delete the natural class, it will be removed from:</value>
+  </data>
+  <data name="ksUsedOnceInRules" xml:space="preserve">
+	<value>{0}. Being used 1 time by rules.</value>
+  </data>
+  <data name="ksUsedXTimesInRules" xml:space="preserve">
+	<value>{0}. Being used {1} times by rules.</value>
+  </data>
+  <data name="ksCantDeleteMarkupTagInUse" xml:space="preserve">
+	<value>You cannot delete a Text Markup tag when there are texts using the tag. One such text using this tag is {0}.</value>
+	<comment>{0} is (one) text that prevents the delete.</comment>
+  </data>
+  <data name="ksCantDeleteLastTagList" xml:space="preserve">
+	<value>The last remaining Text Markup tag list cannot be deleted.</value>
+	<comment>Error message attempting to delete the one and only text markup tag type.</comment>
+  </data>
+  <data name="ksCantDeleteMarkupTypeInUse" xml:space="preserve">
+	<value>You cannot delete a Text Markup type when there are texts using its tags. One such text using this type of tag is {0}.</value>
+	<comment>{0} is (one) text that prevents the delete.</comment>
+  </data>
+  <data name="ksHomographLimits" xml:space="preserve">
+	<value>There are {0} homographs of {1}.
+FieldWorks currently supports a maximum of 255 distinct homographs.</value>
+  </data>
+  <data name="ksEntryNotSetMaybeDeleted" xml:space="preserve">
+	<value>The entry is not set, possibly because it has been deleted by another user.
+Your changes to this entry will be discarded when you exit the project.</value>
+  </data>
+  <data name="ksEntryNotSet" xml:space="preserve">
+	<value>Entry Not Set</value>
+  </data>
+  <data name="ksEntryHasBeenDeleted" xml:space="preserve">
+	<value>The entry has been deleted by another user since you opened the project.
+Your changes to this entry will be discarded when you exit the project.</value>
+  </data>
+  <data name="ksEntryDeleted" xml:space="preserve">
+	<value>Entry Deleted</value>
+  </data>
+  <data name="ksWordformUsedByChkRef" xml:space="preserve">
+	<value>You cannot delete this wordform because it is used as an occurrence of a biblical term ({0}) in Translation Editor.</value>
+	<comment>{0} is a vernacular string. Sometimes it might not render well in the message box font. It's remotely possible it might be empty.</comment>
+  </data>
+  <data name="ksPreparingInterlinear1" xml:space="preserve">
+	<value>Preparing Interlinear (Step 1)</value>
+  </data>
+  <data name="ksPreparingInterlinear2" xml:space="preserve">
+	<value>Preparing Interlinear (Step 2)</value>
+  </data>
+  <data name="ksPreparingInterlinear3" xml:space="preserve">
+	<value>Preparing Interlinear (Step 3)</value>
+  </data>
+  <data name="ksPreparingInterlinear4" xml:space="preserve">
+	<value>Preparing Interlinear (Step 4)</value>
+  </data>
+  <data name="ksPreparingInterlinear5" xml:space="preserve">
+	<value>Preparing Interlinear (Step 5)</value>
+  </data>
+  <data name="ksSectionHeading" xml:space="preserve">
+	<value>{0} (Heading)</value>
+	<comment>Used in concordance references</comment>
+  </data>
+  <data name="ksCantModifyTemplateInUse" xml:space="preserve">
+	<value>This part of a chart template cannot be moved or deleted, because it or one of its children is in use in one or more charts (e.g., {0}).</value>
+	<comment>{0} is the title of a text, or possibly a scripture reference.</comment>
+  </data>
+  <data name="ksEmptyFeatureStructure" xml:space="preserve">
+	<value>an empty feature structure</value>
+  </data>
+  <data name="ksCannotSave" xml:space="preserve">
+	<value>FieldWorks cannot save your changes to {0}. It may be marked Read-only, or you may not have permission to write to the output directory. The file system reports
+{1}</value>
+  </data>
+  <data name="ksCannotWriteBackup" xml:space="preserve">
+	<value>FieldWorks cannot save your changes, because it does not have permission to replace the file {0}. It may be marked Read-only, or you may not have permission to write in the folder. The file system reports
+{1}</value>
+  </data>
+  <data name="ksFileModifiedByOther" xml:space="preserve">
+	<value>FieldWorks cannot safely save your changes, because another program has modified the file. Expected write time {0} but found {1}.</value>
+	<comment>{0} and {1} will be representations of a Date and time.</comment>
+  </data>
+  <data name="ksProblemWritingFile" xml:space="preserve">
+	<value>Problem Writing File</value>
+	<comment>Caption of dialog that reports such a problem</comment>
+  </data>
+  <data name="ksDataMigrationCaption" xml:space="preserve">
+	<value>Data Migration</value>
+  </data>
+  <data name="ksDataMigrationFinishingMessage" xml:space="preserve">
+	<value>Finishing migration process...</value>
+  </data>
+  <data name="ksDataMigrationStatusMessage" xml:space="preserve">
+	<value>Migrating to version {0}...</value>
+  </data>
+  <data name="ksCannotConvert" xml:space="preserve">
+	<value>Cannot Convert</value>
+	<comment>Caption going with ksProjectExists or ksMissingXmlInBackup</comment>
+  </data>
+  <data name="ksConverting" xml:space="preserve">
+	<value>Migrating</value>
+	<comment>Caption for progress dialog during import from 6.0</comment>
+  </data>
+  <data name="ksConvertingFile" xml:space="preserve">
+	<value>Migrating {0} to FieldWorks 7.0</value>
+	<comment>Message used during import from 6.0</comment>
+  </data>
+  <data name="ksExtractingFromZip" xml:space="preserve">
+	<value>Extracting {0} from zip file</value>
+	<comment>Message used during import from 6.0</comment>
+  </data>
+  <data name="ksMissingXmlInBackup" xml:space="preserve">
+	<value>The zip file does not appear to contain a FieldWorks backup. Did you remember to make a backup that includes an XML version of the data?</value>
+	<comment>Error message that may occur importing from 6.0</comment>
+  </data>
+  <data name="ksProjectExists" xml:space="preserve">
+	<value>There is already a project with the same name as the one you are trying to convert.</value>
+	<comment>Error message that may occur importing from 6.0</comment>
+  </data>
+  <data name="ksMemberOfWordSet" xml:space="preserve">
+	<value>a member of the word set(s) called</value>
+	<comment>Goes between a wordform form and a list of word set names to indicate that deleting the wordform will remove it from these sets.</comment>
+  </data>
+  <data name="ksBackupXMLFileTooOld" xml:space="preserve">
+	<value>The backup XML file is either invalid or too old to convert directly.</value>
+  </data>
+  <data name="ksZipNotFieldWorksBackup" xml:space="preserve">
+	<value>The zip file does not contain a version 6.0 (or earlier) FieldWorks backup.</value>
+  </data>
+  <data name="ksBackupProgressCaption" xml:space="preserve">
+	<value>Backing Up</value>
+	<comment>Used in Backup Progress dialog.</comment>
+  </data>
+  <data name="ksBackupStatusMessage" xml:space="preserve">
+	<value>Adding files to backup...</value>
+	<comment>Used in Backup Progress dialog.</comment>
+  </data>
+  <data name="ksBackupClosing" xml:space="preserve">
+	<value>Writing out backup file...</value>
+	<comment>Used in Backup Progress dialog.</comment>
+  </data>
+  <data name="ksRestoringToTempProject" xml:space="preserve">
+	<value>Restoring {0} to a temporary project</value>
+  </data>
+  <data name="ksRestoringToTempProjectFailed" xml:space="preserve">
+	<value>Restoring {0} to a temporary project failed.  The restore process returned error code {1} and error message {2}.</value>
+  </data>
+  <data name="ksMigratingTempCopyToFw60" xml:space="preserve">
+	<value>Migrating the temporary copy of {0} to FieldWorks version 6.0</value>
+  </data>
+  <data name="ksMigratingTempCopyToFw60Failed" xml:space="preserve">
+	<value>Migrating the temporary copy of {0} to FieldWorks 6.0 failed.  The update process returned error code {1} and error message {2}.  If you are restoring a version 2.0 or older project on Vista or Windows 7, right-click on FieldWorks and choose Run as Administrator.</value>
+  </data>
+  <data name="ksWritingTempCopyAsFw60XML" xml:space="preserve">
+	<value>Writing the temporary copy of {0} as FieldWorks 6.0 XML</value>
+  </data>
+  <data name="ksWritingTempCopyAsFw60XMLFailed" xml:space="preserve">
+	<value>Writing the temporary copy of {0} as FieldWorks 6.0 XML failed.  The conversion process returned error code {1} and error message {2}.</value>
+  </data>
+  <data name="ksDeletingOldTempDatabase" xml:space="preserve">
+	<value>Deleting an old temporary database ({0})</value>
+  </data>
+  <data name="ksDeletingOldTempDatabaseFailed" xml:space="preserve">
+	<value>Deleting an old temporary database ({0}) failed.  The delete process returned error code {1} and error message {2}.</value>
+  </data>
+  <data name="ksConversionProcessFailed" xml:space="preserve">
+	<value>The conversion process has failed! Are you sure the input was a backup from FieldWorks version 6.0 or later? The conversion process returned error code {0} and error message {1}.</value>
+  </data>
+  <data name="ksErrorRestoringFromFw60Backup" xml:space="preserve">
+	<value>Error restoring from FieldWorks 6.0 (or earlier) backup</value>
+  </data>
+  <data name="ksRestoringOldFwBackupFailed" xml:space="preserve">
+	<value>Restoring from an old FieldWorks backup failed.</value>
+  </data>
+  <data name="ksFailed" xml:space="preserve">
+	<value>Failed</value>
+  </data>
+  <data name="ksCannotConnectToServer" xml:space="preserve">
+	<value>Could not connect to server. Check that {0} is running on the remote server and that any firewalls are configured to allow connections to it.</value>
+	<comment>Parameter is hard-coded service name (FwRemoteDatabaseConnectorService). This is a message targeted primarily at a computer savvy person.</comment>
+  </data>
+  <data name="ksFailedToStartServer" xml:space="preserve">
+	<value>Failed to start server:
+{0}</value>
+	<comment>The parameter is the error message returned from the FieldWorks service.</comment>
+  </data>
+  <data name="ksWarningProjectFolderNotFoundOnServer" xml:space="preserve">
+	<value>Projects folder "{0}" could not be found on server. Ensure that the Projects folder is present and accessible.</value>
+  </data>
+  <data name="ksConvertingToNonShared" xml:space="preserve">
+	<value>FieldWorks: Converting projects to non-shared format</value>
+	<comment>Caption for progress dialog</comment>
+  </data>
+  <data name="ksConvertingToShared" xml:space="preserve">
+	<value>FieldWorks: Converting projects to shared format</value>
+	<comment>Caption for progress dialog</comment>
+  </data>
+  <data name="ksMustDisconnectCaption" xml:space="preserve">
+	<value>Clients connected to: {0}</value>
+	<comment>{0} is project name. This is a dialog caption, keep it short.</comment>
+  </data>
+  <data name="ksMustDisconnectClients" xml:space="preserve">
+	<value>Cannot continue while the following clients are connected to {0}: {1}</value>
+	<comment>{0} is a project name, {1} is a list of users.</comment>
+  </data>
+  <data name="ksAllProjectsMustDisconnectCaption" xml:space="preserve">
+	<value>Clients connected to shared projects.</value>
+  </data>
+  <data name="ksAllProjectsMustDisconnectClients" xml:space="preserve">
+	<value>Cannot continue while the following clients are connected {0}</value>
+  </data>
+  <data name="ksOtherClientsAreWriting" xml:space="preserve">
+	<value>This project is simultaneously being opened by another user. The project will be available to you shortly.</value>
+	<comment>Message that MAY occasionally be seen in client-server scenario under heavy use, especially while someone else is starting up. Not readily reproducible on demand.</comment>
+  </data>
+  <data name="ksMustCloseProjectsToShare" xml:space="preserve">
+	<value>In order to continue with the conversion, you need to close the following projects: {0}</value>
+	<comment>{0} may be a single project name or a list.</comment>
+  </data>
+  <data name="ksColorStrikethrough" xml:space="preserve">
+	<value>{0} Strikethrough</value>
+  </data>
+  <data name="ksStrikethrough" xml:space="preserve">
+	<value>Strikethrough</value>
+  </data>
+  <data name="ksNumberOfParent" xml:space="preserve">
+	<value>{0} of {1}</value>
+	<comment>Pattern string for the contents of the "Subrecord Of" column in Notebook. {0} is a number, {1} is the title of the parent record. For example, the column might say "1.2.3 of Fishing for Piranha" to indicate that the current record is the third subrecord of the second subrecord of the first subrecord of the main record called "Fishing for Piranha".</comment>
+  </data>
+  <data name="ksConvertFailed" xml:space="preserve">
+	<value>Conversion Failed</value>
+	<comment>Dialog caption</comment>
+  </data>
+  <data name="ksConvertFailedDetails" xml:space="preserve">
+	<value>FieldWorks was unable to convert the project {0}. This is generally a bug in the program. We recommend that you restart the program as soon as you can. If possible, please zip the entire contents of the folder {1} and send it to Flex_Errors@sil.org with the message "{2}" and any other information you think may help. FieldWorks will continue and try to convert other projects.</value>
+  </data>
+  <data name="ksDb4oConnectionLostCaption" xml:space="preserve">
+	<value>The connection to the server has been lost.</value>
+  </data>
+  <data name="ksDb4oConnectionLostText" xml:space="preserve">
+	<value>Would you like to attempt to reconnect? Selecting "No" will cause the loss of any work since the last save.</value>
+  </data>
+  <data name="ksRedoResetHomographs" xml:space="preserve">
+	<value>Redo Reset Homograph Numbers</value>
+  </data>
+  <data name="ksUndoResetHomographs" xml:space="preserve">
+	<value>Undo Reset Homograph Numbers</value>
+  </data>
+  <data name="ksWarnOnConfirmingSingleUserChanges" xml:space="preserve">
+	<value>Number of other users: {0}
+When saving changes in this dialog with other users connected, FieldWorks may crash or malfunction for those users.
+
+Do you want to make the changes anyway?</value>
+  </data>
+  <data name="ksNotAdvisableOthersConnectedCaption" xml:space="preserve">
+	<value>Not advisable when other users connected</value>
+  </data>
+  <data name="ksOthersConnectedCaption" xml:space="preserve">
+	<value>Take care - other users connected</value>
+  </data>
+  <data name="ksCannotRestore" xml:space="preserve">
+	<value>Cannot Restore</value>
+	<comment>Caption for ksCannotRestoreBackup message box</comment>
+  </data>
+  <data name="ksCannotRestoreBackup" xml:space="preserve">
+	<value>The file {0} cannot be overwritten because Windows thinks it is in use. It will not be updated to match the backup.</value>
+  </data>
+  <data name="ksBlankSense" xml:space="preserve">
+	<value>&lt;a sense with no gloss or grammatical info&gt;</value>
+	<comment>Label used in place of the normal display of a sense that has no MSA, gloss, or defn.</comment>
+  </data>
+  <data name="ksBadData" xml:space="preserve">
+	<value>This database contains a corrupted record, which caused a program failure trying to load it. FieldWorks will have to close. Details: {0}. Record contains {1}</value>
+	<comment>{0} will be an obscure programmer-type message. {1} will be a chunk of incomprehensible XML.</comment>
+  </data>
+  <data name="ksShortDelayCaption" xml:space="preserve">
+	<value>Short delay</value>
+	<comment>Caption that goes with ksOtherClientsAreWriting</comment>
+  </data>
+  <data name="ksCouldNotBackupSomeFiles" xml:space="preserve">
+	<value>FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}</value>
+  </data>
+  <data name="ksWarnOnOpeningSingleUserDialog" xml:space="preserve">
+	<value>Number of other users: {0}
+The menu command you selected will open a dialog box. If you change any selections or settings in the dialog box, other users who have this project open on their computers will have problems.
+
+If you will only look at selections and settings, click OK.
+
+If you need to make changes, tell the other users to close this project before you continue, or click Cancel.</value>
+  </data>
+  <data name="ksConvertFailedNewerVersion" xml:space="preserve">
+	<value>FieldWorks was unable to convert the project {0} because it was created by a more recent version of FieldWorks. To convert this project, install the appropriate version of FieldWorks, and turn sharing off then on again. (Note that doing this will upgrade all your projects to the newer version.)</value>
+  </data>
+  <data name="ksRedoCreateNotebookRecord" xml:space="preserve">
+	<value>Redo Create Notebook Record</value>
+  </data>
+  <data name="ksUndoCreateNotebookRecord" xml:space="preserve">
+	<value>Undo Create Notebook Record</value>
+  </data>
+  <data name="ksLocalConnectorServiceNotStarted" xml:space="preserve">
+	<value>Local service {0} not started. If this service has a Startup Type of Manual or Disabled, we recommend that you set it to Automatic, and then in this dialog box click Retry.</value>
+	<comment>Parameter is hard-coded service name (FwRemoteDatabaseConnectorService). This is a message targeted primarily at a computer savvy person.</comment>
+  </data>
+</root>

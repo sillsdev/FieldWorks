@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="datarrow" num="2.4.1,2,3,4" abbr="dtarw" file="FW\DataNav.xml">
+<title tag="datarrow">Data First, Previous, Next, Last Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Data menu is only implemented in applications that are record-oriented. The Data menu allows navigation to the first, previous, next or last entry in the record set according to the current sort order, and according to any filter that might currently be in place. These menu items are selectively disabled if the record set is already displaying the correct record, or if no records match the current filter. In Data Entry view, this means that the record is displayed in the window by itself. In Document, Outline or Browse views, it means that the display scrolls to show the correct record, and the text insertion point is placed at the beginning of that record.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/DATAMENU.HTML" type="doc">Data First, Previous, Next, Last</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the word "Data" followed by "First", "Previous", "Next" or "Last". See the <link uri="TbWindow.xml">general toolbar tests</link> to test the rest of the Data toolbar and menu.</p>
+</context>
+
+ <case id="dtarwInsp" num="0" order="any">
+  <title tag="dtarwInsp">Inspect</title>
+  <context>
+<p>When the application is running</p>
+</context>
+
+<step name="0.1">Use the <link uri="TbWindow.xml">general toolbar tests</link> to exercise the basic toolbar and menu functions.
+<r>Report any failures starting with the words "Data-(Arrow)".</r>
+</step>
+
+</case>
+
+<case id="dtarwfr" num="1" order="any">
+<title tag="dtarwfr">First record</title>
+<context>
+<p>When the first record (according to the current sort order and any filter currently in use) is displayed in the main window</p>
+</context>
+
+<step name="1.1" link="Bug">Inspect the content of the main window.
+   <r>
+<ul>
+<li>
+<b>In Browse view:</b> The main window's content is a grid of all the records. The first record is at the top, and the cursor is at the front of the title of the first record.</li>
+<li>
+<b>In Data Entry view:</b> The main window's content is the first record.</li>
+<li>
+<b>In Document view:</b> The main window's content is a document-style list of all the records. The first record is at the top, and the cursor is at the front of the title of the first record.</li>
+</ul>
+</r>
+<p name="bug">Wrong data record displayed for first</p>
+</step>
+<step name="1.2" link="Bug">Click on the Data menu button.
+   <r>
+<ul>
+<li>"First" and "Previous" menu items are grayed out.</li>
+<li>Main window content is not empty; it is the heading of the first record.</li>
+</ul>
+</r>
+<p name="bug">Data First Previous (pick one) is enabled for first</p>
+<p name="bug">Data First: main window is empty for first</p>
+</step>
+<step name="1.3" link="Bug">Inspect the Data Toolbar.
+   <r>The Data-First button (barred left arrow) and the Data-Previous button (left arrow) are grayed out (disabled)</r>
+<p name="bug">Data First Previous(pick one) is active for first</p>
+</step>
+<step name="1.4" link="Bug">Inspect the Status bar in the lower right of the window.
+   <r>Status bar shows 1 / N, where N is the total number of records, or the number of records selected by the filter, if a filter is on (the filter symbol on the Status bar shows if a filter is on).</r>
+<p name="bug">Status bar shows incorrect record</p>
+<p name="bug">Status bar filter symbol on when filter is off</p>
+</step>
+<step name="1.5" link="Bug">Click the Data-First button on the Data Toolbar or click the Data-First menu item.
+   <r>Nothing happens</r>
+<p name="bug">Data-First produces action on first record</p>
+</step>
+<step name="1.6" link="Bug">Click the Data-Previous button on the Data Toolbar or click the Data-Previous menu item or use its shortcut Alt+P.
+   <r>Nothing happens</r>
+<p name="bug">Data-Previous produces action on first record</p>
+</step>
+
+</case>
+
+<case id="dtarwlr" num="2" order="any">
+<title tag="dtarwlr">Last record</title>
+<context>
+<p>When the last record (according to the current sort order and any filter currently in use) is displayed in the main window</p>
+</context>
+
+<step name="2.1" link="Bug">Inspect the content of the main window.
+   <r>
+<ul>
+<li>
+<b>In Browse view:</b> The main window's content is a grid of all the records. The last record is at the bottom, and the cursor is at the front of the title of the last record.</li>
+<li>
+<b>In Data Entry view:</b> The main window's content is the last record.</li>
+<li>
+<b>In Document view:</b> The main window's content is a document-style list of all the records. The last record is at the bottom, and the cursor is at the front of the title of the last record.</li>
+</ul>
+</r>
+<p name="bug">Wrong data record displayed for last</p>
+</step>
+<step name="2.2" link="Bug">Click on the Data menu button on the Data Toolbar.
+   <r>
+<ul>
+<li>"Last" and "Next" menu items are grayed out.</li>
+<li>Main window content is not empty; it is the heading of the last record.</li>
+</ul>
+</r>
+<p name="bug">Data Last Next (pick one) is enabled for last</p>
+<p name="bug">Data Last: main window is empty for last</p>
+</step>
+<step name="2.3" link="Bug">Inspect the Data Toolbar.
+   <r>The Data-Last button (barred right arrow) and the Data-Next button (right arrow) are grayed out (disabled)</r>
+<p name="bug">Data Last Next(pick one) is active for last</p>
+</step>
+<step name="2.4" link="Bug">Inspect the Status bar in the lower right of the window.
+   <r>Status bar shows N / N, where N is the total number of records, or the number of records selected by the filter, if a filter is on (the filter symbol on the Status bar shows if a filter is on).</r>
+<p name="bug">Status bar shows incorrect record</p>
+<p name="bug">Status bar filter symbol on when filter is off</p>
+</step>
+<step name="2.5" link="Bug">Click on Data-Last button on the Data Toolbar or click the Data-Last menu item.
+   <r>Nothing happens</r>
+<p name="bug">Data-Last produces action on last record</p>
+</step>
+<step name="2.6" link="Bug">Click the Data-Next button on the Data Toolbar or click the Data-Next menu item or use its shortcut Alt+N.
+   <r>Nothing happens</r>
+<p name="bug">Data-Next produces action on last record</p>
+</step>
+
+</case>
+
+ <case id="dtarwFirst" num="3" order="any">
+  <title tag="dtarwFirst">Data-First</title>
+  <context>
+<p>When the first record is NOT being (or is not supposed to be currently) displayed in the main window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/DATAMENU.HTML" type="doc">Data First, Previous, Next, Last</link>.</p>
+  <step name="3.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Data-First menu item.
+   <r>Report any failures as suggested using "Data-First" as the name of the menu item.</r>
+  </step>
+<step name="3.2">Click the Data-First button on the Data Toolbar or click the Data-First menu item.
+   <r>See <link uri="#dtarwfr">case 1</link> for results and further testing.</r>
+</step>
+
+ </case>
+
+ <case id="dtarwLast" num="4" order="any">
+  <title tag="dtarwLast">Data-Last</title>
+  <context>
+<p>When the last record is NOT being (or is not supposed to be currently) displayed in the main window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/DATAMENU.HTML" type="doc">Data First, Previous, Next, Last</link>.</p>
+  <step name="4.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Data-Last menu item..
+   <r>Report any failures as suggested using "Data-Last" as the name of the menu item.</r>
+  </step>
+<step name="4.2">Click the Data-Last button on the Data Toolbar or click the Data-Last menu item.
+   <r>See <link uri="#dtarwlr">case 2</link> for results and further testing.</r>
+</step>
+
+ </case>
+
+ <case id="dtarwPrev" num="5" order="any">
+  <title tag="dtarwPrev">Data-Previous</title>
+  <context>
+<p>When the first record is NOT being (or is not supposed to be currently) displayed in the main window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/DATAMENU.HTML" type="doc">Data First, Previous, Next, Last</link>.</p>
+  <step name="5.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Data-Previous menu item. Use shortcut Alt+P.
+   <r>Report any failures as suggested using "Data-Previous" as the name of the menu item.</r>
+  </step>
+<step name="5.2">Click the Data-Previous button on the Data Toolbar or click the Data-Previous menu item or use its shortcut Alt+P.
+   <r>
+<ul>
+<li>The Status bar current record I (of I/N) decrements by 1.</li>
+<li>
+<b>In Data Entry view:</b> the previous record is displayed.</li>
+<li>
+<b>In Document view:</b> the cursor is in front of the title of the previous record.</li>
+<li>
+<b>In Browse view:</b> the cursor is in front of the previous record.</li>
+</ul>
+</r>
+</step>
+
+ </case>
+
+ <case id="dtarwNext" num="6" order="any">
+  <title tag="dtarwNext">Data-Next</title>
+  <context>
+<p>When the last record is NOT being (or is not supposed to be currently) displayed in the main window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/DATAMENU.HTML" type="doc">Data First, Previous, Next, Last</link>.</p>
+  <step name="6.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Data-Next menu item. Use shortcut Alt+N.
+   <r>Report any failures as suggested using "Data-Next" as the name of the menu item.</r>
+  </step>
+<step name="6.2">Click the Data-Next button on the Data Toolbar or click the Data-Next menu item or use its shortcut Alt+N.
+   <r>
+<ul>
+<li>The Status bar current record I (of I/N) increments by 1.</li>
+<li>
+<b>In Data Entry view:</b> the next record is displayed.</li>
+<li>
+<b>In Document view:</b> the cursor is in front of the title of the next record.</li>
+<li>
+<b>In Browse view:</b> the cursor is in front of the next record.</li>
+</ul>
+</r>
+</step>
+
+ </case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Jul-13-01" author="MikeL">Added case material by Shalom and Janet</update>
+<update date="Jun-03-02" author="RussD">Changed filename to DataNav.xml</update>
+
+</test>

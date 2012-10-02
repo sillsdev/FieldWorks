@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<book name="Mark">
+	<section refs="1:1-8" title="John the Baptist Prepares the Way">
+		<para><v n="2"/><s ws="en">"The beginning of the gospel about Jesus Christ, the Son of God.</s></para>
+		<para><s ws="en">It is written in Isaiah the prophet:</s></para>
+		<para><s ws="en">"I will send my messenger ahead of you</s></para>
+		<para><s ws="en">who will prepare your way</s></para>
+		<para><v n="3"/><s ws="en">"a voice of one calling in the desert,</s></para>
+		<para><s ws="en">'Prepare the way for the Lord, make straight paths for him'"</s></para>
+		<para><v n="4"/><s ws="en">And so John came, baptizing in the desert region and preaching a baptism of repentence for the forgiveness of sins.</s>
+		<v n="5"/><s ws="en">The whole Judean countryside and all the people of Jerusalem went out to him.
+		Confessing their sins, the were baptized by him in the Jordan River...</s></para>
+	</section>
+	<section refs = "1:8-13" title="The Baptism and Temptation of Jesus">
+		<para><v n="9"/><s ws="en">At that time Jesus came from Nazareth in Galilee and was baptized by John in the Jordan.</s>
+		<v n="10"/><s ws="en">As Jesus was coming up out of the water, he saw heaven being torn open and the Spirit descending on him like a dove...</s></para>
+		<para><v n="12"/><s ws="en">At once the Spirit sent him out into the desert...</s></para>
+	</section>
+</book>

@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnMappings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnMappings.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnMappings.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnMappings.Location" type="System.Drawing.Point, System.Drawing">
+	<value>304, 87</value>
+  </data>
+  <data name="btnMappings.Size" type="System.Drawing.Size, System.Drawing">
+	<value>112, 23</value>
+  </data>
+  <data name="btnMappings.TabIndex" type="System.Int32, mscorlib">
+	<value>18</value>
+  </data>
+  <data name="btnMappings.Text" xml:space="preserve">
+	<value>&amp;Modify Mappings...</value>
+  </data>
+  <data name="btnMappings.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;btnMappings.Name" xml:space="preserve">
+	<value>btnMappings</value>
+  </data>
+  <data name="&gt;&gt;btnMappings.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnMappings.Parent" xml:space="preserve">
+	<value>grpExportWhat</value>
+  </data>
+  <data name="&gt;&gt;btnMappings.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>235, 396</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+	<value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="m_btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>323, 396</value>
+  </data>
+  <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="m_btnHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+	<value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="grpOutputTo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="txtOutputFolder.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="txtOutputFolder.Location" type="System.Drawing.Point, System.Drawing">
+	<value>110, 32</value>
+  </data>
+  <data name="txtOutputFolder.Size" type="System.Drawing.Size, System.Drawing">
+	<value>321, 20</value>
+  </data>
+  <data name="txtOutputFolder.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;txtOutputFolder.Name" xml:space="preserve">
+	<value>txtOutputFolder</value>
+  </data>
+  <data name="&gt;&gt;txtOutputFolder.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtOutputFolder.Parent" xml:space="preserve">
+	<value>grpOutputTo</value>
+  </data>
+  <data name="&gt;&gt;txtOutputFolder.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="fileNameSchemeCtrl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>110, 70</value>
+  </data>
+  <data name="fileNameSchemeCtrl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>344, 93</value>
+  </data>
+  <data name="fileNameSchemeCtrl.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;fileNameSchemeCtrl.Name" xml:space="preserve">
+	<value>fileNameSchemeCtrl</value>
+  </data>
+  <data name="&gt;&gt;fileNameSchemeCtrl.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.TE.FileNameSchemeCtrl, TeExport, Version=5.5.0.13349, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;fileNameSchemeCtrl.Parent" xml:space="preserve">
+	<value>grpOutputTo</value>
+  </data>
+  <data name="&gt;&gt;fileNameSchemeCtrl.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="lblOutputFolder.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblOutputFolder.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblOutputFolder.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 35</value>
+  </data>
+  <data name="lblOutputFolder.Size" type="System.Drawing.Size, System.Drawing">
+	<value>74, 13</value>
+  </data>
+  <data name="lblOutputFolder.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="lblOutputFolder.Text" xml:space="preserve">
+	<value>&amp;Output Folder:</value>
+  </data>
+  <data name="&gt;&gt;lblOutputFolder.Name" xml:space="preserve">
+	<value>lblOutputFolder</value>
+  </data>
+  <data name="&gt;&gt;lblOutputFolder.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblOutputFolder.Parent" xml:space="preserve">
+	<value>grpOutputTo</value>
+  </data>
+  <data name="&gt;&gt;lblOutputFolder.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="btnFolderBrowse.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="btnFolderBrowse.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnFolderBrowse.Location" type="System.Drawing.Point, System.Drawing">
+	<value>437, 32</value>
+  </data>
+  <data name="btnFolderBrowse.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnFolderBrowse.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="btnFolderBrowse.Text" xml:space="preserve">
+	<value>&amp;Browse...</value>
+  </data>
+  <data name="&gt;&gt;btnFolderBrowse.Name" xml:space="preserve">
+	<value>btnFolderBrowse</value>
+  </data>
+  <data name="&gt;&gt;btnFolderBrowse.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnFolderBrowse.Parent" xml:space="preserve">
+	<value>grpOutputTo</value>
+  </data>
+  <data name="&gt;&gt;btnFolderBrowse.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="grpOutputTo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 202</value>
+  </data>
+  <data name="grpOutputTo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>528, 179</value>
+  </data>
+  <data name="grpOutputTo.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="grpOutputTo.Text" xml:space="preserve">
+	<value>Output To</value>
+  </data>
+  <data name="&gt;&gt;grpOutputTo.Name" xml:space="preserve">
+	<value>grpOutputTo</value>
+  </data>
+  <data name="&gt;&gt;grpOutputTo.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpOutputTo.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpOutputTo.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="btnOk.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnOk.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
+	<value>147, 396</value>
+  </data>
+  <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="btnOk.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Name" xml:space="preserve">
+	<value>btnOk</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="chkNotes.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="chkNotes.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="chkNotes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 116</value>
+  </data>
+  <data name="chkNotes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>143, 17</value>
+  </data>
+  <data name="chkNotes.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="chkNotes.Text" xml:space="preserve">
+	<value>&amp;Annotations (interleaved)</value>
+  </data>
+  <data name="&gt;&gt;chkNotes.Name" xml:space="preserve">
+	<value>chkNotes</value>
+  </data>
+  <data name="&gt;&gt;chkNotes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkNotes.Parent" xml:space="preserve">
+	<value>grpExportWhat</value>
+  </data>
+  <data name="&gt;&gt;chkNotes.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="chklbWritingSystems.Location" type="System.Drawing.Point, System.Drawing">
+	<value>33, 72</value>
+  </data>
+  <data name="chklbWritingSystems.Size" type="System.Drawing.Size, System.Drawing">
+	<value>181, 34</value>
+  </data>
+  <data name="chklbWritingSystems.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;chklbWritingSystems.Name" xml:space="preserve">
+	<value>chklbWritingSystems</value>
+  </data>
+  <data name="&gt;&gt;chklbWritingSystems.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chklbWritingSystems.Parent" xml:space="preserve">
+	<value>grpExportWhat</value>
+  </data>
+  <data name="&gt;&gt;chklbWritingSystems.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="lblBooks.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="lblBooks.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblBooks.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 8</value>
+  </data>
+  <data name="lblBooks.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 19</value>
+  </data>
+  <data name="lblBooks.TabIndex" type="System.Int32, mscorlib">
+	<value>25</value>
+  </data>
+  <data name="lblBooks.Text" xml:space="preserve">
+	<value>{0} Books {1}{2}</value>
+  </data>
+  <data name="&gt;&gt;lblBooks.Name" xml:space="preserve">
+	<value>lblBooks</value>
+  </data>
+  <data name="&gt;&gt;lblBooks.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblBooks.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblBooks.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="grpExportWhat.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="pnlExportWhat.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="pnlExportWhat.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 20</value>
+  </data>
+  <data name="pnlExportWhat.Size" type="System.Drawing.Size, System.Drawing">
+	<value>511, 50</value>
+  </data>
+  <data name="pnlExportWhat.TabIndex" type="System.Int32, mscorlib">
+	<value>19</value>
+  </data>
+  <data name="&gt;&gt;pnlExportWhat.Name" xml:space="preserve">
+	<value>pnlExportWhat</value>
+  </data>
+  <data name="&gt;&gt;pnlExportWhat.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pnlExportWhat.Parent" xml:space="preserve">
+	<value>grpExportWhat</value>
+  </data>
+  <data name="&gt;&gt;pnlExportWhat.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="grpExportWhat.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 53</value>
+  </data>
+  <data name="grpExportWhat.Size" type="System.Drawing.Size, System.Drawing">
+	<value>528, 143</value>
+  </data>
+  <data name="grpExportWhat.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="grpExportWhat.Text" xml:space="preserve">
+	<value>Export what</value>
+  </data>
+  <data name="&gt;&gt;grpExportWhat.Name" xml:space="preserve">
+	<value>grpExportWhat</value>
+  </data>
+  <data name="&gt;&gt;grpExportWhat.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpExportWhat.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpExportWhat.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="toolTipInvalidChar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>544, 430</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+	<value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Export Standard Format</value>
+  </data>
+  <data name="&gt;&gt;toolTipInvalidChar.Name" xml:space="preserve">
+	<value>toolTipInvalidChar</value>
+  </data>
+  <data name="&gt;&gt;toolTipInvalidChar.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>ExportUsfmDialog</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

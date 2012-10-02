@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\maintask.xml">
+ <title tag="wrt">How to write a test script</title>
+ <index>
+  <li>test script: writing</li>
+  <li>making a test script</li>
+ </index>
+ <prerequisites>
+  <p>Before you begin, make sure you have:</p>
+  <ul>
+   <li>Read about the structure of a test script. <link uri="..\TCL\TestScript.xml" type="module">Details</link></li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps for writing a test script:</p>
+  <step link="Details" uri="http://intranet.sil.org/softwaredev/SantaFe/FW/FEATURES.HTML" type="doc">Locate the software specification.</step>
+  <step link="Details" uri="BreakSpecs.xml">Break the specification into object chunks.</step>
+  <step link="Details" uri="IdTestCases.xml">Identify test cases.</step>
+  <step link="Details" uri="SpecTestCases.xml">Specify test cases.</step>
+  <step link="Details" uri="Steps.xml">Write test case steps.</step>
+  <step link="Details" uri="XML.xml">Render a test script in XML</step>
+  <step link="Details" uri="..\Using\Submit.xml">Submit the test case to the <link uri="..\Milestone\LSTD.xml" type="module">Language Software Test Department</link> as you would a bug report.</step>
+ </steps>
+</task>

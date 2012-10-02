@@ -1,0 +1,474 @@
+'=====================================================================
+' TEST CASE NAME: General GUI tests for Data Notebook
+'
+' GENERAL DESCRIPTION OF WHAT IS VERIFIED: most of test case 1.0.2,
+'   general basic GUI functions like menus, shortcut keys, etc.
+'   Many of these tests are probably also applicable to other FW
+'   applications.
+
+
+' '$DEFINE and '$INCLUDE metacommands for test case
+'-------------------------------------------------------------------
+
+'$INCLUDE '..\DNTesting.inc'
+
+' DIM statements, TYPE declarations, global variables,
+' constants, and so on for test case
+'-------------------------------------------------------------------
+const DNMenuFile$ = "Test\VT\DN\menus-notebk.txt"
+const skip = False  'Set this to True only when debugging test scripts
+
+' *************************
+' **** BEGIN TEST CASE ****
+' *************************
+
+'******* Test Case INITIALIZATION/SETUP *********
+'Minimize the Visual Test window.
+dim hwnd as long
+hwnd = GetHandle(GH_HWNDCLIENT)
+if hwnd <> 0 Then WMinWnd(hwnd)
+
+
+'******* SCENARIO SECTION ***********************
+
+'*** Scenario 1:
+Scenario ("DN Startup (1.0.2: 1.0)")
+	' Check the resolution that this script was recorded on.
+	'CheckResolution (1280, 1024)  'Is this nec? a good thing?
+
+	'Minimize the Visual Test window.
+	If GetHandle(GH_HWNDCLIENT) Then WMinWnd(GetHandle(GH_HWNDCLIENT))
+
+	'For speedier testing of later scenarios
+	if skip = True then goto skipScenario
+
+	hwnd = StartDN(0, 1)
+		'** Does failing within a sub cause failure in the scenario? hope so.
+
+	WaitUntilIdle(DN_START_DELAY * 1000)
+
+	dim titlebar as string
+	titlebar = GetText(hwnd)
+	if right$(titlebar, len(DNExpTitleSuffix)) <> DNExpTitleSuffix then
+		Fail "Main DN window title didn't match '... "; DNExpTitleSuffix; "'"
+	end if
+
+skipScenario:
+
+Scenario Cleanup 'next scenario depends on DN being open.
+	WaitUntilIdle(DN_START_DELAY * 1000)
+	'Now wait for the DN main window to appear.
+	hwnd = WFndWndC(DnExpTitleSuffix, DNMainClass, _
+		FW_FOCUS OR FW_IGNOREFILE_LEFT, DN_START_DELAY)
+	if hwnd <= 0 then
+		Log #0, "Couldn't find DN in scenario cleanup."
+		fail "Couldn't find DN in scenario cleanup."  '?
+	end if
+End Scenario
+
+
+Scenario ("DN taskbar button (1.0.2: 1.1)")
+	'For speedier testing of later scenarios
+	if skip = True then goto skipScenario2
+
+	'We need DN to be the "currently selected" application in the taskbar;
+	'hopefully this is equivalent to the assumption that DN is the active window.
+	hwnd = FindDNWindow(True)
+
+	dim i as integer
+	i = WTaskbarItemIndex("")
+
+	'Unfortunately it's awkward to verify anything about the taskbar button,
+	'such as its label, because it's an owner-draw control.
+	'TODO LarsH: try to find a way
+
+	'For some reason, when VT simulates clicking on the taskbar item, DN doesn't
+	'minimize.  (But it does work by hand.)  So for now, we'll comment out
+	'this scenario.
+
+'	'Click on the item and check that DN got minimized
+'	WTaskbarItemClk(_ord(i))
+'	WaitUntilIdle(TimeoutMsec)
+'
+'	dim dninfo as INFO
+'	WGetInfo(hwnd, dninfo)
+'	Log #0, "Got info of minimized DN window: "; dninfo.hwnd; " "; dninfo.text
+'	if dninfo.visible = True then
+'		fail "DN window didn't minimize"
+'	end if
+'
+'	'Click on the item again and check that DN got restored
+'	WTaskbarItemClk(_ord(i))
+'	WaitUntilIdle(TimeoutMsec)
+'
+'	WGetInfo(hwnd, dninfo)
+'	if dninfo.visible <> True then
+'		fail "DN window didn't restore"
+'	end if
+
+skipScenario2:
+
+Scenario Cleanup 'and handling of scenario failure
+
+End Scenario
+
+
+' Check the menus for DN app.
+Scenario ("DN generic menu compare (1.0.2: 2.1a)")
+	'For speedier testing of later scenarios
+	if skip = True then goto skipScenario3
+
+	'Check menus by generic spec
+	FWVerifyMenus(FWMenuFile)
+
+skipScenario3:
+
+Scenario Cleanup
+
+End Scenario
+
+
+Scenario ("DN specific menu compare (1.0.2: 2.1b)")
+	if skip = True then goto skipScenario3b
+
+	'Check menus by DN-specific spec
+	FWVerifyMenus(DNMenuFile)
+
+skipScenario3b:
+
+Scenario Cleanup
+	play "{Esc}{Esc}{Esc}" 'close open menus or dialogs
+
+End Scenario
+
+
+
+Scenario ("DN File - Exit command (1.0.2: 3.0)")
+	if skip = True then goto skipScenario4
+
+	'These hardcoded captions should be replaced by the symbols in an include file if possible.
+	WToolbarButtonClk(_id(FWIDMenuToolbar), "&File")
+	WMenuSelect("E&xit")
+
+	if FindDNWindow(False) > 0 then
+		Fail("DN failed to exit")
+	end if
+
+	'TODO LarsH: Test whether the application (offers to) saves pending
+	'information before exiting?
+
+skipScenario4:
+
+Scenario Cleanup
+	StartDN(1, 0)  'needed by following scenarios
+End Scenario
+
+
+Scenario ("DN Help - About... command (1.0.2: 3.1, 3.1.1)")
+	if skip = True then goto skipScenario5
+
+	'These hardcoded captions should be replaced by the symbols in an include file if possible.
+	WToolbarButtonClk(_id(FWIDMenuToolbar), "&Help")
+	WMenuSelect("&About Data Notebook...")
+
+	hwnd = WFndWndC("About FieldWorks Data Notebook", FWDialogClass, _
+		FW_FOCUS OR FW_IGNOREFILE_LEFT, Timeout)
+
+	if hwnd = 0 then
+		Fail("Help - About dialog failed to appear")
+	end if
+
+	'FWVerifyText(_id(#kcidFilPgSetMLE#7bb5), "FieldWorks", 0, V_STATIC)
+	FWVerifyText(_id(kctidSuiteName), "FieldWorks", 0, V_STATIC)
+	FWVerifyText(_id(kctidName), "Data Notebook", 0, V_STATIC)
+	if left(StaticText(_id(kctidVersion)), 8) <> "Version:" then
+		fail "About box should show version number"
+	end if
+	if val(StaticText(_id(kctidMemory))) = 0 then
+		fail "About box should show available memory"
+	end if
+	if val(StaticText(_id(kctidDiskSpace))) = 0 then
+		fail "About box should show available disk space"
+	end if
+
+	'TODO LarsH: how to verify that there is a FieldWorks picture?
+	'TODO LarsH: check that the contents of the dialog fit properly, e.g. font size.
+	'That's hard to automate.
+
+	WButtonClick(_id(FWIDOKButton))
+	WaitUntilIdle(TimeoutMsec)
+
+	hwnd = WFndWndC("About FieldWorks Data Notebook", FWDialogClass, FW_FOCUS)
+	if hwnd > 0 then fail "OK button didn't close About dialog"
+
+skipScenario5:
+
+Scenario Cleanup
+	'Close About box
+	Play "{esc}{esc}"
+End Scenario
+
+
+Scenario ("DN maximize (1.0.2: 3.3.1-4)")
+	dim wndpossiz As WNDPOSSIZ
+	dim w%, h%, l%, t%
+
+	'if skip = True then goto skipScenario6
+
+	hwnd = FindDNWindow(True) 'make DN active and get its hwnd
+
+	'Get position of active window
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	w = wndpossiz.wWidth
+	h = wndpossiz.wHeight
+	l = wndpossiz.wLeft
+	t = wndpossiz.wTop
+
+	'We can't access the maximize button on the title bar, so this will have to do.
+	'WSysMenu(0)
+	'Actually WSysMenu(0) isn't working at the moment for DN; instead click at
+	'a hard-coded pixel position (yuck):
+	WClkWnd(hwnd, 5, -5)
+	WaitUntilIdle(TimeoutMsec)
+
+	'Internationalization alert:
+	WMenuSelect("Ma&ximize")
+	WaitUntilIdle(TimeoutMsec)
+
+	If Not WIsMaximized(0) Then Fail "DN window did not maximize."
+
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wWidth <= w or wndpossiz.wHeight <= h or _
+		wndpossiz.wTop > 0 or wndpossiz.wLeft > 0 then
+		fail "DN window did not maximize properly"
+	end if
+
+	'One way to check that it's maximized is to check whether "Restore"
+	'on the system menu has been enabled. This is done implicitly...
+	'WSysMenu(0)
+	WClkWnd(hwnd, 5, -5)
+	WaitUntilIdle(TimeoutMsec)
+
+	WMenuSelect("&Restore")
+	WaitUntilIdle(TimeoutMsec)
+
+	'Make sure "Maximize" got reenabled.
+	'WSysMenu(0)
+	WClkWnd(hwnd, 5, -5)
+	WaitUntilIdle(TimeoutMsec)
+	if not WMenuEnabled("Ma&ximize") then
+		fail "System menu - Maximize should now be enabled."
+	end if
+
+	Play "{esc}{esc}" 'close any open menus
+
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wWidth <> w or wndpossiz.wHeight <> h or _
+		wndpossiz.wTop <> t or wndpossiz.wLeft <> l then
+		fail "Didn't restore properly after Maximize."
+	end if
+
+skipScenario6:
+
+Scenario Cleanup
+	Play "{esc}{esc}" 'close any open menus
+End Scenario
+
+
+Scenario ("DN minimize (1.0.2: 3.4.1-3)")
+
+	'For some reason, VT's ways of restoring DN after minimizing are
+	'not working. So we'll have to skip this scenario. Once DN is minimized,
+	'we have no way to restore it, and testing comes to a halt.
+	goto skipScenario7
+
+	'dim wndpossiz As WNDPOSSIZ
+	'dim w%, h%, l%, t%
+
+	hwnd = FindDNWindow(True) 'make DN active and get its hwnd
+
+	'Get position of active window
+	WGetWndPosSiz (hwnd, wndpossiz, W_ABSOLUTE)
+	w = wndpossiz.wWidth
+	h = wndpossiz.wHeight
+	l = wndpossiz.wLeft
+	t = wndpossiz.wTop
+
+
+	'We can't access the maximize button on the title bar, so this will have to do.
+	'WSysMenu(0)
+	'Actually WSysMenu(0) isn't working at the moment for DN; instead click at
+	'a hard-coded pixel position (yuck):
+	WClkWnd(hwnd, 5, -5)
+	WaitUntilIdle(TimeoutMsec)
+
+	'Internationalization alert:
+	WMenuSelect("Mi&nimize")
+	WaitUntilIdle(TimeoutMsec)
+
+	If Not WIsMinimized(hwnd) Then Fail "DN window did not minimize."
+
+	'WResWnd(hwnd) 'restore window 'This doesn't work, unfortunately.
+	hwnd = FindDNWindow(True, FW_RESTORE) 'Neither does this.
+	WaitUntilIdle(TimeoutMsec)
+	Log #0, "FindDNWindow returned "; hwnd
+	if WIsMinimized(hwnd) then Fail "DN window did not restore."
+
+	'WSysMenu(0)
+	WClkWnd(hwnd, 5, -5)
+	WaitUntilIdle(TimeoutMsec)
+	if not WMenuEnabled("Mi&nimize") then
+		fail "System menu - Minimize should now be enabled."
+	end if
+
+	Play "{esc}{esc}" 'close any open menus
+
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wWidth <> w or wndpossiz.wHeight <> h or _
+		wndpossiz.wTop <> t or wndpossiz.wLeft <> l then
+		fail "Didn't restore properly after Minimize."
+	end if
+
+skipScenario7:
+
+Scenario Cleanup
+	Play "{esc}{esc}" 'close any open menus
+End Scenario
+
+
+Scenario ("DN move (1.0.2: 3.5-3.5.1)")
+	hwnd = FindDNWindow(True) 'make DN active and get its hwnd
+
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	w = wndpossiz.wWidth
+	h = wndpossiz.wHeight
+	l = wndpossiz.wLeft
+	t = wndpossiz.wTop
+
+	'All we can really test for is that the move request was obeyed,
+	'and that DN didn't crash.
+
+	WSetWndPos(hwnd, l-200, t+200)
+	WaitUntilIdle(TimeoutMsec)
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wLeft <> l-200 or wndpossiz.wTop <> t+200 then
+		Fail "Window failed to move."
+	end if
+
+	WSetWndPos(hwnd, l, t)
+	WaitUntilIdle(TimeoutMsec)
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wTop <> t or wndpossiz.wLeft <> l then
+		Fail "Window failed to move back."
+	end if
+
+Scenario Cleanup
+
+End Scenario
+
+
+Scenario ("DN resize (1.0.2: 3.6-3.6.2)")
+	hwnd = FindDNWindow(True) 'make DN active and get its hwnd
+
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	w = wndpossiz.wWidth
+	h = wndpossiz.wHeight
+	l = wndpossiz.wLeft
+	t = wndpossiz.wTop
+
+	'All we can really test for is that the resize request was obeyed,
+	'and that DN didn't crash.
+
+	WSetWndSiz(hwnd, int(w + w/2), int(h + h/2))
+	WaitUntilIdle(TimeoutMsec)
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wWidth <> int(w + w/2) or wndpossiz.wHeight <> int(h + h/2) then
+		Log #0, w + w/2, h + h/2, wndpossiz.wWidth, wndpossiz.wHeight
+		Fail "Window failed to resize larger."
+	end if
+
+	WSetWndSiz(hwnd, int(w/2), int(h/2))
+	WaitUntilIdle(TimeoutMsec)
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wWidth <> int(w/2) or wndpossiz.wHeight <> int(h/2) then
+		Log #0, w/2, h/2, wndpossiz.wWidth, wndpossiz.wHeight
+		Fail "Window failed to resize smaller."
+	end if
+
+Scenario Cleanup
+
+	WSetWndSiz(hwnd, w, h)
+	WaitUntilIdle(TimeoutMsec)
+	WGetWndPosSiz(hwnd, wndpossiz, W_ABSOLUTE)
+	if wndpossiz.wWidth <> w or wndpossiz.wHeight <> h then
+		Fail "Window failed to resize."
+	end if
+
+End Scenario
+
+
+'3.8.1 is covered by FWVerifyMenus()
+
+Scenario ("DN menu shortcuts (1.0.2: 3.8.2)")
+	Play "%(f)%(u)"
+	WaitUntilIdle(TimeoutMsec)
+	hwnd = WFndWndC(FWPSDlgTitle, FWDialogClass, FW_FOCUS, Timeout)
+	if hwnd = 0 then Fail "Alt+F u didn't open Page Setup dialog."
+
+	Play "{esc}"
+	WaitUntilIdle(TimeoutMsec)
+
+	Play "{alt}ha"
+	WaitUntilIdle(TimeoutMsec)
+	hwnd = WFndWndC(FWHADlgTitle$, FWDialogClass, _
+		FW_FOCUS, Timeout)
+	if hwnd = 0 then Fail "Alt h a didn't open About dialog."
+
+	Play "{esc}"
+	WaitUntilIdle(TimeoutMsec)
+
+	'Try arrow keys to Tools - Options
+	Play "{alt}{right}{right}{right}{right}{right}{right}"
+	Play "{up}{up}{enter}" 'May need to modify this as the menus change
+	hwnd = WFndWndC("Options", FWDialogClass, FW_FOCUS, Timeout)
+	if hwnd = 0 then Fail "Alt+arrows didn't open Tools - Options dialog."
+
+Scenario Cleanup
+	Play "{esc}{esc}" 'close any open menus or dialogs
+
+End Scenario
+
+
+Scenario ("DN menu hotkeys (1.0.2: 3.8.3)")
+	Play "{F1}"
+	WaitUntilIdle(TimeoutMsec)
+	hwnd = WFndWndC(DNHHTitle$, FWHelpClass, _
+		FW_FOCUS, Timeout)
+	if hwnd = 0 then
+		Fail "F1 didn't open help dialog"
+	else
+		Play "%({F4})" 'Alt+F4: close help dialog
+	end if
+
+Scenario Cleanup
+	Play "{esc}{esc}" 'close any open menus or dialogs
+End Scenario
+
+'Steps 3.9.* are covered in the test cases for the respective dialogs.
+
+'******* Test Case CLEANUP **********************
+
+
+
+
+
+' *************************
+' ***** END TEST CASE *****
+' *************************
+End
+
+
+
+'*****************************************************************************
+'                          LOCAL SCRIPT SUBS/FUNCTIONS
+'*****************************************************************************

@@ -1,0 +1,163 @@
+; Peter Oatley November 6th 2002
+; Revised Steve Smith, 13 May 2005
+
+EncodingName            "SIL-SAG_TransRoman21-2002"
+DescriptiveName         "TransRoman"
+Version                 "0.2"
+Contact                 "mailto:steve_smith@sall.com"
+RegistrationAuthority   "SIL International"
+RegistrationName        "TransRoman2-2005"
+
+RHSFlags		(expectsNFD)
+
+ByteClass [LowerASCII] = (   0x00 .. 0x7f   )
+UniClass  [LowerASCII] = ( U+0000 .. U+007f )
+
+;Class Definitions for diacritics
+UniClass [uDia] = (U+0300 U+0301 U+0302 U+0303 U+0308 U+0304 U+030C U+0307)
+UniClass [lDia] = (U+0323 U+0325)
+
+;Class definitions for Character width. o-width is the default
+UniClass [iWid] = (U+0069 U+006A U+0072 U+0268 U+026A U+0131)
+UniClass [oWidHigh] = (U+0062 U+0064 U+0068 U+006B U+0256 U+00DF)
+UniClass [iWidHigh] = (U+0066 U+006C U+0074 U+0288)
+
+define Pre_Ctx_IWidth_lDia [iWid] [lDia]? _
+define Pre_Ctx_OWidthHigh_lDia [oWidHigh] [lDia]? _
+define Pre_Ctx_IWidthHigh_lDia [iWidHigh] [lDia]? _
+define Pre_Ctx_IWidth_uDia [iWid] [uDia]? _
+
+
+; Lower ASCII 0x00 - 0x7F remains unchanged
+[LowerASCII] <> [LowerASCII]
+
+;0x80	<>		;   --  .notdef
+;0x81	<>		;   --  .notdef
+0x82	<>	U+201A	; single_low_9_quotation_mark  --  quotesinglbase = SILID 9097*
+0x83	<>	U+0192	; latin_small_letter_f_with_hook  --  florin = SILID 1999
+0x84	<>	U+201E	; double_low_9_quotation_mark  --  quotedblbase = SILID 9098
+0x85	<>	U+2026	; horizontal_ellipsis  --  ellipsis = SILID 9099
+0x86	<>	U+2020	; dagger  --  dagger = SILID 9033
+0x87	<>	U+2021	; double_dagger  --  daggerdbl = SILID 9034
+0x88	<>	U+02C6	; modifier_letter_circumflex_accent  --  circumflex
+0x89	<>	U+2030	; per_mille_sign  --  perthousand = SILID 9059
+0x8A	<>	U+0041 U+030A	; latin_capital_letter_a combining_ring
+0x8B	<>	U+2039	; single_left_pointing_angle_quotation_mark  --  guilsinglleft = SILID 9018*
+0x8C	<>	U+026A	; latin_small_letter_captial_i
+;0x8D	<>		;   --  .notdef
+;0x8E	<>		;   --  .notdef
+;0x8F	<>		;   --  .notdef
+;0x90	<>		;   --  .notdef
+0x91	<>	U+2018	; left_single_quotation_mark  --  quoteleft = SILID 9037*
+0x92	<>	U+2019	; right_single_quotation_mark  --  quoteright = SILID 9038*
+0x93	<>	U+201C	; left_double_quotation_mark  --  quotedblleft = SILID 9066
+0x94	<>	U+201D	; right_double_quotation_mark  --  quotedblright = SILID 9067*
+0x95	<>	U+2022	; bullet  --  bullet
+0x96	<>	U+2013	; en_dash  --  endash = SILID 9023*
+0x97	<>	U+2014	; em_dash  --  emdash = SILID 9025*
+0x98	<>	U+02DC	; small_tilde  --  tilde
+0x99	<>	U+2122	; trade_mark_sign  --  trademark = SILID 9051
+0x9A	<>	U+0061 U+030A	; latin_small_letter_a combining_ring
+0x9B	<>	U+203A	; single_right_pointing_angle_quotation_mark  --  guilsinglright = SILID 9019*
+0x9C	<>	U+028A	; latin_small_letter_upsilon
+;0x9D	<>		;   --  .notdef
+;0x9E	<>		;   --  .notdef
+0x9F	<>	U+00D8	; latin_capital_letter_o_with_forward_slash
+0xA0	<>	U+00A0	; no_break_space
+0xA1	<>	U+00A1	; inverted_exclamation_mark  --  exclamdown = SILID 9017
+0xA2	<>	U+00A2	; cent_sign  --  cent = SILID 9044
+0xA3	<>	U+00A3	; pound_sign  --  sterling = SILID 9045
+0xA4	<>	U+00A4	; currency_sign  --  currency
+0xA5	<>	U+00A5	; yen_sign  --  yen = SILID 9060
+0xA6	<>	U+00A6	; broken_bar  --  brokenbar
+0xA7	<>	U+00A7	; section_sign  --  section = SILID 9042
+0xA8	<>	U+00A8	; diaeresis  --  dieresis
+0xA9	<>	U+00A9	; copyright_sign  --  copyright = SILID 9048
+0xAA	<>	U+02BC	; modifier_letter_apostrophe ; actually this is superscript comma - no Unicode equivalent (sps)
+0xAB	<>	U+00AB	; left_pointing_double_angle_quotation_mark  --  guillemotleft = SILID 9068
+0xAC	<>	U+00AC	; not_sign  --  logicalnot
+0xAD	<>	U+00AD	; soft_hyphen
+0xAE	<>	U+00AE	; registered_sign  --  registered = SILID 9049
+0xAF	<>	U+207B	; superscript_minus ; actually superscript hyphen [not macron!] (sps)
+0xB0	<>	U+00B0	; degree_sign  --  degree
+0xB1	<>	U+2075	; superscript_five
+0xB2	<>	U+2076	; superscript_six
+0xB3	<>	U+2077	; superscript_seven
+0xB4	<>	U+2078	; superscript_eight
+0xB5	<>	U+2079	; superscript_nine
+0xB6	<>	U+00B6	; pilcrow_sign  --  paragraph = SILID 9041
+0xB7	<>	U+00B7	; middle_dot  --  periodcentered - may need to use U+2022 if bullet
+0xB8	<>	U+0043 U+0327	; latin_capital_letter_c combining_cedilla
+0xB9	<>	U+0063 U+0327	; latin_small_letter_c combining_cedilla
+0xBA	<>	U+00C6	; latin_captial_letter_AE
+0xBB	<>	U+00BB	; right_pointing_double_angle_quotation_mark  --  guillemotright = SILID 9069
+0xBC	<>	U+00BC	; vulgar_fraction_one_quarter  --  onequarter
+0xBD	<>	U+00BD	; vulgar_fraction_one_half  --  onehalf
+0xBE	<>	U+00BE	; vulgar_fraction_three_quarters  --  threequarters
+0xBF	<>	U+004D U+0310	; latin_captial_letter_m combining_candrabindu
+0xC0	<>	U+0251	; latin_small_letter_alpha
+0xC1	<>	U+00E6	; latin_small_letter_ae
+0xC2	<>	U+025B	; latin_small_letter_open_e
+0xC3	<>	U+0259	; latin_small_letter_schwa
+0xC4	<>	U+0069	/ _ [lDia]? [uDia] ; latin_small_letter_dotless_i
+0xC5	<>	U+028C	; latin_small_letter_turned_v
+0xC6	<>	U+0254	; latin_small_letter_open_o
+0xC7	<>	U+00F8	; latin_small_letter_o_with_slash
+0xC8	<>	U+0153	; latin_small_letter_oe
+0xC9	<>	U+0294	; latin_letter_glottal_stop
+0xCA	<>	U+014B	; latin_small_letter_eng
+0xCB	<>	U+0272	; latin_small_letter_n_with_left_hook
+0xCC	<>	U+0288	; latin_small_letter_t_with_retroflex_hook
+0xCD	<>	U+0256	; latin_small_letter_d_with_retroflex_hook
+0xCE	<>	U+0273	; latin_small_letter_n_with_retroflex_hook
+0xCF	<>	U+0282	; latin_small_letter_s_with_hook
+0xD0	<>	U+0255	; latin_small_letter_c_with_curl
+0xD1	<>	U+0291	; latin_small_letter_z_with_curl
+0xD2	<>	U+02B0	; modifier_letter_small_h
+0xD3	<>	U+02D0	; modifier_letter_triangular_colon
+0xD4	<>	U+006D U+0310	; latin_small_letter_m combining_candrabindu
+0xD5	<>	U+00DF	; latin_small_letter_sharp_s
+0xD6	<>	U+0152	; latin_capital_ligature_OE
+0xD7	<>	U+00D7	; multiplication_sign  --  multiply
+0xD8	<>	U+0301	; combining_acute_accent
+0xD9	<>	U+0301	/ Pre_Ctx_IWidth_lDia ; I Width combining_acute_accent
+0xDA	<>	U+0301	/ Pre_Ctx_OWidthHigh_lDia ; High O Width combining_acute_accent
+0xDB	<>	U+0301	/ Pre_Ctx_IWidthHigh_lDia ; High I Width combining_acute_accent
+0xDC	<>	U+0300	; combining_grave_accent
+0xDD	<>	U+0300	/ Pre_Ctx_IWidth_lDia ; I Width combining_grave_accent
+0xDE	<>	U+0300	/ Pre_Ctx_OWidthHigh_lDia ; High O Width combining_grave_accent
+0xDF	<>	U+0300	/ Pre_Ctx_IWidthHigh_lDia ; High I Width combining_grave_accent
+0xE0	<>	U+0302	; combining_circumflex_accent
+0xE1	<>	U+0302	/ Pre_Ctx_IWidth_lDia ; I Width combining_circumflex_accent
+0xE2	<>	U+0302	/ Pre_Ctx_OWidthHigh_lDia ; High O Width combining_circumflex_accent
+0xE3	<>	U+0302	/ Pre_Ctx_IWidthHigh_lDia ; High I Width combining_circumflex_accent
+0xE4	<>	U+0303	; combining_tilde
+0xE5	<>	U+0303	/ Pre_Ctx_IWidth_lDia ; I Width combining_tilde
+0xE6	<>	U+0303	/ Pre_Ctx_OWidthHigh_lDia ; High O Width combining_tilde
+0xE7	<>	U+0303	/ Pre_Ctx_IWidthHigh_lDia ; High I Width combining_tilde
+0xE8	<>	U+0308	; combining_umlaut
+0xE9	<>	U+0308	/ Pre_Ctx_IWidth_lDia ; I Width combining_diaeresis
+0xEA	<>	U+0308	/ Pre_Ctx_OWidthHigh_lDia ; High O Width combining_diaeresis
+0xEB	<>	U+0308	/ Pre_Ctx_IWidthHigh_lDia ; High I Width combining_diaeresis
+0xEC	<>	U+0304	; combining_macron
+0xED	<>	U+0304	/ Pre_Ctx_IWidth_lDia ; I Width combining_macron
+0xEE	<>	U+0304	/ Pre_Ctx_OWidthHigh_lDia ; High O Width combining_macron
+0xEF	<>	U+0304	/ Pre_Ctx_IWidthHigh_lDia ; High I Width combining_macron
+0xF0	<>	U+030C	; combining_caron
+0xF1	<>	U+030C	/ Pre_Ctx_IWidth_lDia ; I Width combining_caron
+0xF2	<>	U+030C	/ Pre_Ctx_OWidthHigh_lDia ; High O Width combining_caron
+0xF3	<>	U+030C	/ Pre_Ctx_IWidthHigh_lDia ; High I Width combining_caron
+0xF4	<>	U+0307	; combining_dot_above
+0xF5	<>	U+0307	/ Pre_Ctx_OWidthHigh_lDia ; High combining_dot_above
+; one way map because the same byte is correct for two contexts
+0xF5	<	U+0307	/ Pre_Ctx_IWidthHigh_lDia ; High combining_dot_above
+0xF6	<>	U+0323	; combining_dot_below
+0xF7	<>	U+00F7	; division_sign  --  divide
+0xF8	<>	U+0323	/ Pre_Ctx_IWidth_uDia ; I Width combining_dot_below
+0xF9	<>	U+0325	; combining_ring_below
+0xFA	<>	U+0325	/ Pre_Ctx_IWidth_uDia ; I Width combining_ring_below
+0xFB	<>	U+2070	; superscript_0
+0xFC	<>	U+00B9	; superscript_1
+0xFD	<>	U+00B2	; superscript_2
+0xFE	<>	U+00B3	; superscript_3
+0xFF	<>	U+2074	; superscript_4

@@ -1,0 +1,134 @@
+﻿<LayoutInventory>
+  <layout class="CmPossibility" type="jtview" name="publishStemSenseType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemDomainType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="domain-type-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before=" (" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="domain-type-name" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemUsageType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemStatus" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemSenseComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemMinorSenseType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemMinorTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemMinorDomainType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="domain-type-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before=" (" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="domain-type-name-minor" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemMinorUsageType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemMinorStatus" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name-minor" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemMinorSenseComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishStemMinorComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSenseType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootDomainType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="domain-type-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before=" (" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="domain-type-name" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootUsageType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootStatus" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSenseComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSubSenseType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr-sub" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSubTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSubDomainType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="domain-type-abbr-sub" sep=" " />
+	<part ref="NamePub" label="Name" before=" (" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="domain-type-name-sub" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSubUsageType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr-sub" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSubStatus" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name-sub" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootSubSenseComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootMinorSenseType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootMinorTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootMinorDomainType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="domain-type-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before=" (" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="domain-type-name-minor" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootMinorUsageType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootMinorStatus" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name-minor" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootMinorSenseComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="publishRootMinorComplexFormTransType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never" sep=" " />
+	<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+</LayoutInventory>

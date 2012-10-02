@@ -1,0 +1,14 @@
+<project name="NMock" default="all">
+	<fwroot test="bld\SetupInclude.xml"/>
+	<include buildfile="${fwroot}\Bld\SetupInclude.xml"/>
+	<!--
+-->
+	<target name="all" description="Builds all">
+		<property name="dir.srcProj" value="${nant.project.basedir}"/>
+		<property name="UseVsPath" value="True"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<property name="noIncludeSpecialTargets" value="true"/>
+	<include buildfile="${VSConvertBuildFile}"/>
+	<include buildfile="${fwroot}\Bld\SpecialTargets.xml"/> <!-- this has to be at the end -->
+</project>

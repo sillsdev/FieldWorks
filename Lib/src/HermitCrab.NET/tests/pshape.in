@@ -1,0 +1,381 @@
+;Test translation between strings and pshapes
+;NOTE: because we call a lot of Prolog stuff in here, and because the Prolog
+; calls will not always succeed, we make no attempt to do garbage collection.
+; So running this file with testing of memory leaks turned on will result in
+; lots of apparent leaks.  Hakuna matata...
+;Open a new language for testing purposes (msg 6510):
+(open_language message Phonology Test Language)
+;Don't let abort make us quit:
+(morpher_set message (*quit_on_error* false))
+;First a morpher_set command, which should result in msg 6502:
+(morpher_set message
+  (*pfeatures*
+		(asp     (+ -)
+		 voc     (+ -)
+		 cons    (+ -)
+		 high    (+ -)
+		 low     (+ -)
+		 back    (+ -)
+		 round   (+ -)
+		 vd      (+ -)
+		 poa     (bilabial alveolar velar)
+		 del_rel (+ -)
+		)
+	)
+)
+;Then we run three load_char_def_table commands, each of
+; which should result in a msg 6501:
+(load_char_def_table message
+  <char_table
+  name table1
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd +))
+	  (i   (cons - voc + high + low - back - round - vd +))
+	  (u   (cons - voc + high + low - back + round + vd +))
+	  ("u  (cons - voc + high + low - back - round + vd +))
+	  (-i  (cons - voc + high + low - back + round - vd +))
+	  (p   (cons + voc - poa bilabial vd - asp -))
+	  (t   (cons + voc - poa alveolar vd - asp - del_rel -))
+	  (k   (cons + voc - poa velar    vd - asp -))
+	  (ts  (cons + voc - poa alveolar vd - asp - del_rel +))
+	  (ph  (cons + voc - poa bilabial vd - asp +))
+	  (th  (cons + voc - poa alveolar vd - asp + del_rel -))
+	  (kh  (cons + voc - poa velar    vd - asp +))
+	  (tsh (cons + voc - poa alveolar vd - asp + del_rel +))
+	  (b   (cons + voc - poa bilabial vd + asp -))
+	  (d   (cons + voc - poa alveolar vd + asp -))
+	  (g   (cons + voc - poa velar    vd + asp -))
+	)
+  >
+)
+(load_char_def_table message
+  <char_table
+  name table2
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd +))
+	  (i   (cons - voc + high + low - back - round - vd +))
+	  (u   (cons - voc + high + low - back + round + vd +))
+	  ("u  (cons - voc + high + low - back - round + vd +))
+	  (p   (cons + voc - poa bilabial vd - ))
+	  (t   (cons + voc - poa alveolar vd -  del_rel -))
+	  (k   (cons + voc - poa velar    vd - ))
+	  (ts  (cons + voc - poa alveolar vd -  del_rel +))
+	  (b   (cons + voc - poa bilabial vd + ))
+	  (d   (cons + voc - poa alveolar vd + ))
+	  (g   (cons + voc - poa velar    vd + ))
+	)
+	bdry_defs (+ # ! . $xyz)
+  >
+)
+(load_char_def_table message
+  <char_table
+  name table3
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd +))
+	)
+	bdry_defs (+)
+  >
+)
+;Test first in ANALYSIS mode:
+;First we test string_to_pshape on an input str with an undef'd char (h);
+; error msg 6009
+.string_to_pshape($pha$, table2, test, anal, foobar, Pshape).
+;Now test string_to_pshape and pshape_to_regexpr:
+.string_to_pshape($ts"ubadphatshikh$, table1, test, anal, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table1, 0, anal, Out_str),
+	writeln([$Output = $, Out_str]),
+	ifthenelse(Out_str = $ts"ubadphatshikh$, writeln($CORRECT$),
+						 writeln($******ERROR********$)).
+;This time we'll use table1 for string_to_pshape, and
+; table2 for pshape_to_regexpr.  What was a "ph" on input should correspond
+; to a "p" on output (since "p" in table2 is unmarked for aspiration).
+.string_to_pshape($phatshikh$, table1, test, anal, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table2, 0, anal, Out_str),
+	writeln([$Output = $, Out_str]),
+	gc_pshape(Pshape),
+	ifthenelse(Out_str = $patsik$, writeln($CORRECT$),
+						 writeln($******ERROR********$)).
+;Next we'll try string_to_pshape and pshape_to_regexpr with ambiguous exprs.
+;First one should fail pshape_to_regexpr of ambiguity flag ('f'); msg 6035:
+.string_to_pshape($pabad$, table2, test, anal, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table1, 0, anal, Out_str),
+	writeln($******ERROR********Should not see this msg!!$).
+;Test again, but allow ambiguity ('1' flag):
+; What was a "p" on input should be ambiguous between "p" and "ph" on output:
+.string_to_pshape($patsik$, table2, test, anal, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table1, 1, anal, Out_str),
+	writeln([$Output = $, Out_str]),
+	gc_pshape(Pshape),
+	ifthenelse(Out_str = $pphatstshikkh$, writeln($CORRECT$),
+						 writeln($******ERROR********$)).
+;Now try a word with some boundary markers:
+.string_to_pshape($#bab+pap#$, table2, test, anal, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table2, 1, anal, Out_str1),
+	writeln([$Output 1 = $, Out_str1]),
+	ifthenelse(Out_str1 = $#bab+pap#$, writeln($CORRECT$),
+						   writeln($******ERROR********$)).
+;Test again, using a "-i".  Since this appears in table1 but not in table2,
+; we should get error 6011 when we try to xlate it into a regexpr:
+.string_to_pshape($p-ip$, table1, anal, test, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table2, 1, anal, Out_str).
+;Similarly, we'll use a bdry marker from table2 in input, and xlate it back
+; with table1 (which doesn't have bdry markers); error 6050:
+.string_to_pshape($a+a$, table2, anal, test, foobar, Pshape),
+  pshape_to_regexpr(Pshape, table1, 1, anal, Out_str).
+;And test a bdry marker from table2 that doesn't exist in table3:
+.string_to_pshape($a#a$, table2, anal, test, foobar, Pshape),
+  pshape_to_regexpr(Pshape, table3, 1, anal, Out_str).
+;Now test in SYNTHESIS mode:
+;First we test string_to_pshape on an input str with an undef'd char (h);
+; We use the id '*NA*' here, which should give us error 6016, rather than 6009.
+.string_to_pshape($pha$, table2, test, synth, '*NA*', Pshape).
+;Now test string_to_pshape and pshape_to_regexpr:
+.string_to_pshape($ts"ubadphatshikh$, table1, test, synth, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table1, 0, synth, Out_str),
+	writeln([$Output = $, Out_str]),
+	ifthenelse(Out_str = $ts"ubadphatshikh$, writeln($CORRECT$),
+						 writeln($******ERROR********$)).
+;This time we'll use table1 for string_to_pshape, and
+; table2 for pshape_to_regexpr.  What was a "ph" on input should correspond
+; to a "p" on output (since "p" in table2 is unmarked for aspiration).
+.string_to_pshape($phatshikh$, table1, test, synth, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table2, 0, synth, Out_str),
+	writeln([$Output = $, Out_str]),
+	gc_pshape(Pshape),
+	ifthenelse(Out_str = $patsik$, writeln($CORRECT$),
+						 writeln($******ERROR********$)).
+;Next we'll try string_to_pshape and pshape_to_regexpr with ambiguous exprs.
+;First one should fail pshape_to_regexpr of ambiguity flag ('f'); msg 6035:
+.string_to_pshape($pabad$, table2, test, synth, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table1, 0, synth, Out_str),
+	writeln($******ERROR********Should not see this msg!!$).
+;Test again, but allow ambiguity ('1' flag):
+; What was a "p" on input should be ambiguous between "p" and "ph" on output:
+.string_to_pshape($patsik$, table2, test, synth, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table1, 1, synth, Out_str),
+	writeln([$Output = $, Out_str]),
+	gc_pshape(Pshape),
+	ifthenelse(Out_str = $pphatstshikkh$, writeln($CORRECT$),
+						 writeln($******ERROR********$)).
+;Now try a word with some boundary markers:
+.string_to_pshape($#bab+pap#$, table2, test, synth, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table2, 1, synth, Out_str1),
+	writeln([$Output 1 = $, Out_str1]),
+	ifthenelse(Out_str1 = $#bab+pap#$, writeln($CORRECT$),
+						   writeln($******ERROR********$)).
+;Some tests with erasure of boundary markers:
+.string_to_pshape($+bab$, table2, test, synth, foobar, Pshape),
+  erase_bms(Pshape),
+  pshape_to_regexpr(Pshape, table2, 1, synth, Out_str),
+  ifthenelse(Out_str = $bab$,
+			 writeln($TEST OF LEADING BDRY MARKER OK$),
+			 writeln($********ERROR*******$)).
+.string_to_pshape($b+ab$, table2, test, synth, foobar, Pshape),
+  erase_bms(Pshape),
+  pshape_to_regexpr(Pshape, table2, 1, synth, Out_str),
+  ifthenelse(Out_str = $bab$,
+			 writeln($TEST OF MEDIAL BDRY MARKER OK$),
+			 writeln($********ERROR*******$)).
+.string_to_pshape($bab+$, table2, test, synth, foobar, Pshape),
+  erase_bms(Pshape),
+  pshape_to_regexpr(Pshape, table2, 1, synth, Out_str),
+  ifthenelse(Out_str = $bab$,
+			 writeln($TEST OF TRAILING BDRY MARKER OK$),
+			 writeln($********ERROR*******$)).
+.string_to_pshape($+#b#+ab#+#$, table2, test, synth, foobar, Pshape),
+  erase_bms(Pshape),
+  pshape_to_regexpr(Pshape, table2, 1, synth, Out_str),
+  ifthenelse(Out_str = $bab$,
+			 writeln($TEST OF MULTIPLE BDRY MARKERS OK$),
+			 writeln($********ERROR*******$)).
+;Test again, using a "-i".  Since this appears in table1 but not in table2,
+; we should get error 6011 when we try to xlate it into a regexpr:
+.string_to_pshape($p-ip$, table1, test, synth, foobar, Pshape),
+	pshape_to_regexpr(Pshape, table2, 1, synth, Out_str).
+;Similarly, we'll use a bdry marker from table2 in input, and xlate it back
+; with table1 (which doesn't have bdry markers); error 6050:
+.string_to_pshape($a+a$, table2, synth, test, foobar, Pshape),
+  pshape_to_regexpr(Pshape, table1, 1, synth, Out_str).
+;And test a bdry marker from table2 that doesn't exist in table3:
+.string_to_pshape($a#a$, table2, synth, test, foobar, Pshape),
+  pshape_to_regexpr(Pshape, table3, 1, synth, Out_str).
+;Next, we'll load in a very large char def table and see how it behaves.
+;First remove the char def tables that refer to the old *pfeatures*
+; (msg 6501, 3x):
+(del_char_def_table table1)
+(del_char_def_table table2)
+(del_char_def_table table3)
+;Now we set a new *pfeatures*, giving msg 6502:
+(morpher_set message
+  (*pfeatures*
+   (f01       (v0  v1)
+		f23       (v2  v3)
+		f45       (v4  v5)
+		f67       (v6  v7)
+		f89       (v8  v9)
+		f1011     (v10 v11)
+		f1213     (v12 v13)
+		f1415     (v14 v15)
+		f1617     (v16 v17)
+		f1819     (v18 v19)
+		f2021     (v20 v21)
+		f2223     (v22 v23)
+		f2425     (v24 v25)
+		f2627     (v26 v27)
+		f2829     (v28 v29)
+		f3031     (v30 v31)
+		f3233     (v32 v33)
+		f3435     (v34 v35)
+		f3637     (v36 v37)
+		f3839     (v38 v39)
+		f4041     (v40 v41)
+		f4243     (v42 v43)
+		f4445     (v44 v45)
+		f4647     (v46 v47)
+		f4849     (v48 v49)
+		f5051     (v50 v51)
+		f5253     (v52 v53)
+		f5455     (v54 v55)
+		f5657     (v56 v57)
+		f5859     (v58 v59)
+		f6061     (v60 v61)
+		f6263     (v62 v63)
+	 )
+	)
+)
+;Then we load the table, giving msg 6501.
+;In the ff char def table, "b" differs from "a" only in f6263,
+; and "c" is ambiguous between the two (it has no value for f6263).
+; "d", "e" and "f" differ from a-c in f01, and from each other in
+; f3031 (again, "f" is ambiguous between "d" and "e").  Finally, g-i
+; differ from a-c in f01 and from d-f in f02, and among each other in f3233.
+; And lastly, "j" is distinct from all the above.
+(load_char_def_table message
+  <char_table
+  name large_table
+  encoding test encoding
+  seg_defs
+	(
+		 (a (f01   v0  f23   v2  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30 f3233 v32 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+		 )
+		 (b (f01   v0  f23   v2  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30 f3233 v32 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v63
+					)
+		 )
+		 (c (f01   v0  f23   v2  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30 f3233 v32 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60
+					)
+		 )
+		 (d (f01   v1  f23   v2  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30 f3233 v32 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+		 )
+		 (e (f01   v1  f23   v2  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v31 f3233 v32 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+		 )
+		 (f (f01   v1  f23   v2  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+							   f3233 v32 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+		 )
+		 (g (f01   v1  f23   v3  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30 f3233 v32 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+		 )
+		 (h (f01   v1  f23   v3  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30 f3233 v33 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+		 )
+		 (i (f01   v1  f23   v3  f45   v4  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30           f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+		 )
+		 (j (f01   v1  f23   v3  f45   v5  f67   v6  f89   v8
+					 f1011 v10 f1213 v12 f1415 v14 f1617 v16 f1819 v18
+					 f2021 v20 f2223 v22 f2425 v24 f2627 v26 f2829 v28
+					 f3031 v30 f3233 v33 f3435 v34 f3637 v36 f3839 v38
+					 f4041 v40 f4243 v42 f4445 v44 f4647 v46 f4849 v48
+					 f5051 v50 f5253 v52 f5455 v54 f5657 v56 f5859 v58
+					 f6061 v60 f6263 v62
+					)
+	 )
+	)
+	>
+)
+
+;Now we'll test the table.  Reading in "abcdefghi", we should get
+; out "acbcabcdfefdefgihighi":
+.string_to_pshape($abcdefghi$, large_table, test, anal, foobar, Pshape),
+	pshape_to_regexpr(Pshape, large_table, 1, anal, Out_str),
+	writeln([$Output = $, Out_str]),
+	gc_pshape(Pshape),
+	ifthenelse(
+		Out_str = $acbcabcdfefdefgihighi$,
+		writeln($CORRECT$),
+		writeln($******ERROR********$)).
+;Now we'll try reading in a word that has too many segments.  (256 is the
+; limit.)  We should get error msg 6301:
+.string_to_pshape($aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$, large_table, test, anal, foobar, Pshape).
+;Make sure we can read in and xlate a word with the max num of segs, too:
+.string_to_pshape($jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj$, large_table, test, anal, foobar, Pshape),
+	pshape_to_regexpr(Pshape, large_table, 1, anal, Out_str),
+	gc_pshape(Pshape),
+	ifthenelse(
+			Out_str = $jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj$,
+			writeln($CORRECT$),
+			writeln($******ERROR********$)).
+;Done; morpher will now terminate
+(terminate_morpher x)

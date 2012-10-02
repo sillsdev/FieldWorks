@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- ********************************************************** -->
+	<!-- ************************ commands ******************** -->
+	<!-- ********************************************************** -->
+	<commands>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
+		<include path="DataTreeInclude.xml" query="window/commands/*"/>
+		<command id="CmdConfigureList" label="List..." message="ConfigureList"/>
+		<command id="CmdAddCustomList" label="Custom _List..." message="AddCustomList"/>
+		<command id="CmdDeleteCustomList" label="Delete Custom _List" message="DeleteCustomList"/>
+		<command id="CmdInsertSemDom" label="_Semantic Domain" message="InsertItemInVector" icon="AddItem">
+			<params className="CmSemanticDomain"/>
+		</command>
+		<command id="CmdInsertAnnotationDef" label="_Annotation Definition" message="InsertItemInVector" icon="AddItem">
+			<params className="CmAnnotationDefn"/>
+		</command>
+		<command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
+			<params className="CmPossibility" restrictFromClerkID="ProdRestrict DiscChartTemplateList"/>
+		</command>
+		<command id="CmdInsertCustomItem" label="_Item" message="InsertItemInVector" icon="AddItem">
+			<params className="CmCustomItem"/>
+		</command>
+		<command id="CmdInsertMorphType" label="_Morph Type" message="InsertItemInVector" icon="AddItem">
+			<params className="MoMorphType"/>
+		</command>
+		<command id="CmdInsertAnthroCategory" label="Anthropology _Category" message="InsertItemInVector" icon="AddItem">
+			<params className="CmAnthroItem"/>
+		</command>
+		<command id="CmdInsertPerson" label="_Person" message="InsertItemInVector" icon="AddItem">
+			<params className="CmPerson"/>
+		</command>
+		<command id="CmdInsertLocation" label="_Location" message="InsertItemInVector" icon="AddItem">
+			<params className="CmLocation"/>
+		</command>
+		<command id="CmdInsertLexRefType" label="_Lexical Reference Type" message="InsertItemInVector" icon="AddItem">
+			<params className="LexRefType"/>
+		</command>
+		<command id="CmdInsertFeatureType" label="_Feature Type" message="InsertItemInVector" icon="AddItem">
+			<params className="FsFeatStrucType"/>
+		</command>
+		<command id="CmdJumpToAcademicDomainList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="domainTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DomainTypes"/>
+		</command>
+		<command id="CmdJumpToAnthroList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="anthroEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
+		</command>
+
+		<command id="CmdJumpToLexiconEditWithFilter" label="Filter for Lexical Entries with this category" message="JumpToLexiconEditFilterAnthroItems">
+			<parameters tool="lexiconEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
+		</command>
+		<command id="CmdJumpToNotebookEditWithFilter" label="Filter for Notebook Records with this category" message="JumpToNotebookEditFilterAnthroItems">
+			<parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList"/>
+		</command>
+
+		<command id="CmdJumpToConfidenceList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels"/>
+		</command>
+		<command id="CmdJumpToDiscChartMarkerList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="chartmarkEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ChartMarkers"/>
+		</command>
+		<command id="CmdJumpToDiscChartTemplateList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="charttempEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ConstChartTempl"/>
+		</command>
+		<command id="CmdJumpToEducationList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="educationEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Education"/>
+		</command>
+		<command id="CmdJumpToRoleList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles"/>
+		</command>
+		<command id="CmdJumpToGenreList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="genresEdit" className="CmPossibility" ownerClass="LangProject" ownerField="GenreList"/>
+		</command>
+		<command id="CmdJumpToLexRefTypeList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="lexRefEdit" className="LexRefType" ownerClass="LexDb" ownerField="References"/>
+		</command>
+		<command id="CmdJumpToLocationList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="locationsEdit" className="CmLocation" ownerClass="LangProject" ownerField="Locations"/>
+		</command>
+		<command id="CmdJumpToPublicationList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="publicationsEdit" className="CmPossibility" ownerClass="LexDb" ownerField="PublicationTypes"/>
+		</command>
+		<command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
+			<params className="LexEntryType"/>
+		</command>
+		<command id="CmdJumpToComplexEntryTypeList" label="Show in Complex Form Types list" message="JumpToTool">
+			<parameters tool="complexEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="ComplexEntryTypes"/>
+		</command>
+		<command id="CmdJumpToVariantEntryTypeList" label="Show in Variant Types list" message="JumpToTool">
+			<parameters tool="variantEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="VariantEntryTypes"/>
+		</command>
+
+		<command id="CmdJumpToTextMarkupTagsList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="textMarkupTagsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TextMarkupTags"/>
+		</command>
+
+		<command id="CmdJumpToMorphTypeList" label="Show in Morpheme Types list" message="JumpToTool">
+			<parameters tool="morphTypeEdit" className="MoMorphType" ownerClass="LexDb" ownerField="MorphTypes"/>
+		</command>
+		<command id="CmdJumpToPeopleList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="peopleEdit" className="CmPerson" ownerClass="LangProject" ownerField="People"/>
+		</command>
+
+		<command id="CmdJumpToPositionList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="positionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Positions"/>
+		</command>
+		<command id="CmdJumpToRestrictionsList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="restrictionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Restrictions"/>
+		</command>
+		<command id="CmdJumpToSemanticDomainList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="semanticDomainEdit" className="CmSemanticDomain" ownerClass="LangProject" ownerField="SemanticDomainList"/>
+		</command>
+		<!--command id="CmdJumpToSenseStatusList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="senseStatusEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Status"/>
+		</command>
+		-->
+		<command id="CmdJumpToSenseTypeList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="senseTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="SenseTypes"/>
+		</command>
+		<command id="CmdJumpToStatusList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="statusEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Status"/>
+		</command>
+		<command id="CmdJumpToTranslationTypeList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="translationTypeEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TranslationTags"/>
+		</command>
+		<command id="CmdJumpToUsageTypeList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="usageTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="UsageTypes"/>
+		</command>
+		<command id="CmdJumpToRecordTypeList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="recTypeEdit" className="CmPossibility" ownerClass="RnResearchNbk" ownerField="RecTypes"/>
+		</command>
+		<command id="CmdJumpToTimeOfDayList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="timeOfDayEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TimeOfDay"/>
+		</command>
+	</commands>
+	<!-- ********************************************************** -->
+	<!-- ************************ lists *********************** -->
+	<!-- ********************************************************** -->
+	<lists>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
+		<list id="ListsToolsList"/>
+	</lists>
+	<!-- ********************************************************** -->
+	<!-- ************* controls (embedded browse view) ************ -->
+	<!-- ********************************************************** -->
+	<controls>
+		<parameters id="guicontrols">
+			<guicontrol id="PeopleFlatList">
+				<parameters id="peopleList" listItemsClass="CmPerson" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="true">
+					<columns>
+						<column label="Name" sortmethod="Name" ws="$ws=best vernoranal" editable="false" width="100%" field="Name">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<string field="Name" ws="best vernoranal"/>
+							</span>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/guicontrol/*"/>
+			<clerks>
+			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
+			</clerks>
+		</parameters>
+	</controls>
+	<!-- ******************************************************** -->
+	<!-- ************************ menus *********************** -->
+	<!-- ******************************************************** -->
+	<menubar>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
+	</menubar>
+	<!-- ********************************************************** -->
+	<!-- ************************ menuAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<menuAddOn>
+		<menu id="Edit">
+			<item command="CmdDeleteCustomList" defaultVisible="false"/>
+		</menu>
+		<menu id="Insert">
+			<item command="CmdInsertSemDom" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain"/>
+			<item command="CmdInsertAnnotationDef" defaultVisible="false"/>
+			<item command="CmdInsertPossibility" defaultVisible="false"/>
+			<item command="CmdInsertCustomItem" defaultVisible="false"/>
+			<item command="CmdInsertMorphType" defaultVisible="false"/>
+			<item command="CmdInsertLexEntryType" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype"/>
+			<item command="CmdInsertAnthroCategory" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory"/>
+			<item command="CmdInsertPerson" defaultVisible="false"/>
+			<item command="CmdInsertLocation" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem"/>
+			<item command="CmdInsertLexRefType" defaultVisible="false"/>
+			<item command="CmdInsertFeatureType" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem"/>
+			<item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdAddCustomList" defaultVisible="false"/>
+		</menu>
+		<menu id="Data"/>
+		<!-- This is really the Tools-Configure submenu.-->
+		<menu id="Configure">
+			<item command="CmdConfigureList" defaultVisible="false"/>
+		</menu>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
+	</menuAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ contextMenus *********************** -->
+	<!-- ********************************************************** -->
+	<contextMenus>
+		<include path="DataTreeInclude.xml" query="window/contextMenus/*"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
+	</contextMenus>
+	<!-- ********************************************************** -->
+	<!-- ************************ sidebar *********************** -->
+	<!-- ********************************************************** -->
+	<sidebar>
+		<tab label="List Tools" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
+	</sidebar>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbars *********************** -->
+	<!-- ********************************************************** -->
+	<toolbars>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbars/*"/>
+	</toolbars>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbarsAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<toolbarsAddOn>
+		<!--	Brings out bug where showing a list forces the list to set a current value which then propogates messages to a world that is not ready for them!
+		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl"/> -->
+		<toolbar id="Insert">
+			<item command="CmdInsertSemDom" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-SemanticDomain" defaultVisible="false" label="Subdomain"/>
+			<item command="CmdInsertAnnotationDef" defaultVisible="false"/>
+			<item command="CmdInsertPossibility" defaultVisible="false"/>
+			<item command="CmdInsertCustomItem" defaultVisible="false"/>
+			<item command="CmdInsertMorphType" defaultVisible="false"/>
+			<item command="CmdInsertLexEntryType" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-LexEntryType" defaultVisible="false" label="Subtype"/>
+			<item command="CmdInsertAnthroCategory" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-AnthroCategory" defaultVisible="false" label="Subcategory"/>
+			<item command="CmdInsertPerson" defaultVisible="false"/>
+			<item command="CmdInsertLocation" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Location" defaultVisible="false" label="Subitem"/>
+			<item command="CmdInsertLexRefType" defaultVisible="false"/>
+			<item command="CmdInsertFeatureType" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Possibility" defaultVisible="false" label="Subitem"/>
+			<item command="CmdDataTree-Insert-CustomItem" defaultVisible="false" label="Subitem"/>
+		</toolbar>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
+	</toolbarsAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ resources ********************* -->
+	<!-- ********************************************************** -->
+	<resources>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
+	</resources>
+	<!-- ********************************************************** -->
+	<!-- ************************ listeners *********************** -->
+	<!-- ********************************************************** -->
+	<listeners>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
+	</listeners>
+	<!-- ********************************************************** -->
+	<!-- ************************ defaultProperties ********************* -->
+	<!-- ********************************************************** -->
+	<defaultProperties>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
+		<property name="ToolForAreaNamed_lists" value="domainTypeEdit" settingsGroup="local"/>
+	</defaultProperties>
+	<!-- ********************************************************** -->
+	<!-- ************************ Area Item *********************** -->
+	<!-- ********************************************************** -->
+	<item label="Lists" value="lists" icon="folder-lists">
+		<parameters id="lists">
+			<panels>
+				<listPanel label="List Tools" listId="ListsToolsList"/>
+			</panels>
+			<clerks>
+				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
+				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
+				<clerk id="SemanticDomainList">
+					<recordList owner="LangProject" property="SemanticDomainList">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="GenreList">
+					<recordList owner="LangProject" property="GenreList">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="AnnotationDefList">
+					<recordList owner="LangProject" property="AnnotationDefs">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="DomainTypeList">
+					<recordList owner="LexDb" property="DomainTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="SenseTypeList">
+					<recordList owner="LexDb" property="SenseTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="MorphTypeList">
+					<recordList owner="LexDb" property="MorphTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="UsageTypeList">
+					<recordList owner="LexDb" property="UsageTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<!--
+				<clerk id="SenseStatusList">
+					<recordList owner="LexDb" property="Status">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				-->
+				<clerk id="ComplexEntryTypeList">
+					<recordList owner="LexDb" property="ComplexEntryTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="VariantEntryTypeList">
+					<recordList owner="LexDb" property="VariantEntryTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="TextMarkupTagsList">
+					<recordList owner="LangProject" property="TextMarkupTags">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="TranslationTypeList">
+					<recordList owner="LangProject" property="TranslationTags">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="EducationList">
+					<recordList owner="LangProject" property="Education">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="RoleList">
+					<recordList owner="LangProject" property="Roles">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="LocationList">
+					<recordList owner="LangProject" property="Locations">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="PublicationList">
+					<recordList owner="LexDb" property="PublicationTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="PositionList">
+					<recordList owner="LangProject" property="Positions">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="AffixCategoryList">
+					<recordList owner="LangProject" property="AffixCategories">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="AnthropologyList">
+					<recordList owner="LangProject" property="AnthroList">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="PeopleList">
+					<recordList owner="LangProject" property="People">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+
+				<clerk id="StatusList">
+					<recordList owner="LangProject" property="Status">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="ConfidenceList">
+					<recordList owner="LangProject" property="ConfidenceLevels">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="DiscChartMarkerList">
+					<recordList owner="DsDiscourseData" property="ChartMarkers">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="DiscChartTemplateList">
+					<recordList owner="DsDiscourseData" property="ConstChartTempl">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="RestrictionsList">
+					<recordList owner="LangProject" property="Restrictions">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="LexRefTypeList">
+					<recordList owner="LexDb" property="References">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="featureTypes">
+					<recordList owner="MsFeatureSystem" property="FeatureTypes"/>
+				</clerk>
+				<clerk id="RecTypeList">
+					<recordList owner="RnResearchNbk" property="RecTypes">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="ScrNoteTypesList">
+					<recordList owner="Scripture" property="NoteCategories">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="TimeOfDayList">
+					<recordList owner="LangProject" property="TimeOfDay">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<include path="ReversalPOSEdit/toolConfiguration.xml" query="root/clerks/*"/>
+			</clerks>
+			<tools>
+				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="ReversalPOSEdit/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
+			</tools>
+		</parameters>
+	</item>
+</root>

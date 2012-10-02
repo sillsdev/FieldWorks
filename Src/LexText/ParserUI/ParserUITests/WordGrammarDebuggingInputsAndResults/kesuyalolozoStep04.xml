@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>kesuyalolozo</form>
+  <seq step="Try to build an Orthographic Word node on a Word, including any clitics.">
+	<orthographicWord>
+	  <morph wordType="proclitic">
+		<shortName>ke= (Question): ke</shortName>
+		<stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+	  </morph>
+	  <morph wordType="proclitic">
+		<shortName>su= (PhraseInitial): su</shortName>
+		<stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+	  </morph>
+	  <word syncat="81" syncatAbbr="n">
+		<full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+			<morph wordType="root">
+			  <shortName>yalo (mat): yalo</shortName>
+			  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+			</morph>
+		  </stem>
+		</full>
+	  </word>
+	  <morph wordType="enclitic">
+		<shortName>=lo (PhraseFinal): lo</shortName>
+		<stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+	  </morph>
+	  <morph wordType="enclitic">
+		<shortName>=zo (RelativeClause): zo</shortName>
+		<stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+	  </morph>
+	</orthographicWord>
+  </seq>
+</word>

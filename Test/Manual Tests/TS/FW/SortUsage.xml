@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="sortusage" num="5.6" abbr="sortu" file="FW\SortUsage.xml">
+ <title tag="sortu">Sort Usage Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+<introduction>
+   <p>Using Sort Methods in the application.</p>
+   <p>For an overview, see discussion at the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Sort/Sort.html" type="doc">Sorting spec</link>.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Sort Usage"</p>
+</context>
+
+<case id="sortuBsc" num="1" order="any">
+  <title tag="sortuBsc">Basic Sort Usage</title>
+  <context>
+   <p>When the application is running</p>
+ </context>
+
+<step name="1.1" link="Bug">Create a Sort Method that sorts on a date field (Date of Event, Date Modified, etc.) in reverse order. Apply the sort.
+<r>Verify the entries are sorted by the date type selected with the newest entry at the top or first.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.2" link="Bug">
+Create a Sort Method that sorts on a multiple item list reference field like Anthropology Categories. Apply the sort.
+<r>
+<ul>
+<li>The sort method should sort based on each individual list item</li>
+   <li>An entry with multiple list items will appear multiple times in the view</li>
+   <li>The item that is currently be used in the sort should appear at the top/front of the field</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.3" link="Bug">
+Create a Sort Method that sorts first by one field and then by a second field. Apply the sort.
+<r>The entries are sorted by the first field then any entries that have the same value for the first look at the second field and sort according to that field.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.4" link="Bug">
+Try applying a sort that uses a field in which some entries have no data for.
+<r>The entries that have no data in the field being sorted on should be placed at the beginning (or end if reversed).</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.5" link="Bug">
+Try applying a sort that uses a field that is not present for some entries.
+<r>Entries that do not have the field being sorted on should be placed at the end.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.6" link="Bug">
+Compare the results of a sort using the Include Subentries option with the results of excluding it.
+<r>
+<ul>
+<li>If the user has not selected Include subentries, only main entries are sorted, and subentries are chunked with the main entry.</li>
+   <li>If the Include subentries check box is checked, then subentries are treated just like main entries.</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.7" link="Bug">
+Run a sort for a field that has many of the same items for the data field. Apply the sort and examine the results.
+<r>
+<ul>
+
+<li>The default secondary sort field is used when no secondary sort is specified.</li>
+<li>The default secondary sort field is simply the primary default sort field.</li>
+<li>The purpose is to sort out the entries that have the same values for the first sort field.</li>
+<li>For the Data Notebook the Primary default sort field is the Date Created field.</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="1.8" link="Bug">
+Try sorting on a field that contains a reference link like Supporting Evidence, See Also, or Counter Evidence.
+<r>This field sorts based on the Title and Creation Date of the Entry being linked to.</r>
+<p name="bug">
+</p>
+<p name="note">See Raid Report #3323 for additional details.</p>
+</step>
+
+</case>
+
+ <update date="Jul-25-02" author="RussD">Test Script Created.</update>
+
+</test>

@@ -1,0 +1,183 @@
+﻿; This file was edited using TECkitMappingEditorU.exe v3.0.1.0 on 18/05/2009.
+;   Conversion Type = Legacy_to_from_Unicode
+;   Left-hand side font = MAL Vayalar;11.25
+;   Right-hand side font = Rachana_w01;11.25
+;   Main Window Position = 0,0,624,770
+;   Left-hand side Character Map Window Position = 650,0,449,442
+;   Right-hand side Character Map Window Position = 625,114,587,442
+;   Left-hand side code page = 42
+
+; Winscript Malayalam.map
+
+; Mapping table for NLCI's Winscript Malayalam font version 2.0
+; New version by rde based on Winscript  Malayalam map:  By Anitha Vijay and vijay
+; Modified and fine tuned by Benjamin, SG, NLCI May 2008
+; If you are using a unicode font like Thoolika Unicode, to obtain 'Malayalam Chillu' you will have to use Zero_Width_Non_Joiner instead of Zero_Width_Joiner"
+
+EncodingName			"NLCI-Malayalam"
+DescriptiveName		    "Winscript Malayalam "
+Version			        "2.0"
+Contact			        "mailto:benjamin_varghese@nlife.in"
+RegistrationAuthority	"NLCI"
+RegistrationName		"Malayalam-Unicode"
+
+RHSFlags			(ExpectsNFC)
+pass(byte)
+
+Class[cons] = (73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108)
+class[vowel] = (65..72)
+class[dblCons]=(161..228)
+class[num]=(48..57)
+
+class[LeftSideMatras]=(115 116)
+class[RighSideMatras]=(109..114 117)
+class[RightSideConsSigns]=(120..122)
+class[RxMatra]=(123)
+
+[num]=num 218 > @num 37
+[LeftSideMatras]?=lm [LeftSideMatras]?=lm1 [RxMatra]?=rx [cons]=cons1 [RightSideConsSigns]?=rcs [RighSideMatras]?=rm <> @cons1 @rx @rcs @lm @lm1 @rm
+[LeftSideMatras]?=lm [LeftSideMatras]?=lm1 [RxMatra]?=rx [dblCons]=dblCons1 [RightSideConsSigns]?=rcs [RighSideMatras]?=rm <> @dblCons1 @rx @rcs @lm @lm1 @rm
+
+pass(byte_unicode)
+ByteClass[CTL] = ( 0 .. 33 37 .. 64 127 )
+UniClass[CTL]  = ( 0 .. 33 37 .. 64 127 )
+[CTL] <> [CTL]
+
+34 <> apostrophe
+35 <> dotted_circle
+
+;vowels
+ByteClass [Vwl] = (65..72 139)
+UniClass [Vwl] = (U+0D05..U+0D07 U+0D09 U+0D0B U+0D0C U+0D0E U+0D0F )
+;99  121 <> U+0D30 U+0D4D U+0D2F
+179 100 <> malayalam_letter_na malayalam_sign_virama malayalam_letter_rra
+179 115  100 <> malayalam_letter_na malayalam_sign_virama malayalam_letter_rra malayalam_vowel_sign_e
+65 <> malayalam_letter_a
+66 <> malayalam_letter_aa
+67 <> malayalam_letter_i
+68 <> malayalam_letter_u
+69 <> malayalam_letter_vocalic_r
+139 <> malayalam_letter_vocalic_l
+70 <> malayalam_letter_e
+71 <> malayalam_letter_ee
+72 <> malayalam_letter_o
+
+67 117 <> malayalam_letter_ii
+68 117 <> malayalam_letter_uu
+72 117 <> malayalam_letter_au
+72 109 <> malayalam_letter_oo
+115 70 <> malayalam_letter_ai
+
+;consonants
+ByteClass [Cons]=(73..108)
+UniClass [Cons]=(U+0D15..U+0D28 U+0D2A..U+0D39)
+[Cons] <> [Cons]
+
+;vowel signs
+ByteClass [VwlMatra] = (109..116)
+UniClass [VwlMatra] = (U+0D3E..U+0D43 U+0D46 U+0D47)
+[VwlMatra] <> [VwlMatra]
+
+115 117 <> malayalam_vowel_sign_au
+115 115 <> malayalam_vowel_sign_ai
+115 109 <> malayalam_vowel_sign_o
+116 109 <> malayalam_vowel_sign_oo
+
+
+;others
+123 <> malayalam_sign_virama  malayalam_letter_ra
+121 <> zero_width_joiner malayalam_sign_virama malayalam_letter_ya
+122 <> malayalam_sign_virama malayalam_letter_va
+
+
+;various signs
+118 <>  malayalam_sign_virama
+117 <> malayalam_au_length_mark
+119 <> malayalam_sign_anusvara
+120 <> malayalam_sign_visarga
+
+;Generic additions
+138 <> malayalam_letter_vocalic_rr
+140 <> malayalam_letter_vocalic_ll
+
+;Double Consonants
+161 <> malayalam_letter_ka malayalam_sign_virama  malayalam_letter_ka
+162 <>  malayalam_letter_ka malayalam_sign_virama  malayalam_letter_la
+163 <> malayalam_letter_ka malayalam_sign_virama  malayalam_letter_ssa
+164 <> malayalam_letter_ga malayalam_sign_virama  malayalam_letter_ga
+165 <> malayalam_letter_ga malayalam_sign_virama  malayalam_letter_la
+166 <> malayalam_letter_nga malayalam_sign_virama  malayalam_letter_ka
+167 <> malayalam_letter_nga malayalam_sign_virama  malayalam_letter_nga
+168 <> malayalam_letter_ca malayalam_sign_virama  malayalam_letter_ca
+169 <> malayalam_letter_nya malayalam_sign_virama  malayalam_letter_ca
+170 <> malayalam_letter_nya malayalam_sign_virama  malayalam_letter_nya
+171 <> malayalam_letter_tta malayalam_sign_virama  malayalam_letter_tta
+173 <> malayalam_letter_nna malayalam_sign_virama  malayalam_letter_tta
+174 <> malayalam_letter_nna malayalam_sign_virama  malayalam_letter_nna
+87 245 <> malayalam_letter_nna malayalam_sign_virama  malayalam_letter_nna
+175 <> malayalam_letter_ta malayalam_sign_virama  malayalam_letter_ta
+176 <> malayalam_letter_ta malayalam_sign_virama  malayalam_letter_tha
+177 <> malayalam_letter_da malayalam_sign_virama  malayalam_letter_da
+178 <> malayalam_letter_da malayalam_sign_virama  malayalam_letter_dha
+180 <> malayalam_letter_na malayalam_sign_virama malayalam_letter_ta
+181 <> malayalam_letter_na malayalam_sign_virama  malayalam_letter_da
+182 <> malayalam_letter_na malayalam_sign_virama  malayalam_letter_na
+183 <> malayalam_letter_na malayalam_sign_virama  malayalam_letter_ma
+184 <> malayalam_letter_pa malayalam_sign_virama  malayalam_letter_pa
+185 <> malayalam_letter_pa malayalam_sign_virama  malayalam_letter_la
+186 <> malayalam_letter_ba malayalam_sign_virama  malayalam_letter_ba
+187 <> malayalam_letter_ba malayalam_sign_virama  malayalam_letter_ba
+188 <> malayalam_letter_ma malayalam_sign_virama  malayalam_letter_pa
+189 <> malayalam_letter_ma malayalam_sign_virama  malayalam_letter_ma
+190 <> malayalam_letter_ma malayalam_sign_virama  malayalam_letter_la
+97 251 <> malayalam_letter_ma malayalam_sign_virama  malayalam_letter_la
+191 <> malayalam_letter_ya malayalam_sign_virama  malayalam_letter_ya
+193 <> malayalam_letter_rra malayalam_sign_virama  malayalam_letter_rra
+195 <> malayalam_letter_la malayalam_sign_virama  malayalam_letter_la
+197 <> malayalam_letter_lla malayalam_sign_virama  malayalam_letter_lla
+198 <> malayalam_letter_va malayalam_sign_virama  malayalam_letter_va
+199 <>  malayalam_letter_sha malayalam_sign_virama  malayalam_letter_la
+200 <> malayalam_letter_sha malayalam_sign_virama  malayalam_letter_sha
+201 <> malayalam_letter_sa malayalam_sign_virama  malayalam_letter_la
+202 <>  malayalam_letter_sa malayalam_sign_virama  malayalam_letter_sa
+203 <>  malayalam_letter_ha malayalam_sign_virama  malayalam_letter_la
+204 <> malayalam_letter_sa malayalam_sign_virama malayalam_letter_RRa malayalam_sign_virama malayalam_letter_RRa
+205 <> malayalam_letter_dda malayalam_sign_virama  malayalam_letter_dda
+206 <> malayalam_letter_ka malayalam_sign_virama  malayalam_letter_tta
+207 <> malayalam_letter_ba malayalam_sign_virama  malayalam_letter_dha
+208 <> malayalam_letter_ba malayalam_sign_virama  malayalam_letter_da
+209 <> malayalam_letter_ca malayalam_sign_virama  malayalam_letter_cha
+210 <> malayalam_letter_sa malayalam_sign_virama  malayalam_letter_ma
+211 <> malayalam_letter_ha malayalam_sign_virama  malayalam_letter_na
+212 <> malayalam_letter_na malayalam_sign_virama  malayalam_letter_dha
+213 <> malayalam_letter_ta malayalam_sign_virama  malayalam_letter_sa
+214 <> malayalam_letter_ja malayalam_sign_virama  malayalam_letter_ja
+215 <> malayalam_letter_nna malayalam_sign_virama  malayalam_letter_ma
+216 <> malayalam_letter_sa malayalam_sign_virama  malayalam_letter_tha
+217 <> malayalam_letter_na malayalam_sign_virama  malayalam_letter_tha
+218 <> malayalam_letter_ja malayalam_sign_virama  malayalam_letter_nya
+219 <> malayalam_letter_ta malayalam_sign_virama  malayalam_letter_bha
+220 <> malayalam_letter_ga malayalam_sign_virama  malayalam_letter_ma
+221 <> malayalam_letter_sha malayalam_sign_virama  malayalam_letter_ca
+222 <> malayalam_letter_nna malayalam_sign_virama  malayalam_letter_dda
+223 <> malayalam_letter_ta malayalam_sign_virama  malayalam_letter_ma
+224 <> malayalam_letter_ka malayalam_sign_virama  malayalam_letter_ta
+225 <> malayalam_letter_ga malayalam_sign_virama  malayalam_letter_na
+226 <>  malayalam_letter_na malayalam_sign_virama malayalam_letter_RRa
+227 <>  malayalam_letter_ssa malayalam_sign_virama  malayalam_letter_tta
+228 <> malayalam_letter_RRa malayalam_sign_virama malayalam_letter_RRa
+;229
+
+;This is the old method of obtaining Malayalam_Letter_Chillu_**. Now Chillu is encoded into unicode but no font with new standard is available.
+172 <> malayalam_letter_nna malayalam_sign_virama U+200D ;zero_width_joiner
+179 <> malayalam_letter_na malayalam_sign_virama U+200D
+192 <> malayalam_letter_ra malayalam_sign_virama U+200D
+194 <>  malayalam_letter_la malayalam_sign_virama U+200D
+196 <>  malayalam_letter_lla malayalam_sign_virama U+200D
+
+; Enable these lines and disable the previous ones, once we get a font with the latest unicode standard.
+;172 <>  malayalam_letter_chillu_NN ; U+0d7a
+;179 <> malayalam_letter_chillu_N ; U+0d7b
+;192 <> malayalam_letter_chillu_RR ;U+0d7c
+;194 <> malayalam_letter_chillu_L ; U+0d7d
+;196 <> malayalam_letter_chillu_LL ; U+0d7e

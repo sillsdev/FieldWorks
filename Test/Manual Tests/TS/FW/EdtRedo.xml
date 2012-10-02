@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtredo" num="2.2.2" abbr="edre" file="FW\EdtRedo.xml">
+<title tag="edtredo">Edit-Redo Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Reverses the most recent Undo action. That is, if something was undone, then this menu item does it back again. The menu item adjusts to reflect the nature of the action that is to be redone, e.g., "Redo Typing." The item is disabled if there is nothing to redo (e.g., if nothing has been undone, or if some other action has happened since the last undo command.) The Redo menu item actually represents a stack (a sequence of actions). If you do an Undo operation three times, then there will be three things on the Redo stack. Of course, as soon as you do a new action (as opposed to an Undo), then the stack is cleared and Redo is disabled.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Redo" type="doc">Edit-Redo</link>
+</p>
+</introduction>
+<context>
+<p>When performing Redo, check to see if Redo needs to be selected more than once to perform a Redo operation. Also, check for any unusual cursor. Check if Redo will redo changes to a record that is no longer visible. The first words of the bug report title should be a noun phrase containing the words "Edit-Redo"</p>
+</context>
+
+<case id="edreAct" num="1" order="any">
+<title tag="edreAct">Action</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="1.1" link="Bug">Click Edit or &lt;Alt&gt;&lt;E&gt; to bring up the Edit menu.
+   <r>
+<ul>
+<li>If there was no previous interface undo action that can be redone, the Redo menu item is disabled</li>
+<li>Otherwise, it is available</li>
+</ul>
+</r>
+<p name="bug">Edit-Redo menu item disabled after undo action</p>
+<p name="bug">Edit-Redo menu item enabled before undo action</p>
+</step>
+<step name="1.2" link="Bug">Use <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection and Operation Tests</link>, the shortcut &lt;Ctrl&gt;&lt;Y&gt; and the shortcut &lt;Alt&gt;&lt;R&gt; to test this menu item's basic functionality.
+   <r>
+<ul>
+<li>The state of this menu item (enabled/disabled) is matched by the icon on the Standard Toolbar</li>
+<li>The last undone action isredone when this menu item is clicked.</li>
+<li>If there are no more actions to redo, the menu item and toolbar icon are disabled</li>
+<li>Report any failures as suggested using "Edit-Redo" as the name of this menu item</li>
+</ul>
+</r>
+<p name="bug">Edit-Redo disabled, but not on the toolbar</p>
+<p name="bug">Edit-Redo enabled, but not on the toolbar</p>
+<p name="bug">Edit-Redo fails to redo action</p>
+<p name="bug">Edit-Redo not disabled after last redo</p>
+</step>
+<step name="1.3" link="Bug">Open a new window. Select the same record in each window. Make different changes to the same field of the same record in each of the windows. Next try a variety of combinations of Undo and Redo in each window and observe the result.
+   <r>
+<ul>
+<li>Redo works independently in each window; undos in one are not redoable from the other</li>
+<li>The views change when changes are made in the other window</li>
+</ul>
+</r>
+<p name="bug">Edit-Redo accumulates undo actions from all open windows sharing the data</p>
+<p name="bug">Edit-Redo in one window adds the redone action to the undo list</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Oct-02-01" author="MikeL">Put guts in from a Word test</update>
+
+</test>

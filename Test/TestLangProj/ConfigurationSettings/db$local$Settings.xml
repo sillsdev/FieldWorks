@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfProperty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Property>
+	<name>db$local$ToolForAreaNamed_lexicon</name>
+	<value xsi:type="xsd:string">lexiconEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$Show_DictionaryPubPreview</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$SelectedPublication</name>
+	<value xsi:type="xsd:string">Main Dictionary</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ToolForAreaNamed_textsWords</name>
+	<value xsi:type="xsd:string">interlinearEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ITexts_AddWordsToLexicon</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ITexts_ShowAddWordsToLexiconDlg</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ITexts-ScriptureIds</name>
+	<value xsi:type="xsd:string" />
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ToolForAreaNamed_notebook</name>
+	<value xsi:type="xsd:string">notebookEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ToolForAreaNamed_lists</name>
+	<value xsi:type="xsd:string">CustListEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ToolForAreaNamed_grammar</name>
+	<value xsi:type="xsd:string">posEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$PartsOfSpeech.posEdit.DataTree-Splitter</name>
+	<value xsi:type="xsd:int">200</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$PartsOfSpeech.posAdvancedEdit.DataTree-Splitter</name>
+	<value xsi:type="xsd:int">200</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$InitialArea</name>
+	<value xsi:type="xsd:string">lexicon</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$SortedFromEnd</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$SortedByLength</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.2bdd1159-f9b2-11d3-977b-00c04f186933_sortName</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.2bdd1159-f9b2-11d3-977b-00c04f186933_sorter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.2bdd1159-f9b2-11d3-977b-00c04f186933_filter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$LexDb.Entries_sortName</name>
+	<value xsi:type="xsd:string">Headword</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$LexDb.Entries_sorter</name>
+	<value xsi:type="xsd:string">&lt;sorter assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.GenRecordSorter"&gt;&lt;comparer assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.StringFinderCompare"&gt;&lt;finder assemblyPath="XMLViews.dll" class="SIL.FieldWorks.Common.Controls.SortMethodFinder" layout="EntryHeadwordForEntry" sortmethod="FullSortKey" ws="vernacular"&gt;&lt;column layout="EntryHeadwordForEntry" label="Headword" ws="$ws=vernacular" width="72000" sortmethod="FullSortKey" cansortbylength="true" visibility="always" /&gt;&lt;/finder&gt;&lt;comparer assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WritingSystemComparer" ws="qaa-x-kal" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$LexDb.Entries_filter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lexiconEdit_lexentryList_ColumnList</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lexiconEdit_lexentryList_Column_0_Width</name>
+	<value xsi:type="xsd:int">-1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lexiconEdit_lexentryList_Column_1_Width</name>
+	<value xsi:type="xsd:int">-1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lexiconEdit_lexentryList_Column_2_Width</name>
+	<value xsi:type="xsd:int">-1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lexiconEdit_lexentryList_Column_3_Width</name>
+	<value xsi:type="xsd:int">-1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$entries-Index</name>
+	<value xsi:type="xsd:int">58</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ShowHiddenFields-lexiconEdit</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lexicon$lexiconEdit$CurrentSlicePartName</name>
+	<value xsi:type="xsd:string">MoMorphSynAnalysis-Detail-MainEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lexicon$lexiconEdit$CurrentSliceObjectGuid</name>
+	<value xmlns:q1="http://microsoft.com/wsdl/types/" xsi:type="q1:guid">425ec2ef-f3be-4a00-be13-dbe678e6eb98</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ShowHiddenFields-domainTypeEdit</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.DomainTypes_sortName</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.DomainTypes_sorter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.DomainTypes_filter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$DomainTypeList-Index</name>
+	<value xsi:type="xsd:int">-1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lists$domainTypeEdit$CurrentSlicePartName</name>
+	<value xsi:type="xsd:string">CmPossibility-Detail-NameAllA</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lists$domainTypeEdit$CurrentSliceObjectGuid</name>
+	<value xmlns:q2="http://microsoft.com/wsdl/types/" xsi:type="q2:guid">d7f713b6-e8cf-11d3-9764-00c04f186933</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.66911672-9396-4130-b1ef-c495ae60e6fe_sortName</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.66911672-9396-4130-b1ef-c495ae60e6fe_sorter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CmPossibilityList.66911672-9396-4130-b1ef-c495ae60e6fe_filter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$ShowHiddenFields-CustListEdit</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$CustListList-Index</name>
+	<value xsi:type="xsd:int">1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lists$CustListEdit$CurrentSlicePartName</name>
+	<value xsi:type="xsd:string">CmPossibility-Detail-AbbreviationAllA</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$local$lists$CustListEdit$CurrentSliceObjectGuid</name>
+	<value xmlns:q3="http://microsoft.com/wsdl/types/" xsi:type="q3:guid">43b38fe1-706a-4288-9404-462daf8f283b</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+</ArrayOfProperty>

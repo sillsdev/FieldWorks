@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="htm" type="grammarSketch" datatype="GrammarSketch">
+	<FxtDocumentDescription dataLabel="Grammar Sketch" formatLabel="Web page" defaultExtension="htm" filter="HTM files (*.htm)|*.html|All files (*.*)|*.*">Export Grammar Sketch as a web page file.</FxtDocumentDescription>
+</template>

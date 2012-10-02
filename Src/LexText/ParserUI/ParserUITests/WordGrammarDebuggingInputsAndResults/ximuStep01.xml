@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>ximu</form>
+  <seq step="Try to build a Stem node on a root.">
+	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+	  <morph wordType="root">
+		<shortName>ximu (slowly): ximu</shortName>
+		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+	  </morph>
+	</stem>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
+	<partial syncat="73" syncatAbbr="adv">
+	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
+	  <morph wordType="root">
+		<shortName>ximu (slowly): ximu</shortName>
+		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+	  </morph>
+	</partial>
+  </seq>
+</word>

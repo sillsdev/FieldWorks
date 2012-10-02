@@ -1,0 +1,9 @@
+;This is file MISCELL1.IN.  From here, we'll recursively call the file
+; MISCELL2.IN.  Before termination, you should see the msg
+; "End of file MISCELL1.IN.".
+;About to open TESTS\MISCELL2.IN as input; should see msg m6508.
+(morpher_input_from_file message c:\data\hc\morpher\tests\MISCELL2.IN)
+;Ensure that we can't open for writing a file that is already open:
+; (error msg 6031):
+(morpher_output_to_file message c:\data\hc\morpher\tests\MISCELL.OUT)
+;End of file MISCELL1.IN; should see msg m6521:

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tree" num="0.8" abbr="tre" file="StdCtrls\Tree.xml">
+ <title tag="listbox">Tree Control Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A list box is an input control. It allows the user to select a text value from a list. List boxes are many times bundled with other controls to produce things like combo boxes for text input. Sometimes other controls set the list box selected value. List boxes can have shortcuts. In dialogs, the side-effect of a list box may be immediate if there is a preview window but usually they are delayed until the dialog is closed. In toolbars, the effects are more immediate. List boxes may be in an open rectangular frame or a drop-down frame.</p>
+  </introduction>
+  <context>
+<p>Each list box is tested with its associated controls so that side-effects can be noted. Testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report. The first words of the bug report title should be a noun phrase containing the words "list box" or the name of a control that triggers an unexpected side-effect that relies on the list box value to occur. Use <link uri="textbox.xml" type="module">Text Box Tests</link> to test the associated text box.</p>
+<p>When side-effects are delayed, the "triggering" control must be used before a list box value can influence it.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, it is described in the help system of many interface development products often as part of another control.</p>
+  </warning>
+
+ <case id="treInsp" num="1" order="any">
+  <title tag="treInsp">List Box Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the list box is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A label or text box may be placed near the list box, usually to its left or on top. An underscored letter indicates an &lt;Alt&gt;&lt;alpha&gt; shortcut. If the list box is a drop-down, a triangular control should be present.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the list box.
+   <r>The list box, text box and label must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="Notes">To view the list box, the drop-down control may need to be activated.</p>
+   <p name="bug">List box has incorrect appearance</p>
+   <p name="bug">List box drop-down doesn't work</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the locations of the list box, text box and label relative to eachother and other visible controls.
+   <r>The list box, text box and label should be close to the positions indicated in the specification.</r>
+   <p name="bug">List box has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">If on a toolbar, hover the cursor over the list box.
+   <r>A help bubble displays a short help message.</r>
+   <p name="bug">Tool bar List box doesn't have hover help</p>
+  </step>
+
+ </case>
+
+ <case id="treEdit" num="2" order="any">
+  <title tag="treEdit">List Box Editting</title>
+  <context>
+<p>When the list box is enabled and has an associated editable text box</p>
+</context>
+
+   <p name="Principle">Items in the list box may be selected by typing text into the text box. New items may sometimes be added to the list box by typing text into the text box and triggering a list box action.</p>
+
+  <step name="2.1" link="Bug">Click in the list box or on the drop-down control or use &lt;Alt&gt;&lt;down arrow&gt; or &lt;Alt&gt;&lt;up arrow&gt; when the control has focus.
+   <r>
+<ul>
+	<li>The immediate side-effects match the description in the specification.</li>
+	<li>The list or a specified number of items from the list should be visible.</li>
+	<li>The clicked item in the list box is highlighted.</li>
+	<li>This item also appears highlighted in the corresponding text box if any.</li>
+   </ul>
+</r>
+   <p name="bug">List box not opened.</p>
+   <p name="bug">List box clicked item not selected.</p>
+   <p name="bug">List box valid data action incorrect</p>
+  </step>
+  <step name="2.2" link="Bug">Press the short-cut &lt;Alt&gt;&lt;alpha&gt; for the list box. Press &lt;Alt&gt;&lt;down arrow&gt;.
+   <r>
+<ul>
+	<li>The list or a specified number of items from the list should be visible.</li>
+	<li>The default item in the box is highlighted (this may depend on another control).</li>
+	<li>This item also appears highlighted in the corresponding text box if any.</li>
+   </ul>
+</r>
+   <p name="bug">Shorted list box not focused.</p>
+   <p name="bug">Shorted list box default item not selected.</p>
+  </step>
+  <step name="2.3" link="Bug">Type the first letter of a valid item in the text box associated with the list box.
+   <r>
+<ul>
+	<li>If the list is displayed, the first entry in the list box beginning with the entered letter is highlighted or</li>
+	<li>The next entry in the list box beginning with the entered letter is highlighted.</li>
+	<li>The highlighted text also appears highlighted in the text box without moving the cursor.</li>
+   </ul>
+</r>
+   <p name="bug">List box item not highlighted.</p>
+  </step>
+
+ </case>
+
+ <case id="treOp" num="3" order="any">
+  <title tag="treOp">List Box Operation</title>
+  <context>
+<p>When the text is active</p>
+</context>
+
+   <p name="Principle">List boxes have many uses and cause widely different side-effects.</p>
+
+  <step name="3.1" link="Bug">Exercise a triggering control to activate the delayed side-effects of the list box with nothing selected (if this is possible).
+   <r>The side-effects match the description in the specification for a non-selection.</r>
+   <p name="bug">Null list box action incorrect</p>
+  </step>
+  <step name="3.2" link="Bug">Exercise a triggering control to activate the delayed side-effects of the list box with an item selected.
+   <r>The side-effects match the description in the specification.</r>
+   <p name="bug">List box value action incorrect</p>
+  </step>
+  <step name="3.3" link="Bug">Exercise a triggering control to activate the delayed side-effects of the list box with an illeagal item entered in the text box. Try very large and very small values, or ones with letters or numbers in them if not expected.
+   <r>The side-effects match the description in the specification, usually an error box.</r>
+   <p name="bug">List box value action incorrect</p>
+  </step>
+  <step name="3.4" link="Bug">When operating the list box, do side-effects obscure or disable other functionality in the control frame or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">List box operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Dec-18-00" author="MikeL">Test created.</update>
+
+</test>

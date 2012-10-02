@@ -1,0 +1,20 @@
+<!-- CategoryCatalog.dtd
+	   DTD for category catalog
+	   -->
+<!ELEMENT Abbreviation (#PCDATA)>
+<!ELEMENT Categories (Category+)>
+<!ATTLIST Categories
+   version CDATA #IMPLIED
+>
+<!ELEMENT Category (Languages, Category*)>
+<!ATTLIST Category
+	id ID #REQUIRED
+	use4newlanguageprojects (yes|no) "yes"
+	>
+<!ELEMENT Citation (#PCDATA)>
+<!ELEMENT Citations (Citation*)>
+<!ELEMENT Description (#PCDATA)>
+<!ELEMENT LangCode (#PCDATA)>
+<!ELEMENT Language (LangCode, Name, Abbreviation, Description,Citations)>
+<!ELEMENT Languages (Language+)>
+<!ELEMENT Name (#PCDATA)>

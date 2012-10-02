@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{05CB7C61-19EF-4600-B5AB-79CA4E28C121}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.Utils</RootNamespace>
+	<AssemblyName>BasicUtils</AssemblyName>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
+	<DocumentationFile>..\..\..\Output\Debug\BasicUtils.xml</DocumentationFile>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Accessibility">
+	</Reference>
+	<Reference Include="SilUtils, Version=7.2.0.29041, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Configuration" />
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Management" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+	<Reference Include="Mono.Posix" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="AccessibleNameCreator.cs" />
+	<Compile Include="AlphaOutline.cs" />
+	<Compile Include="ArrayUtils.cs" />
+	<Compile Include="BasicUtils.cs" />
+	<Compile Include="Benchmark.cs" />
+	<Compile Include="BidiDictionary.cs" />
+	<Compile Include="BidirHashtable.cs" />
+	<Compile Include="CharEnumeratorForByteArray.cs" />
+	<Compile Include="ClipboardUtils.cs" />
+	<Compile Include="ColorStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>ColorStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="ColorUtil.cs" />
+	<Compile Include="ConsumerThread.cs" />
+	<Compile Include="DisposableObjectsSet.cs" />
+	<Compile Include="IRefreshable.cs" />
+	<Compile Include="SimpleLogger.cs" />
+	<Compile Include="ThreadHelper.cs" />
+	<Compile Include="HiMetric.cs" />
+	<Compile Include="ImagePicture.cs" />
+	<Compile Include="IPicture.cs" />
+	<Compile Include="Logger.cs" />
+	<Compile Include="MessageBoxUtils.cs" />
+	<Compile Include="OLEConvert.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="RecentItemsCache.cs" />
+	<Compile Include="DriveUtil.cs" />
+	<Compile Include="ExceptionHelper.cs" />
+	<Compile Include="EnvVarTraceListener.cs" />
+	<Compile Include="FileUtils.cs" />
+	<Compile Include="FindFileStatusDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="IdleQueue.cs" />
+	<Compile Include="IFWDisposable.cs" />
+	<Compile Include="IPersistenceProvider.cs" />
+	<Compile Include="IStorage.cs" />
+	<Compile Include="LcidHelper.cs" />
+	<Compile Include="MergeSort.cs" />
+	<Compile Include="PrinterUtils.cs" />
+	<Compile Include="PriorityQueue.cs" />
+	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="RegistryGroup.cs" />
+	<Compile Include="TreeDictionary.cs" />
+	<Compile Include="RegistryRedirect.cs" />
+	<Compile Include="RomanNumerals.cs" />
+	<Compile Include="ScriptMaker.cs" />
+	<Compile Include="Set.cs" />
+	<Compile Include="SimpleBag.cs" />
+	<Compile Include="SmallDictionary.cs" />
+	<Compile Include="TextWriterStream.cs" />
+	<Compile Include="Unicode.cs" />
+	<Compile Include="Utils.cs" />
+	<Compile Include="ViewSizeEvents.cs" />
+	<Compile Include="Tuple.cs" />
+	<Compile Include="LinuxPackageUtils.cs" />
+	<Compile Include="DirectoryUtils.cs" />
+	<Compile Include="StopClock.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="ColorStrings.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>ColorStrings.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FindFileStatusDialog.resx">
+	  <DependentUpon>FindFileStatusDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UcdCharacterResources.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE modularbook SYSTEM "..\XSL\ModularBook.dtd" [
+	<!--   Modular Book files. -->
+	<!ENTITY tp SYSTEM "TitlePage.xml">
+	<!ENTITY wc SYSTEM "Welcome.xml">
+	<!ENTITY nlk SYSTEM "nolink.xml">
+]>
+
+<modularbook file="all.xml">
+
+<!-- modules defined in files -->
+
+&tp;
+&wc;
+&nlk;
+
+</modularbook>

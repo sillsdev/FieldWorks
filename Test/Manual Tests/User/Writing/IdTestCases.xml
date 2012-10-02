@@ -1,0 +1,32 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\IdTestCases.xml">
+ <title tag="wrtid">Identifying test cases</title>
+ <index>
+  <li>test cases: identifying</li>
+  <li>selecting test cases</li>
+  <li>making test cases</li>
+ </index>
+ <prerequisites>
+  <p>Before attempting to identify test cases, you should have</p>
+  <ul>
+   <li>found the specification.</li>
+   <li>identified the objects in it to make test scripts for.</li>
+   <li>selected one of those test scripts to find test cases for.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Test cases list actions and results that pertain to one aspect or use-scenario of the tested object. Here are some guidelines for identifying test cases:</p>
+  <ul>
+	<li>Each interface object with a picture of it in the specification spawns a test case to compare its appearance by visual inspection.</li>
+	<li>Actions have test cases for activation and operation. For special requirements with actions like Save, you may need to provide source materials for comparison or other processes to determine if the action succeeded. Working the process to completion is a test case.</li>
+	<li>Do not make a test case to test nonunique, noninformation-only objects that are the result of an action. Those objects should have their own test scripts.</li>
+	<li>Make a test case for control containers like dialogs and application windows for activation and another for exercising the basic dialog functions.</li>
+	<li>Controls on dialogs, toolbars, etc., each have basic test scripts with a few test cases in the standard control library. If there are various ways to activate a control, a separate test case may be needed for activation. </li>
+	<li>Other controls have basic test cases in the Menu, Toolbar, Dialog and Window test scripts. Test cases are made for these if their behavior diverges from or is more complex than the basic behavior.</li>
+	<li>A few controls may not have any basic tests in the libraries. Test cases are made for these. Later, they may be moved to another library and test script to be the basic tests for that type of control.</li>
+	<li>Otherwise, make a test case for each group of controls. Groups are often delineated by a frame or "engraved" separator lines.</li>
+	<li>Make a test case for each preview window or coordinated control layout to test interoperability.</li>
+	<li>If the interface object causes side-effects based on the settings of its controls, make one or more test cases for side-effects. They should be based on critical control sequences (use-scenarios) or on random settings.</li>
+  </ul>
+ </guidelines>
+</task>

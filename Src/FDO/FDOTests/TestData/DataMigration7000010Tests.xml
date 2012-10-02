@@ -1,0 +1,988 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+	<rt class="CmPossibilityList" guid="EA346C01-022F-4F34-B938-219CE7B65B73" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<CmObject />
+		<CmMajorObject>
+			<DateCreated val="2005-04-29 15:33:59.560" />
+			<DateModified val="2005-04-29 15:33:59.560" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Annotation types defined for use in FieldWorks.</Run>
+				</AStr>
+			</Description>
+			<Name>
+				<AUni ws="en">Annotation Definitions</AUni>
+			</Name>
+		</CmMajorObject>
+		<CmPossibilityList>
+			<Abbreviation>
+				<AUni ws="en">AnnDefn</AUni>
+			</Abbreviation>
+			<Depth val="127" />
+			<ItemClsid val="35" />
+			<PreventDuplicates val="true" />
+			<WsSelector val="-3" />
+			<Possibilities>
+				<objsur t="o" guid="7FFC4EAB-856A-43CC-BC11-0DB55738C15B" />
+				<objsur t="o" guid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" />
+				<objsur t="o" guid="F094A0B0-01B8-4621-97F1-4D775BC29CE7" />
+				<objsur t="o" guid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" />
+				<objsur t="o" guid="A39A1272-38A0-4354-BDAC-8636D64C1EEC" />
+			</Possibilities>
+		</CmPossibilityList>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="7FFC4EAB-856A-43CC-BC11-0DB55738C15B" ownerguid="EA346C01-022F-4F34-B938-219CE7B65B73" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Nt</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:34:21.560" />
+			<DateModified val="2005-04-29 15:34:21.560" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">General category for ad-hoc notes of any kind.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Note</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="C83E33DD-2A79-4A4B-84F6-92343C4F5324" />
+			</Discussion>
+			<SubPossibilities>
+				<objsur t="o" guid="56DE9B1A-1CE7-42A1-AA76-512EBEFF0DDA" />
+				<objsur t="o" guid="80AE5729-9CD8-424D-8E71-96C1A8FD5821" />
+			</SubPossibilities>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CanCreateOrphan val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+			<UserCanCreate val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="C83E33DD-2A79-4A4B-84F6-92343C4F5324" ownerguid="7FFC4EAB-856A-43CC-BC11-0DB55738C15B" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="1A976A2C-F374-4169-AC99-535094858CC2" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="1A976A2C-F374-4169-AC99-535094858CC2" ownerguid="C83E33DD-2A79-4A4B-84F6-92343C4F5324" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="56DE9B1A-1CE7-42A1-AA76-512EBEFF0DDA" ownerguid="7FFC4EAB-856A-43CC-BC11-0DB55738C15B" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">ConsNt</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:35:19.480" />
+			<DateModified val="2005-04-29 15:35:19.480" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Note written from consultant to translation team.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Consultant Note</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="6FDB6BD7-5F53-4635-93DA-351C041DEE09" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn />
+	</rt>
+	<rt class="StText" guid="6FDB6BD7-5F53-4635-93DA-351C041DEE09" ownerguid="56DE9B1A-1CE7-42A1-AA76-512EBEFF0DDA" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="43BEF2AF-0D2E-410D-9FD3-6BC39C24B75B" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="43BEF2AF-0D2E-410D-9FD3-6BC39C24B75B" ownerguid="6FDB6BD7-5F53-4635-93DA-351C041DEE09" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="80AE5729-9CD8-424D-8E71-96C1A8FD5821" ownerguid="7FFC4EAB-856A-43CC-BC11-0DB55738C15B" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">TransNt</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2006-03-12 12:19:46.087" />
+			<DateModified val="2006-03-12 12:19:46.087" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Note written by translation team.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Translator Note</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="D0E2CA25-3D79-4537-B6C4-A2ED906CBDEB" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CanCreateOrphan val="true" />
+			<CopyCutPastable val="true" />
+			<PromptUser val="true" />
+			<UserCanCreate val="true" />
+			<ZeroWidth val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="D0E2CA25-3D79-4537-B6C4-A2ED906CBDEB" ownerguid="80AE5729-9CD8-424D-8E71-96C1A8FD5821" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="707B5EB0-92F1-4907-8479-2A1BC8C17D2B" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="707B5EB0-92F1-4907-8479-2A1BC8C17D2B" ownerguid="D0E2CA25-3D79-4537-B6C4-A2ED906CBDEB" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" ownerguid="EA346C01-022F-4F34-B938-219CE7B65B73" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Txt</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:34:21.560" />
+			<DateModified val="2005-04-29 15:34:21.560" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Annotations applied to larger parts of a text, such as a sentence or clause. This is a grouping category and should not be instantiated.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Text</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="6B901C5F-88BC-4EB6-9D78-1F0CFDFC868E" />
+			</Discussion>
+			<SubPossibilities>
+				<objsur t="o" guid="B63F0702-32F7-4ABB-B005-C1D2265636AD" />
+				<objsur t="o" guid="9AC9637A-56B9-4F05-A0E1-4243FBFB57DB" />
+				<objsur t="o" guid="B0B1BB21-724D-470A-BE94-3D9A436008B8" />
+				<objsur t="o" guid="20CF6C1C-9389-4380-91F5-DFA057003D51" />
+				<objsur t="o" guid="EB92E50F-BA96-4D1D-B632-057B5C274132" />
+				<objsur t="o" guid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" />
+				<objsur t="o" guid="084A3AFE-0D00-41DA-BFCF-5D8DEAFA0296" />
+			</SubPossibilities>
+		</CmPossibility>
+		<CmAnnotationDefn />
+	</rt>
+	<rt class="StText" guid="6B901C5F-88BC-4EB6-9D78-1F0CFDFC868E" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="281B1AD1-D6D9-465D-AE86-E54AF9EF1218" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="281B1AD1-D6D9-465D-AE86-E54AF9EF1218" ownerguid="6B901C5F-88BC-4EB6-9D78-1F0CFDFC868E" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="B63F0702-32F7-4ABB-B005-C1D2265636AD" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">TxtSeg</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:35:19.480" />
+			<DateModified val="2005-04-29 15:35:19.480" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Used to break paragraphs into segments of a convenient size for translation and freeform notes.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Text Segment</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="70CA84D7-211C-4548-8274-004640B3CA5D" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsInstanceOf val="true" />
+			<InstanceOfSignature val="16" />
+			<UserCanCreate val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="70CA84D7-211C-4548-8274-004640B3CA5D" ownerguid="B63F0702-32F7-4ABB-B005-C1D2265636AD" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="7C02332C-1F8D-4208-B15D-CA8AA89B9324" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="7C02332C-1F8D-4208-B15D-CA8AA89B9324" ownerguid="70CA84D7-211C-4548-8274-004640B3CA5D" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="9AC9637A-56B9-4F05-A0E1-4243FBFB57DB" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">FT</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:35:19.480" />
+			<DateModified val="2005-04-29 15:35:19.480" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Gives an good idea of the meaning without trying to preserve anything about the form of the source.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Free Translation</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="A6627D93-8A7C-4FD6-966F-965784E2A595" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<AllowsInstanceOf val="true" />
+			<CanCreateOrphan val="true" />
+			<InstanceOfSignature val="37" />
+			<Multi val="true" />
+			<UserCanCreate val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="A6627D93-8A7C-4FD6-966F-965784E2A595" ownerguid="9AC9637A-56B9-4F05-A0E1-4243FBFB57DB" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="13018DD4-DE2A-4A60-B3EA-70CE221785E5" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="13018DD4-DE2A-4A60-B3EA-70CE221785E5" ownerguid="A6627D93-8A7C-4FD6-966F-965784E2A595" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="B0B1BB21-724D-470A-BE94-3D9A436008B8" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">LT</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:35:19.480" />
+			<DateModified val="2005-04-29 15:35:19.480" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Preserves form as much as possible.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Literal Translation</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="231BA78E-91CD-4657-BDC6-7C0992A16593" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<AllowsInstanceOf val="true" />
+			<CanCreateOrphan val="true" />
+			<InstanceOfSignature val="37" />
+			<Multi val="true" />
+			<UserCanCreate val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="231BA78E-91CD-4657-BDC6-7C0992A16593" ownerguid="B0B1BB21-724D-470A-BE94-3D9A436008B8" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="9B539203-D482-40DA-915F-A0E4337B299C" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="9B539203-D482-40DA-915F-A0E4337B299C" ownerguid="231BA78E-91CD-4657-BDC6-7C0992A16593" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="20CF6C1C-9389-4380-91F5-DFA057003D51" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">pt</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:35:19.480" />
+			<DateModified val="2005-04-29 15:35:19.480" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Used internally by the program to keep track of when some process was last applied to an object.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Process Time</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="8A3AE620-578A-4E94-893B-EC1F20D13C6D" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<CopyCutPastable val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="8A3AE620-578A-4E94-893B-EC1F20D13C6D" ownerguid="20CF6C1C-9389-4380-91F5-DFA057003D51" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="4593A90E-573D-46A1-9F40-D4755DD073DC" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="4593A90E-573D-46A1-9F40-D4755DD073DC" ownerguid="8A3AE620-578A-4E94-893B-EC1F20D13C6D" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="EB92E50F-BA96-4D1D-B632-057B5C274132" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">wfic</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:35:19.497" />
+			<DateModified val="2005-04-29 15:35:19.497" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Used in interlinearized text for each wordform.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Wordform In Context</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="B25ED78D-EA07-4A59-8A24-4C270EC4BD98" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<CopyCutPastable val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="B25ED78D-EA07-4A59-8A24-4C270EC4BD98" ownerguid="EB92E50F-BA96-4D1D-B632-057B5C274132" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="F95924AD-DD4A-4F3B-A9F1-9957E545DA51" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="F95924AD-DD4A-4F3B-A9F1-9957E545DA51" ownerguid="B25ED78D-EA07-4A59-8A24-4C270EC4BD98" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">pic</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:35:19.497" />
+			<DateModified val="2005-04-29 15:35:19.497" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Used in interlinearized text for each non-wordforming punctuation.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Punctuation In Context</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="DFD99C21-8CB9-47A4-AC09-17882526613B" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn />
+	</rt>
+	<rt class="StText" guid="DFD99C21-8CB9-47A4-AC09-17882526613B" ownerguid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="69830DE8-FB6C-43D9-B152-8AAADE5951C4" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="69830DE8-FB6C-43D9-B152-8AAADE5951C4" ownerguid="DFD99C21-8CB9-47A4-AC09-17882526613B" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="084A3AFE-0D00-41DA-BFCF-5D8DEAFA0296" ownerguid="8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">TTag</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2009-02-23 19:34:38.137" />
+			<DateModified val="2009-02-23 19:34:38.137" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Used in interlinear text tagging for syntax, etc</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Text Tag</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="F094A0B0-01B8-4621-97F1-4D775BC29CE7" ownerguid="EA346C01-022F-4F34-B938-219CE7B65B73" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Cmt</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:34:21.560" />
+			<DateModified val="2005-04-29 15:34:21.560" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">General category for comments of any kind.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Comment</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="0483EB8A-2396-4CD6-8EE2-B1C83520C7A6" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CanCreateOrphan val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+			<UserCanCreate val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="0483EB8A-2396-4CD6-8EE2-B1C83520C7A6" ownerguid="F094A0B0-01B8-4621-97F1-4D775BC29CE7" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="41ED59DC-65B8-45C3-8E0B-75648976D246" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="41ED59DC-65B8-45C3-8E0B-75648976D246" ownerguid="0483EB8A-2396-4CD6-8EE2-B1C83520C7A6" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" ownerguid="EA346C01-022F-4F34-B938-219CE7B65B73" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Err</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2005-04-29 15:34:21.560" />
+			<DateModified val="2005-04-29 15:34:21.560" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">General category for errors of any kind.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Errors</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="111863B0-F6C7-451A-AC37-2C9A2CD69B6B" />
+			</Discussion>
+			<SubPossibilities>
+				<objsur t="o" guid="BABCB400-F274-4498-92C5-77E99C90F75C" />
+				<objsur t="o" guid="DCC8D4D2-13B2-46E4-8FB3-29C166D189EA" />
+				<objsur t="o" guid="72ABB400-F274-4498-92C5-77E99C90F75B" />
+				<objsur t="o" guid="DDCCB400-F274-4498-92C5-77E99C90F75B" />
+				<objsur t="o" guid="BABCB400-F274-4498-92C5-77E99C90F75B" />
+				<objsur t="o" guid="F17A054B-D21E-4298-A1A5-0D79C4AF6F0F" />
+				<objsur t="o" guid="6558A579-B9C4-4EFD-8728-F994D0561293" />
+				<objsur t="o" guid="DDCCB400-F274-4498-92C5-77E99C90F75C" />
+				<objsur t="o" guid="BABCB400-F274-4498-92C5-77E99C90F75D" />
+			</SubPossibilities>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="StText" guid="111863B0-F6C7-451A-AC37-2C9A2CD69B6B" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="F9C48667-7D50-47FA-8645-0FA6EF98E692" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="F9C48667-7D50-47FA-8645-0FA6EF98E692" ownerguid="111863B0-F6C7-451A-AC37-2C9A2CD69B6B" >
+		<CmObject />
+		<StPara />
+		<StTxtPara />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="BABCB400-F274-4498-92C5-77E99C90F75C" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:03.437" />
+			<DateModified val="2008-11-12 17:57:03.437" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">No Capital after Punctuation.</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>No_Capital_after_Punctuation</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">TODO (TE-6917): Merge this with the other capitialization check</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="DCC8D4D2-13B2-46E4-8FB3-29C166D189EA" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:03.970" />
+			<DateModified val="2008-11-12 17:57:03.970" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Search for punctuation.</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>Punctuation</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Punctuation</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="72ABB400-F274-4498-92C5-77E99C90F75B" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:04.000" />
+			<DateModified val="2008-11-12 17:57:04.000" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Search for repeated words.</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>Repeated_Words</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Repeated Words</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="DDCCB400-F274-4498-92C5-77E99C90F75B" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:04.017" />
+			<DateModified val="2008-11-12 17:57:04.017" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Matched Pair Punctuation Errors.</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>Matched_Pair_Punctuation_Errors</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Matched Pairs</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="BABCB400-F274-4498-92C5-77E99C90F75B" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:04.050" />
+			<DateModified val="2008-11-12 17:57:04.050" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">No Capital after Style.</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>No_Capital_after_Style</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Capitalization</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="F17A054B-D21E-4298-A1A5-0D79C4AF6F0F" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:04.080" />
+			<DateModified val="2008-11-12 17:57:04.080" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Search for chapter and verse errors</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>Chapter_and_Verse_Numbers</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Chapter and Verse Numbers</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="6558A579-B9C4-4EFD-8728-F994D0561293" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:04.093" />
+			<DateModified val="2008-11-12 17:57:04.093" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Search for invalid characters</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>Characters</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Characters</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="DDCCB400-F274-4498-92C5-77E99C90F75C" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:04.127" />
+			<DateModified val="2008-11-12 17:57:04.127" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Quotation System Errors.</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>Quotation_Errors</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Quotations</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="BABCB400-F274-4498-92C5-77E99C90F75D" ownerguid="82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD" >
+		<CmObject />
+		<CmPossibility>
+			<DateCreated val="2008-11-12 17:57:04.173" />
+			<DateModified val="2008-11-12 17:57:04.173" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Find Mixed Capitalization.</Run>
+				</AStr>
+			</Description>
+			<HelpId>
+				<Uni>Mixed_Capitalization</Uni>
+			</HelpId>
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Mixed Capitalization</AUni>
+			</Name>
+		</CmPossibility>
+		<CmAnnotationDefn>
+			<AllowsComment val="true" />
+			<CopyCutPastable val="true" />
+			<Multi val="true" />
+		</CmAnnotationDefn>
+	</rt>
+	<rt class="CmAnnotationDefn" guid="A39A1272-38A0-4354-BDAC-8636D64C1EEC" ownerguid="EA346C01-022F-4F34-B938-219CE7B65B73" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">DCC</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2008-02-16 10:04:59.810" />
+			<DateModified val="2008-02-16 10:04:59.810" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">A chart component for discourse analysis</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Discourse</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<SubPossibilities>
+				<objsur t="o" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+				<objsur t="o" guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" />
+			</SubPossibilities>
+		</CmPossibility>
+		<CmAnnotationDefn />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="50C1A53D-925D-4F55-8ED7-64A297905346" ownerguid="A39A1272-38A0-4354-BDAC-8636D64C1EEC" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">CCR</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2008-02-16 10:04:59.810" />
+			<DateModified val="2008-02-16 10:04:59.810" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">A row for a discourse constituent chart</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Constituent Chart Row</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+		</CmPossibility>
+		<CmAnnotationDefn />
+	</rt>
+	<rt class="CmAnnotationDefn" guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" ownerguid="A39A1272-38A0-4354-BDAC-8636D64C1EEC" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">CCA</AUni>
+			</Abbreviation>
+			<BackColor val="-1073741824" />
+			<DateCreated val="2008-02-16 10:04:59.810" />
+			<DateModified val="2008-02-16 10:04:59.810" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">A cell in a row for a discourse constituent chart</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="-1073741824" />
+			<IsProtected val="true" />
+			<Name>
+				<AUni ws="en">Constituent Chart Annotation</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+		</CmPossibility>
+		<CmAnnotationDefn />
+	</rt>
+
+
+
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be1b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+	</rt>
+	<rt guid="155B8419-0A9B-44A4-A960-F78983C84768" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+	</rt>
+	<rt guid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+	</rt>
+
+	<rt guid="8E2BAE91-AF99-4A82-BDA0-D16CA49F56FB" class="ScrScriptureNote">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<objsur guid="7ffc4eab-856a-43cc-bc11-0db55738c15b" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation />
+		<ScrScriptureNote />
+	</rt>
+
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be2b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be3b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be4b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt guid="22a8431f-f974-412f-a261-8bd1a4e1be5b" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Free translation -->
+				<objsur guid="9ac9637a-56b9-4f05-a0e1-4243fbfb57db" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<objsur guid="93dcb15d-f622-4329-b1b5-e5cc832daf01" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+</languageproject>

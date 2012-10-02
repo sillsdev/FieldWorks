@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<word-analysis role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.MultiPane/">
+
+  <!-- the browse pane -->
+  <wordforms role="pane" path="9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/">
+	<var id="wordList" set="9:wordList/9:wordList/$nl"/>
+	<label path="9:XCore.PaneBar/9:Wordforms"/>
+	<col path="$wordList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/>
+	   <filter path="/9:FilterBar/9:FwComboBox[$col;]/">
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$wordList;/20:RootSite/24:Table[$row;]/"> <!-- index -->
+	   <col path="$Col;[$col;]/$Text"/> <!-- index -->
+	</record>
+	<scroll path="$wordList;[2]/">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </wordforms>
+
+  <!-- the edit pane -->
+  <analyses role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<title path="9:XCore.PaneBar/9:Wordform Analyses"/>
+	<var id="TREE" set="9:normalEdit/9:RecordEditView.DataTree/"/>    <var id="LABEL" set="9:SplitContainer/9:Panel1/"/>
+	<var id="DATA" set="9:SplitContainer/9:Panel2/"/>
+	<current path="$TREE;9:summary/$DATA;9:Slice_unknown/20:Root/20:Div/$Text"/>
+	<assign-analysis path="$TREE;9:summary/$DATA;9:Slice_unknown/$nl"/>
+	<spelling-status path="$TREE;9:enumcombobox/">
+	   <label path="$LABEL;9:Spelling Status"/>
+	   <data path="$DATA;9:Spelling Status/41:Spelling Status"/>
+	   <open path="$DATA;9:Spelling Status/43:Open"/>
+	</spelling-status>
+
+	<user-approved path="$TREE;9:summary[$ind;]/">
+	   <label name="User Approved (Analyses)" path="$DATA;9:Slice_unknown/20:Root/$Text"/>
+	   <add name="Add Approved Analysis..." path="$DATA;9:Slice_unknown/$nl"/>
+	</user-approved>
+	<analysis-seq inc="1" path="$TREE">
+		<var id="SLICE" set="9:summary[$ind;]/$DATA;9:Slice_unknown/"/>
+		<label path="$SLICE;20:Root/20:Div/$Text"/>
+		<drop path="9:summary[$ind;]/9:SplitContainer/9:Panel1/9:SliceTreeNode"/>
+		<assign-analysis path="$SLICE;$nl"/>
+		<analysis path="9:custom/">
+		   <label path="$LABEL;9:Analysis"/>
+		   <it path="$DATA;20:Analysis/20:Div/$Text;/20:InnerPile[*]/$Text[*]"/>
+		</analysis>
+		<parse-result path="9:lit/">
+			<label path="$LABEL;9:Parse result"/>
+			<data path="$DATA;9:Parse result/41:Parse result"/>
+			<open path="$DATA;9:Parse result/43:Open"/>
+		</parse-result>
+		<word-category path="9:atomicreferencepos/">
+			<label path="$LABEL;9:Word Category"/>
+			<data path="$DATA;9:Word Category/20:RootSite/$Text"/>
+			<open path="$DATA;9:Word Category/$NL;43:NAMELESS"/>
+		</word-category>
+		<word-gloss path="9:multistring[$ind;]/">
+			<label path="$LABEL;9:Word Gloss"/>
+			<lang path="$DATA;20:Word Gloss/24:Table/28:Row[*]/29:Cell/$Text"/>
+			<data path="$DATA;20:Word Gloss/24:Table/28:Row[*]/29:Cell[2]/$Text"/>
+		</word-gloss>
+	 </analysis-seq>
+
+	<user-opinion-unknown path="$TREE;9:summary[$ind;]/">
+	   <label name="User Approved (Analyses)" path="$DATA;9:Slice_unknown/20:Root/$Text"/>
+	   <add name="Add Approved Analysis" path="$DATA;9:Slice_unknown/$nl"/>
+	</user-opinion-unknown>
+	<candidate-seq inc="1" path="$TREE">
+		<var id="SLICE" set="9:summary[$ind;]/$DATA;9:Slice_unknown/"/>
+		<label path="$SLICE;20:Root/20:Div/$Text"/>
+		<drop path="9:summary[$ind;]/9:SplitContainer/9:Panel1/9:SliceTreeNode"/>
+		<assign-analysis path="$SLICE;$nl"/>
+		<analysis path="9:custom/">
+		   <label path="$LABEL;9:Analysis"/>
+		   <it path="$DATA;20:Analysis/20:Div/$Text;/20:InnerPile[*]/$Text["/>
+		</analysis>
+		<parse-result path="9:lit/">
+			<label path="$LABEL;9:Parse result"/>
+			<data path="$DATA;9:Parse result/41:Parse result"/>
+			<open path="$DATA;9:Parse result/43:Open"/>
+		</parse-result>
+	 </candidate-seq>
+
+	<user-disapproved path="$TREE;9:summary[$ind;]/">
+	   <label name="User Disapproved (Test Case)" path="$DATA;9:Slice_unknown/20:Root/$Text"/>
+	   <delete name="Delete Disapproved Analysis..." path="$DATA;9:Slice_unknown/$nl"/>
+	</user-disapproved>
+	<test-case-seq inc="1" path="$TREE">
+		<var id="SLICE" set="9:summary[$ind;]/$DATA;9:Slice_unknown/"/>
+		<label path="$SLICE;20:Root/20:Div/$Text"/>
+		<drop path="9:summary[$ind;]/9:SplitContainer/9:Panel1/9:SliceTreeNode"/>
+		<assign-analysis path="$SLICE;$nl"/>
+		<analysis path="9:custom/">
+		   <label path="$LABEL;9:Analysis"/>
+		   <it path="$DATA;20:Analysis/20:Div/$Text;/20:InnerPile[*]/$Text["/>
+		</analysis>
+		<parse-result path="9:lit/">
+			<label path="$LABEL;9:Parse result"/>
+			<data path="$DATA;9:Parse result/41:Parse result"/>
+			<open path="$DATA;9:Parse result/43:Open"/>
+		</parse-result>
+	 </test-case-seq>
+
+	 <scroll>
+		<down path="$TREE;43:Page down"/>
+		<up path="$TREE;43:Page up"/>
+	 </scroll>
+  </analyses>
+</word-analysis>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Andy Black's demo section H -->
+
+ <on-application args="-db Kalaba" title="Kalaba - FieldWorks Harvest" run="ok" on-fail="assert">
+
+<!-- H.	Derivation-->
+<!-- 1.	Back to the Grammar Sketch, derivation section.-->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Grammar Sketch" />
+  <insert>{PGDN 24}</insert>
+
+<!-- 2.	Discuss what's here.-->
+<!-- 3.	Let's add a derivational suffix ￯﾿ﾢ￯ﾾﾀ￯ﾾﾓnes that changes an adjective into a noun (something like English 'ness: good/goodness; quick/quickness).-->
+<!-- 4.	Ask them what they would need to do.  Here's the script's answer:-->
+<!-- 5.	Go to Lexicon / Lexicon-->
+  <click wait="1000" path="window:MenuBar/menu:View /menu:Lexicon/menu:Lexicon Edit" />
+
+<!-- 6.	Click on Create new major entry button-->
+  <click path="window:Insert/toolbar:Insert/button:Entry..."/>
+  <on-dialog wait="30000" title="New Entry">
+
+<!-- 7.	In the Form field, type "-nes"-->
+   <insert>-nes</insert>
+
+<!-- 8.	In the gloss field, type "quality"-->
+   <insert>{TAB 2}quality</insert>
+
+<!-- 9.	In Grammatical Properties, choose Derivational affix-->
+   <insert>%T{DOWN 2}</insert>
+
+<!-- 10.	Click on the From category chooser button-->
+ <!-- can't go to Alt A, so go to Alt h and back tab -->
+   <insert>%h+{TAB}</insert>
+
+<!-- a.	Open up modifier-->
+   <insert>mm</insert> <!-- second word starting with 'm' -->
+
+<!-- b.	Choose adjective.-->
+   <insert>{RIGHT}a~</insert> <!-- first word starting with 'a' looking down-->
+
+<!-- 11.	Click on the To category chooser button-->
+   <insert>%h</insert>
+
+<!-- a.	Choose noun.-->
+   <insert>nn~</insert>
+
+<!-- 12.	Click on the Create button.-->
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- 13.	Back to Grammar Sketch and regenerate.-->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Grammar Sketch" />
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/button:btnGenerate" />
+
+<!-- 14.	Go to Derivation section.  See newly added suffix.-->
+  <click wait="3000" path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:SIL.FieldWorks.XWorks.FxtViewer/window:panelBottom/window:HtmlControl/window:SHDocVw.WebBrowser_V1" />
+  <insert>{PGDN 24}</insert>
+
+ </on-application>
+</accil>

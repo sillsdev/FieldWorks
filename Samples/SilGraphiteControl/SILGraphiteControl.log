@@ -1,0 +1,42 @@
+Microsoft (R) Help Compiler
+HCRTF 4.03.0002
+Copyright (c) Microsoft Corp 1990 - 1995. All rights reserved.
+silgraphitecontrol.hpj
+	HC1002: Note:
+	Using existing phrase table: SILGraphiteControl.ph.
+	HC1010: Note:
+	The following mapped Topic IDs were not used in any topic:
+	HIDR_MENUBAR_INIT_SIL_DOULOS_PIGLATIN_DEMO
+	HIDD_PROPPAGE_SILGRAPHITECONTROL
+	HIDR_MENUBAR_SAVE_AS_HTML
+	HIDR_MENUBAR_50
+	HIDR_MENUBAR_75
+	HIDR_MENUBAR_PASTE
+	HIDR_MENUBAR_END_RANGE
+	HIDR_ACCELERATOR1
+	HIDR_MENUBAR_INIT_SIMPLE_GRAPHITE_FONT
+	HIDR_MENUBAR_150
+	HIDR_MENUBAR_100
+	HIDR_MENUBAR_200
+	HIDR_MENUBAR_CUT
+	HIDR_MENUBAR_INIT_ARIAL_UNICODE_MS
+	HIDR_MENUBAR_INIT_SIL_DOULOS_UNICODE_IPA
+	HID_ACCELERATOR_OPEN
+	HID_ACCELERATOR_SAVE
+	HIDR_MENUBAR_MULTILINE
+	HIDR_MENUBAR_COPY
+	HIDR_MENUBAR_OPEN
+	HIDR_MENUBAR_REDO
+	HIDR_MENUBAR_SAVE
+	HIDR_MENUBAR_UNDO
+	HIDR_MENUBAR_CHOOSE_FONT
+3	Topics
+0	Jumps
+0	Keywords
+1	Bitmap
+
+
+Created c:\fw\Samples\SilGraphiteControl\SILGraphiteControl.hlp, 6,519 bytes
+Phrase+Zeck compression decreased help file by 72 bytes.
+Compile time: 0 minutes, 0 seconds
+2 notes, 0 warnings

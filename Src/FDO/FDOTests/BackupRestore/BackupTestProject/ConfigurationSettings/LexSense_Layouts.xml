@@ -1,0 +1,205 @@
+﻿<LayoutInventory>
+  <layout class="LexSense" type="jtview" name="publishStemComponentTarget" version="9">
+	<part ref="OwnerOutlinePub" label="Referenced Sense" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" wsType="vernacular" />
+	<part ref="GlossPub" label="Gloss" before=" " after="" visibility="ifdata" ws="analysis" sep=" " showLabels="false" wsType="analysis" />
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishStemMinorPrimaryTarget" version="9">
+	<part ref="OwnerOutlinePub" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" wsType="vernacular" />
+	<part ref="GlossPub" label="Gloss" before=" " after="" visibility="ifdata" ws="analysis" sep=" " showLabels="false" wsType="analysis" />
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishStem" version="9">
+	<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStem" css="grammatical-info" />
+	<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishStemSenseType" css="sense-type" />
+	<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition" />
+	<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishStem" css="examples" />
+	<part ref="EncyclopedicInfoPub" label="Encyclopedic Info." before="[" after="] " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="encyclopedic-info" />
+	<part ref="RestrictionsPub" label="Restrictions" before="Restrictions: " after="] " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="restrictions" />
+	<part ref="LexReferencesConfig" label="Lexical Relations" before="" after=". " sep="; " visibility="ifdata" param="publishStemSenseRef" css="relations" />
+	<part ref="VariantFormsConfig" label="Variants of Sense" before="(" after=") " sep="; " visibility="ifdata" param="publishStemSenseVariantRef" css="sense-variantrefs" />
+	<part ref="AnthroNotePub" label="Anthropology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="DiscourseNotePub" label="Discourse Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="PhonologyNotePub" label="Phonology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SemanticsNotePub" label="Semantics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GeneralNotePub" label="General Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ScientificName" label="Scientific Name" before="" after=" " visibility="ifdata" css="scientific-name" />
+	<part ref="Source" label="Source" before="" after=" " visibility="never" />
+	<part ref="SemanticDomainsConfig" label="Semantic Domains" before="(sem. domains: " after=".) " sep=", " visibility="ifdata" param="publishStemSemDom" css="semantic-domains" />
+	<part ref="AnthroCodesConfig" label="Anthropology Categories" before="anthro. codes " after=" " visibility="never" sep=", " param="publishStemAnthro" />
+	<part ref="DomainTypesConfig" label="Academic Domains" before="ac. domains: " after=" " visibility="ifdata" sep=", " param="publishStemDomainType" css="domain-types" />
+	<part ref="UsageTypesConfig" label="Usages" before="{" after="} " visibility="ifdata" sep=", " param="publishStemUsageType" css="usage-types" />
+	<part ref="StatusConfig" label="Status" before=" status " after=" " visibility="never" param="publishStemStatus" css="status" />
+	<part ref="StemComplexFormsConfig" label="Complex Forms" visibility="ifdata" before="" after=" " sep=" " css="sense-complexformrefs" />
+	<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStem" css="subsenses" after=" " />
+	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" sep=" " showLabels="false">
+		<configureMlString field="$fieldName" />
+	  </part>
+	</generate>
+	<generate class="LexSense" fieldType="simplestring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never">
+		<string field="$fieldName" />
+	  </part>
+	</generate>
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishStemMinor" version="9">
+	<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStemMinor" css="grammatical-info-minor" />
+	<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishStemMinorSenseType" css="sense-type-minor" />
+	<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor" />
+	<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishStemMinor" css="examples-minor" />
+	<part ref="EncyclopedicInfoPub" label="Encyclopedic Info." before=" [" after="]" visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="encyclopedic-info-minor" />
+	<part ref="RestrictionsPub" label="Restrictions" before=" Restrictions: " after="] " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="restrictions-minor" />
+	<part ref="LexReferencesConfig" label="Lexical Relations" before="" after=". " sep="; " visibility="ifdata" param="publishStemMinorSenseRef" css="relations-minor" />
+	<part ref="VariantFormsConfig" label="Variants of Sense" before="(" after=") " sep="; " visibility="ifdata" param="publishStemMinorSenseVariantRef" css="sense-variantrefs-minor" />
+	<part ref="AnthroNotePub" label="Anthropology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="DiscourseNotePub" label="Discourse Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="PhonologyNotePub" label="Phonology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SemanticsNotePub" label="Semantics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GeneralNotePub" label="General Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ScientificName" label="Scientific Name" before="" after=" " visibility="ifdata" css="scientific-name-minor" />
+	<part ref="Source" label="Source" before="" after=" " visibility="never" />
+	<part ref="SemanticDomainsConfig" label="Semantic Domains" before="(sem. domains: " after=".) " sep=", " visibility="ifdata" param="publishStemMinorSemDom" css="semantic-domains-minor" />
+	<part ref="AnthroCodesConfig" label="Anthropology Categories" before="anthro. codes " after=" " visibility="never" sep=", " param="publishStemMinorAnthro" />
+	<part ref="DomainTypesConfig" label="Academic Domains" before="ac. domains: " after=" " visibility="ifdata" sep=", " param="publishStemMinorDomainType" css="domain-types-minor" />
+	<part ref="UsageTypesConfig" label="Usages" before="{" after="} " visibility="ifdata" sep=", " param="publishStemMinorUsageType" css="usage-types-minor" />
+	<part ref="StatusConfig" label="Status" before=" status " after=" " visibility="never" param="publishStemMinorStatus" css="status-minor" />
+	<part ref="StemComplexFormsConfig" label="Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishStemMinorSenseComplexFormRef" css="sense-complexformrefs-minor" />
+	<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStemMinor" css="subsenses-minor" after=" " />
+	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" sep=" " showLabels="false">
+		<configureMlString field="$fieldName" />
+	  </part>
+	</generate>
+	<generate class="LexSense" fieldType="simplestring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never">
+		<string field="$fieldName" />
+	  </part>
+	</generate>
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishRoot" version="9">
+	<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRoot" css="grammatical-info" />
+	<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishRootSenseType" css="sense-type" />
+	<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition" />
+	<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishRoot" css="examples" />
+	<part ref="EncyclopedicInfoPub" label="Encyclopedic Info." before=" [" after="]" visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="encyclopedic-info" />
+	<part ref="RestrictionsPub" label="Restrictions" before=" Restrictions: " after="] " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="restrictions" />
+	<part ref="LexReferencesConfig" label="Lexical Relations" before="" after=". " sep="; " visibility="ifdata" param="publishRootSenseRef" css="relations" />
+	<part ref="VariantFormsConfig" label="Variants of Sense" before="(" after=") " sep="; " visibility="ifdata" param="publishRootSenseVariantRef" css="sense-variantrefs" />
+	<part ref="AnthroNotePub" label="Anthropology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="DiscourseNotePub" label="Discourse Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="PhonologyNotePub" label="Phonology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SemanticsNotePub" label="Semantics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GeneralNotePub" label="General Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ScientificName" label="Scientific Name" before="" after=" " visibility="ifdata" css="scientific-name" />
+	<part ref="Source" label="Source" before="" after=" " visibility="never" />
+	<part ref="SemanticDomainsConfig" label="Semantic Domains" before="(sem. domains: " after=".) " sep=", " visibility="ifdata" param="publishRootSemDom" css="semantic-domains" />
+	<part ref="AnthroCodesConfig" label="Anthropology Categories" before="anthro. codes " after=" " visibility="never" sep=", " param="publishRootAnthro" />
+	<part ref="DomainTypesConfig" label="Academic Domains" before="ac. domains: " after=" " visibility="ifdata" sep=", " param="publishRootDomainType" css="domain-types" />
+	<part ref="UsageTypesConfig" label="Usages" before="{" after="} " visibility="ifdata" sep=", " param="publishRootUsageType" css="usage-types" />
+	<part ref="StatusConfig" label="Status" before=" status " after=" " visibility="never" param="publishRootStatus" css="status" />
+	<part ref="StemComplexFormsConfig" label="Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootSenseComplexFormRef" css="sense-complexformrefs" />
+	<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRoot" css="subsenses" after=" " />
+	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" sep=" " showLabels="false">
+		<configureMlString field="$fieldName" />
+	  </part>
+	</generate>
+	<generate class="LexSense" fieldType="simplestring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never">
+		<string field="$fieldName" />
+	  </part>
+	</generate>
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishRootSub" version="9">
+	<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRootSub" css="grammatical-info-sub" />
+	<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishRootSubSenseType" css="sense-type-sub" />
+	<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-sub" />
+	<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishRootSub" css="examples-sub" />
+	<part ref="EncyclopedicInfoPub" label="Encyclopedic Info." before=" [" after="]" visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="encyclopedic-info-sub" />
+	<part ref="RestrictionsPub" label="Restrictions" before=" Restrictions: " after="] " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="restrictions-sub" />
+	<part ref="LexReferencesConfig" label="Lexical Relations" before="" after=". " sep="; " visibility="ifdata" param="publishRootSubSenseRef" css="relations-sub" />
+	<part ref="VariantFormsConfig" label="Variants of Sense" before="(" after=") " sep="; " visibility="ifdata" param="publishRootSubSenseVariantRef" css="sense-variantrefs-sub" />
+	<part ref="AnthroNotePub" label="Anthropology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="DiscourseNotePub" label="Discourse Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="PhonologyNotePub" label="Phonology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SemanticsNotePub" label="Semantics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GeneralNotePub" label="General Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ScientificName" label="Scientific Name" before="" after=" " visibility="ifdata" css="scientific-name-sub" />
+	<part ref="Source" label="Source" before="" after=" " visibility="never" />
+	<part ref="SemanticDomainsConfig" label="Semantic Domains" before="(sem. domains: " after=".) " sep=", " visibility="ifdata" param="publishRootSubSemDom" css="semantic-domains-sub" />
+	<part ref="AnthroCodesConfig" label="Anthropology Categories" before="anthro. codes " after=" " visibility="never" sep=", " param="publishRootSubAnthro" />
+	<part ref="DomainTypesConfig" label="Academic Domains" before="ac. domains: " after=" " visibility="ifdata" sep=", " param="publishRootSubDomainType" css="domain-types-sub" />
+	<part ref="UsageTypesConfig" label="Usages" before="{" after="} " visibility="ifdata" sep=", " param="publishRootSubUsageType" css="usage-types-sub" />
+	<part ref="StatusConfig" label="Status" before=" status " after=" " visibility="never" param="publishRootSubStatus" css="status-sub" />
+	<part ref="StemComplexFormsConfig" label="Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootSubSenseComplexFormRef" css="sense-complexformrefs-sub" />
+	<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootSub" css="subsenses-sub" after=" " />
+	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" sep=" " showLabels="false">
+		<configureMlString field="$fieldName" />
+	  </part>
+	</generate>
+	<generate class="LexSense" fieldType="simplestring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never">
+		<string field="$fieldName" />
+	  </part>
+	</generate>
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishRootMinor" version="9">
+	<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishRootMinor" css="grammatical-info-minor" />
+	<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="ifdata" style="Dictionary-Contrasting" param="publishRootMinorSenseType" css="sense-type-minor" />
+	<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor" />
+	<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="ifdata" param="publishRootMinor" css="examples-minor" />
+	<part ref="EncyclopedicInfoPub" label="Encyclopedic Info." before=" [" after="]" visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="encyclopedic-info-minor" />
+	<part ref="RestrictionsPub" label="Restrictions" before=" Restrictions: " after="] " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " css="restrictions-minor" />
+	<part ref="LexReferencesConfig" label="Lexical Relations" before="" after=". " sep="; " visibility="ifdata" param="publishRootMinorSenseRef" css="relations-minor" />
+	<part ref="VariantFormsConfig" label="Variants of Sense" before="(" after=") " sep="; " visibility="ifdata" param="publishRootMinorSenseVariantRef" css="sense-variantrefs-minor" />
+	<part ref="AnthroNotePub" label="Anthropology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="DiscourseNotePub" label="Discourse Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="PhonologyNotePub" label="Phonology Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SemanticsNotePub" label="Semantics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="GeneralNotePub" label="General Note" before="" after=" " visibility="never" ws="all analysis" wsType="analysis" sep=" " showLabels="false" />
+	<part ref="ScientificName" label="Scientific Name" before="" after=" " visibility="ifdata" css="scientific-name-minor" />
+	<part ref="Source" label="Source" before="" after=" " visibility="never" />
+	<part ref="SemanticDomainsConfig" label="Semantic Domains" before="(sem. domains: " after=".) " sep=", " visibility="ifdata" param="publishRootMinorSemDom" css="semantic-domains-minor" />
+	<part ref="AnthroCodesConfig" label="Anthropology Categories" before="anthro. codes " after=" " visibility="never" sep=", " param="publishRootMinorAnthro" />
+	<part ref="DomainTypesConfig" label="Academic Domains" before="ac. domains: " after=" " visibility="ifdata" sep=", " param="publishRootMinorDomainType" css="domain-types-minor" />
+	<part ref="UsageTypesConfig" label="Usages" before="{" after="} " visibility="ifdata" sep=", " param="publishRootMinorUsageType" css="usage-types-minor" />
+	<part ref="StatusConfig" label="Status" before=" status " after=" " visibility="never" param="publishRootMinorStatus" css="status-minor" />
+	<part ref="StemComplexFormsConfig" label="Complex Forms" visibility="ifdata" before="" after=" " sep=" " param="publishRootMinorSenseComplexFormRef" css="sense-complexformrefs-minor" />
+	<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishRootMinor" css="subsenses-minor" after=" " />
+	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" sep=" " showLabels="false">
+		<configureMlString field="$fieldName" />
+	  </part>
+	</generate>
+	<generate class="LexSense" fieldType="simplestring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never">
+		<string field="$fieldName" />
+	  </part>
+	</generate>
+  </layout>
+</LayoutInventory>

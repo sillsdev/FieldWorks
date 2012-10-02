@@ -1,0 +1,16 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Building\CheckIn.xml">
+ <title tag="bldchk">Check in manual files</title>
+ <index>
+  <li>manual files: check in</li>
+ </index>
+ <introduction>
+  <p>Each manual file should be opened for edit before it is changed. Generated batch and HTML files are not checked in, but the project files are.</p>
+ </introduction>
+ <steps>
+  <p>To check files in, launch <link uri="..\Source\DocControl.xml" type="module">Perforce</link>.</p>
+  <step>In the right pane, right-click "Pending Changelists+Default"</step>
+  <step>Select "Submit..."</step>
+  <step>Fill in a comment like, "Rebuilt Test Help File" and click "Submit"</step>
+ </steps>
+</task>

@@ -1,0 +1,89 @@
+
+\lx 14988
+\g masc.sing
+\c W
+\wc root
+\mp RootPOS259
+\fd MSFS15006
+\a ms {14989}
+
+\lx 14992
+\g INFL
+\c W/W
+\o NaN NaN
+\wc 15005
+\a ms {14994} MSEnvFS15039
+\a mp {15044} MSEnvFS15045
+\a infl {14993} MSEnvFSNot15045Not15039
+\eType suffix
+
+\lx 15013
+\g masc.pl
+\c W
+\wc root
+\mp RootPOS259
+\fd MSFS15015
+\a mp {15014}
+
+\lx 15022
+\g fem.sing
+\c W
+\wc root
+\mp RootPOS259
+\fd MSFS15024
+\a fs {15023}
+
+\lx 15033
+\g fem/pl
+\c W
+\wc root
+\mp RootPOS259
+\fd MSFS15034
+\a fp {15032}
+
+\lx 15152
+\g ms to verb
+\c W/W
+\o -1
+\wc derivPfx
+\a mptov {15232} MSEnvFS15233
+\a mstov {15153} MSEnvFS15227
+\eType prefix
+\fd FromPOS259
+\fd ToPOS262
+
+\lx 15161
+\g fp to verb
+\c W/W
+\o 1
+\wc derivSfx
+\a fstov {15243} MSEnvFS15244
+\a fptov {15162} MSEnvFS15238
+\eType suffix
+\fd FromPOS259
+\fd ToPOS262
+
+\lx 15344
+\g PERF
+\c W/W
+\o NaN NaN
+\wc 15333
+\fd InflectionFS15356
+\a perf {15345}
+\eType suffix
+
+\lx 15348
+\g PAST
+\c W/W
+\o -NaN -NaN
+\wc 15332
+\a pst {15350} MSEnvFS15354
+\a past {15349} MSEnvFSNot15354
+\eType prefix
+
+\lx 15360
+\g verb
+\c W
+\wc root
+\mp RootPOS262
+\a verb {15361}

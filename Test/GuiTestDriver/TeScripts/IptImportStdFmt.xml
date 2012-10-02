@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 5 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<var id="Scope" select="tests/test[@case='$TestCase;']/@scope"/>
+		<var id="Intro" select="tests/test[@case='$TestCase;']/@intro"/>
+		<var id="DataTypes" select="tests/test[@case='$TestCase;']/@data-types"/>
+		<var id="BtIntro" select="tests/test[@case='$TestCase;']/@BT-Intro"/>
+
+		<if>
+			<condition of="$Scope" is="Entire Scripture Project"/>
+			<then>
+				<var id="ScopeAll" set="TRUE"/>
+			</then>
+			<else>
+				<var id="ScopeAll" set="FALSE"/>
+			</else>
+		</if>
+
+		<if>
+			<condition of="$Intro" is="No"/>
+			<then>
+				<var id="ChkedBookIntros" set="FALSE"/>
+			</then>
+			<else>
+				<var id="ChkedBookIntros" set="TRUE"/>
+			</else>
+		</if>
+
+		<if>
+			<condition of="$DataTypes" is="rexp#Scripture"/>
+			<then>
+				<var id="ChkedScripture" set="TRUE"/>
+			</then>
+			<else>
+				<var id="ChkedScripture" set="FALSE"/>
+			</else>
+		</if>
+
+		<if>
+			<condition of="$DataTypes" is="rexp#BT"/>
+			<then>
+				<var id="ChkedBackTrans" set="TRUE"/>
+			</then>
+			<else>
+				<var id="ChkedBackTrans" set="FALSE"/>
+			</else>
+		</if>
+
+		<if>
+			<condition of="$DataTypes" is="rexp#Annotations"/>
+			<then>
+				<var id="ChkedAnnotations" set="TRUE"/>
+			</then>
+			<else>
+				<var id="ChkedAnnotations" set="FALSE"/>
+			</else>
+		</if>
+
+		<!-- Import Standard Format -->
+		<!-- Menu Model = File > Import > Standard Format -->
+		<on-dialog title="Import Standard Format" until="30000">
+
+			<!--"What to Import" radio button group-->
+			<var id="GuiRadioBtn1" set="45:The entire Scripture project"/>
+			<var id="GuiRadioBtn2" set="45:The range between"/>
+			<var id="RB1_DesiredState" set="$ScopeAll"/>
+			<include from="IncRadioButton.xml"/>
+
+			<!--"Types of Data" check box group-->
+			<var id="GuiChkBox" set="44:The translation (Scripture text, footnotes, etc.)"/>
+			<glimpse id="ChkBoxState1" path="$GuiChkBox" prop="checked"/>
+			<var id="ActualState" set="$ChkBoxState1"/>
+			<var id="DesiredState" set="$ChkedScripture"/>
+			<include from="IncCheckBox.xml"/>
+
+			<var id="GuiChkBox" set="44:Back translations"/>
+			<glimpse id="ChkBoxState2" path="$GuiChkBox" prop="checked"/>
+			<var id="ActualState" set="$ChkBoxState2"/>
+			<var id="DesiredState" set="$ChkedBackTrans"/>
+			<include from="IncCheckBox.xml"/>
+
+			<var id="GuiChkBox" set="44:Book introductions"/>
+			<glimpse id="ChkBoxState3" path="$GuiChkBox" prop="checked"/>
+			<var id="ActualState" set="$ChkBoxState3"/>
+			<var id="DesiredState" set="$ChkedBookIntros"/>
+			<include from="IncCheckBox.xml"/>
+
+			<var id="GuiChkBox" set="44:Annotations"/>
+			<glimpse id="ChkBoxState4" path="$GuiChkBox" prop="checked"/>
+			<var id="ActualState" set="$ChkBoxState4"/>
+			<var id="DesiredState" set="$ChkedAnnotations"/>
+			<include from="IncCheckBox.xml"/>
+
+			<click path="$OK"/>
+		</on-dialog>
+
+		<on-dialog title="Import" until="10000">
+			<click path="9:Import/43:Import"/>
+		</on-dialog>
+
+	</on-application>
+</accil>

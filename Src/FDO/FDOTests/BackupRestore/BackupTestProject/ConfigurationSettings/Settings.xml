@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfProperty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Property>
+	<name>DoingAutomatedTest</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>RemoveAnalyses</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>UpdateLexiconIfPossible</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>ShowSidebar</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>SidebarWidthGlobal</name>
+	<value xsi:type="xsd:int">140</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>SidebarLabel</name>
+	<value xsi:type="xsd:string">Sidebar</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>ShowRecordList</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>RecordListWidthGlobal</name>
+	<value xsi:type="xsd:int">200</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>RecordListLabel</name>
+	<value xsi:type="xsd:string">Record List</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>MainContentLabel</name>
+	<value xsi:type="xsd:string">Main Content</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>AllButSidebarLabel</name>
+	<value xsi:type="xsd:string">Record List &amp; MainContent</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>UseOffice2003Style</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>windowState</name>
+	<value xsi:type="FormWindowState">Normal</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>PreviousToolbarVersion</name>
+	<value xsi:type="xsd:string">1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>IgnoreStatusPanel</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>LinkSetupInfo</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>DictionaryPublicationLayout</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>entries.normalEdit.DataTree-SliceSplitterBaseDistance</name>
+	<value xsi:type="xsd:int">150</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>AllowInsertExternalLink</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>AllowShowNormalFields</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Format_dockline</name>
+	<value xsi:type="xsd:int">1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Format_dockoffset</name>
+	<value xsi:type="xsd:int">425</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Insert_dockline</name>
+	<value xsi:type="xsd:int">1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Insert_dockoffset</name>
+	<value xsi:type="xsd:int">382</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Edit_dockline</name>
+	<value xsi:type="xsd:int">1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Edit_dockoffset</name>
+	<value xsi:type="xsd:int">339</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_View_dockline</name>
+	<value xsi:type="xsd:int">1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_View_dockoffset</name>
+	<value xsi:type="xsd:int">304</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Standard_dockline</name>
+	<value xsi:type="xsd:int">1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_Standard_dockoffset</name>
+	<value xsi:type="xsd:int">0</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_menubar_dockline</name>
+	<value xsi:type="xsd:int">0</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>Bars_menubar_dockoffset</name>
+	<value xsi:type="xsd:int">0</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>categories.advancedEdit.DataTree-SliceSplitterBaseDistance</name>
+	<value xsi:type="xsd:int">150</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>records.normalEdit.DataTree-SliceSplitterBaseDistance</name>
+	<value xsi:type="xsd:int">150</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>DomainTypeList.listsEdit.DataTree-SliceSplitterBaseDistance</name>
+	<value xsi:type="xsd:int">150</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>windowLocation</name>
+	<value xsi:type="Point">
+	  <X>250</X>
+	  <Y>250</Y>
+	</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>windowSize</name>
+	<value xsi:type="Size">
+	  <Width>1125</Width>
+	  <Height>722</Height>
+	</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>UseVernSpellingDictionary</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>XmlDocConfigureDlg_Location</name>
+	<value xsi:type="Point">
+	  <X>275</X>
+	  <Y>275</Y>
+	</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>XmlDocConfigureDlg_Size</name>
+	<value xsi:type="Size">
+	  <Width>658</Width>
+	  <Height>511</Height>
+	</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+</ArrayOfProperty>

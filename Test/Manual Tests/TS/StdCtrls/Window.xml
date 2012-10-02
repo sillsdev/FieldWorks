@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="window" num="0.14" abbr="wnd" file="StdCtrls\Window.xml">
+ <title tag="window">Window Basic Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>Most windows in a FieldWorks application have a few standard widgets and menus. The behavior of these widgets and menus is similar in each application window. Standard widgets include the minimize, maximize/restore and close (X) frame buttons. Standard menus include "File", "Window" and "Help".</p>
+  </introduction>
+  <context>
+<p>Each widget and menu is tested separately. When possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report. The first words of the bug report title should be a noun phrase containing the word "window" or the window's title.</p>
+  </context>
+  <warning>
+<p>There is no project specification for windows in general, however, all FieldWorks windows have specifications.</p>
+  </warning>
+
+ <case id="wndInsp" num="1" order="any">
+  <title tag="wndInsp">Window Inspection</title>
+  <context>
+<p>When the window is displayed</p>
+</context>
+   <p name="Principle">Visual inspection of the appearance and position of the standard widgets and menus is to match the specification up to minor variations caused by the drawing tool or textual description of this window.</p>
+  <step name="1.1" link="Bug">Inspect the appearance of the standard widgets on this window.
+   <r>
+<ul>
+	 <li>The wdgets must have the styles, colors and sizes indicated in the specification.</li>
+	 <li>The widgets appear in the upper right corner of the title bar in this order: minimize, maximize/restore and close (X).</li>
+   </ul>
+</r>
+   <p name="bug">Window widget has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the appearance of the standard menus on this window.
+   <r>
+<ul>
+	 <li>The menus must have the styles, colors and sizes indicated in the specification.</li>
+	 <li>The menus appear below the title bar in this order: File, Window and Help.</li>
+	 <li>Other menus may be interspersed between them.</li>
+   </ul>
+</r>
+   <p name="bug">Window menu has incorrect appearance</p>
+  </step>
+ </case>
+
+ <case id="wndMin" num="2" order="any">
+  <title tag="wndMin">Minimize button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+   <p name="Principle">The button reduces the window to an icon on the system task bar. It is restored from the task bar.</p>
+  <step name="2.1" link="Bug">When the window is displayed, left click the minimize (_) button.
+   <r>
+<ul>
+	 <li>The button depresses momentarily and the window shrinks to the system task bar.</li>
+	 <li>Control returns to the last application in focus.</li>
+   </ul>
+</r>
+   <p name="bug">Window minimize button does not depress</p>
+   <p name="bug">Window minimize button does not work</p>
+  </step>
+  <step name="2.2" link="Bug">When the window is minimized, double click the window's icon on the system task bar.
+   <r>The window is restored to the screen in the same place and size as it was before minimization.</r>
+   <p name="Notes">There are other ways to restore the window, but it doesn't matter which one is used.</p>
+   <p name="bug">Window remains minimized</p>
+   <p name="bug">Window restored to wrong place and size</p>
+  </step>
+  <step name="2.3" link="Bug">Hover the cursor over the minimize (_) button.
+   <r>Balloon help reads "Minimize".</r>
+   <p name="bug">Window minimize button has no balloon help</p>
+  </step>
+ </case>
+
+ <case id="wndMax" num="3" order="any">
+  <title tag="wndMax">Maximize / Restore button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+   <p name="Principle">The button makes the window take up the entire screen area. The button is replaced with the "Restore" button which reverts the window to its previous size and position.</p>
+  <step name="3.1" link="Bug">When the window is displayed, left click the maximize ([]) button.
+   <r>
+<ul>
+	 <li>The button depresses momentarily and the window grows to fill the screen.</li>
+	 <li>The button becomes the "Restore" button (icon: two intersecting rectangles).</li>
+   </ul>
+</r>
+   <p name="bug">Window maximize button does not depress</p>
+   <p name="bug">Window maximize button does not work</p>
+  </step>
+  <step name="3.2" link="Bug">When the window is maximized, click the "Restore" button.
+   <r>The window is restored to the same place and size as it was before maximization.</r>
+   <p name="Notes">There are other ways to restore the window, but it doesn't matter which one is used.</p>
+   <p name="bug">Window remains maximized</p>
+   <p name="bug">Window restored to wrong place and size</p>
+  </step>
+  <step name="3.3" link="Bug">Hover the cursor over the maximize ([]) button.
+   <r>Balloon help reads "Maximize".</r>
+   <p name="bug">Window maximize button has no balloon help</p>
+  </step>
+  <step name="3.4" link="Bug">Hover the cursor over the restore button.
+   <r>Balloon help reads "Restore".</r>
+   <p name="bug">Window restore button has no balloon help</p>
+  </step>
+ </case>
+
+ <case id="wndCls" num="4" order="any">
+  <title tag="wndCls">Close (X) button</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+   <p name="Principle">The button closes the dialog without any side-effects to other views or windows.</p>
+  <step name="4.1" link="Bug">Left click the close (X) button.
+   <r>
+<ul>
+	 <li>The button depresses momentarily and closes the window.</li>
+	 <li>Control returns to the last window that was in focus.</li>
+   </ul>
+</r>
+   <p name="bug">Window close button does not depress</p>
+   <p name="bug">Window close button does not work</p>
+  </step>
+  <step name="4.2" link="Bug">Press the short-cut &lt;alt&gt;&lt;F4&gt;.
+   <r>
+<ul>
+	 <li>The button depresses momentarily and closes the window.</li>
+	 <li>Control returns to the last window that was in focus.</li>
+   </ul>
+</r>
+   <p name="bug">Window close shortcut does not work</p>
+  </step>
+  <step name="4.3" link="Bug">Hover the cursor over the close (X) button.
+   <r>Balloon help reads "Close".</r>
+   <p name="bug">Window close button has no balloon help</p>
+  </step>
+ </case>
+
+ <case id="wndFile" num="5" order="any">
+  <title tag="wndFile">File menu</title>
+  <context>
+<p>When the menu is enabled</p>
+</context>
+   <p name="Principle">The File menu typically allows access to files, opening, closing and saving.</p>
+  <step name="5.1" link="Bug">Left click the File menu.
+   <r>
+<ul>
+	 <li>The menu button depresses while the menu list is displayed.</li>
+	 <li>Actions match those in the specification.</li>
+   </ul>
+</r>
+   <p name="bug">Window File menu does not open</p>
+  </step>
+ </case>
+
+ <case id="wndWin" num="6" order="any">
+  <title tag="wndWin">Window menu</title>
+  <context>
+<p>When the menu is enabled. (Use <link uri="../FW/Windows.xml" type="module">Basic Window Menu Tests</link> to test basic menu items.)</p>
+</context>
+   <p name="Principle">The Window menu allows the user to manage a collection of windows.</p>
+  <step name="6.1" link="Bug">Left click the Window menu.
+   <r>
+<ul>
+	 <li>The window menu button depresses while the menu list is displayed.</li>
+	 <li>Actions match those in the specification.</li>
+   </ul>
+</r>
+   <p name="bug">Window Window menu does not open</p>
+  </step>
+ </case>
+
+ <case id="wndHlp" num="7" order="any">
+  <title tag="wndHlp">Help menu</title>
+  <context>
+<p>When the Help menu is enabled</p>
+</context>
+   <p name="Principle">The Help menu offers an assortment of information about the application and useful resources.</p>
+  <step name="7.1" link="Bug">Left click the help menu.
+   <r>
+<ul>
+	 <li>The help menu button depresses while the menu list is displayed.</li>
+	 <li>Actions match those in the Help Menu specification.</li>
+   </ul>
+</r>
+   <p name="bug">Window help menu does not open</p>
+  </step>
+  <step name="7.2" link="Bug">Press the shortcut &lt;Alt&gt;&lt;H&gt;.
+   <r>
+<ul>
+	 <li>The help menu button depresses while the menu list is displayed.</li>
+	 <li>Actions match those in the Help Menu specification.</li>
+   </ul>
+</r>
+   <p name="bug">Shorted window help menu does not open</p>
+  </step>
+  <step name="7.3" link="Bug">Press the &lt;F1&gt; key.
+   <r>
+<ul>
+	 <li>The help viewer is displayed with the application's main help topic.</li>
+	 <li>The Help menu button does not depress and no menu list is displayed.</li>
+   </ul>
+</r>
+   <p name="bug">Window help F1 key does not open help viewer</p>
+  </step>
+ </case>
+
+ <case id="wndCtl" num="8" order="any">
+  <title tag="wndCtl">Window Controls</title>
+  <context>
+<p>When the window has focus</p>
+</context>
+   <p name="Principle">The window controls activate behavior that is common to all windows and is coordinated with the <link uri="TaskbarBtn.xml" type="module">desktop taskbar</link>. It is activated by clicking the icon in the left corner of the title bar or right clicking anywhere on the title bar or by pressing &lt;Alt&gt;&lt;spacebar&gt;. Activation of the window controls is not tested because that is "built-in", but the behavior of the menu items is tested.</p>
+  <step name="8.1" link="Bug">When the window is not maximized, activate the window controls and click Maximize.
+   <r>
+<ul>
+	 <li>The window grows to cover entire screen</li>
+	 <li>Maximize button (in the right corner of the title bar) changes to Restore</li>
+   </ul>
+</r>
+   <p name="bug">Window Control Maximize fails</p>
+  </step>
+  <step name="8.2" link="Bug">When the window is not minimized, activate the window controls and click Minimize.
+   <r>
+<ul>
+	 <li>The window shrinks and disapears to the desktop taskbar.</li>
+	 <li>Minimize button (in the right corner of the title bar) is disabled on task bar button right-click menu.</li>
+   </ul>
+</r>
+   <p name="bug">Window Control Minimize fails</p>
+  </step>
+  <step name="8.3" link="Bug">When the window is not maximized, activate the window controls and click Move.
+   <r>The "plus-like" move cursor appears.</r>
+   <p name="bug">Window Control Move cursor does not appear</p>
+  </step>
+  <step name="8.4" link="Bug">When the window is showing the move cursor, move the window using the arrow keys. If the pointer is then moved (not clicked), the window moves with it until &lt;enter&gt; is pressed on the keyboard or the pointer is clicked.
+   <r>
+<ul>
+	 <li>The window moves in the direction indicated by keypad arrow used.</li>
+	 <li>The window moves with the pointer.</li>
+   </ul>
+</r>
+   <p name="bug">Window Control Move does not work with arrow keys.</p>
+   <p name="bug">Window Control Move does not work with pointer.</p>
+  </step>
+  <step name="8.5" link="Bug">When the window is not maximized, activate the window controls and click Size.
+   <r>The "plus-like" resize cursor appears.</r>
+   <p name="bug">Window Control Size cursor does not appear</p>
+  </step>
+  <step name="8.6" link="Bug">When the window is showing the resize cursor, resize the window using the arrow keys. If the pointer is then moved (not clicked), the window resizes with it until &lt;enter&gt; is pressed on the keyboard or the pointer is clicked.
+   <r>
+<ul>
+	 <li>The window expands in the direction indicated by the first keypad arrow used in the horizontal and vertical directions.</li>
+	 <li>The window expands with the pointer.</li>
+   </ul>
+</r>
+   <p name="bug">Window Control Move does not work with arrow keys.</p>
+   <p name="bug">Window Control Move does not work with pointer.</p>
+  </step>
+  <step name="8.7" link="Bug">When an item on the window control menu has previously been used, activate the window controls and click Restore.
+   <r>The window should be restored to the location and size that it was before executing the last window control item.</r>
+   <p name="bug">Window Control Restore does not work</p>
+  </step>
+ </case>
+
+ <case id="wndDrag" num="9" order="any">
+  <title tag="wndDrag">Window Dragging</title>
+  <context>
+<p>When the window has focus</p>
+</context>
+   <p name="Principle">Dragging the pointer over special places on a window is a convenient way to manage them.</p>
+  <step name="9.1" link="Bug">When the window has focus, click its title bar and drag it around the screen.
+   <r>The window moves smoothly where the pointer goes until the pointer button is released.</r>
+   <p name="bug">Window title bar dragging does not move window</p>
+  </step>
+  <step name="9.2" link="Bug">When the window has focus, click an edge or corner and drag it to resize.
+   <r>The window expands or contracts smoothly while the edge or corner follows the pointer until the pointer button is released.</r>
+   <p name="bug">Window edge or corner dragging does not resize window</p>
+  </step>
+ </case>
+
+ <update date="Dec-15-00" author="MikeL">Test created.</update>
+ <update date="Apr-02-01" author="MikeL">Added cases 8 and 9</update>
+
+</test>

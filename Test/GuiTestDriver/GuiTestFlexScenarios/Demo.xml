@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+  <bug id="LT-8037" desc="Generate grammar sketch get a crash"/>
+
+<include from="IncKalaba.xml"/>
+
+<!-- Andy Black's demo sections A, B and C -->
+
+<!-- A.  Intro via PowerPoint (point of session; goals of the WordWorks project) -->
+<!-- B.  Start-up LexText and navigate to the Grammar Sketch
+		 (Grammar area / Grammar Sketch tool). -->
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		<include from="IncStartUp.xml"/>
+		<include from="IncGrammar.xml"/>
+
+  <var id="gramSket" set="$menuGRAMMAR;menu:Grammar Sketch"/>
+
+<!-- 1.  Generate the sketch (click on the Generate button) -->
+  <click path="$gramSket" />
+
+<!-- 2.  Page through the various sections of the sketch, explaining that we'll focus
+		 on each of them as we work our way through the demo. -->
+  <click path="$Generate" />
+  <click path="$grmSkPanel" />
+  <insert wait="1000">{DOWN 9}</insert>
+
+<!-- 3.  End up with the Phonemes section. -->
+  <insert wait="1000">{DOWN}</insert>
+  <!--insert wait="1000">{PGDN 54}</insert page to the bottom-->
+
+<!-- C.  Phonemes -->
+<!-- 1.  Go to Grammar area / Phoneme tool -->
+<!-- 2.  (If the Record List is not showing, do View / Record List) -->
+  <!--click path="$leftPANEL;9:SideBar/item:Phonemes"/-->
+  <click path="$menuGrammar;menu:Phonemes"/>
+
+<!-- 3.  Add a new phoneme: /h/ (voiceless velar fricative): -->
+<!-- a.  Do Insert / Phoneme -->
+  <click path="$insGrmPh"/>
+
+<!-- b.  Type "h" in Name slice -->
+  <click path="$grmPhEDIT;9:multistring/$sp;2/20:Name"/>
+  <insert>h</insert>
+
+<!-- c.  Type "voiceless velar fricative" in Description slice -->
+  <click path="$grmPhEDIT;$msp;2/20:Description"/>
+  <insert>^Avoiceless velar fricative</insert><!-- ^A selects the whole field to replace it-->
+
+<!-- d.  Type "h" in the Representation slice (explain point of representations) -->
+  <click path="$grmPhEDIT;$msp;2/20:Representation"/>
+  <insert>h</insert>
+
+<!-- 4.  Go back to Grammar Sketch -->
+  <click path="$gramSket" />
+
+<!-- 5.  Generate the sketch again -->
+  <click path="$Generate" />
+
+<!-- 6.  Go to the Phonemes section and see that the /h/ is now listed -->
+  <click path="$grmSkPanel" />
+  <insert wait="1000">{DOWN 10}</insert>
+
+<!-- 7.  Go back to Phonemes. -->
+  <click path="$menuGrammar;menu:Phonemes"/>
+
+<!-- 8.  Add another representation for /h/: -->
+<!-- a.  Right click on Representations -->
+  <click path="$grmPhEDIT;9:summary/$sp;2/9:Slice_unknown/20:Root/$Text"/>
+  <click path="$grmPhEDIT;9:summary/9:NAMELESS"/>
+
+<!-- b.  Select "Insert Representation" -->
+  <insert >{DOWN}~</insert>
+
+<!-- c.  Type a "j" in the new Representation slice. -->
+  <insert wait="1000">j</insert>
+
+<!-- 9.  Go back to Grammar Sketch. -->
+  <click path="$gramSket" />
+
+<!-- 10.  Go to the Phonemes section and note that the chart has two columns: Representation and Description. -->
+  <click path="$grmSkPanel" />
+  <insert wait="1000">{DOWN 10}</insert>
+
+<!-- 11.  Regenerate the sketch (click on the Generate button) -->
+  <click path="$Generate" />
+<!-- 12.  Go to the Phonemes section and note that the chart has changed. It now has three columns: Representation, Name and Description. Find the /h/ and /j/ representations and note their contents. -->
+  <click path="$grmSkPanel" />
+  <insert wait="1000">{DOWN 10}</insert>
+
+ </on-application>
+</accil>

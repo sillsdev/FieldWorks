@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000025">
+	<rt guid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388" class="LangProject">
+		<DateCreated val="2007-11-19 11:17:52.107" />
+		<DateModified val="2010-9-1 11:4:28.147" />
+		<Description>
+			<AStr ws="en">
+				<Run ws="en">***</Run>
+			</AStr>
+		</Description>
+		<AnalysisWss>
+			<Uni>en pt en-fonipa</Uni>
+		</AnalysisWss>
+		<CurVernWss>
+			<Uni>en en-fonipa fr</Uni>
+		</CurVernWss>
+		<CurAnalysisWss>
+			<Uni>en en-fonipa</Uni>
+		</CurAnalysisWss>
+		<CurPronunWss>
+			<Uni>en</Uni>
+		</CurPronunWss>
+		<VernWss>
+			<Uni>en fr en-fonipa</Uni>
+		</VernWss>
+		<ExtLinkRootDir>
+			<Uni>C:\Fwd\distfiles</Uni>
+		</ExtLinkRootDir>
+	</rt>
+</languageproject>

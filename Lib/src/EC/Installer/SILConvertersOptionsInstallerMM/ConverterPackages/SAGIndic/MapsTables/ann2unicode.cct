@@ -1,0 +1,535 @@
+c Ann2Unicode.cct - Annapurna to Unicode Changes Table
+c
+c Adapted from SAGAnn2TrmR.cct - sps
+
+c 09-Oct-2002 ver 0.02 rde
+c
+c   Steve tells me that even the Indian govt would prefer not using the special
+c   consonant + nukta letters (e.g. U+0958 for ka + lowdot), but rather the
+c   original letter with the nukta explicit (e.g. instead of U+0958, you'd get
+c   U+0915 + U+093C. So I've made this change.
+c
+c   Also, despite Steve's comment below about the "Stacks and conjunts", I changed
+c   this version to use the ZWJ (for half-char forms) and ZWJ (for full-char +
+c   halant forms). So now it should be reversable.
+
+c 28-Feb-2002 ver 0.01
+
+c   Currently, this table will only process the \dev field, as well as anything
+c   which is not contained in a field at all (such as everything before the
+c   first backslash). If you want to add other fields that the table should
+c   convert, then add them to the 'BackslashCode' group below. All other fields
+c   will be passed through unmodified.
+c
+c   Nukta handling: It is not always evident whether the nukta (lower dot)
+c   is being applied to the consonant or the vowel. It IS evident in the case
+c   of ikar, iikar, aakar, okar and aukar, but not u, uu, e or ai. This table
+c   stores nukta in store(LowD), and outputs LowD immediately after the
+c   consonant. If you are using the lower dot to modify the vowel, then alter
+c   define(OutputSyl) to output LowD after the vowel instead of after the
+c   consonant. NOTE however, that currently, Uniscribe will not display it
+c   properly. Note also, that where Unicode has a separate character code
+c   for a dotted consonant (eg, U+0958 for ka + dot), these cases are explicitly
+c   trapped and the composite character code is output. If in fact you meant
+c   for the dot to modify the vowel in that case, and you want to output the
+c   dot separately, after the vowel, simply comment out the lines that trap
+c   those cases explicitly (as well as changing define(OutputSyl) accordingly).
+c
+c   Stacks and conjunts: Annapurna contains some stack symbols (e.g. 'kka') and
+c   conjuncts (e.g. 'kta'). These are converted to consonant+halant+consonant.
+c   The same character sequence could also be represented in Annapurna as
+c   half-cons+cons, or by cons+halant+cons. All three representations get
+c   converted to Unicode as consononant+halant+consonant, which means they will
+c   not be distinguishable on the way back. The reverse transfer will probably
+c   convert them to stack/conjunct if one is available, or to half-cons+cons
+c   otherwise (using cons+halant+cons if the initial cons has no half form).
+c   This could be remedied by explicitly forcing the half or halanted forms in
+c   Unicode by means of ZWJ and ZWNJ characters, but I decided against that.
+c
+c   There are some vowel combinations that may have been "wrongly" keyed. For
+c   example, the independant 'o' vowel may have been entered as d74 (i.e. by
+c   hitting 'q' + 'o' in DevRom.kmn), or as d65 (=independent a) plus d252.
+c   Both these situations get converted to Unicode vowel O (U+0913).
+c
+c ---------------------------------------------------------------
+
+begin > c ufeff   c Unicode Byte Order Mark (BOM) xef xbb xbf
+
+	store(Backslash) '\' endstore
+	c note re punctuation: d150 is word-forming character for CARLA
+	store(Punctuation) '|' d33 d40 d41 d42 d44 d45 d46 d63 d58 d59 d91 d93 d145 d146 d147 d148 d150 endstore
+	store(digit) "0123456789" endstore
+
+	use(gStart)
+
+c ---------------------------------------------------------------
+
+define(OutputSyl) >
+
+c 1. Output the syllable
+	out(reph)        c Reph from following syllable (if present)
+	out(c)           c Consonant(s) (if present)
+	out(LowD)        c Dot Under (if present)
+	out(LowR)        c ra following other consonants (if present)
+	out(v)           c Vowel
+	out(nasal)       c Nasal diacritics
+	out(length)      c avagraha or visarga
+
+c 2. Clear stores to prepare for a new syllable
+	store(reph,c,LowD,LowR,v,nasal,length) endstore
+
+c ---------------------------------------------------------------
+
+group(gStart)
+'\'     > dup back(1) use(BackslashCode)
+''      > store(c)     c Set up syllable by storing into consonant
+		  use(SylMain)
+
+group(SylMain)   c SYLLABLE-INITIAL VOWELS, ikar-, AND CONSONANTS
+
+c NOTE: Customize the next two lines. By default, d58 (visarga with no bar)
+c       gets mapped to colon, and d216 (visarga with top bar) gets mapped
+c       to visarga. If you use them both, you can probably leaves things
+c       that way. If you only use one or the other, map the one you use to
+c       the correct character, according to how you use it.
+c       Note that the length store is also used by avagraha (d215), as we
+c       are assuming that avagraha and visarga never occur together.
+
+d58  > store(length) u003A endstore  c colon
+c d216 > store(length) u0903 endstore  c visarga
+c not working well for the following word: /è˜ØÉ¹çˆ/ (from Php 2:4 in WBTC Hindi Bible)
+d216 > store(length) u0903 endstore  do(OutputSyl) c visarga
+
+c if we get a nl, then output any current syllable, and then the nl.
+nl > do(OutputSyl) dup
+
+c if we get a nl plus backslash at the beginning of a line,
+c -- output and go see if we should convert it or not
+nl '\'  > do(OutputSyl) dup back(1) use(BackslashCode)
+
+c First, Roman punctuation, mapping to the Basic Latin block
+d32 > do(OutputSyl) store(c) u0020 endstore     c space
+d33 > do(OutputSyl) store(c) u0021 endstore     c exclam
+d34 > do(OutputSyl) store(c) u0022 endstore     c quotedbl
+d35 > do(OutputSyl) store(c) u0023 endstore     c numbersign
+d36 > do(OutputSyl) store(c) u0024 endstore     c dollar
+d37 > do(OutputSyl) store(c) u0025 endstore     c percent
+d38 > do(OutputSyl) store(c) u0026 endstore     c ampersand
+d39 > do(OutputSyl) store(c) u0027 endstore     c quotesingle
+d40 > do(OutputSyl) store(c) u0028 endstore     c parenleft
+d41 > do(OutputSyl) store(c) u0029 endstore     c parenright
+d42 > do(OutputSyl) store(c) u002A endstore     c asterisk
+d43 > do(OutputSyl) store(c) u002B endstore     c plus
+d44 > do(OutputSyl) store(c) u002C endstore     c comma
+d45 > do(OutputSyl) store(c) u002D endstore     c hyphen
+d46 > do(OutputSyl) store(c) u002E endstore     c period
+d47 > do(OutputSyl) store(c) u002D endstore     c slash
+d59 > do(OutputSyl) store(c) u003B endstore     c semicolon
+d60 > do(OutputSyl) store(c) u003C endstore     c less
+d61 > do(OutputSyl) store(c) u003D endstore     c equal
+d62 > do(OutputSyl) store(c) u003E endstore     c greater
+d63 > do(OutputSyl) store(c) u003F endstore     c question
+d91 > do(OutputSyl) store(c) u005B endstore     c bracketleft
+d92 > do(OutputSyl) store(c) u005C endstore     c backslash
+d93 > do(OutputSyl) store(c) u005D endstore     c bracketright
+d94 > do(OutputSyl) store(c) u005E endstore     c asciicircum
+d95 > do(OutputSyl) store(c) u005F endstore     c underscore
+d123 > do(OutputSyl) store(c) u007B endstore    c braceleft
+d125 > do(OutputSyl) store(c) u007D endstore    c braceright
+d126 > do(OutputSyl) store(c) u007E endstore    c asciitilde
+d145 > do(OutputSyl) store(c) u2018 endstore    c quoteleft
+d146 > do(OutputSyl) store(c) u2019 endstore    c quoteright
+d147 > do(OutputSyl) store(c) u201C endstore    c quotedblleft
+d148 > do(OutputSyl) store(c) u201D endstore    c quotedblright
+d150 > do(OutputSyl) store(c) u2013 endstore    c endash
+d151 > do(OutputSyl) store(c) u2014 endstore    c emdash
+d164 > do(OutputSyl) store(c) u00A4 endstore    c currencysign
+
+c d176 > do(OutputSyl) store(c) u00B0 endstore    c degree (or map to 0970??)
+c rde: yes, this would be great as 0970
+d176 > do(OutputSyl) store(c) u0970 endstore    c degree (or map to 0970??)
+
+d182 > do(OutputSyl) store(c) u00B6 endstore    c paragraph
+c ** NOTE d183 should never occur in text. We treat it as d218.
+d183 > do(OutputSyl) store(c) u00B7 endstore    c periodcentered
+d218 > do(OutputSyl) store(c) u00B7 endstore    c periodcentered
+d212 > do(OutputSyl) store(c) u2009 endstore    c thin space
+
+c Now Devanagri punctuation
+d48 > do(OutputSyl) store(c) u0966 endstore     c Dev digit zero
+d49 > do(OutputSyl) store(c) u0967 endstore     c Dev digit one
+d50 > do(OutputSyl) store(c) u0968 endstore     c Dev digit two
+d51 > do(OutputSyl) store(c) u0969 endstore     c Dev digit three
+d52 > do(OutputSyl) store(c) u096A endstore     c Dev digit four
+d53 > do(OutputSyl) store(c) u096B endstore     c Dev digit five
+d54 > do(OutputSyl) store(c) u096C endstore     c Dev digit six
+d55 > do(OutputSyl) store(c) u096D endstore     c Dev digit seven
+d56 > do(OutputSyl) store(c) u096E endstore     c Dev digit eight
+d57 > do(OutputSyl) store(c) u096F endstore     c Dev digit nine
+d64 > do(OutputSyl) store(c) u0950 endstore     c OM
+d124 > do(OutputSyl) store(c) u0964 endstore    c danda (vertical bar, full stop)
+d172 > do(OutputSyl) store(c) u0965 endstore    c double danda
+
+c ***** Decide what to do about the next three!! (probably never used)
+d188 > do(OutputSyl) store(c) '??' endstore    c Dev 1/4 fraction
+d189 > do(OutputSyl) store(c) '??' endstore    c Dev 1/2 fraction
+d190 > do(OutputSyl) store(c) '??' endstore    c Dev 3/4 fraction
+
+c ***** Decide what to do about Tibetan dot
+d217 > do(OutputSyl) store(c) u0F0B endstore    c Tibetan tsheg
+
+
+c INDEPENDENT (SYLLABLE-INITIAL) VOWELS
+
+d65             > store(v) u0905 endstore    c independent a
+				  use(SylRest)
+
+d65 d231        > store(v) u0906 endstore    c independent aa
+				  use(SylRest)
+
+d65 d231 d221   > store(v) u0911 endstore    c independent candra o
+				  use(SylRest)
+
+d67             > store(v) u0907 endstore    c independent i
+				  use(SylRest)
+
+d68             > store(v) u0908 endstore    c independent ii
+				  use(SylRest)
+
+d69             > store(v) u0909 endstore    c independent u
+				  use(SylRest)
+
+d70             > store(v) u090A endstore    c independent uu
+				  use(SylRest)
+
+d71             > store(v) u090B endstore    c independent ri
+				  use(SylRest)
+
+d72             > store(v) u090F endstore    c independent e
+				  use(SylRest)
+
+d72 d221        > store(v) u090D endstore    c independent candra e
+				  use(SylRest)
+
+c if we have ind 'e' plus 'ekar matra' then it's really ind 'ai'.
+d72 d248        > next
+d73             > store(v) u0910 endstore    c independent ai
+				  use(SylRest)
+
+d72 d213        > store(v) u0910 endstore    c ai + chandra bindu
+				  store(nasal) u0901 endstore
+				  use(SylRest)
+
+c if we have ind.aa and ekar matra (or ind.a and okar matra), then it's really ind.o.
+d65 d231 d248   > next
+d65 d252        > next
+d74             > store(v) u0913 endstore    c independent o
+				  use(SylRest)
+
+c if we have ind.aa and aikar matra (or ind.a and aukar matra), then it's really ind.au.
+d65 d231 d250   > next
+d65 d253        > next
+d75             > store(v) u0914 endstore    c independent au
+				  use(SylRest)
+
+c PRE-CONSONANTAL DEPENDENT VOWEL ikar-
+
+d232            > next                          c ikar
+d233            > store(v) u093F endstore
+
+
+c HALF CONSONANTS
+c These half-consonants mean that a full-consonant is coming, so
+c stay in SylMain.
+d77       > append(c) u0915 u094D u200d endstore        c k-
+d77 d219  > append(c) u0915 u093c u094D u200d endstore  c k- + LowDot
+d82       > append(c) u0915 u094D u0937 u094D u200d endstore c ksH-
+d84       > append(c) u0916 u094D u200d endstore        c kH-
+d84 d219  > append(c) u0916 u093c u094D u200d endstore  c kH- + LowDot
+d86       > append(c) u0917 u094D u200d endstore        c g-
+d86 d219  > append(c) u0917 u093c u094D u200d endstore  c g- + LowDot
+d88       > append(c) u091C u094D u091E u094D u200d endstore c jny-
+d90       > append(c) u0918 u094D u200d endstore        c gH-
+d90 d219  > append(c) u0918 u093C u094D u200d endstore  c gH- + LowDot
+d104      > append(c) u091A u094D u200d endstore        c c-
+d104 d219 > append(c) u091A u093C u094D u200d endstore  c c- + LowDot
+d108      > append(c) u091C u094D u200d endstore        c j-
+d108 d219 > append(c) u091C u093c u094D u200d endstore  c j- + LowDot
+d112      > append(c) u091D u094D u200d endstore       c jH-
+d112 d219 > append(c) u091D u093C u094D u200d endstore c jH- + LowDot
+d113      > append(c) u091D u094D u200d endstore       c jH- (alternate form)
+d113 d219 > append(c) u091D u093C u094D u200d endstore c jH- (alt) + LowDot
+d115      > append(c) u091E u094D u200d endstore       c nj-
+d115 d219 > append(c) u091E u093C u094D u200d endstore c nj- + LowDot
+d130      > append(c) u0923 u094D u200d endstore       c N-
+d130 d219 > append(c) u0923 u093C u094D u200d endstore c N- + LowDot
+d132      > append(c) u0924 u094D u200d endstore       c t-
+d132 d219 > append(c) u0924 u093C u094D u200d endstore c t- + LowDot
+d137      > append(c) u0925 u094D u200d endstore       c tH-
+d137 d219 > append(c) u0925 u093C u094D u200d endstore c tH- + LowDot
+d149      > append(c) u0927 u094D u200d endstore       c dH-
+d149 d219 > append(c) u0927 u093C u094D u200d endstore c dH- + LowDot
+d153      > append(c) u0928 u094D u200d endstore       c n-
+d153 d219 > append(c) u0928 u093c u094D u200d endstore  c n- + LowDot
+d156      > append(c) u092A u094D u200d endstore       c p-
+d156 d219 > append(c) u092A u093C u094D u200d endstore c p- + LowDot
+d159      > append(c) u092B u094D u200d endstore       c pH-
+d159 d219 > append(c) u092B u093c u094D u200d endstore       c pH- + LowDot
+d163      > append(c) u092C u094D u200d endstore       c b-
+d163 d219 > append(c) u092C u093C u094D u200d endstore c b- + LowDot
+c d163 d219 > append(c) u092C u0323 u094D u200d endstore c b- + LowDot *** COMBINING BLOCK DOT ***
+d166      > append(c) u092D u094D u200d endstore       c bH-
+d166 d219 > append(c) u092D u093C u094D u200d endstore c bH- + LowDot
+d168      > append(c) u092E u094D u200d endstore       c m-
+d168 d219 > append(c) u092E u093C u094D u200d endstore c m- + LowDot
+d171      > append(c) u092F u094D u200d endstore       c y-
+d171 d219 > append(c) u092F u093c u094D u200d endstore  c y- + LowDot
+d181      > append(c) u0932 u094D u200d endstore       c l-
+d181 d219 > append(c) u0932 u093C u094D u200d endstore c l- + LowDot
+d186      > append(c) u0935 u094D u200d endstore       c w-
+d186 d219 > append(c) u0935 u093C u094D u200d endstore c w- + LowDot
+d192      > append(c) u0936 u094d u200d endstore       c sH-
+d192 d219 > append(c) u0936 u093C u094D u200d endstore c sH- + LowDot
+d197      > append(c) u0937 u094D u200d endstore       c SH-
+d197 d219 > append(c) u0937 u093C u094D u200d endstore c SH- + LowDot
+d201      > append(c) u0938 u094D u200d endstore       c s-
+d201 d219 > append(c) u0938 u093C u094D u200d endstore c s- + LowDot
+
+c FULL CONSONANTS
+d66       > append(c) u0933 endstore use(SylRest)   c retroflex la (Unicode LLA)
+c d66 d219  > append(c) u0934 endstore use(SylRest)   c Dravidian la (Unicode LLLA)
+d76       > append(c) u0915 endstore use(SylRest)   c ka
+c d76 d219  > append(c) u0958 endstore use(SylRest)   c qa
+d83       > append(c) u0916 endstore use(SylRest)   c kha
+c d83 d219  > append(c) u0959 endstore use(SylRest)   c khha
+d85       > append(c) u0917 endstore use(SylRest)   c ga
+c d85 d219  > append(c) u095A endstore use(SylRest)   c ghha
+d89       > append(c) u0918 endstore use(SylRest)   c gHa
+d96       > append(c) u0919 endstore use(SylRest)   c nGa
+d103      > append(c) u091A endstore use(SylRest)   c ca
+d106      > append(c) u091B endstore use(SylRest)   c cHa
+d107      > append(c) u091C endstore use(SylRest)   c ja
+d109      > append(c) u095B endstore use(SylRest)   c ja + LowDot = za
+d110      > append(c) u091D endstore use(SylRest)   c jHa
+d111      > append(c) u091D endstore use(SylRest)   c jHa Alternate
+d114      > append(c) u091E endstore use(SylRest)   c nja
+d116      > append(c) u091F endstore use(SylRest)   c Ta
+d119      > append(c) u0920 endstore use(SylRest)   c THa
+d121      > append(c) u0921 endstore use(SylRest)   c Da
+c d121 d219 > append(c) u095C endstore use(SylRest)   c Da + LowDot = dddha
+d128      > append(c) u0922 endstore use(SylRest)   c DHa
+c d128 d219 > append(c) u095D endstore use(SylRest)   c DHa + LowDot = rha
+d129      > append(c) u0923 endstore use(SylRest)   c Na
+d131      > append(c) u0924 endstore use(SylRest)   c ta
+d133      > append(c) u0294 endstore use(SylRest)   c glottal *** come back to this ***
+d136      > append(c) u0925 endstore use(SylRest)   c tHa
+d138      > append(c) u0926 endstore use(SylRest)   c da
+d144      > append(c) u0927 endstore use(SylRest)   c dHa
+d152      > append(c) u0928 endstore use(SylRest)   c na
+c d152 d219 > append(c) u0929 endstore use(SylRest)   c na + LowDot (Unicode NNNA)
+d155      > append(c) u092A endstore use(SylRest)   c pa
+d158      > append(c) u092B endstore use(SylRest)   c pHa
+d161      > append(c) u095E endstore use(SylRest)   c pHa + LowDot = fa
+d162      > append(c) u092C endstore use(SylRest)   c ba
+d165      > append(c) u092D endstore use(SylRest)   c bHa
+d167      > append(c) u092E endstore use(SylRest)   c ma
+d170      > append(c) u092F endstore use(SylRest)   c ya
+c d170 d219 > append(c) u095F endstore use(SylRest)   c ya + LowDot = yya
+
+c The completer-y, d173 when correctly used will only FOLLOW a full
+c consonant which triggers the use of group(SylRest) so at this point
+c in the table d173 will never get matched.
+
+d175      > append(c) u0930 endstore use(SylRest)   c ra
+c d175 d219 > append(c) u0931 endstore use(SylRest)   c ra + LowDot (Unicode RRA)
+d180      > append(c) u0932 endstore use(SylRest)   c la
+d185      > append(c) u0935 endstore use(SylRest)   c wa
+d187      > append(c) u0935 u093C endstore use(SylRest) c wa + LowDot
+d191      > append(c) u0936 endstore use(SylRest)   c sHa
+d196      > append(c) u0937 endstore use(SylRest)   c Sa
+d200      > append(c) u0938 endstore use(SylRest)   c sa
+d204      > append(c) u0939 endstore use(SylRest)   c ha
+
+
+		c FULL CONJUNCT CONSONANTS
+d78  > append(c) u0915 u094D u0915          endstore use(SylRest)  c kka stack
+d79  > append(c) u0915 u094D u0924  endstore use(SylRest)  c kta
+d80  > append(c) u0915 u094D u0930  endstore use(SylRest)  c kra
+d81  > append(c) u0915 u094D u0937  endstore use(SylRest)  c ksHa
+d87  > append(c) u091C u094D u091E  endstore use(SylRest)  c jnya
+d97  > append(c) u0919 u094D u0915          endstore use(SylRest)  c nGka
+d98  > append(c) u0919 u094D u0916          endstore use(SylRest)  c nGkHa
+d99  > append(c) u0919 u094D u0917          endstore use(SylRest)  c nGga
+d100 > append(c) u0919 u094D u0918          endstore use(SylRest)  c nGgHa
+d101 > append(c) u0919 u094D u0919          endstore use(SylRest)  c nGnGa
+d102 > append(c) u0919 u094D u0939          endstore use(SylRest)  c nGha
+d105 > append(c) u091A u094D u091A          endstore use(SylRest)  c cca
+d117 > append(c) u091F u094D u091F          endstore use(SylRest)  c TTa
+d118 > append(c) u091F u094D u0920          endstore use(SylRest)  c TTHa
+d120 > append(c) u0920 u094D u0920          endstore use(SylRest)  c THTHa
+d122 > append(c) u0921 u094D u0921          endstore use(SylRest)  c DDa
+d134 > append(c) u0924 u094D u0924  endstore use(SylRest)  c tta
+d135 > append(c) u0924 u094D u0930  endstore use(SylRest)  c tra
+d139 > append(c) u0926 u094D u0926  endstore use(SylRest)  c dda
+d140 > append(c) u0926 u094D u0927  endstore use(SylRest)  c ddHa
+d141 > append(c) u0926 u094D u092E  endstore use(SylRest)  c dma
+d142 > append(c) u0926 u094D u092F  endstore use(SylRest)  c dya
+d143 > append(c) u0926 u094D u0935  endstore use(SylRest)  c dwa
+d154 > append(c) u0928 u094d u0928  endstore use(SylRest)  c nna
+d157 > append(c) u092A u094D u0924          endstore use(SylRest)  c pta
+d169 > append(c) u092E u094D u0932          endstore use(SylRest)  c mla
+d184 > append(c) u0932 u094D u0932          endstore use(SylRest)  c lla
+d193 > append(c) u0936 u094D u091A          endstore use(SylRest)  c sHca
+d194 > append(c) u0936 u094D u0930  endstore use(SylRest)  c sHra
+d195 > append(c) u0936 u094D u0935  endstore use(SylRest)  c Shwa
+d198 > append(c) u0937 u094D u091F          endstore use(SylRest)  c SHTa
+d199 > append(c) u0937 u094D u0920          endstore use(SylRest)  c SHTHa
+d202 > append(c) u0938 u094D u0928          endstore use(SylRest)  c sna
+d203 > append(c) u0938 u094D u0930          endstore use(SylRest)  c sra
+d205 > append(c) u0939 u094D u0928  endstore use(SylRest)  c hna
+d206 > append(c) u0939 u094D u092E  endstore use(SylRest)  c hma
+d207 > append(c) u0939 u094D u092F  endstore use(SylRest)  c hya
+d208 > append(c) u0939 u094D u0930  endstore use(SylRest)  c hra
+d209 > append(c) u0939 u094D u0932  endstore use(SylRest)  c hla
+d210 > append(c) u0939 u094D u0935  endstore use(SylRest)  c hwa
+
+c COMBINED CONSONANT-VOWEL
+
+d178   > append(c) u0930 endstore        c ru
+		 store(v)  u0941 endstore
+		 use(SylRest)
+
+d179   > append(c) u0930 endstore        c ruu
+		 store(v)  u0942 endstore
+		 use(SylRest)
+
+d211   > append(c) u0939 endstore        c h + rikar
+		 store(v)  u0943 endstore
+		 use(SylRest)
+
+c ---------------------------------------------------------------
+
+group(SylRest)
+
+c get LowDot for 'post-full-consonants' (LowDot on a half-character is
+c detected explicitly in group(SylMain)--not anymore in v0.02 rde
+d219    > next
+d220    > store(LowD) u093C endstore
+c d220    > store(LowD) u0323 endstore   c *** COMBINING BLOCK DOT ***
+
+c special trapping for combined 'short-u' + LowDot character
+d239    > next
+d240    > store(LowD) u093C endstore   c LowDot
+		  store(v)    u0941 endstore   c ukar
+
+c special trapping for combined 'long-u' + LowDot character
+d244    > next
+d245    > store(LowD) u093C endstore   c LowDot
+		  store(v)    u0942 endstore   c uukar
+
+c The "completer y" means that the vowel is killed on the previous
+c consonant. Therefore, we output a halant and then regular ya.
+d173      > append(c) u094D u092F   endstore  c Full completer -ya
+c d173 d219 > append(c) u094D u095F   endstore  c -y-  completer-y + LowDot
+
+c If there's a half completer-y, a full consonant will follow, so go back
+c to group(SylMain)
+d174      > append(c) u094D u092F u094D endstore  c Half completer -y-
+			use(SylMain)
+c d174 d219 > append(c) u094D u095F u094D endstore  c -y-  completer-y + LowDot
+c            use(SylMain)
+
+d226 > next          c Lower R
+d227 > next
+d228 > append(c) u094d u0930 endstore
+
+d231    > store(v) u093E endstore    c -aa
+d231 d219 > store(v) u093E u0323   c -aa plus nukta (use combining mark dot)
+
+d234    > next                       c -ii
+d235    > store(v) u0940 endstore
+d234 d219 > next
+d235 d219 > store(v) u093E u0323   c -ii plus nukta
+
+d236    > next                       c -u
+d237    > next
+d238    > store(v) u0941 endstore
+
+d241    > next                        c -uu
+d242    > next
+d243    > store(v) u0942 endstore
+
+d246    > next                        c -rikar
+d247    > store(v) u0943 endstore
+
+d248    > next                          c -e
+d249    > store(v) u0947 endstore
+
+d213    > next                          c -e + chandra bindu
+d214    > store(v) u0947
+		  store(nasal) u0901 endstore
+
+d250    > next                          c -aikar
+d251    > store(v) u0948 endstore
+
+d252    > store(v) u094B endstore       c -okar
+d252 d219   > store(v) u094B u0323 endstore       c -okar + nukta
+
+d253    > store(v) u094C endstore       c -aukar
+d253 d219   > store(v) u094C u0323 endstore       c -aukar + nukta
+
+c note store 'length' is also used for visarga. They should never occur together
+d215  > store(length) u093D endstore  c avagraha
+
+d229  > next                                c Reph
+d230  > store(reph) u0930 u094D endstore
+
+d224  > next                               c anusvara
+d225  > store(nasal) u0902 endstore
+
+d222  > next                              c Chandra Bindu
+d223  > store(nasal) u0901 endstore
+
+c use 'nasal' store for candra also, as you can't have both.
+d221  > store(nasal) u0945 endstore
+
+c d254 fol(C) > next                                  c halant
+c d255 fol(C) > append(c) u094D endstore use(SylMain)
+
+d254 > next                                  c halant
+d255 > append(c) u094D endstore use(SylMain)
+
+c other (i.e. word-final) halants (stay in SylRest so we get to OutputSyl below)
+c d254 > next                     c halant
+c d255 > append(c) u094D endstore
+
+c End of sort field in Shoebox or end of file when testing
+
+endfile             > do(OutputSyl) endfile
+fol(Punctuation)    > do(OutputSyl) use(SylMain)
+
+c End of syllable (when all else fails)
+
+'' > do(OutputSyl) use(SylMain)
+
+
+group(BackslashCode) c ==============================
+
+c When we hit a backslash code, this group checks whether the contents
+c of that field should be processed. The contents will NOT be processed
+c unless the field marker is listed here.
+c By default, nothing is process. To process the contents of a particular
+c field, add a line similar to the following, replacing \dev with the marker
+c of the field you wish to convert (and without the initial 'c' of course).
+
+'\dev ' > dup use(SylMain)
+
+endfile > endfile
+
+c $Log: ann2unicode.cct,v $
+c Revision 1.2  2005/01/14 06:59:05  Marius1
+c Corrected the behaviour in processing SF-files;
+c (a) it zapped the first backslash in the file
+c (b) it would hit on any backslash whether line initial or not
+c
+c

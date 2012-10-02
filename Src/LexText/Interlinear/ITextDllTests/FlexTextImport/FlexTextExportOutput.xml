@@ -1,0 +1,3842 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document exportSource="paratext" exportTarget="flex" version="1">
+  <interlinear-text scrSectionType="title" scrBook="ACTS">
+	<paragraphs>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Ebhikorwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">vitendo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ebhya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">vya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Jintumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">za</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	</paragraphs>
+	<languages>
+	  <language lang="jit" encoding="ISO639-1" font="Charis SIL" vernacular="true" />
+	  <language lang="en" encoding="ISO639-1" font="Verdana" />
+	</languages>
+  </interlinear-text>
+  <interlinear-text scrSectionType="heading" scrBook="ACTS">
+	<paragraphs>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Obhutangati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	</paragraphs>
+	<languages>
+	  <language lang="jit" encoding="ISO639-1" font="Charis SIL" vernacular="true" />
+	  <language lang="en" encoding="ISO639-1" font="Verdana" />
+	</languages>
+  </interlinear-text>
+  <interlinear-text scrSectionType="verseText" scrBook="ACTS">
+	<paragraphs>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="1" />
+			  <word type="phrase">
+				<item type="txt" lang="jit">omwendwa tewofiiro</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">mu-chitabho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kitabu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">chaani</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">changu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nchi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okwamba</item>
+				<item type="gls" lang="en" analysisStatus="humanApproved">kwamba</item>
+				<morphemes analysisStatus="humanApproved">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kwamba</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwanza</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">,</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">naakukaamiiye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">inguru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">juu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emisango</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mambo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">joone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yote</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ambazo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="humanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aakorere</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alifanya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okwiyigisya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufundisha</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">okusookerera</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutokea</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kusookerera</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutokea</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kubhwambiro</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mwanzo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emirimu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kazi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jaaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">zake</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="2" />
+			  <word>
+				<item type="txt" lang="jit">okukingira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kukingira</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">orusiku</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">rusiku</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">runu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku ambayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aagegerwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alichukuliwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okugenda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-rwire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mbinguni</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Achaari</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">angari</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okugegwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">:aayaanire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">amaragiriro</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jintumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jaaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">zake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ambazo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aawuye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">injira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">njia</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mwoyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mwoyo</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mweru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mweru</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtakatifu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">inguru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">juu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emirimu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kazi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ambazo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhaaja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wanakuja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okukora</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufanya</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="3" />
+			  <word>
+				<item type="txt" lang="jit">Ku-mwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">siku</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">makumi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">makumi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">miaka</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">asuurukire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">amefufuka</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okusoka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutoka</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mufwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">aariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">^neebhuurisya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-ntumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwiiya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kaafu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mara</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Mu-bhibharikisyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhyafu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">vingi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aabheresye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhweru-bhweru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ni</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ni</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">muwanga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mzima</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">muwanga</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mzima</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okubheyigisya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuwafundisha</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emisango</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mambo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">za</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhukama</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ufalme</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Nyamuwanga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mungu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="4" />
+			  <word>
+				<item type="txt" lang="jit">Rusiku</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">rusiku</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rumwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">moja</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">rumwi</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">moja</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">bhunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">^naarya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akala</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aamwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">pamoja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jintumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">:aabharagiriiye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, “</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Mwasiga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">muache</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okusooka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutoka</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kusooka</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutoka</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-musi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mu--</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">musi</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yerusareemu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yerusalemu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Nawe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">lakini</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">murindirire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ahadi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">humo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">humo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">okukingira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kukingira</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omuuja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtakuja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okuramira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kupokea</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omurago</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ahadi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Raata</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">baba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aabharagire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">aliwaahidi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ninyi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kama</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kutyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hivyo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">naabhabhwiriiye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="5" />
+			  <word>
+				<item type="txt" lang="jit">Kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okubha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuwa</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yowana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yohana</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aabhatijisye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alibatiza</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhaanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">watu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">amanji</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">maji</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">nawe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">lakini</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jisiku</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jitari</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siyo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nyafu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nyingi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ninyi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omuuja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtakuja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okubhatijwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kubatizwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mwoyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mwoyo</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mweru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mweru</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtakatifu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.” </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	</paragraphs>
+	<languages>
+	  <language lang="jit" encoding="ISO639-1" font="Charis SIL" vernacular="true" />
+	  <language lang="en" encoding="ISO639-1" font="Verdana" />
+	</languages>
+  </interlinear-text>
+  <interlinear-text scrSectionType="heading" scrBook="ACTS">
+	<paragraphs>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">keenamusibhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okugenda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-rwire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mbinguni</item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	</paragraphs>
+	<languages>
+	  <language lang="jit" encoding="ISO639-1" font="Charis SIL" vernacular="true" />
+	  <language lang="en" encoding="ISO639-1" font="Verdana" />
+	</languages>
+  </interlinear-text>
+  <interlinear-text scrSectionType="verseText" scrBook="ACTS">
+	<paragraphs>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="6" />
+			  <word>
+				<item type="txt" lang="jit">Ku-mwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jintumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jaariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ujasiri</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jiri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yote</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aamwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">pamoja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">jaamubhusiisye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, “</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Raatabhugenyi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">bwana</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">omwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nigwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ndiyo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">owuuja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okubhasubhisya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuwarudishia</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Abhaisirayeeri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">waisraeli</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhukama</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ufalme</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhwebhwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wao</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">?” </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="7" />
+			  <word>
+				<item type="txt" lang="jit">^Naabhabhwira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akawaambia</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, “</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Emyanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nooro</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hata</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jisiku</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">za</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emisango</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mambo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">itari</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siyo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">inguru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">juu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">yeemwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yenu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okujimenya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okubha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ni</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ni</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Raata</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">baba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwene</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mwenyewe</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">mwene</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mwenyewe</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">era</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">tu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhuyinga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhwaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aramura</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">jirikorekana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">zitafanyika</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rusiku-ki</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">gani</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="8" />
+			  <word>
+				<item type="txt" lang="jit">Nawe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">lakini</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">muriramira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">amanaga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nguvu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mwoyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mwoyo</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mweru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mweru</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtakatifu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ariija</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">atakuja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kw-imwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">muriraasya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">joone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yote</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ambazo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mwiyigiiye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwanye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwangu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yerusareemu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yerusalemu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">anu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hapa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-mbaara</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejindi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">zingine</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">joone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yote</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">za</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echaaro</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nchi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nchi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yudeya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Samaariya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">samaria</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okukingira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kukingira</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-bhuteero</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mwishowe</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echaaro</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nchi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">choone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">chochote</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.” </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="9" />
+			  <word>
+				<item type="txt" lang="jit">Ejire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alipo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aamara</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alipomaliza</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okwayika</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kusema</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kwayika</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kusema</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-ntumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jaaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">zake</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">^neengʼengibhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okugenda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-rwire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mbinguni</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Eriire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wingu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nirimuswikira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">bhataamurorere</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rindi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">tena</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="10" />
+			  <word>
+				<item type="txt" lang="jit">Anu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hapa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhaariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">walikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhachaaroreerera</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nekeneke</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">sana</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-rwire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mbingu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">awo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hapo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nawo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wamevaa</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">nibhemereguru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakasimama</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhaanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">watu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhabhiri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wawili</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ayeeyi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">karibu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nabho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nao</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hawa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhaariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">walikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhafwaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wamevaa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jingubho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nguo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinyeru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wamevaa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">pee</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nyeupe</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">! </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="11" />
+			  <word>
+				<item type="txt" lang="jit">Nibhayika</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakasema</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, “</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Emwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ninyi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhaanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">watu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Gaariraaya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">kurwaki</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa nini</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mwimereguyu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mmesimama</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">anu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hapa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kenu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nini</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omuroreerera</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-rwire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mbingu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">? </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aagegwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okusooka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutoka</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kusooka</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutoka</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kw-imwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okugenda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-rwire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mbinguni</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">arisubha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">atarudi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rindi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">tena</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">rwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kama</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kutyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hivyo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mwamurora</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">^naagenda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akaenda</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.” </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	</paragraphs>
+	<languages>
+	  <language lang="jit" encoding="ISO639-1" font="Charis SIL" vernacular="true" />
+	  <language lang="en" encoding="ISO639-1" font="Verdana" />
+	</languages>
+  </interlinear-text>
+  <interlinear-text scrSectionType="heading" scrBook="ACTS">
+	<paragraphs>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Maatiya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">matiya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kaawurwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okubha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">intumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	</paragraphs>
+	<languages>
+	  <language lang="jit" encoding="ISO639-1" font="Charis SIL" vernacular="true" />
+	  <language lang="en" encoding="ISO639-1" font="Verdana" />
+	</languages>
+  </interlinear-text>
+  <interlinear-text scrSectionType="verseText" scrBook="ACTS">
+	<paragraphs>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="12" />
+			  <word>
+				<item type="txt" lang="jit">Nijiiya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jintumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nijisooka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakatoka</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-chiima</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mulima</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">chinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hii</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">chaatogwaaga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Amasyeka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mizeituni</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">nibhasubha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakarudi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-musi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mu--</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">musi</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yerusareemu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yerusalemu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Rwariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ilikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">uti</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kama</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">rugendo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">safari</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">rugendo</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">safari</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kama</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">matambi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">safari</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">chiwumbi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">chimwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kabisa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kutya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hivi</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="13" />
+			  <word>
+				<item type="txt" lang="jit">Bhejire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">walipo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhakinga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wamefika</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-musi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mu--</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">musi</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mji</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yerusareemu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yerusalemu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">bhaagendere</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nibhariinya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakapanda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-chisago</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">chumba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nchi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-rwanja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">munu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">humu</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">munu</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">humu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhaariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">walikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bheekaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">siku</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nooto</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">chache</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Jintumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nibho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ndio</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhanu:</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Petero</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">petro</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yowana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yohana</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yakobho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yakobo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Andereya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">andrea</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Firipo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">filipo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Tomaasi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Bhatoromayo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Mataayo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alfayo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yakobho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yakobo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtoto</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">mwana</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtoto</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">owa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Arufwayo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alfayo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Simooni</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">simoni</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Omujerote</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alfayo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yuuda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yuda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtoto</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">mwana</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtoto</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">owa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yakobho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yakobo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="14" />
+			  <word>
+				<item type="txt" lang="jit">Abho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hao</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhoone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wote</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhaariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">walikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nibhekomeesya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okwikofyanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kujikusanya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aamwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">pamoja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okumusabhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kumuomba</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kumusabhwa</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kumuomba</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Nyamuwanga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mungu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Aamwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">pamoja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hao</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhaariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">walikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhariyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kurene</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhagasi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wanawake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhandi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wengine</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mariamu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nyiramwene</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mama</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhamura</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ndugu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhaabho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">zake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="15" />
+			  <word>
+				<item type="txt" lang="jit">Ku-mwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">echise</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kundi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nchi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhaanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">watu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nichikofyanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">likakusanyika</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">obhukumi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">idadi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhwebhwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wao</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhwariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ulikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">uti</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kama</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">egana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mia</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rimwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kumi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">makumi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">makumi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gabhiri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mawili</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kutya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hivi</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Niwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ndipo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Petero</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">petro</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">^neemereguyu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">agatigati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">katikati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">yebhwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yao</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="16" />
+			  <word>
+				<item type="txt" lang="jit">^naabhabhwira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akawaambia</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, “</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Abhaanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">watu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhaasu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ndugu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">emisango</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mambo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ambazo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jaakaamirwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-Bhikaame</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">vitabu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Ebhyeru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">maandiko</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">inguru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">juu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yuuda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yuda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">yaariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ilikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">iribhusibhusi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jikumire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jaaragirwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mwoyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mwoyo</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Mweru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">roho</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">mweru</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtakatifu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okutura</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kupita</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-kanwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mdomoni</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omukama</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mfalme</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">mukama</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mfalme</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Daudi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">inguru</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">juu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">yaaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yake</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aatangasiisye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hawa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:bhagwatire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="17" />
+			  <word>
+				<item type="txt" lang="jit">Ka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">tena</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">one</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">pia</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yuda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ari</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akiwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ntumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">yeejaasu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">ayaanirwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhukosi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kazi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aamwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">pamoja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eswe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">sisi</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.” </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Yuuda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yuda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aagurire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alinunua</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">risambu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">shamba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jimpirya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">fedha</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ambazo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aabhwene</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alipata</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okusookana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutokana</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echikorwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kitendo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">chaaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">chake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echibhiibhi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Omwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">humo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nimwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ndimo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">^naagwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akaanguka</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhwifumbike</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kifudifudi</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">orubhunda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rwaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">safari yake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nirwatika</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhura</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhwoone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nibhusukuka</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aanja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">inje</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="19" />
+			  <word>
+				<item type="txt" lang="jit">Omusango</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">neno</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">musango</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">neno</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nigumenyekana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ku-bhekasi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhoone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wote</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yerusareemu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yerusalemu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Kurwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nibharitoga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">risambu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">shamba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eryo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hilo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">risiina</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">jina</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">erya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">la</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Hakeeri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Daama</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-nyaika</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">yeebhwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yao</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">,</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">obhugajuro</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">maana</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhwaryo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">shamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit"> ‘‘</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Risambu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">shamba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">erya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">la</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Amaanyinga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">damu</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.") </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="20" />
+			  <word>
+				<item type="txt" lang="jit">Petero</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">petro</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">^naagenderera</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akaendelea</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okwayika</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kusema</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kwayika</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kusema</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, “</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Emisango</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mambo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jinu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ambazo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jikaamirwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">andikwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-chitabho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kitabu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">echa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nchi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Ijabhuri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">zaburi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Inyumba</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">nyumba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">yaaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ribhe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">liwe</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">etongo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hame</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">asiga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">tena</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okubhawo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omuunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">muunu</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">arisigara</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">humo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.’</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words />
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Rindi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">tena</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">ikaamirwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">imeandikwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Omurimu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kazi</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">murimu</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gwaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wake</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">gwaye</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wake</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okutangasya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuongoza</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">ayaanwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omuunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">muunu</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">owundi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mwingine</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.’</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words />
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="21" />
+			  <word>
+				<item type="txt" lang="jit">Kurwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">jiire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na sisi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aawurwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omuunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">muunu</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">owundi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mwingine</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ayengyanyaaga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">neeswe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na sisi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gwone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wote</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ari</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akiwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">neeswe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na sisi</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="22" />
+			  <word>
+				<item type="txt" lang="jit">okusokerera</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuanzia</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhatijibhwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yowana</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yohana</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okukingira</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">kukingira</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kufikia</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">orusiku</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">rusiku</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">runu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku ambayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aagegerwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alichukuliwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okugenda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">mu-rwire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mbinguni</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kaaja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">atakuja</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okwawurwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kuchaguliwa</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">jiire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na sisi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">asangire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">neeswe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na sisi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okuraasya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kutangaza</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhusuuruko</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ufufuo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yeesu</item>
+				<item type="gls" lang="en" analysisStatus="guessByHumanApproved">Yesu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">chaarora</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">tumeona</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.” </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	  <paragraph>
+		<phrases>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="23" />
+			  <word>
+				<item type="txt" lang="jit">Awo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hapo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">nibhatawo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">masiina</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhaanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">watu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhabhiri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wawili</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Owumwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mmoja</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">ow-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mmoja</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">umwi</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mmoja</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ari</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akiwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yusufu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aatogwaga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akiitwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Bharisabha</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wawili</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, (</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">risiina</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">jina</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ryaye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">lake</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">erindi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">jingine</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aariga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikuwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ari</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akiwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yuusito</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yusto</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">). </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">owa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">kabhiri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">pili</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">:aatogwaga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">akiitwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Maatiya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">matiya</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="24" />
+			  <word>
+				<item type="txt" lang="jit">Nibhamusabhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakamuomba</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Nyamuwanga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mungu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nibhayikaga</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakisema</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwamba</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, “</item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Raatabhugenyi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">bwana</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">naawe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wewe</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">owumenya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">unajua</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">emyoyo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mioyo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">eja</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">za</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhaanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">watu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhoone</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wote</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">Kurwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ejo</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hayo</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">echikusabhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ucheresye</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ni</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ni</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">wuuya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yupi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">aagati</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">ya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhabhiri</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wawili</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhanu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">hawa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">unu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">huyu</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">usorere</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="25" />
+			  <word>
+				<item type="txt" lang="jit">agege</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">achukuwe</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">omugabho</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ogwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhukosi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kazi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bhunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Yuuda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">yuda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aasigire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">aliacha</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">omwanya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">gunu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakati</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">:aafuwe</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">alikufa</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">okugenda</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kwenda</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">orubhaara</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">upande</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">o-</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mtu</item>
+				  </morph>
+				  <morph>
+					<item type="txt" lang="jit">rubhaara</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">upande</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">runu</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">siku ambayo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rumwiyire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">.” </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <scrMilestone chapter="1" verse="26" />
+			  <word>
+				<item type="txt" lang="jit">Bhejire</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">walipo</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">bheeya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kisha</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">abhandi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wengine</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">nibhakora</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wakafanya</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">obhwawusi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">uchaguzi</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">yikuura</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">niyaawura</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">Maatiya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">matiya</item>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">, </item>
+			  </word>
+			</words>
+		  </phrase>
+		  <phrase>
+			<words>
+			  <word>
+				<item type="txt" lang="jit">^naagwatanyibhwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis"></item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jintumwa</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mitume</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">jirya</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">wale</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">ekumi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kumi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">rimwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">kumi</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">na</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">na</item>
+			  </word>
+			  <word>
+				<item type="txt" lang="jit">umwi</item>
+				<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mmoja</item>
+				<morphemes analysisStatus="guess">
+				  <morph>
+					<item type="txt" lang="jit">umwi</item>
+					<item type="gls" lang="en" analysisStatus="guessByStatisticalAnalysis">mmoja</item>
+				  </morph>
+				</morphemes>
+			  </word>
+			  <word>
+				<item type="punct" lang="jit">. </item>
+			  </word>
+			</words>
+		  </phrase>
+		</phrases>
+	  </paragraph>
+	</paragraphs>
+	<languages>
+	  <language lang="jit" encoding="ISO639-1" font="Charis SIL" vernacular="true" />
+	  <language lang="en" encoding="ISO639-1" font="Verdana" />
+	</languages>
+  </interlinear-text>
+</document>

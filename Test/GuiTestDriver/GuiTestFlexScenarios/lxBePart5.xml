@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 5: Unicode to Unicode processor test -->
+
+<accil on-fail="assert">
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+   <var id="changeIt" set="Select the target field and the list choice to change it to"/>
+   <var id="copyIt" set="Copy the contents of the source field to the target field"/>
+   <var id="pop" set="Populate a field by applying a complex process to another field"/>
+   <var id="oldVal" set="When the old value is not empty..."/>
+   <var id="arrow" set="  "/>
+   <var id="HOW" set="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$nl;[3]/9:$oldVal;/20:$oldVal;/"/>
+   <var id="sepVal" set="Add after old value, sep. by"/>
+
+<!-- Go to Lexicon/Bulk Edit Entries -->
+   <click path="$menuLEXICON;menu:Bulk Edit Entries"/>
+
+<!-- Goto Bulk Copy tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:Bulk Copy"/>
+
+<!-- Goto Process  tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/37:Process"/>
+
+<!-- Source is Lexeme Form, Target is Import Residue (Entry) -->
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$NL;43:Open"/>
+   <insert>l~</insert><!-- Lexeme Form -->
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/9:Target Field[2]/43:Open"/>
+   <insert>i~</insert><!-- Import Residue (Entry) -->
+
+   <click path="$beeRec;[2]/$Col;[4]/$Text"/>
+   <insert>Huey</insert>
+   <click path="$beeRec;[5]/$Col;[4]/$Text"/>
+   <insert>Duey</insert>
+   <click path="$beeRec;[9]/$Col;[4]/$Text"/>
+   <insert>Louey</insert>
+
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$nl;[2]/41:NAMELESS"/>
+   <insert>A~</insert><!-- Any to Hex -->
+
+   <click  path="$HOW;9:Do nothing/45:Do nothing"/>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$beeRec;[11]/$Col;[2]/$Text"/>
+   <click path="$firstRec"/><!-- Select the first record -->
+   <glimpse id="1" path="$beeRec;[1]/$Col;[4]/$Text" prop="value" expect=" $arrow; -ko"/>
+   <glimpse id="2" path="$beeRec;[2]/$Col;[4]/$Text" prop="value" expect="Huey"/>
+   <glimpse id="4" path="$beeRec;[4]/$Col;[4]/$Text" prop="value" expect=" $arrow; a"/>
+   <glimpse id="5" path="$beeRec;[5]/$Col;[4]/$Text" prop="value" expect="Duey"/>
+   <glimpse id="6" path="$beeRec;[6]/$Col;[4]/$Text" prop="value" expect=" $arrow; a"/>
+   <glimpse id="9" path="$beeRec;[9]/$Col;[4]/$Text" prop="value" expect="Louey"/>
+   <glimpse id="10" path="$beeRec;[11]/$Col;[4]/$Text" prop="value" expect=" $arrow; adia"/>
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+
+   <click  path="$HOW;9:Overwrite/45:Overwrite"/>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$beeRec;[11]/$Col;[2]/$Text"/>
+   <click path="$firstRec"/><!-- Select the first record -->
+   <glimpse id="1a" path="$beeRec;[1]/$Col;[4]/$Text" prop="value" expect=" $arrow; -ko"/>
+   <glimpse id="2a" path="$beeRec;[2]/$Col;[4]/$Text" prop="value" expect="Huey $arrow; a"/>
+   <glimpse id="4a" path="$beeRec;[4]/$Col;[4]/$Text" prop="value" expect=" $arrow; a"/>
+   <glimpse id="5a" path="$beeRec;[5]/$Col;[4]/$Text" prop="value" expect="Duey $arrow; a"/>
+   <glimpse id="6a" path="$beeRec;[6]/$Col;[4]/$Text" prop="value" expect=" $arrow; a"/>
+   <glimpse id="9a" path="$beeRec;[9]/$Col;[4]/$Text" prop="value" expect="Louey $arrow; a"/>
+   <glimpse id="10a" path="$beeRec;[11]/$Col;[4]/$Text" prop="value" expect=" $arrow; adia"/>
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+
+   <click  path="$HOW;9:$sepVal;/45:$sepVal;"/>
+   <!-- click  path="$HOW;9: /20:RootSite/42:Paragraph"/-->
+   <click  path="$HOW;20:RootSite/42:Paragraph"/>
+   <insert>: </insert>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$beeRec;[11]/$Col;[2]/$Text"/>
+   <click path="$firstRec"/><!-- Select the first record -->
+   <glimpse id="1b" path="$beeRec;[1]/$Col;[4]/$Text" prop="value" expect=" $arrow; -ko"/>
+   <glimpse id="2b" path="$beeRec;[2]/$Col;[4]/$Text" prop="value" expect="Huey $arrow; Huey : a"/>
+   <glimpse id="4b" path="$beeRec;[4]/$Col;[4]/$Text" prop="value" expect=" $arrow; a"/>
+   <glimpse id="5b" path="$beeRec;[5]/$Col;[4]/$Text" prop="value" expect="Duey $arrow; Duey : a"/>
+   <glimpse id="6b" path="$beeRec;[6]/$Col;[4]/$Text" prop="value" expect=" $arrow; a"/>
+   <glimpse id="9b" path="$beeRec;[9]/$Col;[4]/$Text" prop="value" expect="Louey $arrow; Louey : a"/>
+   <glimpse id="10b" path="$beeRec;[11]/$Col;[4]/$Text" prop="value" expect=" $arrow; adia"/>
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+
+ </on-application>
+</accil>

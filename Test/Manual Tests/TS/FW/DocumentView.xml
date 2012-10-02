@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="docview" num="5.3" abbr="docview" file="FW\DocumentView.xml">
+ <title tag="docview">Document View Usage Tests</title>
+ <index>
+<li>Document View Usage Test</li>
+ </index>
+
+ <introduction>
+ <p>Working in the Document View Mode.
+ </p>
+ <p name="todo">This is the first version, please look over for completeness</p>
+
+ </introduction>
+
+  <context>
+  <p>Specs for Document View:</p>
+  <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Document/DocView.html" type="doc">Data Notebook Document View</link>
+</p>
+  <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesListEditor/ChoicesListEditor.html" type="doc">Topics List Editor Document View</link>
+</p>
+  <p>Specs for Tools - Options (Document Views):</p>
+  <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#DocumentViews" type="doc">Tools-Options</link>
+</p>
+  <p>The first words of any bug report entries should be "Document View".</p>
+  </context>
+
+<!--**************CASE 1*****************-->
+
+<case id="docview1" num="1">
+ <title tag="docview1">Inspect Document View</title>
+ <context>
+<p>With a language project open in Document View</p>
+</context>
+
+ <step name="1.1" link="Bug">
+   Find an Event entry, examine the view and make sure it agrees with the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Document/DocView.html" type="doc">Document View</link> under 1.1 View Layout.
+   <r>The view should be similiar to the one described in the specifications in size and layout unless the default settings have been changed.</r>
+   <p name="bug">
+</p>
+   <p name="note">Steps 1.1 and 1.1.1 for DN, 1.2 for TLE</p>
+ </step>
+
+ <step name="1.1.1" link="Bug">
+   Find an Analysis entry, examine the view and make sure it agrees with the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Document/DocView.html" type="doc">Document View</link> under 2.1 View Layout.
+   <r>The view should be similiar to the one described in the specifications in size and layout unless the default settings have been changed.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.2" link="Bug">
+   For any entry in TLE, examine the view and make sure it agrees with the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesListEditor/ChoicesListEditor.html" type="doc">Document View</link> under The People List Part C - Document View (There is also an example of the Locations list in Doc View).
+  <r>The view should be similiar to the one described in the specifications in size and layout unless the default settings have been changed.</r>
+  <p name="bug">
+</p>
+  <p name="note">The fields displayed will vary with the type of list and the information present</p>
+ </step>
+
+ <step name="1.3" link="Bug">
+	Document view allows for editing and formatting of certain fields (string and structured text fields like Title, Description, Further Questions, etc.) but no others. Edit one or more of these fields. (See
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Document/DocView.html" type="doc">DN-Document View</link> and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesListEditor/ChoicesListEditor.html" type="doc">TLE-Document View</link> to verify which fields are "str" or "StText".)
+	<r>String and structured text fields are editable and the rest cannot be changed. Changes persist throughout other views.</r>
+	<p name="bug">
+</p>
+ </step>
+
+ <step name="1.4" link="Bug">
+	Apply a filter or sort to the entries displayed in Document View.
+	<r>The entries should be displayed in document view based on the filter or sort applied.</r>
+	<p name="bug">
+</p>
+ </step>
+
+ <step name="1.5" link="Bug">
+	Adjust which fields are visible and how they are displayed in Document View under the Tools-Options-View tab.
+	<r>Verify that the changes made are reflected in the entries displayed in the Document View.</r>
+	<p name="bug">
+</p>
+ </step>
+
+ <step name="1.6" link="Bug">
+	Apply an Overlay to the entries displayed in Document View.
+	<r>The editable text should be formatted to be used with the overlay selected and any tags applied should be present.</r>
+	<p name="bug">
+</p>
+	<p name="note">Overlays are not used in TLE</p>
+ </step>
+</case>
+
+<case id="docview2" num="2">
+  <title tag="docview2">Navigating in the Document View</title>
+  <context>
+<p>With a language project open in the Document View</p>
+</context>
+
+  <step name="2.1" link="Bug">
+	   To Navigate in the Document View, the Data-First, Previous, Next and Last arrows (either from the menu or toolbar) are used in the same manner as in the other views. Click the arrow to navigate to the entry associated with that arrow.
+	  <r>
+<ul>
+<li>If Next is pressed the cursor should move from the current entry to the next entry</li>
+<li>Next and Last should be disabled if the cursor is in the last entry. The same for First and Previous if in the first entry.</li>
+<li>When switching to another view, the cursor should remain on the same entry</li>
+</ul> </r>
+	  <p name="bug">
+</p>
+  </step>
+
+  <step name="2.2" link="Bug">
+	  Tab / Shift+Tab can be used to move to the next/previous selectable text field.
+The Up and Down arrows can be used to move the cursor up or down a line of selectable text.
+	  <r>Verify these commands are working correctly.</r>
+	  <p name="bug">
+</p>
+   </step>
+
+
+</case>
+
+<case id="docview3" num="3" order="any">
+  <title tag="docview3">Adding Entries</title>
+  <context>
+<p>With a language project open in Document View</p>
+</context>
+  <p name="Note">3.1 is for DN, 3.2 for TLE</p>
+  <step name="3.1" link="Bug">
+	 In Data Notebook, to add an entry, simply click Insert - Event or Analysis on the Menu or Toolbar.
+	<r>The view automatically switches to the Data Entry View at the end of the entry list to the blank entry.</r>
+	<p name="bug">
+</p>
+	<p name="note">Subentries cannot be created in the Document View.  (This is not in spec
+yet but is in Raid #508.)</p>
+  </step>
+
+  <step name="3.2" link="Bug">
+	In TLE, to add an item click Insert Item (may have options to Insert above, below or subitem depending on list properties).
+   <r>The view automatically switches to the Data Entry View and the item is placed in the list with respect to the insert selection.</r>
+   <p name="bug">
+</p>
+  </step>
+
+</case>
+
+<case id="docview4" num="4" order="any">
+  <title tag="docview4">Removing An Entry</title>
+  <context>
+<p>With a language project open in Document View</p>
+</context>
+  <p name="note">For use with TLE, substitute the word "item" for "entry"</p>
+
+  <step name="4.1" link="Bug">
+	To delete an entry, use the Edit-Delete menu command when the cursor is in the entry to be deleted. Use <link uri="../FW/EdtDel.xml">Edit-Delete Tests</link> to test this command.
+	<r>
+<ul>
+<li>If text is selected, a prompt will ask if the text or the entry is to be deleted.</li>
+	   <li>Then a box will be displayed saying which entry is to be deleted, and how many subentries and references will also be deleted as a result of deleting the entry. Select No to abort deleting of entry.</li>
+	   <li>Clicking Yes will remove the entry, subentries, and references to the deleted entry.</li>
+</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="4.2" link="Bug">
+	To remove a subentry put the cursor in the subentry (click inside one of its fields) and use the Edit-Delete menu command.
+	<r>The subentry is deleted in the same way an entry is deleted as tested in 4.1 above.</r>
+	<p name="bug">
+</p>
+	<p name="note">Currently the
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Delete" type="doc">Edit-Delete specs</link>
+do not specify whether or how Delete should work among the different views.
+Raid #1068 says it should be disabled in Doc and Browse views. Raid #2970 brings up the question
+again.</p>
+  </step>
+
+</case>
+
+<!--***********************************************-->
+
+ <update date="May-29-02" author="RussD">Test script created.</update>
+ <update date="May-31-02" author="LarsH">2nd pair of eyes. Minor additions and changes.</update>
+ <update date="Jul-01-02" author="RussD">Generalized for use with TLE.</update>
+
+</test>

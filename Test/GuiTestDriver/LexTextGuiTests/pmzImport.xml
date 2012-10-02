@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!--
+	This script is designed to test different parts of the Import
+	wizard for FLEX.
+	Revision History:
+	11-07-05: creation
+				   06-21-10: conversion to model usage
+
+	This script uses the following variables that are declared in the C# test routine:
+	- $SFMImportFileName - this is the full name to be used for the import file - pmzImport.db
+	- $SFMMapFileName - this is the full name to be used for the map file - pmzImport.map
+-->
+<accil on-fail="assert">
+
+   <goal>Exercises  Import wizard for FLEx</goal>
+
+	<bug id="FWR-1476" desc="Crash nexting to 3rd page of Import Standard Format lexical data wizard" />
+
+	<var id="projectName" set="Kalaba"/>
+	<var id="SFMImportFileName" set="pmzImport.db"/>
+	<var id="SFMMapFileName" set="pmzImport.map"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+	<!-- launch a batch file to delete the previous spelling dictionaries -->
+	 <on-application run="yes" path="$ScriptPath" exe="pmzImportant.bat" work="$ScriptPath" close="no" on-fail="assert">
+	 </on-application>
+
+  <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' run="ok">
+
+   <var id="page" set="9:LexImportWizard_tabControl/60:LexImportWizard_tabControl/9:LexImportWizard_tabPage"/>
+
+	 <!-- Start the Lexical import wizard from the menu -->
+	 <click select="menubar/file/import/standard-format-lexicon"/>
+	 <on-dialog select="import-sfm-lex" title="Import Standard Format lexical data">
+
+<!-- Step 1 or 8 - Back up step -->
+<!-- Not doing a back up, just clicking the next button -->
+		<click select="next"/>
+
+<!-- Step 2 of 8 - Enter the databse file, mapping file, and the file to save mapping info to -->
+		<!-- set the Database file value (after removing any data in the box currently) -->
+		<insert wait="200">{HOME}</insert>		<!-- go to the start of the edit box -->
+		<insert wait="200">^{DELETE}</insert>		<!-- Ctrl Delete - deletes the contents of the edit box -->
+		<insert wait="200">$ScriptPath;\$SFMImportFileName</insert>	<!-- this var is set to the file name to use for the db -->
+
+		<!-- Just to make sure, open it with the browse dlg now -->
+		<!-- This is an easy way to make the next button become enabled, the insert must mess with it's checking ?? -->
+
+		<click select="page/file/database-file/open" />
+		<on-dialog title="Select the 'Database' file to use">
+			 <click path="$cancel"/>
+		</on-dialog>
+		<beep wait="100"/>
+		<beep wait="100"/>
+		<beep wait="100"/>
+
+		<!--click path="$page;2"/-->
+		<!-- <click wait="1000" path="9:SettingsFileName/combobox:SettingsFileName"></click> -->
+
+<skip>
+
+		<click path="$page;2/9:SettingsFileName/46:SettingsFileName/9:SettingsFileName/42:SettingsFileName"/>
+
+		<insert wait="200">{HOME}</insert>		<!-- go to the start of the edit box -->
+		<insert wait="200">^{DELETE}</insert>		<!-- Ctrl Delete - deletes the contents of the edit box -->
+		<insert wait="200">"C:\Program Files\SIL\FieldWorks 7\Language  Explorer\Import\MDFImport.map"</insert>	<!-- this var is set to the MAP file name to use -->
+
+		<beep wait="100"/>
+		<beep wait="100"/>
+		<beep wait="100"/>
+
+		<click path="9:btnBack/43:btnBack"/>
+		<click path="9:btnNext/43:btnNext"/>
+
+		<!-- Set the 'save as' mapping file name -->
+<!--
+		<click path="$page;2/9:SaveAsFileName/42:SaveAsFileName"/>
+		<insert wait="100">{HOME}</insert>
+		<insert wait="100">^{DELETE}</insert>
+		<insert wait="100">$ScriptPath;/$SFMMapFileName</insert>
+	 -->
+
+</skip>
+
+		<click select="back"/>
+		<click select="next"/>
+		<click select="next"/>
+
+		<!-- Language mapping - Step 3 of 8 -->
+		<!-- 1. Add a new language mapping -->
+
+		<!-- 1a. click the Add button -->
+		<click path="$page;3/9:AddMappingLanguage/43:AddMappingLanguage"/>
+
+		<!-- Sometimes this next dialog appears with a message about some root.res being
+			   in use by another program. This cancels it -->
+		<on-dialog until="2000" title="InstallLanguage Message" on-fail="skip">
+			<click path="$cancel"/>
+		</on-dialog>
+
+		<!-- Now interact with the 'Add Language mapping' dialog -->
+		<on-dialog name="LexImportWizardLanguage" title="Add language mapping">
+
+			 <!-- 1b. enter a new language descriptor text -->
+			 <click path="9:Language Descriptor:[2]/42:Language Descriptor:"/>
+			 <insert wait="100">FLEXImportTest</insert>
+
+			 <!-- 1c. tab to the next field and select 'English' for the Writing System -->
+			 <insert wait="100">{TAB}</insert>
+			 <insert wait="100">e</insert>
+
+			 <!-- 1d. tab to the next field and select '<Already in Unicode>' as the Encoding Converter -->
+			 <insert wait="100">{TAB}</insert>
+			 <insert wait="100">{TAB}</insert>
+			 <insert wait="100">{HOME}</insert>
+
+			 <!-- 1e. Now press the OK button and close the 'Add language mapping' dialog -->
+			 <click path="$ok"/>
+		</on-dialog>
+
+		<!-- click in the list of language mappings, select the one just added, press the modify button -->
+
+		<click path="9:lvMappingLanguages/34:FLEXImportTest"/>
+		<click path="$page;3/9:ModifyMappingLanguage/43:ModifyMappingLanguage"/>
+
+		<on-dialog name="LexImportWizardLanguage" title="Modify language mapping">
+			<insert wait="100">{END}</insert>
+			<insert wait="100">ing</insert>
+			<click path="$ok"/>
+		</on-dialog>
+
+		<click path="9:btnNext/43:btnNext"/>
+
+		<!-- Content mapping - Step 4 of 8 -->
+		<!-- select the last marker 'mn' and change the writing system to be the one just entered -->
+		<!-- select the control and select the last one, then press the modify button -->
+		<click path="$page;4/9:lvContentMapping/33:lvContentMapping"/>
+		<insert wait="100">{END}</insert>
+
+		<!-- Modify the 'notUsedMarker' at the end of the list, set it to "Don't Import" -->
+		<click path="$page;4/9:ModifyContentMapping/43:ModifyContentMapping"/>
+		<on-dialog name="LexImportWizardMarker" title="Modify Mapping">	<!-- </on-dialog>/1:NAMELESS"/> -->
+			<click path="9:Don't Import/44:Don't Import"/>
+			<click path="$ok"/>
+		</on-dialog>
+
+		<insert wait="100">{UP}</insert>	<!-- select the main control on the page (up from button) -->
+		<insert wait="100">{HOME}</insert>	<!-- select the first entry 'lx' -->
+		<insert wait="100">{DOWN}</insert>	<!-- select the next entry 'mn' -->
+
+		<!-- Modify the 'mn' marker to use the writing system that was just entered -->
+		<click path="$page;4/9:ModifyContentMapping/43:ModifyContentMapping"/>
+		<on-dialog name="LexImportWizardMarker" title="Modify Mapping">
+			<click wait="500" path="9:Language Descriptor :[2]/43:Open"/>
+			<insert wait="100">f</insert>
+			<insert wait="100">~</insert>
+			<insert wait="100">{TAB}</insert>	<!-- Just to get off the previous key, lose focus, etc...  -->
+			<click path="$ok"/>
+		</on-dialog>
+		<click path="9:btnNext/43:btnNext"/>
+
+		 <!-- Step 5 of 8 - Nothing here, so just go to next step -->
+		 <click path="9:btnNext/43:btnNext"/>
+
+		 <!-- Step 6 of 8 - No changes, so just go to next step -->
+		 <click path="9:btnNext/43:btnNext"/>
+
+		<!-- Step 7 of 8 - Generate the report -->
+		<click path="$page;7/9:GenerateReport/43:GenerateReport"/>
+
+		<!-- Now close the IE window that contains the generated report -->
+		<do-once log="all" until="60000">
+			<on-application exe="iexplore.exe" path="c:\Program Files\Internet Explorer\" work="c:\Program Files\Internet Explorer\" log="all" run="no" close="yes">
+				<!-- want to check the title of the new window, but don't know the copy number if there is more than one -->
+				<insert wait="500">hi</insert>
+				<!-- don't close in here via %{F4} if so, close="yes" won't find an app to close and will assert -->
+			</on-application>
+
+	   </do-once>
+
+<!-- Now go on to the next step -->
+	   <click path="9:btnNext/43:btnNext"/>
+
+<!-- Step 8 of 8 - Finish - but use the shift key to keep from importing the data -->
+	   <insert wait="1000">+{n}</insert>	<!-- this is equiv to SHIFT Finish -->
+
+	 </on-dialog>
+  </on-application>
+</accil>

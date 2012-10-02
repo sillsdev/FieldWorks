@@ -1,0 +1,21 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Name.xml">
+ <title tag="useNam">Naming bugs</title>
+ <index>
+  <li>report: naming</li>
+  <li>names of bugs</li>
+  <li>setting names of bugs</li>
+ </index>
+ <introduction>
+  <p>Good bug report names help developers quickly identify the general part of their code the bug occurred in. Most bug patterns have a suggested name pattern with slots indicating what ought to fill them. But sometimes it is still not obvious how to fill a slot. The guidelines below may help in cases of slot confusion and where there is no name pattern.</p>
+ </introduction>
+ <guidelines>
+  <p>Here are some guidelines for naming bug reports:</p>
+  <ul>
+   <li>The name of the interface object or feature should be first in the name. Capitalize the first letter.</li>
+   <li>If there are a few major test cases or types of the object, a qualifying word should come after the object name, preceeded by a colon ":". E.g., <i>Format toolbar appearance .. </i> or <i>Format toolbar: font size ..</i></li>
+   <li>Use a couple of words to give an idea of what action caused the failure.</li>
+   <li>Normally at the end, use a couple of words or words from a failure message to tell what the failure was or what the resulting behavior was.</li>
+  </ul>
+ </guidelines>
+</task>

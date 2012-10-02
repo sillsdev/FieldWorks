@@ -1,0 +1,28 @@
+<word>
+  <form>nihinlikximura</form>
+  <seq>
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="181">
+	  <shortName>hin- (3SgObj): hiN</shortName>
+	  <inflMsa slot="181" slotAbbr="Object" />
+	</morph>
+	<morph wordType="root">
+	  <shortName>lik (to.eat): hinliksa</shortName>
+	  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<morph wordType="root">
+	  <shortName>ximu (slowly): ximu</shortName>
+	  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+	</morph>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+</word>

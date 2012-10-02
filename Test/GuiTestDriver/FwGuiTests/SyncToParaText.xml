@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<!-- Test to see if TE synchronizes with Paratext
+	   This is done by going to TE, starting TW, going to Gen 1,1 in TW context switch back to TE and
+	   going to Matt 1:1, then context switch back to TW to see if TW moved to Matt 1:1-->
+<!-- Start up Translation editor in Sena 3 Database -->
+<accil on-fail="assert">
+ <on-application run="yes" args="-db &quot;Sena 3&quot;" on-fail="assert" close="yes">
+
+<!-- Start up Translators Workplace (note that default view has to have a Bible up in it) -->
+  <on-application wait="2000" path="C:\Program Files\SIL\TW4" exe="Views.exe" work="C:\my documents\TWWork\" id="TWID" args="-cSoftware\TranslatorsWorkplace4\Twtools" title="Translator's Workplace" run="yes">
+
+<!-- turn on synchronization inside of TW for send and recieve and load the TESynchtest desktop (must have this on test machine) -->
+   <click wait="2000" path="menubar:Application/menu:File/menu:Load Desktop..." />
+   <on-dialog title="Open">
+	 <click path="window:File name:"/>
+	 <insert>TESynchtest.twd~</insert>
+	 <on-dialog title="Preview Desktop">
+	   <click path="button:Load"/>
+	 </on-dialog>
+   </on-dialog>
+   <click path="window:Top TWToolbar 800/toolbar:Top TWToolbar 800/chkbox:Send Scripture References" />
+   <click path="chkbox:Receive Scripture References" />
+   <click path="chkbox:Immediately scroll to scripture ref message" />
+  </on-application>
+
+  <!--back in the Translation editor go to Matthew 1:1 -->
+  <click path="window:~MainMenu~/menu:mnuEdit/menu:mnuGoto/menu:mnuGotoRef"/>
+  <on-dialog title="Go To Reference">
+   <insert>MAT 1:1~</insert>
+   <click path="button:OK"/>
+  </on-dialog>
+
+  <!-- go to end of line (make sure you are in Matt 1:1 otherwise it is actually before the verse and TW doesn't go there -->
+  <insert>{Down}</insert>
+
+  <!--back in TW check to see that the scripture scrolled to Matt 1:1 -->
+  <on-application source="TWID" close="yes">
+   <click wait="2000" path="button:Reference Bookmarks (Alt+B)" />
+
+   <on-dialog title="Bookmarked References">
+	<glimpse path="Window:Matthew 1.1" prop="name" expect="Matthew 1.1">
+   Paratext did not synchronously scroll with TE (this is bad)
+	</glimpse>
+	<click wait="1000" path="button:Cancel"/>
+   </on-dialog>
+
+	<!--click wait="1000" path="menu:File/menu:Exit"/-->
+
+  </on-application>
+
+   <!--click wait="1000" path="menu:mnuFile/menu:mnuExit"/-->
+
+ </on-application>
+</accil>

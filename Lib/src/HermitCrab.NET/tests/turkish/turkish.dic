@@ -1,0 +1,35 @@
+;Adapted from PC-KIMMO's TURKISH.REC
+
+<lex id 3  sh oda    gl room       pos N str morphophonemic>
+<lex id 4  sh dere   gl river      pos N str morphophonemic>
+<lex id 5  sh tilki  gl fox        pos N str morphophonemic>
+<lex id 6  sh arï    gl bee        pos N str morphophonemic>
+<lex id 7  sh boru   gl pipe       pos N str morphophonemic>
+<lex id 8  sh kep    gl cap        pos N str morphophonemic>
+<lex id 9  sh at     gl horse      pos N str morphophonemic>
+<lex id 10 sh kurd   gl worm       pos N str morphophonemic>
+<lex id 11 sh sac    gl hair       pos N str morphophonemic>
+<lex id 12 sh sarp   gl steep      pos N str morphophonemic>
+<lex id 13 sh son    gl end        pos N str morphophonemic>
+<lex id 14 sh köy    gl village    pos N str morphophonemic>
+<lex id 15 sh güj    gl power      pos N str morphophonemic>
+<lex id 16 sh sap    gl stalk      pos N str morphophonemic>
+<lex id 17 sh alt    gl bottom     pos N str morphophonemic>
+<lex id 18 sh reng   gl color      pos N str morphophonemic>
+<lex id 19 sh balo   gl ball       pos N str morphophonemic>
+<lex id 20 sh kab    gl container  pos N str morphophonemic>
+<lex id 21 sh tad    gl taste      pos N str morphophonemic>
+<lex id 22 sh ahmed  gl Ahmed      pos N str morphophonemic>
+<lex id 23 sh genj   gl young      pos N str morphophonemic>
+<lex id 24 sh ayak   gl foot       pos N str morphophonemic>
+<lex id 25 sh inek   gl cow        pos N str morphophonemic>
+<lex id 26 sh hukuk  gl law.school pos N str morphophonemic>
+<lex id 27 sh hukuuk gl law        pos N str morphophonemic>
+<lex id 28 sh meslek gl profession pos N str morphophonemic>
+<lex id 29 sh kiraa  gl rent       pos N str morphophonemic>
+<lex id 30 sh maazii gl past       pos N str morphophonemic>
+<lex id 31 sh meraak gl curiosity  pos N str morphophonemic>
+<lex id 32 sh sevaab gl good.deed  pos N str morphophonemic>
+<lex id 33 sh usuül  gl method     pos N str morphophonemic>
+<lex id 34 sh kailb  gl heart      pos N str morphophonemic>
+<lex id 35 sh sait   gl watch      pos N str morphophonemic rf (no_v_short)>

@@ -1,0 +1,685 @@
+
+\lx bfd7f99b-bc6d-4926-acee-0c1583c9170c
+\g to.see
+\c W
+\wc root
+\mp RootPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+\a bili {54e532e0-fad6-4804-b1b7-fd6459ef4681} Bound
+
+\lx 32018d1e-e107-4250-9394-e49f41d5645d
+\g to.sleep
+\c W
+\wc root
+\mp RootPOSd7f7153f-e8cf-11d3-9764-00c04f186933
+\mp InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+\a nad {d3861892-1433-4dbd-a9ca-a57da70a5397}
+
+\lx 069aee8f-8b79-4f8f-afb5-2c433ec4a9e1
+\g 1SgSubj
+\c W/W
+\o -NaN -NaN
+\wc 42b52eed-0970-438d-9608-a03fc8c35855
+\a ni {bd771cf4-d7f4-4993-8399-f47217237d42}
+\eType prefix
+
+\lx be41902f-590a-44a4-99d0-c511fa0f65e7
+\g 3SgObj
+\c W/W
+\o -NaN -NaN
+\wc 395e7178-199d-415a-a5b4-f8f3196a93f2
+\a hin {7a65c6a5-6ee8-4ff7-be7b-9341ed39ac0e} / _ [a27edaa2-622e-4a0d-9a13-df381910e509]  | / _ [+cor,+vd]
+
+\a him {f126109d-f8f4-4a0f-b935-bf0e90bf34ec} / _ b  | / _ b
+
+
+ ~/ _ [a27edaa2-622e-4a0d-9a13-df381910e509]  | ~/ _ [+cor,+vd]
+
+\a hiŋ {37442f21-a4d5-4f8e-a59b-8b1b3b16019c} / _ g  | / _ g
+
+
+ ~/ _ [a27edaa2-622e-4a0d-9a13-df381910e509]  | ~/ _ [+cor,+vd]
+
+
+ ~/ _ b  | ~/ _ b
+
+\eType prefix
+
+\lx fa8d0d01-a92a-444d-be4d-f890aad342fa
+\g Pres
+\c W/W
+\o NaN NaN
+\wc 0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde
+\a sa {f370b536-5cc7-4a65-ae1b-92b8b4483230} ICAd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a ra {2184e638-4b1e-40f7-bcd5-28fb0dac1876} ICA8a0a8938-a569-4e3f-9adf-8c933a3e26de +/ {InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _ +/ {ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _
+\eType suffix
+
+\lx d9487299-a9db-455d-922a-f5c95ae5eedd
+\g Pres
+\c W/W
+\o NaN NaN
+\wc 617322ab-79f5-4302-8b9f-f92ca1d1eeba
+\a sa {f370b536-5cc7-4a65-ae1b-92b8b4483230} ICAd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a ra {2184e638-4b1e-40f7-bcd5-28fb0dac1876} ICA8a0a8938-a569-4e3f-9adf-8c933a3e26de +/ {InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _ +/ {ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _
+\eType suffix
+
+\lx f17bfe28-abef-40c8-b747-0367ac06c620
+\g to.think
+\c W
+\wc root
+\mp RootPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp InflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a dok {b906f755-3c7d-45b8-a7cd-49b6bc040abe} Bound
+
+\lx dbbbe324-8e8c-4a21-84f3-467df33e3b7a
+\g to.hit
+\c W
+\wc root
+\mp RootPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+\a gabi {de88c8da-ca64-4951-bb34-faa101a1f01b} Bound
+
+\lx 30e7bbb0-e5c3-4f58-b308-400ed55c5e62
+\g to.eat
+\c W
+\wc root
+\mp RootPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp InflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a lik {908e113d-1959-465a-87a8-b110f3790b10}
+
+\lx 7a913885-3d98-4c33-bf6b-cfaec62395b8
+\g mat
+\c W
+\wc root
+\mp RootPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\mp InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a
+\a yalo {c0778640-2ea7-4a2e-a5e5-3122a99f139b}
+
+\lx bdc76042-5f07-4772-82ba-91fd08862535
+\g house
+\c W
+\wc root
+\mp RootPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\mp InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a
+\a kasa {ab629abb-2cdf-42a9-afe4-451e37d67219}
+
+\lx f5b2e173-202a-49da-8cab-d216ea79765b
+\g water
+\c W
+\wc root
+\mp RootPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\mp InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a
+\a iŋ {798e057f-f610-4388-af3a-ad1016562cd0}
+
+\lx a3e3e0c3-f3d0-464f-9b03-e6cd6713046a
+\g tree
+\c W
+\wc root
+\mp RootPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\mp InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a
+\a pal {e2e776be-321f-440b-bb22-90b19173aa44}
+
+\lx af274eac-6aa2-4ede-acc4-ada3237f6588
+\g Caus
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {5b8ceb99-0c57-4a98-8c6a-ef4c6a1cb8ed}
+\eType suffix
+\fd FromPOSd7f7153f-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+
+\lx 23042d5c-a25d-4be7-863b-93ed3b4d162f
+\g Caus
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {5b8ceb99-0c57-4a98-8c6a-ef4c6a1cb8ed}
+\eType suffix
+\fd FromPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f7153d-e8cf-11d3-9764-00c04f186933
+\mp ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+
+\lx 1ed2356a-2a20-4656-a8fa-ba1ddc300631
+\g Caus
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {5b8ceb99-0c57-4a98-8c6a-ef4c6a1cb8ed}
+\eType suffix
+\fd FromPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+
+\lx 6b1c89e8-94b2-4598-bc8a-551f1905d3a9
+\g Pass
+\c W/W
+\o -1
+\wc derivPfx
+\a xo {5e15569e-b60b-430c-8777-785eecc6ab80}
+\eType prefix
+\fd FromPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f7153f-e8cf-11d3-9764-00c04f186933
+\mp ToInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+
+\lx b948c950-90f5-42b7-b344-2b464d0ded65
+\g Pass
+\c W/W
+\o -1
+\wc derivPfx
+\a xo {5e15569e-b60b-430c-8777-785eecc6ab80}
+\eType prefix
+\fd FromPOSd7f7153d-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp ToInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+
+\lx fa222f19-c11a-4bf2-9846-a1ce45cd0f30
+\g Rapidly
+\c W/W
+\o 1
+\wc derivSfx
+\a wu {bc8ee989-4b84-4ca9-be59-86af4e6bc366}
+\eType suffix
+\fd FromPOSd7f7153f-e8cf-11d3-9764-00c04f186933
+\mp ToInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+
+\lx 20fd734a-8c62-4b40-8172-4bf073d983ad
+\g Rapidly
+\c W/W
+\o 1
+\wc derivSfx
+\a wu {bc8ee989-4b84-4ca9-be59-86af4e6bc366}
+\eType suffix
+\fd FromPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp ToInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+
+\lx 512b8e9a-8bfc-4601-9952-d4af9aaea107
+\g Rapidly
+\c W/W
+\o 1
+\wc derivSfx
+\a wu {bc8ee989-4b84-4ca9-be59-86af4e6bc366}
+\eType suffix
+\fd FromPOSd7f7153d-e8cf-11d3-9764-00c04f186933
+\mp ToInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+
+\lx 10465805-0e9a-4477-930f-4b54d60522d5
+\g Nom
+\c W/W
+\o 1
+\wc derivSfx
+\a lis {31e1765f-48a3-4e37-a5e3-0d63e14e8e3f}
+\eType suffix
+\fd FromPOSd7f7153b-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\mp ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a
+
+\lx 6d3217da-43bd-46f2-8746-9422df8fa159
+\g Adverbializer
+\c W/W
+\o 1
+\wc derivSfx
+\a ya {ae8fc7b8-a138-4d86-8f41-edef74a19f00}
+\eType suffix
+\fd FromPOSd7f7153b-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71525-e8cf-11d3-9764-00c04f186933
+
+\lx 1f0d4f3b-3850-4667-9d04-c902e63d5743
+\g Adverbializer
+\c W/W
+\o 1
+\wc derivSfx
+\a ya {ae8fc7b8-a138-4d86-8f41-edef74a19f00}
+\eType suffix
+\fd FromPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71525-e8cf-11d3-9764-00c04f186933
+
+\lx 14565f93-d7de-4b1c-b62b-17c477d35d94
+\g ???
+\c W/W
+\o 1 31999
+\wc suffix
+\a kes {36b2112c-4327-4f3c-91a1-8f26c07430e7}
+\eType suffix
+\fd FromPOSd7f7153b-e8cf-11d3-9764-00c04f186933
+
+\lx 1af70026-0364-402d-9937-246ca89cfdab
+\g 2SgSubj
+\c W/W
+\o -NaN -NaN
+\wc 42b52eed-0970-438d-9608-a03fc8c35855
+\a ti {bdb0119f-9017-4ce5-8201-ca76a95417e8}
+\eType prefix
+
+\lx d4ec9b02-9a91-418f-ac42-9a79438b88e2
+\g 1PlSubj
+\c W/W
+\o -NaN -NaN
+\wc 42b52eed-0970-438d-9608-a03fc8c35855
+\a mo {7ea5c25b-bae2-44fc-8f65-0c3b176e662b}
+\eType prefix
+
+\lx 3c2b9e2f-405c-4416-bae8-e50b95fb3b6d
+\g 2PlSubj
+\c W/W
+\o -NaN -NaN
+\wc 42b52eed-0970-438d-9608-a03fc8c35855
+\a se {b32483b8-9835-47fb-adcb-9d4a2642cf91}
+\eType prefix
+
+\lx 8c98c459-33a4-41ad-9f06-217348bb18e5
+\g 1SgObj
+\c W/W
+\o -NaN -NaN
+\wc 395e7178-199d-415a-a5b4-f8f3196a93f2
+\a mi {3cbec368-e525-45b3-afd6-ff295b7ac96d}
+\eType prefix
+
+\lx 99b44a20-3fc6-43d7-9271-bffb30c2d66c
+\g 2SgObj
+\c W/W
+\o -NaN -NaN
+\wc 395e7178-199d-415a-a5b4-f8f3196a93f2
+\a yu {b3a11d22-1904-435f-986f-b5d152cdeb37}
+\eType prefix
+
+\lx e4f26931-0e18-42a6-b898-8dc0d3746276
+\g 1PlObj
+\c W/W
+\o -NaN -NaN
+\wc 395e7178-199d-415a-a5b4-f8f3196a93f2
+\a us {7abe65e5-c5de-469d-8431-2e3ca34bd49a}
+\eType prefix
+
+\lx cf730e86-e5a8-4405-956e-e66417e51d68
+\g 2PlObj
+\c W/W
+\o -NaN -NaN
+\wc 395e7178-199d-415a-a5b4-f8f3196a93f2
+\a yul {f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7}
+\eType prefix
+
+\lx d170e517-38e1-4167-8e6c-14e03fbc0c11
+\g 3PlObj
+\c W/W
+\o -NaN -NaN
+\wc 395e7178-199d-415a-a5b4-f8f3196a93f2
+\a dem {5b408299-855a-4806-9a89-9f71a7655846} / _ b  | / _ b
+
+\a den {23eb1415-4b6f-4f49-91fa-fb89b34d973f} / _ [a27edaa2-622e-4a0d-9a13-df381910e509]  | / _ [+cor,+vd]
+
+
+ ~/ _ b  | ~/ _ b
+
+\a deŋ {5d2239fb-c480-4316-affe-5fe7bcebdc6a} / _ g  | / _ g
+
+
+ ~/ _ b  | ~/ _ b
+
+
+ ~/ _ [a27edaa2-622e-4a0d-9a13-df381910e509]  | ~/ _ [+cor,+vd]
+
+\eType prefix
+
+\lx c274b2d9-740e-423f-a81f-cc06450a7061
+\g Past
+\c W/W
+\o NaN NaN
+\wc 0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde
+\a ko {b70998be-e888-46b3-8087-ab50c75e8916} ICAd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a bi {c4471efc-0fc3-425c-bf79-05ed3814ae6a} ICA8a0a8938-a569-4e3f-9adf-8c933a3e26de +/ {InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _ +/ {ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _
+\eType suffix
+
+\lx 50e06993-ccd3-4edc-9140-9e25cde6d90f
+\g Past
+\c W/W
+\o NaN NaN
+\wc 617322ab-79f5-4302-8b9f-f92ca1d1eeba
+\a ko {b70998be-e888-46b3-8087-ab50c75e8916} ICAd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a bi {c4471efc-0fc3-425c-bf79-05ed3814ae6a} ICA8a0a8938-a569-4e3f-9adf-8c933a3e26de +/ {InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _ +/ {ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _
+\eType suffix
+
+\lx 6be211bd-c7ae-4878-ac83-e43fa51f9a86
+\g Future
+\c W/W
+\o NaN NaN
+\wc 617322ab-79f5-4302-8b9f-f92ca1d1eeba
+\a pe {2026c102-2ed7-4a2b-aae2-d1f408f868dc} ICAd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a gu {883925ad-d74c-4895-874f-774975f8d53b} ICA8a0a8938-a569-4e3f-9adf-8c933a3e26de +/ {InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _ +/ {ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de} ... _
+\eType suffix
+
+\lx 4604b938-3880-4b15-b84e-62cdf0450913
+\g 1SgPoss
+\c W/W
+\o NaN NaN
+\wc 32bf0473-d3a8-40ba-b681-dbecfa10edd9
+\a zi {d901a4f7-577f-4156-abf7-c54669d4952f} ICA441be6a9-e5d5-43c4-bd89-ab335f80e46a +/ {InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _ +/ {ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _
+\a a {025df008-354e-4df8-90d3-fc0c7c7f839e} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ / [a1f47fd7-6c56-419b-9370-17e1c899fec2]_  | / [C] _
+
+\a la {4c0031fd-8f01-43be-ac75-0c71ad6baad8} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ / [43c9ba97-2883-4f95-aa5d-ef9309e85025]_  | / [V] _
+
+
+ ~/ [a1f47fd7-6c56-419b-9370-17e1c899fec2]_  | ~/ [C] _
+
+\eType suffix
+
+\lx 17e79a60-3539-4cbf-92ba-182bbda9de05
+\g 2SgPoss
+\c W/W
+\o NaN NaN
+\wc 32bf0473-d3a8-40ba-b681-dbecfa10edd9
+\a fi {346339c0-46c3-4295-85ef-d037cceafac8} ICA441be6a9-e5d5-43c4-bd89-ab335f80e46aICA1bd0464c-7c79-48c3-a9cf-7760c3a81f5e +/ {InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _ +/ {ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _ +/ {InflClass1bd0464c-7c79-48c3-a9cf-7760c3a81f5e} ... _ +/ {ToInflClass1bd0464c-7c79-48c3-a9cf-7760c3a81f5e} ... _
+\a k {2f528413-6ede-4959-90cc-e26639a38305} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ / [43c9ba97-2883-4f95-aa5d-ef9309e85025]_  | / [V] _
+
+\a or {d5af6e34-d0b1-4114-8a80-c598ae709dfa} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ / [a1f47fd7-6c56-419b-9370-17e1c899fec2]_  | / [C] _
+
+
+ ~/ [43c9ba97-2883-4f95-aa5d-ef9309e85025]_  | ~/ [V] _
+
+\eType suffix
+
+\lx 1771c1af-1e67-48fd-b19f-98b10a59395a
+\g 3SgPoss
+\c W/W
+\o NaN NaN
+\wc 32bf0473-d3a8-40ba-b681-dbecfa10edd9
+\a yo {dff0280b-c5fd-43fa-8f2f-d2b7fcee2e53} ICA441be6a9-e5d5-43c4-bd89-ab335f80e46a +/ {InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _ +/ {ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _
+\a vo {28a4e632-9d6f-4e2d-8b44-b86ba46991b7} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _
+\eType suffix
+
+\lx fd350256-2838-4303-afc9-2d64b6daae75
+\g 1PlPoss
+\c W/W
+\o NaN NaN
+\wc 32bf0473-d3a8-40ba-b681-dbecfa10edd9
+\a pa {0b331a9a-b11e-4e94-8906-3fcba95474c8} ICA441be6a9-e5d5-43c4-bd89-ab335f80e46a +/ {InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _ +/ {ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _
+\a ni {c72610b1-ab45-45ec-966f-57ed56a9398c} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _
+\eType suffix
+
+\lx 2b559217-d31d-4a2e-865b-c189f5499b27
+\g 2PlPoss
+\c W/W
+\o NaN NaN
+\wc 32bf0473-d3a8-40ba-b681-dbecfa10edd9
+\a go {b87770a3-ca75-4272-8466-2fcbe3d36201} ICA441be6a9-e5d5-43c4-bd89-ab335f80e46a +/ {InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _ +/ {ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _
+\a tu {0f7ff8c6-2c39-4dd3-877d-36452bd8cfc2} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _
+\eType suffix
+
+\lx f8e0cf27-4a52-49dd-a064-4576a379c03d
+\g 3PlPoss
+\c W/W
+\o NaN NaN
+\wc 32bf0473-d3a8-40ba-b681-dbecfa10edd9
+\a fo {89638dc7-5501-4ba7-a1f1-fb38bca9f315} ICA441be6a9-e5d5-43c4-bd89-ab335f80e46a +/ {InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _ +/ {ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a} ... _
+\a te {2ea62ae1-d6c1-439b-be69-a80c52835239} ICA39b3605b-9384-48da-b16e-f9a4b5ff659a +/ {InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _ +/ {ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a} ... _
+\eType suffix
+
+\lx 2d58f09e-228d-4e09-98b1-6d7e79b66ba7
+\g slowly
+\c W
+\wc root
+\mp RootPOSd7f71525-e8cf-11d3-9764-00c04f186933
+\a ximu {b2c43ab8-8597-4d00-9994-075f619c7436}
+
+\lx 10736715-15e3-4a79-8a14-8b437830cba8
+\g Intensifier
+\c W/W
+\o -1
+\wc derivPfx
+\a [43c9ba97-2883-4f95-aa5d-ef9309e85025^1]t  {ff4e0504-3262-4431-914f-79994bf7b088} / _ [43c9ba97-2883-4f95-aa5d-ef9309e85025^1]  | / _ [V^1]
+
+\a [a1f47fd7-6c56-419b-9370-17e1c899fec2^1][43c9ba97-2883-4f95-aa5d-ef9309e85025^1]  {eda0cce7-773d-4ef4-8dad-599deeeff961} / _ [a1f47fd7-6c56-419b-9370-17e1c899fec2^1][43c9ba97-2883-4f95-aa5d-ef9309e85025^1]  | / _ [C^1][V^1]
+
+\eType prefix
+\fd FromPOSd7f71543-e8cf-11d3-9764-00c04f186933
+
+\lx 1b19025a-a20a-49aa-8fb7-10e27659adc4
+\g Intensifier
+\c W/W
+\o -1
+\wc derivPfx
+\a [43c9ba97-2883-4f95-aa5d-ef9309e85025^1]t  {ff4e0504-3262-4431-914f-79994bf7b088} / _ [43c9ba97-2883-4f95-aa5d-ef9309e85025^1]  | / _ [V^1]
+
+\a [a1f47fd7-6c56-419b-9370-17e1c899fec2^1][43c9ba97-2883-4f95-aa5d-ef9309e85025^1]  {eda0cce7-773d-4ef4-8dad-599deeeff961} / _ [a1f47fd7-6c56-419b-9370-17e1c899fec2^1][43c9ba97-2883-4f95-aa5d-ef9309e85025^1]  | / _ [C^1][V^1]
+
+\eType prefix
+\fd FromPOSd7f7153f-e8cf-11d3-9764-00c04f186933
+
+\lx f40536b7-4578-412a-bc75-52fbf10ca62d
+\g 3PlSubj
+\c W/W
+\o -NaN -NaN
+\wc 42b52eed-0970-438d-9608-a03fc8c35855
+\a de {3f212d8c-4673-4f6f-ad2b-93a366ac812f}
+\eType prefix
+
+\lx 4fd14684-b1ed-4457-8784-491750354715
+\g to.stand
+\c W
+\wc root
+\mp RootPOSd7f7153f-e8cf-11d3-9764-00c04f186933
+\mp InflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a pone {742bf838-c14e-48be-a1b3-1ff9e9c5751b}
+
+\lx 8b4dcdf5-b9fe-4670-be2b-38060056a6ca
+\g to.buy
+\c W
+\wc root
+\mp RootPOSd7f7153d-e8cf-11d3-9764-00c04f186933
+\mp InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+\a gel {2c48d5d0-500e-4eae-a97e-4aaa32ff7728}
+
+\lx cfae7ea4-92ce-4235-922a-0e852f84ab1e
+\g to.sell
+\c W
+\wc root
+\mp RootPOSd7f7153d-e8cf-11d3-9764-00c04f186933
+\mp InflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\a bako {169331ec-f910-49b4-b0c4-2790bd285d94}
+
+\lx 8d90096e-d9fc-4377-ba55-da8c61d0b9e0
+\g not
+\c Prt
+\wc root
+\mp RootPOSd7f71526-e8cf-11d3-9764-00c04f186933
+\a dok {8fc65b59-f1d5-4c53-b83a-2d0fc32ddbe8}
+
+\lx 580a3aed-71bc-4f96-a179-e685c07d94f2
+\g Question
+\c W/W
+\wc proclitic
+\eType prefix
+\o -32000
+\a ke {c537f739-b7d5-494c-a4fd-311e7af06057}
+\mp Proclitic
+
+\lx 580a3aed-71bc-4f96-a179-e685c07d94f2
+\g Question
+\c Prt
+\wc clitic
+\a ke {c537f739-b7d5-494c-a4fd-311e7af06057}
+\fd CliticPOSd7f7152d-e8cf-11d3-9764-00c04f186933
+
+\lx 3bd2934e-e68a-46a3-9cd7-d78c0b383fe2
+\g PhraseFinal
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a lo {c2d263a8-0059-4ad2-9a0a-7773d047566f}
+\mp Enclitic
+
+\lx 3bd2934e-e68a-46a3-9cd7-d78c0b383fe2
+\g PhraseFinal
+\c Prt
+\wc clitic
+\a lo {c2d263a8-0059-4ad2-9a0a-7773d047566f}
+\fd CliticPOSd7f7152d-e8cf-11d3-9764-00c04f186933
+
+\lx 09477ee9-5488-4796-abdd-a4a06c75d219
+\g PhraseInitial
+\c W/W
+\wc proclitic
+\eType prefix
+\o -32000
+\a su {7a1135a0-f342-4258-94ca-e58cf5403625}
+\mp Proclitic
+
+\lx 09477ee9-5488-4796-abdd-a4a06c75d219
+\g PhraseInitial
+\c Prt
+\wc clitic
+\a su {7a1135a0-f342-4258-94ca-e58cf5403625}
+\fd CliticPOSd7f7152d-e8cf-11d3-9764-00c04f186933
+
+\lx 4a9f796c-1216-4ab1-b263-a892a1401a82
+\g RelativeClause
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a zo {89da5c44-c9e5-4078-a48a-412d7a73d063}
+\mp Enclitic
+
+\lx 4a9f796c-1216-4ab1-b263-a892a1401a82
+\g RelativeClause
+\c Prt
+\wc clitic
+\a zo {89da5c44-c9e5-4078-a48a-412d7a73d063}
+\fd CliticPOSd7f7152d-e8cf-11d3-9764-00c04f186933
+
+\lx f77a1f4f-18b7-48e4-b1c1-cf54fe56ea94
+\g Adjectivizer
+\c W/W
+\o 1
+\wc derivPfx
+\a ul {9feb6014-cdb1-41a8-aabc-69fab81f4175}
+\eType infix
+\loc prefix root / _ [43c9ba97-2883-4f95-aa5d-ef9309e85025]  | / _ [V]
+
+ / #[a1f47fd7-6c56-419b-9370-17e1c899fec2]_  | / #[C] _
+
+\fd FromPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71524-e8cf-11d3-9764-00c04f186933
+
+\lx b656833a-b8e9-44a2-992a-5462d49fe67b
+\g to.be
+\c W
+\wc root
+\mp RootPOSd7f7153f-e8cf-11d3-9764-00c04f186933
+\mp InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+\a kala {207798b5-22a1-40c9-b3ab-e11a4ff1cd57}
+
+\lx 833e5c0e-f62f-4ed1-ad00-1ccab13dfc16
+\g to.be.3SgSubj.Present
+\c W
+\wc root
+\mp RootPOSd7f7153b-e8cf-11d3-9764-00c04f186933
+\a kalo {7e676746-acf4-4ae0-a829-ea977114c740} / # _ #  | / # _ #
+
+
+\lx 2c87ff16-70d3-488b-b3fb-72e3c64b01a6
+\g green
+\c W
+\wc root
+\mp RootPOSd7f71524-e8cf-11d3-9764-00c04f186933
+\a pus {4dc1841d-6cc0-4f3b-a2f2-9404d0a5d1ed}
+
+\lx 4280e494-7966-4e04-ba4c-798bfaee2cdd
+\g Adverbializer2
+\c W/W
+\o 1
+\wc derivSfx
+\a 0 {607bb09f-8d6b-4afa-8379-db1fefa2080a} / [43c9ba97-2883-4f95-aa5d-ef9309e85025]_  | / [V] _
+
+\a o {d717bf50-d812-4730-ad3c-a274b11b4f4e} / [a1f47fd7-6c56-419b-9370-17e1c899fec2]_  | / [C] _
+
+
+ ~/ [43c9ba97-2883-4f95-aa5d-ef9309e85025]_  | ~/ [V] _
+
+\eType suffix
+\fd FromPOSd7f71524-e8cf-11d3-9764-00c04f186933
+\fd ToPOSd7f71525-e8cf-11d3-9764-00c04f186933
+
+\lx c5710b03-5da7-4152-83e8-d27be49a9cec
+\g quick
+\c W
+\wc root
+\mp RootPOSd7f71524-e8cf-11d3-9764-00c04f186933
+\a kola {5357f883-8e18-4f3a-99e6-036b9e2adb48}
+
+\lx 3354a8dd-1aee-4834-a625-d05baca82451
+\g to.strengthen
+\c W
+\wc root
+\mp RootPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\mp InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de
+\a palti {8e8ff051-607b-4be4-bef0-841f61084050}
+
+\lx 4f259db9-b821-45e3-be81-02a5e475f048
+\g to.be.long
+\c W
+\wc root
+\mp RootPOSd7f71542-e8cf-11d3-9764-00c04f186933
+\a duro {c5dac887-ed14-4f25-8951-43e1ef6da511}
+
+\lx a6cff649-bf98-43ff-b323-be658b5f07c6
+\g Doctor
+\c W
+\wc root
+\mp RootPOSd7f71529-e8cf-11d3-9764-00c04f186933
+\a dok {676ecc01-f26c-4e03-b69a-2255f8cc5ace}
+
+\lx f8ba641d-6f64-4081-9eca-4359ac40a4c3
+\g cat
+\c W
+\wc root
+\mp RootPOSd7f71529-e8cf-11d3-9764-00c04f186933
+\a pus {22389a4c-b71e-4279-9602-fa84d1be9a2d}
+
+\lx ed77747e-40fd-4a00-b275-20c5114344fd
+\g blood
+\c W
+\wc root
+\mp RootPOSd7f71529-e8cf-11d3-9764-00c04f186933
+\a pus {f0103dd1-398d-425e-a779-83e33cfa6422}
+
+\lx 51d80b28-2440-4ede-87e0-19a73ec93a9f
+\g who.knows
+\c W/W
+\o -31999 -1
+\wc prefix
+\a ni {9043a334-1de2-4146-b6ff-4970b1e98192}
+\eType infix
+\loc prefix root
+
+\lx 425ec2ef-f3be-4a00-be13-dbe678e6eb98
+\g English gloss
+\c W
+\wc root
+\mp RootPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\a stem.allomorph {bb464c5d-de15-494b-bc05-1ee92c3028e6} / [43c9ba97-2883-4f95-aa5d-ef9309e85025]_  | / [V] _
+
+
+\lx cdbdf5ac-797d-4ccc-905d-6ad743379203
+\g English gloss
+\c W
+\wc root
+\mp RootPOSd7f71529-e8cf-11d3-9764-00c04f186933
+\a stem.allomorph {bb464c5d-de15-494b-bc05-1ee92c3028e6} / [43c9ba97-2883-4f95-aa5d-ef9309e85025]_  | / [V] _
+
+
+\lx b7261799-50d0-4d4d-a546-3b73561daeaa
+\g English gloss
+\c W
+\wc root
+\mp RootPOSd7f71527-e8cf-11d3-9764-00c04f186933
+\a ztestsub {1a1507b0-a899-4b45-afa2-9c294b8f81d6}
+
+\lx 5704a774-1a34-4d60-a868-d5c659eb7cc9
+\g English glos
+\c W
+\wc root
+\mp RootPOSd7f71543-e8cf-11d3-9764-00c04f186933
+\a ztestminor {999df9bd-e000-4c73-b843-c9fec409d989}

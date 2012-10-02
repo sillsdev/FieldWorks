@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+
+	<!-- Test code that creates a new segment if there are xfics, but no old segment. -->
+	<rt class="CmBaseAnnotation" guid="165B8419-0A9B-44A4-A960-F78983C84768">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-4486-A32F-944490F0C023" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="60BF79A0-9579-4486-A32F-944490F0C023" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad 1.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!-- This data allows for testing the cases where an xfic is beyond the end of the last old Segment. -->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1b">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="6" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C023" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="165B8409-0A9B-44A4-A960-F78983C84768">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE7-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="25" />
+			<EndOffset val="30" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-5486-A32F-944490F0C023" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="60BF79A0-9579-5486-A32F-944490F0C023" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad 2.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!-- Pathological case where there is an old segment, but no xfics. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c46-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="6" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c45-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="c1ec5c45-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Segment, no xfics.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!-- Pathological cases related to end offset of pfics. -->
+	<!-- Case where pfic endOffset is beyond the end of the para. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8362-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="8" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec8363-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ec8369-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="7" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec8363-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ec8364-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="7" />
+			<EndOffset val="9" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec8363-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="c1ec8363-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Segment.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!-- Case where pfic endOffset is split between two runs. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8365-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="9" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec8366-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ec8368-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="7" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec8366-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ec8367-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="7" />
+			<EndOffset val="10" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec8366-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="c1ec8366-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Segment. </Run>
+					<Run ws="es">Otras palabras.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!-- Case where pfic begin and end offsets are the same. (Thus, no form at all). -->
+	<rt class="CmBaseAnnotation" guid="c1ecaa62-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="8" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ecaa61-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ecaa63-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="7" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ecaa61-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ecaa64-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="7" />
+			<EndOffset val="7" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ecaa61-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="c1ecaa61-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Segment.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+
+	<!-- Case where first wfic begin offset is NOT zero. And there's only one Segment. -->
+	<!-- Need one CCR to hold the one CCA I'm testing.-->
+	<rt class="DsDiscourseData" guid="733449e3-e1a7-407c-b1d6-fddf43f779fb" ownerguid="E4952BB2-3663-4F8C-A754-947F1DDDD0BE">
+		<CmObject>
+		</CmObject>
+		<DsDiscourseData>
+			<Charts>
+				<objsur t="o" guid="8b7ae394-2951-4933-8b77-544ff690e242" />
+			</Charts>
+		</DsDiscourseData>
+	</rt>
+	<rt class="DsConstChart" guid="8b7ae394-2951-4933-8b77-544ff690e242" ownerguid="733449e3-e1a7-407c-b1d6-fddf43f779fb" >
+		<CmObject>
+		</CmObject>
+		<CmMajorObject />
+		<DsChart />
+		<DsConstChart>
+			<Rows>
+				<objsur t="r" guid="0b6e3456-b489-4c97-8598-9aca1e2a41dc" />
+			</Rows>
+		</DsConstChart>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="0b6e3456-b489-4c97-8598-9aca1e2a41dc" >
+		<!-- Only row in chart, and only one data CCA. (well two now) -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">1a</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Convert CmIndirectAnnotation to a ConstChartWordGroup
+					(Sequence in AppliesTo that are CmBaseAnnotations of type twfic/(pfic)) -->
+				<objsur t="r" guid="93307c1d-1883-45a2-afa1-3c9d439a92fa" />
+				<!-- Add another CCA to check the xfic w/o segment case below -->
+				<objsur t="r" guid="68934c92-c751-4f6f-a27b-0573e2239760" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="93307c1d-1883-45a2-afa1-3c9d439a92fa" >
+		<!--  (Sequence in AppliesTo that are CmBaseAnnotations of type twfic) -->
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfic -->
+				<objsur t="r" guid="9748f8c3-67c6-40f9-8ac8-fb5a45080184" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<!-- The only Segment in this case's paragraph. -->
+	<rt class="CmBaseAnnotation" guid="c5243862-9e30-4a9f-8876-8a50e54e37d1">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="4" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="14f703d9-c849-4251-9b0f-09d964b6b69c" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Only twfic in one word paragraph/segment -->
+	<rt class="CmBaseAnnotation" guid="9748f8c3-67c6-40f9-8ac8-fb5a45080184" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="1" />
+			<EndOffset val="4" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="14f703d9-c849-4251-9b0f-09d964b6b69c" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="14f703d9-c849-4251-9b0f-09d964b6b69c" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en"> Word</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+	<!-- Two twfics in a paragraph where the first segment begins later. -->
+	<rt class="StTxtPara" guid="40ccde9a-cb33-444b-a30b-8728d2c7d7ee" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Two words. One Segment.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<!-- The only Segment in this case's paragraph. -->
+	<rt class="CmBaseAnnotation" guid="276e5550-e45e-4664-8848-8ddf02c99559">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="11" />
+			<EndOffset val="22" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="40ccde9a-cb33-444b-a30b-8728d2c7d7ee" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="d333489a-ea0a-4509-a442-a2ab068be084">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<!-- Two -->
+			<BeginOffset val="0" />
+			<EndOffset val="3" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="40ccde9a-cb33-444b-a30b-8728d2c7d7ee" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="f827e94e-d988-4e94-8546-a13579fe26ba">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE7-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<!-- words -->
+			<BeginOffset val="4" />
+			<EndOffset val="9" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="40ccde9a-cb33-444b-a30b-8728d2c7d7ee" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="68934c92-c751-4f6f-a27b-0573e2239760" >
+		<!--  (Sequence in AppliesTo that are CmBaseAnnotations of type twfic) -->
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfic -->
+				<objsur t="r" guid="d333489a-ea0a-4509-a442-a2ab068be084" />
+				<objsur t="r" guid="f827e94e-d988-4e94-8546-a13579fe26ba" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+</languageproject>

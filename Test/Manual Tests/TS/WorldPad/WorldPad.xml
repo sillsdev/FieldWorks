@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE modularbook ..\..\XSL\ModularBook.dtd" []-->
+<?xml-stylesheet type="text/xsl" href="..\XSL\TCLlist.xsl"?>
+<modularbook file="WorldPad\WorldPad.xml">
+
+<titlePage file="WorldPad\WorldPad.xml">
+ <title tag="tp">WorldPad Test Library</title>
+ <index>
+  <li>all title page</li>
+ </index>
+ <authors>
+  <div>Michael Lastufka (creator, drudge)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="maintask.xml" type="module">No link</link>
+ <shortcuts>
+  <link uri="maintask.xml" type="module">Testing a FieldWorks application</link>
+ </shortcuts>
+</titlePage>
+
+<!-- Test Scripts defined in files -->
+
+<include-test>FileOpen.xml</include-test>
+<include-test>FileNewClose.xml</include-test>
+<include-test>FileSave.xml</include-test>
+<include-test>..\FW\PgSetup.xml</include-test>
+<include-test>..\StdCtrls\PrintDlg.xml</include-test>
+<include-test>..\FW\FileExit.xml</include-test>
+<include-test>..\FW\EdtUndo.xml</include-test>
+<include-test>..\FW\EdtRedo.xml</include-test>
+<include-test>..\FW\Edtccp.xml</include-test>
+<include-test>..\FW\EdtSelectAll.xml</include-test>
+<include-test>..\FW\EdtFind.xml</include-test>
+<include-test>..\FW\EdtNxtMat.xml</include-test>
+<include-test>..\FW\EdtPrvMat.xml</include-test>
+<include-test>..\FW\EdtReplace.xml</include-test>
+<include-test>..\FW\VwToolbar.xml</include-test>
+<include-test>..\FW\InsExtLink.xml</include-test>
+<include-test>..\FW\FmtFont.xml</include-test>
+<include-test>..\FW\FmtPara.xml</include-test>
+<include-test>..\FW\FmtWS.xml</include-test>
+<include-test>..\FW\FmtBnN.xml</include-test>
+<include-test>..\FW\FmtBrdr.xml</include-test>
+<include-test>..\FW\FmtStyle.xml</include-test>
+<include-test>..\FW\Window.xml</include-test>
+<include-test>..\FW\TbStandard.xml</include-test>
+<include-test>..\FW\TbFormat.xml</include-test>
+<include-test>..\FW\TbInsert.xml</include-test>
+<include-test>..\FW\TbWindow.xml</include-test>
+<include-test>..\FW\FwHelp.xml</include-test>
+<include-test>..\FW\HlpApp.xml</include-test>
+<include-test>..\FW\HlpAbout.xml</include-test>
+<include-test>fntipa.xml</include-test>
+<include-test>ToolsWS.xml</include-test>
+<include-test>ToolsOptions.xml</include-test>
+
+</modularbook>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version number="" />
+		<generation date="2010-06-08T19:36:37" />
+		<language type="ko" />
+	</identity>
+	<collations>
+		<collation>
+			<base>
+				<alias source="ko" />
+			</base>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType value="OtherLanguage" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation value="Kor" />
+		<palaso:defaultFontFamily value="Gulim" />
+		<palaso:languageName value="Korean" />
+		<palaso:version value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled value="False" />
+		<fw:windowsLCID value="1042" />
+	</special>
+</ldml>

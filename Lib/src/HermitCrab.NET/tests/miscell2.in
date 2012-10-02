@@ -1,0 +1,6 @@
+;This is file MISCELL2.IN.  Before termination, you should see the comment
+; "This is the end of MISCELL2.IN."
+;From within MISCELL2.IN, we'll try to open a nonexistent file.
+; Should get error msg m6302:
+(morpher_input_from_file message foobar.xxx)
+;This is the end of MISCELL2.IN; should see msg m6521.

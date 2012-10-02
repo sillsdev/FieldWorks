@@ -1,0 +1,27 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: CmnFwDlgsTlb.idl
+Responsibility: Randy Regnier
+Last reviewed: never
+Description:
+	Interface descriptions for the CmnFWDlgs dll. See CmnFWDlgs.idh for a fuller description.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+// This file will be processed by the MIDL tool to
+// produce the type library (CmnFWDlgs.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+#include "common.idh" // DeclareInterface and similar
+
+DeclareLibrary(CmnFwDlgs, 1.0, "Common FieldWorks Dialogs 1.0 Type Library",
+	E6F6FD84-2E27-407e-ADBC-B89612034F7C)
+{
+	importlib("FwKernelTlb.tlb");
+	importlib("LanguageTlb.tlb");
+	importlib("ViewsTlb.tlb");
+	#include "CmnFwDlgs.idh"
+};

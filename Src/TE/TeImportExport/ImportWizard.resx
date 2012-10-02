@@ -1,0 +1,1617 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="m_btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>756, 597</value>
+  </data>
+  <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="m_btnHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+	<value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_btnBack.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="m_btnBack.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_btnBack.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnBack.Location" type="System.Drawing.Point, System.Drawing">
+	<value>516, 597</value>
+  </data>
+  <data name="m_btnBack.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnBack.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_btnBack.Text" xml:space="preserve">
+	<value>&lt; &amp;Back</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.Name" xml:space="preserve">
+	<value>m_btnBack</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="m_btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>677, 597</value>
+  </data>
+  <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="m_btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
+	<value>m_btnCancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="m_btnNext.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="m_btnNext.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnNext.Location" type="System.Drawing.Point, System.Drawing">
+	<value>593, 597</value>
+  </data>
+  <data name="m_btnNext.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnNext.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_btnNext.Text" xml:space="preserve">
+	<value>&amp;Next &gt;</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.Name" xml:space="preserve">
+	<value>m_btnNext</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="lblSteps.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="lblSteps.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblSteps.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblSteps.Location" type="System.Drawing.Point, System.Drawing">
+	<value>816, 558</value>
+  </data>
+  <data name="lblSteps.Size" type="System.Drawing.Size, System.Drawing">
+	<value>14, 13</value>
+  </data>
+  <data name="lblSteps.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="lblSteps.Text" xml:space="preserve">
+	<value>#</value>
+  </data>
+  <data name="lblSteps.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.Name" xml:space="preserve">
+	<value>lblSteps</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="lblFinish.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="lblFinish.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblFinish.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="lblFinish.Size" type="System.Drawing.Size, System.Drawing">
+	<value>93, 53</value>
+  </data>
+  <data name="lblFinish.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblFinish.Text" xml:space="preserve">
+	<value>#</value>
+  </data>
+  <data name="&gt;&gt;lblFinish.Name" xml:space="preserve">
+	<value>lblFinish</value>
+  </data>
+  <data name="&gt;&gt;lblFinish.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFinish.Parent" xml:space="preserve">
+	<value>panStep4</value>
+  </data>
+  <data name="&gt;&gt;lblFinish.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="label14.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label14.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="label14.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label14.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 8</value>
+  </data>
+  <data name="label14.Size" type="System.Drawing.Size, System.Drawing">
+	<value>109, 13</value>
+  </data>
+  <data name="label14.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label14.Text" xml:space="preserve">
+	<value>Setup is Complete</value>
+  </data>
+  <data name="&gt;&gt;label14.Name" xml:space="preserve">
+	<value>label14</value>
+  </data>
+  <data name="&gt;&gt;label14.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label14.Parent" xml:space="preserve">
+	<value>panStep4</value>
+  </data>
+  <data name="&gt;&gt;label14.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panStep4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>144, 136</value>
+  </data>
+  <data name="panStep4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>120, 104</value>
+  </data>
+  <data name="panStep4.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="panStep4.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;panStep4.Name" xml:space="preserve">
+	<value>panStep4</value>
+  </data>
+  <data name="&gt;&gt;panStep4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panStep4.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panStep4.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="cboShowMappings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="cboShowMappings.Items" xml:space="preserve">
+	<value>Show all mappings</value>
+  </data>
+  <data name="cboShowMappings.Items1" xml:space="preserve">
+	<value>Show only mappings that are in use</value>
+  </data>
+  <data name="cboShowMappings.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 217</value>
+  </data>
+  <data name="cboShowMappings.Size" type="System.Drawing.Size, System.Drawing">
+	<value>229, 21</value>
+  </data>
+  <data name="cboShowMappings.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;cboShowMappings.Name" xml:space="preserve">
+	<value>cboShowMappings</value>
+  </data>
+  <data name="&gt;&gt;cboShowMappings.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.9.2.14032, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboShowMappings.Parent" xml:space="preserve">
+	<value>panStep3</value>
+  </data>
+  <data name="&gt;&gt;cboShowMappings.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tabCtrlMappings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="m_btnDeleteScrMapping.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnDeleteScrMapping.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_btnDeleteScrMapping.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnDeleteScrMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>182, 91</value>
+  </data>
+  <data name="m_btnDeleteScrMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnDeleteScrMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_btnDeleteScrMapping.Text" xml:space="preserve">
+	<value>&amp;Delete</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteScrMapping.Name" xml:space="preserve">
+	<value>m_btnDeleteScrMapping</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteScrMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteScrMapping.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteScrMapping.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="lvScrMappings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="columnHeader7.Text" xml:space="preserve">
+	<value>Marker</value>
+  </data>
+  <data name="columnHeader7.Width" type="System.Int32, mscorlib">
+	<value>55</value>
+  </data>
+  <data name="columnHeader8.Text" xml:space="preserve">
+	<value>Translation Editor Style</value>
+  </data>
+  <data name="columnHeader8.Width" type="System.Int32, mscorlib">
+	<value>142</value>
+  </data>
+  <data name="columnHeader9.Text" xml:space="preserve">
+	<value>Details</value>
+  </data>
+  <data name="columnHeader9.Width" type="System.Int32, mscorlib">
+	<value>160</value>
+  </data>
+  <metadata name="m_cmMappings.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_mnuExclude.Text" xml:space="preserve">
+	<value>E&amp;xclude Data from Import</value>
+  </data>
+  <data name="lvScrMappings.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 6</value>
+  </data>
+  <data name="lvScrMappings.Size" type="System.Drawing.Size, System.Drawing">
+	<value>315, 79</value>
+  </data>
+  <data name="lvScrMappings.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;lvScrMappings.Name" xml:space="preserve">
+	<value>lvScrMappings</value>
+  </data>
+  <data name="&gt;&gt;lvScrMappings.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwListView, FwControls, Version=6.9.2.14032, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lvScrMappings.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;lvScrMappings.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_btnAddScrMapping.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnAddScrMapping.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnAddScrMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 91</value>
+  </data>
+  <data name="m_btnAddScrMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnAddScrMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_btnAddScrMapping.Text" xml:space="preserve">
+	<value>&amp;Add...</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddScrMapping.Name" xml:space="preserve">
+	<value>m_btnAddScrMapping</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddScrMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddScrMapping.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddScrMapping.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_btnModifyScrMapping.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnModifyScrMapping.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_btnModifyScrMapping.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnModifyScrMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>94, 91</value>
+  </data>
+  <data name="m_btnModifyScrMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnModifyScrMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_btnModifyScrMapping.Text" xml:space="preserve">
+	<value>&amp;Modify...</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyScrMapping.Name" xml:space="preserve">
+	<value>m_btnModifyScrMapping</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyScrMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyScrMapping.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyScrMapping.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>327, 121</value>
+  </data>
+  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+	<value>Scripture</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
+	<value>tabCtrlMappings</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_btnAddNoteMapping.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnAddNoteMapping.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnAddNoteMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 91</value>
+  </data>
+  <data name="m_btnAddNoteMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnAddNoteMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="m_btnAddNoteMapping.Text" xml:space="preserve">
+	<value>&amp;Add...</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddNoteMapping.Name" xml:space="preserve">
+	<value>m_btnAddNoteMapping</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddNoteMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddNoteMapping.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_btnAddNoteMapping.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_btnDeleteNoteMapping.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnDeleteNoteMapping.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_btnDeleteNoteMapping.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnDeleteNoteMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>182, 91</value>
+  </data>
+  <data name="m_btnDeleteNoteMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnDeleteNoteMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_btnDeleteNoteMapping.Text" xml:space="preserve">
+	<value>&amp;Delete</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteNoteMapping.Name" xml:space="preserve">
+	<value>m_btnDeleteNoteMapping</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteNoteMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteNoteMapping.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_btnDeleteNoteMapping.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_btnModifyNoteMapping.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnModifyNoteMapping.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_btnModifyNoteMapping.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnModifyNoteMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>94, 91</value>
+  </data>
+  <data name="m_btnModifyNoteMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnModifyNoteMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_btnModifyNoteMapping.Text" xml:space="preserve">
+	<value>&amp;Modify...</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyNoteMapping.Name" xml:space="preserve">
+	<value>m_btnModifyNoteMapping</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyNoteMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyNoteMapping.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_btnModifyNoteMapping.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="lvAnnotationMappings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="columnHeader4.Text" xml:space="preserve">
+	<value>Marker</value>
+  </data>
+  <data name="columnHeader4.Width" type="System.Int32, mscorlib">
+	<value>55</value>
+  </data>
+  <data name="columnHeader5.Text" xml:space="preserve">
+	<value>Translation Editor Style</value>
+  </data>
+  <data name="columnHeader5.Width" type="System.Int32, mscorlib">
+	<value>142</value>
+  </data>
+  <data name="columnHeader6.Text" xml:space="preserve">
+	<value>Details</value>
+  </data>
+  <data name="columnHeader6.Width" type="System.Int32, mscorlib">
+	<value>160</value>
+  </data>
+  <data name="lvAnnotationMappings.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 6</value>
+  </data>
+  <data name="lvAnnotationMappings.Size" type="System.Drawing.Size, System.Drawing">
+	<value>315, 79</value>
+  </data>
+  <data name="lvAnnotationMappings.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;lvAnnotationMappings.Name" xml:space="preserve">
+	<value>lvAnnotationMappings</value>
+  </data>
+  <data name="&gt;&gt;lvAnnotationMappings.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwListView, FwControls, Version=6.9.2.14032, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lvAnnotationMappings.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;lvAnnotationMappings.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabPage2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>327, 121</value>
+  </data>
+  <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+	<value>Annotations</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Name" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Parent" xml:space="preserve">
+	<value>tabCtrlMappings</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tabCtrlMappings.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 65</value>
+  </data>
+  <data name="tabCtrlMappings.Size" type="System.Drawing.Size, System.Drawing">
+	<value>335, 147</value>
+  </data>
+  <data name="tabCtrlMappings.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;tabCtrlMappings.Name" xml:space="preserve">
+	<value>tabCtrlMappings</value>
+  </data>
+  <data name="&gt;&gt;tabCtrlMappings.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabCtrlMappings.Parent" xml:space="preserve">
+	<value>panStep3</value>
+  </data>
+  <data name="&gt;&gt;tabCtrlMappings.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="label15.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="label15.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label15.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="label15.Size" type="System.Drawing.Size, System.Drawing">
+	<value>338, 30</value>
+  </data>
+  <data name="label15.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label15.Text" xml:space="preserve">
+	<value>FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.</value>
+  </data>
+  <data name="&gt;&gt;label15.Name" xml:space="preserve">
+	<value>label15</value>
+  </data>
+  <data name="&gt;&gt;label15.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label15.Parent" xml:space="preserve">
+	<value>panStep3</value>
+  </data>
+  <data name="&gt;&gt;label15.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="label20.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label20.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="label20.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label20.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 8</value>
+  </data>
+  <data name="label20.Size" type="System.Drawing.Size, System.Drawing">
+	<value>61, 13</value>
+  </data>
+  <data name="label20.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label20.Text" xml:space="preserve">
+	<value>Mappings</value>
+  </data>
+  <data name="&gt;&gt;label20.Name" xml:space="preserve">
+	<value>label20</value>
+  </data>
+  <data name="&gt;&gt;label20.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label20.Parent" xml:space="preserve">
+	<value>panStep3</value>
+  </data>
+  <data name="&gt;&gt;label20.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="panStep3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>464, 296</value>
+  </data>
+  <data name="panStep3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>360, 240</value>
+  </data>
+  <data name="panStep3.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="panStep3.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;panStep3.Name" xml:space="preserve">
+	<value>panStep3</value>
+  </data>
+  <data name="&gt;&gt;panStep3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panStep3.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panStep3.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="sfFileListBuilder.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="sfFileListBuilder.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 32</value>
+  </data>
+  <data name="sfFileListBuilder.Size" type="System.Drawing.Size, System.Drawing">
+	<value>301, 203</value>
+  </data>
+  <data name="sfFileListBuilder.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;sfFileListBuilder.Name" xml:space="preserve">
+	<value>sfFileListBuilder</value>
+  </data>
+  <data name="&gt;&gt;sfFileListBuilder.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.SFFileListBuilder, TeImportExport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;sfFileListBuilder.Parent" xml:space="preserve">
+	<value>panStep2_Other</value>
+  </data>
+  <data name="&gt;&gt;sfFileListBuilder.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="label21.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label21.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="label21.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label21.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 8</value>
+  </data>
+  <data name="label21.Size" type="System.Drawing.Size, System.Drawing">
+	<value>169, 13</value>
+  </data>
+  <data name="label21.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label21.Text" xml:space="preserve">
+	<value>List of Standard Format Files</value>
+  </data>
+  <data name="&gt;&gt;label21.Name" xml:space="preserve">
+	<value>label21</value>
+  </data>
+  <data name="&gt;&gt;label21.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label21.Parent" xml:space="preserve">
+	<value>panStep2_Other</value>
+  </data>
+  <data name="&gt;&gt;label21.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panStep2_Other.Location" type="System.Drawing.Point, System.Drawing">
+	<value>152, 296</value>
+  </data>
+  <data name="panStep2_Other.Size" type="System.Drawing.Size, System.Drawing">
+	<value>304, 240</value>
+  </data>
+  <data name="panStep2_Other.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="panStep2_Other.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;panStep2_Other.Name" xml:space="preserve">
+	<value>panStep2_Other</value>
+  </data>
+  <data name="&gt;&gt;panStep2_Other.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panStep2_Other.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panStep2_Other.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="cboPTBackTrans.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="cboPTBackTrans.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboPTBackTrans.Location" type="System.Drawing.Point, System.Drawing">
+	<value>152, 144</value>
+  </data>
+  <data name="cboPTBackTrans.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 21</value>
+  </data>
+  <data name="cboPTBackTrans.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;cboPTBackTrans.Name" xml:space="preserve">
+	<value>cboPTBackTrans</value>
+  </data>
+  <data name="&gt;&gt;cboPTBackTrans.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.9.2.14032, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboPTBackTrans.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;cboPTBackTrans.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="cboPTTransNotes.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="cboPTTransNotes.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboPTTransNotes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>152, 171</value>
+  </data>
+  <data name="cboPTTransNotes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 21</value>
+  </data>
+  <data name="cboPTTransNotes.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;cboPTTransNotes.Name" xml:space="preserve">
+	<value>cboPTTransNotes</value>
+  </data>
+  <data name="&gt;&gt;cboPTTransNotes.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.9.2.14032, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboPTTransNotes.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;cboPTTransNotes.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="cboPTLangProj.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="cboPTLangProj.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboPTLangProj.Location" type="System.Drawing.Point, System.Drawing">
+	<value>152, 64</value>
+  </data>
+  <data name="cboPTLangProj.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 21</value>
+  </data>
+  <data name="cboPTLangProj.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;cboPTLangProj.Name" xml:space="preserve">
+	<value>cboPTLangProj</value>
+  </data>
+  <data name="&gt;&gt;cboPTLangProj.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.9.2.14032, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboPTLangProj.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;cboPTLangProj.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="label23.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label23.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label23.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 175</value>
+  </data>
+  <data name="label23.Size" type="System.Drawing.Size, System.Drawing">
+	<value>129, 13</value>
+  </data>
+  <data name="label23.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="label23.Text" xml:space="preserve">
+	<value>&amp;Translation Notes Project:</value>
+  </data>
+  <data name="&gt;&gt;label23.Name" xml:space="preserve">
+	<value>label23</value>
+  </data>
+  <data name="&gt;&gt;label23.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label23.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;label23.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="label24.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label24.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label24.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 148</value>
+  </data>
+  <data name="label24.Size" type="System.Drawing.Size, System.Drawing">
+	<value>126, 13</value>
+  </data>
+  <data name="label24.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="label24.Text" xml:space="preserve">
+	<value>&amp;Back Translation Project:</value>
+  </data>
+  <data name="&gt;&gt;label24.Name" xml:space="preserve">
+	<value>label24</value>
+  </data>
+  <data name="&gt;&gt;label24.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label24.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;label24.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="label25.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label25.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label25.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 68</value>
+  </data>
+  <data name="label25.Size" type="System.Drawing.Size, System.Drawing">
+	<value>97, 13</value>
+  </data>
+  <data name="label25.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label25.Text" xml:space="preserve">
+	<value>&amp;Vernacular Project:</value>
+  </data>
+  <data name="label25.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label25.Name" xml:space="preserve">
+	<value>label25</value>
+  </data>
+  <data name="&gt;&gt;label25.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label25.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;label25.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="label26.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label26.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="label26.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label26.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 8</value>
+  </data>
+  <data name="label26.Size" type="System.Drawing.Size, System.Drawing">
+	<value>144, 13</value>
+  </data>
+  <data name="label26.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label26.Text" xml:space="preserve">
+	<value>Select Paratext Projects</value>
+  </data>
+  <data name="&gt;&gt;label26.Name" xml:space="preserve">
+	<value>label26</value>
+  </data>
+  <data name="&gt;&gt;label26.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label26.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;label26.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="label27.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="label27.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label27.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="label27.Size" type="System.Drawing.Size, System.Drawing">
+	<value>288, 34</value>
+  </data>
+  <data name="label27.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="label27.Text" xml:space="preserve">
+	<value>Select the vernacular Scripture project to import.</value>
+  </data>
+  <data name="&gt;&gt;label27.Name" xml:space="preserve">
+	<value>label27</value>
+  </data>
+  <data name="&gt;&gt;label27.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label27.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;label27.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="label28.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="label28.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label28.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 112</value>
+  </data>
+  <data name="label28.Size" type="System.Drawing.Size, System.Drawing">
+	<value>288, 34</value>
+  </data>
+  <data name="label28.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="label28.Text" xml:space="preserve">
+	<value>If you use different Paratext projects to store a back translation or notes, select those projects:</value>
+  </data>
+  <data name="&gt;&gt;label28.Name" xml:space="preserve">
+	<value>label28</value>
+  </data>
+  <data name="&gt;&gt;label28.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label28.Parent" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;label28.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="panStep2_PT.Location" type="System.Drawing.Point, System.Drawing">
+	<value>440, 8</value>
+  </data>
+  <data name="panStep2_PT.Size" type="System.Drawing.Size, System.Drawing">
+	<value>316, 263</value>
+  </data>
+  <data name="panStep2_PT.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="panStep2_PT.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;panStep2_PT.Name" xml:space="preserve">
+	<value>panStep2_PT</value>
+  </data>
+  <data name="&gt;&gt;panStep2_PT.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panStep2_PT.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panStep2_PT.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="rbParatext5.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="rbParatext5.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="rbParatext5.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 64</value>
+  </data>
+  <data name="rbParatext5.Size" type="System.Drawing.Size, System.Drawing">
+	<value>234, 18</value>
+  </data>
+  <data name="rbParatext5.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="rbParatext5.Text" xml:space="preserve">
+	<value>&amp;Individual Paratext Data Files</value>
+  </data>
+  <data name="&gt;&gt;rbParatext5.Name" xml:space="preserve">
+	<value>rbParatext5</value>
+  </data>
+  <data name="&gt;&gt;rbParatext5.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbParatext5.Parent" xml:space="preserve">
+	<value>panStep1</value>
+  </data>
+  <data name="&gt;&gt;rbParatext5.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="rbOther.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="rbOther.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopLeft</value>
+  </data>
+  <data name="rbOther.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="rbOther.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 88</value>
+  </data>
+  <data name="rbOther.Size" type="System.Drawing.Size, System.Drawing">
+	<value>254, 18</value>
+  </data>
+  <data name="rbOther.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="rbOther.Text" xml:space="preserve">
+	<value>&amp;Other Standard Format (for example, Shoebox and Toolbox)</value>
+  </data>
+  <data name="rbOther.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopLeft</value>
+  </data>
+  <data name="&gt;&gt;rbOther.Name" xml:space="preserve">
+	<value>rbOther</value>
+  </data>
+  <data name="&gt;&gt;rbOther.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbOther.Parent" xml:space="preserve">
+	<value>panStep1</value>
+  </data>
+  <data name="&gt;&gt;rbOther.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="rbParatext6.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="rbParatext6.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="rbParatext6.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 40</value>
+  </data>
+  <data name="rbParatext6.Size" type="System.Drawing.Size, System.Drawing">
+	<value>234, 18</value>
+  </data>
+  <data name="rbParatext6.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="rbParatext6.Text" xml:space="preserve">
+	<value>&amp;Paratext Project (version 6 or later)</value>
+  </data>
+  <data name="rbParatext6.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopLeft</value>
+  </data>
+  <data name="&gt;&gt;rbParatext6.Name" xml:space="preserve">
+	<value>rbParatext6</value>
+  </data>
+  <data name="&gt;&gt;rbParatext6.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbParatext6.Parent" xml:space="preserve">
+	<value>panStep1</value>
+  </data>
+  <data name="&gt;&gt;rbParatext6.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="label30.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="label30.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label30.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="label30.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label30.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 8</value>
+  </data>
+  <data name="label30.Size" type="System.Drawing.Size, System.Drawing">
+	<value>242, 13</value>
+  </data>
+  <data name="label30.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="label30.Text" xml:space="preserve">
+	<value>What kind of data do you want to import?</value>
+  </data>
+  <data name="&gt;&gt;label30.Name" xml:space="preserve">
+	<value>label30</value>
+  </data>
+  <data name="&gt;&gt;label30.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label30.Parent" xml:space="preserve">
+	<value>panStep1</value>
+  </data>
+  <data name="&gt;&gt;label30.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="panStep1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>216, 32</value>
+  </data>
+  <data name="panStep1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>259, 169</value>
+  </data>
+  <data name="panStep1.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="panStep1.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;panStep1.Name" xml:space="preserve">
+	<value>panStep1</value>
+  </data>
+  <data name="&gt;&gt;panStep1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panStep1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panStep1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="label31.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label31.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="label31.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label31.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 8</value>
+  </data>
+  <data name="label31.Size" type="System.Drawing.Size, System.Drawing">
+	<value>60, 13</value>
+  </data>
+  <data name="label31.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="label31.Text" xml:space="preserve">
+	<value>Overview</value>
+  </data>
+  <data name="&gt;&gt;label31.Name" xml:space="preserve">
+	<value>label31</value>
+  </data>
+  <data name="&gt;&gt;label31.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label31.Parent" xml:space="preserve">
+	<value>panStep0</value>
+  </data>
+  <data name="&gt;&gt;label31.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="lblOverview.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="lblOverview.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblOverview.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="lblOverview.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 72</value>
+  </data>
+  <data name="lblOverview.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="lblOverview.Text" xml:space="preserve">
+	<value>#</value>
+  </data>
+  <data name="&gt;&gt;lblOverview.Name" xml:space="preserve">
+	<value>lblOverview</value>
+  </data>
+  <data name="&gt;&gt;lblOverview.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblOverview.Parent" xml:space="preserve">
+	<value>panStep0</value>
+  </data>
+  <data name="&gt;&gt;lblOverview.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panStep0.Location" type="System.Drawing.Point, System.Drawing">
+	<value>144, 8</value>
+  </data>
+  <data name="panStep0.Size" type="System.Drawing.Size, System.Drawing">
+	<value>120, 120</value>
+  </data>
+  <data name="panStep0.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="panStep0.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;panStep0.Name" xml:space="preserve">
+	<value>panStep0</value>
+  </data>
+  <data name="&gt;&gt;panStep0.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panStep0.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panStep0.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="columnHeader1.Text" xml:space="preserve">
+	<value>Marker</value>
+  </data>
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+	<value>55</value>
+  </data>
+  <data name="columnHeader2.Text" xml:space="preserve">
+	<value>Translation Editor Style</value>
+  </data>
+  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
+	<value>142</value>
+  </data>
+  <data name="columnHeader3.Text" xml:space="preserve">
+	<value>Details</value>
+  </data>
+  <data name="columnHeader3.Width" type="System.Int32, mscorlib">
+	<value>160</value>
+  </data>
+  <data name="stepsPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left</value>
+  </data>
+  <data name="stepsPanel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="stepsPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>1, 1, 1, 1</value>
+  </data>
+  <data name="stepsPanel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>130, 563</value>
+  </data>
+  <data name="stepsPanel.StepText" xml:space="preserve">
+	<value>Overview</value>
+  </data>
+  <data name="stepsPanel.StepText1" xml:space="preserve">
+	<value>Project Type</value>
+  </data>
+  <data name="stepsPanel.StepText2" xml:space="preserve">
+	<value>Project Location</value>
+  </data>
+  <data name="stepsPanel.StepText3" xml:space="preserve">
+	<value>Mappings</value>
+  </data>
+  <data name="stepsPanel.StepText4" xml:space="preserve">
+	<value>Finish</value>
+  </data>
+  <data name="stepsPanel.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;stepsPanel.Name" xml:space="preserve">
+	<value>stepsPanel</value>
+  </data>
+  <data name="&gt;&gt;stepsPanel.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.WizardStepPanel, FwControls, Version=6.9.2.14032, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;stepsPanel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;stepsPanel.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>848, 629</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+	<value>541, 439</value>
+  </data>
+  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 10, 40</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+	<value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Standard Format Import Setup</value>
+  </data>
+  <data name="&gt;&gt;columnHeader7.Name" xml:space="preserve">
+	<value>columnHeader7</value>
+  </data>
+  <data name="&gt;&gt;columnHeader7.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader8.Name" xml:space="preserve">
+	<value>columnHeader8</value>
+  </data>
+  <data name="&gt;&gt;columnHeader8.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader9.Name" xml:space="preserve">
+	<value>columnHeader9</value>
+  </data>
+  <data name="&gt;&gt;columnHeader9.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cmMappings.Name" xml:space="preserve">
+	<value>m_cmMappings</value>
+  </data>
+  <data name="&gt;&gt;m_cmMappings.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ContextMenu, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_mnuExclude.Name" xml:space="preserve">
+	<value>m_mnuExclude</value>
+  </data>
+  <data name="&gt;&gt;m_mnuExclude.Type" xml:space="preserve">
+	<value>System.Windows.Forms.MenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader4.Name" xml:space="preserve">
+	<value>columnHeader4</value>
+  </data>
+  <data name="&gt;&gt;columnHeader4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader5.Name" xml:space="preserve">
+	<value>columnHeader5</value>
+  </data>
+  <data name="&gt;&gt;columnHeader5.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader6.Name" xml:space="preserve">
+	<value>columnHeader6</value>
+  </data>
+  <data name="&gt;&gt;columnHeader6.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
+	<value>columnHeader1</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
+	<value>columnHeader2</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Name" xml:space="preserve">
+	<value>columnHeader3</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>ImportWizard</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

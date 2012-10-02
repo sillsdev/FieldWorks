@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000036">
+<rt class="LexSense" guid="8b5e23af-79ea-467a-8d26-460c0ef6e88b" ownerguid="b9281a85-fdb1-45c2-a589-1f04430b4cc9">
+<MorphoSyntaxAnalysis>
+<objsur t="r" guid="77ab677b-7ca8-4bc2-a164-1bb32ba4a233" />
+</MorphoSyntaxAnalysis>
+<SenseType>
+<objsur t="r" guid="02f1d017-4f8e-4e77-bfd1-36693f1d2c03" />
+</SenseType>
+<Gloss>
+<AUni ws="en">yet</AUni>
+</Gloss>
+<Definition>
+<AStr ws="en">
+<Run ws="en">yet</Run>
+</AStr>
+</Definition>
+<AnthroNote>
+<AStr ws="en">
+<Run ws="en">here is my anthro note</Run>
+</AStr>
+</AnthroNote>
+<EncyclopedicInfo>
+<AStr ws="en">
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dHarvest%26tool%3dinterlinearEdit%26guid%3d27a962ca-202d-4c58-90ac-d8b776fa23ea%26server%3d.%5cSILFW%26database%3dTokPisin%26ITextInInterlinearMode%3dbool%3aFalse" namedStyle="Hyperlink">This is a linktypeing new text</Run>
+</AStr>
+</EncyclopedicInfo>
+<GrammarNote>
+<AStr ws="en">
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dHarvest%26tool%3dinterlinearEdit%26guid%3d27a962ca-202d-4c58-90ac-d8b776fa23ea%26server%3d.%5cSILFW%26database%3dTokPisin%26ITextInInterlinearMode%3dbool%3aFalse" namedStyle="Hyperlink">This is a link </Run>
+</AStr>
+</GrammarNote>
+<SemanticDomains>
+<objsur t="r" guid="00269021-e1c4-474d-9dba-341d296bdac7" />
+</SemanticDomains>
+</rt>
+<rt class="LexSense" guid="033427be-ade9-46fd-a8bf-53fa90054740" ownerguid="8f36ae0c-674b-4ef8-b441-94647265e3af">
+<MorphoSyntaxAnalysis>
+<objsur t="r" guid="16cf9783-d027-4e85-8a12-be12b24508a2" />
+</MorphoSyntaxAnalysis>
+<Gloss>
+<AUni ws="en">cemetary</AUni>
+</Gloss>
+<Definition>
+<AStr ws="en">
+<Run ws="en">def</Run>
+</AStr>
+</Definition>
+<EncyclopedicInfo>
+<AStr ws="en">
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dLanguage+Explorer%26tool%3dinterlinearEdit%26guid%3df9a98bcb-677d-485d-8d7d-5ad3e108213c%26server%3d.%5cSILFW%26database%3dTokPisin%26ITextInInterlinearMode%3dbool%3aFalse" namedStyle="Hyperlink">Link to Texts </Run>
+</AStr>
+</EncyclopedicInfo>
+<SemanticDomains>
+<objsur t="r" guid="ca9c215a-e568-4d09-b3a9-b5727cd831d6" />
+</SemanticDomains>
+</rt>
+<rt class="LexSense" guid="25405f01-a102-4530-a562-039cfee382f2" ownerguid="bc946b43-3279-470e-a4c2-0a8690174c1c">
+<MorphoSyntaxAnalysis>
+<objsur t="r" guid="6fb8f026-f2cf-42c8-ae18-8f969d9462e2" />
+</MorphoSyntaxAnalysis>
+<Gloss>
+<AUni ws="en">bubble gum</AUni>
+</Gloss>
+<DiscourseNote>
+<AStr ws="en">
+<Run ws="en">kkk</Run>
+</AStr>
+</DiscourseNote>
+<EncyclopedicInfo>
+<AStr ws="en">
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dLanguage+Explorer%26tool%3dinterlinearEdit%26guid%3d846e0f08-e992-4388-aaf2-ba15e873dc27%26server%3d.%5cSILFW%26database%3dtokpisin" namedStyle="Hyperlink">This is my string linking info</Run>
+</AStr>
+</EncyclopedicInfo>
+<Examples>
+<objsur t="o" guid="9a6c2b89-9185-4bab-aa56-55bc25095d48" />
+</Examples>
+<Pictures>
+<objsur t="o" guid="32320414-d16d-4742-bd1e-47fd822a47e0" />
+</Pictures>
+</rt>
+<rt class="StTxtPara" guid="aaaa9d46-7236-4000-aeb7-fc90a86414bd" ownerguid="d64678a9-56ed-4a62-9ad0-c8109c2cf81b">
+<StyleRules>
+<Prop namedStyle="Normal" />
+</StyleRules>
+<Contents>
+<Str>
+<Run ws="en" namedStyle="Character Formatting 1">Often burial takes place on </Run>
+<Run ws="en" externalLink="http://members.virtualtourist.com/m/p/m/1fb302/" namedStyle="Character Formatting 2">cliffs</Run>
+<Run ws="en" namedStyle="Character Formatting 1">. This was also the case in biblical times see </Run>
+<Run ws="en" externalLink="libronixdls:jump|pos=LLS-AOL%3A1546%3CT0001546%3E.4.0|ref=topic%2Btopics.Grave|res=LLS%3A14.0.10" namedStyle="Character Formatting 2">graves</Run>
+<Run ws="en" namedStyle="Character Formatting 1">.   They </Run>
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dLanguage+Explorer%26tool%3dlexiconEdit%26guid%3db95f6a9b-1ec0-492f-a0f2-c34938b30143%26server%3d.%5cSILFW%26database%3dTokPisin" namedStyle="Character Formatting 2">survey</Run>
+</Str>
+</Contents>
+<ParseIsCurrent val="False" />
+</rt>
+<rt class="StTxtPara" guid="0d7e7d28-b9e8-4666-bca2-3068cb103c76" ownerguid="d64678a9-56ed-4a62-9ad0-c8109c2cf81b">
+<StyleRules>
+<Prop namedStyle="Normal" />
+</StyleRules>
+<Contents>
+<Str>
+<Run ws="en" namedStyle="Character Formatting 1">Assume this is in the </Run>
+<Run ws="en" externalLink="libronixdls:jump|pos=LLS-AOL%3A1548%3CT0001548%3E.4.0|ref=topic%2Btopics.Graving|res=LLS%3A14.0.10" namedStyle="Character Formatting 2">translation editor</Run>
+<Run ws="en" namedStyle="Character Formatting 1"> - </Run>
+<Run ws="en" tags="4B982476-EDD0-4CCD-8186-AF08B727F8BE" namedStyle="Character Formatting 1">When we debated</Run>
+<Run ws="en" namedStyle="Character Formatting 1"> about the use of the term matmat, there was a heated discussion. One of the language helpers acutally walked out after this term was agreed to by the others. Here is an </Run>
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dLanguage+Explorer%26tool%3dinterlinearEdit%26guid%3df9a98bcb-677d-485d-8d7d-5ad3e108213c%26server%3d.%5cSILFW%26database%3dTokPisin%26ITextInInterlinearMode%3dbool%3aTrue" namedStyle="Character Formatting 2">example text</Run>
+<Run ws="en" namedStyle="Character Formatting 1"> that was elicited that used the word.</Run>
+</Str>
+</Contents>
+<ParseIsCurrent val="False" />
+</rt>
+<rt class="StTxtPara" guid="d0855a70-194c-47fd-a990-af9f9cb8e29d" ownerguid="62023811-9e95-4f41-91e6-f8a420b7eda7">
+<StyleRules>
+<Prop namedStyle="Normal" />
+</StyleRules>
+<Contents>
+<Str>
+<Run ws="en" namedStyle="Character Formatting 1">The first thing that we noticed was that the g</Run>
+<Run ws="en" tags="B6829F20-7E6C-41B6-B2FD-0F8E68C3FEA4" namedStyle="Character Formatting 1">randfather was</Run>
+<Run ws="en" namedStyle="Character Formatting 1"> taken to a cliff on the side of a narrow ravine where people are buried (</Run>
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dLanguage+Explorer%26tool%3dlexiconEdit%26guid%3d8f36ae0c-674b-4ef8-b441-94647265e3af%26server%3d.%5cSILFW%26database%3dTokPisin" namedStyle="Character Formatting 2">matmat</Run>
+<Run ws="en" namedStyle="Character Formatting 1">).</Run>
+</Str>
+</Contents>
+<ParseIsCurrent val="False" />
+</rt>
+<rt guid="35396ce9-d39c-4bb5-9f6b-6d7d5d2e27e1" class="StTxtPara" ownerguid="054cdc6f-7eba-414d-896f-10e3de15c657">
+<StyleRules>
+<Prop namedStyle="Normal" />
+</StyleRules>
+<Contents>
+<Str>
+<Run ws="en">This is a test.  If the </Run>
+<Run ws="en" externalLink="ilfw://localhost/link?app%3dLanguage+Explorer%26tool%3dlexiconEdit%26guid%3dd2271654-4b4c-4cb5-9134-a25d21427252%26server%3d.%5cSILFW%26database%3dtokpisin%26tag%3d" namedStyle="Hyperlink">mountain</Run>
+<Run ws="en"> is there, climb it even if it's only a </Run>
+<Run ws="en" externalLink="silfw://localhost/link?app%3dflex%26database%3dTokPisin%26server%3d%26tool%3dlexiconEdit%26guid%3d724b9e6a-0a73-4b7e-a2fe-5178f8847f91%26tag%3d" namedStyle="Hyperlink">hill</Run>
+<Run ws="en">.</Run>
+</Str>
+</Contents>
+<ParseIsCurrent val="False" />
+<Segments>
+<objsur guid="8550bf2f-9002-4c17-bcb6-2ca0f28346dd" t="o" />
+<objsur guid="745cc1c8-7407-471b-b1bf-3dd5071dd5f3" t="o" />
+</Segments>
+</rt>
+</languageproject>

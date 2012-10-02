@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtdel" num="2.2.12" abbr="edd" file="FW\EdtDel.xml">
+ <title tag="edtdel">Edit-Delete Tests</title>
+ <index>
+<li>Delete</li>
+		<li>Edit: Delete</li>
+ </index>
+
+  <introduction>
+<p>Brings up a dialog, which is used to clarify the item that the user wants to delete. It presents all of the possible items that might be deleted according to the current context, and allows the user to make the choice as to which item to delete.</p>
+<p>The basic functionality of the Edit menu is tested via the <link uri="../StdCtrls/MenuBtn.xml">Menu button tests</link>. That includes this menu item. This separate test exists to test the more complex behavior of this menu item.</p>
+  </introduction>
+  <context>
+<p>See specs at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Delete" type="doc">Edit: Delete</link>
+and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Delete/DeleteEffects.html" type="doc">Edit : Delete Effects (dialog)</link>
+and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Incoming/IncomingReferencesExplorer.html" type="doc">Edit : Delete (Incoming References Explorer)</link>
+</p>
+  </context>
+
+ <case id="eddAct" num="1.0" order="any">
+  <title tag="eddAct">Activate Edit Delete</title>
+  <context>
+<p>The application is displayed and the cursor is not in editable text</p>
+</context>
+
+  <step name="1.1" link="Bug">Select the Edit menu.
+	<r>The Delete menu item is grayed out and disabled.</r>
+	<p name="bug">Edit Delete menu item enabled for non-editable text</p>
+  </step>
+  <step name="1.2">Select Delete... from the Edit menu and test using <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link>.
+	<r>Use the name "Edit Delete" when reporting bugs from the basic dialog tests.</r>
+  </step>
+</case>
+
+ <case id="eddNsel" num="2.0" order="any">
+  <title tag="eddNsel">Edit Delete With No Selection (not V1)</title>
+  <context>
+<p>When no text is selected, but the cursor is in editable text</p>
+</context>
+
+  <step name="2.1" link="Bug">Select Delete... from the Edit menu
+	<r>The Delete dialog appears. The Delete radio group displays a context sensitive list of objects that can be deleted including "Character".</r>
+	<p name="bug">Edit Delete dialog not displayed</p>
+	<p name="bug">Edit Delete radio group missing deletable objects</p>
+  </step>
+  <step name="2.2" link="Bug">Select Character from the radio group. Click OK.
+	<r>The Delete dialog disappears. The character following the cursor is deleted.</r>
+	<p name="bug">Edit Delete Character item not deleted</p>
+  </step>
+  <step name="2.3" link="Bug">Select a structured item from the radio group (like Entry). Click OK.
+	<r>The Delete dialog disappears. If the deletion would affect an object that is the target of links from other objects, then the <link uri="EdtDelEffDiag.xml" type="test">Delete Effects dialog</link> is displayed, showing the consequences of the deletion and allowing the user to cancel the deletion.</r>
+	<p name="bug">Edit Delete Effects dialog not displayed</p>
+  </step>
+
+ </case>
+
+ <case id="eddSel" num="3.0" order="any">
+  <title tag="eddSel">Edit Delete Selected Text</title>
+  <context>
+  <p>When editable text is selected</p>
+  </context>
+
+  <step name="3.1" link="Bug">Select Delete... from the Edit menu
+	<r>The Delete dialog appears. The Delete radio group displays a context sensitive list of objects that can be deleted including "Selected Text".</r>
+	<p name="bug">Edit Delete dialog not displayed for selected text</p>
+	<p name="bug">Edit Delete radio group missing deletable objects</p>
+  </step>
+  <step name="3.2" link="Bug">Choose Selected Text from the radio group. Click OK.
+	<r>The Delete dialog disappears. The selected text is deleted.</r>
+	<p name="bug">Edit Delete selected text not deleted</p>
+  </step>
+  <step name="3.3" link="Bug">Select a structured item from the radio group (like Entry). Click OK.
+	<r>The Delete dialog disappears. If the deletion would affect an object that is the target of links from other objects, then the <link uri="EdtDelEffDiag.xml" type="test">Delete Effects dialog</link> is displayed, showing the consequences of the deletion and allowing the user to cancel the deletion.</r>
+	<p name="bug">Edit Delete Effects dialog not displayed</p>
+	<p name="bug">Edit Delete Structured text fails to remove selected text</p>
+  </step>
+
+ </case>
+
+ <case id="eddSub" num="4.0" order="any">
+  <title tag="eddSub">Edit Delete Subentry</title>
+  <context>
+  <p>When the cursor is in a subentry or subanalysis</p>
+  </context>
+
+  <step name="4.1" link="Bug">Select Delete... from the Edit menu
+	<r>The Delete dialog appears. The Delete radio group displays a context sensitive list of objects that can be deleted including Subentry.</r>
+	<p name="bug">Edit Delete dialog not displayed for selected subentry</p>
+	<p name="bug">Edit Delete radio group missing deletable subentry</p>
+  </step>
+  <step name="4.2" link="Bug">Choose Subentry from the radio group. Click OK.
+	<r>The Delete dialog disappears. The selected subentry is deleted.</r>
+	<p name="bug">Edit Delete selected subentry not deleted</p>
+  </step>
+  <step name="4.3" link="Bug">Click in a subentry which is the target of a reference field in another record. Select Delete... from the Edit menu. Select Subentry from the radio group. Click OK.
+	<r>The Delete dialog disappears. If the deletion would affect an object that is the target of links from other objects, then the <link uri="EdtDelEffDiag.xml" type="test">Delete Effects dialog</link> is displayed, showing the consequences of the deletion and allowing the user to cancel the deletion.</r>
+  </step>
+
+ </case>
+
+ <update date="Apr-25-01" author="RickM">Put into XML format</update>
+ <update date="May-08-01" author="MikeL">Made more general</update>
+ <update date="Sep-05-02" author="MikeL">Added case 4 and made links to Delete Effects dialog test</update>
+
+</test>

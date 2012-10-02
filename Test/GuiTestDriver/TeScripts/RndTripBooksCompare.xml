@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<on-dialog title="Imported Books" until="2000"  on-fail="skip">
+
+			<click path="9:Compare and Merge/43:Compare and Merge"/>
+			<insert>{ENTER}</insert>
+			<on-dialog title="Translation Editor" until="1000" on-fail="skip">
+				<glimpse path="18:Translation Editor/9:Yes/43:Yes" on-pass="assert">
+*** Differences found during 'Jonah' book compare!
+				</glimpse>
+			</on-dialog>
+
+			<click path="9:Select an imported book, and then click one of the buttons below.[2]/34:Jonah"/>
+			<insert>{DOWN}</insert>
+
+			<click path="9:Compare and Merge/43:Compare and Merge"/>
+			<insert>{ENTER}</insert>
+			<on-dialog title="Translation Editor" until="1000" on-fail="skip">
+				<glimpse path="18:Translation Editor/9:Yes/43:Yes" on-pass="assert">
+*** Differences found during 'Matthew' book compare!
+				</glimpse>
+			</on-dialog>
+
+			<insert>{DOWN}</insert>
+			<click path="9:Compare and Merge/43:Compare and Merge"/>
+			<insert>{ENTER}</insert>
+			<on-dialog title="Translation Editor" until="1000" on-fail="skip">
+				<glimpse path="18:Translation Editor/9:Yes/43:Yes" on-pass="assert">
+*** Differences found during 'Mark' book compare!
+				</glimpse>
+			</on-dialog>
+
+		</on-dialog>
+
+	</on-application>
+
+</accil>

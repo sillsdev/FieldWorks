@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidAnalysisTargetError" xml:space="preserve">
+	<value>Unable to generate analysis target.</value>
+  </data>
+  <data name="kstidCyclicStratumNotSupported" xml:space="preserve">
+	<value>Cyclic strata are currently not supported.</value>
+  </data>
+  <data name="kstidFieldNotDefined" xml:space="preserve">
+	<value>'{0}' field is not defined in '{1}' {2}.</value>
+  </data>
+  <data name="kstidInvalidField" xml:space="preserve">
+	<value>'{0}' field is invalid in '{1}' {2}.</value>
+  </data>
+  <data name="kstidInvalidLexEntryShape" xml:space="preserve">
+	<value>Failure to translate shape '{0}' of lexical entry '{1}' into a phonetic shape using character table '{2}'.</value>
+  </data>
+  <data name="kstidInvalidRuleShape" xml:space="preserve">
+	<value>Failure to translate shape '{0}' of rule '{1}' into a phonetic shape using character table '{2}'.</value>
+  </data>
+  <data name="kstidInvalidRuleSeg" xml:space="preserve">
+	<value>Segment or boundary marker '{0}' is not defined in character definition table '{2}'.</value>
+  </data>
+  <data name="kstidInvalidWord" xml:space="preserve">
+	<value>Failure to translate input word '{0}' into a phonetic shape using character table '{1}'.</value>
+  </data>
+  <data name="kstidLLNotMember" xml:space="preserve">
+	<value>{0} is not a member of this collection.</value>
+  </data>
+  <data name="kstidNoLang" xml:space="preserve">
+	<value>There is no current language.</value>
+  </data>
+  <data name="kstidNoSurfaceStratum" xml:space="preserve">
+	<value>Surface stratum is not defined.</value>
+  </data>
+  <data name="kstidParseError" xml:space="preserve">
+	<value>Unable to parser input file: {0}.</value>
+  </data>
+  <data name="kstidPShapeMaxSize" xml:space="preserve">
+	<value>Cannot insert {0} in to phonetic shape, because it is already at max size.</value>
+  </data>
+  <data name="kstidSimultOrderNotSupported" xml:space="preserve">
+	<value>Simultaneous phonological rule ordering is currently not supported.</value>
+  </data>
+  <data name="kstidTooManyFeatValues" xml:space="preserve">
+	<value>Too many feature values specified.</value>
+  </data>
+  <data name="kstidTooManySegs" xml:space="preserve">
+	<value>Rule '{0}' is trying to insert too many segments into the phonetic shape.</value>
+  </data>
+  <data name="kstidUninstEnv" xml:space="preserve">
+	<value>A rule requires that the target agree in the feature '{0}' with the environment, but the feature is uninstantiated in the environment.</value>
+  </data>
+  <data name="kstidUnknownCharDefTable" xml:space="preserve">
+	<value>Character definition table {0} is unknown.</value>
+  </data>
+  <data name="kstidUnknownFeat" xml:space="preserve">
+	<value>Unknown feature '{0}'.</value>
+  </data>
+  <data name="kstidUnknownFeatValue" xml:space="preserve">
+	<value>Unknown value '{0}' for feature '{1}'.</value>
+  </data>
+  <data name="kstidUnknownLexEntryStratum" xml:space="preserve">
+	<value>Lexical entry '{0}' assigned to unknown stratum '{1}'.</value>
+  </data>
+  <data name="kstidUnknownMPRFeat" xml:space="preserve">
+	<value>MPR Feature '{0}' is unknown.</value>
+  </data>
+  <data name="kstidUnknownNatClass" xml:space="preserve">
+	<value>Natural class '{0}' is unknown.</value>
+  </data>
+  <data name="kstidUnknownPOS" xml:space="preserve">
+	<value>POS '{0}' is unknown.</value>
+  </data>
+  <data name="kstidUnknownStratum" xml:space="preserve">
+	<value>Stratum '{0}' is unknown.</value>
+  </data>
+  <data name="kstidUnknownVar" xml:space="preserve">
+	<value>Alpha variable '{0}' is unknown.</value>
+  </data>
+  <data name="kstidUnorderOrderNotSupported" xml:space="preserve">
+	<value>Unordered morphological rules are currently not supported.</value>
+  </data>
+  <data name="kstidPatternCombine" xml:space="preserve">
+	<value>Unable to combine patterns of different sizes.</value>
+  </data>
+  <data name="kstidInvalidIPAChar" xml:space="preserve">
+	<value>'{0}' is not a valid IPA character.</value>
+  </data>
+  <data name="kstidUnknownFamily" xml:space="preserve">
+	<value>Unknown lexical family '{0}'.</value>
+  </data>
+  <data name="kstidUnknownMRule" xml:space="preserve">
+	<value>Unknown morphological rule '{0}'.</value>
+  </data>
+  <data name="kstidUnknownTemplate" xml:space="preserve">
+	<value>Unknown affix template '{0}'.</value>
+  </data>
+  <data name="kstidInvalidSlot" xml:space="preserve">
+	<value>A slot in affix template '{0}' is invalid.</value>
+  </data>
+  <data name="kstidLexEntry" xml:space="preserve">
+	<value>&lt;ID: {0}, Allomorphs: ({1}), Gloss: {2}&gt;</value>
+  </data>
+  <data name="kstidTraceBlocking" xml:space="preserve">
+	<value>Blocking [Type: {0}, Entry: {1}]</value>
+  </data>
+  <data name="kstidTraceLexLookup" xml:space="preserve">
+	<value>Lexical Lookup [Shape: {0}, Stratum: {1}]</value>
+  </data>
+  <data name="kstidTraceMorphologicalRuleAnalysis" xml:space="preserve">
+	<value>Morphological Rule Analysis [Rule: {0}, Output: {2}]</value>
+  </data>
+  <data name="kstidTraceMorphologicalRuleAnalysisInputs" xml:space="preserve">
+	<value>Morphological Rule Analysis [Rule: {0}, Input: {1}, Output: {2}]</value>
+  </data>
+  <data name="kstidTraceMorphologicalRuleSynthesis" xml:space="preserve">
+	<value>Morphological Rule Synthesis [Rule: {0}, Output: {2}]</value>
+  </data>
+  <data name="kstidTraceMorphologicalRuleSynthesisInputs" xml:space="preserve">
+	<value>Morphological Rule Synthesis [Rule: {0}, Input: {1}, Output: {2}]</value>
+  </data>
+  <data name="kstidTracePhonologicalRuleAnalysis" xml:space="preserve">
+	<value>Phonological Rule Analysis [Rule: {0}, Output: {2}]</value>
+  </data>
+  <data name="kstidTracePhonologicalRuleAnalysisInputs" xml:space="preserve">
+	<value>Phonological Rule Analysis [Rule: {0}, Input: {1}, Output: {2}]</value>
+  </data>
+  <data name="kstidTracePhonologicalRuleSynthesis" xml:space="preserve">
+	<value>Phonological Rule Synthesis [Rule: {0}, Output: {2}]</value>
+  </data>
+  <data name="kstidTracePhonologicalRuleSynthesisInputs" xml:space="preserve">
+	<value>Phonological Rule Synthesis [Rule: {0}, Input: {1}, Output: {2}]</value>
+  </data>
+  <data name="kstidTraceStratumAnalysisIn" xml:space="preserve">
+	<value>Stratum Analysis In [Stratum: {0}, Input: {1}]</value>
+  </data>
+  <data name="kstidTraceStratumAnalysisOut" xml:space="preserve">
+	<value>Stratum Analysis Out [Stratum: {0}, Output: {1}]</value>
+  </data>
+  <data name="kstidTraceStratumSynthesisIn" xml:space="preserve">
+	<value>Stratum Synthesis In [Stratum: {0}, Input: {1}]</value>
+  </data>
+  <data name="kstidTraceStratumSynthesisOut" xml:space="preserve">
+	<value>Stratum Synthesis Out [Stratum: {0}, Output: {1}]</value>
+  </data>
+  <data name="kstidTraceTemplateAnalysisIn" xml:space="preserve">
+	<value>Template Analysis In [Template: {0}, Input: {1}]</value>
+  </data>
+  <data name="kstidTraceTemplateAnalysisOut" xml:space="preserve">
+	<value>Template Analysis Out [Template: {0}, Output: {1}]</value>
+  </data>
+  <data name="kstidTraceTemplateSynthesisIn" xml:space="preserve">
+	<value>Template Synthesis In [Template: {0}, Input: {1}]</value>
+  </data>
+  <data name="kstidTraceTemplateSynthesisOut" xml:space="preserve">
+	<value>Template Synthesis Out [Template: {0}, Output: {1}]</value>
+  </data>
+  <data name="kstidTraceWordAnalysis" xml:space="preserve">
+	<value>Word Analysis [Input: {0}]</value>
+  </data>
+  <data name="kstidTraceWordSynthesis" xml:space="preserve">
+	<value>Word Synthesis [Root: {0}, Allomorph: {1}, Rules: ({2}), RZ Features: {{{3}}}]</value>
+  </data>
+  <data name="kstidWordAnalysis" xml:space="preserve">
+	<value>&lt;Shape: {0}, POSs: ({1}), MRules: ({2}), Stratum: {3}&gt;</value>
+  </data>
+  <data name="kstidWordSynthesis" xml:space="preserve">
+	<value>&lt;Shape: {0}, POS: {1}, Root ID: {2}, Stratum: {3}, Gloss: {4}&gt;</value>
+  </data>
+  <data name="kstidTraceNoOutput" xml:space="preserve">
+	<value>*None*</value>
+  </data>
+  <data name="kstidTraceReportSuccess" xml:space="preserve">
+	<value>Successful Parse [Output: {0}]</value>
+  </data>
+  <data name="kstidInvalidPseqShape" xml:space="preserve">
+	<value>Failure to translate shape '{0}' in a phonetic sequence into a phonetic shape using character table '{1}'.</value>
+  </data>
+  <data name="kstidInvalidSubruleType" xml:space="preserve">
+	<value>Invalid subrule defined in rule '{0}'.</value>
+  </data>
+  <data name="kstidPhonSubruleError" xml:space="preserve">
+	<value>The specified subrule is not associated with this rule.</value>
+  </data>
+  <data name="kstidUnknownMorpheme" xml:space="preserve">
+	<value>Unknown morpheme '{0}'.</value>
+  </data>
+  <data name="kstidUnknownAllo" xml:space="preserve">
+	<value>Unknown allomorph '{0}'.</value>
+  </data>
+</root>

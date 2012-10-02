@@ -1,0 +1,13 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="Bugs\overview.xml">
+ <title tag="bug">Software Bugs</title>
+ <index>
+  <li>Bugs</li>
+ </index>
+ <moduleGroup>
+  <li><link uri="Bug.xml" type="module">What is a bug?</link></li>
+  <li><link uri="Pattern.xml" type="module">What is a bug pattern?</link></li>
+  <li><link uri="Report.xml" type="module">What is a bug report?</link></li>
+  <li><link uri="PatList.xml" type="module">Bug pattern list</link></li>
+ </moduleGroup>
+</overview>

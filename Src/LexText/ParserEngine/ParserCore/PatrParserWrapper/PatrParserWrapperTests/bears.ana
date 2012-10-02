@@ -1,0 +1,54 @@
+\a %2%< V bear > 3SPRES%< N bear > PL%
+\d %2%bear-s%bear-s%
+\cat %2%V%N%
+\fd %2%=3s%=plur%
+\w bears
+\c 1
+
+\a %2%< V bear >%< N bear >%
+\d %2%bear%bear%
+\cat %2%V%N%
+\fd %2%%%
+\w bear
+
+\a %2%< V bear > 3SPRES%< N bear > PL%
+\d %2%bear-s%bear-s%
+\cat %2%V%N%
+\fd %2%=3s%=plur%
+\w bears
+\n .\n
+
+\a %2%< V bear > 3SPRES%< N bear > PL%
+\d %2%bear-s%bear-s%
+\cat %2%V%N%
+\fd %2%=3s%=plur%
+\w bears
+\c 1
+\n ,
+
+\a %2%< V bear > 3SPRES%< N bear > PL%
+\d %2%bear-s%bear-s%
+\cat %2%V%N%
+\fd %2%=3s%=plur%
+\w bears
+
+\a %2%< V bear >%< N bear >%
+\d %2%bear%bear%
+\cat %2%V%N%
+\fd %2%%%
+\w bear
+\n .\n
+
+\a %2%< V bear > 3SPRES%< N bear > PL%
+\d %2%bear-s%bear-s%
+\cat %2%V%N%
+\fd %2%=3s%=plur%
+\w bears
+\c 1
+
+\a %2%< V bear > 3SPRES%< N bear > PL%
+\d %2%bear-s%bear-s%
+\cat %2%V%N%
+\fd %2%=3s%=plur%
+\w bears
+\n .\n

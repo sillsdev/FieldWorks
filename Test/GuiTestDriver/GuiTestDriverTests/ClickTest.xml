@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+	<on-application log="all" run="ok" on-fail="assert">
+		<!-- special menu click - click each node of a path -->
+		<click wait="3000" for="all" path="menu:Tools/menu:Lexicon/menu:Browse"/>
+		<!-- click object from model -->
+		<click select="//menubar[@id='mainMenu']/button//item[item]"/>
+		<!-- click on a dialog -->
+		<click path="12:Help/menu:About..." />
+		<on-dialog wait="30000" title="About SIL FieldWorks Language Explorer" on-fail="assert">
+			<click wait="1000" path="button:OK" />
+		</on-dialog>
+		<!-- right click -->
+		<click side="right" wait="300" path="2:System"/>
+		<insert wait="300">n</insert> <!-- minimize -->
+		<on-desktop wait="3000" >
+			<click wait="1000" path="window:Running Applications/button:Kalaba - FieldWorks Language Explorer"/>
+		</on-desktop>
+		<!-- double click -->
+		<click repeat="2" path="window:ParentOfMenuBar/toolbar:Standard/button:Next record"/>
+	</on-application>
+</accil>

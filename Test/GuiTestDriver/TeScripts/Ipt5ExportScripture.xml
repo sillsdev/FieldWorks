@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 5 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- set case specific variables -->
+		<var id="TestPlan" select="tests/test[1]/@Test-Plan"/>
+		<var id="Mfr" select="tests/test[@case='$TestCase;']/@mfr"/>
+
+		<if>
+			<condition of="$Mfr" is="(none)"/>
+			<then>
+				<var id="ScriptureMstrResultsFile" set="FALSE"/>
+			</then>
+			<else>
+				<var id="ScriptureMstrResultsFile" set="$Mfr"/>
+			</else>
+		</if>
+
+		<if>
+			<condition of="$TestPlan" is="ImportPt5"/>
+			<then>
+				<var id="Scripture_File_Exists" set="C:\\GuiTestResults\\ImportParatext5\\Test Case $TestCase; Scripture.sf" file-exists="TRUE"/>
+			</then>
+			<else>
+				<!-- TestPlan is ImportPt5BT -->
+				<var id="Scripture_File_Exists" set="C:\\GuiTestResults\\ImportParatext5BT\\Test Case $TestCase; Scripture.sf" file-exists="TRUE"/>
+			</else>
+		</if>
+
+		<!-- ========================================================================== -->
+
+		<!-- Menu Model = File > Export > Toolbox -->
+		<click select="menubar/file/export/standard-format-t"/>
+		<if>
+			<condition of="$ChkedScripture" is="FALSE"/>
+			<then>
+				<glimpse id="no_menu1" path="menubar/file/export/standard-format-t" prop="unavailable" on-fail="assert"/>
+			</then>
+		</if>
+
+		<var id="ActualState" set="$ScriptureMstrResultsFile"/>
+		<if>
+			<condition of="$ActualState" is="FALSE"/>
+			<then>
+				<!-- There is no ScriptureMstrResultsFile to test against -->
+				<var id="Do Nothing" set="Do Nothing"/>
+			</then>
+			<else>
+				<on-dialog title="Export Standard Format (USFM-Toolbox)" until="10000" on-fail="skip">
+
+					<!--"Export what" check box group-->
+					<var id="GuiChkBox" set="44:Scripture"/>
+					<glimpse id="ChkBoxState5" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+					<var id="ActualState" set="$ChkBoxState5"/>
+					<var id="DesiredState" set="TRUE"/>
+					<include from="IncCheckBox.xml"/>
+
+					<var id="GuiChkBox" set="44:Back Translations (interleaved)"/>
+					<glimpse id="ChkBoxState6" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+					<var id="ActualState" set="$ChkBoxState6"/>
+					<var id="DesiredState" set="FALSE"/>
+					<include from="IncCheckBox.xml"/>
+
+					<var id="GuiChkBox" set="44:Annotations (interleaved)"/>
+					<glimpse id="ChkBoxState7" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+					<var id="ActualState" set="$ChkBoxState7"/>
+					<var id="DesiredState" set="FALSE"/>
+					<include from="IncCheckBox.xml"/>
+
+					<!--"Output To" radio button group-->
+					<var id="GuiRadioBtn1" set="9:One file per book/45:One file per book"/>
+					<var id="GuiRadioBtn2" set="9:Single file/45:Single file"/>
+					<!--Click the 2nd radio button, "Single file"-->
+					<var id="RB1_DesiredState" set="FALSE"/>
+					<include from="IncRadioButton.xml"/>
+
+					<click path="9:Browse...[2]/43:Browse..."/>
+
+					<on-dialog title="Save As" until="10000">
+						<if>
+							<condition of="$TestPlan" is="ImportPt5"/>
+							<then>
+								<insert>C:\GuiTestResults\ImportParatext5\Test Case $TestCase; Scripture.sf</insert>
+							</then>
+							<else>
+								<!-- TestPlan is ImportPt5BT -->
+								<insert>C:\GuiTestResults\ImportParatext5BT\Test Case $TestCase; Scripture.sf</insert>
+							</else>
+						</if>
+						<click path="$Save"/>
+						<if>
+							<condition of="$Scripture_File_Exists" is="TRUE"/>
+							<then>
+								<click path="$Yes"/>
+							</then>
+						</if>
+					</on-dialog>
+					<click path="$OK"/>
+				</on-dialog>
+
+				<on-dialog title="Translation Editor" until="10000" on-fail="skip">
+					<click path="$Yes"/>
+				</on-dialog>
+			</else>
+		</if>
+
+	</on-application>
+
+</accil>

@@ -1,0 +1,3792 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000030">
+<rt guid="2a425bc1-0d34-4d2f-8b78-75c6fec9d7e6" class="LangProject">
+<DateCreated val="2009-1-23 12:11:14.487" />
+<DateModified val="2010-7-1 11:14:18.570" />
+<AnalysisWss>
+<Uni>en x-rtl</Uni>
+</AnalysisWss>
+<CurVernWss>
+<Uni>x-kal</Uni>
+</CurVernWss>
+<CurAnalysisWss>
+<Uni>en x-rtl</Uni>
+</CurAnalysisWss>
+<CurPronunWss>
+<Uni>x-kal</Uni>
+</CurPronunWss>
+<VernWss>
+<Uni>id x-kal x-kal-etic</Uni>
+</VernWss>
+<ExtLinkRootDir>
+<Uni>C:\DFW\distfiles</Uni>
+</ExtLinkRootDir>
+</rt>
+<rt class="UserView" guid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Type val="1" />
+<App val="5EA62D01-7A78-11D4-8078-0000C0FB81B5" />
+<System val="true" />
+<Details>
+<Binary>03000000
+</Binary>
+</Details>
+<Name>
+<AUni ws="en">Data Entry</AUni>
+</Name>
+<Records>
+<objsur t="o" guid="226275F6-EB2F-4961-A04C-94D12A3418DA" />
+<objsur t="o" guid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2" />
+<objsur t="o" guid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5" />
+<objsur t="o" guid="D0FF8575-7B55-4398-A1CC-0374BFF7E138" />
+<objsur t="o" guid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127" />
+<objsur t="o" guid="133B9771-C957-4849-B661-9763C7C73F46" />
+<objsur t="o" guid="19B9384E-A41C-4799-B084-055F299742B1" />
+<objsur t="o" guid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2" />
+<objsur t="o" guid="69BE04B7-50CB-410F-907A-FD3CF648775A" />
+<objsur t="o" guid="00BD56B6-0C8B-4CC6-97B4-5C20F047DD5B" />
+</Records>
+</rt>
+<rt class="UserViewRec" guid="226275F6-EB2F-4961-A04C-94D12A3418DA" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="7" />
+<Fields>
+<objsur t="o" guid="EAF16D52-2D53-4CCF-AE49-9512E4C9D586" />
+<objsur t="o" guid="E25CB867-D089-4D11-AD3D-4187263361ED" />
+<objsur t="o" guid="E1932CDB-AEBD-4C60-8145-2B791C945E43" />
+<objsur t="o" guid="715CBB7C-C4EE-4AEF-BF47-F1FAC73D3ACA" />
+<objsur t="o" guid="25D5A9E2-35EB-42E7-9FCF-ECEF0887391A" />
+<objsur t="o" guid="E6C84130-A57B-403F-9884-EB4B67CFF204" />
+<objsur t="o" guid="02348626-430A-4C3E-9D2A-55574CB9396E" />
+<objsur t="o" guid="E277B1B2-FD6E-4CA6-AB3E-9D9DFE8406D3" />
+<objsur t="o" guid="11A56600-2791-4F17-832F-FD4036BF6136" />
+<objsur t="o" guid="3B8B13FC-EBE5-4D11-A527-13DA6CD3FAF6" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="EAF16D52-2D53-4CCF-AE49-9512E4C9D586" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="E25CB867-D089-4D11-AD3D-4187263361ED" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="E1932CDB-AEBD-4C60-8145-2B791C945E43" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="715CBB7C-C4EE-4AEF-BF47-F1FAC73D3ACA" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="25D5A9E2-35EB-42E7-9FCF-ECEF0887391A" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="E6C84130-A57B-403F-9884-EB4B67CFF204" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="02348626-430A-4C3E-9D2A-55574CB9396E" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="E277B1B2-FD6E-4CA6-AB3E-9D9DFE8406D3" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="11A56600-2791-4F17-832F-FD4036BF6136" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="3B8B13FC-EBE5-4D11-A527-13DA6CD3FAF6" ownerguid="226275F6-EB2F-4961-A04C-94D12A3418DA">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="13" />
+<Fields>
+<objsur t="o" guid="111D6ABE-9D4E-44D6-9AFB-E0A7EB92DF30" />
+<objsur t="o" guid="43DFDB71-DE57-4DAC-8134-C29FF038A555" />
+<objsur t="o" guid="A1C66E15-71FB-40BB-81F2-D4BF17844FA6" />
+<objsur t="o" guid="F20F09EA-3DCF-4774-ADA5-DE09AF1769AC" />
+<objsur t="o" guid="202C7CBC-598A-470F-AEEF-86C2AB1B8197" />
+<objsur t="o" guid="DB259A7C-8E5C-4480-AAF5-69422A0868CF" />
+<objsur t="o" guid="1DC1E535-5F02-4E98-9B15-7D72DD4C8FB9" />
+<objsur t="o" guid="62A4102E-185D-40CA-9B0D-AC598C6FF0FE" />
+<objsur t="o" guid="68C5D4A5-A032-4AE1-A745-4EC79DE8FB05" />
+<objsur t="o" guid="AC818FF3-70F6-4531-8A8F-0E4D1B75CE5F" />
+<objsur t="o" guid="CAFB3A1D-E1CF-4BCF-8C53-10CECBA0F865" />
+<objsur t="o" guid="9B1F4728-6C7A-4B62-854B-5BCE2877C18B" />
+<objsur t="o" guid="7493E1A6-34E6-4E2A-934D-AB568B316257" />
+<objsur t="o" guid="BD1F98DC-3E9F-4C7D-8C49-433BD049EA51" />
+<objsur t="o" guid="DE3F695F-2844-4E7E-9337-C85522258E8E" />
+<objsur t="o" guid="6F6DF1AA-ABF1-4F71-8FF7-C601A45E9FB7" />
+<objsur t="o" guid="CA532104-2D8E-474A-AC2B-C57E5C101A68" />
+<objsur t="o" guid="0BAC56E8-AD4D-46AE-832E-8957D3850666" />
+<objsur t="o" guid="C9711522-7163-4029-AE64-D8C883CEDFCC" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="111D6ABE-9D4E-44D6-9AFB-E0A7EB92DF30" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Full Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The complete name of the person.  Whenever possible, enter names in a consistent pattern such as 'John P. Doe' or 'Doe, John P.'.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="43DFDB71-DE57-4DAC-8134-C29FF038A555" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="A1C66E15-71FB-40BB-81F2-D4BF17844FA6" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="F20F09EA-3DCF-4774-ADA5-DE09AF1769AC" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Biographical Information</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  Biographical information for the person.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="202C7CBC-598A-470F-AEEF-86C2AB1B8197" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DB259A7C-8E5C-4480-AAF5-69422A0868CF" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="1DC1E535-5F02-4E98-9B15-7D72DD4C8FB9" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="62A4102E-185D-40CA-9B0D-AC598C6FF0FE" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="2" />
+<Flid val="13001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Alias</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The assumed or special-usage name of the person.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="68C5D4A5-A032-4AE1-A745-4EC79DE8FB05" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="6" />
+<Flid val="13003" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Gender</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The sex of the person.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="AC818FF3-70F6-4531-8A8F-0E4D1B75CE5F" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="17" />
+<Flid val="13004" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date of Birth</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date the person was born.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="CAFB3A1D-E1CF-4BCF-8C53-10CECBA0F865" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="3" />
+<Flid val="13006" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Place of Birth</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The location where the person was born.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="9B1F4728-6C7A-4B62-854B-5BCE2877C18B" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="6" />
+<Flid val="13008" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Is a Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies whether or not the person is a researcher contributing to this project.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="7493E1A6-34E6-4E2A-934D-AB568B316257" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="5" />
+<Flid val="13009" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Place of Residence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The place where the person lives or calls home.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="BD1F98DC-3E9F-4C7D-8C49-433BD049EA51" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="4" />
+<Flid val="13010" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Education</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The highest level of schooling completed by the person.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DE3F695F-2844-4E7E-9337-C85522258E8E" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="17" />
+<Flid val="13011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date of Death</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date the person died.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="6F6DF1AA-ABF1-4F71-8FF7-C601A45E9FB7" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="5" />
+<Flid val="13013" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Position</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The social position, job title, rank, religious office and other capabilities of the person.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="CA532104-2D8E-474A-AC2B-C57E5C101A68" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="0BAC56E8-AD4D-46AE-832E-8957D3850666" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="C9711522-7163-4029-AE64-D8C883CEDFCC" ownerguid="C61DCC66-54FA-4F50-AACF-B91B5B73D4F2">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="12" />
+<Fields>
+<objsur t="o" guid="D0172342-5932-41EC-BE05-61A695A5F836" />
+<objsur t="o" guid="4793AA86-F178-4B64-99D2-3F883F5812EF" />
+<objsur t="o" guid="28AE4877-0C7E-43A5-B96C-1E6185C7C6D2" />
+<objsur t="o" guid="0592E097-9FCB-4017-95EA-53F54DF8029A" />
+<objsur t="o" guid="F85E183B-9320-4FBF-8CE7-2E8A56AA63E0" />
+<objsur t="o" guid="818E5618-FC3D-44DA-92FB-8394A4308C06" />
+<objsur t="o" guid="D507C765-DAE7-487A-91D2-B647961E0BF9" />
+<objsur t="o" guid="79E9C656-5AF8-44F5-91CC-17E86453D8A6" />
+<objsur t="o" guid="DB634B4B-4D8C-4D6E-8706-01981509CDAD" />
+<objsur t="o" guid="DDB87F94-DD12-4734-92A0-976D41288713" />
+<objsur t="o" guid="9256D533-9CCA-4ECD-95DA-C7A9B93E4BF1" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="D0172342-5932-41EC-BE05-61A695A5F836" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Location Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Specifies a location by a place's name or a unique descriptive phrase.  Enter a more detailed description in the Short Description field, and a complete discussion in the discussion field.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="4793AA86-F178-4B64-99D2-3F883F5812EF" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="28AE4877-0C7E-43A5-B96C-1E6185C7C6D2" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="0592E097-9FCB-4017-95EA-53F54DF8029A" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="F85E183B-9320-4FBF-8CE7-2E8A56AA63E0" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="818E5618-FC3D-44DA-92FB-8394A4308C06" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="D507C765-DAE7-487A-91D2-B647961E0BF9" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="79E9C656-5AF8-44F5-91CC-17E86453D8A6" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="2" />
+<Flid val="12001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Alias</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The assumed or special-usage name of the location.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DB634B4B-4D8C-4D6E-8706-01981509CDAD" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DDB87F94-DD12-4734-92A0-976D41288713" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="9256D533-9CCA-4ECD-95DA-C7A9B93E4BF1" ownerguid="E3ED7393-CA2E-46C0-B4D1-06FFAA3DB6E5">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="D0FF8575-7B55-4398-A1CC-0374BFF7E138" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="26" />
+<Fields>
+<objsur t="o" guid="22CFFF2A-6127-4E54-B145-9003B9CDB6BF" />
+<objsur t="o" guid="92AD8326-00D9-40B5-B61F-23319BB3343F" />
+<objsur t="o" guid="F73AB01F-B111-4E2B-BC6C-96137F60B9FD" />
+<objsur t="o" guid="49030476-48FE-46B1-83BE-79D80A198770" />
+<objsur t="o" guid="4D358788-76F6-4841-8995-CF3DAE7D29A5" />
+<objsur t="o" guid="403FF3D3-3107-47F3-93BB-64BE17D650AA" />
+<objsur t="o" guid="DB9C9DF7-E17C-4AC6-8A44-F065908295AE" />
+<objsur t="o" guid="2A623E39-05B2-4CFF-BAA4-9505F656B5B3" />
+<objsur t="o" guid="2ECB2FE7-97EC-464B-B15F-9B90B27199E5" />
+<objsur t="o" guid="85C37CC7-FA75-49ED-A85C-301BB6DC479B" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="22CFFF2A-6127-4E54-B145-9003B9CDB6BF" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="92AD8326-00D9-40B5-B61F-23319BB3343F" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="F73AB01F-B111-4E2B-BC6C-96137F60B9FD" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="49030476-48FE-46B1-83BE-79D80A198770" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="4D358788-76F6-4841-8995-CF3DAE7D29A5" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="403FF3D3-3107-47F3-93BB-64BE17D650AA" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DB9C9DF7-E17C-4AC6-8A44-F065908295AE" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="2A623E39-05B2-4CFF-BAA4-9505F656B5B3" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="2ECB2FE7-97EC-464B-B15F-9B90B27199E5" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="85C37CC7-FA75-49ED-A85C-301BB6DC479B" ownerguid="D0FF8575-7B55-4398-A1CC-0374BFF7E138">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="27" />
+<Fields>
+<objsur t="o" guid="C8A999E2-6313-4B70-850C-08EFF101A087" />
+<objsur t="o" guid="1753F556-7560-41DA-8EEB-FB95D57B620B" />
+<objsur t="o" guid="661A34B5-B63F-4A73-8C9D-B303291E59A8" />
+<objsur t="o" guid="1C6392A9-E56D-4723-B205-1F0ECF247027" />
+<objsur t="o" guid="22AD9025-5833-4C7B-A4AF-7F11347E9A81" />
+<objsur t="o" guid="1AB9E8D7-D81E-4B54-B89F-EDF77C0B83A1" />
+<objsur t="o" guid="464675FC-1478-4D4C-AEC1-761E7CE041E9" />
+<objsur t="o" guid="A43A30BB-C472-4FC9-AD93-EB94DEF9C8F9" />
+<objsur t="o" guid="CE281F64-F7B3-4A52-962B-9C649B863E03" />
+<objsur t="o" guid="17A32789-2613-4482-82CE-E2AC2D019CAF" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="C8A999E2-6313-4B70-850C-08EFF101A087" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="1753F556-7560-41DA-8EEB-FB95D57B620B" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="661A34B5-B63F-4A73-8C9D-B303291E59A8" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="1C6392A9-E56D-4723-B205-1F0ECF247027" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="22AD9025-5833-4C7B-A4AF-7F11347E9A81" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="1AB9E8D7-D81E-4B54-B89F-EDF77C0B83A1" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="464675FC-1478-4D4C-AEC1-761E7CE041E9" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="A43A30BB-C472-4FC9-AD93-EB94DEF9C8F9" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="CE281F64-F7B3-4A52-962B-9C649B863E03" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="17A32789-2613-4482-82CE-E2AC2D019CAF" ownerguid="C85BCFA1-ED05-48CB-B35F-FEC32D58F127">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="133B9771-C957-4849-B661-9763C7C73F46" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="5049" />
+<Fields>
+<objsur t="o" guid="63B204A5-7315-4155-B576-B6111A53709A" />
+<objsur t="o" guid="52532CF3-38AF-4B76-8D7F-BEE64B1B28CB" />
+<objsur t="o" guid="A8261760-D0C0-4F0A-AA43-649C37F139EF" />
+<objsur t="o" guid="8BCF9CE5-8705-44BC-9A70-495D782BAD96" />
+<objsur t="o" guid="495EF4B4-0337-44B3-8870-9410FFF3D18F" />
+<objsur t="o" guid="56E47377-E2A8-43D6-88F1-0C0A9F37015D" />
+<objsur t="o" guid="C47276AB-DA12-4DDD-A13E-5FDD60D6711C" />
+<objsur t="o" guid="9D51C840-EEB6-48F3-B32D-85FEC53AB364" />
+<objsur t="o" guid="1F2535CC-15B4-4B79-9340-3511389F3B81" />
+<objsur t="o" guid="10E4BE93-4002-421A-8E94-6F30AD40C21D" />
+<objsur t="o" guid="564C9FAD-2265-4AFC-8B72-2F986A138700" />
+<objsur t="o" guid="298CEC23-FADF-4B54-8854-DAFB4AEB829E" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="63B204A5-7315-4155-B576-B6111A53709A" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="52532CF3-38AF-4B76-8D7F-BEE64B1B28CB" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="A8261760-D0C0-4F0A-AA43-649C37F139EF" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="8BCF9CE5-8705-44BC-9A70-495D782BAD96" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="495EF4B4-0337-44B3-8870-9410FFF3D18F" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="56E47377-E2A8-43D6-88F1-0C0A9F37015D" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="C47276AB-DA12-4DDD-A13E-5FDD60D6711C" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="9D51C840-EEB6-48F3-B32D-85FEC53AB364" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="18" />
+<Flid val="5049006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Infl. Affix Slot</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="1F2535CC-15B4-4B79-9340-3511389F3B81" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="18" />
+<Flid val="5049005" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Infl. Affix Template</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="10E4BE93-4002-421A-8E94-6F30AD40C21D" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="564C9FAD-2265-4AFC-8B72-2F986A138700" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="298CEC23-FADF-4B54-8854-DAFB4AEB829E" ownerguid="133B9771-C957-4849-B661-9763C7C73F46">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="19B9384E-A41C-4799-B084-055F299742B1" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="5042" />
+<Fields>
+<objsur t="o" guid="0688C881-8C7F-4EE1-A4ED-617B00140CA7" />
+<objsur t="o" guid="7990D5FF-B467-437E-B792-0E4E60344397" />
+<objsur t="o" guid="CD7B6E58-BF56-49C5-B170-C2A0BF512F29" />
+<objsur t="o" guid="26547061-F747-4DFF-B857-777961A4846C" />
+<objsur t="o" guid="61F95112-0EA1-491A-A2B4-1FFA1339AC48" />
+<objsur t="o" guid="DA561534-1D86-4F3B-A01A-A106106F53C0" />
+<objsur t="o" guid="A0431A5E-27B5-4D50-ADE3-6774159BF6F7" />
+<objsur t="o" guid="704700D0-3D1C-4198-A204-E58549BA769C" />
+<objsur t="o" guid="FC44A862-82CD-4A2B-9721-B6125D360CE1" />
+<objsur t="o" guid="ED54F116-A69C-4BD1-BEAD-1322B56DD057" />
+<objsur t="o" guid="E705E072-C696-470C-97C7-DF81A0B49FED" />
+<objsur t="o" guid="D3B1398B-6773-4D30-9C8C-8486C7B3041F" />
+<objsur t="o" guid="ADBAEC38-CE68-4519-B126-8F150E3F74E3" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="0688C881-8C7F-4EE1-A4ED-617B00140CA7" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="7990D5FF-B467-437E-B792-0E4E60344397" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="CD7B6E58-BF56-49C5-B170-C2A0BF512F29" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="26547061-F747-4DFF-B857-777961A4846C" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="61F95112-0EA1-491A-A2B4-1FFA1339AC48" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DA561534-1D86-4F3B-A01A-A106106F53C0" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="A0431A5E-27B5-4D50-ADE3-6774159BF6F7" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="704700D0-3D1C-4198-A204-E58549BA769C" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="7" />
+<Flid val="5042002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Prefix</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="FC44A862-82CD-4A2B-9721-B6125D360CE1" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="7" />
+<Flid val="5042001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Postfix</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="ED54F116-A69C-4BD1-BEAD-1322B56DD057" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="21" />
+<Flid val="5042003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Secondary Order</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="E705E072-C696-470C-97C7-DF81A0B49FED" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="D3B1398B-6773-4D30-9C8C-8486C7B3041F" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="ADBAEC38-CE68-4519-B126-8F150E3F74E3" ownerguid="19B9384E-A41C-4799-B084-055F299742B1">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="5021" />
+<Fields>
+<objsur t="o" guid="48EDAA23-74FF-4CAD-9F1D-72C0C909FA93" />
+<objsur t="o" guid="B2CB0F26-00C9-42BA-9AA8-9A38FF4C7F35" />
+<objsur t="o" guid="F541D253-5D3D-4081-A586-BC11BF68EED7" />
+<objsur t="o" guid="23AAAC30-F4BE-4408-9C4F-F0339664A43A" />
+<objsur t="o" guid="D884F579-D634-4E12-A834-04CCE390183C" />
+<objsur t="o" guid="6CAD0D59-5C91-4B34-B493-02BD26A579DC" />
+<objsur t="o" guid="555D3D8F-21D3-4BAC-8889-45EC2DF0B137" />
+<objsur t="o" guid="6E8D5D71-3CC1-40CF-ADCD-7DFE504673AB" />
+<objsur t="o" guid="32E280B8-A2E6-498C-9B50-970CA63D3AE6" />
+<objsur t="o" guid="44AB64AC-63B2-4C5C-91DF-48FFF9984B90" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="48EDAA23-74FF-4CAD-9F1D-72C0C909FA93" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="B2CB0F26-00C9-42BA-9AA8-9A38FF4C7F35" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="F541D253-5D3D-4081-A586-BC11BF68EED7" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="23AAAC30-F4BE-4408-9C4F-F0339664A43A" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="D884F579-D634-4E12-A834-04CCE390183C" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="6CAD0D59-5C91-4B34-B493-02BD26A579DC" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="555D3D8F-21D3-4BAC-8889-45EC2DF0B137" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="6E8D5D71-3CC1-40CF-ADCD-7DFE504673AB" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="32E280B8-A2E6-498C-9B50-970CA63D3AE6" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="44AB64AC-63B2-4C5C-91DF-48FFF9984B90" ownerguid="639C8A48-ECE4-471A-9D06-9DCFA8269FA2">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="69BE04B7-50CB-410F-907A-FD3CF648775A" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="5036" />
+<Fields>
+<objsur t="o" guid="88F886F5-2451-499C-BA15-CF86B822963C" />
+<objsur t="o" guid="A07006D4-B493-4224-A7B7-C567D848FD27" />
+<objsur t="o" guid="C6F4DF17-D000-4B5D-B66F-A94225B4A202" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="88F886F5-2451-499C-BA15-CF86B822963C" ownerguid="69BE04B7-50CB-410F-907A-FD3CF648775A">
+<Type val="2" />
+<Flid val="5036001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="A07006D4-B493-4224-A7B7-C567D848FD27" ownerguid="69BE04B7-50CB-410F-907A-FD3CF648775A">
+<Type val="1" />
+<Flid val="5036002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="C6F4DF17-D000-4B5D-B66F-A94225B4A202" ownerguid="69BE04B7-50CB-410F-907A-FD3CF648775A">
+<Type val="6" />
+<Flid val="5036004" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Optional</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="00BD56B6-0C8B-4CC6-97B4-5C20F047DD5B" ownerguid="4FA9963A-C422-46B2-9B00-6F1EE0EB5F69">
+<Clsid val="5037" />
+<Fields>
+<objsur t="o" guid="B8624F63-C493-4C9E-9004-E43D2E591A8F" />
+<objsur t="o" guid="BD317741-C293-4FA7-A8A2-EB2BB06B9E94" />
+<objsur t="o" guid="4136F7DE-3680-4070-8941-3C1A790B886B" />
+<objsur t="o" guid="1628AC5D-9E19-4EFB-8348-26B89414A1F5" />
+<objsur t="o" guid="CA6DE711-DE10-47A5-99CA-DDF0DF99BF83" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="B8624F63-C493-4C9E-9004-E43D2E591A8F" ownerguid="00BD56B6-0C8B-4CC6-97B4-5C20F047DD5B">
+<Type val="2" />
+<Flid val="5037001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="BD317741-C293-4FA7-A8A2-EB2BB06B9E94" ownerguid="00BD56B6-0C8B-4CC6-97B4-5C20F047DD5B">
+<Type val="1" />
+<Flid val="5037002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="4136F7DE-3680-4070-8941-3C1A790B886B" ownerguid="00BD56B6-0C8B-4CC6-97B4-5C20F047DD5B">
+<Type val="20" />
+<Flid val="5037003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Slots</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="1628AC5D-9E19-4EFB-8348-26B89414A1F5" ownerguid="00BD56B6-0C8B-4CC6-97B4-5C20F047DD5B">
+<Type val="20" />
+<Flid val="5037006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Prefix Slots</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="CA6DE711-DE10-47A5-99CA-DDF0DF99BF83" ownerguid="00BD56B6-0C8B-4CC6-97B4-5C20F047DD5B">
+<Type val="20" />
+<Flid val="5037007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Suffix Slots</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">L</AUni>
+</HelpString>
+</rt>
+<rt class="UserView" guid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Type val="2" />
+<App val="5EA62D01-7A78-11D4-8078-0000C0FB81B5" />
+<System val="true" />
+<Details>
+<Binary>03000000
+</Binary>
+</Details>
+<Name>
+<AUni ws="en">Document</AUni>
+</Name>
+<Records>
+<objsur t="o" guid="607962B6-8A7E-43BE-A97C-EF1AA44B8283" />
+<objsur t="o" guid="C41ABCC3-CC11-408A-8C47-38D152324C74" />
+<objsur t="o" guid="740DE948-22EE-4B17-8C6E-2B20A68594FC" />
+<objsur t="o" guid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554" />
+<objsur t="o" guid="20089B84-E7DE-492D-A78B-361AED033F69" />
+<objsur t="o" guid="B9091C20-895F-4A45-BD5B-BA6132A4324B" />
+<objsur t="o" guid="74E690E5-B5FF-4413-B23B-B80ED78EB69A" />
+<objsur t="o" guid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE" />
+<objsur t="o" guid="1AB5DA29-9CFE-4D17-83E3-D7250F8ED72E" />
+<objsur t="o" guid="4D6417F8-7C5D-4DC5-A610-606D7A880451" />
+</Records>
+</rt>
+<rt class="UserViewRec" guid="607962B6-8A7E-43BE-A97C-EF1AA44B8283" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="7" />
+<Fields>
+<objsur t="o" guid="9881442C-EAE8-454C-B704-64B82400D9CC" />
+<objsur t="o" guid="D947F852-C3C7-4765-9794-96CEE593E89B" />
+<objsur t="o" guid="F14FAA3C-F3BD-469D-A2E9-5BCB808F99B0" />
+<objsur t="o" guid="E73406F4-6BCD-45CD-9C2C-949BC74D7FC3" />
+<objsur t="o" guid="D00AB55C-A8CC-4CFC-B1F9-2D984DB3AFC9" />
+<objsur t="o" guid="E371DBB4-5B1F-48CA-AAF5-684FA6A4D4E2" />
+<objsur t="o" guid="D94C0F60-10F3-4670-B230-7586EE3F5378" />
+<objsur t="o" guid="BC351084-1707-4EBA-BD32-4732599A77AB" />
+<objsur t="o" guid="CDEA281F-272B-4FA3-AB84-755451F6BD11" />
+<objsur t="o" guid="68C04384-757A-4755-BB02-4125B0C5EBCC" />
+<objsur t="o" guid="D396E4CC-80DC-4C9F-9A46-91AB9EEB455C" />
+<objsur t="o" guid="AEC39387-E455-4342-9652-7C595DD3B332" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="9881442C-EAE8-454C-B704-64B82400D9CC" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D947F852-C3C7-4765-9794-96CEE593E89B" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="F14FAA3C-F3BD-469D-A2E9-5BCB808F99B0" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E73406F4-6BCD-45CD-9C2C-949BC74D7FC3" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D00AB55C-A8CC-4CFC-B1F9-2D984DB3AFC9" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E371DBB4-5B1F-48CA-AAF5-684FA6A4D4E2" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D94C0F60-10F3-4670-B230-7586EE3F5378" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="BC351084-1707-4EBA-BD32-4732599A77AB" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="CDEA281F-272B-4FA3-AB84-755451F6BD11" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="68C04384-757A-4755-BB02-4125B0C5EBCC" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D396E4CC-80DC-4C9F-9A46-91AB9EEB455C" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="AEC39387-E455-4342-9652-7C595DD3B332" ownerguid="607962B6-8A7E-43BE-A97C-EF1AA44B8283">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="C41ABCC3-CC11-408A-8C47-38D152324C74" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="13" />
+<Fields>
+<objsur t="o" guid="C68B4516-9750-421D-A3FF-1D455F5B6F16" />
+<objsur t="o" guid="6095DBB9-3DA3-4D62-B6D3-1C35B610927D" />
+<objsur t="o" guid="5868D511-51D8-4FEE-AE35-3F602C8A94EF" />
+<objsur t="o" guid="ADC13291-38C9-497E-B893-9F20A70425D9" />
+<objsur t="o" guid="8226F0A8-9958-4143-AC35-02748E21DA5C" />
+<objsur t="o" guid="2122A193-45E8-48FE-9F97-0753C0B66812" />
+<objsur t="o" guid="A533F024-07E2-4B62-AE92-ACC1C74E9D23" />
+<objsur t="o" guid="A4F108BE-0F79-45E6-81FE-31F5AB31F8E3" />
+<objsur t="o" guid="049B25BF-9643-4089-93E5-810EEFFB5C54" />
+<objsur t="o" guid="73A29029-4B89-49DD-9863-160F04B8B253" />
+<objsur t="o" guid="09983736-617C-4EF8-AB2D-AB423E080E8D" />
+<objsur t="o" guid="DF12F1BA-4F4A-4D13-BA3E-807C3BD12472" />
+<objsur t="o" guid="FC1D92DA-6910-4361-A1DD-F40B52CB573E" />
+<objsur t="o" guid="C32C079C-90E4-4F7F-8E91-4841E74E47CA" />
+<objsur t="o" guid="D3FFD6F4-6571-4CA3-ABDB-086220378BD1" />
+<objsur t="o" guid="00378972-5415-4222-9878-C751A00B381F" />
+<objsur t="o" guid="E83BC363-A03A-47A1-A249-B40C414F6F94" />
+<objsur t="o" guid="F77DFAC6-134C-43CB-BDE4-ACD2767BB78C" />
+<objsur t="o" guid="EFF26477-4B27-41EA-A123-D4FE80587385" />
+<objsur t="o" guid="4F76DA06-30F4-4586-BFE1-CB9106741661" />
+<objsur t="o" guid="02EC89E7-4053-4857-8D60-6E1E8C3D4BF9" />
+<objsur t="o" guid="6290BDC5-5C03-4C3E-8960-0748558A5E5C" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="C68B4516-9750-421D-A3FF-1D455F5B6F16" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-6" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Full Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="6095DBB9-3DA3-4D62-B6D3-1C35B610927D" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="5868D511-51D8-4FEE-AE35-3F602C8A94EF" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="ADC13291-38C9-497E-B893-9F20A70425D9" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">General Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="8226F0A8-9958-4143-AC35-02748E21DA5C" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="17" />
+<Flid val="13004" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date of Birth</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2122A193-45E8-48FE-9F97-0753C0B66812" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="3" />
+<Flid val="13006" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Place of Birth</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="A533F024-07E2-4B62-AE92-ACC1C74E9D23" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="6" />
+<Flid val="13003" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Gender</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="A4F108BE-0F79-45E6-81FE-31F5AB31F8E3" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="17" />
+<Flid val="13011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date of Death</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="049B25BF-9643-4089-93E5-810EEFFB5C54" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="5" />
+<Flid val="13009" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Place of Residence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="73A29029-4B89-49DD-9863-160F04B8B253" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="4" />
+<Flid val="13010" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Education</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="09983736-617C-4EF8-AB2D-AB423E080E8D" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="5" />
+<Flid val="13013" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Position</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="DF12F1BA-4F4A-4D13-BA3E-807C3BD12472" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="6" />
+<Flid val="13008" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Is a Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="FC1D92DA-6910-4361-A1DD-F40B52CB573E" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="2" />
+<Flid val="13001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Alias</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C32C079C-90E4-4F7F-8E91-4841E74E47CA" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Biographical Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D3FFD6F4-6571-4CA3-ABDB-086220378BD1" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="00378972-5415-4222-9878-C751A00B381F" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E83BC363-A03A-47A1-A249-B40C414F6F94" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="F77DFAC6-134C-43CB-BDE4-ACD2767BB78C" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="EFF26477-4B27-41EA-A123-D4FE80587385" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="4F76DA06-30F4-4586-BFE1-CB9106741661" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="02EC89E7-4053-4857-8D60-6E1E8C3D4BF9" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="6290BDC5-5C03-4C3E-8960-0748558A5E5C" ownerguid="C41ABCC3-CC11-408A-8C47-38D152324C74">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="740DE948-22EE-4B17-8C6E-2B20A68594FC" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="12" />
+<Fields>
+<objsur t="o" guid="2CB7BF9C-3EBD-4D6C-923A-DBBFDB7DAA38" />
+<objsur t="o" guid="FAD1AD48-8428-46CF-AB73-692331AF614E" />
+<objsur t="o" guid="B4574B3D-82D9-4840-AF1E-D5BD7B3E6967" />
+<objsur t="o" guid="CB6B0597-6677-4A6C-BC86-231CFC6A7836" />
+<objsur t="o" guid="39616CD5-E66E-4805-AF21-24FEC8DFCD53" />
+<objsur t="o" guid="547513DF-454F-4E94-9015-E51054B08150" />
+<objsur t="o" guid="AFFCCCF4-5B00-465B-8418-B000F71B0FBA" />
+<objsur t="o" guid="B02A1C8A-C2BB-4B39-9298-7E45F6206BC6" />
+<objsur t="o" guid="2542BF3A-0A9D-4057-B05C-1C483D00EF99" />
+<objsur t="o" guid="B3A859F1-1E17-4BD4-9A82-E882B6305BC2" />
+<objsur t="o" guid="8FE801DF-657C-492A-BE3C-9C6A237EBC41" />
+<objsur t="o" guid="0E68EB1B-7BFD-459B-9FA9-92AF7EA659C5" />
+<objsur t="o" guid="BA525691-D4E9-4156-A56B-F51D9A93FC85" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="2CB7BF9C-3EBD-4D6C-923A-DBBFDB7DAA38" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-6" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Location Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="FAD1AD48-8428-46CF-AB73-692331AF614E" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="B4574B3D-82D9-4840-AF1E-D5BD7B3E6967" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="CB6B0597-6677-4A6C-BC86-231CFC6A7836" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="2" />
+<Flid val="12001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Alias</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="39616CD5-E66E-4805-AF21-24FEC8DFCD53" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="547513DF-454F-4E94-9015-E51054B08150" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="AFFCCCF4-5B00-465B-8418-B000F71B0FBA" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="B02A1C8A-C2BB-4B39-9298-7E45F6206BC6" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2542BF3A-0A9D-4057-B05C-1C483D00EF99" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="B3A859F1-1E17-4BD4-9A82-E882B6305BC2" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="8FE801DF-657C-492A-BE3C-9C6A237EBC41" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="0E68EB1B-7BFD-459B-9FA9-92AF7EA659C5" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="BA525691-D4E9-4156-A56B-F51D9A93FC85" ownerguid="740DE948-22EE-4B17-8C6E-2B20A68594FC">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="26" />
+<Fields>
+<objsur t="o" guid="82ABE77C-C956-459E-B594-10E014637000" />
+<objsur t="o" guid="993A1C1C-8504-4DF5-81F1-9C5660B67342" />
+<objsur t="o" guid="FF333ED2-56CC-442A-9C6F-2BE74FF00E57" />
+<objsur t="o" guid="0C3194CF-F15F-4A5E-A54D-E157B699C41E" />
+<objsur t="o" guid="76E31431-7F04-4ACB-A3AB-15A2C30BDF9C" />
+<objsur t="o" guid="EB218C1B-C2BF-491E-BD81-9C4F29435D4D" />
+<objsur t="o" guid="06F76FE1-2A4B-408F-B0AC-BC8C50E6B378" />
+<objsur t="o" guid="D14AC3D1-0A99-4AD2-B08A-48ED7F1E41B4" />
+<objsur t="o" guid="8CF994B3-894C-4175-99B3-68D58A0C7B2E" />
+<objsur t="o" guid="8FADC1A2-216F-4BE2-85E4-2449CECE1028" />
+<objsur t="o" guid="88A653AD-3604-4AB0-B297-393FC53CA2A7" />
+<objsur t="o" guid="EEA9AFFC-9565-4F2F-9AA9-B302AC7EE585" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="82ABE77C-C956-459E-B594-10E014637000" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="993A1C1C-8504-4DF5-81F1-9C5660B67342" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="FF333ED2-56CC-442A-9C6F-2BE74FF00E57" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="0C3194CF-F15F-4A5E-A54D-E157B699C41E" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="76E31431-7F04-4ACB-A3AB-15A2C30BDF9C" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="EB218C1B-C2BF-491E-BD81-9C4F29435D4D" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="06F76FE1-2A4B-408F-B0AC-BC8C50E6B378" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D14AC3D1-0A99-4AD2-B08A-48ED7F1E41B4" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="8CF994B3-894C-4175-99B3-68D58A0C7B2E" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="8FADC1A2-216F-4BE2-85E4-2449CECE1028" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="88A653AD-3604-4AB0-B297-393FC53CA2A7" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="EEA9AFFC-9565-4F2F-9AA9-B302AC7EE585" ownerguid="F2E0A7C0-FC7F-4B84-BD63-ED4BC3A38554">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="20089B84-E7DE-492D-A78B-361AED033F69" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="27" />
+<Fields>
+<objsur t="o" guid="43911AB7-ECF8-4518-B02E-4C355C968907" />
+<objsur t="o" guid="622624B4-18E9-4358-A1F3-B0F1D9B35A0D" />
+<objsur t="o" guid="6CB8DC2D-567C-4C63-8114-DC3816573F0E" />
+<objsur t="o" guid="459D8C3C-0EF7-4209-A540-0B4131AEE695" />
+<objsur t="o" guid="D9D641EF-132A-4FE2-9536-F9BE77E2F7F3" />
+<objsur t="o" guid="5D582E6B-3929-42CF-83ED-C03E9A512EEB" />
+<objsur t="o" guid="D8056BB8-8A89-4F47-A712-7CDE5E19D4BB" />
+<objsur t="o" guid="72EB4AC5-E3EB-42C4-8C32-09D1BCCA8EBB" />
+<objsur t="o" guid="512B1886-56E8-4CEF-9B60-497020A5B6E8" />
+<objsur t="o" guid="DCA3CB7E-347C-4B7B-95BD-18FBE95BAE8D" />
+<objsur t="o" guid="0684AAC1-2983-4B39-9120-7A0C9FD4AEE3" />
+<objsur t="o" guid="3F5ECC7B-03EA-47C9-A7C5-51AF74FCD694" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="43911AB7-ECF8-4518-B02E-4C355C968907" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="622624B4-18E9-4358-A1F3-B0F1D9B35A0D" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="6CB8DC2D-567C-4C63-8114-DC3816573F0E" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="459D8C3C-0EF7-4209-A540-0B4131AEE695" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D9D641EF-132A-4FE2-9536-F9BE77E2F7F3" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="5D582E6B-3929-42CF-83ED-C03E9A512EEB" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D8056BB8-8A89-4F47-A712-7CDE5E19D4BB" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="72EB4AC5-E3EB-42C4-8C32-09D1BCCA8EBB" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="512B1886-56E8-4CEF-9B60-497020A5B6E8" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="DCA3CB7E-347C-4B7B-95BD-18FBE95BAE8D" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="0684AAC1-2983-4B39-9120-7A0C9FD4AEE3" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="3F5ECC7B-03EA-47C9-A7C5-51AF74FCD694" ownerguid="20089B84-E7DE-492D-A78B-361AED033F69">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="B9091C20-895F-4A45-BD5B-BA6132A4324B" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="5049" />
+<Fields>
+<objsur t="o" guid="2C1AD89B-1C5A-441A-ABC9-79E4034818CC" />
+<objsur t="o" guid="E0CA6A4D-EE61-452C-9360-33B1B534448E" />
+<objsur t="o" guid="DE1B96FE-85A4-40E8-9FC5-30BBA58EB2FD" />
+<objsur t="o" guid="E093A5A3-28E4-4120-BB11-083369B4A7CD" />
+<objsur t="o" guid="CECF198E-84F9-4480-9B59-6727C85698CF" />
+<objsur t="o" guid="52F317AB-F83C-4963-ADAA-32B4EE64F9F4" />
+<objsur t="o" guid="BDD9D409-61A9-424A-BB1F-D2FD3447145B" />
+<objsur t="o" guid="A70DC72F-B2F7-4E1E-A6FD-CAF422953F01" />
+<objsur t="o" guid="B829A64D-AA66-4653-B748-DA4F280321CD" />
+<objsur t="o" guid="2755B616-F4E8-45DB-8092-BC7ED2A51CD4" />
+<objsur t="o" guid="3185348B-1BCA-49FC-B9AA-53D96D0B08AF" />
+<objsur t="o" guid="EB544D8F-4B4A-4F3F-BB25-A89188AB7BDB" />
+<objsur t="o" guid="FC5E6438-55E6-4768-835D-EC82C70D99DC" />
+<objsur t="o" guid="9903A6EA-D321-4E39-AB75-6746D6A61AB4" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="2C1AD89B-1C5A-441A-ABC9-79E4034818CC" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E0CA6A4D-EE61-452C-9360-33B1B534448E" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="DE1B96FE-85A4-40E8-9FC5-30BBA58EB2FD" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E093A5A3-28E4-4120-BB11-083369B4A7CD" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="18" />
+<Flid val="5049006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Infl. Affix Slot</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="CECF198E-84F9-4480-9B59-6727C85698CF" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="18" />
+<Flid val="5049005" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Infl. Affix Template</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="52F317AB-F83C-4963-ADAA-32B4EE64F9F4" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="BDD9D409-61A9-424A-BB1F-D2FD3447145B" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="A70DC72F-B2F7-4E1E-A6FD-CAF422953F01" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="B829A64D-AA66-4653-B748-DA4F280321CD" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2755B616-F4E8-45DB-8092-BC7ED2A51CD4" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="3185348B-1BCA-49FC-B9AA-53D96D0B08AF" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="EB544D8F-4B4A-4F3F-BB25-A89188AB7BDB" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="FC5E6438-55E6-4768-835D-EC82C70D99DC" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="9903A6EA-D321-4E39-AB75-6746D6A61AB4" ownerguid="B9091C20-895F-4A45-BD5B-BA6132A4324B">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="74E690E5-B5FF-4413-B23B-B80ED78EB69A" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="5042" />
+<Fields>
+<objsur t="o" guid="0A3B6B1B-B26E-41B7-905A-4AC45E9FB890" />
+<objsur t="o" guid="669A1C86-A01D-4809-BE98-F60E389FF429" />
+<objsur t="o" guid="C90706D4-AF24-4550-A1BD-EF726D680463" />
+<objsur t="o" guid="2C01E511-457B-4C37-A5C8-2FD790F60B00" />
+<objsur t="o" guid="35B813BF-2E32-4D18-A378-00ED27009517" />
+<objsur t="o" guid="C7746DF5-98A6-4F72-9639-ACAF559FBB69" />
+<objsur t="o" guid="AE63581C-67B1-41AE-A418-8A8B5545CDD3" />
+<objsur t="o" guid="ED8D2930-1821-4266-8D24-494CB9712C51" />
+<objsur t="o" guid="85899E00-D59E-48F7-B513-3F24A38FCB7D" />
+<objsur t="o" guid="C40E6EB8-2F07-425B-BCA4-E4E5D5537D21" />
+<objsur t="o" guid="7F08C019-3F24-4A20-8410-3CF49DF63857" />
+<objsur t="o" guid="B8430609-9A52-4FB5-B054-0E9D9FF33FE4" />
+<objsur t="o" guid="017FA0CD-7A7D-4CCF-8A17-EE17C25DC4E2" />
+<objsur t="o" guid="A20B7F89-14AA-4853-8C93-FEB987471582" />
+<objsur t="o" guid="BADE4724-C194-4E22-A49F-8BB9FF4DAC4B" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="0A3B6B1B-B26E-41B7-905A-4AC45E9FB890" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="669A1C86-A01D-4809-BE98-F60E389FF429" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C90706D4-AF24-4550-A1BD-EF726D680463" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2C01E511-457B-4C37-A5C8-2FD790F60B00" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Flid val="5042002" />
+<WsSelector val="-4" />
+<Label>
+<AUni ws="en">Prefix</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="35B813BF-2E32-4D18-A378-00ED27009517" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Flid val="5042001" />
+<WsSelector val="-4" />
+<Label>
+<AUni ws="en">Postfix</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C7746DF5-98A6-4F72-9639-ACAF559FBB69" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="21" />
+<Flid val="5042003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Secondary Order</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="AE63581C-67B1-41AE-A418-8A8B5545CDD3" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="ED8D2930-1821-4266-8D24-494CB9712C51" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="85899E00-D59E-48F7-B513-3F24A38FCB7D" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C40E6EB8-2F07-425B-BCA4-E4E5D5537D21" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="7F08C019-3F24-4A20-8410-3CF49DF63857" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="B8430609-9A52-4FB5-B054-0E9D9FF33FE4" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="017FA0CD-7A7D-4CCF-8A17-EE17C25DC4E2" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="A20B7F89-14AA-4853-8C93-FEB987471582" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="BADE4724-C194-4E22-A49F-8BB9FF4DAC4B" ownerguid="74E690E5-B5FF-4413-B23B-B80ED78EB69A">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="5021" />
+<Fields>
+<objsur t="o" guid="AD79F698-9A96-42DF-B66C-019685F89BC9" />
+<objsur t="o" guid="1FA1367E-9381-4EEA-8687-CC16D84A31B8" />
+<objsur t="o" guid="94A50200-230A-47AE-A05F-27218F7108BC" />
+<objsur t="o" guid="837A8B01-3F21-4C8A-9B53-2D6F88A23A1C" />
+<objsur t="o" guid="A0F94622-BF68-497D-8A6D-3DD82125C208" />
+<objsur t="o" guid="B9351F93-5F27-4036-98D1-1018C230BFF3" />
+<objsur t="o" guid="DF80E123-15E4-4AA2-AC39-A5CE7FC5F0B3" />
+<objsur t="o" guid="F719FD0A-CFA8-45E8-8946-FA0045FADE41" />
+<objsur t="o" guid="3929DA58-7903-44D5-829E-9420B36751E1" />
+<objsur t="o" guid="59FAC973-6417-4C82-A946-FC1D687D11C1" />
+<objsur t="o" guid="EE6ADB4A-BC2C-40AF-B50E-E9FCF7130A75" />
+<objsur t="o" guid="C57958B6-26D0-411D-88F0-225D6FE16979" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="AD79F698-9A96-42DF-B66C-019685F89BC9" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="2" />
+<Flid val="7001" />
+<Required val="2" />
+<WsSelector val="-3" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="1FA1367E-9381-4EEA-8687-CC16D84A31B8" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="2" />
+<Flid val="7002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Abbreviation</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="94A50200-230A-47AE-A05F-27218F7108BC" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="1" />
+<Flid val="7003" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Short Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="837A8B01-3F21-4C8A-9B53-2D6F88A23A1C" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="9" />
+<Flid val="7012" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="A0F94622-BF68-497D-8A6D-3DD82125C208" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Other Information</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="B9351F93-5F27-4036-98D1-1018C230BFF3" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="5" />
+<Flid val="7007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="DF80E123-15E4-4AA2-AC39-A5CE7FC5F0B3" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="4" />
+<Flid val="7008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="F719FD0A-CFA8-45E8-8946-FA0045FADE41" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="5" />
+<Flid val="7013" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="3929DA58-7903-44D5-829E-9420B36751E1" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="7" />
+<Flid val="7014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Help Id</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="59FAC973-6417-4C82-A946-FC1D687D11C1" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="EE6ADB4A-BC2C-40AF-B50E-E9FCF7130A75" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="15" />
+<Flid val="7010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C57958B6-26D0-411D-88F0-225D6FE16979" ownerguid="C2C437A5-C42C-4DAA-9BAE-6BB81719E5AE">
+<Type val="15" />
+<Flid val="7011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="1AB5DA29-9CFE-4D17-83E3-D7250F8ED72E" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="5036" />
+<Fields>
+<objsur t="o" guid="436FCB07-FC4C-4B63-8DA9-B0459268736B" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="436FCB07-FC4C-4B63-8DA9-B0459268736B" ownerguid="1AB5DA29-9CFE-4D17-83E3-D7250F8ED72E">
+<Type val="2" />
+<Flid val="5036001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="4D6417F8-7C5D-4DC5-A610-606D7A880451" ownerguid="1D2725F3-224D-4A49-A48F-165A8A8B6113">
+<Clsid val="5037" />
+<Fields>
+<objsur t="o" guid="DBEA0817-655F-4896-9216-EB99F3688E91" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="DBEA0817-655F-4896-9216-EB99F3688E91" ownerguid="4D6417F8-7C5D-4DC5-A610-606D7A880451">
+<Type val="2" />
+<Flid val="5037001" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Name</AUni>
+</Label>
+</rt>
+<rt class="UserView" guid="EF42F45B-9102-4563-80FA-D96358233744">
+<App val="39886581-4DD5-11D4-8078-0000C0FB81B5" />
+<System val="true" />
+<Details>
+<Binary>05000000
+</Binary>
+</Details>
+<Name>
+<AUni ws="en">Browse</AUni>
+</Name>
+<Records>
+<objsur t="o" guid="091BC338-BECC-4EF8-8E7B-6E4AB8294498" />
+<objsur t="o" guid="B3825F0C-AAC0-4367-B8DB-1E3E53A8A504" />
+</Records>
+</rt>
+<rt class="UserViewRec" guid="091BC338-BECC-4EF8-8E7B-6E4AB8294498" ownerguid="EF42F45B-9102-4563-80FA-D96358233744">
+<Fields>
+<objsur t="o" guid="ADC0FB79-793B-4AA3-880A-B26539B54EF0" />
+<objsur t="o" guid="FE493820-75AE-4DF9-A0E0-1C32FFC71688" />
+<objsur t="o" guid="85733DBA-52BA-4815-A09F-3B310F54A6B2" />
+<objsur t="o" guid="CAC1F0A3-D71B-4FE9-8453-4E50C46F2F99" />
+<objsur t="o" guid="956DFE2E-7DDD-4A26-BB3B-54FBA31A5D80" />
+<objsur t="o" guid="D3170023-9E93-4773-A9EC-1EA8D4327A45" />
+<objsur t="o" guid="61C846A8-54AF-48A2-A29C-ED14AC021F05" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="ADC0FB79-793B-4AA3-880A-B26539B54EF0" ownerguid="091BC338-BECC-4EF8-8E7B-6E4AB8294498">
+<Type val="17" />
+<Flid val="4006008" />
+<Required val="1" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date of Event</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date or approximate date this event occurred.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="FE493820-75AE-4DF9-A0E0-1C32FFC71688" ownerguid="091BC338-BECC-4EF8-8E7B-6E4AB8294498">
+<Flid val="4004001" />
+<Required val="1" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Title</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Title for entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="85733DBA-52BA-4815-A09F-3B310F54A6B2" ownerguid="091BC338-BECC-4EF8-8E7B-6E4AB8294498">
+<Type val="5" />
+<Flid val="4004007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Anthropology categories for this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="CAC1F0A3-D71B-4FE9-8453-4E50C46F2F99" ownerguid="091BC338-BECC-4EF8-8E7B-6E4AB8294498">
+<Type val="5" />
+<Flid val="4006003" />
+<Required val="1" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Location</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Identification of the places where the event occurred.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="956DFE2E-7DDD-4A26-BB3B-54FBA31A5D80" ownerguid="091BC338-BECC-4EF8-8E7B-6E4AB8294498">
+<Type val="5" />
+<Flid val="4006007" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Source</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  List of people reporting the event or information to the researcher.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="D3170023-9E93-4773-A9EC-1EA8D4327A45" ownerguid="091BC338-BECC-4EF8-8E7B-6E4AB8294498">
+<Type val="20" />
+<Flid val="4004015" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">See Also</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(cross-reference field)  Internal links to other entries or subentries.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="61C846A8-54AF-48A2-A29C-ED14AC021F05" ownerguid="091BC338-BECC-4EF8-8E7B-6E4AB8294498">
+<Type val="9" />
+<Flid val="4004014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Further Questions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  New or unresolved questions related to your event, hypothesis or conclusions.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="B3825F0C-AAC0-4367-B8DB-1E3E53A8A504" ownerguid="EF42F45B-9102-4563-80FA-D96358233744">
+<Clsid val="4010" />
+<Fields>
+<objsur t="o" guid="30A9C166-6B49-4AE3-B455-56AF6DC2E959" />
+<objsur t="o" guid="BD82EAA6-6F2E-47C9-A106-FCDD741BF7E8" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="30A9C166-6B49-4AE3-B455-56AF6DC2E959" ownerguid="B3825F0C-AAC0-4367-B8DB-1E3E53A8A504">
+<Type val="5" />
+<Flid val="4010001" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Participants</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="BD82EAA6-6F2E-47C9-A106-FCDD741BF7E8" ownerguid="B3825F0C-AAC0-4367-B8DB-1E3E53A8A504">
+<Type val="3" />
+<Flid val="4010002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Role</AUni>
+</Label>
+</rt>
+<rt class="UserView" guid="5D18591A-2DC8-4041-9E98-B7BEE0DCBDC9">
+<Type val="1" />
+<App val="39886581-4DD5-11D4-8078-0000C0FB81B5" />
+<System val="true" />
+<Details>
+<Binary>05000000
+</Binary>
+</Details>
+<Name>
+<AUni ws="en">Data Entry</AUni>
+</Name>
+<Records>
+<objsur t="o" guid="4FA09081-3240-4BB0-ACF3-45A3B9650253" />
+<objsur t="o" guid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F" />
+<objsur t="o" guid="087F8DEC-6398-4AB5-B023-4796F3D3F4D1" />
+</Records>
+</rt>
+<rt class="UserViewRec" guid="4FA09081-3240-4BB0-ACF3-45A3B9650253" ownerguid="5D18591A-2DC8-4041-9E98-B7BEE0DCBDC9">
+<Clsid val="4006" />
+<Fields>
+<objsur t="o" guid="EFA5E8D0-FDD6-4B0B-871D-BCB82314515A" />
+<objsur t="o" guid="5AC79582-7312-4523-985D-D7B4C7E74D49" />
+<objsur t="o" guid="7F19B6CC-41E8-4959-A143-9279BFD36671" />
+<objsur t="o" guid="9318E66C-9165-4474-9E3B-982635B3686C" />
+<objsur t="o" guid="8541D7DB-A963-473E-AE95-488785BD0F49" />
+<objsur t="o" guid="BD63AC4E-FD90-4CD9-B391-3D466DABD088" />
+<objsur t="o" guid="569A0E16-8854-458B-AA94-E6D8B57B1500" />
+<objsur t="o" guid="833932A9-D7FB-49A8-A33A-BFD0D8434903" />
+<objsur t="o" guid="ED1DD298-580D-4243-8E45-E14559A3A7D7" />
+<objsur t="o" guid="7BE3D7DF-0029-4858-9FB5-78D0A8DEF88D" />
+<objsur t="o" guid="05FED582-368E-424A-99EA-F9FE0B116898" />
+<objsur t="o" guid="2A04557C-256E-4B18-BF11-D2D351E00E9F" />
+<objsur t="o" guid="C29A7CA5-5A40-473F-ACC8-F0C64A2FCDCF" />
+<objsur t="o" guid="4AA8A4D3-A6B5-4198-B03C-410EA773970A" />
+<objsur t="o" guid="73262359-8D83-4495-AEBF-800678E0967D" />
+<objsur t="o" guid="9649F3F6-19EE-4B4E-BF32-6369FB8D9583" />
+<objsur t="o" guid="C1164D0F-9071-4862-B7BA-89EF9DCF1AC6" />
+<objsur t="o" guid="EB87E5BC-C877-4060-AF5E-4B075484B905" />
+<objsur t="o" guid="991DCD6C-19B9-4174-8381-1E2C04317EAB" />
+<objsur t="o" guid="EEB07C50-7663-4272-A5D7-9ED694481F62" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="EFA5E8D0-FDD6-4B0B-871D-BCB82314515A" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Flid val="4004001" />
+<Required val="1" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Title</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Title for entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="5AC79582-7312-4523-985D-D7B4C7E74D49" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="5" />
+<Flid val="4004006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  An indication of any limitations on the distribution of data in this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="7F19B6CC-41E8-4959-A143-9279BFD36671" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="17" />
+<Flid val="4006008" />
+<Required val="1" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date of Event</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date or approximate date this event occurred.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="9318E66C-9165-4474-9E3B-982635B3686C" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="5" />
+<Flid val="4006009" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Time of Event</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The approximate time of day this event occurred.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="8541D7DB-A963-473E-AE95-488785BD0F49" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="5" />
+<Flid val="4004004" />
+<Required val="1" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Names of people who obtained, entered, or analyzed the data in this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="BD63AC4E-FD90-4CD9-B391-3D466DABD088" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="5" />
+<Flid val="4006007" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Source</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  List of people reporting the event or information to the researcher.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="569A0E16-8854-458B-AA94-E6D8B57B1500" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="23" />
+<Flid val="4006002" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Participants</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  List of people involved in this event.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="833932A9-D7FB-49A8-A33A-BFD0D8434903" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="4" />
+<Flid val="4004005" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  An indication of the reliability of the data in this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="ED1DD298-580D-4243-8E45-E14559A3A7D7" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="5" />
+<Flid val="4006003" />
+<Required val="1" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Location</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Identification of the places where the event occurred.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="7BE3D7DF-0029-4858-9FB5-78D0A8DEF88D" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="3" />
+<Flid val="4006004" />
+<Required val="1" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Event Type</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Event type.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="05FED582-368E-424A-99EA-F9FE0B116898" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="9" />
+<Flid val="4006001" />
+<Required val="1" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Description</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  Description of the event or of culturally significant facts identified by the title. This field contains the main body of data for this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="2A04557C-256E-4B18-BF11-D2D351E00E9F" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="5" />
+<Flid val="4004007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Anthropology categories for this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="C29A7CA5-5A40-473F-ACC8-F0C64A2FCDCF" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="20" />
+<Flid val="4004015" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">See Also</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(cross-reference field)  Internal links to other entries or subentries.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="4AA8A4D3-A6B5-4198-B03C-410EA773970A" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="9" />
+<Flid val="4004014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Further Questions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  New or unresolved questions related to your event, hypothesis or conclusions.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="73262359-8D83-4495-AEBF-800678E0967D" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="5" />
+<Flid val="4006006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Weather</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Description of weather conditions existing during this event.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="9649F3F6-19EE-4B4E-BF32-6369FB8D9583" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="9" />
+<Flid val="4004013" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">External Materials</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  List of photos, recordings, or other materials supporting this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="C1164D0F-9071-4862-B7BA-89EF9DCF1AC6" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="9" />
+<Flid val="4006010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Personal Notes</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph field)  Your notes on this entry that you do not want published.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="EB87E5BC-C877-4060-AF5E-4B075484B905" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="15" />
+<Flid val="4004010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this entry was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="991DCD6C-19B9-4174-8381-1E2C04317EAB" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="15" />
+<Flid val="4004011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this entry was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="EEB07C50-7663-4272-A5D7-9ED694481F62" ownerguid="4FA09081-3240-4BB0-ACF3-45A3B9650253">
+<Type val="18" />
+<Flid val="4004009" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Subentries</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">Event subentry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F" ownerguid="5D18591A-2DC8-4041-9E98-B7BEE0DCBDC9">
+<Clsid val="4005" />
+<Fields>
+<objsur t="o" guid="740A4940-49EA-42C6-9449-E791886000C3" />
+<objsur t="o" guid="DC99F292-AED5-46F1-98AC-48EB0E740E00" />
+<objsur t="o" guid="A4AF1BE7-1943-435E-94FA-E2391C92138A" />
+<objsur t="o" guid="1D980CE8-6BB3-46FD-8987-1C95918F7354" />
+<objsur t="o" guid="49C30AF8-A5C3-4098-84D9-C0ECD3CB550A" />
+<objsur t="o" guid="A8F1E2CA-8CF6-4DF5-9B2A-B09A3EA3609A" />
+<objsur t="o" guid="624AE27E-A7FB-4EF8-ACE1-7D8D0C9AA0CD" />
+<objsur t="o" guid="B8E1DDE9-3445-4389-A7C5-C0AB84747C7A" />
+<objsur t="o" guid="BD6FDA01-5482-495B-AFDA-CC04FC81906A" />
+<objsur t="o" guid="97643360-23D9-4B26-965E-C8141049D9FB" />
+<objsur t="o" guid="6FE5CB41-189A-49F4-9093-D5C2BC397014" />
+<objsur t="o" guid="221C3620-BE1C-461B-8544-EB37459C9C99" />
+<objsur t="o" guid="2B95EA1B-CFE7-43A5-A7FB-7F99884334FB" />
+<objsur t="o" guid="76A974E6-BB1C-4AFD-AB5D-53925A2CA91B" />
+<objsur t="o" guid="68022A60-1AF1-419E-954E-FFFDF5EFBD5C" />
+<objsur t="o" guid="FA85F2B1-947A-44FE-B9AD-46BDC61C29B9" />
+<objsur t="o" guid="DC29D266-0647-4D20-8DA5-36976BDE13D2" />
+<objsur t="o" guid="B4B57E56-FCBE-4B3C-B470-4106F5A3B7EF" />
+<objsur t="o" guid="FBABA8DB-FE59-41CB-A4AA-0731C126C5D8" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="740A4940-49EA-42C6-9449-E791886000C3" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Flid val="4004001" />
+<Required val="1" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Title</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(single-line text field)  Title for entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DC99F292-AED5-46F1-98AC-48EB0E740E00" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="5" />
+<Flid val="4004004" />
+<Required val="1" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Names of people who obtained, entered, or analyzed the data in this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="A4AF1BE7-1943-435E-94FA-E2391C92138A" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="9" />
+<Flid val="4005001" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Hypothesis</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  A statement of your hypothesis.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="1D980CE8-6BB3-46FD-8987-1C95918F7354" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="9" />
+<Flid val="4005003" />
+<Required val="1" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  A write-up of the results of your research.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="49C30AF8-A5C3-4098-84D9-C0ECD3CB550A" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="5" />
+<Flid val="4004007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Anthropology categories for this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="A8F1E2CA-8CF6-4DF5-9B2A-B09A3EA3609A" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="9" />
+<Flid val="4005004" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Conclusions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  A summary of the results.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="624AE27E-A7FB-4EF8-ACE1-7D8D0C9AA0CD" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="20" />
+<Flid val="4005005" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">Supporting Evidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(cross-reference field)  Internal links to entries that support this hypothesis.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="B8E1DDE9-3445-4389-A7C5-C0AB84747C7A" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="20" />
+<Flid val="4005006" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">Counter Evidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(cross-reference field)  Internal links to entries that refute this hypothesis.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="BD6FDA01-5482-495B-AFDA-CC04FC81906A" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="20" />
+<Flid val="4005007" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">Superseded By</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(cross-reference field)  Internal links to other analysis entries that encompass or replace this one.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="97643360-23D9-4B26-965E-C8141049D9FB" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="20" />
+<Flid val="4004015" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">See Also</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(cross-reference field)  Internal links to other entries or subentries.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="6FE5CB41-189A-49F4-9093-D5C2BC397014" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="4" />
+<Flid val="4005008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Status</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  An indication of the current status of this hypothesis.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="221C3620-BE1C-461B-8544-EB37459C9C99" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="4" />
+<Flid val="4004005" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  An indication of the reliability of the data in this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="2B95EA1B-CFE7-43A5-A7FB-7F99884334FB" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="5" />
+<Flid val="4004006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  An indication of any limitations on the distribution of data in this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="76A974E6-BB1C-4AFD-AB5D-53925A2CA91B" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="9" />
+<Flid val="4004013" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">External Materials</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  List of photos, recordings, or other materials supporting this entry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="68022A60-1AF1-419E-954E-FFFDF5EFBD5C" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="9" />
+<Flid val="4004014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Further Questions</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  New or unresolved questions related to your event, hypothesis or conclusions.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="FA85F2B1-947A-44FE-B9AD-46BDC61C29B9" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="9" />
+<Flid val="4005002" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Research Plan</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(multiparagraph text field)  Description of a plan to test the hypothesis.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="DC29D266-0647-4D20-8DA5-36976BDE13D2" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="15" />
+<Flid val="4004010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Created</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this entry was first created.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="B4B57E56-FCBE-4B3C-B470-4106F5A3B7EF" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="15" />
+<Flid val="4004011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date Modified</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(date field)  The date and time this entry was last modified.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="FBABA8DB-FE59-41CB-A4AA-0731C126C5D8" ownerguid="C0E26EE7-DF47-4987-9BBD-C66C61619B3F">
+<Type val="18" />
+<Flid val="4004009" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Subentries</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">Analysis subentry.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewRec" guid="087F8DEC-6398-4AB5-B023-4796F3D3F4D1" ownerguid="5D18591A-2DC8-4041-9E98-B7BEE0DCBDC9">
+<Clsid val="4010" />
+<Fields>
+<objsur t="o" guid="AB90043A-5F4E-4177-9648-72B0B8279D4D" />
+<objsur t="o" guid="14D96461-FD55-4CFB-B373-AE287092249C" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="AB90043A-5F4E-4177-9648-72B0B8279D4D" ownerguid="087F8DEC-6398-4AB5-B023-4796F3D3F4D1">
+<Type val="5" />
+<Flid val="4010001" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Participants</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  Participants with a given role.</AUni>
+</HelpString>
+</rt>
+<rt class="UserViewField" guid="14D96461-FD55-4CFB-B373-AE287092249C" ownerguid="087F8DEC-6398-4AB5-B023-4796F3D3F4D1">
+<Type val="3" />
+<Flid val="4010002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Role</AUni>
+</Label>
+<HelpString>
+<AUni ws="en">(list reference field)  The role of one or more participants.</AUni>
+</HelpString>
+</rt>
+<rt class="UserView" guid="0510D405-BDA1-4BCB-BDD8-CD765A5A443A">
+<Type val="2" />
+<App val="39886581-4DD5-11D4-8078-0000C0FB81B5" />
+<System val="true" />
+<Details>
+<Binary>05000000
+</Binary>
+</Details>
+<Name>
+<AUni ws="en">Document</AUni>
+</Name>
+<Records>
+<objsur t="o" guid="327F90B5-B662-41BD-8C59-4D4122177938" />
+<objsur t="o" guid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA" />
+<objsur t="o" guid="A803F87B-3966-4860-B60D-8B8A42FE07EF" />
+</Records>
+</rt>
+<rt class="UserViewRec" guid="327F90B5-B662-41BD-8C59-4D4122177938" ownerguid="0510D405-BDA1-4BCB-BDD8-CD765A5A443A">
+<Clsid val="4006" />
+<Fields>
+<objsur t="o" guid="0BF0DDB3-6ED2-4C1B-8DD3-425DCD919081" />
+<objsur t="o" guid="2CDA9A80-56A6-4247-8B7F-F1392543DC2F" />
+<objsur t="o" guid="6BB04C98-80A0-41DC-AE49-0FA994225026" />
+<objsur t="o" guid="C9E219AB-33C5-42B8-9053-AB852DA0884C" />
+<objsur t="o" guid="3FF03032-B172-479F-8DBA-C533096B68B7" />
+<objsur t="o" guid="9255224E-92A1-4E3C-A0B3-B2D8754C228B" />
+<objsur t="o" guid="24CF26F4-3006-422B-8692-CB65E06F36D4" />
+<objsur t="o" guid="E32998C6-0164-4F87-AADF-6A20B138DC6E" />
+<objsur t="o" guid="C571C71B-A520-4CE5-BA5D-975C4A932B62" />
+<objsur t="o" guid="CA3F3636-BB26-4D9F-90AB-B4D2F6E1B406" />
+<objsur t="o" guid="8F6725DA-D780-41B8-A6CE-6CA320BCA005" />
+<objsur t="o" guid="18195BB3-0C79-402B-BF93-1923DC735BCD" />
+<objsur t="o" guid="2ADA8D2B-890C-47F1-AAE0-07202F9875B8" />
+<objsur t="o" guid="A5AAB2B0-35FC-4E71-94E9-50397DC40808" />
+<objsur t="o" guid="C81013E5-11E6-4EF7-9E73-55C7C29EDD41" />
+<objsur t="o" guid="830A2746-B07E-4B26-8A07-B0A9F763FC6B" />
+<objsur t="o" guid="D1202D77-5535-40C4-AA9B-D061DF9A2C82" />
+<objsur t="o" guid="D0A26C6B-5F4C-4E54-A4A3-5EF63A672AE7" />
+<objsur t="o" guid="835FCA96-A12A-4FC2-BA1C-D3CD4E34C026" />
+<objsur t="o" guid="DF07CC61-9F8C-454C-8595-527911D103BA" />
+<objsur t="o" guid="E0206DBD-089E-4510-92D9-FC3651AEF066" />
+<objsur t="o" guid="A629FD3C-2EC6-48EB-8A80-1F7F34FD2518" />
+<objsur t="o" guid="FEE60B21-A378-45A3-BFDA-6EE36FE18CB2" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="0BF0DDB3-6ED2-4C1B-8DD3-425DCD919081" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="14" />
+<Flid val="4004001" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Title</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2CDA9A80-56A6-4247-8B7F-F1392543DC2F" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="10" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Entry Type</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="6BB04C98-80A0-41DC-AE49-0FA994225026" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="5" />
+<Flid val="4004007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C9E219AB-33C5-42B8-9053-AB852DA0884C" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="9" />
+<Flid val="4006001" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Description</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="3FF03032-B172-479F-8DBA-C533096B68B7" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="9" />
+<Flid val="4004014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Further Questions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="9255224E-92A1-4E3C-A0B3-B2D8754C228B" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="9" />
+<Flid val="4006010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Personal Notes</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="24CF26F4-3006-422B-8692-CB65E06F36D4" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Classifications</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E32998C6-0164-4F87-AADF-6A20B138DC6E" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="3" />
+<Flid val="4006004" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Event Type</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C571C71B-A520-4CE5-BA5D-975C4A932B62" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="17" />
+<Flid val="4006008" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Date of Event</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="CA3F3636-BB26-4D9F-90AB-B4D2F6E1B406" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="5" />
+<Flid val="4006009" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Time of Event</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="8F6725DA-D780-41B8-A6CE-6CA320BCA005" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="5" />
+<Flid val="4006007" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Source</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="18195BB3-0C79-402B-BF93-1923DC735BCD" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="23" />
+<Flid val="4006002" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Participants</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2ADA8D2B-890C-47F1-AAE0-07202F9875B8" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="5" />
+<Flid val="4006003" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Location</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="A5AAB2B0-35FC-4E71-94E9-50397DC40808" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="3" />
+<Flid val="4004005" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C81013E5-11E6-4EF7-9E73-55C7C29EDD41" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="5" />
+<Flid val="4006006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Weather</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="830A2746-B07E-4B26-8A07-B0A9F763FC6B" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="5" />
+<Flid val="4004004" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D1202D77-5535-40C4-AA9B-D061DF9A2C82" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="5" />
+<Flid val="4004006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D0A26C6B-5F4C-4E54-A4A3-5EF63A672AE7" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="9" />
+<Flid val="4004013" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">External Materials</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="835FCA96-A12A-4FC2-BA1C-D3CD4E34C026" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="20" />
+<Flid val="4004015" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">See Also</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="DF07CC61-9F8C-454C-8595-527911D103BA" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="13" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E0206DBD-089E-4510-92D9-FC3651AEF066" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="15" />
+<Flid val="4004010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="A629FD3C-2EC6-48EB-8A80-1F7F34FD2518" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="15" />
+<Flid val="4004011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="FEE60B21-A378-45A3-BFDA-6EE36FE18CB2" ownerguid="327F90B5-B662-41BD-8C59-4D4122177938">
+<Type val="18" />
+<Flid val="4004009" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Subentries</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA" ownerguid="0510D405-BDA1-4BCB-BDD8-CD765A5A443A">
+<Clsid val="4005" />
+<Fields>
+<objsur t="o" guid="0CFC8FC7-A40F-43D1-8C6F-5088ECC4C7B1" />
+<objsur t="o" guid="C8ABEB89-7D1C-49DF-9B32-5A278A015BAE" />
+<objsur t="o" guid="2C26E7D6-0BD6-4EBA-BB66-6249EA2E46CE" />
+<objsur t="o" guid="96EE4EBD-8911-49A2-AFF5-4201C53E0616" />
+<objsur t="o" guid="FA448C1A-2CF8-410B-A950-3601FC06D495" />
+<objsur t="o" guid="E517F5C5-08B8-4FC6-AC86-9D4B8907DA09" />
+<objsur t="o" guid="2C1915B0-82FD-415E-B2F3-9935B49CCA19" />
+<objsur t="o" guid="6CAACAF6-D84F-4897-917F-FDE143421993" />
+<objsur t="o" guid="D74FF8F0-95BC-48B5-99D3-83A8AE3147A9" />
+<objsur t="o" guid="00F06DBE-A492-45A7-B92F-A8B026C8C4E9" />
+<objsur t="o" guid="0EDC7B02-6EB4-4373-8C9E-B29227C72D0E" />
+<objsur t="o" guid="FBE4E0B6-D63E-4750-82EA-04709DF58568" />
+<objsur t="o" guid="E18240CC-1701-48BE-BECA-640276DDC0AC" />
+<objsur t="o" guid="C82DD70D-6CA0-4B9D-A2D2-FF229CCC4CB4" />
+<objsur t="o" guid="26720332-4479-4DCB-B70A-5471F9F03F6C" />
+<objsur t="o" guid="3F1AD6CA-FE4A-43E9-A4AA-7874025A4351" />
+<objsur t="o" guid="CD136970-13DA-493E-ABCF-64EFE41B86F0" />
+<objsur t="o" guid="5757DE64-494C-4D1C-BBD9-39F7EEE0B9BF" />
+<objsur t="o" guid="1FCD655A-01F6-451B-AF56-31990A1512D5" />
+<objsur t="o" guid="F2F81998-7552-4BBB-99D8-A518187A142C" />
+<objsur t="o" guid="4A3F5274-C4B1-4EDD-A51D-E7D28E733066" />
+<objsur t="o" guid="5DEDDE30-BA55-4B7F-B916-902FB8FE9DFF" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="0CFC8FC7-A40F-43D1-8C6F-5088ECC4C7B1" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="14" />
+<Flid val="4004001" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Title Text</Uni>
+</Style>
+<Label>
+<AUni ws="en">Title</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C8ABEB89-7D1C-49DF-9B32-5A278A015BAE" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="10" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Entry Type</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2C26E7D6-0BD6-4EBA-BB66-6249EA2E46CE" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="5" />
+<Flid val="4004007" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="96EE4EBD-8911-49A2-AFF5-4201C53E0616" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="9" />
+<Flid val="4005001" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Hypothesis</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="FA448C1A-2CF8-410B-A950-3601FC06D495" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="9" />
+<Flid val="4005003" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Discussion</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E517F5C5-08B8-4FC6-AC86-9D4B8907DA09" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="9" />
+<Flid val="4005004" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Conclusions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="2C1915B0-82FD-415E-B2F3-9935B49CCA19" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="9" />
+<Flid val="4004014" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Further Questions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="6CAACAF6-D84F-4897-917F-FDE143421993" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="9" />
+<Flid val="4005002" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Research Plan</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="D74FF8F0-95BC-48B5-99D3-83A8AE3147A9" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="20" />
+<Flid val="4005005" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">Supporting Evidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="00F06DBE-A492-45A7-B92F-A8B026C8C4E9" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="20" />
+<Flid val="4005006" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">Counter Evidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="0EDC7B02-6EB4-4373-8C9E-B29227C72D0E" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="20" />
+<Flid val="4005007" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">Superseded By</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="FBE4E0B6-D63E-4750-82EA-04709DF58568" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="20" />
+<Flid val="4004015" />
+<WsSelector val="-1" />
+<Style>
+<Uni>Hyperlink</Uni>
+</Style>
+<Label>
+<AUni ws="en">See Also</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E18240CC-1701-48BE-BECA-640276DDC0AC" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="9" />
+<Flid val="4004013" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">External Materials</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="C82DD70D-6CA0-4B9D-A2D2-FF229CCC4CB4" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="12" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Classifications</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="26720332-4479-4DCB-B70A-5471F9F03F6C" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="3" />
+<Flid val="4005008" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Status</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="3F1AD6CA-FE4A-43E9-A4AA-7874025A4351" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="3" />
+<Flid val="4004005" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Confidence</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="CD136970-13DA-493E-ABCF-64EFE41B86F0" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="5" />
+<Flid val="4004004" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Researcher</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="5757DE64-494C-4D1C-BBD9-39F7EEE0B9BF" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="5" />
+<Flid val="4004006" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Restrictions</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="1FCD655A-01F6-451B-AF56-31990A1512D5" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="13" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">History</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="F2F81998-7552-4BBB-99D8-A518187A142C" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="15" />
+<Flid val="4004010" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Created</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="4A3F5274-C4B1-4EDD-A51D-E7D28E733066" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="15" />
+<Flid val="4004011" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Modified</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="5DEDDE30-BA55-4B7F-B916-902FB8FE9DFF" ownerguid="9F9CF402-C86F-4CF4-9B2C-5E440369E4EA">
+<Type val="18" />
+<Flid val="4004009" />
+<WsSelector val="-1" />
+<Label>
+<AUni ws="en">Subentries</AUni>
+</Label>
+</rt>
+<rt class="UserViewRec" guid="A803F87B-3966-4860-B60D-8B8A42FE07EF" ownerguid="0510D405-BDA1-4BCB-BDD8-CD765A5A443A">
+<Clsid val="4010" />
+<Fields>
+<objsur t="o" guid="B01D683A-E173-495A-888A-BB654FBF79B6" />
+<objsur t="o" guid="E11F6BAA-13BA-4ED4-96E8-CD1AACAEE77D" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="B01D683A-E173-495A-888A-BB654FBF79B6" ownerguid="A803F87B-3966-4860-B60D-8B8A42FE07EF">
+<Type val="5" />
+<Flid val="4010001" />
+<WsSelector val="-6" />
+<Label>
+<AUni ws="en">Participants</AUni>
+</Label>
+</rt>
+<rt class="UserViewField" guid="E11F6BAA-13BA-4ED4-96E8-CD1AACAEE77D" ownerguid="A803F87B-3966-4860-B60D-8B8A42FE07EF">
+<Type val="3" />
+<Flid val="4010002" />
+<WsSelector val="-3" />
+<Label>
+<AUni ws="en">Role</AUni>
+</Label>
+</rt>
+<rt class="UserView" guid="575EC0F8-71F2-4651-B3B9-EFC3144EE7A4">
+<Type val="4" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Scripture/Draft</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="B20F9B40-9513-400A-94AE-E55010F6CFB4">
+<Type val="5" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Scripture/Print Layout</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="4A24BD97-64F4-40F0-96FE-66D1A74A1125">
+<Type val="12" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Scripture/Correction
+Printout</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="34F50C05-2D28-4EBB-9A12-32F81BCB2775">
+<Type val="11" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Scripture/Trial Publication</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="79EE06CD-619B-4E64-8BE7-1B1DF2E8BD58">
+<Type val="8" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Back Translation/Draft</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="A45797EB-F5EC-43BD-8BEA-C05BC96BC829">
+<Type val="7" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Back Translation/Parallel
+Print Layout</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="A3C2E9C4-25AE-4F11-BE3B-EE5F72FC458D">
+<Type val="9" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Back Translation/Consultant
+Check</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="BA4E4507-BC46-4FAA-B745-496FA1B78930">
+<Type val="6" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Back Translation/Simple
+Print Layout</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="B4DB013C-5FB1-469B-8565-4A7E5E24EB68">
+<Type val="3" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">/Concordance</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="7F246E80-A967-408B-A73E-BFF6B3452766">
+<Type val="14" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Checking/Editorial Checks</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="182E602B-A518-4403-99B9-D7508D22CE35">
+<Type val="10" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">Checking/Biblical Terms</AUni>
+</Name>
+</rt>
+<rt class="UserView" guid="04D81578-13DA-4156-8869-17FBE6C6980A">
+<Type val="1" />
+<App val="A7D421E1-1DD3-11D5-B720-0010A4B54856" />
+<System val="true" />
+<Name>
+<AUni ws="en">/Data Entry</AUni>
+</Name>
+<Records>
+<objsur t="o" guid="C248EC0E-C569-45DF-B8C0-D8E8E1F23525" />
+<objsur t="o" guid="5A546776-7645-4324-A7A6-67AA7F778932" />
+<objsur t="o" guid="F21255EA-3F48-4EEC-A484-0A7F379F575A" />
+</Records>
+</rt>
+<rt class="UserViewRec" guid="C248EC0E-C569-45DF-B8C0-D8E8E1F23525" ownerguid="04D81578-13DA-4156-8869-17FBE6C6980A">
+<Clsid val="3001" />
+<Fields>
+<objsur t="o" guid="BC591314-434F-428C-B1BC-0C7B42F86E63" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="BC591314-434F-428C-B1BC-0C7B42F86E63" ownerguid="C248EC0E-C569-45DF-B8C0-D8E8E1F23525">
+<Flid val="3001024" />
+</rt>
+<rt class="UserViewRec" guid="5A546776-7645-4324-A7A6-67AA7F778932" ownerguid="04D81578-13DA-4156-8869-17FBE6C6980A">
+<Clsid val="3017" />
+<Fields>
+<objsur t="o" guid="4C71ABEC-7C2D-4242-BCC9-279AFA564FE0" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="4C71ABEC-7C2D-4242-BCC9-279AFA564FE0" ownerguid="5A546776-7645-4324-A7A6-67AA7F778932">
+<Flid val="3017002" />
+</rt>
+<rt class="UserViewRec" guid="F21255EA-3F48-4EEC-A484-0A7F379F575A" ownerguid="04D81578-13DA-4156-8869-17FBE6C6980A">
+<Clsid val="3018" />
+<Fields>
+<objsur t="o" guid="FB3714A2-685C-4496-9A04-E01B63598E5D" />
+<objsur t="o" guid="102721D7-79B8-4139-9439-FD10F642A49E" />
+<objsur t="o" guid="60B51416-E9D5-4DC1-985A-DFBE26BDF9F3" />
+<objsur t="o" guid="E20274BF-8571-4AF1-8F51-7F5A49AB0DA4" />
+<objsur t="o" guid="562E3BEF-6555-4F4E-8DCB-D8F03F553F3D" />
+<objsur t="o" guid="AF46B0B0-B992-4F70-ADFB-A808C544BC95" />
+<objsur t="o" guid="359BA574-1B14-4A70-8D27-74620FB10503" />
+<objsur t="o" guid="770A4F44-1F69-46A4-89B4-EE7A751C2864" />
+<objsur t="o" guid="71BE8FFB-8B88-4E85-AD56-1E3D714A3973" />
+<objsur t="o" guid="4D32DB02-451D-495B-B88C-1DAF989D372F" />
+<objsur t="o" guid="F6DCC2F6-F9FB-44DB-B732-E717B58E91D5" />
+<objsur t="o" guid="6103787D-F5CB-48DE-BBD7-9776191A4EFB" />
+<objsur t="o" guid="CB21EB48-95BC-473F-B637-69E26BB7FCD1" />
+</Fields>
+</rt>
+<rt class="UserViewField" guid="FB3714A2-685C-4496-9A04-E01B63598E5D" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="3018001" />
+</rt>
+<rt class="UserViewField" guid="102721D7-79B8-4139-9439-FD10F642A49E" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="37010" />
+</rt>
+<rt class="UserViewField" guid="60B51416-E9D5-4DC1-985A-DFBE26BDF9F3" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="37011" />
+</rt>
+<rt class="UserViewField" guid="E20274BF-8571-4AF1-8F51-7F5A49AB0DA4" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="3018002" />
+</rt>
+<rt class="UserViewField" guid="562E3BEF-6555-4F4E-8DCB-D8F03F553F3D" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="3018005" />
+</rt>
+<rt class="UserViewField" guid="AF46B0B0-B992-4F70-ADFB-A808C544BC95" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="3018006" />
+</rt>
+<rt class="UserViewField" guid="359BA574-1B14-4A70-8D27-74620FB10503" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="3018004" />
+</rt>
+<rt class="UserViewField" guid="770A4F44-1F69-46A4-89B4-EE7A751C2864" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="3018007" />
+</rt>
+<rt class="UserViewField" guid="71BE8FFB-8B88-4E85-AD56-1E3D714A3973" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="3018003" />
+</rt>
+<rt class="UserViewField" guid="4D32DB02-451D-495B-B88C-1DAF989D372F" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="68001" />
+</rt>
+<rt class="UserViewField" guid="F6DCC2F6-F9FB-44DB-B732-E717B58E91D5" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="68002" />
+</rt>
+<rt class="UserViewField" guid="6103787D-F5CB-48DE-BBD7-9776191A4EFB" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="34004" />
+</rt>
+<rt class="UserViewField" guid="CB21EB48-95BC-473F-B637-69E26BB7FCD1" ownerguid="F21255EA-3F48-4EEC-A484-0A7F379F575A">
+<Flid val="34003" />
+</rt>
+</languageproject>

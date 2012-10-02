@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- LexiqueProConfig.dtd -->
+<!-- DTD for Lexique Pro configuration file -->
+<!-- Copyright (c) 2004-2005 SIL International -->
+<!-- Valid for Lexique Pro version 2.4 - 25 April 2005 -->
+
+<!ELEMENT lexiqueProConfig (version, date?, encoding, lexiconLanguage, glossLanguages, fieldFormatting?, multiEntryView?, permissions?, fieldMarkers, labels, categories, omitRules?, aboutDir?, settingsDir?, databaseTypeFilename?, cctFilename?, homePage)>
+
+<!ELEMENT version EMPTY>
+  <!ATTLIST version number CDATA #REQUIRED>
+
+<!ELEMENT date (#PCDATA)>
+
+<!-- Plain text or UTF-8 Unicode -->
+
+<!ELEMENT encoding EMPTY>
+  <!ATTLIST encoding type (Text | UTF-8) #REQUIRED>
+
+<!-- Lexicon Language settings -->
+
+<!ELEMENT lexiconLanguage (displayNames, languageCodes?, lowerCase, upperCase, caseAssociations, sortOrder, sortFromEnd?, ignoreChars?, alphabet, alphaButtons, alphaSelect, fonts, textDirection, convertToUnicode?, tabTitle?)>
+
+<!ELEMENT displayNames (displayName*)>
+<!ELEMENT displayName (#PCDATA)>
+  <!ATTLIST displayName lang (en | fr | es) #REQUIRED>
+  <!-- Language of user interface: en=English, fr=French, es=Spanish -->
+
+<!ELEMENT languageCodes (languageCode*)>
+<!ELEMENT languageCode (#PCDATA)>
+  <!ATTLIST languageCode type (SIL | ISO-639) #REQUIRED>
+
+<!ELEMENT lowerCase (#PCDATA)>
+<!ELEMENT upperCase (#PCDATA)>
+
+<!ELEMENT caseAssociations (caseLine*)>
+<!ELEMENT caseLine (#PCDATA)>
+
+<!ELEMENT sortOrder (sortLine*)>
+  <!ATTLIST sortOrder sort (true | false) "false">
+<!ELEMENT sortLine (#PCDATA)>
+
+<!ELEMENT sortFromEnd EMPTY>
+  <!ATTLIST sortFromEnd display (true | false) "false">
+
+<!ELEMENT ignoreChars (#PCDATA)>
+
+<!ELEMENT alphabet (#PCDATA)>
+  <!ATTLIST alphabet display (true| false) "true">
+<!ELEMENT alphaButtons (alphaButtonsAlphabet)>
+  <!ATTLIST alphaButtons
+		  display (true | false) "true"
+		  width CDATA #REQUIRED
+		  height CDATA #REQUIRED>
+<!ELEMENT alphaButtonsAlphabet (#PCDATA)>
+<!ELEMENT alphaSelect EMPTY>
+<!ATTLIST alphaSelect selectby (lx | lc) "lx">
+
+<!ELEMENT fonts (font*)>
+<!ELEMENT font (name, size, style?, color?, line-height?, charset?)>
+  <!ATTLIST font area (alpha-buttons | borrowed-word | borrowed-word-small | category | category-small | category-index | definition | definition-small | encyc | encyc-small | etymology | etymology-small | gloss | gloss-small | input-box | label | label-small | list | part-of-speech | part-of-speech-small | phonetic | phonetic-small | reference | reference-small | scientific | scientific-small | sub-entry | title) #REQUIRED>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT size (#PCDATA)>
+<!ELEMENT style EMPTY>
+  <!ATTLIST style bold  (true | false) "false">
+  <!ATTLIST style italic  (true | false) "false">
+  <!ATTLIST style underline (true | false) "false">
+<!ELEMENT color (#PCDATA)>
+<!ELEMENT line-height (#PCDATA)>
+<!ELEMENT charset (#PCDATA)>
+
+<!ELEMENT textDirection EMPTY>
+  <!ATTLIST textDirection dir (LTR | RTL) "LTR">
+  <!-- LTR = Left to Right, RTL = Right to Left -->
+
+<!ELEMENT convertToUnicode (TECkitMappingFilename)>
+<!ELEMENT TECkitMappingFilename (#PCDATA)>
+
+<!ELEMENT tabTitle EMPTY>
+  <!ATTLIST tabTitle langname (true | false) "true">
+
+<!-- Gloss Language settings -->
+
+<!ELEMENT glossLanguages (glossLanguage*)>
+<!ELEMENT glossLanguage (displayNames, markerChar, lowerCase, upperCase, caseAssociations, sortOrder, ignoreChars, fonts, textDirection, convertToUnicode?)>
+  <!ATTLIST glossLanguage major (true | false) "true">
+  <!ATTLIST glossLanguage index (true | false) "true">
+
+<!ELEMENT markerChar (#PCDATA)>
+
+<!-- Miscellaneous field formatting settings -->
+
+<!ELEMENT fieldFormatting (fonts, fieldFormat*)>
+<!ELEMENT fieldFormat EMPTY>
+  <!ATTLIST fieldFormat area (part-of-speech | phonetic | scientific | reference ) #REQUIRED>
+  <!ATTLIST fieldFormat case (same | lower | upper) #IMPLIED>
+  <!ATTLIST fieldFormat style (0 | 1 | 2 | 3 | 4) "3">
+  <!ATTLIST fieldFormat weblink (true | false) "true">
+  <!ATTLIST fieldFormat dir (LTR | RTL) "LTR">
+  <!ATTLIST fieldFormat position (before | after) "before">
+
+<!-- Multi-Entry view - which fields to display -->
+
+<!ELEMENT multiEntryView (displayItem*)>
+<!ELEMENT displayItem EMPTY>
+  <!ATTLIST displayItem name (Examples | ScientificName | LexFunctions | Paradigms | EncycInfo | CrossRefs | Phonetic | Category) #REQUIRED>
+  <!ATTLIST displayItem display (true | false) "false">
+
+<!-- Security Permissions - used when distributing dictionaries -->
+
+<!ELEMENT permissions (permission*)>
+<!ELEMENT permission EMPTY>
+  <!ATTLIST permission area (ChangeConfig | Distribute | Edit | Open | Close | Print | ExportToWord | ExportToWeb) #REQUIRED>
+  <!ATTLIST permission allow (true | false) "false">
+
+<!-- Field Markers -->
+
+<!ELEMENT fieldMarkers (fieldMarker*)>
+<!ELEMENT fieldMarker (#PCDATA)>
+  <!ATTLIST fieldMarker type CDATA #REQUIRED>
+  <!ATTLIST fieldMarker lang CDATA #IMPLIED>
+  <!ATTLIST fieldMarker label CDATA #IMPLIED>
+
+  <!-- The following are recognised Field Marker types:
+	  "Lexeme", "Homonym Number", "Citation Form", "Phonetic Form",
+	  "Sub Entry", "Part Of Speech", "Sense Number", "Gloss", "Definition", "Reversal",
+	   Example, "Example Reference", "Example Gloss", "Paradigm Label", "Paradigm Form" |
+	  "Paradigm Gloss", "Plural Form", "Singular Form", "Scientific Name" |
+	  "Lexical Function", "Lexical Function Value", "Lexical Function Gloss", Usage |
+	  "Encyclopedic Information", "Only (restrictions)", Synonym, Antonym, "Morphology",
+	  "Cross Reference", "Cross Reference Gloss", "Main Entry Cross Reference",
+	  "Variant Form", "Variant Comment", "Borrowed Word", Etymology, "Etymology Gloss",
+	  "Semantic Domain", "Index of Semantics", "Biographical Reference", "Picture",
+	  "Sound (main word)", "Sound (in context)", "Attached File", "Attached File Caption",
+	  "Attached File Picture", "First dual", "First plural exclusive",
+	  "First plural inclusive", "First plural", "First singular", "Second dual",
+	  "Second plural", "Second singular", "Third dual", "Third plural", "Third singular",
+	  "Non-animate dual", "Non-animate plural", "Non-animate singular", "Date" -->
+
+<!ELEMENT labels (label*)>
+<!ELEMENT label (displayNames?)>
+  <!ATTLIST label type (lexical-function | paradigm) #REQUIRED>
+  <!ATTLIST label text CDATA #REQUIRED>
+  <!ATTLIST label hyperlink (true | false) #IMPLIED>
+
+<!-- Categories -->
+
+<!ELEMENT categories (category*)>
+ <!ATTLIST categories visible (true | false) "false">
+  <!ATTLIST categories style (user | ddp) "user">
+
+<!ELEMENT category (displayNames?, categories?)>
+  <!ATTLIST category code CDATA #IMPLIED>
+
+<!-- Omit Rules -->
+
+<!ELEMENT omitRules (omitRule*)>
+<!ELEMENT omitRule (marker, text?)>
+  <!ATTLIST omitRule test (exists | contains | equals | empty) #REQUIRED>
+<!ELEMENT marker (#PCDATA)>
+<!ELEMENT text (#PCDATA)>
+
+<!-- Folders and filenames -->
+
+<!ELEMENT aboutDir (#PCDATA)>
+<!ELEMENT settingsDir (#PCDATA)>
+<!ELEMENT databaseTypeFilename (#PCDATA)>
+<!ELEMENT cctFilename (#PCDATA)>
+
+<!ELEMENT homePage (topImage, bottomImage)>
+<!ELEMENT topImage (#PCDATA)>
+  <!ATTLIST topImage display (true | false) "true">
+<!ELEMENT bottomImage (#PCDATA)>
+  <!ATTLIST bottomImage display (true | false) "true">

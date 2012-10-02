@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="sfm" type="configured" datatype="ExportedDictionary" xslt="Configured.xsl;ConfiguredSfm.xsl">
+	<FxtDocumentDescription dataLabel="Configured Dictionary" formatLabel="SFM" defaultExtension="db" filter="SFM files (*.db)|*.db|All files (*.*)|*.*">
+Export to Standard Format (similar to MDF) following the configuration of the dictionary view, and any current filters and sorts.
+	</FxtDocumentDescription>
+</template>

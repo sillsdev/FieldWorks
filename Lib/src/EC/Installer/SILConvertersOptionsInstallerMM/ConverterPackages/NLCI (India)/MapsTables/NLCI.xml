@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="NLCI's TECkit encoding converter between SL Oriya and Unicode">
+			<scriptInstall filename="MapsTables\SLOri2UOri.tec.vbs" mappingName="SL Oriya&lt;&gt;UNICODE" converterSpec="MapsTables\SLOri2UOri.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="Test Data"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\SLOri2UOri.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\SLOri2UOri.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="NLCI's TECkit encoding converter between DevPanini (including DV-TTYogesh and other CDAC ISFOC DEVANAGARI encoded fonts) and Unicode">
+			<scriptInstall filename="MapsTables\WinScrDev.tec.vbs" mappingName="Winscript/iLeap Devanagari&lt;&gt;UNICODE" converterSpec="MapsTables\WinScrDev.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="/ÊEòiÉÉ¤É/ means 'book' in Hindi"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\WinScrDev.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\WinScrDev.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="NLCI's TECkit encoding converter between WinScript Gujarati (including other CDAC ISFOC Gujarati encoded fonts) and Unicode">
+			<scriptInstall filename="MapsTables\WinScrGuj.tec.vbs" mappingName="Winscript/iLeap Gujarati&lt;&gt;UNICODE" converterSpec="MapsTables\WinScrGuj.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="Test Data"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\WinScrGuj.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\WinScrGuj.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="NLCI's TECkit encoding converter between WinScript Malayalam and Unicode">
+			<scriptInstall filename="MapsTables\WinScrMal.tec.vbs" mappingName="Winscript Malayalam&lt;&gt;UNICODE" converterSpec="MapsTables\WinScrMal.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="Test Data"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\WinScrMal.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\WinScrMal.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="NLCI's TECkit encoding converter between WinScript Oriya and Unicode">
+			<autoInstall mappingName="Winscript Oriya&lt;&gt;UNICODE" converterSpec="MapsTables\WinScrOri.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="NLCI-Oriya" rightEncoding="Unicode Oriya" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\WinScrOri.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\WinScrOri.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="NLCI's TECkit encoding converter between WinScript Tamil and Unicode">
+			<scriptInstall filename="MapsTables\WinScrTam.tec.vbs" mappingName="Winscript Tamil&lt;&gt;UNICODE" converterSpec="MapsTables\WinScrTam.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="Test Data"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\WinScrTam.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\WinScrTam.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="NLCI's TECkit encoding converter between WinScript Telugu and Unicode">
+			<scriptInstall filename="MapsTables\WinScrTel.tec.vbs" mappingName="Winscript Telugu&lt;&gt;UNICODE" converterSpec="MapsTables\WinScrTel.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" sampleData="Test Data"></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\WinScrTel.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\WinScrTel.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="NLCI's TECkit encoding converter between PHNindus and Unicode">
+			<autoInstall mappingName="PHNindus&lt;&gt;UNICODE" converterSpec="MapsTables\PHNindus2UnicodeIPA.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="PHNindus" rightEncoding="Unicode IPA" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\PHNindus2UnicodeIPA.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\PHNindus2UnicodeIPA.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

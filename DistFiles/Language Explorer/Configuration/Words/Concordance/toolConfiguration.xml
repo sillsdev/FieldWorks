@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks>
+		<clerk id="OccurrencesOfSelectedUnit" allowDeletions="false">
+			<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit"/>
+			<recordList class="LangProject" field="ConcOccurrences">
+		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems"/>
+		<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+	  </recordList>
+			<sortMethods/>
+		</clerk>
+		<clerk id="OccurrencesOfSelectedWordform" clerkProvidingOwner="concordanceWords">
+			<recordList class="WfiWordform" field="Occurrences">
+				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" key="WordformOccurrences"/>
+			</recordList>
+			<sortMethods/>
+		</clerk>
+	</clerks>
+
+	<tools>
+	<tool label="Concordance" value="concordance" icon="SideBySideView">
+	  <control>
+		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceContainer"/>
+		<parameters area="textsWords" id="WordsAndOccurrencesMultiPane" splitterBarOrientation="vertical" defaultPrintPane="wordOccurrenceList">
+		  <!--this will fill the pane on the left -->
+		  <control>
+			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+			<parameters area="textsWords" id="LineAndTextMultiPane" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="50%">
+			  <!-- this will fill the top of the left side -->
+			  <control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="concordanceControl" collapse="110000">
+				  <control>
+					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceControl"/>
+					<parameters id="concordanceControl" clerk="OccurrencesOfSelectedUnit"/>
+				  </control>
+				</parameters>
+			  </control>
+			  <!-- this will fill the bottom of the left side -->
+			  <control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="wordOccurrenceList" collapse="180000">
+				  <control>
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+					<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
+					  <include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+					</parameters>
+				  </control>
+				</parameters>
+			  </control>
+			</parameters>
+		  </control>
+		  <!-- this will fill the pane on the right -->
+		  <control>
+			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+			<parameters id="ITextControl" collapse="144000">
+			  <control>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
+				<parameters id="ITextControl" editable="true" clerk="OccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed" hideTitleContents="true" suppressAutoCreate="true" altTitleId="Concordance-Context"/>
+			  </control>
+			</parameters>
+		  </control>
+		</parameters>
+	  </control>
+	</tool>
+	<tool label="Word List Concordance" value="wordListConcordance" icon="SideBySideView">
+	  <control>
+		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+		<parameters area="textsWords" id="WordsAndOccurrencesMultiPane" splitterBarOrientation="vertical" defaultPrintPane="wordOccurrenceList">
+		  <!--this will fill the pane on the left -->
+		  <include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformPaneBarControl']"/>
+		  <!-- this will fill the pane on the right -->
+		  <control>
+			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+			<parameters id="wordOccurrenceList" collapse="180000">
+			  <control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="textsWords" id="LineAndTextMultiPane" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="50%">
+				  <!-- this will fill the top of the right side -->
+				  <control>
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+					<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedWordform" convertDummiesInView="false" convertDummiesSelected="true" filterBar="true" ShowOwnerShortname="true" altTitleId="WordListConcordance-Matches">
+					  <include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+					</parameters>
+				  </control>
+				  <!-- this will fill the bottom of the right side -->
+				  <control>
+					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
+					<parameters id="wordOccurrenceList" editable="true" clerk="OccurrencesOfSelectedWordform" hideTitleContents="true" treeBarAvailability="NotMyBusiness" suppressAutoCreate="true"/>
+				  </control>
+				</parameters>
+			  </control>
+			</parameters>
+		  </control>
+		</parameters>
+	  </control>
+	</tool>
+  </tools>
+</root>

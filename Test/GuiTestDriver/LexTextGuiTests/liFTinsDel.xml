@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <accil on-fail="assert">
+   <goal>Make a List Feature Types entry</goal>
+
+<!--test List Feature Type insert and deletes-->
+<!--assumes original Kalaba database-->
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+  <!--Go to Lists/Feature Types-->
+  <click select="menubar/view/lists/feature-types"/>
+
+  <!--insert new feature-->
+  <click select="toolbar/insert/new-feature-type"/>
+
+  <model select="list-adv[@role='view']">
+
+  <var id="ind" set="*"/>
+  <var id="fld" set="Name"/>
+  <var id="row" set="1"/>
+  <click select="item/multi/text"/>
+  <insert>new entry~</insert>
+  <!--click path="$refresh"/-->
+  <click select="//toolbar/insert/new-feature-type"/><!-- add a second empty feature -->
+
+  <!--check success-->
+  <var id="row" set="*"/>
+  <click select="tree/name" path="/value:new entry"/>
+  <var id="row" set="1"/>
+  <glimpse id ="check1" select="item/multi/text" prop="value" expect="new entry"/>
+
+  <!--delete new feature-->
+  <click select="//toolbar/standard/delete"/>
+	<insert>d</insert>
+  <click select="//toolbar/standard/delete"/>
+	<insert>d</insert>
+
+  <glimpse id ="check2" select="item/multi/text" prop="value" expect="new entry" on-fail="skip" on-pass="assert"/>
+
+  <click  select="item/multi/text"/> <!-- Clicking somewhere off the ParentOfMenuBar so the next test will run -->
+
+  </model>
+
+  </on-application>
+</accil>

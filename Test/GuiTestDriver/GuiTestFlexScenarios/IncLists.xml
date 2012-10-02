@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+  <!--
+		  Often used variables for the List tools
+   -->
+
+
+  <var id="menuLISTS" set="$menuVIEW;menu:Lists/"/>
+  <var id="listFIELDS" set="$singlePANE;9:listsEdit/9:RecordEditView.DataTree/"/>
+
+  <!-- Feature Types -->
+  <var id="insLiFt" set="$INSERT;43:Feature Type"/>
+  <!--var id="liFtPANE" set="$singlePANE;9:/"/-->
+  <var id="liFtEDIT" set="$singlePANE;9:advancedEdit/9:RecordEditView.DataTree/"/>
+  <var id="liFtRec" set="$RecTree"/><!-- record list -->
+
+  <!-- Confidence Level -->
+  <var id="insLiCl" set="$INSERT;43:Confidence Level"/>
+  <var id="liClEDIT" set="$singlePANE;9:listsEdit/9:RecordEditView.DataTree/"/>
+  <var id="liClRec" set="$RecTree"/><!-- outline -->
+
+  <!-- Lexical Reference Types -->
+  <var id="insLiRt" set="$INSERT;43:Lexical Relation"/>
+  <var id="liRtRec" set="$RecTree"/><!-- outline -->
+  <var id="liRtEDIT" set="$singlePANE;9:listsEdit/9:RecordEditView.DataTree/"/>
+
+</include>

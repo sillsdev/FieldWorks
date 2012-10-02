@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 9</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>494, 13</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+	<value>Unable to restore project from this backup file, which was created with an earlier version of FieldWorks: </value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <metadata name="label3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 57</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>318, 13</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>To upgrade this project to FieldWorks 7.0, do one of the following:</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <metadata name="pictureBox1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="pictureBox1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 85</value>
+  </data>
+  <data name="pictureBox1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>10, 10</value>
+  </data>
+  <data name="pictureBox1.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+	<value>CenterImage</value>
+  </data>
+  <data name="pictureBox1.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;pictureBox1.Name" xml:space="preserve">
+	<value>pictureBox1</value>
+  </data>
+  <data name="&gt;&gt;pictureBox1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pictureBox1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;pictureBox1.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>32, 83</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 45</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+	<value>If you can open the original project in FieldWorks 6.0 on another computer, create a backup that includes XML. Cancel this dialog box and select that backup file in the Restore a Project dialog box.</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <metadata name="label4.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label4.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 129</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 13</value>
+  </data>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+	<value>If you have the FieldWorks Installer for FieldWorks 6.0, install it, and then click Retry in this dialog box.</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+	<value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="pictureBox2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="pictureBox2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="pictureBox2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>14, 131</value>
+  </data>
+  <data name="pictureBox2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>10, 10</value>
+  </data>
+  <data name="pictureBox2.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+	<value>CenterImage</value>
+  </data>
+  <data name="pictureBox2.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.Name" xml:space="preserve">
+	<value>pictureBox2</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;pictureBox2.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <metadata name="pictureBox3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="pictureBox3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="pictureBox3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>14, 154</value>
+  </data>
+  <data name="pictureBox3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>10, 10</value>
+  </data>
+  <data name="pictureBox3.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+	<value>CenterImage</value>
+  </data>
+  <data name="pictureBox3.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="&gt;&gt;pictureBox3.Name" xml:space="preserve">
+	<value>pictureBox3</value>
+  </data>
+  <data name="&gt;&gt;pictureBox3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pictureBox3.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;pictureBox3.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="label6.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label6.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="label6.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 244</value>
+  </data>
+  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 13</value>
+  </data>
+  <data name="label6.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="label6.Text" xml:space="preserve">
+	<value>After downloading and installing whatever is needed, click Retry in this dialog box.</value>
+  </data>
+  <data name="&gt;&gt;label6.Name" xml:space="preserve">
+	<value>label6</value>
+  </data>
+  <data name="&gt;&gt;label6.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_labelSqlDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_labelSqlDownload.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_labelSqlDownload.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 152</value>
+  </data>
+  <data name="m_labelSqlDownload.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 13</value>
+  </data>
+  <data name="m_labelSqlDownload.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="m_labelSqlDownload.Text" xml:space="preserve">
+	<value>Click this link to download a FieldWorks installer for SQL Server, and then install it first.</value>
+  </data>
+  <data name="&gt;&gt;m_labelSqlDownload.Name" xml:space="preserve">
+	<value>m_labelSqlDownload</value>
+  </data>
+  <data name="&gt;&gt;m_labelSqlDownload.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_labelSqlDownload.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_labelSqlDownload.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_lnkFw60.AccessibleName" xml:space="preserve">
+	<value>m_lnkFw60</value>
+  </data>
+  <data name="m_lnkFw60.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_lnkFw60.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lnkFw60.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 221</value>
+  </data>
+  <data name="m_lnkFw60.Size" type="System.Drawing.Size, System.Drawing">
+	<value>251, 13</value>
+  </data>
+  <data name="m_lnkFw60.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_lnkFw60.Text" xml:space="preserve">
+	<value>Download SIL FieldWorks Conversion Components.</value>
+  </data>
+  <data name="&gt;&gt;m_lnkFw60.Name" xml:space="preserve">
+	<value>m_lnkFw60</value>
+  </data>
+  <data name="&gt;&gt;m_lnkFw60.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lnkFw60.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lnkFw60.ZOrder" xml:space="preserve">
+	<value>14</value>
+  </data>
+  <data name="m_lnkSqlSvr.AccessibleName" xml:space="preserve">
+	<value>m_lnkSqlSvr</value>
+  </data>
+  <data name="m_lnkSqlSvr.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_lnkSqlSvr.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 175</value>
+  </data>
+  <data name="m_lnkSqlSvr.Size" type="System.Drawing.Size, System.Drawing">
+	<value>225, 13</value>
+  </data>
+  <data name="m_lnkSqlSvr.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_lnkSqlSvr.Text" xml:space="preserve">
+	<value>Download FieldWorks installer for SQL Server.</value>
+  </data>
+  <data name="&gt;&gt;m_lnkSqlSvr.Name" xml:space="preserve">
+	<value>m_lnkSqlSvr</value>
+  </data>
+  <data name="&gt;&gt;m_lnkSqlSvr.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lnkSqlSvr.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lnkSqlSvr.ZOrder" xml:space="preserve">
+	<value>13</value>
+  </data>
+  <data name="m_btnOK.AccessibleName" xml:space="preserve">
+	<value>m_btnOK</value>
+  </data>
+  <data name="m_btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
+	<value>200, 272</value>
+  </data>
+  <data name="m_btnOK.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnOK.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_btnOK.Text" xml:space="preserve">
+	<value>Retry</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.Name" xml:space="preserve">
+	<value>m_btnOK</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnOK.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <data name="m_lblBackupFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_lblBackupFile.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 30</value>
+  </data>
+  <data name="m_lblBackupFile.Size" type="System.Drawing.Size, System.Drawing">
+	<value>539, 13</value>
+  </data>
+  <data name="m_lblBackupFile.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_lblBackupFile.Text" xml:space="preserve">
+	<value>#</value>
+  </data>
+  <data name="&gt;&gt;m_lblBackupFile.Name" xml:space="preserve">
+	<value>m_lblBackupFile</value>
+  </data>
+  <data name="&gt;&gt;m_lblBackupFile.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBackupFile.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblBackupFile.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="m_btnCancel.AccessibleName" xml:space="preserve">
+	<value>m_btnCancel</value>
+  </data>
+  <data name="m_btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="m_btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>290, 272</value>
+  </data>
+  <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="m_btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
+	<value>m_btnCancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_labelFwDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="m_labelFwDownload.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_labelFwDownload.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 198</value>
+  </data>
+  <data name="m_labelFwDownload.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 13</value>
+  </data>
+  <data name="m_labelFwDownload.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="m_labelFwDownload.Text" xml:space="preserve">
+	<value>Click this link to download an installer for a minimal set of FieldWorks 6.0 features, and then install it.</value>
+  </data>
+  <data name="&gt;&gt;m_labelFwDownload.Name" xml:space="preserve">
+	<value>m_labelFwDownload</value>
+  </data>
+  <data name="&gt;&gt;m_labelFwDownload.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_labelFwDownload.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_labelFwDownload.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>564, 307</value>
+  </data>
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		AAABAAEAICAAAAEAGACoDAAAFgAAACgAAAAgAAAAQAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAACUdHuVfHoAAAD/////////////////////////////////////////
+		//////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACLcnSUdHuCeWRF
+		gx4AAAD///////////8AAAD///////////////8AAAAAAAD///8AAAAAAAD///8AAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACLcnSLcnRmfEY1iggnhwAAAAD///////////8AAAD/////////
+		//8AAAD///////8AAAD///////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCa2yIbnJ9
+		dWRMhCMsigAtgwAtgwAAAAD///////////8AAAD///////////8AAAD///////8AAAD///////////8A
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACKb2uIcW1mfEY1iggsigAtgwAtgwAsfAAAAAD/////////
+		//////8AAAD///////8AAAD///////8AAAAAAAD///////8AAAAAAAAAAAAAAAAAAAAAAAAAAACCa2yI
+		cWR5YnszMrEphREsigAtgwAtgwAsfAAsfAAAAAD///////////////8AAAD///////////8AAAAAAAD/
+		//8AAAD///////8AAAAAAAAAAAAAAAAAAAAAAACCbGOCbGNYS5cQDOYAAeQrgg4sigAtgwAsfAAsfAAj
+		eyIAAAD///////////////8AAAD///////////////////////////////////8AAAAAAAAAAAAAAAB5
+		ZWOBa15yYXQ1LLsCAvQCAvQDCNgqfA0tgwAsfAAfHwAaeEQBg7sAAAD///8AAAAAAAAAAAAAAAAAAAD/
+		//////////////////////////////8AAAAAAAAAAAB5ZWN5ZWNbTIsTEOMAAPsAAOsAAOsDCNIqfA1O
+		TiBAQABAQAA/PwAAgcgAAAD///////////////////////////////////////////////////////8A
+		AAAAAAAAAAB5ZVthUXgCAvQAAPsAAOsAAeRwcHBJSTBfXwAwMAAwMBhgYGAwMBdVVRAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB5ZVthUXgCAvQAAOsAAeQf
+		HwBPTwBTUws3Nzefn5/T09OYmJiXl5cwMBc/PwAAqf4Apv4Aqf4Aqf4Pho3wEHj+A4L+CYH+CYH+CYH+
+		CYGpZ3ySgHsAAAAAAAAAAAAAAAB5ZVthUXgAAOtOTiA/PwBAQABXV0ePj4/Pz8/Hx8fHx8eQkJCgoKCI
+		iIhAQB8/PwAApv4Apv4Aqf4PrfT3hWb/Jnj+A4L+CYH+CYH+CYGlZXqSgHsAAAAAAAAAAAAAAABwcHBJ
+		STBgYAAwMAA8PCOnp6e/v7/Ly8vX19fLy8u7u7uIiIioqKiYmJiIiIgwMBdVVRAApv4Apv4PpvXwtV/+
+		rFX/VG7+A4L+A4L+CYGlZXqOfXgAAAAAAAAAAAAfHwBPTwBUVAs3Nzefn5/j4+PHx8fDw8Pj4+O4uLiY
+		mJhgYGCIiIiYmJioqKigoKCXl5cwMBc/PwAApv4PpvXwrGD/s1T/s1T3hWb/Jnj+A4KlZXqOfXgAAAAA
+		AAAgIABgYABXV0ePj4/Pz8/Hx8fX19fPz8/Hx8eQkJBQUFAQEBB/fwBfXyCIiIigoKCgoKCgoKCIiIhA
+		QB8/PwAPpvXwrGD+rFX+rFX/s1T/oFr8SXClZXqOfXgAAAAAAAAgIABAQACQkJDLy8vX19fLy8vLy8uo
+		qKhISEgYGBhfXwC/vwD//7/f319HRxiYmJigoKCoqKiYmJiIiIgwMBdVVRDwrGD+rFX+rFX+rFX/s1T+
+		rFWifnCLdHgAAAAAAAAgIABAQACQkJDj4+O4uLiYmJhISEgfHwA/PwD+/j/+/p////7////////+/m9H
+		RxiIiIiYmJioqKigoKCXl5cwMBc/PwD+rFX+rFX+rFX+rFX8q1iifnCLcnQAAAAAAAAgIABAQACQkJCQ
+		kJBQUFAQEBB/fwC/vz///3/////////////////////////f319fXyCIiIigoKCgoKCgoKCIiIhAQB8P
+		DwD+rFX+rFX+rFX8q1igfm+LcnQAAAAAAAAgIABAQAAkJCQYGBhfXwC/vwD//7///9//////////////
+		/////////////////+/f319HRxiYmJigoKCoqKiYmJhXV1f/zZj8unT+rFX+rFX8q1ide22GcHQAAAAA
+		AAAYGAA/PwAHBwD+/g/+/p/+/v7+/v7+/v7+/v7+/v7+/v7+/v7////////////////////+/m9HRxiI
+		iIiYmJioqKhHR0f/zZj/y5X/w4f8smT+rFWde22GcHQAAAAAAABgYGBfXz9fXx+fnx/+/r/+/v7+/v7+
+		/v7+/v7+/v7+/v7+/v7///////////////////////7f319fXyCIiIigoKBPT0//zZj/y5X/y5X/y5X8
+		unSde22IbnIAAAAAAAAAAACHh4e3t59XVwCfnx/+/s/+/v7+/v7+/v7+/v7+/v7+/v7/////////////
+		/////////////+/f319HRxiYmJhXV1f/y5X/y5X/0JftvZCniHmCa2yIbnIAAAAAAAAAAAAAAABwcHC3
+		t59fXx+XlwD+/s/+/v7+/v7+/v7+/v7+/v7////////////////////////////////+/m9HRxgvLy//
+		zZj/y5XPpYWLcnR/aW2LcnQAAAAAAAAAAAAAAAAAAAAAAACHh4efn39fXx+fnx/+/r/+/v7+/v7+/v7+
+		/v7///////////////////////////////////7f318/PwBgYGCniHl8Z2mCa2wAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAACHh4e3t59XVwCfnx/+/s/+/v7+/v7+/v7/////////////////////////////
+		/////////7/f3wAvLwBzYmiCa2wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwcHC3t59f
+		Xx+XlwD+/s/+/v7+/v7//////////////////////////+///7/Pzy+amhBAQEB5ZWMAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACHh4efn39fXx+fnx/+/r/+/v7/////////////
+		/////////5/f319/fwCCgmB5ZVt5ZWMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAACHh4e3t59XVwCfnx/+/s///////////////8///z9vbw9jYzB1Ylt1YlsAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwcHC3t59fXx+X
+		lwD//7///7/Pzy+amhBAQEByYXRyX1Z0YWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACHh4efn39fXx9/fwB/fwCCgmBqWlpqWlpwXVoAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAACHh4cnJw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAD//wAA//wAAP/wAAD/4AAA/4AAAP8AAAD8AAAA+AAAAOAAAADAAAAAwAAAAMAA
+		AAPAAAADwAAAA4AAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADgAAAA8AAAAfgAAAf8AAAP/gA
+		AP/8AAH//gAH//8AD///gD///8///w==
+</value>
+  </data>
+  <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
+	<value>1200, 345</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+	<value>580, 345</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>FieldWorks</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>MissingOldFieldWorksDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

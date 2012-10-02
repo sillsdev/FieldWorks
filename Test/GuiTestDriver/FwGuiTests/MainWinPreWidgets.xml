@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+	<on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+		<find-extra select="//menubar[@id='MainWindow']/button" on-fail="assert">
+			An extra <data get="path"/> child named '<data get="extra"/>' was found.
+		</find-extra>
+		<find-extra select="//titlebar[@id='Title']" on-fail="assert">
+			An extra <data get="path"/> child named '<data get="extra"/>' was found.
+		</find-extra>
+		<!--glimpse path="button:Minimize">
+		 Main Window missing <data get="path"/>
+		</glimpse>
+		<glimpse path="button:Maximize">
+		 Main Window missing <data get="path"/>
+		</glimpse>
+		<glimpse path="button:Close">
+		 Main Window missing <data get="path"/>
+		</glimpse-->
+		<click wait="1000" path="button:Maximize" />
+		<glimpse path="button:Restore">
+		 Main Window missing <data get="path"/>
+		</glimpse>
+		<click wait="1000" path="button:Restore" />
+	</on-application>
+</accil>

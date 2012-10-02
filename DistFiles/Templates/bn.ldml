@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-10-14T02:57:20" />
+		<language
+			type="bn" />
+	</identity>
+	<characters>
+		<exemplarCharacters>[৺ অ আ ই ঈ উ ঊ ঋ ৠ ঌ ৡ এ ঐ ও ঔ \u09BC ং ঃ \u0981 ক {ক\u09CDষ} খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড {ড\u09BC} ঢ {ঢ\u09BC} ণ ৎ ত থ দ ধ ন প ফ ব ভ ম য {য\u09BC} র ল শ ষ স হ ঽ া ি ী \u09C1 \u09C2 \u09C3 \u09C4 \u09E2 \u09E3 ে ৈ ো ৌ \u09CD ৗ]</exemplarCharacters>
+		<exemplarCharacters
+			type="auxiliary">[\u200C\u200D ৸ ৹ ৲ ৳ ৰ ৱ ৴ ৵ ৶ ৷]</exemplarCharacters>
+		<exemplarCharacters
+			type="currencySymbol">[৳]</exemplarCharacters>
+		<exemplarCharacters
+			type="index"
+			draft="contributed">[অ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ ক {ক\u09CDষ} খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য র ল শ ষ স হ]</exemplarCharacters>
+		<stopwords>
+			<stopwordList
+				type="collation"
+				draft="provisional">একটি -টি -টা -খানি -খানা</stopwordList>
+		</stopwords>
+	</characters>
+	<collations>
+		<collation>
+			<settings
+				normalization="on" />
+			<rules>
+				<reset>৺</reset>
+				<pc>৸৹৲৳অআইঈউঊঋৠঌৡএঐওঔ়ংঃঁকখগঘঙচছজঝঞটঠড</pc>
+				<p>ড়</p>
+				<i>ড়</i>
+				<p>ঢ</p>
+				<p>ঢ়</p>
+				<i>ঢ়</i>
+				<pc>ণৎতথদধনপফবভময</pc>
+				<p>য়</p>
+				<i>য়</i>
+				<pc>রৰলৱশষসহঽািীুূৃৄৢৣেৈ</pc>
+				<p>ো</p>
+				<i>ো</i>
+				<p>ৌ</p>
+				<i>ৌ</i>
+				<pc>্ৗ</pc>
+			</rules>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType
+					value="CustomICU" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Ben" />
+		<palaso:defaultFontFamily
+			value="Vrinda" />
+		<palaso:languageName
+			value="Bengali" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:windowsLCID
+			value="1093" />
+	</special>
+</ldml>

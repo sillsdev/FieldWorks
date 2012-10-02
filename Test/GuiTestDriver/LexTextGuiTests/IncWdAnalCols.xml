@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+
+ <!-- include when in the Words area either Analysis or Concordance -->
+ <!-- Column defaults are Form, Word Glosses, Number in Corpus -->
+
+ <!--   Including script may also  define these variables -->
+   <var id="wordTop" set="$APP;9:WordsAndAnalysesMultiPane/9:wordList/9:wordList"/>
+   <var id="colFilter" set="$wordTop;/9:NAMELESS/9:FilterBar/9:FwComboBox"/>
+   <var id="FilterOff" set="9:ParentOfMenuBar/9:ParentOfMenuBar/22:View/43:Turn off all filters"/>
+   <var id="colChanger" set="$wordTop;/9:NAMELESS[3]/43:NAMELESS"/>
+   <var id="firstRec" set="9:ParentOfMenuBar/9:ParentOfMenuBar/22:Standard/43:First record"/>
+   <var id="wdRow" set="$wordTop;/9:NAMELESS/20:RootSite/24:Table"/>
+   <var id="cell" set="row:Row/cell:Cell"/>
+   <var id="p" set="text:Paragraph"/>
+   <var id="colHeader" set="$wordTop;/9:NAMELESS/9:HeaderListView/33:HeaderListView/9:NAMELESS"/>
+   <var id="idForm" set="1"/>  <!-- 1 is Form -->
+   <var id="idGloss" set="2"/> <!-- 2 is Word Glosses -->
+   <var id="idCorp" set="3"/>   <!-- 3 is Number in Corpus -->
+
+   <!-- Check for "Words" at the top of the area button pane -->
+	 <glimpse id="incWdWords" path="$leftPANEL;9:XYZControl/35:XYZControl/9:Words"/>
+	 <!-- "Words" not found at the top of the area button pane-->
+
+  <!-- Set all columns to "Show All"-->
+	 <click path="$FilterOff"/>
+	 <click path="$firstRec"/>
+	 <glimpse wait="2000" id="wdFirstRecHead" path="$wdRow;[1]/$cell;[$idForm;]/$p" prop="value" expect="biliya" on-fail="skip"/>
+
+	<!-- make sure the word forms are sorted in ascending order -->
+	<if><condition of="$wdFirstRecHead" is="false"/>
+	<then>
+	   <click path="$colHeader;/25:Form"/>
+	   <click path="$firstRec"/>
+	</then>
+	</if>
+
+</include>

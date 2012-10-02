@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+   <goal>TBD</goal>
+
+   <bug id="TBD" desc="TBD"/>
+
+   <!-- In the Mutsun database:
+		 Goto Interlinear texts/Baseline tab
+		 Click Reel 63.
+		 Switch to Analysis tab.
+		 Switch back to Baseline tab.
+		 Time: Select all text and delete.
+		   -->
+
+	<!--Start FLEx with "Mutsun" project loaded -->
+	<var id="projectName" set="Mutsun"/>
+	<!--var id="ProjType" set="XML"/>
+	<var id="ProjExt" set="xml"/-->
+	<var id="ProjType" set="DB4OCS"/>
+	<var id="ProjExt" set="db4o"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application run = "ok" args='-app FLEx -db "C:\GuiTestDriver\Projects\$projectName;\$projectName;.$ProjExt;"' on-fail = "assert">
+
+   <click select="menubar/view/texts-words/interlinear-texts"/>
+
+   <model select="interlinear-texts[@role='view']">
+		  <click select="text/baseline/tab"/>
+
+		  <click select="texts/record/col" path="/value:Reel 63" row="*"/>
+
+		  <click select="text/analyze/tab"/>
+
+		  <!--click wait="10000" select="text/baseline/tab"/-->
+		  <click select="text/baseline/tab"/>
+		  <glimpse id="ereeSiy" select="text/baseline/line" prop="value" expect="ereeSiy!" />
+		  <!-- insert wait="2000">^{A}</insert--> <!-- select all text -->
+		  <click select="//menubar/edit/select-all"/>
+
+		 <!--monitor-time wait="5000" expect="999999999" desc="Mutsun db Delete Texts"-->
+		 <monitor-time expect="999999999" desc="Mutsun db Delete Texts">
+			<insert>{DELETE}</insert> <!-- select all text -->
+			<glimpse id="ereeSiy2" select="text/baseline/line" prop="value" expect="ereeSiy!" on-fail="skip"/>
+		 </monitor-time>
+
+   </model>
+
+   <click select="menubar/view/lexicon/lexicon-edit"/>
+   <click select="toolbar/standard/first"/>
+   <!-- Get the cursor off the toolbar so the next test won't die! -->
+   <click select="lexicon-edit[@role='view']/entry/slice/lexeme-form/data" ind="*"/>
+
+ </on-application>
+
+</accil>

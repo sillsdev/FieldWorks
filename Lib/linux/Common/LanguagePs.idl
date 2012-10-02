@@ -1,0 +1,7069 @@
+#line 1 "C:\\fw\\Src\\Language\\LanguagePs.idl"
+
+
+
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+
+
+#line 1 "C:\\fw\\Src\\Generic\\Common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 19 "C:\\fw\\Src\\Language\\LanguagePs.idl"
+
+
+
+#line 1 "C:\\fw\\src\\Kernel\\FwKernel.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+interface ITsString;
+interface IFwFldSpec;
+interface IUndoGrouper;
+
+typedef [v1_enum] enum UndoResult
+{
+	kuresSuccess,
+	kuresRefresh,
+	kuresFailed,
+
+
+
+	kuresError,
+
+} UndoResult;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwCustomExport") cpp_quote(",") cpp_quote("40300033-D5F9-4136-9A8C-B401D8582E9B") cpp_quote(");") [ uuid("40300033-D5F9-4136-9A8C-B401D8582E9B"), object, pointer_default(unique) ] interface IFwCustomExport : IUnknown
+{
+
+
+
+
+
+	HRESULT SetLabelStyles(
+		[in] BSTR bstrLabel,
+		[in] BSTR bstrSubLabel);
+
+
+
+
+
+
+
+	HRESULT AddFlidCharStyleMapping(
+		[in] int flid,
+		[in] BSTR bstrStyle);
+
+
+
+
+
+
+
+
+	HRESULT BuildSubItemsString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+
+
+
+
+
+
+
+	HRESULT BuildObjRefSeqString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+
+
+
+
+
+
+
+	HRESULT BuildObjRefAtomicString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+
+
+
+
+
+
+
+	HRESULT BuildExpandableString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+
+
+
+
+
+	HRESULT GetEnumString(
+		[in] int flid,
+		[in] int itss,
+		[out, retval] BSTR * pbstrName);
+
+
+
+
+
+
+
+
+	HRESULT GetActualLevel(
+		[in] int nLevel,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] int * pnActualLevel);
+
+
+
+
+
+
+
+
+
+	HRESULT BuildRecordTags(
+		[in] int nLevel,
+		[in] int hvo,
+		[in] int clid,
+		[out] BSTR * pbstrStartTag,
+		[out] BSTR * pbstrEndTag);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetPageSetupInfo(
+		[out] int * pnOrientation,
+		[out] int * pnPaperSize,
+		[out] int * pdxmpLeftMargin,
+		[out] int * pdxmpRightMargin,
+		[out] int * pdympTopMargin,
+		[out] int * pdympBottomMargin,
+		[out] int * pdympHeaderMargin,
+		[out] int * pdympFooterMargin,
+		[out] int * pdxmpPageWidth,
+		[out] int * pdympPageHeight,
+		[out] ITsString ** pptssHeader,
+		[out] ITsString ** pptssFooter);
+
+
+
+
+
+
+
+
+	HRESULT PostProcessFile(
+		[in] BSTR bstrInputFile,
+		[out, retval] BSTR * pbstrOutputFile);
+
+
+
+
+
+	HRESULT IncludeObjectData(
+		[out, retval] ComBool *pbWriteObjData);
+};
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwTool") cpp_quote(",") cpp_quote("37396941-4DD1-11d4-8078-0000C0FB81B5") cpp_quote(");") [ uuid("37396941-4DD1-11d4-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface IFwTool : IUnknown
+{
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT NewMainWnd(
+		[in] BSTR bstrServerName,
+		[in] BSTR bstrDbName,
+		[in] int hvoLangProj,
+		[in] int hvoMainObj,
+		[in] int encUi,
+		[in] int nTool,
+		[in] int nParam,
+		[out] int * ppidNew,
+		[out, retval] long * phtool);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT NewMainWndWithSel(
+		[in] BSTR bstrServerName,
+		[in] BSTR bstrDbName,
+		[in] int hvoLangProj,
+		[in] int hvoMainObj,
+		[in] int encUi,
+		[in] int nTool,
+		[in] int nParam,
+		[in, size_is(chvo)] const long * prghvo,
+		[in] int chvo,
+		[in, size_is(cflid)] const int * prgflid,
+		[in] int cflid,
+		[in] int ichCur,
+		[in] int nView,
+		[out] int * ppidNew,
+		[out, retval] long * phtool);
+
+
+
+
+
+
+	HRESULT CloseMainWnd(
+		[in] long htool,
+		[out, retval] ComBool *pfCancelled);
+
+
+
+
+
+
+
+	HRESULT CloseDbAndWindows(
+		[in] BSTR bstrSvrName,
+		[in] BSTR bstrDbName,
+		[in] ComBool fOkToClose);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IUndoAction") cpp_quote(",") cpp_quote("2F6BB7C9-1B3A-4e94-A7BF-782C2369F681") cpp_quote(");") [ uuid("2F6BB7C9-1B3A-4e94-A7BF-782C2369F681"), object, pointer_default(unique) ] interface IUndoAction : IUnknown
+{
+
+
+
+	HRESULT Undo(
+		[out, retval] ComBool * pfSuccess);
+
+
+	HRESULT Redo(
+		[out, retval] ComBool * pfSuccess);
+
+
+	HRESULT Commit();
+
+
+
+	HRESULT IsDataChange([out,retval]ComBool * pfRet);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IActionHandler") cpp_quote(",") cpp_quote("32C2020C-3094-42bc-80FF-45AD89826F62") cpp_quote(");") [ uuid("32C2020C-3094-42bc-80FF-45AD89826F62"), object, pointer_default(unique) ] interface IActionHandler : IUnknown
+{
+
+
+
+
+
+
+
+	HRESULT BeginUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+
+
+	HRESULT EndUndoTask();
+
+
+
+
+	HRESULT ContinueUndoTask();
+
+
+
+	HRESULT EndOuterUndoTask();
+
+
+
+	HRESULT BreakUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT StartSeq(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo,
+		[in] IUndoAction * puact);
+
+
+
+
+
+	HRESULT AddAction(
+		[in] IUndoAction * puact);
+
+
+
+
+	HRESULT GetUndoText(
+		[out, retval] BSTR * pbstrUndoText);
+
+
+
+
+
+	HRESULT GetUndoTextN(
+		[in] int iAct,
+		[out, retval] BSTR * pbstrUndoText);
+
+
+
+
+
+	HRESULT GetRedoText(
+		[out, retval] BSTR * pbstrRedoText);
+
+
+
+
+
+
+	HRESULT GetRedoTextN(
+		[in] int iAct,
+		[out, retval] BSTR * pbstrRedoText);
+
+
+
+	HRESULT CanUndo(
+		[out, retval] ComBool * pfCanUndo);
+
+
+
+	HRESULT CanRedo(
+		[out, retval] ComBool * pfCanRedo);
+
+
+
+	HRESULT Undo(
+		[out, retval] UndoResult * pures);
+
+
+
+	HRESULT Redo(
+		[out, retval] UndoResult * pures);
+
+
+
+
+	HRESULT Commit();
+
+
+
+
+	HRESULT Close();
+
+
+
+	HRESULT Mark(
+		[out, retval] int * phMark);
+
+
+
+
+
+
+
+
+
+
+	HRESULT CollapseToMark(
+		[in] int hMark,
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+
+
+	HRESULT DiscardToMark(
+		[in] int hMark);
+
+
+	[propget] HRESULT TopMarkHandle(
+		[out, retval] int * phMark);
+
+
+
+	[propget] HRESULT TasksSinceMark(
+		[in] ComBool fUndo,
+		[out, retval] ComBool * pf);
+
+
+
+
+	[propget] HRESULT UndoableActionCount(
+		[out, retval] int * pcSeq);
+
+
+
+	[propget] HRESULT UndoableSequenceCount(
+		[out, retval] int * pcSeq);
+
+
+
+	[propget] HRESULT RedoableSequenceCount(
+		[out, retval] int * pcSeq);
+
+
+	[propget] HRESULT UndoGrouper(
+		[out, retval] IUndoGrouper ** ppundg);
+
+
+	[propput] HRESULT UndoGrouper(
+		[in] IUndoGrouper * pundg);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IAdvInd") cpp_quote(",") cpp_quote("5F74AB40-EFE8-4a0d-B9AE-30F493FE6E21") cpp_quote(");") [ uuid("5F74AB40-EFE8-4a0d-B9AE-30F493FE6E21"), object, pointer_default(unique) ] interface IAdvInd : IUnknown
+{
+
+
+
+
+	HRESULT Step(
+		[in] int nStepAmt);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IAdvInd2") cpp_quote(",") cpp_quote("639C98DB-A241-496d-BE19-1EFC85CA1DD7") cpp_quote(");") [ uuid("639C98DB-A241-496d-BE19-1EFC85CA1DD7"), object, pointer_default(unique) ] interface IAdvInd2 : IAdvInd
+{
+
+	HRESULT NextStage();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IAdvInd3") cpp_quote(",") cpp_quote("86b6ae62-3dfa-4020-b5d1-7fa28e7726e4") cpp_quote(");") [ uuid("86b6ae62-3dfa-4020-b5d1-7fa28e7726e4"), object, pointer_default(unique) ] interface IAdvInd3 : IAdvInd
+{
+
+
+	[propput] HRESULT Title(
+		[in] BSTR bstrTitle);
+
+
+	[propput] HRESULT Message(
+		[in] BSTR bstrMessage);
+
+
+	[propput] HRESULT Position(
+		[in] int nPos);
+
+	[propput] HRESULT StepSize(
+		[in] int nStepInc);
+
+	HRESULT SetRange(
+		[in] int nMin,
+		[in] int nMax);
+};
+
+
+
+
+
+typedef [v1_enum] enum CrtReportType
+{
+	Warn    = 0x0,
+	Error   = 0x1,
+	Assert  = 0x2,
+} CrtReportType;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDebugReportSink") cpp_quote(",") cpp_quote("14E389C6-C986-4e31-AE70-1CC10CC35471") cpp_quote(");") [ uuid("14E389C6-C986-4e31-AE70-1CC10CC35471"), object, pointer_default(unique) ] interface IDebugReportSink : IUnknown
+{
+
+
+
+
+
+	HRESULT Report(
+		[in] CrtReportType nReportType,
+		[in] BSTR szMsg);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDebugReport") cpp_quote(",") cpp_quote("7AE7CF67-67BE-4860-8E72-AAC88294C397") cpp_quote(");") [ uuid("7AE7CF67-67BE-4860-8E72-AAC88294C397"), object, pointer_default(unique) ] interface IDebugReport : IUnknown
+{
+
+
+	HRESULT ShowAssertMessageBox(
+		[in] ComBool fShowMessageBox);
+
+
+	HRESULT SetSink(
+		[in] IDebugReportSink * pSink);
+};
+
+
+
+
+
+
+
+
+#line 727 "C:\\fw\\src\\Kernel\\FwKernel.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IHelpTopicProvider") cpp_quote(",") cpp_quote("AF8960FB-B7AF-4259-832B-38A3F5629052") cpp_quote(");") [ uuid("AF8960FB-B7AF-4259-832B-38A3F5629052"), object, pointer_default(unique) ] interface IHelpTopicProvider : IUnknown
+{
+
+	HRESULT GetHelpString(
+		[in] BSTR bstrPropName,
+		[in] int iKey,
+		[out, retval] BSTR * pbstrPropValue);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwFldSpec") cpp_quote(",") cpp_quote("FE44E19B-E710-4635-9690-1AFB451B1226") cpp_quote(");") [ uuid("FE44E19B-E710-4635-9690-1AFB451B1226"), object, pointer_default(unique) ] interface IFwFldSpec : IUnknown
+{
+	[propput] HRESULT Visibility(
+		[in] int nVis);
+	[propget] HRESULT Visibility(
+		[out, retval] int * pnVis);
+
+	[propput] HRESULT HideLabel(
+		[in] ComBool fHide);
+	[propget] HRESULT HideLabel(
+		[out, retval] ComBool * pfHide);
+
+	[propput] HRESULT Label(
+		[in] ITsString * ptssLabel);
+	[propget] HRESULT Label(
+		[out, retval] ITsString ** pptssLabel);
+
+	[propput] HRESULT FieldId(
+		[in] int flid);
+	[propget] HRESULT FieldId(
+		[out, retval] int * pflid);
+
+	[propput] HRESULT ClassName(
+		[in] BSTR bstrClsName);
+	[propget] HRESULT ClassName(
+		[out, retval] BSTR * pbstrClsName);
+
+	[propput] HRESULT FieldName(
+		[in] BSTR bstrFieldName);
+	[propget] HRESULT FieldName(
+		[out, retval] BSTR * pbstrFieldName);
+
+	[propput] HRESULT Style(
+		[in] BSTR bstrStyle);
+	[propget] HRESULT Style(
+		[out, retval] BSTR * pbstrStyle);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IUndoGrouper") cpp_quote(",") cpp_quote("C38348D3-392C-4e02-BD50-A01DC4189E1D") cpp_quote(");") [ uuid("C38348D3-392C-4e02-BD50-A01DC4189E1D"), object, pointer_default(unique) ] interface IUndoGrouper : IUnknown
+{
+
+
+	HRESULT BeginGroup(
+		[out, retval] int * phndl);
+
+
+	HRESULT EndGroup(
+		[in] int hndl);
+
+
+
+	HRESULT CancelGroup(
+		[in] int hndl);
+};
+
+
+
+
+
+
+
+
+#line 23 "C:\\fw\\Src\\Language\\LanguagePs.idl"
+#line 1 "C:\\fw\\src\\Kernel\\TextServ.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+interface ITsString;
+interface ITsTextProps;
+interface ITsStrFactory;
+interface ITsPropsFactory;
+interface ITsStrBldr;
+interface ITsIncStrBldr;
+interface ITsPropsBldr;
+interface ITsMultiString;
+
+interface ILgWritingSystemFactory;
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("const OLECHAR kchObject = 0xFFFC;")
+cpp_quote("#else // !defined(__cplusplus)")
+const OLECHAR kchObject = 0xFFFC;
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextPropVar
+{
+	ktpvDefault    = 0x0,
+	ktpvMilliPoint = 0x1,
+	ktpvRelative   = 0x2,
+	ktpvEnum       = 0x3,
+
+	ktpvNinch      = 0xF
+} FwTextPropVar;
+
+
+
+
+
+
+typedef [v1_enum] enum FwNormalizationMode
+{
+	knmNone    = 1,
+	knmNFD = 2,
+	knmNFKD   = 3,
+	knmNFC      = 4,
+	knmDefault = 4,
+	knmNFKC = 5,
+	knmFCD = 6,
+	knmNFSC = 7,
+
+
+
+	knmLim
+} FwNormalizationMode;
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextPropType
+{
+
+	ktptWs = 1,
+
+
+	ktptItalic = 2,
+
+
+	ktptBold = 3,
+
+
+	ktptSuperscript = 4,
+
+
+	ktptUnderline = 5,
+
+
+
+	ktptFontSize = 6,
+
+
+
+	ktptOffset = 7,
+
+
+
+	ktptForeColor = 8,
+
+
+
+	ktptBackColor = 9,
+
+
+
+	ktptUnderColor = 10,
+
+
+
+
+
+
+
+	ktptBaseWs = 16,
+
+
+	ktptAlign = 17,
+
+
+
+
+	ktptFirstIndent = 18,
+
+
+	ktptLeadingIndent = 19,
+	ktptMarginLeading = 19,
+
+
+	ktptTrailingIndent = 20,
+	ktptMarginTrailing = 20,
+
+
+	ktptSpaceBefore = 21,
+	ktptMswMarginTop = 21,
+
+
+	ktptSpaceAfter = 22,
+	ktptMarginBottom = 22,
+
+
+	ktptTabDef = 23,
+
+
+
+
+	ktptLineHeight = 24,
+
+
+
+	ktptParaColor = 25,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	ktptMarginTop = 50,
+
+
+
+
+
+
+	ktptFontFamily = 1,
+	ktptCharStyle = 2,
+	ktptParaStyle = 3,
+	ktptTabList = 4,
+	ktptTags = 5,
+	ktptObjData = 6,
+
+
+
+
+
+
+	ktptRightToLeft = 128,
+	ktptDirectionDepth = 129,
+
+	ktptFontVariations = 130,
+	ktptNamedStyle = 133,
+	ktptPadLeading = 134,
+	ktptPadTrailing = 135,
+	ktptPadTop = 136,
+	ktptPadBottom = 137,
+
+	ktptBorderTop = 138,
+	ktptBorderBottom = 139,
+	ktptBorderLeading = 140,
+	ktptBorderTrailing = 141,
+	ktptBorderColor = 142,
+
+	ktptBulNumScheme = 143,
+	ktptBulNumStartAt = 144,
+	ktptBulNumTxtBef = 145,
+	ktptBulNumTxtAft = 146,
+	ktptBulNumFontInfo = 147,
+
+
+	ktptKeepWithNext = 148,
+	ktptKeepTogether = 149,
+	ktptHyphenate = 150,
+	ktptMaxLines = 151,
+
+
+	ktptCellBorderWidth = 152,
+	ktptCellSpacing = 153,
+	ktptCellPadding = 154,
+
+	ktptEditable = 155,
+
+	ktptWsStyle = 156,
+
+
+	ktptSetRowDefaults = 159,
+
+
+
+	ktptRelLineHeight = 160,
+	ktptTableRule = 161,
+
+
+
+	ktptFieldName = 9998,
+
+
+
+	ktptMarkItem = 9999
+
+} FwTextPropType;
+
+
+
+
+
+
+typedef [v1_enum] enum TptEditable
+ {
+	ktptNotEditable = 0,
+	ktptIsEditable,
+	ktptSemiEditable,
+} TptEditable;
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwObjDataTypes
+{
+	kodtPictEven = 1,
+	kodtPictOdd = 2,
+
+
+
+
+
+
+
+
+	kodtNameGuidHot = 3,
+
+
+
+
+	kodtExternalPathName = 4,
+
+
+
+
+
+
+	kodtOwnNameGuidHot = 5,
+
+
+
+
+
+
+	kodtEmbeddedObjectData = 6,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	kodtContextString = 7,
+
+
+
+
+
+
+
+	kodtGuidMoveableObjDisp = 8,
+} FwObjDataTypes;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextScalarProp
+{
+
+
+
+
+
+
+	kscpWs = ((ktptWs) << 2) | 2,
+
+
+
+	kscpWsAndOws = ((ktptWs) << 2) | 3,
+
+
+
+	kscpItalic = ((ktptItalic) << 2) | 0,
+
+
+
+	kscpBold = ((ktptBold) << 2) | 0,
+
+
+
+	kscpSuperscript = ((ktptSuperscript) << 2) | 0,
+
+
+
+	kscpUnderline = ((ktptUnderline) << 2) | 0,
+
+
+
+
+	kscpFontSize = ((ktptFontSize) << 2) | 2,
+
+
+
+
+	kscpOffset = ((ktptOffset) << 2) | 2,
+
+
+
+
+	kscpForeColor = ((ktptForeColor) << 2) | 2,
+
+
+
+
+	kscpBackColor = ((ktptBackColor) << 2) | 2,
+
+
+
+
+	kscpUnderColor = ((ktptUnderColor) << 2) | 2,
+
+
+
+
+
+
+
+
+	kscpBaseWs = ((ktptBaseWs) << 2) | 2,
+
+
+
+	kscpBaseWsAndOws = ((ktptBaseWs) << 2) | 3,
+
+
+
+	kscpAlign = ((ktptAlign) << 2) | 0,
+
+
+
+
+
+	kscpFirstIndent = ((ktptFirstIndent) << 2) | 2,
+
+
+
+	kscpLeadingIndent = ((ktptLeadingIndent) << 2) | 2,
+
+
+
+	kscpTrailingIndent = ((ktptTrailingIndent) << 2) | 2,
+
+
+
+	kscpSpaceBefore = ((ktptSpaceBefore) << 2) | 2,
+
+
+
+	kscpSpaceAfter = ((ktptSpaceAfter) << 2) | 2,
+
+
+
+	kscpTabDef = ((ktptTabDef) << 2) | 2,
+
+
+
+
+
+	kscpLineHeight = ((ktptLineHeight) << 2) | 2,
+
+
+
+
+	kscpParaColor = ((ktptParaColor) << 2) | 2,
+
+
+
+	kscpMarkItem = ((ktptMarkItem) << 2) | 0
+
+} FwTextScalarProp;
+
+
+
+
+
+typedef [v1_enum] enum FwTextStringProp
+{
+	kstpFontFamily = ktptFontFamily,
+	kstpCharStyle = ktptCharStyle,
+	kstpParaStyle = ktptParaStyle,
+	kstpTabList = ktptTabList,
+	kstpTags = ktptTags,
+	kstpObjData = ktptObjData,
+
+	kstpFontVariations = ktptFontVariations,
+	kstpNamedStyle = ktptNamedStyle,
+	kstpBulNumTxtBef = ktptBulNumTxtBef,
+	kstpBulNumTxtAft = ktptBulNumTxtAft,
+	kstpBulNumFontInfo = ktptBulNumFontInfo,
+	kstpWsStyle = ktptWsStyle,
+
+
+	 kstpFieldName = ktptFieldName
+
+} FwTextStringProp;
+
+
+
+
+
+typedef [v1_enum] enum FwTextPropConstants
+{
+
+	kdenTextPropRel = 10000,
+
+
+	kcbitTextPropVar = 4,
+
+
+
+	knNinch = 0x80000000,
+
+	knConflicting = 0x80000001,
+} FwTextPropConstants;
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextToggleVal
+{
+	kttvOff = 0,
+	kttvForceOn = 1,
+	kttvInvert = 2,
+} FwTextToggleVal;
+
+
+
+
+
+
+typedef [v1_enum] enum FwSuperscriptVal
+{
+	kssvOff = 0,
+	kssvSuper = 1,
+	kssvSub = 2,
+} FwSuperscriptVal;
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextColor
+{
+	kclrWhite       = 0x00FFFFFF,
+	kclrBlack       = 0x00000000,
+	kclrRed         = 0x000000FF,
+	kclrGreen       = 0x0000FF00,
+	kclrBlue        = 0x00FF0000,
+	kclrYellow		= 0x0000FFFF,
+	kclrMagenta		= 0x00FF00FF,
+	kclrCyan		= 0x00FFFF00,
+
+
+
+
+	kclrReserved1 = 0x80000000,
+	kclrReserved2 = 0x80000001,
+
+	kclrTransparent = 0xC0000000,
+} FwTextColor;
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwUnderlineType
+{
+	kuntMin,
+
+	kuntNone = kuntMin,
+	kuntDotted,
+	kuntDashed,
+	kuntSingle,
+	kuntDouble,
+	kuntStrikethrough,
+
+
+	kuntSquiggle,
+
+	kuntLim,
+} FwUnderlineType;
+
+
+
+
+
+typedef [v1_enum] enum FwTextAlign
+{
+	ktalMin,
+
+	ktalLeading = ktalMin,
+	ktalLeft,
+	ktalCenter,
+	ktalRight,
+	ktalTrailing,
+	ktalJustify,
+
+	ktalLim,
+} FwTextAlign;
+
+
+
+typedef struct TsRunInfo
+{
+	int ichMin;
+	int ichLim;
+	int irun;
+} TsRunInfo;
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quote(",") cpp_quote("0E9E5A6C-BA20-4245-8E26-719A67FE1892") cpp_quote(");") [ uuid("0E9E5A6C-BA20-4245-8E26-719A67FE1892"), object, pointer_default(unique) ] interface ITsString : IUnknown
+{
+
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT Length(
+		[out, retval] int * pcch);
+
+	[propget] HRESULT RunCount(
+		[out, retval] int * pcrun);
+
+
+
+
+
+	[propget] HRESULT RunAt(
+		[in] int ich,
+		[out, retval] int * pirun);
+
+	[propget] HRESULT MinOfRun(
+		[in] int irun,
+		[out, retval] int * pichMin);
+
+	[propget] HRESULT LimOfRun(
+		[in] int irun,
+		[out, retval] int * pichLim);
+
+	HRESULT GetBoundsOfRun(
+		[in] int irun,
+		[out] int * pichMin,
+		[out] int * pichLim);
+
+
+
+
+	HRESULT FetchRunInfoAt(
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+	HRESULT FetchRunInfo(
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+	[propget] HRESULT RunText(
+		[in] int irun,
+		[out, retval] BSTR * pbstr);
+
+	HRESULT GetChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, retval] BSTR * pbstr);
+
+
+	[restricted, local] HRESULT FetchChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, size_is(ichLim - ichMin), string] OLECHAR * prgch);
+
+
+
+
+	[restricted, local] HRESULT LockText(
+		[out, string] const OLECHAR ** pprgch,
+		[out] int * pcch);
+
+	[restricted, local] HRESULT UnlockText(
+		[in, string] const OLECHAR * prgch);
+
+	[restricted, local] HRESULT LockRun(
+		[in] int irun,
+		[out, string] const OLECHAR ** pprgch,
+		[out] int * pcch);
+
+	[restricted, local] HRESULT UnlockRun(
+		[in] int irun,
+		[in, string] const OLECHAR * prgch);
+
+
+
+	[propget] HRESULT PropertiesAt(
+		[in] int ich,
+		[out, retval] ITsTextProps ** ppttp);
+
+	[propget] HRESULT Properties(
+		[in] int irun,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+
+
+	HRESULT GetBldr(
+		[out, retval] ITsStrBldr ** pptsb);
+
+
+
+	HRESULT GetIncBldr(
+		[out, retval] ITsIncStrBldr ** pptisb);
+
+
+	HRESULT GetFactoryClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+
+
+	HRESULT Equals(
+		[in] ITsString * ptss,
+		[out, retval] ComBool * pfEqual);
+
+
+
+	HRESULT WriteAsXml(
+		[in] IStream * pstrm,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] int cchIndent,
+		[in] int ws,
+		[in] ComBool fWriteObjData);
+
+
+
+
+
+
+	[propget] HRESULT IsNormalizedForm(
+		[in] FwNormalizationMode nm,
+		[out, retval] ComBool * pfRet);
+
+
+
+
+
+
+
+
+	[propget] HRESULT NormalizedForm(
+		[in] FwNormalizationMode nm,
+		[out, retval] ITsString ** pptssRet);
+
+
+
+
+
+
+
+
+
+
+	[restricted, local] HRESULT NfdAndFixOffsets(
+		[out] ITsString ** pptssRet,
+		[in, size_is(cichOffsetsToFix)] int ** prgpichOffsetsToFix,
+		[in] int cichOffsetsToFix);
+};
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_quote(",") cpp_quote("4FA0B99A-5A56-41A4-BE8B-B89BC62251A5") cpp_quote(");") [ uuid("4FA0B99A-5A56-41A4-BE8B-B89BC62251A5"), object, pointer_default(unique) ] interface ITsTextProps : IUnknown
+{
+
+
+	[propget] HRESULT IntPropCount(
+		[out, retval] int * pcv);
+
+
+	HRESULT GetIntProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] int * pnVar,
+		[out, retval] int * pnVal);
+
+
+	HRESULT GetIntPropValues(
+		[in] int tpt,
+		[out] int * pnVar,
+		[out, retval] int * pnVal);
+
+
+	[propget] HRESULT StrPropCount(
+		[out, retval] int * pcv);
+
+	HRESULT GetStrProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out, retval] BSTR * pbstrVal);
+
+
+	HRESULT GetStrPropValue(
+		[in] int tpt,
+		[out, retval] BSTR * pbstrVal);
+
+
+
+
+
+	HRESULT GetBldr(
+		[out, retval] ITsPropsBldr ** pptpb);
+
+
+	HRESULT GetFactoryClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT Serialize(
+		[in] IStream * pstrm);
+
+	HRESULT SerializeRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcb);
+
+
+
+	HRESULT SerializeRgPropsRgb(
+		[in] int cpttp,
+		[in] ITsTextProps ** rgpttp,
+		[in] int * rgich,
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcb);
+
+
+
+
+
+	HRESULT WriteAsXml(
+		[in] IStream * pstrm,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] int cchIndent);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrFactory") cpp_quote(",") cpp_quote("F1EF76E4-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E4-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsStrFactory : IUnknown
+{
+	HRESULT DeserializeStringStreams(
+		[in] IStream * pstrmTxt,
+		[in] IStream * pstrmFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeString(
+		[in] BSTR bstrTxt,
+		[in] IStream * pstrmFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeStringRgb(
+		[in] BSTR bstrTxt,
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeStringRgch(
+		[in, size_is(*pcchTxt), string] const OLECHAR * prgchTxt,
+		[in, out] int * pcchTxt,
+		[in, size_is(*pcbFmt)] const BYTE * prgbFmt,
+		[in, out] int * pcbFmt,
+		[out, retval] ITsString ** pptss);
+
+
+
+
+	HRESULT MakeString(
+		[in] BSTR bstr,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[restricted] HRESULT MakeStringRgch(
+		[in, size_is(cch), string] const OLECHAR * prgch,
+		[in] int cch,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[restricted] HRESULT MakeStringWithPropsRgch(
+		[in, size_is(cch), string] const OLECHAR * prgch,
+		[in] int cch,
+		[in] ITsTextProps * pttp,
+		[out, retval] ITsString ** pptss);
+
+
+
+	HRESULT GetBldr(
+		[out, retval] ITsStrBldr ** pptsb);
+
+
+	HRESULT GetIncBldr(
+		[out, retval] ITsIncStrBldr ** pptisb);
+
+
+
+	[propget] HRESULT RunCount(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[out, retval] int * pcrun);
+
+
+
+	HRESULT FetchRunInfoAt(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+	HRESULT FetchRunInfo(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+};
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsFactory") cpp_quote(",") cpp_quote("8DCE56A6-CFF1-4402-95FE-2B574912B54E") cpp_quote(");") [ uuid("8DCE56A6-CFF1-4402-95FE-2B574912B54E"), object, pointer_default(unique) ] interface ITsPropsFactory : IUnknown
+{
+	HRESULT DeserializeProps(
+		[in] IStream * pstrm,
+		[out, retval] ITsTextProps ** ppttp);
+	HRESULT DeserializePropsRgb(
+		[in, size_is(*pcb)] const BYTE * prgb,
+		[in, out] int * pcb,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+	HRESULT DeserializeRgPropsRgb(
+		[in] int cpttpMax,
+		[in, size_is(*pcb)] const BYTE * prgb,
+		[in, out] int * pcb,
+		[out] int * pcpttpRet,
+		[out, size_is(cpttpMax)] ITsTextProps ** rgpttp,
+		[out, size_is(cpttpMax)] int * rgich);
+
+
+
+
+
+	HRESULT MakeProps(
+		[in] BSTR bstrStyle,
+		[in] int ws,
+		[in] int ows,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+
+	[restricted] HRESULT MakePropsRgch(
+		[in, size_is(cch), string] const OLECHAR * prgchStyle,
+		[in] int cch,
+		[in] int ws,
+		[in] int ows,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+	HRESULT GetPropsBldr(
+		[out, retval] ITsPropsBldr ** pptpb);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrBldr") cpp_quote(",") cpp_quote("F1EF76E6-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E6-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsStrBldr : IUnknown
+{
+
+
+
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+	[propget] HRESULT Length(
+		[out, retval] int * pcch);
+	[propget] HRESULT RunCount(
+		[out, retval] int * pcrun);
+
+
+	[propget] HRESULT RunAt(
+		[in] int ich,
+		[out, retval] int * pirun);
+
+	HRESULT GetBoundsOfRun(
+		[in] int irun,
+		[out] int * pichMin,
+		[out] int * pichLim);
+	[restricted] HRESULT FetchRunInfoAt(
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+	[restricted] HRESULT FetchRunInfo(
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+	[propget] HRESULT RunText(
+		[in] int irun,
+		[out, retval] BSTR * pbstr);
+	HRESULT GetChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, retval] BSTR * pbstr);
+	[restricted, local] HRESULT FetchChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, size_is(ichLim - ichMin), string] OLECHAR * prgch);
+
+
+	[propget] HRESULT PropertiesAt(
+		[in] int ich,
+		[out, retval] ITsTextProps ** pttp);
+	[propget] HRESULT Properties(
+		[in] int irun,
+		[out, retval] ITsTextProps ** pttp);
+
+
+
+
+
+
+
+
+	HRESULT Replace(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] BSTR bstrIns,
+		[in] ITsTextProps * pttp);
+
+
+
+	HRESULT ReplaceTsString(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] ITsString * ptssIns);
+
+
+
+	HRESULT ReplaceRgch(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in, size_is(cchIns), string] const OLECHAR * prgchIns,
+		[in] int cchIns,
+		[in] ITsTextProps * pttp);
+
+
+	HRESULT SetProperties(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] ITsTextProps * pttp);
+
+
+
+	HRESULT SetIntPropValues(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+
+
+	HRESULT SetStrPropValue(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+
+	HRESULT GetString(
+		[out, retval] ITsString ** pptss);
+
+	HRESULT Clear(
+		);
+
+
+	HRESULT GetBldrClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsIncStrBldr") cpp_quote(",") cpp_quote("F1EF76E7-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E7-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsIncStrBldr : IUnknown
+{
+
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+
+
+
+	HRESULT Append(
+		[in] BSTR bstrIns);
+
+	HRESULT AppendTsString(
+		[in] ITsString * ptssIns);
+
+	[restricted] HRESULT AppendRgch(
+		[in, size_is(cchIns), string] const OLECHAR * prgchIns,
+		[in] int cchIns);
+
+
+
+
+
+	HRESULT SetIntPropValues(
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+
+
+
+	HRESULT SetStrPropValue(
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+
+	HRESULT GetString(
+		[out, retval] ITsString ** pptss);
+
+	HRESULT Clear(
+		);
+
+
+	HRESULT GetIncBldrClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+
+};
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsBldr") cpp_quote(",") cpp_quote("F1EF76E8-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E8-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsPropsBldr : IUnknown
+{
+
+	[propget] HRESULT IntPropCount(
+		[out, retval] int * pcv);
+
+	HRESULT GetIntProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] int * pnVar,
+		[out] int * pnVal);
+
+
+	HRESULT GetIntPropValues(
+		[in] int tpt,
+		[out] int * pnVar,
+		[out] int * pnVal);
+
+
+	[propget] HRESULT StrPropCount(
+		[out, retval] int * pcv);
+
+	HRESULT GetStrProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] BSTR * pbstrVal);
+
+
+	HRESULT GetStrPropValue(
+		[in] int tpt,
+		[out] BSTR * pbstrVal);
+
+
+
+	HRESULT SetIntPropValues(
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+
+	HRESULT SetStrPropValue(
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+
+	HRESULT SetStrPropValueRgch(
+		[in] int tpt,
+		[in, size_is(nValLength)] const byte* rgchVal,
+		[in] int nValLength);
+
+
+
+	HRESULT GetTextProps(
+		[out, retval] ITsTextProps ** ppttp);
+};
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsMultiString") cpp_quote(",") cpp_quote("DD409520-C212-11d3-9BB7-00400541F9E9") cpp_quote(");") [ uuid("DD409520-C212-11d3-9BB7-00400541F9E9"), object, pointer_default(unique) ] interface ITsMultiString : IUnknown
+{
+
+	[propget] HRESULT StringCount(
+		[out, retval] int * pctss);
+
+
+
+
+
+
+	HRESULT GetStringFromIndex(
+		[in] int iws,
+		[out] int * pws,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[propget] HRESULT String(
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[propputref] HRESULT String(
+		[in] int ws,
+		[in] ITsString * ptss);
+};
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStreamWrapper") cpp_quote(",") cpp_quote("4516897E-314B-49d8-8378-F2E105C80009") cpp_quote(");") [ uuid("4516897E-314B-49d8-8378-F2E105C80009"), object, pointer_default(unique) ] interface ITsStreamWrapper : IUnknown
+{
+
+	[propget] HRESULT Stream(
+		[out, retval] IStream ** ppstrm);
+
+	[propget] HRESULT Contents(
+		[out, retval] BSTR * pbstr);
+
+
+
+	[propput] HRESULT Contents(
+		[in] BSTR bstr);
+
+	HRESULT WriteTssAsXml(
+		[in] ITsString * ptss,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] int cchIndent,
+		[in] int ws,
+		[in] ComBool fWriteObjData);
+
+
+	HRESULT ReadTssFromXml(
+		[in] ILgWritingSystemFactory * pwsf,
+		[out, retval] ITsString ** pptss);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 24 "C:\\fw\\Src\\Language\\LanguagePs.idl"
+
+#line 1 "C:\\fw\\src\\DbAccess\\DbAccess.idh"
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+typedef [v1_enum] enum SqlStmtType
+{
+	knSqlStmtNoResults = 0,
+	knSqlStmtSelectWithOneRowset = 1,
+	knSqlStmtStoredProcedure = 2,
+} SqlStmtType;
+
+typedef [v1_enum] enum OdeLockTimeoutMode
+{
+	koltNone,
+	koltMsgBox,
+	koltReturnError
+} OdeLockTimeoutMode;
+
+typedef [v1_enum] enum OdeLockTimeoutValue
+{
+	koltvForever = -1,
+	koltvNoWait = 0,
+	koltvFwDefault = 1000
+} OdeLockTimeoutValue;
+
+
+interface IOleDbCommand;
+interface IOleDbEncap;
+interface IFwMetaDataCache;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbCommand") cpp_quote(",") cpp_quote("21993161-3E24-11d4-A1BD-00C04F0C9593") cpp_quote(");") [ uuid("21993161-3E24-11d4-A1BD-00C04F0C9593"), object, pointer_default(unique) ] interface IOleDbCommand : IUnknown
+{
+
+
+
+	HRESULT ColValWasNull(
+		[out] int * pfIsNull);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT ExecCommand(
+		[in] BSTR bstrSqlStatement,
+		[in] int nStatementType);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetColValue(
+		[in] ULONG iluColIndex,
+		[out, size_is(cbBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cbBufferLength,
+		[out] ULONG * pcbAmtBuffUsed,
+		[out] ComBool * pfIsNull,
+		[in] int cbPad);
+
+
+
+
+
+
+
+
+
+	HRESULT GetInt(
+		[in] int iColIndex,
+		[out] int * pnValue);
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetParameter(
+		[in] ULONG iluColIndex,
+		[out, size_is(cluBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cluBufferLength,
+		[out] ComBool * pfIsNull);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetRowset(
+		[in] int nRowsBuffered);
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] IUnknown * punkSession,
+		[in] IStream * pfistLog);
+
+
+
+	HRESULT NextRow(
+		[out] ComBool * pfMoreRows);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT SetParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in] WORD nDataType,
+		[in, size_is(cluBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cluBufferLength);
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT SetByteBuffParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in, size_is(cluBufferLength)] BYTE * prgbDataBuffer,
+		[in] ULONG cluBufferLength);
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT SetStringParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in, size_is(cluBufferLength)] OLECHAR * prgchDataBuffer,
+		[in] ULONG cluBufferLength);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbEncap") cpp_quote(",") cpp_quote("CB7BEA0F-960A-4b23-80D3-DE06C0530E04") cpp_quote(");") [ uuid("CB7BEA0F-960A-4b23-80D3-DE06C0530E04"), object, pointer_default(unique) ] interface IOleDbEncap : IUnknown
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT BeginTrans();
+
+
+
+
+
+
+
+	HRESULT CommitTrans();
+
+
+
+
+
+	HRESULT CreateCommand(
+		[out] IOleDbCommand ** ppodc);
+
+
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pfistLog,
+		[in] OdeLockTimeoutMode olt,
+		[in] int nmsTimeout);
+
+
+
+	HRESULT IsTransactionOpen(
+		[out,retval] ComBool * pfTransactionOpen);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT RollbackTrans();
+
+
+
+
+
+
+
+	HRESULT RollbackSavePoint(
+		[in] BSTR bstrSavePoint);
+
+
+
+
+
+
+
+
+	HRESULT SetSavePoint(
+		[out] BSTR * pbstr);
+
+
+
+
+
+	HRESULT SetSavePointOrBeginTrans(
+		[out] BSTR * pbstr);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT InitMSDE(
+		[in] IStream * pfistLog,
+		[in] ComBool fForce);
+
+
+
+	[propget] HRESULT Server(
+		[out, retval] BSTR * pbstrSvr);
+
+
+
+	[propget] HRESULT Database(
+		[out, retval] BSTR * pbstrDb);
+
+
+
+	HRESULT GetFreeLogKb(
+		[in] int nReservespace,
+		[out] int * pnKbFree);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwMetaDataCache") cpp_quote(",") cpp_quote("6AA9042E-0A4D-4f33-881B-3FBE48861D14") cpp_quote(");") [ uuid("6AA9042E-0A4D-4f33-881B-3FBE48861D14"), object, pointer_default(unique) ] interface IFwMetaDataCache : IUnknown
+{
+
+
+
+
+
+
+	HRESULT Init(
+		[in] IOleDbEncap * pode);
+
+
+
+
+	HRESULT Reload(
+		[in] IOleDbEncap * pode,
+		[in] ComBool fKeepVirtuals);
+
+
+
+
+
+
+
+
+
+	HRESULT InitXml(
+		[in] BSTR bstrPathname,
+		[in] ComBool fClearPrevCache);
+
+
+
+
+
+
+
+	[propget] HRESULT FieldCount(
+		[out, retval] int * pcflid);
+
+
+
+
+
+
+	HRESULT GetFieldIds(
+		[in] int cflid,
+		[out, size_is(cflid)] ULONG * rgflid);
+
+
+
+
+
+
+
+	HRESULT GetOwnClsName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrOwnClsName);
+
+
+
+
+
+
+
+
+	HRESULT GetDstClsName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrDstClsName);
+
+
+
+
+
+
+	HRESULT GetOwnClsId(
+		[in] ULONG luFlid,
+		[out] ULONG * pluOwnClsid);
+
+
+
+
+
+
+
+
+
+	HRESULT GetDstClsId(
+		[in] ULONG luFlid,
+		[out] ULONG * pluDstClsid);
+
+
+
+
+
+
+	HRESULT GetFieldName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldName);
+
+
+
+
+
+
+	HRESULT GetFieldLabel(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldLabel);
+
+
+
+
+
+
+	HRESULT GetFieldHelp(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldHelp);
+
+
+
+
+
+
+	HRESULT GetFieldXml(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldXml);
+
+
+
+
+
+
+	HRESULT GetFieldListRoot(
+		[in] ULONG luFlid,
+		[out] int * piListRoot);
+
+
+
+
+
+
+	HRESULT GetFieldWs(
+		[in] ULONG luFlid,
+		[out] int * piWs);
+
+
+
+
+
+
+
+
+	HRESULT GetFieldType(
+		[in] ULONG luFlid,
+		[out] int * piType);
+
+
+
+
+
+
+
+	[propget] HRESULT IsValidClass(
+		[in] ULONG luFlid,
+		[in] ULONG luClid,
+		[out, retval] ComBool * pfValid);
+
+
+
+
+
+
+
+	[propget] HRESULT ClassCount(
+		[out, retval] int * pcclid);
+
+
+
+
+
+
+	HRESULT GetClassIds(
+		[in] int cclid,
+		[out, size_is(cclid)] ULONG * rgclid);
+
+
+
+
+
+
+	HRESULT GetClassName(
+		[in] ULONG luClid,
+		[out] BSTR * pbstrClassName);
+
+
+
+
+
+
+	HRESULT GetAbstract(
+		[in] ULONG luClid,
+		[out] ComBool * pfAbstract);
+
+
+
+
+
+
+	HRESULT GetBaseClsId(
+		[in] ULONG luClid,
+		[out] ULONG * pluClid);
+
+
+
+
+
+
+
+	HRESULT GetBaseClsName(
+		[in] ULONG luClid,
+		[out] BSTR * pbstrBaseClsName);
+
+
+
+
+
+
+
+
+	HRESULT GetFields(
+		[in] ULONG luClid,
+		[in] ComBool fIncludeSuperclasses,
+		[in] int grfcpt,
+		[in] int cflidMax,
+		[out, size_is(cflidMax)] ULONG * prgflid,
+		[out] int * pcflid);
+
+
+
+
+
+
+	HRESULT GetClassId(
+		[in] BSTR bstrClassName,
+		[out, retval] ULONG * pluClid);
+
+
+
+	HRESULT GetFieldId(
+		[in] BSTR bstrClassName,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] ULONG * pluFlid);
+
+
+
+
+	HRESULT GetFieldId2(
+		[in] ULONG luClid,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] ULONG * pluFlid);
+
+	HRESULT GetDirectSubclasses(
+		[in] ULONG luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax), length_is(*pcluOut)] ULONG * prgluSubclasses);
+
+
+
+
+	HRESULT GetAllSubclasses(
+		[in] ULONG luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax), length_is(*pcluOut)] ULONG * prgluSubclasses);
+
+
+
+	HRESULT AddVirtualProp(
+		[in] BSTR bstrClass,
+		[in] BSTR bstrField,
+		[in] ULONG luFlid,
+		[in] int type);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDbAdmin") cpp_quote(",") cpp_quote("2A861F95-63D0-480d-B5AF-4FAF0D22125D") cpp_quote(");") [ uuid("2A861F95-63D0-480d-B5AF-4FAF0D22125D"), object, pointer_default(unique) ] interface IDbAdmin : IUnknown
+{
+
+
+
+
+	HRESULT CopyDatabase(
+		[in] BSTR bstrSrcPathName,
+		[in] BSTR bstrDstPathName);
+
+
+
+
+	HRESULT AttachDatabase(
+		[in] BSTR bstrDatabaseName,
+		[in] BSTR bstrPathName);
+
+
+	HRESULT DetachDatabase(
+		[in] BSTR bstrDatabaseName);
+
+
+
+
+
+
+
+
+	HRESULT RenameDatabase(
+		[in] BSTR bstrDirName,
+		[in] BSTR bstrOldName,
+		[in] BSTR bstrNewName,
+		[in] ComBool fDetachBefore,
+		[in] ComBool fAttachAfter);
+
+
+	[propputref] HRESULT LogStream(
+		[in] IStream * pstrm);
+
+
+	[propget] HRESULT FwRootDir(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT FwMigrationScriptDir(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT FwDatabaseDir(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT FwTemplateDir(
+		[out, retval] BSTR * pbstr);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 26 "C:\\fw\\Src\\Language\\LanguagePs.idl"
+#line 1 "c:\\fw\\src\\language\\Render.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	interface ILgInputMethodEditor;
+	interface ILgLineBreakEngine;
+	interface IVwGraphics;
+	interface ILgWritingSystemFactory;
+	interface IJustifyingRenderer;
+
+
+	typedef [v1_enum] enum LgLineBreak {
+
+		klbNoBreak = 0,
+		klbWsBreak = 10,
+		klbWordBreak = 15,
+		klbHyphenBreak = 20,
+		klbLetterBreak = 30,
+		klbClipBreak = 40
+	} LgLineBreak;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	typedef [v1_enum] enum LgLineBreakStatus
+	{
+		kflbsBrk = 0x1,
+		kflbsSpace = 0x2,
+
+
+		kflbsBrkL = 0x4
+	} LgLineBreakStatus;
+
+	typedef [v1_enum] enum LgIPDrawMode
+	{
+		kdmNormal,
+		kdmSplitPrimary,
+		kdmSplitSecondary
+	} LgIPDrawMode;
+
+	typedef [v1_enum] enum LgIpValidResult
+	{
+		kipvrOK,
+		kipvrBad,
+		kipvrUnknown
+	} LgIpValidResult;
+
+	typedef [v1_enum] enum LgTrailingWsHandling
+	{
+		ktwshAll,
+		ktwshNoWs,
+		ktwshOnlyWs,
+	} LgTrailingWsHandling;
+
+	typedef [v1_enum] enum LgUtfForm
+	{
+		kutf8,
+		kutf16,
+		kutf32
+	} LgUtfForm;
+
+
+
+
+	typedef [v1_enum] enum VwGenericFontNames
+	{
+		kvgfnCustom,
+		kvgfnSerif,
+		kvgfnSansSerif,
+		kvgfnMonospace
+	} VwGenericFontNames;
+
+	typedef [v1_enum] enum VwFontStyle {
+		kfsNormal,
+		kfsItalic,
+		kfsOblique
+	} VwFontStyle;
+
+	typedef [v1_enum] enum VwTextUnderline {
+		ktuNoUnderline,
+		ktuSingleUnderline
+	} VwTextUnderline;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	typedef struct
+	{
+		COLORREF clrFore;
+		COLORREF clrBack;
+		COLORREF clrUnder;
+		int dympOffset;
+		int ws;
+		byte fWsRtl;
+		int nDirDepth;
+		int ssv;
+		int unt;
+
+
+
+
+
+		int ttvBold;
+		int ttvItalic;
+		int dympHeight;
+		OLECHAR szFaceName[32];
+		OLECHAR szFontVar[64];
+	} LgCharRenderProps;
+
+
+	typedef enum ScriptDirCode
+	{
+		kfsdcNone			= 0,
+		kfsdcHorizLtr		= 1,
+		kfsdcHorizRtl		= 2,
+		kfsdcVertFromLeft	= 4,
+		kfsdcVertFromRight	= 8,
+
+	} ScriptDirCode;
+
+
+	typedef enum JustGlyphAttr
+	{
+		kjgatStretch = 1,
+		kjgatShrink,
+		kjgatWeight,
+		kjgatStep,
+		kjgatChunk,
+		kjgatWidth,
+		kjgatBreak,
+
+		kjgatStretchInSteps,
+		kjgatWidthInSteps,
+
+		kjgatAdvWidth,
+		kjgatAdvHeight,
+		kjgatBbLeft,
+		kjgatBbRight,
+		kjgatBbTop,
+		kjgatBbBottom,
+
+	} JustGlyphAttr;
+
+
+
+
+
+	typedef struct
+	{
+
+
+
+
+
+
+
+
+
+
+
+
+		ScriptDirCode sdcPara;
+		ScriptDirCode sdcOuter;
+	} LgParaRenderProps;
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ISimpleInit") cpp_quote(",") cpp_quote("FC1C0D0D-0483-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("FC1C0D0D-0483-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface ISimpleInit : IUnknown
+	{
+		[restricted] HRESULT InitNew(
+			[in, size_is(cb)] const BYTE * prgb,
+			[in] int cb);
+
+
+		[propget, restricted] HRESULT InitializationData(
+			[out, retval] BSTR * pbstr);
+	};
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwGraphics") cpp_quote(",") cpp_quote("3A3CE0A1-B5EB-43bd-9C89-35EAA110F12B") cpp_quote(");") [ uuid("3A3CE0A1-B5EB-43bd-9C89-35EAA110F12B"), object, pointer_default(unique) ] interface IVwGraphics : IUnknown
+	{
+
+
+		HRESULT InvertRect(
+			[in] int xLeft,
+			[in] int yTop,
+			[in] int xRight,
+			[in] int yBottom);
+
+		[propput] HRESULT ForeColor(
+			[in] int clr);
+
+		[propput] HRESULT BackColor(
+			[in] int clr);
+
+		HRESULT DrawRectangle(
+			[in] int xLeft,
+			[in] int yTop,
+			[in] int xRight,
+			[in] int yBottom);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		HRESULT DrawHorzLine(
+			[in] int xLeft,
+			[in] int xRight,
+			[in] int y,
+			[in] int dyHeight,
+			[in] int cdx,
+			[in, size_is(cdx)] int * prgdx,
+			[in, out] int * pdxStart);
+		HRESULT DrawLine(
+			[in] int xLeft,
+			[in] int yTop,
+			[in] int xRight,
+			[in] int yBottom);
+		HRESULT DrawText(
+			[in] int x,
+			[in] int y,
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[in] int xStretch);
+		HRESULT DrawTextExt(
+			[in] int x,
+			[in] int y,
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgchw,
+			[in] UINT uOptions,
+			[in] const RECT * prect,
+			[in] int * prgdx);
+		HRESULT GetTextExtent(
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[out] int * px,
+			[out] int * py);
+
+
+		HRESULT GetTextLeadWidth(
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[in] int ich,
+			[in] int xStretch,
+			[out, retval] int * px);
+		HRESULT GetClipRect(
+			[out] int * pxLeft,
+			[out] int * pyTop,
+			[out] int * pxRight,
+			[out] int * pyBottom);
+
+		HRESULT GetFontEmSquare(
+			[out, retval] int * pxyFontEmSquare);
+		HRESULT GetGlyphMetrics(
+			[in] int chw,
+			[out] int * psBoundingWidth,
+			[out] int * pyBoundingHeight,
+			[out] int * pxBoundingX,
+			[out] int * pyBoundingY,
+			[out] int * pxAdvanceX,
+			[out] int * pyAdvanceY);
+
+		HRESULT GetFontData(
+			[in] int nTableId,
+			[out] int * pcbTableSz,
+			[out, retval] BSTR * pbstrTableData);
+		HRESULT GetFontDataRgch(
+			[in] int nTableId,
+			[out] int * pcbTableSz,
+			[out, size_is(cchMax)] OLECHAR * prgch,
+			[in] int cchMax);
+		HRESULT XYFromGlyphPoint(
+			[in] int chw,
+			[in] int nPoint,
+			[out] int * pxRet,
+			[out] int * pyRet);
+		[propget] HRESULT FontAscent(
+			[out, retval] int * py);
+		[propget] HRESULT FontDescent(
+			[out, retval] int * pyRet);
+		[propget] HRESULT FontCharProperties(
+			[out, retval] LgCharRenderProps * pchrp);
+
+
+
+
+
+		HRESULT ReleaseDC();
+
+
+
+		[propget] HRESULT XUnitsPerInch(
+			[out, retval] int * pxInch);
+
+		[propput] HRESULT XUnitsPerInch(
+			[in] int xInch);
+
+
+
+		[propget] HRESULT YUnitsPerInch(
+			[out, retval] int * pyInch);
+
+		[propput] HRESULT YUnitsPerInch(
+			[in] int yInch);
+
+
+
+		HRESULT SetupGraphics(
+
+			[in, out] LgCharRenderProps * pchrp);
+
+
+		HRESULT PushClipRect(
+			[in] RECT rcClip);
+		HRESULT PopClipRect();
+
+
+		HRESULT DrawPolygon(
+			[in] int cvpnt,
+			[in, size_is(cvpnt)] POINT prgvpnt[]);
+
+		HRESULT RenderPicture(
+		  [in] IPicture * ppic,
+		  [in] long x,
+		  [in] long y,
+		  [in] long cx,
+		  [in] long cy,
+		  [in] OLE_XPOS_HIMETRIC xSrc,
+		  [in] OLE_YPOS_HIMETRIC ySrc,
+		  [in] OLE_XSIZE_HIMETRIC cxSrc,
+		  [in] OLE_YSIZE_HIMETRIC cySrc,
+		  [in] LPCRECT prcWBounds);
+
+
+
+
+
+
+
+
+		HRESULT MakePicture(
+			[in, size_is(cbData)] byte * pbData,
+			[in] int cbData,
+			[out, retval] IPicture ** pppic);
+
+
+	};
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwGraphicsWin32") cpp_quote(",") cpp_quote("8E6828A3-8681-4822-B76D-6C4A25CAECE6") cpp_quote(");") [ uuid("8E6828A3-8681-4822-B76D-6C4A25CAECE6"), object, pointer_default(unique) ] interface IVwGraphicsWin32 : IVwGraphics
+	{
+
+
+
+		[local] HRESULT Initialize(
+			[in] HDC hdc);
+
+		[local] HRESULT GetDeviceContext(
+			[out, retval] HDC * phdc);
+
+
+		[local] HRESULT SetMeasureDc(
+			[in] HDC hdc);
+
+
+		HRESULT SetClipRect(
+			[in] RECT * prcClip);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwTextSource") cpp_quote(",") cpp_quote("92AC8BE4-EDC8-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("92AC8BE4-EDC8-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface IVwTextSource : IUnknown
+	{
+
+
+		HRESULT Fetch(
+			[in] int ichMin,
+			[in] int ichLim,
+			[out, size_is(ichLim - ichMin)] OLECHAR * prgchBuf);
+		[propget] HRESULT Length(
+			[out, retval] int * pcch);
+
+
+
+
+
+
+
+
+
+		HRESULT GetCharProps(
+			[in] int ich,
+			[out] LgCharRenderProps * pchrp,
+			[out] int * pichMin,
+			[out] int * pichLim);
+
+		HRESULT GetParaProps(
+			[in] int ich,
+			[out] LgParaRenderProps * pchrp,
+			[out] int * pichMin,
+			[out] int * pichLim);
+
+
+
+
+
+
+
+
+
+		HRESULT GetCharStringProp(
+			[in] int ich,
+			[in] int nId,
+			[out] BSTR * pbstr,
+			[out] int * pichMin,
+			[out] int * pichLim);
+
+
+		HRESULT GetParaStringProp(
+			[in] int ich,
+			[in] int nId,
+			[out] BSTR * pbstr,
+			[out] int * pichMin,
+			[out] int * pichLim);
+	};
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwJustifier") cpp_quote(",") cpp_quote("BAC7725F-1D26-42b2-8E9D-8B9175782CC7") cpp_quote(");") [ uuid("BAC7725F-1D26-42b2-8E9D-8B9175782CC7"), object, pointer_default(unique) ] interface IVwJustifier : IUnknown
+	{
+
+
+
+		HRESULT AdjustGlyphWidths(
+			[in] IJustifyingRenderer * pjren,
+			[in] int iGlyphMin,
+			[in] int iGlyphLim,
+			[in] float dxCurrentWidth,
+			[in] float dxDesiredWidth);
+
+
+
+
+
+
+
+
+
+
+
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSegment") cpp_quote(",") cpp_quote("7407F0FC-58B0-4476-A0C8-69431801E560") cpp_quote(");") [ uuid("7407F0FC-58B0-4476-A0C8-69431801E560"), object, pointer_default(unique) ] interface ILgSegment : IUnknown
+	{
+
+		HRESULT DrawText(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[out] int * dxdWidth);
+
+
+
+
+		HRESULT Recompute(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg);
+		[propget] HRESULT Width(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * px);
+		[propget] HRESULT RightOverhang(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * px);
+		[propget] HRESULT LeftOverhang(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * px);
+		[propget] HRESULT Height(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * py);
+		[propget] HRESULT Ascent(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * py);
+		HRESULT Extent(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out] int* px,
+			[out] int* py);
+
+
+
+		HRESULT BoundingRect(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[out, retval] RECT * prcBounds);
+
+
+		HRESULT GetActualWidth(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[out] int * dxdWidth);
+
+		[propget] HRESULT AscentOverhang(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int *py);
+		[propget] HRESULT DescentOverhang(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int *py);
+
+
+		[propget] HRESULT RightToLeft(
+			[in] int ichBase,
+			[out, retval] ComBool * pfResult);
+
+
+		[propget] HRESULT DirectionDepth(
+			[in] int ichBase,
+			[out] int * pnDepth,
+			[out] ComBool * pfWeak);
+
+
+		HRESULT SetDirectionDepth(
+			[in] int ichwBase,
+			[in] int nNewDepth);
+
+
+		[propget] HRESULT WritingSystem(
+			[in] int ichBase,
+			[out] int * pws);
+
+
+
+
+
+		[propget] HRESULT Lim(
+			[in] int ichBase,
+			[out, retval] int * pdich);
+
+
+
+
+
+		[propget] HRESULT LimInterest(
+			[in] int ichBase,
+			[out, retval] int * pdich);
+
+
+		[propput] HRESULT EndLine(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] ComBool fNewVal);
+		[propput] HRESULT StartLine(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] ComBool fNewVal);
+		[propget] HRESULT StartBreakWeight(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] LgLineBreak * plb);
+		[propget] HRESULT EndBreakWeight(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] LgLineBreak * plb);
+		[propget] HRESULT Stretch(
+			[in] int ichBase,
+			[out, retval] int * pxs);
+		[propput] HRESULT Stretch(
+			[in] int ichBase,
+			[in] int xs);
+
+
+
+
+
+
+
+
+		HRESULT IsValidInsertionPoint(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] int ich,
+			[out, retval] LgIpValidResult * pipvr);
+		HRESULT DoBoundariesCoincide(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] ComBool fBoundaryEnd,
+			[in] ComBool fBoundaryRight,
+			[out, retval] ComBool * pfResult);
+		HRESULT DrawInsertionPoint(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[in] int ich,
+			[in] ComBool fAssocPrev,
+			[in] ComBool fOn,
+			[in] LgIPDrawMode dm);
+		HRESULT PositionsOfIP(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[in] int ich,
+			[in] ComBool fAssocPrev,
+			[in] LgIPDrawMode dm,
+			[out] RECT * rectPrimary,
+			[out] RECT * rectSecondary,
+			[out] ComBool * pfPrimaryHere,
+			[out] ComBool * pfSecHere);
+
+		HRESULT DrawRange(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[in] int ichMin,
+			[in] int ichLim,
+			[in] int ydTop,
+			[in] int ydBottom,
+			[in] ComBool bOn);
+		HRESULT PositionOfRange(
+			[in] int ichBase,
+			[in] IVwGraphics* pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[in] int ichMin,
+			[in] int ichim,
+			[in] int ydTop,
+			[in] int ydBottom,
+			[in] RECT * rsBounds,
+			[out, retval] ComBool * pfAnythingToDraw);
+		HRESULT PointToChar(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[in] POINT ptdClickPosition,
+			[out] int * pich,
+			[out] ComBool * pfAssocPrev);
+		HRESULT ArrowKeyPosition(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in,out] int * pich,
+			[in, out] ComBool * pfAssocPrev,
+			[in] ComBool fRight,
+			[in] ComBool fMovingIn,
+			[out] ComBool * pfResult);
+		HRESULT ExtendSelectionPosition(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in, out] int * pich,
+			[in] ComBool fAssocPrevMatch,
+
+			[in] ComBool fAssocPrevNeeded,
+			[in] int ichAnchor,
+			[in] ComBool fRight,
+			[in] ComBool fMovingIn,
+			[out] ComBool * pfRet);
+
+
+
+
+
+		HRESULT GetCharPlacement(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] int ichMin,
+			[in] int ichLim,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+
+			[in] ComBool fSkipSpace,
+			[in] int cxdMax ,
+			[out] int * pcxd,
+
+
+
+
+
+
+			[out, size_is(cxdMax )] int * prgxdLefts,
+			[out, size_is(cxdMax )] int * prgxdRights,
+			[out, size_is(cxdMax )] int * prgydUnderTops);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	};
+
+
+	typedef [v1_enum] enum
+	{
+
+		kestNoMore,
+
+		kestMoreLines,
+
+
+
+		kestHardBreak,
+
+
+
+		kestBadBreak,
+
+
+
+		kestOkayBreak,
+
+
+
+
+
+		kestWsBreak,
+
+
+
+		kestMoreWhtsp,
+
+		kestNothingFit
+
+	} LgEndSegmentType;
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRenderEngine") cpp_quote(",") cpp_quote("93CB892F-16D1-4dca-9C71-2E804BC9395C") cpp_quote(");") [ uuid("93CB892F-16D1-4dca-9C71-2E804BC9395C"), object, pointer_default(unique) ] interface IRenderEngine : IUnknown
+	{
+
+
+
+
+
+		HRESULT InitRenderer(
+			[in] IVwGraphics * pvg,
+			[in] BSTR bstrData);
+
+
+
+
+
+		HRESULT FontIsValid();
+
+
+
+
+
+		[propget] HRESULT SegDatMaxLength(
+			[out, retval] int * cb);
+
+
+		HRESULT FindBreakPoint(
+			[in] IVwGraphics * pvg,
+			[in] IVwTextSource * pts,
+			[in] IVwJustifier * pvjus,
+
+			[in] int ichMin,
+
+
+
+
+
+			[in] int ichLim,
+
+
+			[in] int ichLimBacktrack,
+
+
+
+
+			[in] ComBool fNeedFinalBreak,
+			[in] ComBool fStartLine,
+			[in] int dxMaxWidth,
+			[in] LgLineBreak lbPref,
+			[in] LgLineBreak lbMax,
+			[in] LgTrailingWsHandling twsh,
+			[in] ComBool fParaRightToLeft,
+
+			[out] ILgSegment ** ppsegRet,
+			[out] int * pdichLimSeg,
+			[out] int * pdxWidth,
+			[out] LgEndSegmentType * pest,
+			[in] ILgSegment * psegPrev);
+
+
+
+
+
+		[propget] HRESULT ScriptDirection(
+			[out, retval] int * pgrfsdc);
+
+
+		[propget] HRESULT ClassId(
+			[out, retval] GUID * pguid);
+
+
+
+
+
+
+		HRESULT InterpretChrp(
+			[in, out] LgCharRenderProps * pchrp);
+
+
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRenderingFeatures") cpp_quote(",") cpp_quote("0A439F99-7BF2-4e11-A871-8AFAEB2B7D53") cpp_quote(");") [ uuid("0A439F99-7BF2-4e11-A871-8AFAEB2B7D53"), object, pointer_default(unique) ] interface IRenderingFeatures : IUnknown
+	{
+
+
+
+
+
+
+		HRESULT GetFeatureIDs(
+			[in] int cMax,
+			[out, size_is(cMax)] int * prgFids,
+			[out] int * pcfid);
+
+
+		HRESULT GetFeatureLabel(
+			[in] int fid,
+			[in] int nLanguage,
+			[out] BSTR * pbstrLabel);
+
+
+
+		HRESULT GetFeatureValues(
+			[in] int fid,
+			[in] int cfvalMax,
+			[out, size_is(cfvalMax)] int * prgfval,
+			[out] int * pcfval,
+			[out] int * pfvalDefault);
+
+
+		HRESULT GetFeatureValueLabel(
+			[in] int fid,
+			[in] int fval,
+			[in] int nLanguage,
+			[out] BSTR * pbstrLabel);
+	};
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IJustifyingRenderer") cpp_quote(",") cpp_quote("D7364EF2-43C0-4440-872A-336A4647B9A3") cpp_quote(");") [ uuid("D7364EF2-43C0-4440-872A-336A4647B9A3"), object, pointer_default(unique) ] interface IJustifyingRenderer : IUnknown
+	{
+
+		HRESULT GetGlyphAttributeFloat(
+			[in] int iGlyph,
+			[in] int kjgatId,
+			[in] int nLevel,
+			[out] float * pValueRet);
+		HRESULT GetGlyphAttributeInt(
+			[in] int iGlyph,
+			[in] int kjgatId,
+			[in] int nLevel,
+			[out] int * pValueRet);
+
+
+		HRESULT SetGlyphAttributeFloat(
+			[in] int iGlyph,
+			[in] int kjgatId,
+			[in] int nLevel,
+			[in] float value);
+		HRESULT SetGlyphAttributeInt(
+			[in] int iGlyph,
+			[in] int kjgatId,
+			[in] int nLevel,
+			[in] int value);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 1166 "c:\\fw\\src\\language\\Render.idh"
+#line 27 "C:\\fw\\Src\\Language\\LanguagePs.idl"
+#line 1 "c:\\fw\\src\\language\\Language.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	interface IRenderEngine;
+	interface ILgCharacterPropertyEngine;
+	interface ILgStringConverter;
+	interface ILgTokenizer;
+	interface ILgSpellCheckFactory;
+	interface ILgSpellChecker;
+	interface ILgCollatingEngine;
+	interface ILgSearchEngine;
+	interface ILgCollation;
+	interface ILgWritingSystem;
+	interface ILgWritingSystemFactory;
+	interface ILgTsStringPlusWss;
+	interface ILgTsDataObject;
+	interface ILgTextServices;
+
+
+
+
+
+
+
+	typedef [v1_enum] enum LgGeneralCharCategory
+	{
+		kccLu,
+		kccLl,
+		kccLt,
+		kccLm,
+		kccLo,
+
+		kccMn,
+		kccMc,
+		kccMe,
+
+		kccNd,
+		kccNl,
+		kccNo,
+
+		kccZs,
+		kccZl,
+		kccZp,
+
+		kccCc,
+		kccCf,
+		kccCs,
+		kccCo,
+		kccCn,
+
+		kccPc,
+		kccPd,
+		kccPs,
+		kccPe,
+		kccPi,
+
+		kccPf,
+
+		kccPo,
+
+		kccSm,
+		kccSc,
+		kccSk,
+		kccSo,
+	} LgGeneralCharCategory;
+
+
+	typedef [v1_enum] enum LgBidiCategory
+	{
+
+		kbicL,
+		kbicLRE,
+		kbicLRO,
+		kbicR,
+		kbicAL,
+		kbicRLE,
+		kbicRLO,
+		kbicPDF,
+
+
+		kbicEN,
+		kbicES,
+		kbicET,
+		kbicAN,
+		kbicCS,
+
+
+		kbicNSM,
+		kbicBN,
+		kbicB,
+		kbicS,
+
+
+		kbicWS,
+		kbicON,
+	} LgBidiCategory;
+
+
+	typedef [v1_enum] enum LgLBP
+	{
+
+		klbpAI,
+		klbpAL,
+		klbpB2,
+		klbpBA,
+		klbpBB,
+		klbpBK,
+		klbpCB,
+		klbpCL,
+		klbpCM,
+		klbpCR,
+		klbpEX,
+		klbpGL,
+		klbpHY,
+		klbpID,
+		klbpIN,
+		klbpIS,
+		klbpLF,
+		klbpNS,
+		klbpNU,
+		klbpOP,
+		klbpPO,
+		klbpPR,
+		klbpQU,
+		klbpSA,
+		klbpSG,
+		klbpSP,
+		klbpSY,
+		klbpXX,
+		klbpZW
+	} LgLBP;
+
+
+	typedef [v1_enum] enum LgDecompMapTag
+	{
+		kdtNoTag,
+		kdtFont,
+		kdtNoBreak,
+		kdtInitial,
+		kdtMedial,
+		kdtFinal,
+		kdtIsolated,
+		kdtCircle,
+		kdtSuper,
+		kdtSub,
+		kdtVertical,
+		kdtWide,
+		kdtNarrow,
+		kdtSmall,
+		kdtSquare,
+		kdtFraction,
+		kdtCompat
+	} LgDecompMapTag;
+
+
+	typedef [v1_enum] enum LgXMLTag
+	{
+		kxmlInvalid,
+		kxmlChardefs,
+		kxmlDef,
+		kxmlUdata,
+		kxmlLinebrk
+	} LgXMLTag;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgCollation") cpp_quote(",") cpp_quote("254DB9E3-0265-49CF-A19F-3C75E8525A28") cpp_quote(");") [ uuid("254DB9E3-0265-49CF-A19F-3C75E8525A28"), object, pointer_default(unique) ] interface ILgCollation : IUnknown
+	{
+
+
+		[propget] HRESULT Name(
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT Name(
+			[in] int ws,
+			[in] BSTR bstr);
+
+		[propget] HRESULT NameWsCount(
+			[out, retval] int * pcws);
+
+		[propget] HRESULT NameWss(
+			[in] int cws,
+			[out, size_is(cws)] int * prgws);
+
+
+		[propget] HRESULT Hvo(
+			[out, retval] int * phvo);
+
+
+		[propget] HRESULT WinLCID(
+			[out, retval] int * pnCode);
+
+
+		[propput] HRESULT WinLCID(
+			[in] int nCode);
+
+		[propget] HRESULT WinCollation(
+			[out, retval] BSTR * pbstr);
+
+
+		[propput] HRESULT WinCollation(
+			[in] BSTR bstr);
+
+
+		[propget] HRESULT IcuResourceName(
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT IcuResourceName(
+			[in] BSTR bstr);
+
+		[propget] HRESULT IcuResourceText(
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT IcuResourceText(
+			[in] BSTR bstr);
+
+
+
+		[propget] HRESULT Dirty(
+			[out, retval] ComBool * pf);
+
+
+		[propput] HRESULT Dirty(
+			[in] ComBool fDirty);
+
+
+
+		HRESULT WriteAsXml(
+			[in] IStream * pstrm,
+			[in] int cchIndent);
+
+
+		HRESULT Serialize(
+			[in] IStorage * pstg);
+
+
+		HRESULT Deserialize(
+			[in] IStorage * pstg);
+
+		[propget] HRESULT IcuRules(
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT IcuRules(
+			[in] BSTR bstr);
+
+
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystem") cpp_quote(",") cpp_quote("28BC5EDC-3EF3-4db2-8B90-556200FD97ED") cpp_quote(");") [ uuid("28BC5EDC-3EF3-4db2-8B90-556200FD97ED"), object, pointer_default(unique) ] interface ILgWritingSystem : IUnknown
+	{
+
+
+		[propget] HRESULT WritingSystem(
+			[out, retval] int * pws);
+
+
+		[propget] HRESULT NameWsCount(
+			[out, retval] int * pcws);
+
+		[propget] HRESULT NameWss(
+			[in] int cws,
+			[out, size_is(cws)] int * prgws);
+
+
+
+		[propget] HRESULT Name(
+			[in] int ws,
+			[out, retval] BSTR * pbstrName);
+
+		[propput] HRESULT Name(
+			[in] int ws,
+			[in] BSTR bstrName);
+
+
+		[propget] HRESULT Locale(
+			[out, retval] int * pnLocale);
+
+		[propput] HRESULT Locale(
+			[in] int nLocale);
+
+
+
+
+
+
+
+
+
+		[propget] HRESULT ConverterFrom(
+			[in] int ws,
+			[out, retval] ILgStringConverter ** ppstrconv);
+
+
+
+
+
+
+
+
+
+		[propget] HRESULT NormalizeEngine(
+			[out, retval] ILgStringConverter ** ppstrconv);
+
+
+
+
+		[propget] HRESULT WordBreakEngine(
+			[out, retval] ILgTokenizer ** pptoker);
+
+
+
+
+
+		[propget] HRESULT SpellingFactory(
+			[out, retval] ILgSpellCheckFactory ** ppspfact);
+
+
+		[propget] HRESULT SpellCheckEngine(
+			[out, retval] ILgSpellChecker ** ppspchk);
+
+
+
+
+
+
+
+
+		[propget] HRESULT SearchEngine(
+			[out, retval] ILgSearchEngine ** ppsrcheng);
+
+
+		HRESULT CompileEngines();
+
+
+
+		[propget] HRESULT Dirty(
+			[out, retval] ComBool * pf);
+
+
+		[propput] HRESULT Dirty(
+			[in] ComBool fDirty);
+
+
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+
+
+
+		HRESULT WriteAsXml(
+			[in] IStream * pstrm,
+			[in] int cchIndent);
+
+
+
+		HRESULT Serialize(
+			[in] IStorage * pstg);
+
+
+		HRESULT Deserialize(
+			[in] IStorage * pstg);
+
+
+
+
+
+		[propget] HRESULT RightToLeft(
+			[out, retval] ComBool * pfRightToLeft);
+
+
+		[propput] HRESULT RightToLeft(
+			[in] ComBool fRightToLeft);
+
+
+
+
+		[propget] HRESULT Renderer(
+			[in] IVwGraphics * pvg,
+			[out, retval] IRenderEngine ** ppreneng);
+
+
+
+		[propget] HRESULT FontVariation(
+			[out, retval] BSTR * pbstr);
+
+
+		[propput] HRESULT FontVariation(
+			[in] BSTR bstr);
+
+
+
+		[propget] HRESULT SansFontVariation(
+			[out, retval] BSTR * pbstr);
+
+
+		[propput] HRESULT SansFontVariation(
+			[in] BSTR bstr);
+
+
+		[propget] HRESULT DefaultSerif(
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT DefaultSerif(
+			[in] BSTR bstr);
+
+
+		[propget] HRESULT DefaultSansSerif(
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT DefaultSansSerif(
+			[in] BSTR bstr);
+
+
+
+
+
+
+
+		[propget] HRESULT DefaultMonospace(
+			[out, retval] BSTR * pbstr);
+
+
+
+
+
+
+		[propput] HRESULT DefaultMonospace(
+			[in] BSTR bstr);
+
+
+
+
+		[propget] HRESULT KeyMan(
+			[out, retval] ComBool * pfKeyMan);
+
+		[propput] HRESULT KeyMan(
+			[in] ComBool fKeyMan);
+
+		[propget] HRESULT UiName(
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+
+
+		[propget] HRESULT CollationCount(
+			[out, retval] int * pccoll);
+
+		[propget] HRESULT Collation(
+			[in] int icoll,
+			[out, retval] ILgCollation ** ppcoll);
+		[propputref] HRESULT Collation(
+			[in] int icoll,
+			[in] ILgCollation * pcoll);
+
+
+		HRESULT RemoveCollation(
+			[in] int icoll);
+
+
+
+
+		[propget] HRESULT Abbr(
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT Abbr(
+			[in] int ws,
+			[in] BSTR bstr);
+
+		[propget] HRESULT AbbrWsCount(
+			[out, retval] int * pcws);
+
+		[propget] HRESULT AbbrWss(
+			[in] int cws,
+			[out, size_is(cws)] int * prgws);
+
+
+
+		[propget] HRESULT Description(
+			[in] int ws,
+			[out, retval] ITsString ** pptss);
+
+
+		[propput] HRESULT Description(
+			[in] int ws,
+			[in] ITsString * ptss);
+
+
+		[propget] HRESULT DescriptionWsCount(
+			[out, retval] int * pcws);
+
+
+		[propget] HRESULT DescriptionWss(
+			[in] int cws,
+			[out, size_is(cws)] int * prgws);
+
+
+		[propget] HRESULT CollatingEngine(
+			[out, retval] ILgCollatingEngine ** ppcoleng);
+
+
+		[propget] HRESULT CharPropEngine(
+			[out, retval] ILgCharacterPropertyEngine ** pppropeng);
+
+		HRESULT SetTracing(
+			[in] int n);
+
+
+		HRESULT InterpretChrp(
+			[in, out] LgCharRenderProps * pchrp);
+
+
+		[propget] HRESULT IcuLocale(
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT IcuLocale(
+			[in] BSTR bstr);
+
+		HRESULT GetIcuLocaleParts(
+			[out] BSTR * pbstrLanguage,
+			[out] BSTR * pbstrCountry,
+			[out] BSTR * pbstrVariant);
+
+
+
+
+
+
+		[propget] HRESULT LegacyMapping(
+			[out, retval] BSTR * pbstr);
+
+		[propput] HRESULT LegacyMapping(
+			[in] BSTR bstr);
+
+
+
+		[propget] HRESULT KeymanKbdName(
+			[out, retval] BSTR * pbstr);
+		[propput] HRESULT KeymanKbdName(
+			[in] BSTR bstr);
+
+
+
+
+
+
+		[propget] HRESULT LanguageName(
+			[out, retval] BSTR * pbstr);
+
+		[propget] HRESULT CountryName(
+			[out, retval] BSTR * pbstr);
+
+		[propget] HRESULT VariantName(
+			[out, retval] BSTR * pbstr);
+
+		[propget] HRESULT LanguageAbbr(
+			[out, retval] BSTR * pbstr);
+
+		[propget] HRESULT CountryAbbr(
+			[out, retval] BSTR * pbstr);
+
+		[propget] HRESULT VariantAbbr(
+			[out, retval] BSTR * pbstr);
+
+
+
+
+
+		HRESULT SaveIfDirty(
+			[in] IOleDbEncap * pode);
+
+
+
+
+
+
+		HRESULT InstallLanguage(ComBool fForce);
+
+
+		[propget] HRESULT LastModified(
+			[out, retval] DATE * pdate);
+
+		[propput] HRESULT LastModified(
+			[in] DATE date);
+
+
+
+		[propget] HRESULT CurrentInputLanguage(
+			[out, retval] int * pnLangId);
+
+		[propput] HRESULT CurrentInputLanguage(
+			[in] int nLangId);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgInputMethodEditor") cpp_quote(",") cpp_quote("17aebfe0-c00a-11d2-8078-0000c0fb81b5") cpp_quote(");") [ uuid("17aebfe0-c00a-11d2-8078-0000c0fb81b5"), object, pointer_default(unique) ] interface ILgInputMethodEditor : IUnknown
+	{
+
+
+		HRESULT Setup();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		[local, restricted] HRESULT Replace(
+			[in] BSTR bstrInput,
+			[in] ITsTextProps * pttpInput,
+			[in] ITsStrBldr * ptsbOld,
+			[in] int ichMin,
+			[in] int ichLim,
+			[out] int * pichModMin,
+			[out] int * pichModLim,
+			[out] int * pichIP);
+
+
+
+
+
+
+
+
+
+
+
+
+		HRESULT Backspace(
+			[in] int pichStart,
+			[in] int cactBackspace,
+			[in] ITsStrBldr * ptsbOld,
+			[out] int * pichModMin,
+			[out] int * pichModLim,
+			[out] int * pichIP,
+			[out] int * pcactBsRemaining);
+
+
+
+
+
+
+
+
+
+
+
+		HRESULT DeleteForward(
+			[in] int pichStart,
+			[in] int cactDelForward,
+			[in] ITsStrBldr * ptsbInOut,
+			[out] int * pichModMin,
+			[out] int * pichModLim,
+			[out] int * pichIP,
+			[out] int * pcactDfRemaining);
+
+
+
+
+		HRESULT IsValidInsertionPoint(
+			[in] int ich,
+			[in] ITsString * ptss,
+			[out, retval] BOOL * pfValid);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgFontManager") cpp_quote(",") cpp_quote("10894680-F384-11d3-B5D1-00400543A266") cpp_quote(");") [ uuid("10894680-F384-11d3-B5D1-00400543A266"), object, pointer_default(unique) ] interface ILgFontManager : IUnknown
+	{
+
+		HRESULT IsFontAvailable(
+			[in] BSTR bstrName,
+			[out, retval] ComBool * pfAvail);
+
+
+		HRESULT IsFontAvailableRgch(
+			[in] int cch,
+			[in] OLECHAR * prgchName,
+			[out, retval] ComBool * pfAvail);
+
+
+		HRESULT AvailableFonts(
+			[out] BSTR * pbstrNames);
+
+
+		HRESULT RefreshFontList();
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	typedef [v1_enum] enum LgCollatingOptions
+	{
+		fcoDefault = 0,
+		fcoIgnoreCase = 1,
+		fcoDontIgnoreVariant = 2,
+		fcoLim
+	} LgCollatingOptions;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgCollatingEngine") cpp_quote(",") cpp_quote("DB78D60B-E43E-4464-B8AE-C5C9A00E2C04") cpp_quote(");") [ uuid("DB78D60B-E43E-4464-B8AE-C5C9A00E2C04"), object, pointer_default(unique) ] interface ILgCollatingEngine : IUnknown
+	{
+
+
+
+		[propget] HRESULT SortKey(
+			[in] BSTR bstrValue,
+			[in] LgCollatingOptions colopt,
+			[out, retval] BSTR * pbstrKey);
+
+
+
+
+
+
+
+
+
+		[restricted] HRESULT SortKeyRgch(
+			[in, size_is(cchIn)] const OLECHAR * pch,
+			[in] int cchIn,
+			[in] LgCollatingOptions colopt,
+			[in] int cchMaxOut,
+			[out, size_is(cchMaxOut)] OLECHAR * pchKey,
+			[out] int * pcchOut);
+
+
+
+
+
+
+
+		HRESULT Compare(
+			[in] BSTR bstrValue1,
+			[in] BSTR bstrValue2,
+			[in] LgCollatingOptions colopt,
+			[out, retval] int * pnVal);
+
+
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+
+
+
+
+
+
+
+		[propget] HRESULT SortKeyVariant(
+			[in] BSTR bstrValue,
+			[in] LgCollatingOptions colopt,
+			[out, retval] VARIANT * psaKey);
+
+
+
+
+
+
+
+		HRESULT CompareVariant(
+			[in] VARIANT saValue1,
+			[in] VARIANT saValue2,
+			[in] LgCollatingOptions colopt,
+			[out, retval] int * pnVal);
+
+
+		HRESULT Open(
+			[in] BSTR bstrLocale);
+
+
+		HRESULT Close();
+
+
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgCharacterPropertyEngine") cpp_quote(",") cpp_quote("7C8B7F40-40C8-47f7-B10B-45372415778D") cpp_quote(");") [ uuid("7C8B7F40-40C8-47f7-B10B-45372415778D"), object, pointer_default(unique) ] interface ILgCharacterPropertyEngine : IUnknown
+	{
+
+
+		[propget] HRESULT GeneralCategory(
+			[in] int ch,
+			[out, retval] LgGeneralCharCategory * pcc);
+
+
+
+
+		[propget] HRESULT BidiCategory(
+			[in] int ch,
+			[out, retval] LgBidiCategory * pbic);
+
+
+
+
+		[propget] HRESULT IsLetter(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+
+
+
+
+		[propget] HRESULT IsWordForming(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsPunctuation(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsNumber(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsSeparator(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsSymbol(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsMark(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsOther(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+
+		[propget] HRESULT IsUpper(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+		[propget] HRESULT IsLower(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+
+
+		[propget] HRESULT IsTitle(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsModifier(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		[propget] HRESULT IsOtherLetter(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+
+
+		[propget] HRESULT IsOpen(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+
+		[propget] HRESULT IsClose(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+
+		[propget] HRESULT IsWordMedial(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+		[propget] HRESULT IsControl(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+
+
+
+
+
+
+
+		[propget] HRESULT ToLowerCh(
+				  [in] int ch,
+				  [out, retval] int * pch);
+
+
+
+
+
+
+
+
+		[propget] HRESULT ToUpperCh(
+				  [in] int ch,
+				  [out, retval] int * pch);
+
+
+
+
+
+
+
+
+
+		[propget] HRESULT ToTitleCh(
+				  [in] int ch,
+				  [out, retval] int * pch);
+
+
+
+
+
+		HRESULT ToLower(
+				  [in] BSTR bstr,
+				  [out, retval] BSTR * pbstr);
+
+
+
+
+		HRESULT ToUpper(
+				  [in] BSTR bstr,
+				  [out, retval] BSTR * pbstr);
+
+
+
+
+
+
+
+
+		HRESULT ToTitle(
+				  [in] BSTR bstr,
+				  [out, retval] BSTR * pbstr);
+
+
+
+
+
+
+
+		[restricted] HRESULT ToLowerRgch(
+				  [in, size_is(cchIn)] OLECHAR * prgchIn,
+				  [in] int cchIn,
+				  [out, size_is(cchOut)] OLECHAR * prgchOut,
+				  [in] int cchOut,
+				  [out] int * pcchRet);
+
+
+
+
+
+
+		[restricted] HRESULT ToUpperRgch(
+				  [in, size_is(cchIn)] OLECHAR * prgchIn,
+				  [in] int cchIn,
+				  [out, size_is(cchOut)] OLECHAR * prgchOut,
+				  [in] int cchOut,
+				  [out] int * pcchRet);
+
+
+
+
+
+
+
+
+
+
+		[restricted] HRESULT ToTitleRgch(
+				  [in, size_is(cchIn)] OLECHAR * prgchIn,
+				  [in] int cchIn,
+				  [out, size_is(cchOut)] OLECHAR * prgchOut,
+				  [in] int cchOut,
+				  [out] int * pcchRet);
+
+
+
+
+
+
+
+
+		[propget] HRESULT IsUserDefinedClass(
+			[in] int ch,
+			[in] int chClass,
+			[out, retval] ComBool * pfRet);
+
+
+
+
+
+
+
+
+
+
+
+
+
+		[propget] HRESULT SoundAlikeKey(
+			[in] BSTR bstrValue,
+			[out, retval] BSTR * pbstrKey);
+
+
+
+
+
+
+
+		[propget] HRESULT CharacterName(
+			[in] int ch,
+			[out, retval] BSTR * pbstrName);
+
+
+
+
+		[propget] HRESULT Decomposition(
+			[in] int ch,
+			[out, retval] BSTR * pbstr);
+
+
+
+		[restricted] HRESULT DecompositionRgch(
+			[in] int ch,
+			[in] int cchMax,
+			[out] OLECHAR * prgch,
+			[out] int * pcch,
+			[out] ComBool * pfHasDecomp);
+
+
+
+
+		[propget] HRESULT FullDecomp(
+			[in] int ch,
+			[out, retval] BSTR * pbstrOut);
+
+
+
+		[restricted] HRESULT FullDecompRgch(
+			[in] int ch,
+			[in] int cchMax,
+			[out] OLECHAR * prgch,
+			[out] int * pcch,
+			[out] ComBool * pfHasDecomp);
+
+
+
+
+
+
+
+
+
+
+
+		[propget] HRESULT NumericValue(
+			[in] int ch,
+			[out, retval] int * pn);
+
+
+
+
+		[propget] HRESULT CombiningClass(
+			[in] int ch,
+			[out, retval] int * pn);
+
+
+
+
+
+		[propget] HRESULT Comment(
+			[in] int ch,
+			[out, retval] BSTR * pbstr);
+
+
+
+
+
+
+		[restricted] HRESULT GetLineBreakProps(
+			[in, size_is(cchIn)] const OLECHAR * prgchIn,
+			[in] int cchIn,
+			[out, size_is(cchIn)] byte * prglbOut);
+
+
+
+
+		[restricted] HRESULT GetLineBreakStatus(
+			[in, size_is(cb)] const byte * prglbpIn,
+			[in] int cb,
+			[out, size_is(cb)] byte * prglbsOut);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		[restricted] HRESULT GetLineBreakInfo(
+			[in, size_is(cchIn)] const OLECHAR * prgchIn,
+			[in] int cchIn,
+			[in] int ichMin,
+			[in] int ichLim,
+			[out, size_is(ichLim - ichMin)] byte * prglbsOut,
+			[out] int * pichBreak);
+
+
+
+
+
+		HRESULT StripDiacritics(
+			  [in] BSTR bstr,
+			  [out, retval] BSTR * pbstr);
+
+
+
+
+		[restricted] HRESULT StripDiacriticsRgch(
+			[in, size_is(cchIn)] OLECHAR * prgchIn,
+			[in] int cchIn,
+			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
+			[in] int cchMaxOut,
+			[out] int * pcchOut);
+
+
+
+
+		HRESULT NormalizeKd(
+			  [in] BSTR bstr,
+			  [out, retval] BSTR * pbstr);
+
+
+
+		[restricted] HRESULT NormalizeKdRgch(
+			[in, size_is(cchIn)] OLECHAR * prgchIn,
+			[in] int cchIn,
+			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
+			[in] int cchMaxOut,
+			[out] int * pcchOut);
+
+
+		[propget] HRESULT Locale(
+			[out, retval] int * pnLocale);
+
+
+
+
+
+		[propput] HRESULT Locale(
+			[in] int nLocale);
+
+
+
+		HRESULT GetLineBreakText(
+			[in] int cchMax,
+			[out] OLECHAR * prgchOut,
+			[out] int * pcchOut);
+
+		[propput] HRESULT LineBreakText(
+			[in, size_is(cchMax)] OLECHAR * prgchIn,
+			[in] int cchMax);
+
+
+
+
+
+
+		HRESULT LineBreakBefore(
+			[in] int ichIn,
+			[out] int * pichOut,
+			[out] LgLineBreak * plbWeight);
+
+
+
+
+
+		HRESULT LineBreakAfter(
+			[in] int ichIn,
+			[out] int * pichOut,
+			[out] LgLineBreak * plbWeight);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSearchEngine") cpp_quote(",") cpp_quote("0D224001-03C7-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("0D224001-03C7-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface ILgSearchEngine : IUnknown
+	{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		HRESULT SetPattern(
+			[in] BSTR bstrPattern,
+			[in] ComBool fIgnoreCase,
+			[in] ComBool fIgnoreModifiers,
+			[in] ComBool fUseSoundAlike,
+			[in] ComBool fUseWildCards);
+
+
+
+
+		HRESULT SetReplacePattern(
+			[in] BSTR bstrPattern);
+
+
+
+
+		HRESULT ShowPatternDialog(
+			[in] BSTR bstrTitle,
+			[in] ILgWritingSystem * pwse,
+			[in] ComBool fForReplace,
+			[out, retval] ComBool * pfGoAhead);
+
+
+
+		HRESULT FindString(
+			[in] BSTR bstrSource,
+			[in] int ichFirst,
+			[out] int * ichMinFound,
+			[out] int * ichLimFound,
+			[out, retval] ComBool * pfFound);
+
+
+
+
+
+
+
+		HRESULT FindReplace(
+			[in] BSTR bstrSource,
+			[in] int ichFirst,
+			[out] int * ichMinFound,
+			[out] int * ichLimFound,
+			[out, retval] BSTR * pbstrReplacement);
+
+
+
+
+
+
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgStringConverter") cpp_quote(",") cpp_quote("0D224002-03C7-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("0D224002-03C7-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface ILgStringConverter : IUnknown
+	{
+
+
+
+
+
+
+		HRESULT ConvertString(
+			[in] BSTR bstrIn,
+			[out,retval] BSTR * pbstrOut);
+
+
+
+
+
+
+
+
+
+		[restricted] HRESULT ConvertStringRgch(
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[in] int cch,
+			[in] int cchMax,
+			[out, size_is(cchMax)] OLECHAR * prgchOut,
+			[out] int * pcchOut);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgTokenizer") cpp_quote(",") cpp_quote("0D224003-03C7-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("0D224003-03C7-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface ILgTokenizer : IUnknown
+	{
+
+
+
+
+
+
+
+
+		[restricted] HRESULT GetToken(
+			[in, size_is(cch)] OLECHAR * prgchInput,
+			[in] int cch,
+			[out] int * pichMin,
+			[out] int * pichLim);
+
+
+
+
+
+
+		[propget] HRESULT TokenStart(
+			[in] BSTR bstrInput,
+			[in] int ichFirst,
+			[out, retval] int *pichMin);
+
+
+
+
+
+
+
+		[propget] HRESULT TokenEnd(
+			[in] BSTR bstrInput,
+			[in] int ichFirst,
+			[out, retval] int *pichLim);
+
+
+	};
+
+
+
+
+	typedef [v1_enum] enum LgSpellCheckOptions
+	{
+		fsplcNil                   = 0x00000,
+		fsplcSuggestFromUserDict   = 0x00001,
+		fsplcIgnoreAllCaps         = 0x00002,
+		fsplcIgnoreMixedDigits     = 0x00004,
+		fsplcIgnoreRomanNumerals   = 0x00008,
+		fsplcFindUncappedSentences = 0x00010,
+		fsplcFindMissingSpaces     = 0x00020,
+		fsplcFindRepeatWord        = 0x00040,
+		fsplcFindExtraSpaces       = 0x00080,
+		fsplcFindSpacesBeforePunc  = 0x00100,
+		fsplcFindSpacesAfterPunc   = 0x00200,
+		fsplcFindInitialNumerals   = 0x00800,
+		fsplcQuickSuggest          = 0x02000,
+		fsplcUseAllOpenUdr         = 0x04000,
+		fsplcSglStepSugg           = 0x10000,
+		fsplcIgnoreSingleLetter    = 0x20000,
+	} LgSpellCheckOptions;
+
+
+
+	typedef [v1_enum] enum LgSpellCheckResults
+	{
+		scrsNoErrors                    =  0,
+		scrsUnknownInputWord            =  1,
+		scrsReturningChangeAlways       =  2,
+		scrsReturningChangeOnce         =  3,
+		scrsInvalidHyphenation          =  4,
+		scrsErrorCapitalization         =  5,
+		scrsWordConsideredAbbreviation  =  6,
+		scrsHyphChangesSpelling         =  7,
+		scrsNoMoreSuggestions           =  8,
+		scrsMoreInfoThanBufferCouldHold =  9,
+		scrsNoSentenceStartCap          = 10,
+		scrsRepeatWord                  = 11,
+		scrsExtraSpaces                 = 12,
+		scrsMissingSpace                = 13,
+		scrsInitialNumeral              = 14,
+
+	} LgSpellCheckResults;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSpellChecker") cpp_quote(",") cpp_quote("0D224006-03C7-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("0D224006-03C7-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface ILgSpellChecker : IUnknown
+	{
+
+		HRESULT Init(
+			[in] LPCOLESTR pszwCustom);
+
+
+		HRESULT SetOptions(
+			[in] int grfsplc);
+
+
+
+
+
+
+
+
+
+
+
+		HRESULT Check(
+			[in, size_is(cchw)] const OLECHAR * prgchw,
+			[in] int cchw,
+			[out] int * pichMinBad,
+			[out] int * pichLimBad,
+			[out] BSTR * pbstrBad,
+			[out] BSTR * pbstrSuggest,
+			[out] int * pscrs);
+
+
+
+
+
+
+		HRESULT Suggest(
+			[in, size_is(cchw)] const OLECHAR * prgchw,
+			[in] int cchw,
+			[in] ComBool fFirst,
+			[out] BSTR *pbstrSuggest);
+
+
+
+		HRESULT IgnoreAll(
+			[in] LPCOLESTR pszw);
+
+
+
+
+
+
+
+
+
+
+		HRESULT Change(
+			[in] LPCOLESTR pszwSrc,
+			[in] LPCOLESTR pszwDst,
+			ComBool fAll);
+
+
+
+
+
+
+
+
+		HRESULT AddToUser(
+			[in] LPCOLESTR pszw);
+
+
+		HRESULT FlushIgnoreList();
+
+
+		HRESULT FlushChangeList(
+			[in] ComBool fAll);
+	};
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSpellCheckFactory") cpp_quote(",") cpp_quote("FC1C0D01-0483-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("FC1C0D01-0483-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface ILgSpellCheckFactory : IUnknown
+	{
+
+		[propget] HRESULT Checker(
+			[out, retval] ILgSpellChecker ** ppspchk);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgNumericEngine") cpp_quote(",") cpp_quote("FC1C0D04-0483-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("FC1C0D04-0483-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface ILgNumericEngine : IUnknown
+	{
+
+		[propget] HRESULT IntToString(
+			[in] int n,
+			[out, retval] BSTR * bstr);
+
+
+		[propget] HRESULT IntToPrettyString(
+			[in] int n,
+			[out, retval] BSTR * bstr);
+
+
+
+
+
+
+		[propget] HRESULT StringToInt(
+			[in] BSTR bstr,
+			[out, retval] int * pn);
+
+
+
+
+
+
+
+		[restricted] HRESULT StringToIntRgch(
+			[in, size_is(cch)] OLECHAR * prgch,
+			[in] int cch,
+			[out] int * pn,
+			[out] int * pichUnused);
+
+
+
+
+		[propget] HRESULT DblToString(
+			[in] double dbl,
+			[in] int cchFracDigits,
+			[out, retval] BSTR * bstr);
+
+
+		[propget] HRESULT DblToPrettyString(
+			[in] double dbl,
+			[in] int cchFracDigits,
+			[out, retval] BSTR * bstr);
+
+
+		[propget] HRESULT DblToExpString(
+			[in] double dbl,
+			[in] int cchFracDigits,
+			[out, retval] BSTR * bstr);
+
+
+
+
+
+
+		[propget] HRESULT StringToDbl(
+			[in] BSTR bstr,
+			[out, retval] double * pdbl);
+
+
+
+
+
+		[restricted] HRESULT StringToDblRgch(
+			[in, size_is(cch)] OLECHAR * prgch,
+			[in] int cch,
+			[out] double * pdbl,
+			[out] int * pichUnused);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystemFactory") cpp_quote(",") cpp_quote("2C4636E3-4F49-4966-966F-0953F97F51C8") cpp_quote(");") [ uuid("2C4636E3-4F49-4966-966F-0953F97F51C8"), object, pointer_default(unique) ] interface ILgWritingSystemFactory : IUnknown
+	{
+
+
+
+
+		[propget] HRESULT Engine(
+			[in] BSTR bstrIcuLocale,
+			[out, retval] ILgWritingSystem ** ppwseng);
+
+
+
+
+
+		[propget] HRESULT EngineOrNull(
+			[in] int ws,
+			[out, retval] ILgWritingSystem ** ppwseng);
+
+
+		HRESULT AddEngine(
+			[in] ILgWritingSystem * pwseng);
+
+
+		HRESULT RemoveEngine(
+			[in] int ws);
+
+
+
+		HRESULT GetWsFromStr(
+			[in] BSTR bstr,
+			[out, retval] int * pwsId);
+
+
+		HRESULT GetStrFromWs(
+			[in] int wsId,
+			[out, retval] BSTR * pbstr);
+
+
+		[propget] HRESULT NumberOfWs(
+			[out, retval] int * pcws);
+
+		HRESULT GetWritingSystems(
+			[out, size_is(cws)] int * rgws,
+			[in] int cws);
+
+
+
+		[propget] HRESULT UnicodeCharProps(
+			[out, retval] ILgCharacterPropertyEngine ** pplcpe);
+
+		[propget] HRESULT DefaultCollater(
+			[in] int ws,
+			[out, retval] ILgCollatingEngine ** ppcoleng);
+
+		[propget] HRESULT CharPropEngine(
+			[in] int ws,
+			[out, retval] ILgCharacterPropertyEngine ** pplcpe);
+
+		[propget] HRESULT Renderer(
+			[in] int ws,
+			[in] IVwGraphics * pvg,
+			[out, retval] IRenderEngine ** ppre);
+
+		[propget] HRESULT RendererFromChrp(
+
+			[in, out] LgCharRenderProps * pchrp,
+			[out, retval] IRenderEngine ** ppre);
+
+
+
+
+
+
+
+
+
+		HRESULT Shutdown();
+
+
+
+		HRESULT Clear();
+
+
+
+		HRESULT SaveWritingSystems();
+
+
+
+
+		HRESULT Serialize(
+			[in] IStorage * pstg);
+
+
+		[propget] HRESULT UserWs(
+			[out, retval] int * pws);
+
+
+
+
+
+		[propget] HRESULT BypassInstall(
+			[out, retval] ComBool * pfBypass);
+		[propput] HRESULT BypassInstall(
+			[in] ComBool fBypass);
+
+	};
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystemFactoryBuilder") cpp_quote(",") cpp_quote("8AD52AF0-13A8-4d28-A1EE-71924B36989F") cpp_quote(");") [ uuid("8AD52AF0-13A8-4d28-A1EE-71924B36989F"), object, pointer_default(unique) ] interface ILgWritingSystemFactoryBuilder : IUnknown
+	{
+
+
+
+
+
+
+
+
+
+
+		HRESULT GetWritingSystemFactory(
+			[in] IOleDbEncap * pode,
+			[in] IStream * pfistLog,
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+
+
+
+
+
+
+
+
+		HRESULT GetWritingSystemFactoryNew(
+			[in] BSTR bstrServer,
+			[in] BSTR bstrDatabase,
+			[in] IStream * pfistLog,
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+
+
+		HRESULT Deserialize(
+			[in] IStorage * pstg,
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+
+
+
+
+		HRESULT ShutdownAllFactories();
+	};
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgTsStringPlusWss") cpp_quote(",") cpp_quote("71C8D1ED-49B0-40ef-8423-92B0A5F04B89") cpp_quote(");") [ uuid("71C8D1ED-49B0-40ef-8423-92B0A5F04B89"), object, pointer_default(unique) ] interface ILgTsStringPlusWss : IUnknown
+{
+
+
+	[propget] HRESULT String(
+		[in] ILgWritingSystemFactory * pwsf,
+		[out, retval] ITsString ** pptss);
+
+	[propputref] HRESULT String(
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] ITsString * ptss);
+
+
+
+	[propget] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+
+
+	HRESULT Serialize(
+		[in] IStorage * pstg);
+
+
+	HRESULT Deserialize(
+		[in] IStorage * pstg);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgTsDataObject") cpp_quote(",") cpp_quote("56CD4356-C349-4927-9E3D-CC0CF0EFF04E") cpp_quote(");") [ uuid("56CD4356-C349-4927-9E3D-CC0CF0EFF04E"), object, pointer_default(unique) ] interface ILgTsDataObject : IUnknown
+{
+
+
+	HRESULT Init([in] ILgTsStringPlusWss * ptsswss);
+
+
+	HRESULT GetClipboardType([out] UINT * type);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgKeymanHandler") cpp_quote(",") cpp_quote("D43F4C58-5E24-4b54-8E4D-F0233B823678") cpp_quote(");") [ uuid("D43F4C58-5E24-4b54-8E4D-F0233B823678"), object, pointer_default(unique) ] interface ILgKeymanHandler : IUnknown
+{
+
+
+
+
+
+
+	HRESULT Init(
+		[in] ComBool fForce);
+
+
+	[propget] HRESULT NLayout(
+		[out, retval] int * pclayout);
+
+	[propget] HRESULT Name(
+		[in] int ilayout,
+		[out, retval] BSTR * pbstrName);
+
+	[propget] HRESULT ActiveKeyboardName(
+		[out, retval] BSTR * pbstrName);
+	[propput] HRESULT ActiveKeyboardName(
+		[in] BSTR bstrName);
+
+	[propget] HRESULT KeymanWindowsMessage(
+		[out, retval] int * pwm);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgTextServices") cpp_quote(",") cpp_quote("03D86B2C-9FB3-4E33-9B23-6C8BFC18FB1E") cpp_quote(");") [ uuid("03D86B2C-9FB3-4E33-9B23-6C8BFC18FB1E"), object, pointer_default(unique) ] interface ILgTextServices : IUnknown
+{
+
+	HRESULT SetKeyboard(
+		[in] int nLcid,
+		[in] BSTR bstrKeymanKbd,
+		[in, out] int * pnActiveLangId,
+		[in, out] BSTR * pbstrActiveKeymanKbd,
+		[in, out] ComBool * pfSelectLangPending
+		);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgCodePageEnumerator") cpp_quote(",") cpp_quote("62811E4D-5572-4f76-B71F-9F17238338E1") cpp_quote(");") [ uuid("62811E4D-5572-4f76-B71F-9F17238338E1"), object, pointer_default(unique) ] interface ILgCodePageEnumerator : IUnknown
+{
+
+
+
+	HRESULT Init();
+
+
+	HRESULT Next(
+		[out] int * pnId,
+		[out] BSTR * pbstrName);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgLanguageEnumerator") cpp_quote(",") cpp_quote("76470164-E990-411d-AF66-42A7192E4C49") cpp_quote(");") [ uuid("76470164-E990-411d-AF66-42A7192E4C49"), object, pointer_default(unique) ] interface ILgLanguageEnumerator : IUnknown
+{
+
+
+
+	HRESULT Init();
+
+
+	HRESULT Next(
+		[out] int * pnId,
+		[out] BSTR * pbstrName);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuConverterEnumerator") cpp_quote(",") cpp_quote("34D4E39C-C3B6-413e-9A4E-4457BBB02FE8") cpp_quote(");") [ uuid("34D4E39C-C3B6-413e-9A4E-4457BBB02FE8"), object, pointer_default(unique) ] interface ILgIcuConverterEnumerator : IUnknown
+{
+
+	[propget] HRESULT Count(
+		[out, retval] int * pcconv);
+
+
+	[propget] HRESULT ConverterName(
+		[in] int iconv,
+		[out] BSTR * pbstrName);
+
+
+	[propget] HRESULT ConverterId(
+		[in] int iconv,
+		[out] BSTR * pbstrName);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuTransliteratorEnumerator") cpp_quote(",") cpp_quote("B26A6461-582C-4873-B3F5-673104D1AC37") cpp_quote(");") [ uuid("B26A6461-582C-4873-B3F5-673104D1AC37"), object, pointer_default(unique) ] interface ILgIcuTransliteratorEnumerator : IUnknown
+{
+
+	[propget] HRESULT Count(
+		[out, retval] int * pctrans);
+
+
+	[propget] HRESULT TransliteratorName(
+		[in] int itrans,
+		[out] BSTR * pbstrName);
+
+
+	[propget] HRESULT TransliteratorId(
+		[in] int iconv,
+		[out] BSTR * pbstrName);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuLocaleEnumerator") cpp_quote(",") cpp_quote("00C88119-F57D-4e7b-A03B-EDB0BC3B57EE") cpp_quote(");") [ uuid("00C88119-F57D-4e7b-A03B-EDB0BC3B57EE"), object, pointer_default(unique) ] interface ILgIcuLocaleEnumerator : IUnknown
+{
+
+	[propget] HRESULT Count(
+		[out, retval] int * pclocale);
+
+
+	[propget] HRESULT Name(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+
+	[propget] HRESULT Language(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+
+	[propget] HRESULT Country(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+
+	[propget] HRESULT Variant(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+
+
+
+	[propget] HRESULT DisplayName(
+		[in] int iloc,
+		[in] BSTR bstrLocaleName,
+		[out, retval] BSTR * pbstrName);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundle") cpp_quote(",") cpp_quote("4518189C-E545-48b4-8653-D829D1ECB778") cpp_quote(");") [ uuid("4518189C-E545-48b4-8653-D829D1ECB778"), object, pointer_default(unique) ] interface ILgIcuResourceBundle : IUnknown
+{
+
+
+	HRESULT Init(
+		[in] BSTR bstrPath,
+		[in] BSTR locale);
+
+
+	[propget] HRESULT Key(
+		[out, retval] BSTR * pbstrKey);
+
+
+	[propget] HRESULT String(
+		[out, retval] BSTR * pbstrString);
+
+
+
+	[propget] HRESULT Name(
+		[out, retval] BSTR * pbstrName);
+
+
+
+	[propget] HRESULT GetSubsection(
+		[in] BSTR bstrSectionName,
+		[out, retval] ILgIcuResourceBundle ** pprb);
+
+
+
+	[propget] HRESULT HasNext(
+		[out, retval] ComBool * pfHasNext);
+
+
+
+	[propget] HRESULT Next(
+		[out, retval] ILgIcuResourceBundle ** pprb);
+
+
+	[propget] HRESULT Size(
+		[out, retval] int * pcrb);
+
+
+	[propget] HRESULT StringEx(
+		[in] int irb,
+		[out, retval] BSTR * pbstr);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 28 "C:\\fw\\Src\\Language\\LanguagePs.idl"

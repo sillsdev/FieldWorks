@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<interlinear-texts role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.MultiPane/">
+
+  <!-- the browse pane -->
+  <texts role="pane" path="9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/">
+	<var id="titleList" set="9:textsChooser/9:textsChooser/$nl"/>
+	<title path="9:XCore.PaneBar/9:Texts"/>
+	<col path="$titleList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/>
+	   <filter path="/9:FilterBar/9:FwComboBox"> <!-- index -->
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$titleList;/20:RootSite/24:Table[$row]/"> <!-- index -->
+	   <col path="$Col;/$Text"/> <!-- index -->
+	</record>
+	<scroll path="$titleList;[2]/">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </texts>
+
+  <!-- the edit pane -->
+  <text role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<var id="header" set="9:XCore.PaneBar/9:Text"/>
+	<title path="$header"/>
+	<Title path="9:ITextContent/20:RootSite/24:Table/28:Row[$row;]/29:Cell"><!-- table row index -->
+		<lang path="[2]/$Text"/>
+		<data path="[3]/$Text" />
+	</Title>
+
+	<var id="txtTABS" set="9:ITextContent/9:m_tabCtrl.AccessibleName/"/>
+
+	<info path="$txtTABS;">
+	   <tab path="37:Info"/>
+	   <fields path="60:m_tabCtrl.AccessibleName/9:m_tpInfo.AccessibleName/$NL;9:RecordEditView/9:RecordEditView.DataTree/">
+		  <var id="data" set="9:Panel2/24:Table/28:Row[*]/29:Cell"/>
+		  <title path="9:multistring/9:SplitContainer/">
+			 <label path="9:Panel1/9:Title"/>
+			 <lang path="$data;/$Text"/>
+			 <data path="$data;[2]/$Text"/>
+		  </title>
+		  <abbr path="9:multistring/9:SplitContainer/">
+			 <label path="9:Panel1/9:Abbreviation"/>
+			 <lang path="$data;/$Text"/>
+			 <data path="$data;[2]/$Text"/>
+		  </abbr>
+		  <source path="9:multistring/9:SplitContainer/">
+			 <label path="9:Panel1/9:Source"/>
+			 <lang path="$data;/$Text"/>
+			 <data path="$data;[2]/$Text"/>
+		  </source>
+		  <is-trans path="">
+		  </is-trans>
+		  <genres path="">
+		  </genres>
+		  <comment path="9:multistring/9:SplitContainer/">
+			 <label path="9:Panel1/9:Comment"/>
+			 <lang path="$data;/$Text"/>
+			 <data path="$data;[2]/$Text"/>
+		  </comment>
+	   </fields>
+	</info>
+
+	<baseline path="$txtTABS;">
+	   <tab path="37:Baseline"/>
+	   <var id="txtData" set="60:m_tabCtrl.AccessibleName/9:m_tpRawText.AccessibleName/20:m_rtPane"/>
+	   <empty path="$txtData"/>
+	   <line path="$txtData;/$Text"/>
+	</baseline>
+
+	<gloss path="$txtTABS;">
+	   <tab path="37:Gloss"/>
+	   <dialog name="Add Words to Lexicon" dismiss="$ok" on="first show"/>
+
+	   <var id="LINE" set="60:m_tabCtrl.AccessibleName/9:m_tpGloss.AccessibleName/$NL;20:m_idcPane/"/>
+
+	   <focus-box path="$LINE;20:Div/42:Paragraph/21:Bar"/>
+
+	   <free-trans path="$LINE;20:Div/20:Div/$Text">
+		  <empty/>  <!-- To click the Free Translation empty text, use this and dx="150" or similar -->
+		  <text path="[2]"/>
+	   </free-trans>
+
+	   <trans-line path="$LINE;20:Div/20:Div[$ind;]/$Text;/"> <!-- lit., Note, etc.. -->
+		  <label path="42:String[2]"/>
+		  <text path="42:String[4]"/>
+	   </trans-line>
+
+	   <labels path="$LINE;20:Div"> <!-- index for an interlinear line -->
+		 <label path="/42:Paragraph/20:InnerPile"> <!-- index for a pile, 1 is for index number, 2 for labels -->
+			<index path="/42:Paragraph"/>
+			<heading path="[2]/42:Paragraph"/> <!-- add [n] index for a heading -->
+		 </label>
+	   </labels>
+
+	   <line path="$LINE;20:Div"> <!-- index for an interlinear line -->
+		 <pile path="/42:Paragraph/20:InnerPile"> <!-- index for a pile, 2 + is for data -->
+			<word path="/42:Paragraph"/> <!-- index 1 for the word -->
+			<gloss path="/42:Paragraph[3]"/> <!-- index 3 for word gloss -->
+			<category path="/42:Paragraph[4]"/> <!-- index 4 for a word category -->
+		 </pile>
+		 <trans-note path="/42:Paragraph[2]/"> <!-- index 2 +  for free translation, literal trans and notes -->
+		   <label name="Free:" path="42:String"/>
+		   <text path="42:String[2]"/>
+		 </trans-note>
+	   </line>
+
+	</gloss>
+
+	<analyze path="$txtTABS;">
+	   <tab path="37:Analyze"/>
+
+	   <var id="LINE" set="60:m_tabCtrl.AccessibleName/9:m_tpInterlinear.AccessibleName/9:NAMELESS/20:m_idcPane/"/>
+
+	   <focus-box path="$LINE;20:Div/42:Paragraph/21:Bar"/>
+
+	   <free-trans path="$LINE;20:Div/20:Div/$Text">
+		  <empty/>  <!-- To click the Free Translation empty text, use this and dx="150" or similar -->
+		  <text path="[2]"/>
+	   </free-trans>
+
+	   <trans-line path="$LINE;20:Div/20:Div[$ind;]/$Text;/"> <!-- lit., Note, etc.. -->
+		  <label path="42:String[2]"/>
+		  <text path="42:String[4]"/>
+	   </trans-line>
+
+	   <labels path="$LINE;20:Div[$row;]"> <!-- index for an interlinear line -->
+		 <label path="/42:Paragraph/20:InnerPile[$col;]"> <!-- index for a pile, 1 is for labels -->
+			<heading path="/42:Paragraph"/> <!-- index for a heading -->
+		 </label>
+	   </labels>
+
+	   <line path="$LINE;20:Div[$row;]/"> <!-- index for an interlinear line -->
+		 <pile path="42:Paragraph/20:InnerPile[$ind;]/"> <!-- index for a pile, 2 + is for data -->
+			<word path="42:Paragraph"/> <!-- index 1 for the word -->
+			<lex-data path="42:Paragraph[2]"> <!-- index 2 for lex data -->
+			   <morpheme path="/20:InnerPile[$mo;]/"> <!-- index for a morpheme of this word -->
+				  <field path="42:Paragraph[$fld;]"/> <!-- index for specific lex data field -->
+			   </morpheme>
+			</lex-data>
+			<gloss path="42:Paragraph[3]"/> <!-- index 3 for word gloss -->
+			<category path="42:Paragraph[4]"/> <!-- index 4 for a word category -->
+		 </pile>
+		 <trans-note path="20:Div[$col;]/42:Paragraph/"> <!-- index 2 +  for free translation, literal trans and notes -->
+		   <label path="42:String[2]"/>
+		   <text path="42:String[4]"/>
+		 </trans-note>
+	   </line>
+
+	</analyze>
+
+	<print-view path="$txtTABS;">
+	   <tab path="37:Print View"/>
+	   <var id="LINE" set="60:m_tabCtrl.AccessibleName/9:m_tpPrintView.AccessibleName/9:NAMELESS/20:m_printViewPane/20:Div/"/>
+
+	   <title path="$LINE;42:Paragraph"/> <!-- index for different language titles -->
+	   <info-comment path="$LINE;42:Paragraph[3]"/>
+
+	   <labels path="$LINE;20:Div"> <!-- index for an interlinear line -->
+		 <label path="/42:Paragraph/20:InnerPile"> <!-- index for a pile, 1 is for labels -->
+			<number path="/42:Paragraph"/>
+			<heading path="[2]/42:Paragraph[$row;]"/> <!-- row of a heading -->
+		 </label>
+	   </labels>
+
+	  <line path="$LINE;20:Div"> <!-- index for an interlinear line -->
+		 <pile path="/42:Paragraph/20:InnerPile[$col;]"> <!-- index for a pile, 3 + is for data -->
+			<word path="/42:Paragraph"/> <!-- index 1 for the word -->
+			<lex-data path="/42:Paragraph[2]"> <!-- index 2 for lex data -->
+			   <morpheme path="/20:InnerPile[$ind;]"/> <!-- index for a morpheme of this word -->
+			   <field path="/42:Paragraph[$row;]"/> <!-- index for specific lex data field -->
+			</lex-data>
+			<gloss path="/42:Paragraph[3]"/> <!-- index 3 for word gloss -->
+			<category path="/42:Paragraph[4]"/> <!-- index 4 for a word category -->
+		 </pile>
+		 <trans-note path="[$row;]]/20:Div/42:Paragraph/"> <!-- index 2 +  for free translation, literal trans and notes -->
+		   <label path="42:String[2]"/>
+		   <text path="42:String[4]"/>
+		 </trans-note>
+	   </line>
+
+	</print-view>
+
+	<text-chart path="$txtTABS;">
+	   <tab path="37:Text Chart"/>
+	   <dialog name="New Feature" dismiss="$ok" on="show"/>
+
+	   <chart path="60:m_tabCtrl.AccessibleName/9:m_tpCChart.AccessibleName/$NL;$nl;">
+		  <header path="/9:NAMELESS/33:NAMELESS/9:NAMELESS/25:" />
+		  <!-- use: select="chart/header" path="Subject" -->
+		  <empty path="/20:RootSite"/>
+		  <!-- just click a cell to open it's drop menu -->
+		  <cell path="/20:RootSite/24:Table[$row;]/$Col;[$col;]">
+			 <empty/>
+			 <text path="/42:Paragraph">
+			   <row path="/20:InnerPile[$ind;]/42:Paragraph"/>
+			 </text>
+		  </cell>
+		  <notes path="/20:RootSite/24:Table[$row;]/28:Row/29:Cell[9]">
+			  <empty/>
+			  <text path="/$Text"/> <!-- each line is a String[*] -->
+		  </notes>
+		  <footer path="[2]/$NL;9:">
+			 <outer name="Outer">
+			   <button name="Outer" path="$name;/43:$name;"/>
+			   <drop path="NAMELESS[1]/43:NAMELESS"/>
+			 </outer>
+			 <inner name="Inner">
+			   <button name="Inner" path="$name;/43:$name;"/>
+			   <drop path="NAMELESS[2]/43:NAMELESS"/>
+			 </inner>
+			 <subject name="Subject">
+			   <button name="Subject" path="$name;/43:$name;"/>
+			   <drop path="NAMELESS[3]/43:NAMELESS"/>
+			 </subject>
+			 <verb name="Verb">
+			   <button name="Verb" path="$name;/43:$name;"/>
+			   <drop path="NAMELESS[4]/43:NAMELESS"/>
+			 </verb>
+			 <o-c name="O/C">
+			   <button name="O/C" path="O//C/43:O//C"/>
+			   <drop path="NAMELESS[5]/43:NAMELESS"/>
+			 </o-c>
+			 <inner2 name="Inner">
+			   <button name="Inner" path="$name;[2]/43:$name;"/>
+			   <drop path="NAMELESS[6]/43:NAMELESS"/>
+			 </inner2>
+			 <outer2 name="Outer">
+			   <button name="Outer" path="$name;[2]/43:$name;"/>
+			   <drop path="NAMELESS[7]/43:NAMELESS"/>
+			 </outer2>
+		  </footer>
+		  <text path="[2]/20:RootSite/42:Paragraph/20:InnerPile[$col;]/$Text;[$row;]"/>
+	   </chart>
+
+	</text-chart>
+
+  </text>
+</interlinear-texts>

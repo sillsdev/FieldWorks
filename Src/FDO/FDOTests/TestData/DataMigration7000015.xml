@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000014">
+	<!-- Version 7000014 data to test.-->
+	<rt class="PhSimpleContextBdry" guid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<PhContextOrVar />
+		<PhPhonContext>
+			<Name>
+				<AUni ws="en">MyName</AUni>
+				<AUni ws="es">MiNombre</AUni>
+			</Name>
+			<Description>
+				<objsur t="o" guid="C83E33DD-2A79-4A4B-84F6-92343C4F5324" />
+			</Description>
+		</PhPhonContext>
+		<PhSimpleContext/>
+		<PhSimpleContextBdry>
+			<FeatureStructure>
+				<objsur t="r" guid="C83E33DD-2A79-4A4B-84F6-92343C4F5325" />
+			</FeatureStructure>
+		</PhSimpleContextBdry>
+	</rt>
+	<rt class="StText" guid="C83E33DD-2A79-4A4B-84F6-92343C4F5324" >
+		<CmObject />
+		<StText />
+	</rt>
+	<rt class="PhBdryMarker" guid="C83E33DD-2A79-4A4B-84F6-92343C4F5325" >
+		<CmObject />
+		<PhTerminalUnit />
+		<PhBdryMarker />
+	</rt>
+</languageproject>

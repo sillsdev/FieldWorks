@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <click wait="2000" select="//sidebar/*"/>
+  <glimpse select="//sidebar//*" prop="name" on-fail="assert">
+   Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+  <click path="button:Views" />
+  <click side="right" path="tray:Draft"/>
+  <!--click path="button:Small Icons" /-->
+  <insert>{DOWN}{DOWN}{ENTER}</insert> <!-- select small icons-->
+  <click side="right" path="tray:Draft"/>
+  <insert>{DOWN}{ENTER}</insert> <!-- select the large icons-->
+  <click side="right" path="tray:Draft"/>
+  <insert>{DOWN}{DOWN}{DOWN}{DOWN}{ENTER}</insert> <!-- select hide side bar -->
+  <glimpse path="menu:View/menu:Side Bar" prop="checked" on-pass="assert">
+   Glimpse of <data get="path"/> for <data get="prop"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+  <click path="menu:View/menu:Side Bar"/><!-- restore the side bar -->
+ </on-application>
+</accil>

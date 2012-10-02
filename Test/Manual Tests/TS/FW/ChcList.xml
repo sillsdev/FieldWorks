@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="chclist" num="6.1" abbr="chli" file="FW\ChcList.xml">
+<title tag="chclist">List Chooser Dialog Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>In FieldWorks, a Choices list is a set of items from which a user may choose when providing one or more values for a particular data field. Many Choices lists may be edited by users but some cannot be changed. The Choices dialog box lets you choose and insert an item or items in a field, and edit items in the Choices list. The dialog has two main modes, accessed through a tab control. The Choices List view of the Choices dialog is used (1) to choose and assign one or more items from a Choices List to a data field, (2) to add, remove, modify, or rearrange items in a Choices list that permits editing.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesList/ChoicesList.html" type="doc">List Chooser Dialog</link>
+</p>
+<p>To launch the List Chooser dialog, select a choices field (such as Source or Location) in a data entry view and click the "..." button</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "List Chooser Dialog"</p>
+</context>
+
+<case id="chliAct" num="1" order="any">
+<title tag="chliAct">Activation</title>
+<context>
+<p>When the List Chooser Dialog is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Launch the List Chooser dialog by selecting a choices field such as Source or Location in the data entry view and clicking the "..." button
+   <r>
+<ul>
+<li>The dialog launches</li>
+<li>The title bar displays the name of the choices list displayed</li>
+<li>The List Item box matches the choices list item currently highlighted.</li>
+</ul>
+</r>
+<p name="bug">List Chooser fails to launch from choices icon</p>
+<p name="bug">List Chooser title bar shows wrong list name</p>
+<p name="bug">List Chooser List Item box shows wrong content</p>
+</step>
+<step name="1.2" link="Bug">Visually inspect the List Chooser dialog and make sure it agrees with the one defined in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesList/ChoicesList.html" type="doc">List Chooser Dialog</link> specs.
+<r>The dialog displayed agrees with the one in the specs according to approximate size and position of all buttons and text.</r>
+<p name="bug">List Chooser dialog does not visually agree with specs</p>
+</step>
+</case>
+
+<case id="chliBd" num="2" order="any">
+<title tag="chliBd">Dialog Controls</title>
+<context>
+<p>When the List Chooser Dialog is displayed:</p>
+</context>
+
+<step name="2.1" link="Bug">Use the <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test the basic functionality of the dialog like the OK, Cancel, Help and "X" buttons.
+   <r>
+<ul>
+<li>The Topics List tab is the default when the application is first started.</li>
+<li>Boxes for items already present in the field from which the Choices dialog is launched are automatically marked as choices in this dialog.</li>
+<li>Window size is persisted.</li>
+<li>Topics List and Keyword Search tabs are tested below, but their basic functionality can be tested through the link.</li>
+<li>Report any errors using the initial phrase "List Chooser"</li>
+</ul>
+</r>
+<p name="bug">List Chooser default tab is not Topics List</p>
+<p name="bug">List Chooser Items in launching field are not checked</p>
+<p name="bug">List Chooser window size is not persisted</p>
+</step>
+
+<step name="2.2" link="Bug">
+Use the <link uri="../StdCtrls/Button.xml">Buttons Tests</link> to test the Modify Button and its associated shortcut key &lt;Alt&gt;&lt;d&gt;. It has a drop down menu associated with it that can also be accessed via right clicking on the List itself.
+<r>Modify displays the menu with the following controls:<ul>
+<li>Show Names (hotkey N)</li>
+<li>Show Abbreviations (hotkey A)</li>
+<li>Show Names and Abbreviations (hotkey W)</li>
+</ul>
+Some combination of these controls:
+<ul>
+<li>Insert (hotkey I)</li>
+<li>Insert Above (hotkey I)</li>
+<li>Insert Below (hotkey B)</li>
+<li>Insert Subitem (hotkey S)</li>
+</ul>
+
+And:
+<ul>
+<li>Rename (hotkey R)</li>
+<li>Merge (hotkey M)</li>
+<li>Delete (hotkey D)</li>
+<li>Edit List... (hotkey E)</li>
+</ul>
+One of the first three items should have a check next to it in the list denoting the current selection.</r>
+<p name="bug">
+</p>
+</step>
+
+
+<step name="2.4" link="Bug">
+Test the commands displayed in the Modify button's menu using the tests below that test the same commands thru the right click menu.
+<r>Report any errors using "List Chooser" as the first words of the report.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="2.5" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo Box tests</link> to test the List Item text box.
+   <r>
+<ul>
+<li>The selected/highlighted list item name appears in the combo box and is added to the drop-down list.</li>
+<li>The drop-down list displays up to 12 most recent item searches.</li>
+<li>Report problems using the initial phrase "List Chooser List Item".</li>
+</ul>
+</r>
+<p name="bug">List Chooser List Item selection name not copied to text box</p>
+<p name="bug">List Chooser List Item selection name not added to drop-down</p>
+<p name="bug">List Chooser List Item Combo list does not hold 12</p>
+</step>
+<step name="2.6" link="Bug">Left-Click on an item or move the highlight with the direction arrows on the keyboard.
+   <r>
+<ul>
+<li>Highlights an item.</li>
+<li>The item appears in the List item box.</li>
+</ul>
+</r>
+<p name="bug">List Chooser List Item selection fails to highlight it</p>
+<p name="bug">List Chooser List Item selection name not copied to text box</p>
+</step>
+<step name="2.7" link="Bug">Type in this box to find an item.
+   <r>
+<ul>
+<li>Supports type-to-find user action. An item is returned if the list contains one that matches.</li>
+<li>The list is synchronized with the choices list so that it scrolls and the highlight moves to the item that matches.</li>
+</ul>
+</r>
+<p name="bug">List Chooser List Item not matched though identical</p>
+<p name="bug">List Chooser List Item matched though different</p>
+<p name="bug">List Chooser List Item not in synch with chooser list</p>
+</step>
+
+</case>
+
+
+<case id="chliLn" num="3" order="any">
+<title tag="chliLn">List Navigation</title>
+<context>
+<p>When the List Chooser Dialog is displayed:</p>
+</context>
+
+<step name="3.1" link="Bug">Arrow keys: open the OCM codes choices list (can be accessed by clicking the [...] button on the Anthropology Categories field) and navigate with the up, down, left and right arrow keys
+   <r>
+<ul>
+<li>The item currently highlighted appears in the List item box.</li>
+<li>If the help box to the right is open, the help for the current item appears there. The help box is opened using the More&gt;&gt; button, if it's enabled. It is for OCM codes.</li>
+<li>Up and down arrows select the next item above or below.</li>
+<li>Left arrow key moves to the next level up in the hierarchy or collapse the hierarchy below the selected item if it is open.</li>
+<li>Right arrow key moves to the next level below in the hierarchy if it is open below the current item or it opens the level below if it is currently not open.</li>
+</ul>
+</r>
+<p name="bug">List Chooser List Item selection name not copied to text box</p>
+<p name="bug">List Chooser More help is not displayed</p>
+<p name="bug">List Chooser More help changes to wrong topic</p>
+<p name="bug">List Chooser nav arrow keys don't work</p>
+<p name="bug">List Chooser nav up/down arrow misbehaves</p>
+<p name="bug">List Chooser nav left/right arrow misbehaves</p>
+</step>
+<step name="3.2" link="Bug">With an item selected, press the spacebar.
+   <r>Pressing the spacebar toggles the item's checkbox.</r>
+<p name="bug">List Chooser space bar does not affect item checkbox</p>
+</step>
+<step name="3.3" link="Bug">Click twice on any item to rename it (not double-click).
+   <r>A box opens around the item for in-place editing (like renaming a Windows file).</r>
+<p name="bug">List Chooser twice-clicked item not openned for in-place edit</p>
+<p name="note">No in-place editing in version 1</p>
+</step>
+<step name="3.4" link="Bug">Drag and drop to rearrange items in the list using the mouse.
+   <r>
+<ul>
+<li>A horizontal insertion point cursor moves through the list with the item.</li>
+<li>If the item is moved over an item higher in the tree, the item is highlighted.</li>
+<li>Dropping the item inserts it "under" the highlighted item.</li>
+</ul>
+</r>
+<p name="bug">List Chooser Drag does not shows horizontal insertion point cursor</p>
+<p name="bug">List Chooser Drag over higher item does not highlight it</p>
+<p name="bug">List Chooser Drag and drop item not inserted under highlight</p>
+<p name="note">Items cannot be rearranged by drag/drop if Sorting by name is checked under List Properties</p>
+<p name="note">Items cannot be made child items unless Support Hierarchy is checked under List Properties</p>
+</step>
+<step name="3.5" link="Bug">Right-click and select Show Names or Show Abbreviations or Show Names and Abbreviations.
+   <r>
+<ul>
+<li>A check mark denotes the current state among these.</li>
+<li>Show Names presents the list showing only names.</li>
+<li>Show Abbreviations presents the list showing only abbreviations.</li>
+<li>Show Names and Abbreviations shows the list using both names and abbreviations.</li>
+</ul>
+</r>
+<p name="bug">List Chooser op menu Show name/abbr checked wrong</p>
+<p name="bug">List Chooser op menu Show name/abbr problems</p>
+</step>
+<step name="3.6" link="Bug">Right-click and select Insert, Insert Above, Insert Below or Insert Subitem.
+   <r>
+<ul>
+<li>The Insert New List Item dialog pops up.</li>
+<li>Insert: inserts a new list item (this menu option is only for alphabetized lists; not ordered by the user).</li>
+<li>Insert Above: inserts a new list item above the current selection. (not shown in alphabetized lists).</li>
+<li>Insert Below: inserts a new list item below the current selection. (not shown in alphabetized lists).</li>
+<li>Insert Subitem Inserts a new list item hierarchically below the current selection (not shown in flat lists).</li>
+</ul>
+</r>
+<p name="bug">List Chooser op menu insert above/below displayed for alphabetized lists</p>
+<p name="bug">List Chooser op menu insert displayed for non-alphabetized lists</p>
+<p name="bug">List Chooser op menu insert subitem displayed for flat list</p>
+<p name="bug">List Chooser op menu insert fails to invoke Insert New List Item dialog</p>
+<p name="bug">List Chooser op menu insert fails to insert item where expected</p>
+</step>
+<step name="3.7" link="Bug">Right-click and select Rename.
+   <r>
+<ul>
+<li>The Rename Item dialog pops up.</li>
+<li>The user changes the list item name with this dialog.</li>
+</ul>
+</r>
+<p name="bug">List Chooser op menu Rename fails to launch Rename Item dialog</p>
+<p name="bug">List Chooser op menu Rename doesn't result in change</p>
+</step>
+<step name="3.8" link="Bug">Right-click and select Delete.
+   <r>
+<ul>
+<li>FW checks if the item is being used/referenced elsewhere in the program</li>
+<li>A Delete Effects Dialog is displayed same as the one associated with Edit-Delete to show the user the consequence of deleting the item</li>
+<li>If the item is deleted, all subitems and references to the item and subitems are also deleted</li>
+</ul>
+</r>
+<p name="bug">List Chooser op menu Delete does not show Delete Effects dialog</p>
+<p name="bug">List Chooser op menu Delete does not delete all items and references correctly</p>
+</step>
+<step name="3.9" link="Bug">Right-click and select Edit List...
+   <r>
+<ul>
+<li>The Topics List Editor is opened in the Data Entry View.</li>
+<li>The editor scrolls and expands the target item.</li>
+</ul>
+</r>
+<p name="bug">List Chooser op menu Edit List fails to open the List Editor</p>
+<p name="bug">List Chooser op menu Edit List opens List Editor on wrong list</p>
+<p name="bug">List Chooser op menu Edit List opens List Editor on wrong item</p>
+</step>
+
+<step name="3.10" link="Bug">When the chooser is displaying the
+OCM (or FRAME and OCM) anthropology codes, verify that the codes in use
+are the updated 2002 version by looking for and selecting these
+codes: 890 Gender Roles, 900 Texts, 910 Archeological Measures,
+2010 Internet communications.
+<r>
+<ul>
+<li>The new 2002 OCM codes are present.</li>
+<li>When the new 2002 OCM codes are selected, appropriate
+descriptions are shown in the help pane at right.</li>
+</ul>
+</r>
+</step>
+
+</case>
+
+<case id="chliML" num="4" order="any">
+<title tag="chliML">Exercise More and Less</title>
+<context>
+<p>When the List Chooser Dialog is displayed:</p>
+</context>
+
+<step name="4.1" link="Bug">Click the More &gt;&gt; button. This is enabled for all lists with a help file, including OCM codes. See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesList/ChoicesList.html#DescriptiveHelpExpansion" type="doc">Descriptive Help</link>.
+   <r>
+<ul>
+<li>Provides descriptive help for the highlighted item.</li>
+<li>The dialog expands to the right to make room to display the help.</li>
+<li>A &lt;&lt; Less button replaces More &gt;&gt;.</li>
+</ul>
+</r>
+<p name="bug">List Chooser More shows wrong help topic</p>
+<p name="bug">List Chooser does not expand for More help</p>
+<p name="bug">List Chooser More is not replaced with Less</p>
+
+</step>
+<step name="4.1.1" link="Bug">Find an item whose descriptive help includes a link to another item (e.g. in OCM Codes).  Click on this link on the descriptive help pane.
+<r>The selection in the left pane moves to the linked-to item; and the help pane displays the
+help for the item.</r>
+</step>
+
+<step name="4.2" link="Bug">Click the &lt;&lt; Less button. This shows when More &gt;&gt; help is expanded.
+   <r>
+<ul>
+<li>Collapses descriptive help.</li>
+<li>The dialog shrinks to the left to close the help frame.</li>
+<li>A More &gt;&gt; button replaces &lt;&lt; Less.</li>
+</ul>
+</r>
+<p name="bug">List Chooser Less leaves More help open</p>
+<p name="bug">List Chooser Less is not replaced with More</p>
+</step>
+<step name="4.3" link="Bug">Click the descriptive help Back button.
+   <r>
+<ul>
+<li>Pages back to the previous information viewed in the descriptive help pane.</li>
+<li>The back button is grayed out until two selections have been made in the Choices List pane.</li>
+</ul>
+</r>
+<p name="bug">List Chooser More help Back doesn't work</p>
+<p name="bug">List Chooser More help Back not disabled initially</p>
+<p name="bug">List Chooser More help Back remains disabled after selections</p>
+<p name="bug">List Chooser More help Back not disabled after backing out</p>
+<p name="bug">List Chooser More help Back wrong previous information displayed</p>
+</step>
+<step name="4.4" link="Bug">Click the descriptive help forward button.
+   <r>
+<ul>
+<li>Pages forward only when the back button has been used.</li>
+<li>The forward button is grayed out until the Back button has been clicked.</li>
+</ul>
+</r>
+<p name="bug">List Chooser More help Forward doesn't work</p>
+<p name="bug">List Chooser More help Forward not disabled initially</p>
+<p name="bug">List Chooser More help Forward remains disabled after going back</p>
+<p name="bug">List Chooser More help Forward not disabled after new selection</p>
+<p name="bug">List Chooser More help Forward wrong information displayed</p>
+</step>
+<step name="4.5" link="Bug">Click the descriptive help print button.
+   <r>Pops up a standard print dialog which lets you print out the current topic.</r>
+<p name="bug">List Chooser More help print does not launch print dialog</p>
+<p name="bug">List Chooser More help print produces wrong content</p>
+</step>
+
+</case>
+
+<case id="chliScc" num="5" order="any">
+<title tag="chliScc">Exercise Show Current Choices</title>
+<context>
+<p>When the List Chooser Dialog is displayed:</p>
+</context>
+
+<step name="5.1" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box tests</link> to test the Show current choices check box.
+   <r>
+<ul>
+<li>Report problems using the initial phrase "List Chooser Show Current"</li>
+</ul>
+</r>
+<p name="bug">List Chooser Show Current frame does not open</p>
+<p name="bug">List Chooser Show Current allows editing in list</p>
+</step>
+<step name="5.2" link="Bug">Open the List Chooser dialog from the tags field. Select a number of items from the list. Select the 'Show current choices' check box.
+   <r>
+<ul>
+<li>The scrolling window appears and shows the currently selected choices.</li>
+<li>No editing can take place in this window.</li>
+</ul>
+</r>
+<p name="bug">List Chooser Show Current frame does not open</p>
+<p name="bug">List Chooser Show Current allows editing in list</p>
+</step>
+<step name="5.3" link="Bug">With Show current choices checked, select and unselect items from the chooser list. Select enough items to test the scrolling mechanism in the current selection frame.
+   <r>
+<ul>
+<li>Selected items from the chooser get added to the current selection list</li>
+<li>Deselected items are removed from the current selection list</li>
+<li>When the number of items in the list grow larger than the frame, a scroll bar activates and works</li>
+<li>When the number of items in the list dwindles, the scroll bar is disabled (grayed out)</li>
+</ul>
+</r>
+<p name="bug">List Chooser Show Current does not add new selections</p>
+<p name="bug">List Chooser Show Current does not remove deselected items</p>
+<p name="bug">List Chooser Show Current does not allow scrolling</p>
+<p name="bug">List Chooser Show Current scroll bar remains active after list shrinks</p>
+<p name="bug">List Chooser Show Current scroll bar has problems</p>
+</step>
+<step name="5.4" link="Bug">Un-check the Show current choices check box.
+   <r>The scrolling window disappears</r>
+<p name="bug">List Chooser Show Current frame remains after unchecking</p>
+</step>
+<step name="5.5" link="Bug">Click on the Keyword Search tab.
+   <r>The current choices pane is not affected.</r>
+<p name="bug">List Chooser Show Current list is affected by changing tabs</p>
+</step>
+
+</case>
+
+<case id="chliKst" num="6" order="any">
+<title tag="chliKst">Exercise Keyword Search Tab</title>
+<context>
+<p>When the List Chooser Dialog is displayed:</p>
+</context>
+
+<step name="6.1" link="Bug">Click on the Keyword Search tab.
+   <r>
+<ul>
+<li>The Keyword search view displays as shown in the specs</li>
+<li>Initially nothing appears in the item pane until something is typed in the Keyword combo box.</li>
+<li>With no keyword index available for the list, the tab should be grayed out (disabled)</li>
+</ul>
+</r>
+<p name="bug">List Chooser Keyword Tab fails to show content</p>
+<p name="bug">List Chooser Keyword Tab not disabled though no index</p>
+</step>
+<step name="6.2" link="Bug">Exit the List Chooser dialog after selecting the Keyword Search tab and then re-invoke it.
+   <r>
+<ul>
+<li>The keyword search tab is displayed.</li>
+</ul>
+</r>
+<p name="bug">List Chooser Keyword Tab does not persist on restart</p>
+</step>
+<step name="6.3" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo Box Tests</link> with the Keyword combo box.
+   <r>
+<ul>
+<li>Words entered or selected result in a list of matched list items or no list when there are no matches.</li>
+<li>Report problems using the initial phrase "List Chooser Keyword Tab".</li>
+</ul>
+</r>
+<p name="bug">List Chooser Keyword Tab Keyword box fails to produce a list</p>
+<p name="bug">List Chooser Keyword Tab Keyword box produces junk list</p>
+</step>
+<step name="6.4" link="Bug">Click the Keyword list box drop-down. Select an item from it.
+   <r>
+<ul>
+<li>The drop-down Keyword list box stores and displays up to 12 most recent keyword searches.</li>
+<li>The dialog stores these keywords indefinitely.</li>
+<li>When an item is selected, a list displays of matched list items or no list when there are no matches.</li>
+</ul>
+</r>
+<p name="bug">List Chooser Keyword Tab drop-down gets stuck</p>
+<p name="bug">List Chooser Keyword Tab drop-down does not display 12 items</p>
+<p name="bug">List Chooser Keyword Tab drop-down forgets items before 12 listed</p>
+<p name="bug">List Chooser Keyword Tab drop-down fails to produce a list</p>
+<p name="bug">List Chooser Keyword Tab drop-down produces junk list</p>
+</step>
+
+</case>
+
+
+<case id="chliIR" num="7" order="any">
+<title tag="chliIR">Exercise Insert/Rename Pop-up Dialog</title>
+<context>
+<p>When the Insert/Rename Pop-up Dialog is showing</p>
+</context>
+
+<step name="7.1" link="Bug">Visually inspect the Insert and Rename dialogs and make sure each one agrees with the one defined in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesList/ChoicesList.html#EditItemPopUpDialog" type="doc">Insert/Rename Pop-up Dialog</link> specs.
+<r>The dialog displayed agrees with the one in the specs according to approximate size and position of all buttons and text (the dialogs should be the same except for the titles and actual data present).</r>
+<p name="bug">List Chooser - Insert/Rename dialog does not visually agree with specs</p>
+</step>
+
+<step name="7.2" link="Bug">Use the <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test the basic functionality of each dialog.
+<r>Report any errors using the initial phrase "List Chooser Insert/Rename dialog"</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="7.3" link="Bug">
+Upon clicking on one version of Insert(Insert, Insert Subitem, etc.), an Empty Insert dialog should be displayed.
+<r>
+<ul>
+<li>The Item Name, Abbreviation, and Short Description boxes should initially be empty</li>
+   <li>Initially the OK button is disabled.</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="7.4" link="Bug">
+Use <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link> to test the Item Name text box. Enter a value in for name without entering any other information yet.
+<r>
+<ul>
+<li>Initially, focus should be in the Item Name text box.</li>
+   <li>The value entered for Item Name should be copied to abbreviation according to the following rules:</li>
+   <ul>
+<li>Take the name and delete all spaces and punctuation</li>
+	   <li>Truncate it to 8 characters</li>
+	   <li>Place it in the abbreviation box</li>
+</ul>
+   <li>If the user moves to the abbreviation field next, the generated abbreviation should be selected for edit</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="7.5" link="Bug">
+Use <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link> to test the Abbreviation text box. Enter an abbreviation when the Item Name box is empty.
+<r>The abbreviation is automatically copied to the Item Name text box upon removing focus from the Abbreviation text box.
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="7.6" link="Bug">
+Enter a Name or Abbreviation into one of the text boxes that already exists for a List that doesn't allow duplicates (This is controlled under the List Properties which can be accessed by File - Topics List Properties under TLE or the Properties button in the Tools - Topics Lists dialog in DN).
+<r>A Duplicate Name dialog is displayed saying either the Name or Abbreviation already exists. The value must be changed before proceeding. </r>
+<p name="bug">
+</p>
+</step>
+
+<step name="7.7" link="Bug">
+In either the Name or Abbreviation text boxes, enter in a ":" or " - " (space hyphen space).
+<r>A message is displayed: <i>One or more characters you typed are not permitted in this field (colon ":" or space hyphen space " - "). FieldWorks automatically replaced the invalid character with a hyphen.</i>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="7.8" link="Bug">
+Upon opening the dialog from the Rename command in the List Chooser dialog, examine the data displayed.
+<r>
+<ul>
+<li>The three values (Name, Abbreviation and Description) should correspond to the item selected for renaming.</li>
+	<li>The Item Name text box is initially highlighted.</li>
+	<li>Any values changed should persist after hitting OK.</li>
+	<li>The rules described above for Insert apply to Rename as well</li>
+  </ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="7.9" link="Bug">
+Delete the text in both the Name and Abbreviation text boxes.
+<r>The OK button has been disabled (or if only one has been deleted a Missing Info dialog is displayed). Name and Abbreviation are both required fields.</r>
+<p name="bug">
+</p>
+</step>
+
+</case>
+
+
+<case id="chliMTL" num="8" order="any">
+<title tag="chliMTL">Exercise Merge Topic List Item Dialog</title>
+<context>
+<p>When the Merge Topic List Item Dialog is showing</p>
+</context>
+
+<step name="8.1" link="Bug">Visually inspect the Merge Topic List Item dialog and make sure it agrees with the one defined in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesList/ChoicesList.html#MergeListItems" type="doc">Merge Topic List Item dialog</link> specs.
+<r>The dialog displayed agrees with the one in the specs according to approximate size and position of all buttons and text.</r>
+<p name="bug">List Chooser - Merge Topic List Item dialog does not visually agree with specs</p>
+</step>
+
+<step name="8.2" link="Bug">Use the <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test the basic functionality of the dialog.
+<r>Report any errors using the initial phrase "List Chooser Merge Item dialog"</r>
+<p name="bug">
+</p>
+</step>
+
+
+<step name="8.3" link="Bug">
+On the merge of an item, select the same item from the list as the item to merge into.
+<r>An invalid merge dialog is displayed. You cannot merge an item into itself or a parent into its child.</r>
+<p name="bug">List Chooser - Merge allowed of an item into itself</p>
+<p name="bug">List Chooser - Merge allowed a parent item into its child item</p>
+</step>
+
+<step name="8.4" link="Bug">
+Select a valid item to merge into and click Merge.
+<r>
+<ul>
+<li>The current item and all of its incoming references are merged into the other existing item.</li>
+<li>Any descriptions or associated fields with the original item should be appended to the end of those same fields in the other existing item (so no data is lost in the merge). NOTE: atomic references are discarded.</li>
+</ul>
+</r>
+<p name="bug">List Chooser - Merge action did not merge items correctly</p>
+</step>
+
+
+</case>
+
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Sep-28-01" author="MikeL">Put in guts from Word version by Rick M. and Shalom A.</update>
+<update date="Jun-17-02" author="RussD">Brought up to specs</update>
+<update date="Jun-27-02" author="LarsH">Added test of links in help pane (4.1.1)</update>
+<update date="Jun-28-02" author="LarsH">Added check for OCM 2002 codes (3.10)</update>
+
+</test>

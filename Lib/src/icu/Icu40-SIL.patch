@@ -1,0 +1,157 @@
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/common/ubidi_props.h icu/source/common/ubidi_props.h
+--- icu-4.0/source/common/ubidi_props.h	2008-02-08 18:50:08.000000000 -0600
++++ icu/source/common/ubidi_props.h	2008-11-06 14:51:47.000000000 -0600
+@@ -24,7 +24,7 @@
+ #include "uset_imp.h"
+ #include "udataswp.h"
+
+-#define UBIDI_HARDCODE_DATA 1
++#define UBIDI_HARDCODE_DATA 0
+
+ U_CDECL_BEGIN
+
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/common/ucase.h icu/source/common/ucase.h
+--- icu-4.0/source/common/ucase.h	2008-06-13 16:07:07.000000000 -0500
++++ icu/source/common/ucase.h	2008-11-06 14:51:57.000000000 -0600
+@@ -44,7 +44,7 @@
+ U_CAPI const UCaseProps * U_EXPORT2
+ ucase_getSingleton(UErrorCode *pErrorCode);
+
+-#define UCASE_HARDCODE_DATA 1
++#define UCASE_HARDCODE_DATA 0
+
+ #if !UCASE_HARDCODE_DATA
+ /**
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/common/uchar.c icu/source/common/uchar.c
+--- icu-4.0/source/common/uchar.c	2008-04-04 17:47:43.000000000 -0500
++++ icu/source/common/uchar.c	2008-11-10 14:35:13.645603500 -0600
+@@ -35,7 +35,7 @@
+
+ /* dynamically loaded Unicode character properties -------------------------- */
+
+-#define UCHAR_HARDCODE_DATA 1
++#define UCHAR_HARDCODE_DATA 0
+
+ #if UCHAR_HARDCODE_DATA
+
+@@ -81,7 +81,7 @@
+		 pInfo->dataFormat[1]==0x50 &&
+		 pInfo->dataFormat[2]==0x72 &&
+		 pInfo->dataFormat[3]==0x6f &&
+-        pInfo->formatVersion[0]==4 &&
++        pInfo->formatVersion[0]==5 &&
+		 pInfo->formatVersion[2]==UTRIE_SHIFT &&
+		 pInfo->formatVersion[3]==UTRIE_INDEX_SHIFT
+	 ) {
+@@ -703,6 +703,14 @@
+
+ U_CAPI void U_EXPORT2
+ u_getUnicodeVersion(UVersionInfo versionArray) {
++#if !UCHAR_HARDCODE_DATA
++    // Ensure that the data is loaded.
++    if(!HAVE_DATA) {
++        if (versionArray!=NULL) {
++            uprv_memset(versionArray, 0, U_MAX_VERSION_LENGTH);
++        }
++    }
++#endif
+	 if(versionArray!=NULL) {
+		 uprv_memcpy(versionArray, dataVersion, U_MAX_VERSION_LENGTH);
+	 }
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/common/unorm.cpp icu/source/common/unorm.cpp
+--- icu-4.0/source/common/unorm.cpp	2007-06-03 01:08:46.000000000 -0500
++++ icu/source/common/unorm.cpp	2008-11-06 14:54:01.000000000 -0600
+@@ -186,7 +186,7 @@
+ }
+ U_CDECL_END
+
+-#define UNORM_HARDCODE_DATA 1
++#define UNORM_HARDCODE_DATA 0
+
+ #if UNORM_HARDCODE_DATA
+
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/tools/genprops/props2.c icu/source/tools/genprops/props2.c
+--- icu-4.0/source/tools/genprops/props2.c	2008-04-04 17:47:43.000000000 -0500
++++ icu/source/tools/genprops/props2.c	2008-11-07 12:06:59.731513600 -0600
+@@ -748,8 +748,13 @@
+				 "static const uint32_t propsVectors[%ld]={\n",
+				 pv, 32, pvCount,
+				 "};\n\n");
+-            fprintf(f, "static const int32_t countPropsVectors=%ld;\n", (long)pvCount);
+-            fprintf(f, "static const int32_t propsVectorsColumns=%ld;\n", (long)indexes[UPROPS_ADDITIONAL_VECTORS_COLUMNS_INDEX]);
++            /* fprintf(f,...) crashes on Microsoft Windows XP.  (why are we not shocked at this?)*/
++            /*fprintf(f, "static const int32_t countPropsVectors=%ld;\n", (long)pvCount);*/
++            /*fprintf(f, "static const int32_t propsVectorsColumns=%ld;\n", (long)indexes[UPROPS_ADDITIONAL_VECTORS_COLUMNS_INDEX]);*/
++            usrc_writeStringWithOneParameter(f,
++                "static const int32_t countPropsVectors=%ld;\n", (long)pvCount);
++            usrc_writeStringWithOneParameter(f,
++                "static const int32_t propsVectorsColumns=%ld;\n", (long)indexes[UPROPS_ADDITIONAL_VECTORS_COLUMNS_INDEX]);
+		 } else {
+			 uprv_memcpy(p, pv, pvCount*4);
+		 }
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/tools/genprops/store.c icu/source/tools/genprops/store.c
+--- icu-4.0/source/tools/genprops/store.c	2008-04-04 17:47:43.000000000 -0500
++++ icu/source/tools/genprops/store.c	2008-11-07 12:09:17.937879200 -0600
+@@ -467,7 +467,9 @@
+				 "static const int32_t indexes[UPROPS_INDEX_COUNT]={",
+				 indexes, 32, UPROPS_INDEX_COUNT,
+				 "};\n\n");
+-            fclose(f);
++            /* fclose(f) crashes on Microsoft Windows XP.  (why are we not shocked at this?)*/
++            /*fclose(f);*/
++            usrc_close(f);
+		 }
+	 } else {
+		 /* write the data */
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/tools/toolutil/writesrc.c icu/source/tools/toolutil/writesrc.c
+--- icu-4.0/source/tools/toolutil/writesrc.c	2007-08-28 21:57:42.000000000 -0500
++++ icu/source/tools/toolutil/writesrc.c	2008-11-07 12:13:56.209818800 -0600
+@@ -188,3 +188,19 @@
+		 fputs(postfix, f);
+	 }
+ }
++
++U_CAPI void U_EXPORT2
++usrc_writeStringWithOneParameter(FILE *f,
++                                 const char *formatString,
++                                 long parameter)
++{
++    if (f != NULL)
++        fprintf(f, formatString, parameter);
++}
++
++U_CAPI void U_EXPORT2
++usrc_close(FILE *f)
++{
++    if (f != NULL)
++        fclose(f);
++}
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0/source/tools/toolutil/writesrc.h icu/source/tools/toolutil/writesrc.h
+--- icu-4.0/source/tools/toolutil/writesrc.h	2005-05-06 16:49:48.000000000 -0500
++++ icu/source/tools/toolutil/writesrc.h	2008-11-07 12:15:43.356467600 -0600
+@@ -67,4 +67,25 @@
+					   const char *getFoldingOffsetName,
+					   const char *postfix);
+
++/*
++ * The next two functions are needed because Microsoft Windows XP cannot handle opening the
++ * file in the tools utilities DLL but using (or closing) the open file in the main program
++ * (such as genprops), at least not when compiled with /MT or /MTd to avoid having to
++ * distribute the MSVC runtime DLL.
++ */
++/**
++ *  Mimic fprintf for one argument that looks like a long.
++ *  A more thorough solution would handle a variable number of arguments...
++ */
++U_CAPI void U_EXPORT2
++usrc_writeStringWithOneParameter(FILE *f,
++                                 const char *formatString,
++                                 long parameter);
++
++/**
++ *  Close the file opened by usrc_create().
++ */
++U_CAPI void U_EXPORT2
++usrc_close(FILE *f);
++
+ #endif

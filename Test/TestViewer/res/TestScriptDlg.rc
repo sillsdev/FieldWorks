@@ -1,0 +1,107 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "TestScriptDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\..\Src\AppCore\AfDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTstScrDlg DIALOGEX 0, 0, 187, 146
+STYLE DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+CAPTION "Page Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",IDOK,69,130,50,14
+	LISTBOX         kcidTstScrList,3,22,180,106,LBS_NOINTEGRALHEIGHT |
+					LBS_EXTENDEDSEL | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+	PUSHBUTTON      "New Test",kcidNewBtn,3,3,16,16,BS_BITMAP
+	PUSHBUTTON      "Open Test",kcidOpenBtn,36,3,16,16,BS_BITMAP
+	PUSHBUTTON      "Save Test",kcidSaveBtn,52,3,16,16,BS_BITMAP,
+					WS_EX_TRANSPARENT
+	PUSHBUTTON      "Save Test As",kcidSaveAsBtn,68,3,16,16,BS_BITMAP
+	PUSHBUTTON      "Execute",kcidExecuteBtn,139,3,16,16,BS_BITMAP,
+					WS_EX_TRANSPARENT
+	PUSHBUTTON      "Delete",kcidDeleteBtn,168,3,16,16,BS_BITMAP
+	PUSHBUTTON      "Button7",kcidRecordTstBtn,20,3,16,16,BS_BITMAP
+	PUSHBUTTON      "Button7",kcidRunLineBtn,123,3,16,16,BS_BITMAP
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"TestScriptDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\..\\Src\\AppCore\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+NEWBITMAP               BITMAP  DISCARDABLE     "New.bmp"
+OPENBITMAP              BITMAP  DISCARDABLE     "Open.bmp"
+SAVEBITMAP              BITMAP  DISCARDABLE     "Save.bmp"
+SAVEASBITMAP            BITMAP  DISCARDABLE     "SaveAs.bmp"
+EXECUTEBITMAP           BITMAP  DISCARDABLE     "Execute.bmp"
+DELETEBITMAP            BITMAP  DISCARDABLE     "Delete.bmp"
+STOPBITMAP              BITMAP  DISCARDABLE     "Stop.bmp"
+WRITEBITMAP             BITMAP  DISCARDABLE     "Write.bmp"
+PAUSEBITMAP             BITMAP  DISCARDABLE     "Pause.bmp"
+STEPBITMAP              BITMAP  DISCARDABLE     "Step.bmp"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

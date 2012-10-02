@@ -1,0 +1,126 @@
+￯ﾻ﾿<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Add and then delete a Natural Class (based on modified Demo J )-->
+
+ <on-application args="-db Kalaba" run="ok" on-fail="assert">
+
+<!-- 3.	Add a Natural Class "nasal".-->
+<!-- a.	Go to Grammar / Natural Classes.-->
+  <click path="window:MenuBar/menu:View /menu:Grammar/menu:Natural Classes" />
+
+<!-- b.	Click on Insert menu item / Natural Class.-->
+  <click wait="3000" path="window:MenuBar/menu:Insert/menu:Natural Class" />
+
+<!-- c.	In the Name slice, type "nasal"-->
+  <var id="NaturalClass" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:RecordEditView/window:RecordEditView.DataTree"/>
+  <click path="$NaturalClass;/window:string/group:Name/para:0/line:0"/>
+  <insert>nasal</insert>
+
+<!-- d.	In the Description slice, type "All nasal consonants."-->
+  <click path="$NaturalClass;/window:string[2]/group:Description/para:0/line:0"/>
+  <insert>All nasal consonants.</insert>
+
+<!-- e.	In the Abbreviation slice, type "nasal"-->
+  <click path="$NaturalClass;/window:string[3]/group:Abbreviation/para:0/line:0"/>
+  <insert>nasal</insert>
+
+<!-- f.	Click on the chooser in the Segments slice.-->
+  <click path="$NaturalClass;/window:defaultvectorreference/window:Phonemes"/>
+  <insert>{TAB}~</insert>
+
+<!-- 1.	Select "m", then "n", then the eng.-->
+  <on-dialog title="Choose Segments">
+   <click wait="1000" repeat="1" path="window:Edit the Phonemes[3]/sbar:Vertical/button:Page down"/>
+   <click dx="-10" path="window:Edit the Phonemes[3]/oline:Edit the Phonemes/chkbox:m"/>
+   <click dx="-10" path="window:Edit the Phonemes[3]/oline:Edit the Phonemes/chkbox:n"/>
+   <!--click path="window:Edit the Phonemes[3]/oline:Edit the Phonemes/chkbox:?"/--><!-- eng? -->
+   <click path="window:OK"/>
+  </on-dialog>
+
+<!-- 4.	Environments-->
+<!-- c.	Go to Lexicon / Lexicon Edit.-->
+  <click path="window:MenuBar/menu:View /menu:Lexicon/menu:Lexicon Edit"/>
+
+<!-- 1.	Insert major entry-->
+  <click path="window:Insert[1]/toolbar:Insert/button:Entry..."/>
+
+<!-- 2.	In the Form field, type "-an"-->
+  <on-dialog title="New Entry">
+   <insert>-an</insert>
+
+<!-- 3.	In the Gloss field, type "Fut" (for future)-->
+   <insert>{TAB 2}Fut</insert>
+
+<!-- 4.	Click on "Inflectional Affix"-->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Affix Type:[2]/button:NAMELESS"/>
+   <insert>{DOWN}~</insert>
+
+<!-- 5.	Open the chooser for Category-->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Attaches to Category:[2]/button:NAMELESS"/>
+
+<!-- a.	Open up verb.-->
+   <insert>v~</insert>
+
+<!-- b.	Open the chooser for Slot - Select "Tense"-->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Fills Slot:[2]/button:NAMELESS"/>
+   <insert>t~</insert>
+
+<!-- 6.	Click on Create-->
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- d.	Let's add the /a/ allomorph: -->
+<!-- 1.	Right click on Allomorphs-->
+  <var id="Entry" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:LexItemsAndDetailMultiPane/window:TestEditMulti/window:normalEdit/window:RecordEditView.DataTree/"/>
+  <click side="right" path="$Entry;window:summary[2]"/>
+
+<!-- 2.	Select "Insert Affix Allomorph"-->
+   <insert>{DOWN 2}~</insert>
+
+<!-- 3.	Type "a" in the Affix Allomorph slice-->
+   <insert>a</insert>
+
+<!-- 4.	Select "suffix" for the morph type-->
+   <insert>{TAB 4}~ss~</insert>
+
+<!-- 5.	In the environment slice, type "/ [nasal] _"-->
+  <click path="$Entry;window:phoneenvreference/window:Environments"/>
+   <insert>/ [nasal] _</insert>
+
+<!-- 8.	Also use environment chooser.-->
+<!-- 9.	Back to Lexicon / Lexicon Edit, "-an" entry.-->
+  <click path="window:MenuBar/menu:View /menu:Lexicon/menu:Lexicon Edit"/>
+
+<!-- 13.	Go to Grammar / Environments-->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Environments" />
+   <insert>{F5}</insert>
+
+<!-- b.	For the nasal one, type "after a nose job?" in the Name field.-->
+  <var id="environs" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:EnvironmentItemsAndDetailMultiPane/window:EnvironmentList/window:EnvironmentList/window:NAMELESS[1]/group:Root"/>
+  <click path="$environs;/table:Table/row:Row/cell:Cell[3]/text:Paragraph/value:// [nasal] _[-4]"/>
+  <var id="Environ" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:RecordEditView/window:RecordEditView.DataTree/"/>
+  <click wait="2000" path="$Environ;window:string/view:Name"/>
+  <insert>+{END}after a nose job?</insert>
+  <insert>{F5}</insert>
+
+<!-- XX.	DELETE the Natural Class "nasal"-->
+<!-- a.	Go to Grammar / Natural Classes.-->
+  <click path="window:MenuBar/menu:View /menu:Grammar/menu:Natural Classes" />
+ <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:NaturalClassItemsAndDetailMultiPane/window:NaturalClassList/window:NaturalClassList/window:NAMELESS[1]/group:Root/table:Table/row:Row/cell:Cell[1]/text:Paragraph/value:nasal[-4]" />
+ <click path="window:ParentOfMenuBar/button:Delete Record..." />
+ <insert>{DOWN}</insert>
+ <insert>{ENTER}</insert>
+
+<!-- "nasal" should now be deleted, It should still be in the entry but with a red underline-->
+
+<!-- c.	Go to Lexicon / Lexicon Edit.-->
+  <click path="window:MenuBar/menu:View /menu:Lexicon/menu:Lexicon Edit"/>
+  <click wait="1" path="9:ParentOfMenuBar/9:ParentOfMenuBar/22:Insert/43:Find lexical entry..."/>
+
+   <insert>an</insert>
+	 <insert>{TAB 3}</insert>
+	 <insert>{ENTER}</insert>
+
+ </on-application>
+</accil>

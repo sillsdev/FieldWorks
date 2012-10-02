@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE modularbook SYSTEM "..\..\XSL\ModularBook.dtd" [
+	<!--   Modular Book files. -->
+	<!ENTITY use SYSTEM "..\Using\maintask.xml">
+	<!ENTITY useRep SYSTEM "..\Using\Report.xml">
+	<!ENTITY usePri SYSTEM "..\Using\Priority.xml">
+	<!ENTITY useSev SYSTEM "..\Using\Severity.xml">
+	<!ENTITY useCat SYSTEM "..\Using\Category.xml">
+	<!ENTITY useNam SYSTEM "..\Using\Name.xml">
+	<!ENTITY useDes SYSTEM "..\Using\Describe.xml">
+	<!ENTITY useRel SYSTEM "..\Using\Related.xml">
+	<!ENTITY useSub SYSTEM "..\Using\Submit.xml">
+	<!ENTITY useFld SYSTEM "..\Using\Fields.xml">
+]>
+
+<modularbook file="Using\all.xml">
+
+<titlePage file="Using\all.xml#tp">
+ <title tag="tp">All modular book XML in this folder</title>
+ <index>
+  <li>all title page</li>
+ </index>
+ <authors>
+  <div>Michael Lastufka (creator, drudge)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="maintask.xml" type="module">No link</link>
+ <shortcuts>
+  <link uri="maintask.xml" type="module">How to use a test script</link>
+ </shortcuts>
+</titlePage>
+
+<!-- modules defined in files -->
+
+&use;
+&useRep;
+&usePri;
+&useSev;
+&useCat;
+&useNam;
+&useDes;
+&useRel;
+&useSub;
+&useFld;
+
+</modularbook>

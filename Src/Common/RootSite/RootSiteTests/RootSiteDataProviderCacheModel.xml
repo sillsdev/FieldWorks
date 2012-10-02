@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000010" xsi:noNamespaceSchemaLocation="TestModel.xsd">
+	<class num="0" id="CmObject" abstract="true" abbr="obj">
+	  <props/>
+	</class>
+	<class num="1" id="Document" abstract="false" abbr="proj" base="CmObject" depth="0">
+		<props>
+			<owning num="1" id="Title" card="atomic" sig="StText"/>
+			<owning num="2" id="Divisions" card="seq" sig="Section"/>
+			<owning num="3" id="Footnotes" card="seq" sig="StFootnote"/>
+		</props>
+	</class>
+	<class num="7" id="Section" abstract="false" abbr="T" base="CmObject" depth="0">
+		<props>
+			<owning num="1" id="Stuff" card="atomic" sig="StText"/>
+		</props>
+	</class>
+	<class num="14" id="StText" abstract="false" abbr="T" base="CmObject" depth="0">
+		<props>
+			<owning num="1" id="Paragraphs" card="seq" sig="StTxtPara"/>
+		</props>
+	</class>
+	<class num="16" id="StTxtPara" abstract="false" abbr="P" base="CmObject" depth="0">
+	  <props>
+		  <basic num="1" id="Contents" sig="String" big="true"/>
+		  <basic num="2" id="Properties" sig="TextPropBinary"/>
+	  </props>
+	</class>
+	<class num="25" id="StFootnote" abstract="false" abbr="F" base="StText" depth="1">
+		<props>
+			<basic num="2" id="Marker" sig="String"/>
+		</props>
+	</class>
+  <class num="101" id="FlatLevel" abstract="false" abbr="flat" base="CmObject" depth="0">
+	<props>
+	  <basic num="1" id="SimpleStringProp1" sig="String"/>
+	  <basic num="2" id="MultiStringProp11" sig="MultiUnicode"/>
+	  <basic num="3" id="MorphemesProp11" card="seq" sig="MockMoForm"/>
+	</props>
+  </class>
+  <class num="102" id="MockMoForm" abstract="false" abbr="P" base="CmObject" depth="0">
+	<props>
+	  <basic num="1" id="Form1" sig="MultiUnicode"/>
+	</props>
+  </class>
+	<class num="999" id="WritingSystem" abstract="false" abbr="ws" base="CmObject" depth="0"/>
+</EntireModel>

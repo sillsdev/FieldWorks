@@ -1,0 +1,109 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2002, SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: AfExport.rc
+Responsibility: Steve McConnel
+Last reviewed: Not yet.
+
+Description:
+	FieldWorks Notebook specific File / Export command dialog resources.
+----------------------------------------------------------------------------------------------*/
+#include "AfExportRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//  English (U.S.) resources
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"AfExportRes.h\0"
+END
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/***********************************************************************************************
+	Dialogs
+***********************************************************************************************/
+
+kridExportDlg DIALOGEX 0, 0, 239, 149
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Export"
+FONT 8, "MS Sans Serif"
+BEGIN
+	GROUPBOX    "Export &as",IDC_STATIC,7,7,225,32
+	COMBOBOX    kctidExportType,11,20,217,120,CBS_DROPDOWNLIST | WS_VSCROLL |  WS_TABSTOP
+// commented out as per Raid bug 3311
+//    CHECKBOX    "&Export only the current entry or the selected entries.",
+//                kctidExportSelectionOnly,11,40,217,10,WS_GROUP
+
+	GROUPBOX    "Export to",IDC_STATIC,7,60,225,60
+	LTEXT       "Path: ",IDC_STATIC,11,70,38,8
+	LTEXT       "C:\\Where\\Ever\\It\\Is\\", kcidExportFolder, 50,70,190,8
+	LTEXT       "&Filename:",IDC_STATIC,11,88,38,8
+	EDITTEXT    kctidExportFilename,50,86,125,14,ES_AUTOHSCROLL
+	PUSHBUTTON  "&Browse ...",kctidExportBrowse,180,86,48,14
+	CHECKBOX    "&Open file after exporting", kctidExportOpenWhenDone, 11,106,210,10
+
+	DEFPUSHBUTTON   "OK",kctidOk,72,128,50,14
+	PUSHBUTTON  "Cancel",kctidCancel,127,128,50,14
+	PUSHBUTTON  "Help...",kctidHelp,182,128,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidExportType          "Specifies the export file format to use."
+	kctidExportSelectionOnly "Only the selected entries in the document are exported."
+	kctidExportFilename      "Specifies the name for the exported file."
+	kctidExportBrowse        "Opens a dialog where you can find and specifiy the folder for the exported file."
+	kctidExportOpenWhenDone  "If selected, opens the exported file in its Windows-associated application when export is complete."
+
+	kstidExportMsgCaption       "Data Export"
+
+	kstidExportFileAlreadyFmt   "%<0>s already exists.  Do you want to overwrite it?"
+	kstidExportFileAlreadyOpenFmt "The file %<0>s is already open.%nPlease close it if you want to overwrite this file.%nOtherwise, use another filename."
+
+	kstidExportingData          "Writing exported data"
+	kstidExportFormattingData   "Formatting exported data"
+	kstidExportFormattingDataPass "Formatting exported data (Pass %<0>d of %<1>d)"
+	kstidExportErrorMsgTitle    "Cannot launch %<0>s"
+
+	kstidExportErrorTitle       "Data Export Error"
+	kstidExportLaunchErrorMsg   "The file '%<0>s' could not be opened.%n%<1>s."
+	kstidExportErrorXmlSyntax   "Error in transforming XML output: %<0>s (line %<2>d)."
+	kstidExportErrorXmlProcess  "Error in transforming XML output: %<0>s"
+	kstidExportErrorTransforming "Error in transforming XML output."
+	kstidExportProcessStepFmt   "Error in transforming XML output: applying %<0>s to %<1>s to produce %<2>s."
+
+	kstidExportErrorFilesGone   "The relevant export option files have been deleted since the program started."
+	kstidExportReallySlow       "This process may take a long time.  Do you want to continue?"
+END
+
+#endif    // English (U.S.) resources
+////////////////////////////////////////////////////////////////////////////////////////////////

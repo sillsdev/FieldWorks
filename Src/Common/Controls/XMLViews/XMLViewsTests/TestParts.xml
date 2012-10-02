@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<PartInventory>
+  <bin class="LexSense">
+	<part id="LexSense-Jt-MsaGloss" type="jtview">
+		<para>
+			<obj field="MorphoSyntaxAnalysis" layout="basic"/>
+			<lit>&#32;</lit>
+			<string field="Gloss" ws="analysis"/>
+		</para>
+	</part>
+	<part id="LexSense-Jt-DomainsAbbrAndName" type="jtview">
+		<seq field="SemanticDomains" layout="ParaAbbrColonName" debugId="SDAN"/>
+	</part>
+  </bin>
+  <bin class="LexEntry">
+	<part id="LexEntry-Jt-Msas" type="jtview">
+		<div debugId="EntryMsasDiv">
+			<properties>
+				<editable value="false"/>
+			</properties>
+
+			<seq field="MorphoSyntaxAnalyses" layout="Browse" debugId="EntryMsaSeq"/>
+		</div>
+	</part>
+	 <part id="LexEntry-Jt-DomainsOfSenses" type="jtview">
+		<div debugId="DosDiv">
+			<properties>
+				<editable value="false"/>
+			</properties>
+
+			<seq field="Senses" layout="DomainsAbbrAndName"/>
+		</div>
+	</part>
+  </bin>
+  <bin class="MoStemMsa">
+	<part id="MoStemMsa-Jt-Browse" type="jtview">
+		<obj field="PartOfSpeech" layout="GreenNamePara"/>
+	</part>
+  </bin>
+  <bin class="MoDerivAffMsa">
+		<part id="MoDerivAffMsa-Jt-Browse" type="jtview">
+			<choice>
+				<where field="FromPartOfSpeech" lengthatmost="0">
+					<para>
+						<properties>
+							<forecolor value="gray"/>
+						</properties>
+						<lit>???</lit>
+						<lit> &gt; </lit>
+						<obj field="ToPartOfSpeech" layout="Abbreviation"/>
+					</para>
+				</where>
+				<otherwise>
+					<para>
+						<properties>
+							<forecolor value="gray"/>
+						</properties>
+						<obj field="FromPartOfSpeech" layout="Abbreviation"/>
+						<lit> &gt; </lit>
+						<obj field="ToPartOfSpeech" layout="Abbreviation"/>
+					</para>
+				</otherwise>
+			</choice>
+		</part>
+  </bin>
+
+  <bin class="PartOfSpeech">
+	<part id="PartOfSpeech-Jt-GreenNamePara" type="jtview">
+		<para>
+			<properties>
+				<forecolor value="green"/>
+			</properties>
+			<string class="PartOfSpeech" field="Name" ws="analysis"/>
+		</para>
+	</part>
+		<part id="CmPossibility-Jt-ParaAbbrColonName" type="jtview">
+			<para debugId="PACN_Para">
+				<string field="Abbreviation" ws="analysis"/>
+				<lit>: </lit>
+				<string field="Name" ws="analysis"/>
+			</para>
+		</part>
+  </bin>
+</PartInventory>

@@ -1,0 +1,19 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="XML\XSL.xml">
+ <title tag="xmlXsl">What is XSL?</title>
+ <index>
+  <li>XSL</li>
+ </index>
+ <definition>
+  <p>XSL is an acronym for <i>Extensible Stylesheet Language</i>. At heart it is like a "report generator" that uses an XML document as input. However, it is much more flexible and powerful. Any XSL stylesheet written for one document of a given type will work on all documents of that type or even on documents that have borrowed structure from that type. However, the results are only likely to make sense on validated XML documents.</p>
+<p>Here are some reasons XSL is used with our documentation:</p>
+  <ul>
+   <li>It can transform all of our valid XML documents for use by other media, the web, HTML Help, Word file format; the output can even be executed as a program if it makes sense to do so. It is the ultimate data transformer.</li>
+   <li>It is free and there are many free tools to use with it.</li>
+   <li>It is written in XML itself and can be transformed.</li>
+  </ul>
+ </definition>
+ <seeAlso>
+  <li><link uri="http://www.w3.org/Style/XSL/" type="doc">The w3 XSL website</link></li>
+ </seeAlso>
+</concept>

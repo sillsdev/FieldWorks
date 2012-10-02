@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000041">
+<rt guid="e4952bb2-3663-4f8c-a754-947f1dddd0be" class="LangProject">
+<DateCreated val="2006-5-9 18:47:54.140" />
+<DateModified val="2011-3-15 22:7:54.273" />
+<AnalysisWss><Uni>en fr</Uni></AnalysisWss>
+<CurVernWss><Uni>sok</Uni></CurVernWss>
+<CurAnalysisWss><Uni>en fr</Uni></CurAnalysisWss>
+<CurPronunWss><Uni>sok-fonipa</Uni></CurPronunWss>
+<VernWss><Uni>sok sok-fonipa</Uni></VernWss>
+<LexDb>
+<objsur guid="7ab66ebc-a10b-4645-9a9e-5e4e1992a5fd" t="o" />
+</LexDb>
+</rt>
+<rt class="LexDb" guid="7ab66ebc-a10b-4645-9a9e-5e4e1992a5fd" ownerguid="e4952bb2-3663-4f8c-a754-947f1dddd0be">
+<DateCreated val="2006-5-9 18:47:54.403" />
+<DateModified val="2007-11-20 22:5:35.750" />
+<Name>
+<AUni ws="en">Dictionary</AUni>
+</Name>
+<VariantEntryTypes>
+<objsur t="o" guid="13de3116-4be7-4c7c-ae88-4d3cd7127118" />
+</VariantEntryTypes>
+<ComplexEntryTypes>
+<objsur t="o" guid="532859eb-4feb-48da-bc30-60d3ee233751" />
+</ComplexEntryTypes>
+</rt>
+<rt class="CmPossibilityList" guid="532859eb-4feb-48da-bc30-60d3ee233751" ownerguid="7ab66ebc-a10b-4645-9a9e-5e4e1992a5fd">
+<DateCreated val="2009-3-6 21:28:35.653" />
+<DateModified val="2009-3-6 21:28:35.653" />
+<Name>
+<AUni ws="en">Complex Form Types</AUni>
+</Name>
+<Description>
+<AStr ws="en">
+<Run ws="en">Complex entry types for lexicons.</Run>
+</AStr>
+</Description>
+<Depth val="127" />
+<IsSorted val="true" />
+<PreventDuplicates val="true" />
+<ItemClsid val="5118" />
+<WsSelector val="-3" />
+<Abbreviation>
+<AUni ws="en">ComEnt</AUni>
+</Abbreviation>
+<Possibilities>
+<objsur t="o" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" />
+<objsur t="o" guid="98c273c4-f723-4fb0-80df-eede2204dfca" />
+<objsur t="o" guid="b2276dec-b1a6-4d82-b121-fd114c009c59" />
+<objsur t="o" guid="cce519d8-a9c5-4f28-9c7d-5370788bfbd5" />
+<objsur t="o" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" />
+<objsur t="o" guid="9466d126-246e-400b-8bba-0703e09bc567" />
+<objsur t="o" guid="a1050f74-952f-4161-97b1-36c24bd25b56" />
+</Possibilities>
+</rt>
+<rt class="CmPossibilityList" guid="13de3116-4be7-4c7c-ae88-4d3cd7127118" ownerguid="7ab66ebc-a10b-4645-9a9e-5e4e1992a5fd">
+<DateCreated val="2009-3-6 21:28:35.90" />
+<DateModified val="2009-3-6 21:28:35.90" />
+<Name>
+<AUni ws="en">Variant Types</AUni>
+</Name>
+<Description>
+<AStr ws="en">
+<Run ws="en">Variant entry types for lexicons.</Run>
+</AStr>
+</Description>
+<Depth val="127" />
+<IsSorted val="true" />
+<PreventDuplicates val="true" />
+<ItemClsid val="5118" />
+<WsSelector val="-3" />
+<Abbreviation>
+<AUni ws="en">VarEnt</AUni>
+</Abbreviation>
+<Possibilities>
+<objsur t="o" guid="024b62c9-93b3-41a0-ab19-587a0030219a" />
+<objsur t="o" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" />
+<objsur t="o" guid="fcc61889-00e6-467b-9cf0-8c4f48b9a486" />
+<objsur t="o" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" />
+</Possibilities>
+</rt>
+<rt class="LexEntryType" guid="024b62c9-93b3-41a0-ab19-587a0030219a" ownerguid="13de3116-4be7-4c7c-ae88-4d3cd7127118">
+<DateCreated val="2006-5-9 18:47:57.30" />
+<DateModified val="2006-5-9 18:47:57.30" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Dialectal Variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">dial. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant of a major entry lexeme characteristic of a specific demographic subset of the language.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">dial. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" ownerguid="13de3116-4be7-4c7c-ae88-4d3cd7127118">
+<DateCreated val="2006-5-9 18:47:57.30" />
+<DateModified val="2006-5-9 18:47:57.30" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Free Variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">fr. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant which may substitute for a major entry lexeme in the same environment without causing a change in meaning.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">fr. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="fcc61889-00e6-467b-9cf0-8c4f48b9a486" ownerguid="13de3116-4be7-4c7c-ae88-4d3cd7127118">
+<DateCreated val="2006-5-9 18:47:57.43" />
+<DateModified val="2006-5-9 18:47:57.43" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Irregularly Inflected Form</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">inf. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant of a major entry lexeme that expresses a grammatical contrast which is obligatory for the stem's word class in some given grammatical context.</Run>
+</AStr>
+</Description>
+<SubPossibilities>
+<objsur t="o" guid="1e32f084-1600-4bed-b005-7441e8ba7fc3" />
+<objsur t="o" guid="a5901d96-ef97-4993-8ea9-ef9ebdb02ea5" />
+<objsur t="o" guid="c71b4313-e516-4296-b4af-02e53ad564ae" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="en">inf. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="1e32f084-1600-4bed-b005-7441e8ba7fc3" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2006-5-11 21:19:50.653" />
+<DateModified val="2007-5-30 18:16:43.860" />
+<Name>
+<AUni ws="en">inalienable</AUni>
+<AUni ws="fr">inalienable</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">inalien</AUni>
+<AUni ws="fr">inalien</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Inalienable noun</Run>
+</AStr>
+<AStr ws="fr">
+<Run ws="fr">Nom inalienable</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">inalien</AUni>
+<AUni ws="fr">inalien</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="a5901d96-ef97-4993-8ea9-ef9ebdb02ea5" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2007-5-30 18:15:48.310" />
+<DateModified val="2007-5-30 18:22:0.203" />
+<Name>
+<AUni ws="fr">signalé</AUni>
+<AUni ws="en">designated</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="fr">sign</AUni>
+<AUni ws="en">desg</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Demonstrative for pointing out something</Run>
+</AStr>
+<AStr ws="fr">
+<Run ws="fr">Demonstratif pour montrer du doigt</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">desg</AUni>
+<AUni ws="fr">sign</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="c71b4313-e516-4296-b4af-02e53ad564ae" ownerguid="fcc61889-00e6-467b-9cf0-8c4f48b9a486">
+<DateCreated val="2006-5-15 22:14:33.77" />
+<DateModified val="2007-5-30 18:17:7.250" />
+<Name>
+<AUni ws="en">plural</AUni>
+<AUni ws="fr">pluriel</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">PL</AUni>
+<AUni ws="fr">PL</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Plural noun</Run>
+</AStr>
+<AStr ws="fr">
+<Run ws="fr">Nom pluriel</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">PL</AUni>
+<AUni ws="fr">PL</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" ownerguid="13de3116-4be7-4c7c-ae88-4d3cd7127118">
+<DateCreated val="2006-5-9 18:47:57.60" />
+<DateModified val="2006-5-9 18:47:57.60" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Spelling Variant</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">sp. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregularly spelled variant of a major entry lexeme, not attributable to variety of speech.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">sp. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" ownerguid="532859eb-4feb-48da-bc30-60d3ee233751">
+<DateCreated val="2006-5-9 18:47:56.997" />
+<DateModified val="2006-5-9 18:47:56.997" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Compound</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">comp. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of more than one root.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">comp.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="98c273c4-f723-4fb0-80df-eede2204dfca" ownerguid="532859eb-4feb-48da-bc30-60d3ee233751">
+<DateCreated val="2006-5-9 18:47:57.30" />
+<DateModified val="2006-5-9 18:47:57.30" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Derivative</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">der. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of a root plus an affix that adds a non-inflectional component of meaning.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">der.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="b2276dec-b1a6-4d82-b121-fd114c009c59" ownerguid="532859eb-4feb-48da-bc30-60d3ee233751">
+<DateCreated val="2006-5-9 18:47:57.43" />
+<DateModified val="2006-5-9 18:47:57.43" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Idiom</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">id. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A multi-word expression that is recognized as a semantic unit.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">id.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="cce519d8-a9c5-4f28-9c7d-5370788bfbd5" ownerguid="532859eb-4feb-48da-bc30-60d3ee233751">
+<DateCreated val="2006-5-9 18:47:57.43" />
+<DateModified val="2006-5-9 18:47:57.43" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Keyterm Phrase</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">kt. phr. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A phrase equivalent for a key term for translation.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">kt. phr.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" ownerguid="532859eb-4feb-48da-bc30-60d3ee233751">
+<DateCreated val="2006-5-9 18:47:57.60" />
+<DateModified val="2006-5-9 18:47:57.60" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Phrasal Verb</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">ph. v. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A combination of a lexical verb and a verbal particle that forms a single semantic and syntactic unit.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">ph. v.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9466d126-246e-400b-8bba-0703e09bc567" ownerguid="532859eb-4feb-48da-bc30-60d3ee233751">
+<DateCreated val="2006-5-9 18:47:57.60" />
+<DateModified val="2006-5-9 18:47:57.60" />
+<ForeColor val="-1073741824" />
+<BackColor val="-1073741824" />
+<UnderColor val="-1073741824" />
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Saying</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">say. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Any pithy phrasal expression of wisdom or truth; esp., an adage, proverb, or maxim.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">say.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="a1050f74-952f-4161-97b1-36c24bd25b56" ownerguid="532859eb-4feb-48da-bc30-60d3ee233751">
+<DateCreated val="2006-5-17 21:6:45.843" />
+<DateModified val="2006-5-18 20:7:4.780" />
+<Name>
+<AUni ws="en">Discourse Variant</AUni>
+<AUni ws="fr">Variant de Discour</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">disc. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An irregular variant of a major entry lexeme that expresses a discourse contrast which is obligatory for the stem's word class in some given discourse context.</Run>
+</AStr>
+</Description>
+<ReverseAbbr>
+<AUni ws="en">disc. var.</AUni>
+</ReverseAbbr>
+</rt>
+</languageproject>

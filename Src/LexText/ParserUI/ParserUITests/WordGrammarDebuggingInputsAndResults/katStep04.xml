@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>kat</form>
+  <seq step="Try to build an Orthographic Word node on a Word, including any clitics.">
+	<orthographicWord>
+	  <word syncat="81" syncatAbbr="n">
+		<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		  <partial syncat="0" syncatAbbr="">
+			<morph wordType="root">
+			  <shortName>kat (feline): kat</shortName>
+			  <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+			</morph>
+		  </partial>
+		</partial>
+	  </word>
+	</orthographicWord>
+  </seq>
+</word>

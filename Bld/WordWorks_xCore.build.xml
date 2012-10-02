@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<!-- This file is included in WordWorks_xProjects.build.xml -->
+<project name="xCore" default="allxCore" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- ********************************************************************************** -->
+	<!-- Add super target here -->
+	<!-- -->
+	<target name="allxCore" description="Build all of the xCore projects."
+			depends="CommandBar,SidebarLibrary,xCoreInterfaces,xCore,
+			xCoreOpenSourceAdapter,xCoreSample"/>
+	<!-- -->
+	<target name="remakexcore" description="Completely rebuilds xCore..">
+		<tstamp/>
+		<property name="build-action" value="cc register"/>
+		<call target="blow-away-output" failonerror="false" cascade="false"/>
+		<call target="remakexcore-internal" failonerror="false" cascade="false"/>
+		<if test="${fw-remake-internal-error}">
+			<if test="${property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="${fw-build-error}; remakexcore failed"/>
+			</if>
+			<if test="${not property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="remakexcore failed"/>
+			</if>
+		</if>
+		<tstamp/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- -->
+	<target name="SidebarLibrary" description="Build SidebarLibrary project.">
+		<call target="SidebarLibrary-nodep" cascade="false"/>
+	</target>
+	<target name="SidebarLibrary-nodep" description="Build SidebarLibrary project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/XCore/ControlLibrary/SidebarLibrary"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="CommandBar" description="Build CommandBar project.">
+		<call target="CommandBar-nodep" cascade="false"/>
+	</target>
+	<target name="CommandBar-nodep" description="Build CommandBar project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/XCore/ControlLibrary/CommandBarLibrary"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="xCoreOpenSourceAdapter" description="Build XCore open source adapter project."
+		depends="CommandBar,xCoreInterfaces,SidebarLibrary,XMLUtils,BasicUtils">
+		<call target="xCoreOpenSourceAdapter-nodep" cascade="false"/>
+	</target>
+	<target name="xCoreOpenSourceAdapter-nodep" description="Build xCoreOpenSourceAdapter project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/XCore/xCoreOpenSourceAdapter"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!-- -->
+	<target name="xCoreSample" description="Build xCoreSample project."
+		depends="xCore,xCoreInterfaces">
+		<call target="xCoreSample-nodep" cascade="false"/>
+	</target>
+	<target name="xCoreSample-nodep" description="Build xCoreSample project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/XCore/xCoreSample"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="xCoreInterfaces" description="Build xCoreInterfaces project."
+		depends="XMLUtils,BasicUtils,Reporting,TestUtils,COMInterfaces">
+		<call target="xCoreInterfaces-nodep" cascade="false"/>
+	</target>
+	<target name="xCoreInterfaces-nodep" description="Build xCoreInterfaces project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/XCore/xCoreInterfaces"/>
+		<call target="vsconvert-convert"/>
+		<!-- "Microsoft Visual Studio 8/SDK/v2.0/Bin/sgen.exe" produces xCoreInterfaces.XmlSerializers.dll during build time.
+			Typically it would get built at run time after causing "new XmlSerializer(CustomSerializableType)"
+			to throw an exception during initialization. -->
+		<if test="${not platform::is-unix()}"><!-- TODO-Linux: Does this affect us on Linux? -->
+			<exec program="${framework::get-sdk-directory(framework::get-target-framework())}/sgen.exe"
+				  commandline="/a:${dir.outputBase}/xCoreInterfaces.dll /force" workingdir="${dir.outputBase}"
+				  failonerror="false"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="xCore" description="Build C# xCore project."
+		depends="xCoreInterfaces,XMLUtils,xCoreOpenSourceAdapter,MessageBoxExLib,BasicUtils,TestUtils,COMInterfaces">
+		<call target="xCore-nodep" cascade="false"/>
+	</target>
+	<target name="xCore-nodep" description="Build xCore project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/XCore"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add internal project targets here. These should not be called outside of this project. -->
+	<!-- -->
+	<target name="remakexcore-internal" description="Completely rebuilds xCore - don't call directly">
+		<property name="fw-remake-internal-error" value="true"/>
+		<call target="allxCore" cascade="false"/>
+		<property name="fw-remake-internal-error" value="false"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add project includes here -->
+	<!-- -->
+</project>

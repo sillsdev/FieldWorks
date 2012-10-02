@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="insobj" num="2.5.6" abbr="inobj" file="FW\InsObject.xml" ready="V2">
+<title tag="insobj">Insert-Object Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Brings up a dialog by which the user can choose from a list of possible objects that can be inserted, or from a file on the disk. The data is then inserted at the text cursor. This list is composed of ActiveX objects installed on the system, such as an Excel Spreadsheet, WordArt, etc. Once inserted, the object can be edited in place by clicking on it; or edited in a separate window by double clicking on it.</p>
+<p name="Specification">See the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/InsertMenu.html#Insert-Object" type="doc">Insert-Object menu item</link>
+	and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/Object/InsertObject.html" type="doc">Insert Object dialog</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert-Object"</p>
+</context>
+<case id="inobjAct" num="0" order="any">
+<title tag="inobjAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Insert-Object. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/Object/InsertObject.html" type="doc">Insert-Object specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Insert-Object dialog fails to open</p>
+<p name="bug">Insert-Object dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The Create New tab is selected.</li>
+<li>The Object type list shows all objects that can be created.</li>
+</ul>
+</r>
+<p name="bug">Insert-ObjectInsert-Object Create New tab is selected failed</p>
+<p name="bug">Insert-ObjectInsert-Object Object type list shows all objects that can be created failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The object icon appears at the insertion point in the text.</li>
+<li>The an object instance appears at the insertion point in the text.</li>
+<li>Report any failures as suggested using "Insert-Object" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-Object dialog remains after OK</p>
+<p name="bug">Insert-Object object icon appears at the insertion point in the text failed</p>
+<p name="bug">Insert-Object an object instance appears at the insertion point in the text failed</p>
+</step>
+</case>
+<case id="inobjstatic" num="1" order="any">
+<title tag="inobjstatic">Check static data and icons</title>
+<context>
+<p>When the Create New tab is displayed</p>
+</context>
+<step name="0.3" link="Bug">Use the shortcut &lt;Alt&gt;&lt;C&gt; to select the Create New tab.
+  <r>The content of the Create New tab is displayed.</r>
+<p name="bug">Insert-Object Create New tab shortcut fails</p>
+</step>
+<step name="1.1" link="Bug">Verify that the Result data complies with expectations.
+  <r>
+<ul>
+	<li>The value is "Inserts a new &lt;object name&gt; into your document.".</li>
+   </ul>
+</r>
+	<p name="bug">Insert-Object value is not "Inserts a new &lt;object name&gt; into your document."</p>
+   </step>
+</case>
+<case id="inobjot" num="3" order="any">
+<title tag="inobjot">Object Type List Box</title>
+<context>
+<p>When the Create New tab  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> to test the Object type list box.<r>
+<ul>
+<li>There is a list below the text box.</li>
+<li>The default is "&lt;all of the objects currently in the system that can be inserted&gt;".</li>
+<li>Report any failures using the first words, "Insert-Object Object type".</li>
+</ul>
+</r>
+<p name="bug">Insert-Object Object type has list problems</p>
+<p name="bug">Insert-Object Object type default is not "&lt;all of the objects currently in the system that can be inserted&gt;"</p>
+</step>
+<step name="3.2" link="Bug">Check the list entries.<r>
+<ul>
+<li>The cursor highlights each item.</li>
+	 <li>The list contains ActiveX objects installed on the system.</li>
+	</ul>
+</r>
+<p name="bug">Insert-ObjectObject type list items not highlighted</p>
+	 <p name="bug">Insert-ObjectObject type drop list missing &lt;ActiveX objects installed on the system&gt;</p>
+	</step>
+</case>
+<case id="inobjstatic" num="1" order="any">
+<title tag="inobjstatic">Check static data and icons</title>
+<context>
+<p>When the Create from File tab is displayed</p>
+</context>
+<step name="0.3" link="Bug">Use the shortcut &lt;Alt&gt;&lt;F&gt; to select the Create from File tab.
+  <r>The content of the Create from File tab is displayed.</r>
+<p name="bug">Insert-Object Create from File tab shortcut fails</p>
+</step>
+<step name="1.1" link="Bug">Verify that the Result data complies with expectations.
+  <r>
+<ul>
+	<li>The value is "Inserts the contents of the file into your document so that you can edit it later using the application which created the source file.".</li>
+   </ul>
+</r>
+	<p name="bug">Insert-Object value is not "Inserts the contents of the file into your document so that you can edit it later using the application which created the source file."</p>
+   </step>
+</case>
+<case id="inobjfname" num="3" order="any">
+<title tag="inobjfname">Filename Text Box</title>
+<context>
+<p>When the Create from File tab  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Filename text box.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Object Filename".</li>
+</ul>
+</r>
+</step>
+<step name="3.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is empty.</li>
+	 <li>The value is a file name.</li>
+	 <li>The value is editable text that persists.</li>
+	</ul>
+</r>
+<p name="bug">Insert-Object default vaule is not empty</p>
+	 <p name="bug">Insert-ObjectFilename value is not a file name</p>
+	 <p name="bug">Insert-ObjectFilename value is not editable text that persists</p>
+	</step>
+</case>
+<case id="inobjbrow" num="4" order="any">
+<title tag="inobjbrow">Browse Button</title>
+<context>
+<p>When the Create from File tab  is displayed</p>
+</context>
+<step name="4.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Browse button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Object Browse".</li>
+</ul>
+</r>
+</step>
+<step name="4.2" link="Bug">
+	Click the Browse button to test its action.
+	<r>
+<ul>
+<li>Brings up the system file browser dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-ObjectCreate from File fails to brings up the system file browser dialog</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+
+</test>

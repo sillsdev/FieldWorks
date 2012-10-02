@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidSavedVersion" xml:space="preserve">
+	<value>Saved Version: {0}</value>
+  </data>
+  <data name="kstidRecalculateDiff" xml:space="preserve">
+	<value>Recalculating Differences...</value>
+	<comment>Used in the progress dialog when recalculating differences</comment>
+  </data>
+  <data name="kstidTextChanged" xml:space="preserve">
+	<value>Text Changed</value>
+	<comment>Used in the diffTool window when the text was changed</comment>
+  </data>
+  <data name="kstidMissingParaStyle" xml:space="preserve">
+	<value>(missing paragraph style)</value>
+	<comment>Used in the diffTool window when paragraph style is missing--indicates invalid condition</comment>
+  </data>
+  <data name="kstidCharacterStyleDiff" xml:space="preserve">
+	<value>Character Style Difference</value>
+	<comment>Used in the diffTool window when there is a character style difference in a verse</comment>
+  </data>
+  <data name="kstidMultipleStyleDiffs" xml:space="preserve">
+	<value>Style Differences</value>
+	<comment>Used in the diffTool window when there are multiple style differences in a verse</comment>
+  </data>
+  <data name="kstidFootnoteDifference" xml:space="preserve">
+	<value>{0} in footnote</value>
+	<comment>Other descriptions of differences will be combined with this to describe differences within footnotes</comment>
+  </data>
+  <data name="kstidFootnoteDeleted" xml:space="preserve">
+	<value>Footnote Deleted</value>
+	<comment>Used in the diffTool window when a footnote was removed</comment>
+  </data>
+  <data name="kstidFootnoteAdded" xml:space="preserve">
+	<value>Footnote Added</value>
+	<comment>Used in the diffTool window when a footnote was added</comment>
+  </data>
+  <data name="kstidFootnoteDifferences" xml:space="preserve">
+	<value>Footnote Differences</value>
+	<comment>Used in the diffTool window when there is are multiple footnote differences</comment>
+  </data>
+  <data name="kstidPictureDifference" xml:space="preserve">
+	<value>Picture Difference</value>
+	<comment>Used in the diffTool window when a change was made to a picture</comment>
+  </data>
+  <data name="kstidPictureMissing" xml:space="preserve">
+	<value>Picture Missing</value>
+	<comment>Used in the diffTool window when a picture is missing in the current</comment>
+  </data>
+  <data name="kstidVerseDeleted" xml:space="preserve">
+	<value>Verse Deleted</value>
+	<comment>Used in the diffTool window when a verse was removed</comment>
+  </data>
+  <data name="kstidVerseAdded" xml:space="preserve">
+	<value>Verse Added</value>
+	<comment>Used in the diffTool window when a verse was added</comment>
+  </data>
+  <data name="kstidParagraphDeleted" xml:space="preserve">
+	<value>Paragraph(s) Deleted</value>
+	<comment>Used in the diffTool window when one or more paragraphs were removed</comment>
+  </data>
+  <data name="kstidParagraphAdded" xml:space="preserve">
+	<value>Paragraph(s) Added</value>
+	<comment>Used in the diffTool window when one or more paragraphs were added</comment>
+  </data>
+  <data name="kstidStanzaBreakDeleted" xml:space="preserve">
+	<value>Stanza breaks Deleted</value>
+	<comment>Used in the diffTool window when one or more stanza breaks were removed</comment>
+  </data>
+  <data name="kstidStanzaBreakAdded" xml:space="preserve">
+	<value>Stanza breaks Added</value>
+	<comment>Used in the diffTool window when one or more stanza breaks were added</comment>
+  </data>
+  <data name="kstidParagraphSplit" xml:space="preserve">
+	<value>Paragraph Split</value>
+	<comment>Used in the diffTool window when a paragraph is split</comment>
+  </data>
+  <data name="kstidParagraphMerged" xml:space="preserve">
+	<value>Paragraphs Combined</value>
+	<comment>Used in the diffTool window when paragraphs are merged</comment>
+  </data>
+  <data name="kstidParagraphStructureChange" xml:space="preserve">
+	<value>Paragraph Structure Change</value>
+	<comment>Used in the diffTool window when the structure of paragraphs are changed</comment>
+  </data>
+  <data name="kstidParagraphStructureAndTextChanges" xml:space="preserve">
+	<value>Paragraph Structure and Text Changes</value>
+	<comment>Used in the diffTool window when the structure of paragraphs are changed and text differences are also introduced</comment>
+  </data>
+  <data name="kstidComplexChanges" xml:space="preserve">
+	<value>Complex Changes</value>
+	<comment>Used in the diffTool window when the structure of paragraphs are changed</comment>
+  </data>
+  <data name="kstidSectionDeleted" xml:space="preserve">
+	<value>Section Deleted</value>
+	<comment>Used in the diffTool window when a section was removed</comment>
+  </data>
+  <data name="kstidSectionsDeleted" xml:space="preserve">
+	<value>Sections Deleted</value>
+	<comment>Used in the diffTool window when multiple sections were removed</comment>
+  </data>
+  <data name="kstidSectionAdded" xml:space="preserve">
+	<value>Section Added</value>
+	<comment>Used in the diffTool window when a section was added</comment>
+  </data>
+  <data name="kstidSectionsAdded" xml:space="preserve">
+	<value>Sections Added</value>
+	<comment>Used in the diffTool window when multiple sections were added</comment>
+  </data>
+  <data name="kstidSectionHeadDeleted" xml:space="preserve">
+	<value>Section Head Deleted</value>
+	<comment>Used in the diffTool window when a section head was removed</comment>
+  </data>
+  <data name="kstidSectionHeadAdded" xml:space="preserve">
+	<value>Section Head Added</value>
+	<comment>Used in the diffTool window when a section head was added</comment>
+  </data>
+  <data name="kstidVerseMoved" xml:space="preserve">
+	<value>Verse Moved</value>
+	<comment>Used in the diffTool window when a verse was moved</comment>
+  </data>
+  <data name="kstidVersesMoved" xml:space="preserve">
+	<value>Verses Moved</value>
+	<comment>Used in the diffTool window when multiple verses were moved</comment>
+  </data>
+  <data name="kstidZoom" xml:space="preserve">
+	<value>{0}%</value>
+	<comment>Displayed in the Zoom combo box</comment>
+  </data>
+  <data name="kstidPictureAdded" xml:space="preserve">
+	<value>Picture Added</value>
+	<comment>Used in the diffTool window when a picture was added</comment>
+  </data>
+  <data name="kstidContentMissing" xml:space="preserve">
+	<value>&lt;Content Missing&gt;</value>
+	<comment>Text displayed in the view when entire paragraph(s) are missing in one version but present in the other.</comment>
+  </data>
+  <data name="kstidWritingSystemDiff" xml:space="preserve">
+	<value>Writing System Difference</value>
+	<comment>Used in the diffTool window when there is a writing system difference in the text</comment>
+  </data>
+  <data name="kstidMultipleWritingSystemDiffs" xml:space="preserve">
+	<value>Writing System Differences</value>
+	<comment>Used in the diffTool window when there are multiple writing system differences in the text</comment>
+  </data>
+</root>

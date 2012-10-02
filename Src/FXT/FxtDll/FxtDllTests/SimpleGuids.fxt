@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+	<class name="LangProject">
+		<LangProject>
+			<attribute ws="analysis" simpleProperty="Name"/>
+			<attribute name="Description" simpleProperty="Description" ws="analysis"/>
+			<group objProperty="LexDbOA">
+				<Lexicon>
+					<attribute name="Description" simpleProperty="Description" ws="analysis"/>
+				</Lexicon>
+			</group>
+			<AllPartsOfSpeech>
+				<objVector objProperty="AllPartsOfSpeech"/>
+			</AllPartsOfSpeech>
+			<TopPartsOfSpeech>
+				<group objProperty="PartsOfSpeechOA">
+					<objVector objProperty="PossibilitiesOS"/>
+				</group>
+			</TopPartsOfSpeech>
+	  <JustOnePartOfSpeech>
+			  <group objProperty="PartsOfSpeechOA">
+					<objVector objProperty="PossibilitiesOS" count="1"/>
+				</group>
+	  </JustOnePartOfSpeech>
+	  <TestALiteral literalAttr="red"/>
+		</LangProject>
+	</class>
+	<class name="PartOfSpeech">
+		<PartOfSpeech>
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Description" simpleProperty="Description" ws="analysis"/>
+			<SubPossibilities>
+				<refVector field="SubPossibilities" itemLabel="poss" ordered="true"/>
+			</SubPossibilities>
+		</PartOfSpeech>
+	</class>
+</template>

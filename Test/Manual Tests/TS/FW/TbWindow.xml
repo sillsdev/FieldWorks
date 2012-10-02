@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbwnd" num="3.6" abbr="twn" file="FW\TbWindow.xml">
+ <title tag="tbwnd">Window Toolbar Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>Window toolbar icons include those for opening a new window on the current view, splitting/unsplitting the curent window, cascading and tiling windows.</p>
+  </introduction>
+  <context>
+<p>Most icons are tested separately. None on this toolbar perform inverse operations, but splitting is a toggle. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Window Toolbar".</p>
+  </context>
+ <case id="twnBsc" num="0" order="any">
+  <title tag="twnBsc">Basic Window Toolbar</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.0">
+<link uri="../StdCtrls/TlbButton.xml" type="module">Toolbar Button Tests</link> to test this toolbar's basic functionality. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html" type="doc">Definition of Window Toolbar</link> to compare appearance.
+   <r>Toolbar icons and controls should be enabled. Report any failures as suggested using "Window Toolbar &lt;control name&gt;" as the name of the control.</r>
+  </step>
+  <step name="0.1">
+<link uri="Window.xml" type="module">Window Menu Tests</link> to test this toolbar's actions.
+   <r>The split control, the last icon, is a toggle. The middle three icons do nothiing on a second consecutive click. Report any failures as suggested using "Window Toolbar &lt;control name&gt;" as the name of the control.</r>
+  </step>
+
+ </case>
+ <update date="Jan-17-01" author="MikeL">Test created.</update>
+ <update date="Jun-14-02" author="JoelC">Minor changes.</update>
+
+</test>

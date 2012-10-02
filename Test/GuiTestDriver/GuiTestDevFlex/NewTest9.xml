@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Backs up the current Kalaba database -->
+
+<accil on-fail="assert">
+
+<var id="menu" set="9:ParentOfMenuBar/9:ParentOfMenuBar/2:MenuBar"/>
+<var id="backup" set="$nl;[2]/18:NAMELESS"/>
+
+<!--  -->
+  <include from="IncKalaba.xml"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+
+<!-- Bring up Backup and Restore dialog and click Kalaba  -->
+  <click path="$menu;/12:File/menu:Project Management/menu:Backup and Restore..."/>
+
+  <on-dialog title="Backup and Restore">
+	<click path="$backup;/9:Projects to back up:[2]/44:Kalaba"/>
+	<insert wait="500">%d</insert> <!-- enter destination -->
+	<insert wait="500">C:\Temp\</insert>
+	<click path="$backup;/9:Include a human readable (XML) backup/44:Include a human readable (XML) backup"/>
+	<insert wait="500">%s</insert> <!-- Start Backup -->
+  </on-dialog>
+
+  <on-dialog title="Backup Progress">
+	<glimpse id="seeTitle" path="1:NAMELESS" prop="value" expect="Backup Progress"/>
+  </on-dialog>
+
+ </on-application>
+</accil>

@@ -1,0 +1,14 @@
+<BackupFileSettings xmlns="http://schemas.datacontract.org/2004/07/SIL.FieldWorks.FDO.DomainServices.BackupRestore" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<AppAbbrev>FLEx</AppAbbrev>
+<BackupTime>2010-11-19T16:30:00</BackupTime>
+<Comment/>
+<ConfigurationSettings>false</ConfigurationSettings>
+<DbVersion>7000031</DbVersion>
+<FwVersion>Version: 6.9.2</FwVersion>
+<LinkedFiles>true</LinkedFiles>
+<LinkedFilesPathActualPersisted>FwWW\Src\FDO\FDOTests\BackupRestore\LinkedFilesTestProjectFiles</LinkedFilesPathActualPersisted>
+<LinkedFilesPathRelativePersisted>%proj%Files</LinkedFilesPathRelativePersisted>
+<ProjectName>LinkedFilesTestProject</ProjectName>
+<SpellCheckAdditions>false</SpellCheckAdditions>
+<SupportingFiles>false</SupportingFiles>
+</BackupFileSettings>

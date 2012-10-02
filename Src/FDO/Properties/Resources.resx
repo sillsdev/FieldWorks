@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidCreatingDB" xml:space="preserve">
+	<value>Creating new database...</value>
+	<comment>Displayed in the progress dialog box when creating a new FieldWorks project</comment>
+  </data>
+  <data name="kstidInitializingDB" xml:space="preserve">
+	<value>Initializing new database...</value>
+	<comment>Displayed in the progress dialog box when creating a new FieldWorks project</comment>
+  </data>
+  <data name="ksLoadingSemanticDomains" xml:space="preserve">
+	<value>Loading the Semantic Domain List</value>
+  </data>
+  <data name="kstidInvalidFieldWorksXMLFile" xml:space="preserve">
+	<value>File is not a valid FieldWorks project file.</value>
+	<comment>Error message when the user attempts to load a file as a FW project when it isn't.</comment>
+  </data>
+  <data name="kstidReversalIndexDeletionText" xml:space="preserve">
+	<value>{0} has {1} entries referenced by {2} senses.</value>
+	<comment>format for creating the deletion text for a ReversalIndex object</comment>
+  </data>
+  <data name="kstidOfferToRestore" xml:space="preserve">
+	<value>There was a problem opening the current version of the file {0}, dated {1}. Would you like to open the automatic backup, {2}, dated {3}?</value>
+  </data>
+  <data name="ksLoadingPartsOfSpeech" xml:space="preserve">
+	<value>Loading the initial Parts of Speech</value>
+  </data>
+  <data name="kstidProblemOpeningFile" xml:space="preserve">
+	<value>Problem opening file</value>
+	<comment>Caption for error dialog</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="question" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/question.ico;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidProjectIsForNewerVersionOfFw" xml:space="preserve">
+	<value>This project is for a newer version of FieldWorks.
+
+To open this project, click Close, and then install the newer version of FieldWorks.
+To revert to a version of this project which is compatible with this version of FieldWorks, click Restore a Project.</value>
+  </data>
+  <data name="kstidFw60OrEarlierBackupComment" xml:space="preserve">
+	<value>FieldWorks 6.0 (or earlier) backup</value>
+	<comment>Comment associated with a backup from FieldWorks 6.0 or earlier (shown in Restore a Project dialog box)</comment>
+  </data>
+  <data name="kstidFw60XmlBackupComment" xml:space="preserve">
+	<value>FieldWorks 6.0 XML file</value>
+	<comment>Comment associated with an XML backup from FieldWorks 6.0 (shown in Restore a Project dialog box)</comment>
+  </data>
+  <data name="kstidLockFileLocked" xml:space="preserve">
+	<value>FieldWorks cannot open the project {0} because another program is using it. Please close the other program and try again. Note: this can sometimes occur when there appears to be no other program using the file. The simplest way to fix this is to log off and on again. Other options are discussed in Help.</value>
+	<comment>Must contain {0} which is a project name</comment>
+  </data>
+</root>

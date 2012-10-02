@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="deview" num="5.1" abbr="deview" file="FW\DataEntryView.xml">
+ <title tag="deview">Data Entry View Usage Tests</title>
+ <index>
+<li>Data Entry View Usage Test</li>
+ </index>
+
+ <introduction>
+ <p>Working in the Data Entry View Mode.</p>
+ </introduction>
+
+  <context>
+  <p>Specs for Data Entry View:</p>
+  <p> <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc">DN Data Entry View</link>
+  <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DataEntry/DataEntryViews.html" type="doc">General Explanation of Data Entry View</link> </p>
+  <p>Specs for Tools - Options:</p>
+  <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html" type="doc">Tools-Options</link>
+</p>
+  <p>Specs for In-place Insertion of New List Items</p>
+  <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/NewListItems/NewListItems.htm" type="doc">In-place Entering of New List Items</link>
+</p>
+  <p>The first words of any bug report entries should be "Data Entry View".</p>
+  </context>
+
+<!--**************CASE 1*****************-->
+
+<case id="deview1" num="1">
+ <title tag="deview1">Creating New Entry</title>
+ <context>
+<p>With a language project open in Data Entry View in Data Notebook</p>
+</context>
+
+ <step name="1.1" link="Bug">
+	Insert a new Event or Analysis using either the Insert - Event Menu command or Toolbar command. Use <link uri="../DN/InsertEvent.xml">Insert Event Tests</link> or <link uri="../DN/InsertAnalysis.xml">Insert Analysis Tests</link> to test this command.
+	<r>A new, blank event or analysis is created.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.2" link="Bug">
+	Fill in the title, description and further question fields with data. These fields can simply be typed in to.
+	<r>The fields should contain the data the user typed in.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.3" link="Bug">
+	Fill in the other fields with data. Most of these fields when selected show a button to invoke a Chooser Dialog in which a person, place, etc. can be chosen to reference in the data field.  Instead of using the chooser dialog, the user can also type in the data field and the program will try to find the closest match from valid references.
+	<r>The data fields are filled with valid data references.</r>
+	<p name="bug">
+</p>
+ </step>
+
+ <step name="1.3.1" link="Bug">
+	Use the type ahead feature of the reference fields. Examine what happens. A visual of the process can be found in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/NewListItems/NewListItems.htm" type="doc">the specifications</link>.
+	<r>
+<ul>
+<li>As the user types, the display fills in the first item that matches the current set of letters</li>
+	   <li>Once the user types a letter that does not match anything in the list, FW 'bings' once but accepts the new letter; it also places a red squiggly line underneath what has been typed thus far indicating that FW does not recognize that sequence of letters.</li>
+<li>The user is free to back space and retype the letters. When he back spaces enough to match a list item, that list item is displayed and the red squiggly line is lost.</li>
+<li>If the user does not change the unknown list item, and he moves out of that field, the item is added to that list </li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+ <step name="1.3.2" link="Bug">
+	Add a new list item to a field displaying names only (this is normally the case but can be adjusted in Tools-Options-Views-DE). Use the in-place insertion feature by typing in a value that produces a red squiggly line under it.
+  <r>
+<ul>
+<li>Verify that the new item has been added to the list.</li>
+<li>The abbreviation should be the first 10 letters of the name, no spaces or punctuation.</li>
+<li>The red squiggly line should disappear once the item is added to the list.</li>
+</ul>
+</r>
+  <p name="bug">
+</p>
+  <p name="note">In version 1, the abbreviation is an exact copy of the name.</p>
+ </step>
+ <step name="1.3.3" link="Bug">
+	Add a new list item using in-place insertion to a field displaying only abbreviations or abbreviations and names (abbreviations appear first if both are displayed).
+   <r>If the abbreviation field is present, the value is assumed to be the abbreviation. The name is then simply a copy of the abbreviation.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.3.4" link="Bug">
+   Enter in a new list item in a field that displays abbreviations and names using a " - " (space hyphen space) between the new abbreviation and name.
+   <r>The program parses out the abbreviation and name using the " - " and creates a new list item with the two values.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.3.5" link="Bug">
+   Type at the end of an input string or press backspace at the end of an input string.
+   <r>Type-ahead should be activated.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.3.6" link="Bug">
+   Place the cursor within an input string, press delete at the end of an input string or type a letter that does not produce a match.
+  <r>Type-ahead should be deactivated.</r>
+  <p name="bug">
+</p>
+ </step>
+
+
+ <step name="1.4" link="Bug">
+	Add data to a field that is currently hidden. Right-Click in the grey left column area where the data field titles are displayed and choose Show.  Then pick the field to display and edit it.
+	<r>The field should be displayed and then focus should be sent to it to allow data to be added. The data should be displayed once added.</r>
+	<p name="bug">
+</p>
+ </step>
+ <step name="1.4.1" link="Bug">
+	Show a hidden field. Then move to another entry without entering any data into the field. Move back to the previous entry.
+	<r>The field that was shown disappeared upon moving to another entry and then returning since it had no data.</r>
+	<p name="bug">
+</p>
+ </step>
+ <step name="1.4.2" link="Bug">
+	Change a field's data entry Visibility settings under Tools-Options-Views from Only if Data is Present to Not Visible. (ie. Weather for an event). Try to Show the field.
+   <r>The field is not presented as a choice in the list of fields to Show.</r>
+   <p name="bug">
+</p>
+ </step>
+
+</case>
+
+<!--**************CASE 2*****************-->
+<case id="deview2" num="2">
+ <title tag="deview2">Adding Subentries</title>
+ <context>
+<p>With a language project open in Data Entry View in Data Notebook</p>
+</context>
+
+ <step name="2.1" link="Bug">
+	Insert a Sub-Event or Sub-Analysis using the menu or toolbar command for subentries.  Use <link uri="../DN/InsertSubentry.xml">Insert Subentry</link> to test this command.
+   <r>A subentry should be placed at the bottom of the current entry or below the last subentry of the current entry.</r>
+   <p name="bug">
+</p>
+</step>
+
+  <step name="2.2" link="Bug">
+	Fill in data in the subentry in the same manner that data was filled in Case 1 above for a regular entry.
+	<r>The data entered or data references selected are displayed and persist.</r>
+	<p name="bug">
+</p>
+  </step>
+
+</case>
+
+<!--**************CASE 3*****************-->
+
+<case id="deview3" num="3" order="any">
+  <title tag="deview3">Navigating Entries</title>
+  <context>
+<p>With a language project open in Data Entry View in Data Notebook</p>
+</context>
+
+  <!-- Step 3.1 -->
+  <step name="3.1" link="Bug">
+	Move from one entry to another using the Data - First, Previous, Next, Last menu commands or corresponding toolbar buttons. Use the <link uri="DataNav.xml">Data First, Previous, Next, Last Tests</link> to test this command.
+	<r>The entry being displayed in the Data Entry View should be the new entry selected  (ie. the next entry if Next is pressed) </r>
+	<p name="bug">
+</p>
+  </step>
+
+  <!-- Step 3.2 -->
+  <step name="3.2" link="Bug">
+  Navigate to an entry with subentries.  To display a subentry, left-click the plus sign on the grey bar on the left.
+  <r>The subentry should be opened up below the entry with the field titles slightly to the right of the titles above. Subsequent subentries are opened in the same manner.</r>
+  <p name="bug">
+</p>
+  </step>
+
+</case>
+
+<!--**************CASE 4*****************-->
+ <case id="deview4" num="4" order="any">
+  <title tag="deview4">Inspect Preexisting Entry</title>
+  <context>
+<p>With a language project open in Data Entry View in Data Notebook</p>
+</context>
+
+
+<!-- Step 4.1 -->
+  <step name="4.1" link="Bug">
+	Make sure the entry looks like the entry described in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DataEntry/DataEntryViews.html" type="doc">General Explanation of Data Entry View</link>
+	.
+	<r>The entry should have the field names in the left column with their values on the right as described in the specs.  Report any bugs as "Data Entry View Appearance"</r>
+  <p name="bug">
+</p>
+  </step>
+
+<!-- Step 4.2 -->
+  <step name="4.2" link="Bug">
+
+	Observe the font sizes of the Entry.
+	<r>The default font size of most fields is 10.  The Title Field is 20% larger than the normal font size so its default is 12.  The user may change the default font size (The font size can be observed/changed on the Format Toolbar or from the Font Dialog on the Format Menu). </r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 4.3 -->
+  <step name="4.3" link="Bug">
+	Note which fields are displayed (User can change settings for displaying fields under Tools - Options - View Tab and then clicking on Data Entry View).
+
+	<r>For the default settings, the following fields must always be displayed for an <b>Event Entry</b>:
+<ul>
+<li>Title</li>
+<li>Date of Event</li> <li>Researchers</li>
+<li>Sources</li>
+<li>Locations</li>
+<li>Event Type</li>
+<li>Description</li>
+<li>Anthropology Categories</li>
+<li>See Also</li>
+<li>Further Questions</li>
+<li>Any Custom Fields</li>
+<li>Subentries</li>
+</ul> For the default settings, the following fields must always be displayed for an <b>Analysis Entry</b>:<ul>
+<li>Title</li>
+<li>Researchers</li>
+<li>Discussion</li>
+<li>Anthropology Categories</li>
+<li>Further Questions</li>
+<li>Any Custom Fields</li>
+<li>Subentries</li>
+</ul> </r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 4.4 -->
+  <step name="4.4" link="Bug">
+	Note which fields have data in them. Then move to a different entry. For those fields that are encouraged and empty, a box should pop up when trying to move to another entry letting the user know the fields are empty.
+	<r>For the default settings, the following fields are encouraged to contain data for an <b>Event Entry</b>:<ul>
+<li>Title</li>
+<li>Date of Event</li>
+<li>Researchers</li>
+<li>Locations</li>
+<li>Event Type</li>
+<li>Description</li>
+</ul>
+For the default settings, the following fields are encouraged to contain data for an <b>Analysis Entry</b>:<ul>
+<li>Title</li>
+<li>Researchers</li>
+<li>Discussion</li>
+</ul>
+<p>Verify a "Missing Data" box is displayed for any field that is encouraged and empty when trying to change entries.</p>
+</r>
+	<p name="note">No fields are <i>Required</i> under the default settings (ie. cannot be empty in order to move to another entry).</p>
+	<p name="bug">
+</p>
+  </step>
+<!-- Step 4.5 -->
+<step name="4.5" link="Bug">
+	 Change values in data fields.  Selectable text fields (like description, further questions, etc.) are editable and formatable similar to a word processing program. The other fields use the Chooser to reference data.
+	<r>
+<ul>
+	   <li>The values should be able to change and the changes should persist when changing to another entry or closing the program.</li>
+	   <li>Selectable text should be able to be formatted in a variety of ways using the commands from the Format menu or toolbar </li>
+	   <li>If all data is removed from a field that is Encouraged or Required, the user should be prompted to fill it in upon trying to move to another entry.</li>
+		</ul>
+</r>
+	<p name="bug">
+</p>
+</step>
+
+ <step name="4.6" link="Bug">
+	Examine the fields displayed in Data Entry View of the Topics List Editor. They should behave in the same manner as the fields in Data Notebook. The fields displayed vary however depending on the type of list (people,location,weather, etc).
+   <r>
+<ul>
+<li>Name and Abbreviation should be required fields and always displayed.</li>
+   <li>The rest of the fields are normally optional.</li>
+   <li>All lists should include a Short Description field along with several other fields including some specific to the list type.</li>
+</ul>
+</r>
+   <p name="bug">
+</p>
+ </step>
+
+ </case>
+
+<!--**************CASE 5*****************-->
+
+<case id="deview5" num="5" order="any">
+  <title tag="deview5">Removing An Entry</title>
+  <context>
+<p>With a language project open in Data Entry View in Data Notebook</p>
+</context>
+
+  <step name="5.1" link="Bug">
+	To delete an entry, use the Edit-Delete menu command when viewing the entry to be deleted. Use <link uri="EdtDel.xml">Edit-Delete Tests</link> to test this command.
+	<r>
+<ul>
+<li>If text is selected, a prompt will ask if the text or the entry is to be deleted.</li>
+	   <li>Then a box will be displayed saying which entry is to be deleted, and how many subentries and references will also be deleted as a result of deleting the entry. Select No to abort deleting of entry.</li>
+	   <li>Clicking Yes will remove the entry, subentries, and references to the deleted entry.</li>
+</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="5.2" link="Bug">
+	To remove a subentry put focus in the subentry (click inside one of its fields) and use the Edit-Delete menu command or right-click on the Subentry in the grey column on the left and select delete.
+	<r>The subentry is deleted in the same way an entry is deleted as tested in 5.1 above.</r>
+	<p name="bug">
+</p>
+  </step>
+
+</case>
+
+
+
+<!--**************CASE 6*****************-->
+
+<case id="deview6" num="6" order="any">
+  <title tag="deview6">Field Navigation</title>
+  <context>
+<p>With a language project open in Data Entry View in Data Notebook</p>
+</context>
+
+  <step name="6.1" link="Bug">
+	Click on each field
+	<r>
+<ul>
+	   <li>Focus is on the clicked field.</li>
+	   <li>If field is a list field, a button appears on the right that is used to launched the List Chooser.</li>
+	   <li>Cannot focus on static fields.</li>
+	</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="6.2" link="Bug">
+	Use &lt;Tab&gt; and &lt;Shift&gt;&lt;Tab&gt; repreatedly
+	<r>
+<ul>
+	   <li>&lt;Tab&gt; will advance cursor to the next field until the last one displayed.</li>
+	   <li>&lt;Shift&gt;&lt;Tab&gt; will advance cursor to the previous field until the first one displayed.</li>
+	   <li>Cursor skips over static fields.</li>
+	</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="6.3" link="Bug">
+	Use &lt;Ctrl&gt;&lt;Tab&gt; and &lt;Ctrl&gt;&lt;Shift&gt;&lt;Tab&gt; repreatedly
+	<r>
+<ul>
+	   <li>&lt;Ctrl&gt;&lt;Tab&gt; will advance cursor to the next item in the list field.</li>
+	   <li>&lt;Ctrl&gt;&lt;Tab&gt; will advance the cursor from the last item in a list field to the blank spot after the last item</li>
+	   <li>Another &lt;Ctrl&gt;&lt;Tab&gt; will advance the cursor to the next field.</li>
+	   <li>&lt;Ctrl&gt;&lt;Shift&gt;&lt;Tab&gt; will move the cursor back through the list.</li>
+	   <li>&lt;Shift&gt;&lt;Tab&gt; will advance cursor to the previous field until the first one displayed.</li>
+	   <li>Cursor skips over static fields.</li>
+	</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="6.4" link="Bug">
+	Use &lt;Up&gt; and &lt;Down&gt; arrow keys repreatedly
+	<r>
+<ul>
+	   <li>&lt;Up&gt; will advance cursor to the previous field until the first field.</li>
+	   <li>&lt;Down&gt; will advance the cursor to the next field until the last field.</li>
+	   <li>Cursor skips over static fields.</li>
+	</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="6.5" link="Bug">
+	Use &lt;Alt&gt;&lt;Down&gt; in a list field.
+	<r>Opens the List Chooser</r>
+	<p name="bug">
+</p>
+  </step>
+
+</case>
+
+
+<!--**************CASE 7*****************-->
+
+<case id="deview7" num="7" order="any">
+  <title tag="deview7">Popup Menus</title>
+  <context>
+<p>With a language project open in Data Entry View in Data Notebook</p>
+</context>
+
+  <step name="7.1" link="Bug">
+	Right-click over a data field
+	<r>Popup menu appears with at least the following options (more options may be available depending on application):<ul>
+	   <li>Cut</li>
+	   <li>Copy</li>
+	   <li>Paste</li>
+	   <li>Encoding (not in v1)</li>
+	   <li>Help (not in v1)</li>
+	</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="7.2" link="Bug">
+	Right-click over the left column and test each option's functionality
+	<r>Popup menu appears with at least the following options (more options may be available depending on application):<ul>
+	   <li>Insert - Brings up a cascading menu listing all the possible items that can be inserted in the current context.</li>
+	   <li>Show - Brings up a cascading menu listing all fields which are currently not being shown. If all fields are currently shown, the item is grayed out in the menu.</li>
+	   <li>Delete "X" (e.g. Delete Researcher) - Deletes all of the data in the given field. Confirmation dialog appears; default answer is "Yes".</li>
+	   <li>Help (not in v1)</li>
+	</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+</case>
+
+
+<!--**************CASE 8*****************-->
+
+<case id="deview8" num="8" order="any">
+  <title tag="deview8">Structural Hierarchy</title>
+  <context>
+<p>With a language project with subentries open in Data Entry View in Data Notebook</p>
+</context>
+
+  <step name="8.1" link="Bug">
+	Collapse a node in the outline in the left column.
+	<r>The data is shown in a static field and cannot be edited. In v1, the Title is the field displayed.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="8.2" link="Bug">
+	Add subentries to the structure.
+	<r>By default, hierarchical nodes are automatically numbered and subnodes use the academic standard for numbering: 1.1, 1.2, 2.1.2, etc. (Only first digits end with a period, all other levels do not.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="8.3" link="Bug">
+	Drag and drop a subentry to reorder or raise the subentry,
+	<r>The subentry is moved to the new location or new position in the hierarchy.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="8.4" link="Bug">
+	Drag and drop a field to a new position.
+	<r>The field is moved to the new location. The change is specific to the current view and has no affect on other views.</r>
+	<p name="bug">
+</p>
+  </step>
+
+</case>
+
+<case id="deview9" num="9" order="any">
+  <title tag="deview9">Text Editing Special Cases</title>
+  <p name="Note">Taken from an Email of "Hints for testing text stuff" from JohnT</p>
+  <context>
+<p>With a language project open in Data Entry View</p>
+</context>
+
+  <step name="9.1" link="Bug">
+	Enter in a long sequence of space characters. Try entering in the sequence near a line break.
+	<r>There should be no unusual behavior.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="9.2" link="Bug">
+	Type in a paragraph of around 100 characters. Observe the behavior of the paragraph layout.
+	<r>There should be no unusual behavior.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="9.3" link="Bug">
+   Try selecting multiple paragraphs. Compare behavior to selections within a single paragraph.
+   <r>The behavior of the two should be similar.</r>
+   <p name="bug">
+</p>
+  </step>
+
+  <step name="9.4" link="Bug">
+	Test selecting text starting at the end of a paragraph. Try starting at the beginning too.
+	<r>Where a selection is started/ended should not affect the selection.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="9.5" link="Bug">
+	Try selecting from different directions (starting at the beginning and dragging forward or at the end and dragging back).
+	<r>The direction of the selection should not have any effect.</r>
+	<p name="bug">
+</p>
+  </step>
+
+</case>
+
+<case id="deview10" num="10" order="any">
+  <title tag="deview10">Date Modified Field</title>
+  <p name="Note">See Raid Reports 1331 and 3278 for additional information</p>
+  <context>
+<p>With a language project open in Data Entry View</p>
+</context>
+
+  <step name="10.1" link="Bug">
+	Show the Date Modified field for Data Entry View which can be done from Tools-Options-Views-DE. Make a change in the field, go to the next entry and come back. Try going to a different view and returning also.
+	<r>The Date Modified field associated with the entry has been updated for the last edit.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="10.2" link="Bug">
+  With the Date Modified field showing, make a change in an entry that contains a subentry (go to an entry with subentries or create one if necessary).  Then move focus to the subentry.
+  <r>When changing to the subentry, the Date Modified field for the parent entry should be updated.</r>
+  <p name="bug">
+</p>
+  </step>
+
+  <step name="10.3" link="Bug">
+  With the Date Modified field showing, make some changes to an entry, then Save.
+  <r>
+<ul>
+<li>The Date Modified field should NOT be updated. It is only updated after changing to a different entry (or view).</li>
+	 <li>If DN is exited and reopened, the field will be updated.</li>
+</ul> </r>
+  <p name="bug">
+</p>
+  </step>
+
+</case>
+
+
+<!--***********************************************-->
+
+ <update date="May-28-02" author="RussD">Test script created.</update>
+ <update date="May-30-02" author="JoelC">Added Case 6.</update>
+ <update date="May-31-02" author="JoelC">Added Case 7 and 8.</update>
+ <update date="Jun-12-02" author="RussD">Minor additions</update>
+ <update date="Jun-19-02" author="RussD">Added tests for in-place insertion of list items (1.3.*)</update>
+ <update date="Jul-08-02" author="RussD">Added Case 9</update>
+ <update date="Jul-12-02" author="RussD">Added Case 10</update>
+
+</test>

@@ -1,0 +1,1673 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+	<interlinear-text>
+		<item type="title" lang="stp">Corn</item>
+		<item type="title-abbreviation" lang="stp">C</item>
+		<paragraphs>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="punct" lang="stp">{</item>
+							</word>
+							<word>
+								<item type="txt" lang="stp">Na</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">jax</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">jax</item>
+										<item type="gls" lang="es">cómo</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">jak</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">jak</item>
+										<item type="gls" lang="es">Man</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gɨgɨr</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">CV-</item>
+										<item type="gls" lang="es">Redup</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gɨr</item>
+										<item type="gls" lang="es">crecer</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">juun</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">juunu</item>
+										<item type="gls" lang="es">maíz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ya</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">ya</item>
+										<item type="gls" lang="es">Prx</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">Juktɨr</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">Juktɨr</item>
+										<item type="gls" lang="es">S.M.O.</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">}</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">moikda</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">moikada</item>
+										<item type="gls" lang="es">barbechar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ich</item>
+								<morphemes>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ich</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Not</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">no</item>
+										<item type="gls" lang="es">cuando</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=t</item>
+										<item type="gls" lang="es">=3sS/Prt</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">duun</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">duudu</item>
+										<item type="gls" lang="es">llover</item>
+									</morph>
+									<morph type="" guid="d7f713dc-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=‹T›=</item>
+										<item type="gls" lang="es">Pret</item>
+									</morph>
+								</morphemes>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">nach</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tɨ</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tɨ-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ɨxia</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">ɨxi</item>
+										<item type="gls" lang="es">sembrar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Tutuur</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">CV-</item>
+										<item type="gls" lang="es">Redup</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tuuru</item>
+										<item type="gls" lang="es">toro</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">kɨn</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">kɨn</item>
+										<item type="gls" lang="es">con</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu_juanidha</item>
+								<morphemes>
+									<morph type="" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+										<item type="txt" lang="stp">tu_juan</item>
+										<item type="gls" lang="es">trabajar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-idha</item>
+										<item type="gls" lang="es">Apl</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ich</item>
+								<morphemes>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ich</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">nach</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">mi</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">mi-</item>
+										<item type="gls" lang="es">MdBa</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tɨ</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tɨ-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ɨxia</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">ɨxi</item>
+										<item type="gls" lang="es">sembrar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Bha</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">bha-</item>
+										<item type="gls" lang="es">MH</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">sɨɨxidha</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">sɨsɨ</item>
+										<item type="gls" lang="es">picar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-idha</item>
+										<item type="gls" lang="es">Apl</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ich</item>
+								<morphemes>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ich</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tootkom</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tootkom</item>
+										<item type="gls" lang="es">carrizo</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">kɨn</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">kɨn</item>
+										<item type="gls" lang="es">dentro de</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tuur</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tuur</item>
+										<item type="gls" lang="es">toro</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">maan</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">maan</item>
+										<item type="gls" lang="es">un</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Sec</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">mu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">mu-</item>
+										<item type="gls" lang="es">MoAl</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tɨ</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tɨ-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ɨxia</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">ɨxi</item>
+										<item type="gls" lang="es">sembrar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">juun</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">juunu</item>
+										<item type="gls" lang="es">maíz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gio</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gio</item>
+										<item type="gls" lang="es">y</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">bhab</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">bhab</item>
+										<item type="gls" lang="es">frijol</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="stp">imai</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">imai</item>
+										<item type="gls" lang="es">calabaza</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">,</item>
+							</word>
+							<word>
+								<item type="txt" lang="stp">chiilak</item>
+								<morphemes>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp"/>
+										<item type="gls" lang="es">chilacayote</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Na_pai_dhuuk</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">pai</item>
+										<item type="gls" lang="es">donde</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">dhuu</item>
+										<item type="gls" lang="es">estar (Sol)</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-k</item>
+										<item type="gls" lang="es">Pnt</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">bar</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=r</item>
+										<item type="gls" lang="es">=Exs</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ggr</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">CV-</item>
+										<item type="gls" lang="es">Redup</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">g</item>
+										<item type="gls" lang="es">grande</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ka</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ka</item>
+										<item type="gls" lang="es">Est</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">,</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">dai</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">dai</item>
+										<item type="gls" lang="es">sólo</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">nach</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">jimchuda</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">jimɨ</item>
+										<item type="gls" lang="es">ir-venir</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-tu</item>
+										<item type="gls" lang="es">Caus</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-da</item>
+										<item type="gls" lang="es">Cnt</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Gio</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gio</item>
+										<item type="gls" lang="es">y</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">nax</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=</item>
+										<item type="gls" lang="es">=Cop</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">iom</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">iom</item>
+										<item type="gls" lang="es">mucho</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">bar</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=r</item>
+										<item type="gls" lang="es">=Exs</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ggr</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">CV-</item>
+										<item type="gls" lang="es">Redup</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">g</item>
+										<item type="gls" lang="es">grande</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ka</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ka</item>
+										<item type="gls" lang="es">Est</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">,</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">dai</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">dai</item>
+										<item type="gls" lang="es">sólo</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">nach</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">boopñia</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">boopnɨ</item>
+										<item type="gls" lang="es">desyerbar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">gio</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gio</item>
+										<item type="gls" lang="es">y</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">nach</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">mu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">mu-</item>
+										<item type="gls" lang="es">MoAl</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">jimchuda</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">jimɨ</item>
+										<item type="gls" lang="es">ir-venir</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-tu</item>
+										<item type="gls" lang="es">Caus</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-da</item>
+										<item type="gls" lang="es">Cnt</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Daipui</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">dai</item>
+										<item type="gls" lang="es">sólo</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">pui</item>
+										<item type="gls" lang="es">así</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Sec</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Mai</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">mai</item>
+										<item type="gls" lang="es">MRF</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">bua</item>
+								<morphemes>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp"/>
+										<item type="gls" lang="es">echar/Prt</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ich</item>
+								<morphemes>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ich</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">nam</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=m</item>
+										<item type="gls" lang="es">=3pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">bindisiiro</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">bindisiiro</item>
+										<item type="gls" lang="es">bendecir</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">nɨikartam</item>
+								<morphemes>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">nɨi</item>
+										<item type="gls" lang="es">bailar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-kar</item>
+										<item type="gls" lang="es">InstrInan</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-tam</item>
+										<item type="gls" lang="es">Lugar</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">,</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">na</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Sec</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">cham</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">cham</item>
+										<item type="gls" lang="es">no</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ka</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">ka-</item>
+										<item type="gls" lang="es">Tmp</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">xidhuu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">xidhuu</item>
+										<item type="gls" lang="es">prohibido</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ka</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ka</item>
+										<item type="gls" lang="es">Est</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">junbaa</item>
+								<morphemes>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">juun</item>
+										<item type="gls" lang="es">maíz</item>
+									</morph>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp"/>
+										<item type="gls" lang="es">mojado</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Na</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">pai_dhuuk</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">pai</item>
+										<item type="gls" lang="es">donde</item>
+									</morph>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">dhuu</item>
+										<item type="gls" lang="stp"/>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-k</item>
+										<item type="gls" lang="es">Pnt</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">bax</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=</item>
+										<item type="gls" lang="es">=Cop</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">kaim</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">kaim</item>
+										<item type="gls" lang="es">hay.elotes</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ka</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ka</item>
+										<item type="gls" lang="es">Est</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">,</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">jugia</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">jugɨ</item>
+										<item type="gls" lang="es">comer</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ich</item>
+								<morphemes>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ich</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">junbaa</item>
+								<morphemes>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">juun</item>
+										<item type="gls" lang="es">maíz</item>
+									</morph>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp"/>
+										<item type="gls" lang="es">mojado</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">joidham</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">joidham</item>
+										<item type="gls" lang="es">bien</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">kiis</item>
+								<morphemes>
+									<morph type="" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">kiis</item>
+										<item type="gls" lang="es">queso</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">kɨn</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">kɨn</item>
+										<item type="gls" lang="es">con</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Na</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">pai_dhuuk</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">pai</item>
+										<item type="gls" lang="es">donde</item>
+									</morph>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">dhuu</item>
+										<item type="gls" lang="es">estar (Sol)</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-k</item>
+										<item type="gls" lang="es">Pnt</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gakia</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gakɨ</item>
+										<item type="gls" lang="es">secarse</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gaa</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gaa</item>
+										<item type="gls" lang="es">milpa</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">,</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">dai</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">dai</item>
+										<item type="gls" lang="es">sólo</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">nach</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Sec</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ba</item>
+								<morphemes>
+									<morph type="" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+										<item type="txt" lang="stp">ba</item>
+										<item type="gls" lang="es">Rlz</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">oraa</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">ora</item>
+										<item type="gls" lang="es">pizcar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">Gioch</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gio</item>
+										<item type="gls" lang="es">y</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">jup</item>
+								<morphemes>
+									<morph type="" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+										<item type="txt" lang="stp">jup</item>
+										<item type="gls" lang="es">Rep</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tu</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tu-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">moikda</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">moikada</item>
+										<item type="gls" lang="es">barbechar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="stp">nach</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">na</item>
+										<item type="gls" lang="es">Sub</item>
+									</morph>
+									<morph type="" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">=ch</item>
+										<item type="gls" lang="es">=1pS</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">mi</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">mi-</item>
+										<item type="gls" lang="es">MdBa</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">tɨ</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">tɨ-</item>
+										<item type="gls" lang="es">Ext</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">ɨxia</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">ɨxi</item>
+										<item type="gls" lang="es">sembrar</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">-a</item>
+										<item type="gls" lang="es">Fut</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">gu</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">gu</item>
+										<item type="gls" lang="es">Art</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">jumai</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">jumai</item>
+										<item type="gls" lang="es">otro</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">oidha</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">oidha</item>
+										<item type="gls" lang="es">año</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">bhuuyax</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">bhuuyax</item>
+										<item type="gls" lang="es">buey</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="stp">kɨn</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="stp">kɨn</item>
+										<item type="gls" lang="es">con</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="stp">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="es"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph/>
+		</paragraphs>
+		<languages>
+			<language lang="stp" font="Charis SIL" vernacular="true"/>
+			<language lang="es" font="Times New Roman"/>
+		</languages>
+	</interlinear-text>
+</document>

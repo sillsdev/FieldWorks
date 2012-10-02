@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000022">
+	<rt guid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388" class="LangProject">
+		<DateCreated val="2007-11-19 11:17:52.107" />
+		<DateModified val="2010-9-1 11:4:28.147" />
+		<Description>
+			<AStr ws="en">
+				<Run ws="en">***</Run>
+			</AStr>
+		</Description>
+		<AnalysisWss>
+			<Uni>en pt en-fonipa</Uni>
+		</AnalysisWss>
+		<CurVernWss>
+			<Uni>en en-fonipa fr</Uni>
+		</CurVernWss>
+		<CurAnalysisWss>
+			<Uni>en en-fonipa</Uni>
+		</CurAnalysisWss>
+		<CurPronunWss>
+			<Uni>en</Uni>
+		</CurPronunWss>
+		<VernWss>
+			<Uni>en fr en-fonipa</Uni>
+		</VernWss>
+		<ExtLinkRootDir>
+			<Uni>C:\Fwd\distfiles</Uni>
+		</ExtLinkRootDir>
+		<LexDb>
+			<objsur guid="0821b3cf-3029-4b43-bb1e-67f48b9820c8" t="o" />
+		</LexDb>
+		<ResearchNotebook>
+			<objsur guid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310" t="o" />
+		</ResearchNotebook>
+		<AnalysisStatus>
+			<objsur guid="0084b4d9-6c1e-4d63-9c66-ff22764ef171" t="o" />
+		</AnalysisStatus>
+	</rt>
+	<rt guid="0084b4d9-6c1e-4d63-9c66-ff22764ef171" class="CmPossibilityList" ownerguid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388">
+		<Name>
+			<AUni ws="en">Status</AUni>
+			<AUni ws="es">Estado</AUni>
+			<AUni ws="fr">Statut</AUni>
+			<AUni ws="pt">Status</AUni>
+		</Name>
+		<DateCreated val="2007-11-19 11:17:52.983" />
+		<DateModified val="2010-8-31 14:31:36.774" />
+		<Depth val="1" />
+		<PreventChoiceAboveLevel val="0" />
+		<IsSorted val="False" />
+		<IsClosed val="False" />
+		<PreventDuplicates val="False" />
+		<PreventNodeChoices val="False" />
+		<Abbreviation>
+			<AUni ws="en">Stat</AUni>
+		</Abbreviation>
+		<UseExtendedFields val="False" />
+		<DisplayOption val="0" />
+		<ItemClsid val="7" />
+		<IsVernacular val="False" />
+		<WsSelector val="-3" />
+		<ListVersion val="00000000-0000-0000-0000-000000000000" />
+		<Possibilities>
+			<objsur guid="8d87fc8a-593e-4c84-a9ed-193879d08585" t="o" />
+			<objsur guid="1b23572f-2131-4c78-a2a5-1897d1641df9" t="o" />
+			<objsur guid="7b5486b7-6211-497d-8a4f-21aca91c4be7" t="o" />
+			<objsur guid="2f319b91-ac0a-46d9-a004-4f66f7d588ad" t="o" />
+			<objsur guid="3f420b02-ac1a-57d0-a115-5f77f8d699ad" t="o" />
+		</Possibilities>
+	</rt>
+	<rt class="CmPossibility" guid="8D87FC8A-593E-4C84-A9ED-193879D08585" ownerguid="0084B4D9-6C1E-4D63-9C66-FF22764EF171">
+		<DateCreated val="2007-11-19 11:17:53.607" />
+		<DateModified val="2007-11-19 11:17:53.607" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<Name>
+			<AUni ws="en">Confirmed</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">Conf</AUni>
+		</Abbreviation>
+	</rt>
+	<rt guid="1b23572f-2131-4c78-a2a5-1897d1641df9" class="CmPossibility" ownerguid="0084b4d9-6c1e-4d63-9c66-ff22764ef171">
+		<Name>
+			<AUni ws="en">Tentative</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">tent</AUni>
+		</Abbreviation>
+		<SortSpec val="0" />
+		<DateCreated val="2010-8-31 14:31:36.742" />
+		<DateModified val="2010-9-1 14:41:1.675" />
+		<ForeColor val="0" />
+		<BackColor val="0" />
+		<UnderColor val="0" />
+		<UnderStyle val="0" />
+		<Hidden val="False" />
+		<IsProtected val="False" />
+	</rt>
+	<rt class="CmPossibility" guid="7B5486B7-6211-497D-8A4F-21ACA91C4BE7" ownerguid="0084B4D9-6C1E-4D63-9C66-FF22764EF171">
+		<DateCreated val="2007-11-19 11:17:53.607" />
+		<DateModified val="2007-11-19 11:17:53.607" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<Name>
+			<AUni ws="en">Disproved</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">Dis</AUni>
+		</Abbreviation>
+	</rt>
+	<rt class="CmPossibility" guid="2F319B91-AC0A-46D9-A004-4F66F7D588AD" ownerguid="0084B4D9-6C1E-4D63-9C66-FF22764EF171">
+		<DateCreated val="2007-11-19 11:17:53.607" />
+		<DateModified val="2007-11-19 11:17:53.607" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<Name>
+			<AUni ws="en">Pending</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">Pend</AUni>
+		</Abbreviation>
+	</rt>
+	<rt class="CmPossibility" guid="3f420b02-ac1a-57d0-a115-5f77f8d699ad" ownerguid="0084B4D9-6C1E-4D63-9C66-FF22764EF171">
+		<DateCreated val="2007-11-19 11:17:53.607" />
+		<DateModified val="2007-11-19 11:17:53.607" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<Name>
+			<AUni ws="en">Approved</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">ApprO</AUni>
+		</Abbreviation>
+	</rt>
+	<rt guid="0821b3cf-3029-4b43-bb1e-67f48b9820c8" class="LexDb" ownerguid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388">
+		<Name>
+			<AUni ws="en">Dictionary</AUni>
+		</Name>
+		<DateCreated val="2007-11-19 11:17:52.437" />
+		<DateModified val="2010-7-19 10:54:25.420" />
+		<IsHeadwordCitationForm val="False" />
+		<IsBodyInSeparateSubentry val="False" />
+		<Status>
+			<objsur guid="652c7dee-5fde-488c-9fe0-d4d19f4f7547" t="o" />
+		</Status>
+		<Entries>
+			<objsur guid="fd6bb890-bb84-4920-954d-40d1e987b683" t="o" />
+		</Entries>
+	</rt>
+	<rt guid="652c7dee-5fde-488c-9fe0-d4d19f4f7547" class="CmPossibilityList" ownerguid="0821b3cf-3029-4b43-bb1e-67f48b9820c8">
+		<Name>
+			<AUni ws="en">Sense Status</AUni>
+			<AUni ws="es">Estatus de la acepción</AUni>
+			<AUni ws="fr">Statut de sens</AUni>
+			<AUni ws="pt">Status do Significado</AUni>
+		</Name>
+		<DateCreated val="2007-11-19 11:17:53.420" />
+		<DateModified val="2010-8-31 14:30:4.273" />
+		<Depth val="1" />
+		<PreventChoiceAboveLevel val="0" />
+		<IsSorted val="False" />
+		<IsClosed val="False" />
+		<PreventDuplicates val="False" />
+		<PreventNodeChoices val="False" />
+		<Abbreviation>
+			<AUni ws="en">SenStat</AUni>
+		</Abbreviation>
+		<UseExtendedFields val="False" />
+		<DisplayOption val="0" />
+		<ItemClsid val="7" />
+		<IsVernacular val="False" />
+		<WsSelector val="-3" />
+		<ListVersion val="00000000-0000-0000-0000-000000000000" />
+		<Possibilities>
+			<objsur guid="401300fa-7253-4c01-8db9-db078d75c60b" t="o" />
+			<objsur guid="bb99a534-5d49-49b8-886c-1dbc873a9523" t="o" />
+			<objsur guid="b7d7f50f-54a6-4406-b2bc-219c93e70820" t="o" />
+			<objsur guid="c7f01fab-c64d-4218-8368-052b100b7703" t="o" />
+			<objsur guid="D0B2F9AB-86B1-4106-AD85-3F9E60F52977" t="o" />
+		</Possibilities>
+	</rt>
+	<rt class="CmPossibility" guid="401300FA-7253-4C01-8DB9-DB078D75C60B" ownerguid="652C7DEE-5FDE-488C-9FE0-D4D19F4F7547">
+		<DateCreated val="2007-11-19 11:17:54.950" />
+		<DateModified val="2007-11-19 11:17:54.950" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<Name>
+			<AUni ws="en">Confirmed</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">Conf</AUni>
+		</Abbreviation>
+	</rt>
+	<rt guid="bb99a534-5d49-49b8-886c-1dbc873a9523" class="CmPossibility" ownerguid="652c7dee-5fde-488c-9fe0-d4d19f4f7547">
+		<Name>
+			<AUni ws="en">Ann</AUni>
+		</Name>
+		<SortSpec val="0" />
+		<DateCreated val="2010-8-31 14:30:4.211" />
+		<DateModified val="2010-8-31 14:30:10.789" />
+		<ForeColor val="0" />
+		<BackColor val="0" />
+		<UnderColor val="0" />
+		<UnderStyle val="0" />
+		<Hidden val="False" />
+		<IsProtected val="False" />
+	</rt>
+	<rt guid="b7d7f50f-54a6-4406-b2bc-219c93e70820" class="CmPossibility" ownerguid="652c7dee-5fde-488c-9fe0-d4d19f4f7547">
+		<Name>
+			<AUni ws="en">Approved</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">ApprO</AUni>
+		</Abbreviation>
+		<SortSpec val="0" />
+		<DateCreated val="2007-11-19 11:17:54.950" />
+		<DateModified val="2010-8-31 15:23:28.196" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<UnderStyle val="0" />
+		<Hidden val="False" />
+		<IsProtected val="False" />
+	</rt>
+	<rt class="CmPossibility" guid="C7F01FAB-C64D-4218-8368-052B100B7703" ownerguid="652C7DEE-5FDE-488C-9FE0-D4D19F4F7547">
+		<DateCreated val="2007-11-19 11:17:54.950" />
+		<DateModified val="2007-11-19 11:17:54.950" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<Name>
+			<AUni ws="en">Tentative</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="en">Tent</AUni>
+		</Abbreviation>
+	</rt>
+	<rt class="CmPossibility" guid="D0B2F9AB-86B1-4106-AD85-3F9E60F52977" ownerguid="652c7dee-5fde-488c-9fe0-d4d19f4f7547">
+		<DateCreated val="2007-11-19 11:17:53.607" />
+		<DateModified val="2007-11-19 11:17:53.607" />
+		<ForeColor val="-1073741824" />
+		<BackColor val="-1073741824" />
+		<UnderColor val="-1073741824" />
+		<Name>
+			<AUni ws="id">Foreign</AUni>
+		</Name>
+		<Abbreviation>
+			<AUni ws="id">For</AUni>
+		</Abbreviation>
+	</rt>
+	<rt guid="fd6bb890-bb84-4920-954d-40d1e987b683" class="LexEntry" ownerguid="0821b3cf-3029-4b43-bb1e-67f48b9820c8">
+		<HomographNumber val="0" />
+		<CitationForm>
+			<AUni ws="en">a</AUni>
+			<AUni ws="en-fonipa">a</AUni>
+		</CitationForm>
+		<DateCreated val="2007-11-19 11:26:28.470" />
+		<DateModified val="2010-9-3 10:48:23.72" />
+		<DoNotUseForParsing val="False" />
+		<ExcludeAsHeadword val="False" />
+		<Senses>
+			<objsur guid="c13c7005-6b3a-42fd-b6cb-2750c336746a" t="o" />
+			<objsur guid="a649f69a-efb9-404b-86fc-3db88db9772b" t="o" />
+			<objsur guid="6069cba0-ff21-4dac-bfce-bee8a56b7e9c" t="o" />
+			<objsur guid="eb324c8f-e149-4a4a-9425-20b70a8bb1aa" t="o" />
+			<objsur guid="eb324c9f-e149-4a4a-9425-20b70a8bb1aa" t="o" />
+		</Senses>
+	</rt>
+	<rt guid="c13c7005-6b3a-42fd-b6cb-2750c336746a" class="LexSense" ownerguid="fd6bb890-bb84-4920-954d-40d1e987b683">
+		<Definition>
+			<AStr ws="en">
+				<Run ws="en">dadadfadf</Run>
+			</AStr>
+			<AStr ws="en-fonipa">
+				<Run ws="en-fonipa">jhkjhjh</Run>
+			</AStr>
+		</Definition>
+		<Gloss>
+			<AUni ws="en">Aardvark</AUni>
+		</Gloss>
+		<MorphoSyntaxAnalysis>
+			<objsur guid="0c0a8b78-0bba-4f7f-99f6-dc897b81a333" t="r" />
+		</MorphoSyntaxAnalysis>
+		<Status>
+			<objsur guid="401300fa-7253-4c01-8db9-db078d75c60b" t="r" />
+		</Status>
+		<Examples>
+			<objsur guid="b99170c0-5ee1-4f88-bdaa-56fb7a3f99fc" t="o" />
+			<objsur guid="4aa19c2b-c824-4f03-a391-f4738dd9ab8b" t="o" />
+			<objsur guid="8fbb9412-d967-4800-b164-1d6bd3a33d15" t="o" />
+		</Examples>
+	</rt>
+	<rt guid="a649f69a-efb9-404b-86fc-3db88db9772b" class="LexSense" ownerguid="fd6bb890-bb84-4920-954d-40d1e987b683">
+		<Gloss>
+			<AUni ws="en">Aardvark2</AUni>
+		</Gloss>
+		<MorphoSyntaxAnalysis>
+			<objsur guid="0c0a8b78-0bba-4f7f-99f6-dc897b81a333" t="r" />
+		</MorphoSyntaxAnalysis>
+		<Status>
+			<objsur guid="bb99a534-5d49-49b8-886c-1dbc873a9523" t="r" />
+		</Status>
+	</rt>
+	<rt guid="eb324c8f-e149-4a4a-9425-20b70a8bb1aa" class="LexSense" ownerguid="fd6bb890-bb84-4920-954d-40d1e987b683">
+		<Gloss>
+			<AUni ws="en">Aardvark3</AUni>
+		</Gloss>
+		<MorphoSyntaxAnalysis>
+			<objsur guid="0c0a8b78-0bba-4f7f-99f6-dc897b81a333" t="r" />
+		</MorphoSyntaxAnalysis>
+		<Status>
+			<objsur guid="b7d7f50f-54a6-4406-b2bc-219c93e70820" t="r" />
+		</Status>
+	</rt>
+	<rt guid="6069cba0-ff21-4dac-bfce-bee8a56b7e9c" class="LexSense" ownerguid="fd6bb890-bb84-4920-954d-40d1e987b683">
+		<Status>
+			<objsur guid="b7d7f50f-54a6-4406-b2bc-219c93e70820" t="r" />
+		</Status>
+		<Gloss>
+			<AUni ws="en">Aardvark3</AUni>
+		</Gloss>
+		<Senses>
+			<objsur guid="eb324c8f-e149-4a4a-9425-20b70a8bb1aa" t="o" />
+		</Senses>
+	</rt>
+	<rt guid="eb324c8f-e149-4a4a-9425-20b70a8bb1aa" class="LexSense" ownerguid="fd6bb890-bb84-4920-954d-40d1e987b683">
+		<Gloss>
+			<AUni ws="en">Aardvark3</AUni>
+		</Gloss>
+		<MorphoSyntaxAnalysis>
+			<objsur guid="0c0a8b78-0bba-4f7f-99f6-dc897b81a333" t="r" />
+		</MorphoSyntaxAnalysis>
+		<Status>
+			<objsur guid="b7d7f50f-54a6-4406-b2bc-219c93e70820" t="r" />
+		</Status>
+	</rt>
+	<rt guid="eb324c9f-e149-4a4a-9425-20b70a8bb1aa" class="LexSense" ownerguid="fd6bb890-bb84-4920-954d-40d1e987b683">
+		<Gloss>
+			<AUni ws="en">Aardvark4</AUni>
+		</Gloss>
+		<MorphoSyntaxAnalysis>
+			<objsur guid="0c0a8b78-0bba-4f7f-99f6-dc897b81a333" t="r" />
+		</MorphoSyntaxAnalysis>
+	</rt>
+
+	<rt guid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310" class="RnResearchNbk" ownerguid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388">
+		<Name>
+			<AUni ws="en">Data Notebook</AUni>
+		</Name>
+		<DateCreated val="2007-11-19 11:17:52.750" />
+		<DateModified val="2010-9-1 14:6:16.803" />
+		<Records>
+			<objsur guid="611739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="612739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="613739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="614739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="615739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="616739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="617739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+		</Records>
+	</rt>
+	<rt guid="611739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+		<Status>
+			<objsur guid="2f319b91-ac0a-46d9-a004-4f66f7d588ad" t="r" />
+		</Status>
+	</rt>
+	<rt guid="612739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+		<Status>
+			<objsur guid="8d87fc8a-593e-4c84-a9ed-193879d08585" t="o" />
+		</Status>
+	</rt>
+	<rt guid="613739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+		<Status>
+			<objsur guid="1b23572f-2131-4c78-a2a5-1897d1641df9" t="o" />
+		</Status>
+	</rt>
+	<rt guid="614739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+		<Status>
+			<objsur guid="3f420b02-ac1a-57d0-a115-5f77f8d699ad" t="o" />
+		</Status>
+	</rt>
+	<rt guid="615739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+		<Status>
+			<objsur guid="7b5486b7-6211-497d-8a4f-21aca91c4be7" t="o" />
+		</Status>
+	</rt>
+		<rt guid="616739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+		<Status>
+			<objsur guid="7b5486b7-6211-497d-8a4f-21aca91c4be7" t="o" />
+		</Status>
+	</rt>
+		<rt guid="617739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+</languageproject>

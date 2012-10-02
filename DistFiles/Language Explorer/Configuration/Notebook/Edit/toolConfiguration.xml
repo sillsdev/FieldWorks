@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<root>
+	<clerks/>
+	<tools>
+		<tool label="Record Edit" value="notebookEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="notebook" id="RecordBrowseAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details" defaultPrintPane="RecordDetailPane">
+					<!--this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="recordList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="recordList" clerk="records" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural">
+									<columns>
+										<include path="../browseDialogColumns.xml" query="doc/browseColumns/column"/>
+										<!-- include common custom field definitions -->
+										<include path="../browseDialogColumns.xml" query="doc/browseColumns/generate"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!--this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="RecordDetailPane" PaneBarGroupId="PaneBar-RecordDetail" collapse="162000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters area="notebook" clerk="records" PaneBarGroupId="PaneBar-RecordDetail" persistContext="normalEdit" suppressInfoBar="ifNotFirst" layout="Normal" layoutChoiceField="Type" treeBarAvailability="NotAllowed" showDescendantInRoot="true" emptyTitleId="No-RnGenericRecs" printLayout="publishRecord">
+									<!--menuHandler>
+										<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryMenuHandler"/>
+									</menuHandler-->
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

@@ -1,0 +1,622 @@
+#line 1 "C:\\fw\\Src\\CommonCOMDlgs\\CmnFwDlgsPs.idl"
+
+
+
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+import "FwKernelPs.idl";
+import "ViewsPs.idl";
+
+#line 1 "C:\\fw\\Src\\Generic\\Common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 20 "C:\\fw\\Src\\CommonCOMDlgs\\CmnFwDlgsPs.idl"
+
+
+
+#line 1 "c:\\fw\\src\\commoncomdlgs\\CmnFwDlgs.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOpenFWProjectDlg") cpp_quote(",") cpp_quote("8cb6f2f9-3b0a-4030-8992-c50fb78e77f3") cpp_quote(");") [ uuid("8cb6f2f9-3b0a-4030-8992-c50fb78e77f3"), object, pointer_default(unique) ] interface IOpenFWProjectDlg : IUnknown
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT Show(
+		[in] IStream * fist,
+		[in] BSTR bstrCurrentServer,
+		[in] BSTR bstrLocalServer,
+		[in] BSTR bstrUserWs,
+		[in] DWORD hwndParent,
+		[in] ComBool fAllowMenu,
+		[in] int clidSubitem,
+		[in] BSTR bstrHelpFullUrl);
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetResults(
+		[out] ComBool * fHaveProject,
+		[out] int * hvoProj,
+		[out] BSTR * bstrProject,
+		[out] BSTR * bstrDatabase,
+		[out] BSTR * bstrMachine,
+		[out] GUID * guid,
+		[out] ComBool * fHaveSubitem,
+		[out] int * hvoSubitem,
+		[out] BSTR * bstrName);
+
+
+	[propputref] HRESULT WritingSystemFactory(
+		[in] ILgWritingSystemFactory * pwsf);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwExportDlg") cpp_quote(",") cpp_quote("67A68372-5727-4bd4-94A7-C2D703A75C36") cpp_quote(");") [ uuid("67A68372-5727-4bd4-94A7-C2D703A75C36"), object, pointer_default(unique) ] interface IFwExportDlg : IUnknown
+{
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT Initialize(
+		[in] DWORD hwndParent,
+		[in] IVwStylesheet * pvss,
+		[in] IFwCustomExport * pfcex,
+		[in] GUID * pclsidApp,
+		[in] BSTR bstrRegProgName,
+		[in] BSTR bstrProgHelpFile,
+		[in] BSTR bstrHelpTopic,
+		[in] int hvoLp,
+		[in] int hvoObj,
+		[in] int flidSubitems);
+
+
+
+
+
+
+
+
+
+
+	HRESULT DoDialog(
+		[in] int vwt,
+		[in] int crec,
+		[in, size_is(crec)] int * rghvoRec,
+		[in, size_is(crec)] int * rgclidRec,
+		[out, retval] int * pnRet);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum StylesDlgType
+{
+	ksdtStandard = 0,
+	ksdtTransEditor
+} StylesDlgType;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwStylesDlg") cpp_quote(",") cpp_quote("0D598D88-C17D-4E46-AC89-51FFC5DA0799") cpp_quote(");") [ uuid("0D598D88-C17D-4E46-AC89-51FFC5DA0799"), object, pointer_default(unique) ] interface IFwStylesDlg : IUnknown
+{
+
+	[propput] HRESULT DlgType(
+		[in] StylesDlgType sdt);
+
+
+	[propput] HRESULT ShowAll(
+		[in] ComBool fShowAll);
+
+
+	[propput] HRESULT SysMsrUnit(
+		[in] int nMsrSys);
+
+
+	[propput] HRESULT UserWs(
+		[in] int wsUser);
+
+
+	[propput] HRESULT HelpFile(
+		[in] BSTR bstrHelpFile);
+
+
+
+	[propput] HRESULT TabHelpFileUrl(
+		[in] int tabNum,
+		[in] BSTR bstrHelpFileUrl);
+
+
+	[propputref] HRESULT WritingSystemFactory(
+		[in] ILgWritingSystemFactory * pwsf);
+
+
+	[propput] HRESULT ParentHwnd(
+		[in] DWORD hwndParent);
+
+
+	[propput] HRESULT CanDoRtl(
+		[in] ComBool fCanDoRtl);
+
+
+
+	[propput] HRESULT OuterRtl(
+		[in] ComBool fOuterRtl);
+
+
+	[propput] HRESULT FontFeatures(
+		[in] ComBool fFontFeatures);
+
+
+	[propputref] HRESULT Stylesheet(
+		[in] IVwStylesheet * pasts);
+
+
+
+
+
+
+	HRESULT SetApplicableStyleContexts(
+		[in, size_is(cpnContexts)] int * rgnContexts,
+		[in] int cpnContexts);
+
+
+
+	[propput] HRESULT CanFormatChar(
+		[in] ComBool fCanFormatChar);
+
+
+
+	[propput] HRESULT OnlyCharStyles(
+		[in] ComBool fOnlyCharStyles);
+
+
+	[propput] HRESULT StyleName(
+		[in] BSTR bstrStyleName);
+
+
+	[propput] HRESULT CustomStyleLevel(
+		[in] int level);
+
+
+
+
+
+	HRESULT SetTextProps(
+		[in, size_is(cttpPara)] ITsTextProps ** rgpttpPara,
+		[in] int cttpPara,
+		[in, size_is(cttpChar)] ITsTextProps ** rgpttpChar,
+		[in] int cttpChar
+	);
+
+
+
+	[propput] HRESULT RootObjectId(
+		[in] int hvoRootObj);
+
+
+
+
+	HRESULT SetWritingSystemsOfInterest(
+		[in, size_is(cws)] int * rgws,
+		[in] int cws);
+
+
+	[propputref] HRESULT LogFile(
+		[in] IStream * pstrmLog);
+
+
+	[propputref] HRESULT HelpTopicProvider(
+		[in] IHelpTopicProvider * phtprov);
+
+
+	[propput] HRESULT AppClsid(
+		[in] GUID * pclsidApp);
+
+
+
+	HRESULT ShowModal(
+		[out, retval] int * pnResult);
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetResults(
+		[out] BSTR * pbstrStyleName,
+		[out] ComBool * pfStylesChanged,
+		[out] ComBool * pfApply,
+		[out] ComBool * pfReloadDb,
+		[out, retval] ComBool * pfResult);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwDbMergeStyles") cpp_quote(",") cpp_quote("A7CD703C-6199-4097-A5C0-AB78DD23120E") cpp_quote(");") [ uuid("A7CD703C-6199-4097-A5C0-AB78DD23120E"), object, pointer_default(unique) ] interface IFwDbMergeStyles : IUnknown
+{
+
+
+
+
+
+
+
+
+
+	HRESULT Initialize(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pstrmLog,
+		[in] int hvoRootObj,
+		[in] const GUID * pclsidApp);
+
+
+	HRESULT AddStyleReplacement(
+		[in] BSTR bstrOldStyleName,
+		[in] BSTR bstrNewStyleName);
+
+
+
+	HRESULT AddStyleDeletion(
+		[in] BSTR bstrDeleteStyleName);
+
+
+
+
+	HRESULT Process();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwDbMergeWrtSys") cpp_quote(",") cpp_quote("DE96B989-91A5-4104-9764-69ABE0BF0B9A") cpp_quote(");") [ uuid("DE96B989-91A5-4104-9764-69ABE0BF0B9A"), object, pointer_default(unique) ] interface IFwDbMergeWrtSys : IUnknown
+{
+
+
+
+
+
+
+
+
+
+	HRESULT Initialize(
+		[in] IFwTool * pfwt,
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pstrmLog,
+		[in] int hvoProj,
+		[in] int hvoRootObj,
+		[in] int wsUser);
+
+
+
+
+
+
+
+
+
+	HRESULT Process(
+		[in] int wsOld,
+		[in] BSTR bstrOldName,
+		[in] int wsNew,
+		[in] BSTR bstrNewName);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwCheckAnthroList") cpp_quote(",") cpp_quote("8AC06CED-7B73-4E34-81A3-852A43E28BD8") cpp_quote(");") [ uuid("8AC06CED-7B73-4E34-81A3-852A43E28BD8"), object, pointer_default(unique) ] interface IFwCheckAnthroList : IUnknown
+{
+	HRESULT CheckAnthroList(
+		[in] IOleDbEncap * pode,
+		[in] DWORD hwndParent,
+		[in] BSTR bstrProjName,
+		[in] int wsDefault);
+
+	[propput] HRESULT Description(
+		[in] BSTR bstrDescription);
+}
+
+
+
+
+
+
+
+#line 24 "C:\\fw\\Src\\CommonCOMDlgs\\CmnFwDlgsPs.idl"

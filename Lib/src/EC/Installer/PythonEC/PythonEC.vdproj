@@ -1,0 +1,769 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:PythonEC MergeModule"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_10A986AC2F8F47E2A61DBFE94DB92359"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_279CE2FF28A947AEB661B8745627C476"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_2C4A1CB3BB8345528E0C4DA4AC627D28"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_2C6FBFDB97144141ACDB935880725DBD"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_31A4EDAD70B7438F881755268187887B"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_35A2446DBFE340AFB47D73F61840E275"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_53F5C223FADA456E8750463D6030D16A"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_71E54378EF764F2D80B8C6B1777B43BB"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_8E6904CE6BBC4BDAA197B1AD127A5AEF"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_9B2383597C6047698A2ADB91C54AFA20"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_9BE248FD2012493C9FE2FCFA8B162D42"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_ABB59E6BF25D4EFB9195947F6BAFBC24"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_CA8D8C572FE34FB78B38B8666DBA7DAF"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_DAF94C93C3BD4E398C22B24CB70D1C08"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E8C42A8300DF430380A42B0482738023"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F293F177398A4F6CBCAF8A6E217F0C65"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F3A1626A11254141B8291FC67AE3EBFF"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\PythonEC.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\PythonEC.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_10A986AC2F8F47E2A61DBFE94DB92359"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\image007.png"
+			"TargetName" = "8:image007.png"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_279CE2FF28A947AEB661B8745627C476"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\image008.jpg"
+			"TargetName" = "8:image008.jpg"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2C4A1CB3BB8345528E0C4DA4AC627D28"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\image005.jpg"
+			"TargetName" = "8:image005.jpg"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2C6FBFDB97144141ACDB935880725DBD"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\PythonEC25a.dll"
+			"TargetName" = "8:PythonEC25a.dll"
+			"Tag" = "8:"
+			"Folder" = "8:_49E74FB6E01E4872AD8D9BA2EE147DAE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_31A4EDAD70B7438F881755268187887B"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\header.htm"
+			"TargetName" = "8:header.htm"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_35A2446DBFE340AFB47D73F61840E275"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\image003.png"
+			"TargetName" = "8:image003.png"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_53F5C223FADA456E8750463D6030D16A"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\..\\DistFiles\\EncodingConverters\\TestPyScript.py"
+			"TargetName" = "8:TestPyScript.py"
+			"Tag" = "8:"
+			"Folder" = "8:_C8E772617E2E42F99A55169BB60A3905"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_71E54378EF764F2D80B8C6B1777B43BB"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\..\\DistFiles\\pywintypes25.dll"
+			"TargetName" = "8:pywintypes25.dll"
+			"Tag" = "8:"
+			"Folder" = "8:_49E74FB6E01E4872AD8D9BA2EE147DAE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8E6904CE6BBC4BDAA197B1AD127A5AEF"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\image001.png"
+			"TargetName" = "8:image001.png"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9B2383597C6047698A2ADB91C54AFA20"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\..\\DistFiles\\python25.dll"
+			"TargetName" = "8:python25.dll"
+			"Tag" = "8:"
+			"Folder" = "8:_49E74FB6E01E4872AD8D9BA2EE147DAE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9BE248FD2012493C9FE2FCFA8B162D42"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Plugins\\IEC3.0.0.0\\PythonEC 3.0.0.0 Plugin Details.xml"
+			"TargetName" = "8:PythonEC 3.0.0.0 Plugin Details.xml"
+			"Tag" = "8:"
+			"Folder" = "8:_AC0586C9A0284DCD81567F12BBB142D1"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ABB59E6BF25D4EFB9195947F6BAFBC24"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box.htm"
+			"TargetName" = "8:Python Script Plug-in About box.htm"
+			"Tag" = "8:"
+			"Folder" = "8:_5350BA965614456A8046EC072BC2CA33"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CA8D8C572FE34FB78B38B8666DBA7DAF"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\PythonEC25a.tlb"
+			"TargetName" = "8:PythonEC25a.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_49E74FB6E01E4872AD8D9BA2EE147DAE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DAF94C93C3BD4E398C22B24CB70D1C08"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\filelist.xml"
+			"TargetName" = "8:filelist.xml"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E8C42A8300DF430380A42B0482738023"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\MSVCR71.DLL"
+			"TargetName" = "8:MSVCR71.DLL"
+			"Tag" = "8:"
+			"Folder" = "8:_484596FF2E344F51B70C9D1FA7E2D1E2"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F293F177398A4F6CBCAF8A6E217F0C65"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\..\\DistFiles\\pythoncom25.dll"
+			"TargetName" = "8:pythoncom25.dll"
+			"Tag" = "8:"
+			"Folder" = "8:_49E74FB6E01E4872AD8D9BA2EE147DAE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3A1626A11254141B8291FC67AE3EBFF"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Help\\Python Script Plug-in About box_files\\image004.jpg"
+			"TargetName" = "8:image004.jpg"
+			"Tag" = "8:"
+			"Folder" = "8:_5CE3100FB33F4046B725AC7DDD7B978C"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_3F4D8DB913514C59939BEE3D8681833D"
+			{
+			"DefaultLocation" = "8:[CommonAppDataFolder]SIL"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_ACD27BB0D8AA4A84A691CF8D2A6DADFA"
+					{
+					"Name" = "8:EC"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_F05B6A06068941C086D3E930A44468E4"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_B2803CC582AB4EF8857F790658A16DD6"
+							{
+							"Name" = "8:Plugins"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_A7AA254C6A3545F59F8E0093CB959E70"
+								"Folders"
+								{
+									"{9EF0B969-E518-4E46-987F-47570745A589}:_AC0586C9A0284DCD81567F12BBB142D1"
+									{
+									"Name" = "8:IEC3.0.0.0"
+									"AlwaysCreate" = "11:FALSE"
+									"Condition" = "8:"
+									"Transitive" = "11:FALSE"
+									"Property" = "8:_19A137500C244A47BBD904CE71849720"
+										"Folders"
+										{
+										}
+									}
+								}
+							}
+						}
+					}
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_D88653F9397E4022BF6BD3AE70B441F3"
+					{
+					"Name" = "8:SILConverters30"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_5FB5A79F3EFF4A16A181014AE6B95788"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_C8E772617E2E42F99A55169BB60A3905"
+							{
+							"Name" = "8:MapsTables"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_EBE9C5311A434887862B28DE19435820"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+			"{1525181F-901A-416C-8A58-119130FE478E}:_484596FF2E344F51B70C9D1FA7E2D1E2"
+			{
+			"Name" = "8:#1914"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:SystemFolder"
+				"Folders"
+				{
+				}
+			}
+			"{1525181F-901A-416C-8A58-119130FE478E}:_906D50FA71CB4C8E81ADFB9BF948DF8D"
+			{
+			"Name" = "8:#1910"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:CommonFilesFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_49E74FB6E01E4872AD8D9BA2EE147DAE"
+					{
+					"Name" = "8:SIL"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_C917C8B647D649048498EA7E89C03E5D"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_5350BA965614456A8046EC072BC2CA33"
+							{
+							"Name" = "8:Help"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_6654F9A65E8E446C8E4D467D75875E29"
+								"Folders"
+								{
+									"{9EF0B969-E518-4E46-987F-47570745A589}:_5CE3100FB33F4046B725AC7DDD7B978C"
+									{
+									"Name" = "8:Python Script Plug-in About box_files"
+									"AlwaysCreate" = "11:FALSE"
+									"Condition" = "8:"
+									"Transitive" = "11:FALSE"
+									"Property" = "8:_9BFB356A8AA4448192B493B19D7B5C0B"
+										"Folders"
+										{
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			"{1525181F-901A-416C-8A58-119130FE478E}:_A40FB21300A947F6889A196E4B8DE8FF"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_FEBADF54002348F6B0513A97DAFA81A3"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_079310DC8AA64883BD871FDFF54B2686"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_8BE99E58AD8C4A549E71FB679DF7BA23"
+							{
+							"Name" = "8:Help"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_C242359091874175B1B60A8894135258"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:PythonEcMergeModule.1371781EFDD1423189C5C4A3EB4011D3"
+		"Version" = "8:1.0.0.0"
+		"Title" = "8:PythonEC"
+		"Subject" = "8:Python EncConverter"
+		"Author" = "8:SIL"
+		"Keywords" = "8:Python, Encoding Conversion, SILConverters"
+		"Comments" = "8:Merge module containing the Python Script EncConverter DLLs"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_88E820CF3CB84D4795EA9808ACF0A976"
+			{
+			"Name" = "8:Help for Python Script Plug-in"
+			"Arguments" = "8:"
+			"Description" = "8:"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_ABB59E6BF25D4EFB9195947F6BAFBC24"
+			"Folder" = "8:_8BE99E58AD8C4A549E71FB679DF7BA23"
+			"WorkingFolder" = "8:_5350BA965614456A8046EC072BC2CA33"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

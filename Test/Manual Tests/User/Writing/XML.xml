@@ -1,0 +1,23 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="Writing\XML.xml">
+ <title tag="wrtxml">Test scripts in XML</title>
+ <index>
+  <li>XML: test scripts</li>
+  <li>making XML test scripts</li>
+  <li>creating XML test scripts</li>
+ </index>
+ <introduction>
+  <p>When you send a test script to the <link uri="..\Milestone\LSTD.xml" type="module">Language Software Test Department</link>, it is edited and converted to XML. Our tools are then used to make the test script available to our team members via our source control system, intranet, this HTML Help File and varoius tracking reports used internally. This is possible because XML is powerful and flexible, allowing control over the expression of our documents in various media and as data to programs.</p>
+  <p>To author or render existing testscripts in XML, you will need the latest version of your browser (IE 5.5, or Netscape 6.01) and a few free software tools. Though you can write XML with none of these, just a <link uri="..\XML\Editor.xml" type="module">text editor</link>, these will allow you to see what it will look like in the HTML help file format and validate that your XML is correct.</p>
+  <p>Set up the <link uri="tools.xml" type="module">XML test script authoring tools</link>.</p>
+ </introduction>
+ <moduleGroup>
+  <li><link uri="tools.xml" type="module">Using the XML authoring tools</link></li>
+  <li><link uri="xlibrary.xml" type="module">Setting up a test script library in XML</link></li>
+  <li><link uri="xtestscript.xml" type="module">Rendering a test script in XML</link></li>
+  <li><link uri="xtestcase.xml" type="module">Rendering a test case in XML</link></li>
+  <li><link uri="xteststep.xml" type="module">Rendering a test step in XML</link></li>
+  <li><link uri="validlib.xml" type="module">Validating your XML test script - Did I get it right?</link></li>
+  <li><link uri="..\Using\Submit.xml" type="module">Send in your work</link> as you would test reports</li>
+ </moduleGroup>
+</overview>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+   <goal>Exercises add and delete styles</goal>
+
+   <bug id="lt-8864" desc="Add Style - Delete Crash"/>
+   <bug id="lt-6808" desc="delete a style get a crash"/>
+   <bug id="lt-8727" desc="Add/Delete Style then Crash"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+<!-- Go to View/Texts/Edit -->
+	<click select="menubar/view/texts-words/interlinear-texts"/>
+
+<!-- Go to Format/Styles -->
+	<click select="menubar/format/styles"/>
+
+<!--create new style, test tabs-->
+  <on-dialog select="styles[@role='dialog']">
+   <click select="add"/>
+   <insert>{DOWN}</insert>
+   <insert>~</insert>
+   <click select="general/name/data"/>
+	 <insert>{END}+{HOME}</insert>
+	 <insert>Of Course I Have Style</insert>
+   <click select="general/tab"/>
+   <click select="font/tab"/>
+   <click select="paragraph/tab"/>
+   <click select="bullets-and-numbering/tab"/>
+   <click select="border/tab"/>
+   <click select="ok"/>
+  </on-dialog>
+
+  <!--on-dialog title="Beta Notice"-->
+   <!--click path="$ok"/-->
+  <!--/on-dialog-->
+
+<!-- Go to Format/Styles -->
+	<click select="menubar/format/styles"/>
+
+<!-- delete new style -->
+  <on-dialog select="styles[@role='dialog']">
+   <click select="data" path="Normal"/>
+   <insert>{PGDN}</insert>
+   <click select="data" path="Of Course I Have Style"/>
+   <glimpse id="check" select="general/name/data" prop="value" expect="Of Course I Have Style"/>
+   <click select="delete"/>
+   <insert wait="3000">{UP}</insert> <!-- wait for the deletion to finish -->
+   <click select="ok"/>
+  </on-dialog>
+
+  <!--on-dialog title="Deleting Style">
+   <click path="9:Yes"/>
+  </on-dialog-->
+
+  </on-application>
+</accil>

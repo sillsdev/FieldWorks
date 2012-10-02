@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LangProject>
+<PartsOfSpeech>
+<CmPossibilityList>
+<Depth><Integer val="127"/></Depth>
+<IsSorted><Boolean val="true"/></IsSorted>
+<UseExtendedFields><Boolean val="true"/></UseExtendedFields>
+<ItemClsid><Integer val="5049"/></ItemClsid>
+<WsSelector><Integer val="-3"/></WsSelector>
+<Name>
+<AUni ws="en">Parts Of Speech</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">Pos</AUni>
+</Abbreviation>
+<Possibilities>
+<PartOfSpeech>
+<ForeColor><Integer val="6303632"/></ForeColor>
+<BackColor><Integer val="-1073741824"/></BackColor>
+<UnderColor><Integer val="-1073741824"/></UnderColor>
+<UnderStyle><Integer val="1"/></UnderStyle>
+<Name>
+<AUni ws="en">Adverb</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">adv</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An adverb, narrowly defined, is a part of speech whose members modify verbs for such categories as time, manner, place, or direction. An adverb, broadly defined, is a part of speech whose members modify any constituent class of words other than nouns, such as verbs, adjectives, adverbs, phrases, clauses, or sentences. Under this definition, the possible type of modification depends on the class of the constituent being modified.</Run>
+</AStr>
+</Description>
+<CatalogSourceId><Uni>Adverb</Uni></CatalogSourceId>
+</PartOfSpeech>
+<PartOfSpeech>
+<ForeColor><Integer val="6303632"/></ForeColor>
+<BackColor><Integer val="-1073741824"/></BackColor>
+<UnderColor><Integer val="-1073741824"/></UnderColor>
+<UnderStyle><Integer val="1"/></UnderStyle>
+<Name>
+<AUni ws="en">Noun</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">n</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A noun is a broad classification of parts of speech which include substantives and nominals.</Run>
+</AStr>
+</Description>
+<CatalogSourceId><Uni>Noun</Uni></CatalogSourceId>
+</PartOfSpeech>
+<PartOfSpeech>
+<ForeColor><Integer val="6303632"/></ForeColor>
+<BackColor><Integer val="-1073741824"/></BackColor>
+<UnderColor><Integer val="-1073741824"/></UnderColor>
+<UnderStyle><Integer val="1"/></UnderStyle>
+<Name>
+<AUni ws="en">Pro-form</AUni>
+																							</Name>
+<Abbreviation>
+<AUni ws="en">pro-form</AUni>
+																							</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A pro-form is a part of speech whose members usually substitute for other constituents, including phrases, clauses, or sentences, and whose meaning is recoverable from the linguistic or extralinguistic context.</Run>
+</AStr>
+</Description>
+<CatalogSourceId><Uni>Pro-form</Uni></CatalogSourceId>
+<SubPossibilities>
+<PartOfSpeech>
+<ForeColor><Integer val="6303632"/></ForeColor>
+<BackColor><Integer val="-1073741824"/></BackColor>
+<UnderColor><Integer val="-1073741824"/></UnderColor>
+<UnderStyle><Integer val="1"/></UnderStyle>
+<Name>
+<AUni ws="en">Pronoun</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">pro</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A pronoun is a pro-form which functions like a noun and substitutes for a noun or noun phrase.</Run>
+</AStr>
+</Description>
+<CatalogSourceId><Uni>Pronoun</Uni></CatalogSourceId>
+</PartOfSpeech>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech>
+<ForeColor><Integer val="6303632"/></ForeColor>
+<BackColor><Integer val="-1073741824"/></BackColor>
+<UnderColor><Integer val="-1073741824"/></UnderColor>
+<UnderStyle><Integer val="1"/></UnderStyle>
+<Name>
+<AUni ws="en">Verb</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">v</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A verb is a part of speech whose members typically signal events and actions; constitute, singly or in a phrase, a minimal predicate in a clause; govern the number and types of other constituents which may occur in the clause; and, in inflectional languages, may be inflected for tense, aspect, voice, modality, or agreement with other constituents in person, number, or grammatical gender.</Run>
+</AStr>
+</Description>
+<CatalogSourceId><Uni>Verb</Uni></CatalogSourceId>
+</PartOfSpeech>
+</Possibilities>
+</CmPossibilityList>
+</PartsOfSpeech>
+</LangProject>

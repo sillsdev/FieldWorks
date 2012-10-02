@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Tests Grammar/Inflection Features -->
+
+<accil on-fail="assert">
+	<goal>Creates a Grammar Inflection Feature</goal>
+
+	<bug id="FWR-316" desc="Crash invoking OnDataTreeInsert()"/>
+	<bug id="LT-8184" desc="Add Inflection Feature from Catalog doesn't close"/>
+	<bug id="LT-7871" desc="Create a new value, get a crash"/>
+	<bug id="LT-7649" desc="Ctrl A also selects language in multilingual text fields"/>
+	<bug id="LT-6915" desc="Delete a feature, get a crash"/>
+<!--test Grammar Feature insert and deletes-->
+<!--assumes original Kalaba database-->
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+  <!--Go to Lists/Feature Types-->
+  <click select="menubar/view/grammar/inflection-features"/>
+
+  <!--insert new feature-->
+  <click select="toolbar/insert/new-inflection-feature"/>
+
+  <on-dialog title="Add Inflection Features from Catalog" name="MasterInflectionFeatureListDlg">
+	<insert>{RIGHT}</insert>
+	<insert>{DOWN}</insert>
+	<insert>{RIGHT}</insert>
+	<click path="9:Inflection Features Catalog[2]/36:positive: pos"/>
+	<insert>~</insert>
+  </on-dialog>
+
+<model select="inflection-features[@role='view']">
+
+  <click id="noDegree" select="browse/record/col" row="*" col="1" path="/value:degree"/>
+
+  <!--insert new value (Values heading in edit pane)-->
+   <click select="edit/slice/values/label"/>
+   <click select="edit/slice/values/drop"/>
+   <insert>{DOWN}~</insert>
+
+   <!-- insert wait="500">{F5}</insert -->
+   <!--var id="ind" set="*"/-->
+   <!--click select="edit/slice/value-name/data"/-->
+   <insert>^a</insert>
+   <insert>farenheit</insert>
+   <click select="edit/slice/description/data" ind="*" />
+
+  <!--check success-->
+   <glimpse wait="500" id ="check1" select="edit/slice/value-name/data" ind="7" prop="value" expect="farenheit"/>
+
+ <!--delete first feature value-->
+  <click side="right" select="edit/slice/value-name/label" ind="*"/>
+  <insert wait="300">{DOWN}</insert>
+  <insert wait="300">~</insert>
+  <insert wait="300">d</insert>
+
+  <!--check success-->
+  <glimpse id ="check2" select="edit/slice/value-name/data" prop="value" expect="degree" on-pass="assert"/>
+
+  <!--delete feature-->
+  <click select="//toolbar/standard/delete"/>
+  <insert>{TAB}</insert>
+  <insert>~</insert>
+
+  <!-- still have to get the cursor off the delete button or the next test fails -->
+   <click select="edit/show-hidden-fields/check-box"/>
+   <click select="edit/show-hidden-fields/check-box"/>
+
+</model>
+
+  </on-application>
+</accil>

@@ -1,0 +1,94 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2001, SIL International. All rights reserved.
+
+File: RnAnthroList.rc
+Responsibility: Steve McConnel
+Last reviewed: Not yet.
+
+Description:
+	FieldWorks Data Notebook specific dialog for selecting an anthropology list for a new project.
+----------------------------------------------------------------------------------------------*/
+#include "RnAnthroListRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"RnAnthroListRes.h\0"
+END
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+/*----------------------------------------------------------------------------------------------
+	New Language Project Wizard - Choose Anthropology Codes Page.
+----------------------------------------------------------------------------------------------*/
+kridRnAnthroCodes DIALOGEX 0, 0, 230, 152
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_APPWINDOW
+CAPTION "Choose a List of Anthropology Categories"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT       "In the Data Notebook, you will use a list of anthropology categories to catalog your observations.  Choose a starting list of anthropology categories for this project.",
+				kctidRnAnthroDescription,10,5,210,27
+	CONTROL     "&Enhanced Outline of Cultural Materials (OCM), which includes additional codes to better differentiate social, religious, and ethnomusicology topics (recommended if available)",
+				kctidRnAnthroOCMFrame, "Button",
+				BS_AUTORADIOBUTTON | BS_MULTILINE | BS_TOP | WS_TABSTOP, 10,40,210,27
+	CONTROL     "&Standard OCM anthropology categories",kctidRnAnthroOCM,
+				"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,10,70,210,9
+	CONTROL     "&Create my own set of anthropology categories (start with a blank list)",
+				kctidRnAnthroBlank, "Button",
+				BS_AUTORADIOBUTTON | BS_MULTILINE | BS_TOP | WS_TABSTOP, 10,82,212,18
+	CONTROL     "&Use",kctidRnAnthroUseOther, "Button", BS_AUTORADIOBUTTON | WS_TABSTOP,
+				10,103,30,9
+	COMBOBOX    kctidRnAnthroOther,40,103,180,70,
+				CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+	DEFPUSHBUTTON   "OK",kctidOk,40,128,50,14
+	PUSHBUTTON      "Help...",kctidHelp,140,128,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidRnAnthroOCMFrame  "Sets the OCM categories enhanced with FRAME categories as your anthropology categorizing system."
+	kctidRnAnthroOCM       "Sets the standard OCM categories as your anthropology categorizing system."
+	kctidRnAnthroBlank     "Sets an empty list as your anthropology categorizing system."
+	kctidRnAnthroUseOther  "Sets a locally defined list as your anthropology categorizing system (Not Version 1)."
+	kctidRnAnthroOther     "Opens a dialog so you can select the locally defined list of anthropology categories you want to use."
+	kstidRnAnthroImportListProg     "Importing the anthropology categories list."
+	kstidRnAnthroImportListTitleFmt "Initializing the %<0>s project"
+END
+
+// These strings are the default name and abbreviation for a user-defined anthropology list.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidRnAnthroListName           "Anthropology Categories"
+	kstidRnAnthroListAbbr           "Anth"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////

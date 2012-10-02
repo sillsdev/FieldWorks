@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\Result.xml">
+ <title tag="wrtres">Writing a result</title>
+ <index>
+  <li>test cases: writing Results</li>
+ </index>
+ <prerequisites>
+  <p>Before attempting to write a result, you should be in the process of</p>
+  <ul>
+   <li>writing test steps for a specific test case.</li>
+   <li>reviewing <link uri="..\TCL\CaseStep.xml" type="module">test step structure</link>.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Here are some guidelines for writing step results:</p>
+  <ul>
+   <li>Keep the results for each step to a minimum.</li>
+   <li>List multiple results for easier reading.</li>
+   <li>Each result item should be a detectible change or potential bug that should not happen.</li>
+   <li>Begin each item of the result list with the qualified name of the interface object affected or potentially affected.</li>
+   <li>Each result item is used to generate a bug pattern for the step.</li>
+  </ul>
+ </guidelines>
+</task>

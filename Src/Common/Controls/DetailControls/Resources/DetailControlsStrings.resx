@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksBadEditorType" xml:space="preserve">
+	<value>Editor type '{0}' not implemented.</value>
+  </data>
+  <data name="ksBadEnv" xml:space="preserve">
+	<value>Error in Environment</value>
+	<comment>used as header for message box displaying an error message</comment>
+  </data>
+  <data name="ksCmdDisabled" xml:space="preserve">
+	<value>Command disabled</value>
+  </data>
+  <data name="ksCmdUnavailable" xml:space="preserve">
+	<value>Sorry, that command is not available at the moment</value>
+  </data>
+  <data name="ksCreate" xml:space="preserve">
+	<value>Create</value>
+  </data>
+  <data name="ksDateAndTime" xml:space="preserve">
+	<value>{0} {1}</value>
+	<comment>used to concatenate a long format date string with a short format time string.</comment>
+  </data>
+  <data name="ksDelete" xml:space="preserve">
+	<value>Delete</value>
+  </data>
+  <data name="ksEnterNumber" xml:space="preserve">
+	<value>Please enter a whole number</value>
+  </data>
+  <data name="ksImageSliceFailed" xml:space="preserve">
+	<value>Could not create the ImageSlice. {0}</value>
+  </data>
+  <data name="ksInvalidNumber" xml:space="preserve">
+	<value>Couldn't set the field to that value (too large?).</value>
+  </data>
+  <data name="ksItemFrom" xml:space="preserve">
+	<value>{0} from {1}</value>
+  </data>
+  <data name="ksNewItem" xml:space="preserve">
+	<value>new {0} in {1}</value>
+  </data>
+  <data name="ksNewItemAfter" xml:space="preserve">
+	<value>new {0} after this in {1}</value>
+  </data>
+  <data name="ksNewItemBefore" xml:space="preserve">
+	<value>new {0} before this in {1}</value>
+  </data>
+  <data name="ksNewItemWithin" xml:space="preserve">
+	<value>new {0} in containing {1}</value>
+  </data>
+  <data name="ksNoPlayMedia" xml:space="preserve">
+	<value>Cannot play media file</value>
+	<comment>used as header for message box displaying the system error message</comment>
+  </data>
+  <data name="ksNotInitialized" xml:space="preserve">
+	<value>Not initialized yet.</value>
+  </data>
+  <data name="ksNullLabel" xml:space="preserve">
+	<value>&lt;Empty&gt;</value>
+  </data>
+  <data name="ksQuestionable" xml:space="preserve">
+	<value>???</value>
+	<comment>marks unknown value that the user shouldn't see</comment>
+  </data>
+  <data name="ksRedoChange" xml:space="preserve">
+	<value>Redo change {0}</value>
+  </data>
+  <data name="ksRedoChangeTo" xml:space="preserve">
+	<value>Redo change to {0}</value>
+  </data>
+  <data name="ksRedoDelete" xml:space="preserve">
+	<value>Redo Delete</value>
+  </data>
+  <data name="ksRedoDeleteItem" xml:space="preserve">
+	<value>Redo Delete Item in {0}</value>
+  </data>
+  <data name="ksRedoSet" xml:space="preserve">
+	<value>Redo set {0}</value>
+	<comment>appears as a menu item for redoing a "set" action after undoing it.</comment>
+  </data>
+  <data name="ksRedoSetCat" xml:space="preserve">
+	<value>Redo set Category</value>
+  </data>
+  <data name="ksUndoChange" xml:space="preserve">
+	<value>Undo change {0}</value>
+  </data>
+  <data name="ksUndoChangeTo" xml:space="preserve">
+	<value>Undo change to {0}</value>
+  </data>
+  <data name="ksUndoDelete" xml:space="preserve">
+	<value>Undo Delete</value>
+  </data>
+  <data name="ksUndoDeleteItem" xml:space="preserve">
+	<value>Undo Delete Item in {0}</value>
+  </data>
+  <data name="ksUndoSet" xml:space="preserve">
+	<value>Undo set {0}</value>
+	<comment>appears as a menu item for undoing a "set" action.</comment>
+  </data>
+  <data name="ksUndoSetCat" xml:space="preserve">
+	<value>Undo set Category</value>
+  </data>
+  <data name="ksUndoCreate0" xml:space="preserve">
+	<value>Undo create {0}</value>
+  </data>
+  <data name="ksRedoCreate0" xml:space="preserve">
+	<value>Redo create {0}</value>
+  </data>
+  <data name="ksSliceConfigureWssDlgTitle" xml:space="preserve">
+	<value>Writing Systems for {0} field</value>
+  </data>
+  <data name="ksRootNoComponentsCaption" xml:space="preserve">
+	<value>Morph type root implies no components</value>
+  </data>
+  <data name="ksRootNoComponentsMessage" xml:space="preserve">
+	<value>An entry that has components cannot have a morph type of root, since by definition a root is indivisible. Would you like Language Explorer to delete the references to components in this entry?</value>
+  </data>
+  <data name="ksRedoDeleteRef" xml:space="preserve">
+	<value>Redo Delete Reference</value>
+  </data>
+  <data name="ksUndoDeleteRef" xml:space="preserve">
+	<value>Undo Delete Reference</value>
+  </data>
+  <data name="ksRedoUpdatePicture" xml:space="preserve">
+	<value>Redo Update Picture</value>
+  </data>
+  <data name="ksUndoUpdatePicture" xml:space="preserve">
+	<value>Undo Update Picture</value>
+  </data>
+  <data name="ksGenDateUnknown" xml:space="preserve">
+	<value>Unknown</value>
+  </data>
+  <data name="ksFieldChooserDlgTitle" xml:space="preserve">
+	<value>Set {0}</value>
+  </data>
+  <data name="ksRedoCreateSlot" xml:space="preserve">
+	<value>Redo create Slot</value>
+  </data>
+  <data name="ksUndoCreateSlot" xml:space="preserve">
+	<value>Undo create Slot</value>
+  </data>
+  <data name="ksUndoTextChange" xml:space="preserve">
+	<value>Undo Text Change</value>
+  </data>
+  <data name="ksRedoTextChange" xml:space="preserve">
+	<value>Redo Text Change</value>
+  </data>
+  <data name="ksUndoDemote" xml:space="preserve">
+	<value>Undo Demote</value>
+  </data>
+  <data name="ksRedoDemote" xml:space="preserve">
+	<value>Redo Demote</value>
+  </data>
+  <data name="ksChooseOwnerOfDemotedRecord" xml:space="preserve">
+	<value>Choose Owner of Demoted Record</value>
+  </data>
+  <data name="ksUndoMoveUp" xml:space="preserve">
+	<value>Undo Move Up</value>
+  </data>
+  <data name="ksRedoMoveUp" xml:space="preserve">
+	<value>Redo Move Up</value>
+  </data>
+  <data name="ksUndoMoveDown" xml:space="preserve">
+	<value>Undo Move Down</value>
+  </data>
+  <data name="ksRedoMoveDown" xml:space="preserve">
+	<value>Redo Move Down</value>
+  </data>
+  <data name="ksUndoPromote" xml:space="preserve">
+	<value>Undo Promote</value>
+  </data>
+  <data name="ksRedoPromote" xml:space="preserve">
+	<value>Redo Promote</value>
+  </data>
+  <data name="ksChooseOwnerOfDemotedSubrecord" xml:space="preserve">
+	<value>Choose Owner of Demoted Subrecord</value>
+  </data>
+  <data name="ksUndoCreatingInflectionalAffixCategoryItem" xml:space="preserve">
+	<value>Undo Creating Inflectional Affix Category Item</value>
+  </data>
+  <data name="ksRedoCreatingInflectionalAffixCategoryItem" xml:space="preserve">
+	<value>Redo Creating Inflectional Affix Category Item</value>
+  </data>
+  <data name="ksRedoAlphabeticalOrder" xml:space="preserve">
+	<value>Redo Alphabetical Order</value>
+  </data>
+  <data name="ksRedoReorder" xml:space="preserve">
+	<value>Redo Change Order</value>
+  </data>
+  <data name="ksUndoAlphabeticalOrder" xml:space="preserve">
+	<value>Undo Alphabetical Order</value>
+  </data>
+  <data name="ksUndoReorder" xml:space="preserve">
+	<value>Undo Change Order</value>
+  </data>
+</root>

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filenew" num="2.1.1" abbr="flnp" file="FW\FileNewProject.xml">
+<title tag="filenew">File - New Language Project Wizard Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The New Language Project Wizard is the used to set up basic information about a new language project, such as the name of the project, writing system, analysis language, etc. The Wizard has four steps and hence four dialog boxes.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangProjWiz/NewLangProjWizard.html" type="doc">New Language Project Wizard</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "New Language Project"</p>
+</context>
+
+<case id="flnpAct" num="1" order="any">
+<title tag="flnpAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke File - New Language Project (from the File menu).
+<r>Step 1 of the New Language Project Wizard is displayed.</r>
+<p name="bug">New Language Project is not working</p>
+</step>
+<step name="1.2" link="Bug">Invoke File - New Language Project. Use the images at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangProjWiz/NewLangProjWizard.html" type="doc">New Language Project Wizard</link> to visually inspect the four dialog boxes of this Wizard.
+<r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">New Language Project Wizard layout incorrect</p>
+</step>
+
+</case>
+
+<case id="flnpDiac" num="2" order="any">
+<title tag="flnpDiac">Exercise dialog controls</title>
+<context>
+<p>When the Wizard is running</p>
+</context>
+<p name="Note">Apply the this test case to all four pages of the Wizard.</p>
+
+<step name="2.1">Use <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test the dialog's basic functionality.
+<r>
+<ul>
+<li>There is no OK button, What's this help widget nor resize widget.</li>
+<li>Report any failures as suggested using "New Language Project Wizard" as the name of the dialog.</li>
+</ul>
+</r>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Back, Next, and Finish buttons.
+<r>Report any failures as suggested using "New Language Project Wizard" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="flnpone" num="3" order="any">
+<title tag="flnpone">Identify the Language - Step 1</title>
+<context>
+<p>When the Step 1 of the Wizard is displayed</p>
+</context>
+
+<step name="3.1" link="Bug">Use <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Language Name text box.
+<r>
+<ul>
+ <li>Default value: Unknown Language Name</li>
+ <li>This control is always enabled</li>
+ <li>Report any failures as suggested using "New Language Project Language Name" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Language Name text box default wrong</p>
+<p name="bug">New Language Project Language Name text box disabled</p>
+</step>
+<step name="3.2" link="Bug">Leave the name of the language text box empty.
+<r>Next button is disabled until the user has entered a value in the language text box.</r>
+<p name="bug">New Language Project Language Name text box empty behavior is bad</p>
+</step>
+<step name="3.3" link="Bug">Use <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Code text box.
+<r>
+<ul>
+ <li>Default value: blank</li>
+ <li>This control is always enabled</li>
+ <li>Report any failures as suggested using "New Language Project Code" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Code text box default wrong</p>
+<p name="bug">New Language Project Code text box disabled</p>
+</step>
+<step name="3.4" link="Bug">Enter less than three letters in the enthologue code box.
+<r>Next is disabled.</r>
+<p name="bug">New Language Project Code fails to disable Next button</p>
+</step>
+<step name="3.5" link="Bug">Enter more than three letters in the enthologue code box.
+<r>Only three letters are allowed.</r>
+<p name="bug">New Language Project Code allows codes longer than 3 letters</p>
+</step>
+<step name="3.6" link="Bug">Enter in some combination that includes a number or symbol.
+<r>Next is disabled. Only letters are allowed.</r>
+<p name="bug">New Language Project Code allows non-letters to be used for the code</p>
+</step>
+<step name="3.7" link="Bug">Click Help.
+<r>A list of Ethnologue codes is given on the contextual help page.</r>
+<p name="bug">New Language Project step 1 help shows no code list</p>
+</step>
+
+<step name="3.8" link="Bug">
+<i>Note: 3.8 and 3.10 apply only to the New Language Project Wizard.  For the New Language Definition Wizard,
+see 3.12 and 3.13.</i>
+In the language name and Ethnologue code field,
+enter the name and matching code of a canned analysis writing system
+(English/ENG, French/FRN, Portuguese/POR, or Spanish/SPN). Press the Next button.
+<r>The wizard proceeds to the next page without any Question message
+box.</r>
+</step>
+
+<step name="3.9" link="Bug">In the Ethnologue code field,
+enter the code of a canned analysis writing system (ENG, FRN, POR,
+SPN). In the language name field, enter a name that doesn't match
+the code. Press the Next button.
+<r>A "Duplicate Ethnologue Code" question message box appears, as described
+in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangProjWiz/NewLangProjWizard.html" type="doc">spec</link> (under Page 1 - 'Next' button), with Yes/No/Help buttons.
+The default is No. The suggested code given is the code you entered,
+plus a suffix that makes it unique.</r>
+</step>
+
+<step name="3.9.0" link="Bug">Test the controls on the Duplicate
+Ethnologue Code dialog using <link uri="../StdCtrls/Dialog.xml">Basic
+Dialog Tests</link> (not all controls are present, e.g. no OK button
+nor "What's This?" widget).
+<r>Report any failures using "Duplicate Ethnologue Code" as the name
+of the dialog.</r>
+</step>
+
+<step name="3.9.1" link="Bug">On the Duplicate Ethnologue Code dialog,
+click Help.
+<r>The appropriate Help page is displayed.</r>
+</step>
+
+<step name="3.9.2" link="Bug">On the Duplicate Ethnologue Code dialog,
+click No.
+<r>The message box closes, the wizard stays at Step 1, and focus
+is set to the Ethnologue code field with the contents selected.
+</r>
+</step>
+
+<step name="3.9.3" link="Bug">On the Duplicate Ethnologue Code dialog,
+click Yes.
+<r>The suggested dialect code is accepted, the message box closes,
+and the wizard procedes to Step 2.</r>
+</step>
+
+<step name="3.10" link="Bug">
+<i>Note: 3.8 and 3.10 apply only to the New Language Project Wizard.  For the New Language Definition Wizard,
+see 3.12 and 3.13.</i>
+In the language name and Ethnologue code field,
+enter the exact name of a canned analysis writing system (English, French,
+Spanish, or Portuguese), but enter a different Ethnologue code.
+Press the Next button.
+<r>An Information message box appears with a message as shown in
+the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangProjWiz/NewLangProjWizard.html" type="doc">
+spec</link>.
+</r>
+</step>
+
+<step name="3.10.0" link="Bug">
+Test the Help and OK buttons on this dialog.
+<r>The Help button launches an appropriate help page, and the OK
+button returns to Step 1 of the wizard. Report problems using
+"Writing System Already Defined" as the name of the dialog.
+</r>
+</step>
+
+<step name="3.11" link="Bug">
+In the Language Name and Ethnologue code fields, enter values
+that are not predefined, e.g. Klingon and KLN.
+<r>The wizard proceeds to the next page without any Question message
+box.</r>
+</step>
+
+<step name="3.12" link="Bug">
+<i>Note: 3.12 and 3.13 apply only to the New Language Definition Wizard.</i>
+In the language name and Ethnologue code field,
+enter the name and matching code of a canned analysis writing system
+(English/ENG, French/FRN, Portuguese/POR, or Spanish/SPN). Press the Next button.
+<r>An Information message box appears with a message as shown in
+the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangDefnWiz/NewLangDefnWizard.html" type="doc">
+spec</link>.
+</r>
+</step>
+
+<step name="3.12.0" link="Bug">
+Test the Help and OK buttons on this dialog.
+<r>The Help button launches an appropriate help page, and the OK
+button returns to Step 1 of the wizard. Report problems using
+"Writing System Already Defined" as the name of the dialog.
+</r>
+</step>
+
+<step name="3.13" link="Bug">
+<i>Note: 3.12 and 3.13 apply only to the New Language Definition Wizard.</i>
+In the language name and Ethnologue code field,
+enter the exact name of a canned analysis writing system (English, French,
+Spanish, or Portuguese), but enter a different Ethnologue code.
+Press the Next button.
+<r>An Information message box appears with a message as shown in
+the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangDefnWiz/NewLangDefnWizard.html" type="doc">
+spec</link>.
+</r>
+</step>
+
+
+</case>
+
+<case id="flnptwo" num="4" order="any">
+<title tag="flnptwo">Set up the Vernacular Writing System - Step 2</title>
+<context>
+<p>When Step 2 of the Wizard is displayed.</p>
+</context>
+
+<step name="4.1" link="Bug">Use <link uri="../StdCtrls/listbox.xml">List Box / Combo Box Tests</link> to test the Choose combo box.
+<r>
+<ul>
+ <li>Default value: Choose...</li>
+ <li>This control is always enabled</li>
+ <li>List has a two-level hierarchy, language name and locale</li>
+ <li>Report any failures as suggested using "New Language Project Choose" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Choose default wrong</p>
+<p name="bug">New Language Project Choose disabled</p>
+<p name="bug">New Language Project Choose list is wrong</p>
+</step>
+<step name="4.2" link="Bug">Leave the Choose... button with its default value. Try to click Next.
+<r>The Next button is disabled until all fields have values.</r>
+<p name="bug">New Language Project Language Choose... null behavior is bad</p>
+</step>
+<step name="4.3" link="Bug">Use <link uri="../StdCtrls/listbox.xml">List Box / Combo Box Tests</link> to test the Default Text Font combo box.
+<r>
+<ul>
+ <li>Default value: Times New Roman</li>
+ <li>This control is always enabled</li>
+ <li>Report any failures as suggested using "New Language Project Text Font" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Text Font default wrong</p>
+<p name="bug">New Language Project Text Font disabled</p>
+</step>
+<step name="4.4" link="Bug">Use <link uri="../StdCtrls/listbox.xml">List Box / Combo Box Tests</link> to test the Heading Font combo box.
+<r>
+<ul>
+ <li>Default value: Arial</li>
+ <li>This control is always enabled</li>
+ <li>Report any failures as suggested using "New Language Project Heading Font" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Heading Font default wrong</p>
+<p name="bug">New Language Project Heading Font disabled</p>
+</step>
+<step name="4.5" link="Bug">Use <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Keyman Setup  button.
+<r>
+<ul>
+ <li>This control is always enabled</li>
+ <li>Report any failures as suggested using "New Language Project Keyman button" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Keyman button disabled</p>
+<p name="Note">Not V1</p>
+</step>
+</case>
+
+<case id="flnpthree" num="5" order="any">
+<title tag="flnpthree">Choose an Analysis Language - Step Three</title>
+<context>
+<p>When Step 3 of the Wizard is displayed.</p>
+</context>
+
+<step name="5.1" link="Bug">Use <link uri="../StdCtrls/radiobutton.xml">Radio Button Tests</link> to test the <i>Choose an Analysis Language</i> radio buttons.
+<r>
+<ul>
+ <li>Default value: English or the main language set in operating system</li>
+ <li>This control is always enabled</li>
+ <li>Report any failures as suggested using "New Language Project Analysis Language" as the name of the control group.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Analysis Language default wrong</p>
+<p name="bug">New Language Project Analysis Language disabled</p>
+</step>
+<step name="5.2" link="Bug">Use <link uri="../StdCtrls/listbox.xml">List Box / Combo Box Tests</link> to test the Choose combo box.
+<r>
+<ul>
+ <li>Default value: Choose...</li>
+ <li>This control is always enabled</li>
+ <li>List has a two-level hierarchy, language name and locale</li>
+ <li>Report any failures as suggested using "New Language Project step 3 Choose" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">New Language Project step 3 Choose default wrong</p>
+<p name="bug">New Language Project step 3 Choose disabled</p>
+<p name="bug">New Language Project step 3 Choose list is wrong</p>
+</step>
+<step name="5.3" link="Bug">Select the Other radio button and leave the Choose... button with its default value. Try to click Next.
+<r>The Next button is disabled until a value is selected.</r>
+<p name="bug">New Language Project Language Choose... Step 3 null behavior is bad</p>
+</step>
+
+</case>
+
+<case id="flnpfour" num="6" order="any">
+<title tag="flnpfour">Choose a List of Anthropology Codes - Step Four</title>
+<context>
+<p>When Step 4 of the Wizard is displayed.</p>
+</context>
+
+<step name="6.1" link="Bug">Use <link uri="../StdCtrls/radiobutton.xml">Radio Button Tests</link> to test the <i>Choose a List of Anthropology Categories</i> radio buttons.
+<r>
+<ul>
+ <li>Default value: Enhanced OCM</li>
+ <li>This control is always enabled</li>
+ <li>Report any failures as suggested using "New Language Project Category" as the name of the control group.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Category default wrong</p>
+<p name="bug">New Language Project Category buttons disabled</p>
+</step>
+<step name="6.2" link="Bug">Install the application with a license key.
+<r>All options are available.</r>
+<p name="bug">New Language Project Category buttons 1 and 2 disabled</p>
+</step>
+<step name="6.3" link="Bug">Install the application without a license key.
+<r>Options 1 and 2 are disabled.</r>
+<p name="bug">New Language Project Category buttons 1 and 2 enabled</p>
+</step>
+<step name="6.4" link="Bug">Use <link uri="../StdCtrls/listbox.xml">List Box / Combo  Box Tests</link> to test the Use combo box.
+<r>
+<ul>
+ <li>Default value: first item on drop-down list</li>
+ <li>When the branch has supplied additional XML files, this control is present</li>
+ <li>Check the Templates folder in the installation folder to see these files.</li>
+ <li>Report any failures as suggested using "New Language Project Use" as the name of the control group.</li>
+</ul>
+</r>
+<p name="bug">New Language Project Use default wrong</p>
+<p name="bug">New Language Project Use disabled when files present</p>
+<p name="bug">New Language Project Use enabled when files not present</p>
+</step>
+<step name="6.5" link="Bug">Click Finish. Verify the results.
+<r>
+<ul>
+ <li>A new language project is created on the local server. The name of the language project is Language name, e.g., "Selaru", or "Indonesian".</li>
+ <li>The vernacular language is created as per the settings in this wizard. A Language Definition object is placed in the Explorer's hierarchy: Shared Resources-Language Definitions-Local.</li>
+ <li>The initial folder hierarchy for the language project is created as Language Project-Data-Topics Lists</li>
+ <li>The various topics lists needed for the language project, including the OCM list are created. The global lists belong in the <i>Topics Lists</i> folder.</li>
+ <li>An empty Data Notebook is created and placed in the UserData folder.</li>
+</ul>
+</r>
+<p name="bug">New Language Project not created</p>
+<p name="bug">New Language Project name not correct</p>
+<p name="bug">New Language Project vernacular language definition not created</p>
+<p name="bug">New Language Project initial folder hierarchy not correct</p>
+<p name="bug">New Language Project topics lists not created</p>
+<p name="bug">New Language Project Data Notebook not created</p>
+</step>
+</case>
+
+<update date="Sep-05-01" author="ShalomA">Test created.</update>
+<update date="Dec-05-01" author="MikeL">Expanded steps that were too general</update>
+<update date="May-30-02" author="RussD">Minor changes.</update>
+<update date="Jun-18-02" author="LarsH">Added Duplicate Ethnologue Code dialog tests (3.8 - 3.13).</update>
+</test>

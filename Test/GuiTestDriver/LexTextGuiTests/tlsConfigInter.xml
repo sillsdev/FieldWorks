@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Tests Tools/Configure Interlinear dialog -->
+<!--  -->
+
+<accil on-fail="assert">
+
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+
+ <on-application args="-db $projectName" title="$projectName$FlexSig" run="ok" close="no" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncTexts.xml"/>
+
+<!-- Go to Texts/Edit/Interlinearize tab -->
+	<click path="$menuTEXTS;menu:Edit"/>
+	<click path="$txtInterlinear"/><!-- Interlinearize tab -->
+
+<!-- Select the first text -->
+	<click path="$txtRec;/$Col;/$Text;/value:Phatani ntima"/>
+
+<!-- Move the focus box off the first "pile" so the tool can see the paths to the data -->
+	<insert wait="300">^{RIGHT}</insert>
+	<insert wait="300">^{RIGHT}</insert>
+
+<!-- Check the order of the row headings: the cursor won't go to these, but the path will be found or fail -->
+	<click path="$txtRowHeads;/value:Word"/>
+	<click path="$txtRowHeads;[2]/value:Morphemes"/>
+	<click path="$txtRowHeads;[3]/value:Lex. Entries"/>
+	<click path="$txtRowHeads;[4]/value:Lex. Gloss"/>
+	<click path="$txtRowHeads;[5]/value:Lex. Gram. Info."/>
+	<click path="$txtRowHeads;[6]/value:Word Gloss"/>
+	<click path="$txtRowHeads;[7]/value:Word Cat."/>
+
+<!-- Check the order of the data in the first "pile" (but don't focus or this tool can't see into it!) -->
+	<glimpse id="Pisapha" path="$txtRowCol;[2]/$Text;/value:Pisapha"/>
+	<glimpse id="pi-1" path="$txtRowCol;[2]/$Text;[2]/20:InnerPile/$Text;/value:pi-"/>
+	<glimpse id="pi-2" path="$txtRowCol;[2]/$Text;[2]/20:InnerPile/$Text;[2]/value:pi-1"/>
+	<glimpse id="8" path="$txtRowCol;[2]/$Text;[2]/20:InnerPile/$Text;[3]/value:8"/>
+	<glimpse id="Vsbj" path="$txtRowCol;[2]/$Text;[2]/20:InnerPile/$Text;[4]/value:V:sbj//(obj)"/>
+	<glimpse id="estas" path="$txtRowCol;[2]/$Text;[3]/value:estas coisas doem"/>
+	<glimpse id="V" path="$txtRowCol;[2]/$Text;[4]/value:V"/>
+
+<!-- Open the Configure Interlinear Lines dialog -->
+	<click path="$menuTOOLS;menu:Configure Interlinear..."/>
+
+	<on-dialog title="Configure Interlinear Lines">
+<!-- Add a Literal Translation -->
+		<click id="lt" path="$cilAvailableLines;Literal Translation"/>
+		<click id="show" path="9:Show >>/43:Show >>"/>
+<!-- Move the Literal Translation up one -->
+		<click id="up" path="$cilUp"/>
+<!-- Add an English Note -->
+		<click id="note" path="$cilAvailableLines;Note"/>
+		<click path="9:Show >>/43:Show >>"/>
+<!-- Move the Note up 2 and down one -->
+		<click path="$cilUp"/>
+		<click path="$cilUp"/>
+		<click id="down" path="$cilDown"/>
+<!-- Change the Note's writing system to English -->
+		<click path="$cilWsDrop"/>
+		<insert wait="300">{DOWN}~</insert><!-- Select English -->
+<!-- Move Word Cat. to the top -->
+		<click path="$cilDisplayedLines;Word Cat."/>
+		<click path="$cilUp"/>
+		<click path="$cilUp"/>
+		<click path="$cilUp"/>
+		<click path="$ok"/>
+	</on-dialog>
+
+<!-- Insert a Note -->
+	<click path="$txtNote"/>
+	<click path="$txtDataRow;/$Text;[2]"/>
+	<insert wait="300">This is a note to the wise!</insert>
+	<glimpse id="seeNote" path="$txtDataRow;/$Text;[2]" prop="value" expect="Note: This is a note to the wise!"/>
+
+<!-- Insert a Literal Translation -->
+	<click path="$txtLt"/>
+	<click path="$txtDataRow;/$Text;[2]"/>
+	<insert wait="300">Literal translation is this</insert>
+	<glimpse id="seeLt" path="$txtDataRow;/$Text;[2]/42:String[2]" prop="value" expect="Literal translation is this"/>
+
+<!-- Select the third text -->
+	<click path="$txtRec;[3]/$Col;/$Text"/>
+<!-- Go back to the first text -->
+	<click path="$txtRec;/$Col;/$Text;/value:Phatani ntima"/>
+	<glimpse id="seeNote2" path="$txtDataRow;/$Text;[3]" prop="value" expect="Note: This is a note to the wise!"/>
+	<glimpse id="seeLt2" path="$txtDataRow;/$Text;[2]/42:String[2]" prop="value" expect="Literal translation is this"/>
+
+<!-- Delete the note -->
+	<click dx="100" side="right" path="$txtDataRow;/$Text;[3]"/>
+	<insert wait="300">{DOWN}~</insert>
+
+<!-- Delete the lit trans -->
+	<click dx="100" side="right" path="$txtDataRow;/$Text;[2]"/>
+	<insert wait="300">{DOWN}~</insert>
+
+<!-- Restore the Configure Interlinear Lines dialog -->
+	<click path="$menuTOOLS;menu:Configure Interlinear..."/>
+
+	<on-dialog title="Configure Interlinear Lines">
+<!-- Hide the Literal Translation -->
+		<click id="ltHide" path="$cilDisplayedLines;Literal Translation"/>
+		<click id="hide" path="9:&lt;&lt; Hide/43:&lt;&lt; Hide"/>
+<!-- Hide the English Note -->
+		<click id="noteHide" path="$cilDisplayedLines;Note"/>
+		<click path="9:&lt;&lt; Hide/43:&lt;&lt; Hide"/>
+<!-- Move Word Cat. to the bottom -->
+		<click path="$cilDisplayedLines;Word Cat."/>
+		<click path="$cilDown"/>
+		<click path="$cilDown"/>
+		<click path="$cilDown"/>
+		<click path="$ok"/>
+	</on-dialog>
+
+
+
+ </on-application>
+
+</accil>

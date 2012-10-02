@@ -1,0 +1,31 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Building\Compile.xml">
+ <title tag="bldcomp">Compile the TestHelp manual</title>
+ <index>
+  <li>manual: compile</li>
+ </index>
+ <prerequisites>
+  <p>Before you can compile this manual, you will need to:</p>
+  <ul>
+   <li>Download and install the <link uri="http://msdn.microsoft.com/library/default.asp?URL=/library/tools/htmlhelp/chm/hh1start.htm" type="doc">Microsoft HTML Help Workshop</link>.</li>
+   <li>Realize, the download will take a half hour or so using a 56K modem with no competing traffic.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps for compiling this manual:</p>
+  <step>Open the three TestHelp.hh* files in the file control system for editing so they can be deleted and rebuilt by the batch file.</step>
+  <step>Double click the HelpFiles\TestHelp.hhp file to launch the Microsoft HTML Help Workshop.</step>
+  <step>Verify the project files in the left pane.</step>
+  <step>Click the TOC and Index tabs to verify the names and indentation of those entries.</step>
+  <step>Click the diskette icon at the bottom to save the TOC in its own HTML format.</step>
+  <step>Click the Index tab.</step>
+  <step>Sort the index by clicking the sort button near the bottom of the control column to the left of the index list.</step>
+  <step>Click the project tab.</step>
+  <step>Click the compile button at the bottom left of the left pane.
+   <p name="Don't panic">If some files don't compile, check their paths in the project file, [OPTIONS] and {FILES} sections, and try to compile again. If source XML files were copied to create new ones, then it is likely the file name in the source XML file is wrong.</p></step>
+ </steps>
+ <label name="Postcompilation">
+  <p name="Testing">Each time the help file is created, it should be tested randomly to see that links, Table of Contents, Index and Searching works.</p>
+  <p name="External links">Mailto links will work if a default mail program is set in Windows. Links to the SIL intranet work only if there is a web connection.</p>
+ </label>
+</task>

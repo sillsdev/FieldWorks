@@ -1,0 +1,87 @@
+c unpoint.cct    remove cantillation marks from SE text files   6-12-96 jmw
+c                and convert to unpointed text.
+begin > use(main)
+
+group(main)
+d33 > ''
+d34 > ''
+d35 > ''
+d36 > ''
+d37 > ''
+d38 > ''
+d40 > ''
+d41 > ''
+d42 > ''
+d43 > ''
+d44 > ''
+c d45 > ''  c 6/3/97 keep makkef jw
+d46 > ''
+d47 > ''
+d58 > ''
+d59 > ''
+d60 > ''
+d62 > ''
+d63 > ''
+d64 > ''
+d65 > ''
+d69 > ''
+d72 > d83  c shin to unpointed sin
+d79 > ''
+d87 > d83  c sin to unpointed sin
+d92 > ''
+d97 > ''
+d101 > ''
+d105 > ''
+d111 > ''
+d117 > ''
+d123 > ''
+d124 > ''
+d125 > ''
+c remove standard cants
+d128 > ''
+d129 > ''
+d130 > ''
+d131 > ''
+d132 > ''
+d133 > ''
+d134 > ''
+d135 > ''
+d136 > ''
+d137 > ''
+d138 > ''
+d139 > ''
+d140 > ''
+d141 > ''
+d142 > ''
+d143 > ''
+d144 > ''
+d149 > ''
+d152 > ''
+d153 > ''
+d154 > ''
+d155 > ''
+d156 > ''
+d157 > ''
+d158 > ''
+d159 > ''
+d161 > ''
+d178 > ''
+d179 > ''
+d180 > ''
+c change full vowels to unpointed consonants and remove dagesh, etc.
+d202 > d121   c convert to yod
+d203 > d104   c convert to he
+d208 > ''
+d225 > ''
+c d226 > d121  c 6/3/97 jw removed, d226 is now ZWL
+d228 > d104
+d233 > ''
+d234 > d121
+d235 > d104
+d238 > d121
+d243 > ''
+d244 > d119  c convert to waw
+d246 > d104
+d248 > ''
+d251 > d119
+d252 > ''

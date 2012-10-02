@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 5 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+		<include from="IncImportVariables.xml"/>
+
+		<var id="TestPlan" select="tests/test[@case='$TestCase;']/@Test-Plan"/>
+
+		<!-- Import Standard Format Setup -->
+		<on-dialog title="Standard Format Import Setup" until="10000">
+
+			<insert>{TAB 5}</insert>
+
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\fig"/>
+			<glimpse id="FigExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$FigExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\fig" Scripture Mapping -->
+					<click path="$Modify"/>
+
+					<on-dialog title="Modify Mapping" until="10000">
+						<click path="9:Exclude this data from import/44:Exclude this data from import"/>
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+			</if>
+
+			<insert>{DOWN 7}</insert>
+
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\imt"/>
+			<glimpse id="ImtExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$ImtExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\imt" Scripture Mapping -->
+					<click path="$Modify"/>
+
+					<on-dialog title="Modify Mapping" until="10000">
+						<if>
+							<!-- Is Back Translation is being used? -->
+							<condition of="$btNone" is="FALSE"/>
+							<then>
+								<if>
+									<!--<condition of="$ImportPt5BT" is="TRUE"/>-->
+									<condition of="$TestPlan" is="ImportPt5BT"/>
+									<then>
+										<insert>{TAB 5}</insert>
+									</then>
+									<else>
+										<insert>{TAB 4}</insert>
+									</else>
+								</if>
+							</then>
+							<else>
+								<insert>{TAB 5}</insert>
+							</else>
+						</if>
+						<!-- Select "Intro Section Head" -->
+						<insert>{UP 36}</insert>
+						<click path="$OK"/>
+					</on-dialog>
+
+					<insert>{DOWN 8}</insert>
+				</then>
+				<else>
+					<insert>{DOWN 3}</insert>
+				</else>
+			</if>
+
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\mt2"/>
+			<glimpse id="Mt2Exists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$Mt2Exists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\mt2" Scripture Mapping -->
+					<click path="$Modify"/>
+
+					<on-dialog title="Modify Mapping" until="10000">
+						<if>
+							<!-- Is Back Translation is being used? -->
+							<condition of="$btNone" is="FALSE"/>
+							<then>
+								<if>
+									<!--<condition of="$ImportPt5BT" is="TRUE"/>-->
+									<condition of="$TestPlan" is="ImportPt5BT"/>
+									<then>
+										<insert>{TAB 5}</insert>
+									</then>
+									<else>
+										<insert>{TAB 4}</insert>
+									</else>
+								</if>
+							</then>
+							<else>
+								<insert>{TAB 5}</insert>
+							</else>
+						</if>
+						<!-- Select "Title Main" -->
+						<insert>{UP}</insert>
+						<!--<on-dialog title="Bogus Dialog" until="3000" on-fail="skip"/>-->
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+			</if>
+
+			<insert>{DOWN 7}</insert>
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\restore"/>
+			<glimpse id="RestoreExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$RestoreExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\restore" Scripture Mapping -->
+					<click path="$Modify"/>
+
+					<on-dialog title="Modify Mapping" until="10000">
+						<click path="9:Exclude this data from import/44:Exclude this data from import"/>
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+			</if>
+		</on-dialog>
+
+		<on-dialog title="Standard Format Import Setup" until="10000">
+			<click path="$Next"/>
+			<click path="9:Finish/43:Finish"/>
+		</on-dialog>
+
+	</on-application>
+</accil>

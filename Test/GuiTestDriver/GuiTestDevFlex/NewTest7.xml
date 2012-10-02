@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?-->
+
+<accil>
+
+   <!--  -->
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+	<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application run = "ok" args = "-db $projectName" on-fail = "assert">
+
+   <click select="menubar/view/XXXXXXX"/>
+
+   <model select="XXXX[@role='view']">
+
+
+
+   </model>
+
+ </on-application>
+
+ <click select="menubar/view/lexicon/lexicon-edit"/>
+ <click select="toolbar/first-record"/>
+ <!-- Get the cursor off the toolbar so the next test won't die! -->
+ <click select="lexicon-edit[@role='view']/entry/slice/lexeme-form/data"/>
+ <sound frequency = "700" duration = "250"/>
+
+</accil>

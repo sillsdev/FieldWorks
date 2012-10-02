@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- CHECK BOX BEHAVIOR -->
+<!-- This code will set a specific checkbox's (GuiChkBox) desired state -->
+<!--          (Checked = TRUE / Unchecked = FALSE). -->
+<!-- Use this code in the following example as a guideline: -->
+
+<!--<var id="GuiChkBox" set="44:Annotations"/>
+<glimpse id="ChkBoxState1" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+<var id="ActualState" set="$ChkBoxState1"/>
+<var id="DesiredState" set="FALSE"/>
+<include from="CheckBox.xml"/>-->
+
+<include>
+
+	<if>
+		<condition of="$ActualState" is="true"/>
+		<!--<condition of="$ActualState" is="TRUE"/>-->
+		<then>
+			<if>
+				<condition of="$DesiredState" is="FALSE"/>
+				<then>
+					<!-- Chk Box is checked and should uncheck it -->
+					<click path="$GuiChkBox"/>
+				</then>
+			</if>
+		</then>
+		<else>
+			<if>
+				<condition of="$DesiredState" is="TRUE"/>
+				<then>
+					<!-- Chk Box is unchecked and should check it -->
+					<click path="$GuiChkBox"/>
+				</then>
+			</if>
+		</else>
+	</if>
+
+</include>

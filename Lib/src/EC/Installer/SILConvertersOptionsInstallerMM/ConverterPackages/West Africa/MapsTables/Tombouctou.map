@@ -1,0 +1,95 @@
+EncodingName	'Tombouctou-Dutch'
+DescriptiveName	'Tombouctou-Dutch to Unicode'
+Version                 "1.0"
+Contact                 "mailto:Doug_Higby@sil.org"
+RegistrationAuthority   "SIL International"
+RegistrationName        "SIL-Tombouctou-Dutch-2006"
+
+ByteDefault		'?'
+UniDefault		replacement_character
+
+ByteClass [ascii] = ( 0 .. 127 )
+UniClass [ascii] = ( 0x0000 .. 0x007f )
+ByteClass [latin1] = ( 0xa0..0xa2 0xa4 0xa6 0xa8 0xab 0xad 0xaf 0xb0 0xb2..0xb6 0xb8..0xbe 0xc0 0xc2 0xc7..0xca 0xcc 0xce 0xd4 0xd9 0xdb 0xe0 0xe2 0xe4 0xe5 0xe7..0xef 0xf2 0xf4 0xf6 0xf7 0xf9..0xfc 0xfe )
+UniClass [latin1] = ( U+00a0..U+00a2 U+00a4 U+00a6 U+00a8 U+00ab U+00ad U+00af U+00b0 U+00b2..U+00b6 U+00b8..U+00be U+00c0 U+00c2 U+00c7..U+00ca U+00cc U+00ce U+00d4 U+00d9 U+00db U+00e0 U+00e2 U+00e4 U+00e5 U+00e7..U+00ef U+00f2 U+00f4 U+00f6 U+00f7 U+00f9..U+00fc U+00fe )
+
+[ascii]	<>	[ascii]
+[latin1]	<>	[latin1]
+
+
+
+0x80	<>	euro_sign
+0x81	<>	latin_small_letter_a combining_breve
+0x82	<>	single_low_9_quotation_mark
+0x83	<>	latin_capital_letter_s combining_caron
+0x84	<>	double_low_9_quotation_mark
+0x85	<>	horizontal_ellipsis
+0x86	<>	latin_small_letter_z combining_dot_below
+0x87	<>	double_dagger
+0x88	<>	modifier_letter_circumflex_accent
+0x89	<>	latin_capital_letter_eng
+;0x8a	<>	unknown character
+0x8b	<>	single_left_pointing_angle_quotation_mark
+0x8c	<>	latin_capital_ligature_oe
+;0x8d	undefined
+;0x8e	<>	might be used in old texts.  Unknown character.
+;0x8f	undefined
+;0x90	undefined
+0x91	<>	left_single_quotation_mark
+0x92	<>	right_single_quotation_mark
+0x93	<>	left_double_quotation_mark
+0x94	<>	right_double_quotation_mark
+0x95	<>	bullet
+0x96	<>	en_dash
+0x97	<>	em_dash
+0x98	<>	small_tilde
+0x99	<>	latin_small_letter_eng
+;0x9a	<>	unknown characters
+0x9b	<>	single_right_pointing_angle_quotation_mark
+0x9c	<>	latin_small_ligature_oe
+;0x9d	undefined
+0x9e	<>	latin_small_letter_z_with_caron
+0x9f	<>	latin_capital_letter_y_with_hook
+
+
+0xA3	<>	latin_capital_letter_open_e
+0xA5	<>	latin_capital_letter_z combining_caron
+0xA7	<>	latin_small_letter_s combining_caron
+0xA9	<>	latin_capital_letter_open_o
+0xAA	>	latin_small_letter_a
+0xAC	>	latin_small_letter_g
+0xAE	<>	latin_small_letter_open_e
+0xB1	<>	latin_small_letter_s combining_dot_below
+
+0xBF	<>	latin_letter_glottal_stop
+0xC1	<>	latin_small_letter_z combining_caron
+0xC3	<>	latin_capital_letter_A combining_breve
+0xC4	<>	latin_small_letter_d combining_dot_below
+0xC5	<>	latin_small_letter_b combining_dot_below
+0xC6	<>	latin_capital_letter_reversed_e
+0xCB	<>	latin_small_letter_h combining_dot_below
+0xCD	<>	latin_small_letter_gamma
+0xCF	<>	latin_small_letter_l combining_dot_below
+0xD0	<>	latin_capital_letter_d combining_dot_below
+0xD1	<>	latin_capital_letter_n_with_left_hook
+0xD2	<>	latin_small_letter_esh
+0xD3	<>	latin_capital_letter_d_with_hook
+0xD5	<>	latin_capital_letter_ezh
+0xD6	<>	U+F216
+0xD7	<>	latin_letter_pharyngeal_voiced_fricative
+0xD8	>	latin_capital_letter_gamma
+0xDA	<>	latin_small_letter_b_with_hook
+0xDC	<>	latin_small_letter_t combining_dot_below
+0xDD	<>	latin_small_letter_h combining_dot_below
+0xDE	<>	latin_capital_letter_h combining_dot_below
+0xDF	<>	latin_capital_letter_b_with_hook
+0xE1	<>	latin_capital_letter_t combining_dot_below
+0xE3	<>	latin_small_letter_a combining_breve
+0xE6	<>	latin_small_letter_reversed_e
+0xF0	<>	latin_capital_letter_l combining_dot_below
+0xF1	<>	latin_capital_letter_z combining_dot_below
+0xF3	<>	latin_capital_letter_gamma
+0xF5	<>	latin_small_letter_ezh
+0xF8	<>	latin_small_letter_gamma
+0xFD	<>	latin_capital_letter_s combining_dot_below
+0xFF	<>	latin_small_letter_y_with_hook

@@ -1,0 +1,659 @@
+; DEV Panini.map
+;Copyright (c) 2002 NLCI
+
+; Mapping table for NLCI's DEV Panini font version 05
+; New version by rde based on vijaya_kumar@kastanet.org's Winscript  Devanagari map:
+
+EncodingName			"CDAC-ISFOC_DEVANAGARI"
+DescriptiveName		    "Winscript and iLeap Devanagari"
+Version			        "1.2"
+Contact			        "mailto:vijaya_kumar@kastanet.org"
+RegistrationAuthority	"NLCI"
+RegistrationName		"Devanagari-Winscript"
+
+
+
+RHSFlags			(ExpectsNFC)
+pass(byte)
+class[all_let] = (33 .. 255)
+
+[all_let]= all_let1 < @all_let1 63
+;***************************************************
+; Pass 1a: Change the writing Order for off cons and cons
+;***************************************************
+; VK Mark this for 202 cons and cons it will work off_cons and Full cons
+
+pass(Byte)
+class[off_cons] = (74 75 76 77 78 79 80 81 82  \
+				   83 84 86 87 88 89 90 91 92 \
+				   104 \
+				   105 106 107 108 109 118 119 120 121 122 \
+				   123 124 164  165 166 167 168 169 \
+				   170 171 172 173 177 180 181 182 183 184 185 186 187 188 )
+class[a] = (201)
+class[full_off_cons] = (76 68 73 74 75 85 93 96 98 99 102 110 125 126 161 162 163 174 178 179 189 190 191 )
+
+207 [off_cons] ?= offcons1 [full_off_cons]?= fulloffcons1 [off_cons]?= offcons2 [full_off_cons]?= fulloffcons2[a]?=a1 <> @offcons1 @fulloffcons1 @offcons2 @fulloffcons2 @a1 207
+208 [off_cons] ?= offcons1 [full_off_cons]?= fulloffcons1 [off_cons]?= offcons2 [full_off_cons]?= fulloffcons2[a]?=a1 <> @offcons1 @fulloffcons1 @offcons2 @fulloffcons2 @a1 208
+209 [off_cons] ?= offcons1 [full_off_cons]?= fulloffcons1 [off_cons]?= offcons2 [full_off_cons]?= fulloffcons2[a]?=a1 <> @offcons1 @fulloffcons1 @offcons2 @fulloffcons2 @a1 209
+
+207 < 206 198
+208 < 206 199
+209 < 206 199 198
+
+;***************************************************
+; Pass 1: Joining the full Cons letter in LHS to RHS
+;***************************************************
+
+pass(Byte)
+class[cons] = (69 70 71 72 82 85 93 94 95 96 97 98 100 101 102 103 110 161 162 163 174 175 179 189 191)
+class[spa] = (242 243 244 245 246 247 248 249 250 251 252 253 254 )
+
+200 [spa]=spac < 199 @spac 198
+203 [spa]=spac < 202 @spac 198
+139 [spa]=spac	<	67 @spac 69
+200 [spa]=spac	<	199  @spac 198
+203 [spa]=spac	<	202  @spac 198
+204 [spa]=spac	<	202  @spac 199
+205 [spa]=spac	<	202  @spac 199 198
+207 [spa]?=spac	<	202  @spac  198
+208 [spa]=spac	<	202  @spac 199
+209 [spa]=spac	<	202  @spac 199 198
+211 [spa]=spac	<	210  @spac 198
+212 [spa]=spac	<	210  @spac 199
+213 [spa]=spac	<	210  @spac 199 198
+215 [spa]=spac	<	214  @spac 195
+216 [spa]=spac	<	214  @spac 197
+219 [spa]=spac	<	218  @spac 195
+220 [spa]=spac	<	218  @spac 197
+225 [spa]=spac	<	224  @spac 198
+226 [spa]=spac	<	224  @spac 199
+227 [spa]=spac	<	224  @spac 199 198
+229 [spa]=spac	<	228  @spac 198
+230 [spa]=spac	<	228  @spac 199
+231 [spa]=spac	<	228  @spac 199 198
+233 [spa]=spac	<	232  @spac 198
+234 [spa]=spac	<	232  @spac 199
+235 [spa]=spac	<	232  @spac 199 198
+237 [spa]=spac	<	236  @spac 198
+238 [spa]=spac	<	236  @spac 199
+239 [spa]=spac	<	236  @spac 199 198
+221 [spa]=spac	<	218  @spac
+217 [spa]=spac	>	214  @spac
+204 [cons]?=con [spa]?=spac   < 199 202 @con @spac
+
+
+;***************************************************
+; Pass 2: Break the Speical Letter (Both Side)
+;***************************************************
+
+pass(Byte)
+; here remove double letter> It will work like Macro call WSremoveDoubleSpaces
+; It will work LHS to RHS (Note side only)
+class[kar_dot] = (200 203 205 207 209 211 213 225 227 229 231 233 235 237 239)
+;class[double] = ( 32 194 212 218 222 224 228 232 236 )  ; MP: see below (Dec 2004)
+;class[double] = ( 32 194 212      222 224     232 236 )  ; MP: removed 218 and 228 as these
+														 ; were causing some words to join together!
+														 ; Perhaps other should also be removed???
+														 ; Vijay, please check!
+								; Yes Mark what you told that is correct i removed the
+								; double cons rule . really it is very danger. see the
+								; Pass 1a .
+class[top] = ( 196 197 198 199 200  )
+class[cons] = (69 70 71 72 82 85 93 94 95 96 97 98 100 101 102 103 110 161 162 163 174 175 179 189 191)
+class[spa] = (242 243 244 245 246 247 248 249 250 251 252 253 254 )
+[kar_dot]= kar 198 > @kar
+;[double]= double1 [double] = double2 > @double1
+[cons]=con [top]=ma  [spa]=sp < @con @sp @ma
+;main
+139 	<>	67 69
+200	<>	199 198
+203	<>	202 198
+204	<>	202 199
+205	<>	202 199 198
+207	<>	202 198
+208	<>	202 199
+209	<>	202 199 198
+211	<>	210 198
+212	<>	210 199
+213	<>	210 199 198
+215	<>	214 195
+216	<>	214 197
+219	<>	218 195
+220	<>	218 197
+225	<>	224 198
+226	<>	224 199
+227	<>	224 199 198
+229	<>	228 198
+230	<>	228 199
+231	<>	228 199 198
+233	<>	232 198
+234	<>	232 199
+235	<>	232 199 198
+237	<>	236 198
+238	<>	236 199
+239	<>	236 199 198
+221	>	218
+217	>	214
+; here it is changeing the dot and letter to one letter
+67 195	>	68
+69 195	>	69
+74 195	>	74
+77 195 >	78
+86 195 >	87
+98 195 >	99
+125 195 >	126
+161 195 >	162
+
+pass(byte)
+69 242 210 < 69 210
+110 249 210 < 110 210
+189 249 210 < 189 249
+93 254 210 < 93 210
+96 254 210 < 96 210
+102 254 210 < 102 210
+98 254 210 < 98 210
+
+;***************************************************
+; Pass 3: arrange uniformly
+;***************************************************
+pass(Byte)
+class[cons] = (69 70 71 72 82 85 93 94 95 96 97 98 99 100 101 102 103 112 113 114  115 116 117 110 161 162 163 174 175 179 189 190 191 192 193 ) ; VK: Mark here the problem for 114 '[  x  q I '  this group for change the writing order for I mathras. I did not included the 114 and some other cons. now i done that.
+class[off_cons] = (74 75 76 77 78 79 80 81 82  \
+				   83 84 86 87 88 89 90 91 92 \
+				   104 \
+				   105 106 107 108 109 118 119 120 121 122 \
+				   123 124 164  165 166 167 168 169 \
+				   170 171 172 173 177 180 181 182 183 184 185 186 187 188 )
+class[space1]= (242 243 244 245 246 247 248 249 250 251 252 253 254 )
+class[spe_mat] = ( 210 214 218 222 223 224 228 232 236)
+class[k_cons] = (69 70 71 72 161 162 163)
+class[t_cons] = (93 94 95)
+class[d_cons] = (96 97 179)
+class[d1_cons] = (98 99 100 101)
+class[d2_cons] = (102 103)
+class[th_cons] = (110 112 113 114 )
+class[r_cons] = (174)
+class[r1_cons] = (175 176)
+class[h_cons] = (189 191)
+class[s]= (199)
+62 240 <> 	62	; vowels u
+64 241	<>	64	; vowels R
+65 241	<>	65	; vowels ^
+; i r m off_cons f aa
+
+202=ikar  199?= ikar2 198?= ikar1 [off_cons]=conss  195?=dot 201?=aa   <>   @ikar2 @conss @aa @dot @ikar   @ikar1
+206=ikar  199?= ikar2 198?= ikar1 [off_cons]=conss [off_cons]=conss1  195?=dot 201?=aa   <>   @ikar2 @conss @conss1 @aa @dot @ikar   @ikar1
+206=ikar  199?= ikar2 198?= ikar1 [off_cons]=conss [cons]?=con [space1]?=spa   195?=dot   <>   @ikar2 @conss  @con @spa  @dot @ikar   @ikar1
+[off_cons]=conss  195=dot 201=aa1  201=aa 210?=ii [spe_mat]?=spemat 199?= ikar2 198?=ikar3  <>  @ikar2  @conss  @aa @dot @aa1     @spemat   @ii @ikar3
+[off_cons]=conss  195?=dot 201?=aa1  201?=aa 210?=ii [spe_mat]?=spemat 199?= ikar2 198?=ikar3  <>  @ikar2  @conss  @aa @aa1  @dot   @spemat   @ii @ikar3
+;full netter
+
+202=ikar 198?= ikar1 199?= ikar2 198?= ikar3 67?=k [cons] =conss 201?=aa 198?=ikar4 [space1]=spa 199?=ikar5	198?=ikar6 <> @ikar2 @ikar5 @k @conss  @spa @ikar @ikar1 @ikar3 @ikar4 @ikar6  @aa
+[cons] =conss  [space1]=spa   201?=aa   210=ikar1 198?=ikar2 199?=ikar3 198?=ikar4   <> @ikar3 @conss @spa   @aa  @ikar1 @ikar2  @ikar4
+; differnet is i ad spe_mat here
+
+[cons] =conss  [spe_mat]?=spemat [space1]?=spa  201?=aa   [spe_mat]? = spemat1  199?=ikar1  198?=ikar2 [space1]?=spa1 <> @ikar1 @conss @spa @spa1  @spemat @aa  [spe_mat]?=spemat1 @ikar2
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 4: This pass will Remove all the space
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+pass(Byte)
+class[cons] = (69 70 71 72 82 85 93 94 95 96 97 98 100 101 102 103 110 161 162 163 174 175 179 189 191)
+class[spa]= (242 243 244 245 246 247 248 249 250 251 252 253 254 )
+class[spe_mat] = (214 218 222 223 224 228 232 236)
+class[k_cons] = (69 70 71 72 161 162 163 )
+class[t_cons] = (93 94 95)
+class[d_cons] = (96 97 179)
+class[d1_cons] = (98 99 100 101)
+class[d2_cons] = (102 103)
+class[th_cons] = (110 112 113 114 )
+class[r_cons] = (174 )
+class[r1_cons] = (175 176)
+class[h_cons] = (189 191)
+; numbers ( THIS FOR SCRIPTURE PROJECT)
+48 160	>	48
+49 160	>	49
+50 160	>	50
+51 160	>	51
+52 160	>	52
+53 160	>	53
+54 160	>	54
+55 160	>	55
+56 160	>	56
+57 160	>	57
+
+[k_cons] 242	<> [k_cons]
+[k_cons] 195 242	<> [k_cons] 195
+[k_cons]  242	202  <> [k_cons] 202
+[k_cons]  [spe_mat]  242	 <>	[k_cons] [spe_mat]
+[k_cons]  [spe_mat]  198 242	 <>	[k_cons] [spe_mat] 198
+[k_cons]  [spe_mat]  199 198 242	 <>	[k_cons] [spe_mat] 199 198
+[k_cons]  [spe_mat]  199 242	 <>	[k_cons] [spe_mat] 199
+[k_cons] 195 214 242 <> [k_cons] 195 214
+[k_cons] 195 214 198 242 <> [k_cons] 195 214 198
+
+82 243	<> 82
+82 195 243	<> 82 195
+82 202  243	<>	82 202
+82 [spe_mat] 243  <>  	82 [spe_mat]
+82  [spe_mat]  198 243	 <>	82 [spe_mat] 198
+82  [spe_mat]  199 198 243	 <>	82 [spe_mat] 199 198
+82  [spe_mat]  199 243	 <>	82 [spe_mat] 199
+82 195 214 243 <> 82 195 214
+82 195 214 198 243 <> 82 195 214 198
+
+85 244	<> 85
+85 195  244	<> 85 195
+85 202  244	<>	85 202
+85  [spe_mat]  244	<>	85 [spe_mat]
+85  [spe_mat]  198 244	 <>	85 [spe_mat] 198
+85  [spe_mat]  199 198 244	 <>	85 [spe_mat] 199 198
+85  [spe_mat]  199 244	 <>	85 [spe_mat] 199
+85 195 214 244 <> 85 195 214
+85 195 214 198 244 <> 85 195 214 198
+
+85 254	<> 85
+85 202  254	<>	85 202
+85  [spe_mat]  254	<>	85 [spe_mat]
+
+[t_cons] 245	<> [t_cons]
+[t_cons] 195 245	<> [t_cons] 195
+[t_cons] 202  245	<>	[t_cons] 202
+[t_cons] 197  245	<>	[t_cons] 197
+[t_cons] [spe_mat]  245	<>	[t_cons] [spe_mat]
+[t_cons]  [spe_mat]  198 245	 <>	[t_cons] [spe_mat] 198
+[t_cons]  [spe_mat]  199 198 245	 <>	[t_cons] [spe_mat] 199 198
+[t_cons]  [spe_mat]  199 245	 <>	[t_cons] [spe_mat] 199
+[t_cons] 195 214 245 <> [t_cons] 195 214
+[t_cons] 195 214 198 245 <> [t_cons] 195 214 198
+
+175 251	<> 175
+175 195 251	<> 175 195
+175 202  251	<>	175 202
+175  [spe_mat]  251	<>	175 [spe_mat]
+175  [spe_mat]  198 251	 <>	175 [spe_mat] 198
+175  [spe_mat]  199 198 251	 <>	175 [spe_mat] 199 198
+175  [spe_mat]  199 251	 <>	175 [spe_mat] 199
+175 195 214 251 <> 175 195 214
+175 195 214 198 251 <> 175 195 214 198
+
+179 246	<> 179
+179 195 246	<> 179 195
+179 202  246	<>	179 202
+179  [spe_mat]  246	<>	179 [spe_mat]
+179  [spe_mat]  198 246	 <>	179 [spe_mat] 198
+179  [spe_mat]  199 198 246	 <>	179 [spe_mat] 199 198
+179  [spe_mat]  199 246	 <>	179 [spe_mat] 199
+179 195 214 246 <> 179 195 214
+179 195 214 198 246 <> 179 195 214 198
+
+[d_cons] 246	<> [d_cons]
+[d_cons] 195 246	<> [d_cons] 195
+[d_cons] 202  246	<>	[d_cons] 202
+[d_cons] [spe_mat]  246	<>	[d_cons] [spe_mat]
+[d_cons]  [spe_mat]  198 246	 <>	[d_cons] [spe_mat] 198
+[d_cons]  [spe_mat]  199 198 246	 <>	[d_cons] [spe_mat] 199 198
+[d_cons]  [spe_mat]  199 246	 <>	[d_cons] [spe_mat] 199
+[d_cons] 195 214 246 <> [d_cons] 195 214
+[d_cons] 195 214 198 246 <> [d_cons] 195 214 198
+
+[d1_cons] 247	<> [d1_cons]
+[d1_cons] 195 247	<> [d1_cons] 195
+[d1_cons] 202  247	<>	[d1_cons] 202
+[d1_cons] [spe_mat]  247	<>	[d1_cons] [spe_mat]
+[d1_cons]  [spe_mat]  198 247	 <>	[d1_cons] [spe_mat] 198
+[d1_cons]  [spe_mat]  199 198 247	 <>	[d1_cons] [spe_mat] 199 198
+[d1_cons]  [spe_mat]  199 247	 <>	[d1_cons] [spe_mat] 199
+[d1_cons] 195 214 247 <> [d1_cons] 195 214
+[d1_cons] 195 214 198 247 <> [d1_cons] 195 214 198
+
+[d2_cons] 248	<> [d2_cons]
+[d2_cons] 195 248	<> [d2_cons] 195
+[d2_cons] 202  248	<>	[d2_cons] 202
+[d2_cons] [spe_mat]  248	<>	[d2_cons] [spe_mat]
+[d2_cons]  [spe_mat]  198 248	 <>	[d2_cons] [spe_mat] 198
+[d2_cons]  [spe_mat]  199 198 248	 <>	[d2_cons] [spe_mat] 199 198
+[d2_cons]  [spe_mat]  199 248	 <>	[d2_cons] [spe_mat] 199
+[d2_cons] 195 214 248 <> [d2_cons] 195 214
+[d2_cons] 195 214 198 248 <> [d2_cons] 195 214 198
+
+[th_cons] 249	<> [th_cons]
+[th_cons] 195 249	<> [th_cons] 195
+[th_cons] 202  249	<>	[th_cons] 202
+[th_cons] [spe_mat]  249	<>	[th_cons] [spe_mat]
+[th_cons]  [spe_mat]  198 249	 <>	[th_cons] [spe_mat] 198
+[th_cons]  [spe_mat]  199 198 249	 <>	[th_cons] [spe_mat] 199 198
+[th_cons]  [spe_mat]  199 249	 <>	[th_cons] [spe_mat] 199
+[th_cons] 195 214 249 <> [th_cons] 195 214
+[th_cons] 195 214 198 249 <> [th_cons] 195 214 198
+
+[r_cons] 250	<> [r_cons]
+[r_cons] 195 250	<> [r_cons] 195
+[r_cons] 202  250	<>	[r_cons] 202
+[r_cons] [spe_mat]  250	<>	[r_cons] [spe_mat]
+[r_cons]  [spe_mat]  198 250	 <>	[r_cons] [spe_mat] 198
+[r_cons]  [spe_mat]  199 198 250	 <>	[r_cons] [spe_mat] 199 198
+[r_cons]  [spe_mat]  199 250	 <>	[r_cons] [spe_mat] 199
+[r_cons] 195 214 250 <> [r_cons] 195 214
+[r_cons] 195 214 198 250 <> [r_cons] 195 214 198
+
+[r1_cons] 252 <> [r1_cons]
+[r1_cons] 195 252 <> [r1_cons] 195
+[r1_cons] 202  252 <>	[r1_cons] 202
+[r1_cons] [spe_mat]  252 <>	[r1_cons] [spe_mat]
+[r1_cons]  [spe_mat]  198 252	 <>	[r1_cons] [spe_mat] 198
+[r1_cons]  [spe_mat]  199 198 252	 <>	[r1_cons] [spe_mat] 199 198
+[r1_cons]  [spe_mat]  199 252	 <>	[r1_cons] [spe_mat] 199
+[r1_cons] 195 214 252 <> [r1_cons] 195 214
+[r1_cons] 195 214 198 252 <> [r1_cons] 195 214 198
+
+[h_cons] 254	<> [h_cons]
+[h_cons] 195 254	<> [h_cons] 195
+[h_cons] 202  254	<>	[h_cons] 202
+[h_cons] [spe_mat]  254>	[h_cons] [spe_mat]
+[h_cons]  [spe_mat]  198 254	 <>	[h_cons] [spe_mat] 198
+[h_cons]  [spe_mat]  199 198 254	 <>	[h_cons] [spe_mat] 199 198
+[h_cons]  [spe_mat]  199 254	 <>	[h_cons] [spe_mat] 199
+[h_cons] 195 214 254 <> [h_cons] 195 214
+[h_cons] 195 214 198 254 <> [h_cons] 195 214 198
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 5: This pass for changeing the possion in reversce version
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+Pass(Byte)
+class[off_cons] = (74 75 76 77 78 79 80 81 82  \
+				   83 84 86 87 88 89 90 91 92 \
+				   104 \
+				   105 106 107 108 109 118 119 120 121 122 \
+				   123 124 164  165 166 167 168 169 \
+				   170 171 172 173 177 180 181 182 183 184 185 186 187 188 )
+; This cons group is old after Mark's bug i disable this.
+;class[cons] = (69 70 71 72 82 85 93 94 95 96 97 98 100 101 102 103 110  161 162 163 174 175 179 189 191)
+class[cons] = (69 70 71 72 82 85 93 94 95 96 97 98 99 100 101 102 103 112 113 114  115 116 117 110 161 162 163 174 175 179 189 190 191 192 193 )
+class[spa]= (242 243 244 245 246 247 248 249 250 251 252 253 254 )
+202 [cons]= con  < @con 202
+;202 [off_cons]?=offcons  [cons]= con  < @offcons @con 202
+202   [off_cons]=off1 201 < @off1 201 202
+202 199?=vi 198?=dot  [off_cons]=off1 201 < @off1 201 202 @vi @dot
+206 199?=vi 198?=dot [off_cons]=off  [off_cons]=off1 201 < @off1  @off   201 202 @vi @dot
+206 199?=vi 198?=dot [off_cons]=off [cons]?=con   <  @off @con   202 @vi @dot
+class[off_cons_rev] = (74 77 80 83 86 90 104 105 108 118 120 123 164 166 170 180 182 185 186)
+67  < 69 194
+125 < 161 194
+178 < 179 194
+188 <  189 194
+[off_cons_rev]= offconsrev < @offconsrev 201 194
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 6: remove all balance space and unwanted glys
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+241 >
+242 >
+243 >
+244 >
+245 >
+246 >
+247 >
+248 >
+249 >
+250 >
+251 >
+252 >
+253 >
+254 >
+
+
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 7: map byte codes to Unicodes
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; This pass deals with "basic" byte codes; it never sees the "presentation form"
+; byte codes for half forms/conjuncts/positional variants
+
+pass(Byte_Unicode)
+
+ByteClass[CTL] = ( 0 .. 31 138 )
+UniClass[CTL]  = ( 0 .. 31 138 )
+[CTL] <> [CTL]
+ ;	Vowels
+43 201  236	<>	devanagari_letter_candra_o
+43 201  224	<>	devanagari_letter_short_o
+43 201  228	<>	devanagari_letter_o
+43 201  232	<>	devanagari_letter_au
+43 201		<>	devanagari_letter_aa
+60 199		<>	devanagari_letter_ii
+66 236		<>	devanagari_letter_candra_e
+66 224		<>	devanagari_letter_short_e
+66 228		<>	devanagari_letter_ai
+138 222	<>	devanagari_letter_vocalic_ll
+138 		<>	devanagari_letter_vocalic_l
+
+;	 Consonants
+74 201	<>	devanagari_letter_kha
+75 201 	<>	devanagari_letter_kha devanagari_sign_nukta
+76 201	<>	devanagari_letter_kha devanagari_sign_virama devanagari_letter_ra
+77 201	<>	devanagari_letter_ga
+78 201 	<>	devanagari_letter_ga devanagari_sign_nukta
+79 201	<>	devanagari_letter_ga devanagari_sign_virama devanagari_letter_ra
+80 201	<>	devanagari_letter_gha
+81 201	<>	devanagari_letter_gha devanagari_sign_virama devanagari_letter_ra
+83 201	<>	devanagari_letter_ca
+84 201	<>	devanagari_letter_ca devanagari_sign_virama devanagari_letter_ra
+86 201	<>	devanagari_letter_ja
+87 201 	<>	devanagari_letter_ja devanagari_sign_nukta
+88 201	<>	devanagari_letter_ja devanagari_sign_virama devanagari_letter_ra
+89 201	<> 	devanagari_letter_ja devanagari_sign_virama devanagari_letter_nya
+90 201	<>	devanagari_letter_jha
+91 201	<>	devanagari_letter_jha devanagari_sign_virama devanagari_letter_ra
+92 201	<>	devanagari_letter_nya
+104 201	<>	devanagari_letter_nna
+105 201	<>	devanagari_letter_ta
+106 201	<>	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ra
+107 201	<>	devanagari_letter_ta devanagari_sign_virama devanagari_letter_ta
+108 201	<>	devanagari_letter_tha
+109 201	<>	devanagari_letter_tha devanagari_sign_virama devanagari_letter_ra
+118 201	<>	devanagari_letter_dha
+119 201	<>	devanagari_letter_dha devanagari_sign_virama devanagari_letter_ra
+120 201	<>	devanagari_letter_na
+121 201	<>	devanagari_letter_na devanagari_sign_virama devanagari_letter_ra
+122 201	<>	devanagari_letter_na devanagari_sign_virama devanagari_letter_na
+123 201	<>	devanagari_letter_pa
+124 201	<>	devanagari_letter_pa devanagari_sign_virama devanagari_letter_ra
+
+164 201	<>	devanagari_letter_ba
+165 201	<>	devanagari_letter_ba devanagari_sign_virama devanagari_letter_ra
+166 201	<>	devanagari_letter_bha
+167 201	<>	devanagari_letter_bha devanagari_sign_virama devanagari_letter_ra
+168 201	<>	devanagari_letter_ma
+169 201	<>	devanagari_letter_ma devanagari_sign_virama devanagari_letter_ra
+170 201	<>	devanagari_letter_ya
+171 201	<>	devanagari_letter_ya devanagari_sign_virama devanagari_letter_ra
+174 195	<>	devanagari_letter_ra devanagari_sign_nukta
+177 201	<>	devanagari_letter_la
+179 195	<>	devanagari_letter_lla devanagari_sign_nukta
+180 201	<>	devanagari_letter_va
+181 201	<>	devanagari_letter_va devanagari_sign_virama devanagari_letter_ra
+182 201	<>	devanagari_letter_sha
+183 201	<>	devanagari_letter_sha devanagari_sign_virama devanagari_letter_va
+184 201	<>	devanagari_letter_sha devanagari_sign_virama devanagari_letter_ra
+185 201	<>	devanagari_letter_ssa
+186 201	<>	devanagari_letter_sa
+187 201	<>	devanagari_letter_sa devanagari_sign_virama devanagari_letter_ra
+
+; 	Matras
+201 236	<>	devanagari_vowel_sign_candra_e
+201 224	<>	devanagari_vowel_sign_short_o
+201 228	<>	devanagari_vowel_sign_o
+201 232	<>	devanagari_vowel_sign_au
+
+;	Signs and Others
+32	<>	space
+33	<>	exclamation_mark
+34	<>	U+2018
+34	<	U+201C
+;35	<>	number_sign
+36	<>	devanagari_om
+37	<>	devanagari_sign_avagraha
+38	<>	devanagari_sign_visarga
+39	<>	U+2019
+39 	< 	U+201D
+
+40	<>	left_parenthesis
+41	<>	right_parenthesis
+42	<>	devanagari_danda
+43	<>	devanagari_letter_a
+44	<>	comma
+45	<>	hyphen_minus
+46	<>	full_stop
+47	<>	solidus
+48	<>	devanagari_digit_zero
+49	<>	devanagari_digit_one
+50	<>	devanagari_digit_two
+51	<>	devanagari_digit_three
+52	<>	devanagari_digit_four
+53	<>	devanagari_digit_five
+54	<>	devanagari_digit_six
+55	<>	devanagari_digit_seven
+56	<>	devanagari_digit_eight
+57	<>	devanagari_digit_nine
+58	<>	colon
+59	<>	semicolon
+
+; 	Vowels
+60	<>	devanagari_letter_i
+61	<>	devanagari_letter_u
+62	<>	devanagari_letter_uu
+63	<>	question_mark
+64	<>	devanagari_letter_vocalic_r
+65	<>	devanagari_letter_vocalic_rr
+66	<>	devanagari_letter_e
+
+;	 Consonants
+69 194	<	devanagari_letter_ka devanagari_sign_virama
+67	>	devanagari_letter_ka devanagari_sign_virama  0x200d
+69 194 	<	devanagari_letter_ka devanagari_sign_virama  0x200d
+68 	<>	devanagari_letter_ka devanagari_sign_nukta devanagari_sign_virama  0x200d
+69 	<>	devanagari_letter_ka
+70 	<>	devanagari_letter_ka  devanagari_sign_nukta
+71 	<>	devanagari_letter_ka  devanagari_sign_virama devanagari_letter_ra
+72 	<>	devanagari_letter_ka  devanagari_sign_virama devanagari_letter_ta
+73 201	<>	devanagari_letter_ka  devanagari_sign_virama devanagari_letter_ssa  ; MP: d73 was not appearing at all!
+74 	<>	devanagari_letter_kha devanagari_sign_virama 0x200d
+75 	<>	devanagari_letter_kha devanagari_sign_nukta  devanagari_sign_virama  0x200d
+76	<>	devanagari_letter_kha devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+77	<>	devanagari_letter_ga devanagari_sign_virama 0x200d
+78 	<>	devanagari_letter_ga devanagari_sign_nukta  devanagari_sign_virama  0x200d
+79	<>	devanagari_letter_ga devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+80	<>	devanagari_letter_gha devanagari_sign_virama 0x200d
+81	<>	devanagari_letter_gha devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+82 	<>	devanagari_letter_nga
+83	<>	devanagari_letter_ca devanagari_sign_virama 0x200d
+84	<>	devanagari_letter_ca devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+85	<>	devanagari_letter_cha
+86	<>	devanagari_letter_ja devanagari_sign_virama 0x200d
+87 	<>	devanagari_letter_ja devanagari_sign_nukta  devanagari_sign_virama  0x200d
+88	<>	devanagari_letter_ja devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+89	<> 	devanagari_letter_ja devanagari_sign_virama devanagari_letter_nya devanagari_sign_virama
+90	<>	devanagari_letter_jha devanagari_sign_virama 0x200d
+91	<>	devanagari_letter_jha devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+92 	<>	devanagari_letter_nya devanagari_sign_virama
+93	<>	devanagari_letter_tta
+94	<>	devanagari_letter_tta devanagari_sign_virama devanagari_letter_tta
+95	<>	devanagari_letter_tta devanagari_sign_virama devanagari_letter_ttha
+96	<>	devanagari_letter_ttha
+97	<>	devanagari_letter_ttha devanagari_sign_virama devanagari_letter_ttha
+98	<>	devanagari_letter_dda
+99	<>	devanagari_letter_dda devanagari_sign_nukta
+100	<>	devanagari_letter_dda devanagari_sign_virama devanagari_letter_dda
+101	<>	devanagari_letter_dda devanagari_sign_virama devanagari_letter_ddha
+102	<>	devanagari_letter_ddha
+103	<>	devanagari_letter_ddha devanagari_sign_nukta
+104	<>	devanagari_letter_nna devanagari_sign_virama 0x200d
+105	<>	devanagari_letter_ta  devanagari_sign_virama 0x200d
+106	<>	devanagari_letter_ta  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+107	<>	devanagari_letter_ta  devanagari_sign_virama devanagari_letter_ta devanagari_sign_virama
+108	<>	devanagari_letter_tha  devanagari_sign_virama 0x200d
+109	<>	devanagari_letter_tha  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+110	<>	devanagari_letter_da
+111	<>	devanagari_letter_da devanagari_sign_virama devanagari_vowel_sign_vocalic_r   ; MP: d111 was no appearing at all!
+112	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_ra
+113	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_da
+114	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_dha
+115	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_ma
+116	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_ya
+117	<>	devanagari_letter_da devanagari_sign_virama devanagari_letter_va
+118	<>	devanagari_letter_dha  devanagari_sign_virama 0x200d
+119	<>	devanagari_letter_dha  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+120	<>	devanagari_letter_na  devanagari_sign_virama 0x200d
+121	<>	devanagari_letter_na  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+122	<>	devanagari_letter_na  devanagari_sign_virama devanagari_letter_na devanagari_sign_virama
+123	<>	devanagari_letter_pa  devanagari_sign_virama 0x200d
+124	<>	devanagari_letter_pa  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+125	<>	devanagari_letter_pha  devanagari_sign_virama 0x200d
+126	<>	devanagari_letter_pha devanagari_sign_nukta devanagari_sign_virama 0x200d
+161	<>	devanagari_letter_pha
+162	<>	devanagari_letter_pha devanagari_sign_nukta
+163	<>	devanagari_letter_pha  devanagari_sign_virama devanagari_letter_ra
+164	<>	devanagari_letter_ba  devanagari_sign_virama 0x200d
+165	<>	devanagari_letter_ba  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+166	<>	devanagari_letter_bha  devanagari_sign_virama 0x200d
+167	<>	devanagari_letter_bha  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+168	<>	devanagari_letter_ma  devanagari_sign_virama 0x200d
+169	<>	devanagari_letter_ma  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+170	<>	devanagari_letter_ya  devanagari_sign_virama 0x200d
+171	<>	devanagari_letter_ya  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+172 201 <>	devanagari_sign_virama devanagari_letter_ya  ; MP: d172 was not appearing at all!
+;173	<>
+174	<>	devanagari_letter_ra
+175	<>	devanagari_letter_ra devanagari_vowel_sign_u
+176	<>	devanagari_letter_ra devanagari_vowel_sign_uu
+177	<>	devanagari_letter_la devanagari_sign_virama 0x200d
+178	<>	devanagari_letter_lla devanagari_sign_virama 0x200d
+179	<>	devanagari_letter_lla
+180	<>	devanagari_letter_va  devanagari_sign_virama 0x200d
+181	<>	devanagari_letter_va  devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+182	<>	devanagari_letter_sha devanagari_sign_virama 0x200d
+183	<>	devanagari_letter_sha devanagari_sign_virama devanagari_letter_va devanagari_sign_virama
+184	<>	devanagari_letter_sha devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+185	<>	devanagari_letter_ssa devanagari_sign_virama 0x200d
+186	<>	devanagari_letter_sa devanagari_sign_virama 0x200d
+187	<>	devanagari_letter_sa devanagari_sign_virama devanagari_letter_ra devanagari_sign_virama
+188	<>	devanagari_letter_ha devanagari_sign_virama  0x200d
+189	<>	devanagari_letter_ha
+190	<>	devanagari_letter_ha devanagari_vowel_sign_vocalic_r   ; MP: d190 was not appearing at all!
+191	<>	devanagari_letter_ha devanagari_sign_virama devanagari_letter_ra
+192	<>	devanagari_letter_ha devanagari_sign_virama devanagari_letter_ma
+193	<>	devanagari_letter_ha devanagari_sign_virama devanagari_letter_ya
+; 240 >
+; 	Matras
+194	<> 	devanagari_sign_virama
+195	<>	devanagari_sign_nukta
+196	<>	devanagari_sign_candrabindu
+197	<>	devanagari_sign_virama devanagari_letter_ra
+198	<>	devanagari_sign_anusvara
+199	<>	devanagari_letter_ra devanagari_sign_virama
+;201 228	<> 	devanagari_vowel_sign_o
+201	<>	devanagari_vowel_sign_aa
+202	<>	devanagari_vowel_sign_i
+206	<>	devanagari_vowel_sign_i
+210	<>	devanagari_vowel_sign_ii
+214	<>	devanagari_vowel_sign_u
+218	<>	devanagari_vowel_sign_uu
+222	<>	devanagari_vowel_sign_vocalic_r
+223	<>	devanagari_vowel_sign_vocalic_rr
+224	<>	devanagari_vowel_sign_short_e
+228	<>	devanagari_vowel_sign_e
+232	<>	devanagari_vowel_sign_ai
+236	<>	devanagari_vowel_sign_candra_e
+; THIS IS ARB NUMBERS I GAVE DIGIT ZERO FOR 128 IT NOT TAKEN BY SYSTEM SO I GAVE DIRECT UNICOE NUMBER
+128	<>	U+0030
+129	<>	U+0031
+130	<>	U+0032
+131	<>	U+0033
+132	<>	U+0034
+133	<>	U+0035
+134	<>	U+0036
+135	<>	U+0037
+136	<>	U+0038
+137	<>	U+0039

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALVI OTHERSF IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+		<!--<include from="IncImportVariables.xml"/>-->
+
+		<!-- set case specific variables -->
+		<var id="BackTranslation" select="tests/test[@case='$TestCase;']/@back-trans"/>
+
+		<var id="btNone" set="FALSE"/>
+		<if>
+			<condition of="$BackTranslation" is="(none)"/>
+			<then>
+				<var id="btFullName" set="(none)"/>
+				<var id="btNone" set="TRUE"/>
+			</then>
+		</if>
+
+		<!-- Import Standard Format Setup -->
+		<on-dialog title="Standard Format Import Setup" until="10000">
+
+			<insert>{TAB 5}</insert>
+
+			<!--NEED to click the first mapping item, Chapter Number, so "{DOWN 4}" will work later when missing mapping items like Cap, Cat & Chk-->
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\c"/>
+			<glimpse id="ChapNbrExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$ChapNbrExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+				</then>
+			</if>
+
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\cap"/>
+			<glimpse id="CapExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$CapExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\imt" Scripture Mapping -->
+					<click path="$Modify"/>
+					<on-dialog title="Modify Mapping" until="10000">
+						<insert>{TAB 1}</insert>
+						<!-- Select "Annotations" -->
+						<insert>{UP 1}</insert>
+						<insert>{TAB 7}</insert>
+						<!-- Select "Remark" -->
+						<insert>{DOWN 16}</insert>
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+				<else>
+					<insert>{DOWN 4}</insert>
+				</else>
+			</if>
+
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\cat"/>
+			<glimpse id="CatExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$CatExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\imt" Scripture Mapping -->
+					<click path="$Modify"/>
+					<on-dialog title="Modify Mapping" until="10000">
+						<if>
+							<condition of="$CapExists" is="true"/>
+							<then>
+								<insert>{TAB 5}</insert>
+							</then>
+							<else>
+								<insert>{TAB 2}</insert>
+							</else>
+						</if>
+						<!-- Select "Figure Parameters, USFM-style (property)" -->
+						<!--<insert>{DOWN 26}</insert>-->
+						<insert>{DOWN 4}</insert>
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+				<else>
+					<insert>{DOWN 4}</insert>
+				</else>
+			</if>
+
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\chk"/>
+			<glimpse id="ChkExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$ChkExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\imt" Scripture Mapping -->
+					<click path="$Modify"/>
+					<on-dialog title="Modify Mapping" until="10000">
+						<click path="9:Exclude this data from import/44:Exclude this data from import"/>
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+				<else>
+					<insert>{DOWN 4}</insert>
+				</else>
+			</if>
+
+			<insert>{DOWN 10}</insert>
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\ref"/>
+			<glimpse id="RefExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$RefExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\restore" Scripture Mapping -->
+					<click path="$Modify"/>
+
+					<on-dialog title="Modify Mapping" until="10000">
+						<click path="9:Exclude this data from import/44:Exclude this data from import"/>
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+			</if>
+
+			<var id="MappingName" set="9:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button.[2]/60:FieldWorks needs to know how to interpret your data. To change a mapping, select the marker, and then click the Modify button./9:Scripture/9:NAMELESS/34:\ud"/>
+			<glimpse id="UdExists" path="$MappingName" on-fail="skip"/>
+			<if>
+				<condition of="$UdExists" is="true"/>
+				<then>
+					<click path="$MappingName"/>
+					<!-- Modify "\restore" Scripture Mapping -->
+					<click path="$Modify"/>
+
+					<on-dialog title="Modify Mapping" until="10000">
+						<click path="9:Exclude this data from import/44:Exclude this data from import"/>
+						<click path="$OK"/>
+					</on-dialog>
+				</then>
+			</if>
+		</on-dialog>
+
+		<on-dialog title="Standard Format Import Setup" until="10000">
+			<click path="$Next"/>
+			<click path="9:Finish/43:Finish"/>
+		</on-dialog>
+
+	</on-application>
+</accil>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+
+  <find-extra select="//menubar/button[@name='View']" on-fail="assert">
+   An extra <data get="path"/> child named '<data get="extra"/>' was found.
+  </find-extra>
+
+  <!-- Must click on views (if not done already) to construct the accessible objects -->
+  <click path="tray:Views" />
+  <click path="tray:Filters" />
+  <find-extra select="//sidebar/tray[@name='Views']" on-fail="assert">
+   An extra <data get="path"/> child named '<data get="extra"/>' was found.
+  </find-extra>
+ </on-application>
+</accil>

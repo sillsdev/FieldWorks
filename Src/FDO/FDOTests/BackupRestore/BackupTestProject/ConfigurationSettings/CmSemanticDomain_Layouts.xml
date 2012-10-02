@@ -1,0 +1,22 @@
+﻿<LayoutInventory>
+  <layout class="CmSemanticDomain" type="jtview" name="publishStemSemDom" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name" sep=" " />
+  </layout>
+  <layout class="CmSemanticDomain" type="jtview" name="publishStemMinorSemDom" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name-minor" sep=" " />
+  </layout>
+  <layout class="CmSemanticDomain" type="jtview" name="publishRootSemDom" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name" sep=" " />
+  </layout>
+  <layout class="CmSemanticDomain" type="jtview" name="publishRootSubSemDom" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr-sub" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name-sub" sep=" " />
+  </layout>
+  <layout class="CmSemanticDomain" type="jtview" name="publishRootMinorSemDom" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr-minor" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name-minor" sep=" " />
+  </layout>
+</LayoutInventory>

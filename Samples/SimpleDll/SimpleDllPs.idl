@@ -1,0 +1,17 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: SimpleDllPs.idl
+Responsibility: John Thomson
+Last reviewed: never
+
+	Defines SimpleDll Services Interfaces for proxy / stub generation.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+
+#include "Common.idh"
+
+#define NO_COCLASSES
+
+#include "SimpleDll.idh"

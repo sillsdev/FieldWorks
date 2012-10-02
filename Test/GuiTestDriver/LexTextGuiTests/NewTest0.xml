@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?-->
+
+<accil>
+
+<!-- Tests Tools/Configure Interlinear dialog -->
+<!--  -->
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+	<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application run = "ok" args = "-db $projectName" on-fail = "assert">
+
+   <click select="menubar/view/texts-words/interlinear-texts"/>
+
+   <model select="interlinear-texts[@role='view']">
+
+	   <click select="text/analyze/tab"/>
+
+<!-- Select the first text -->
+	   <var id="row" set="1"/>
+	   <click select="texts/record/col" path="/value:Phatani ntima"/>
+
+<!-- Move the focus box off the first "pile" so the tool can see the paths to the data -->
+	   <insert wait="300">^{RIGHT}</insert>
+	   <insert wait="300">^{RIGHT}</insert>
+
+<!-- Check the order of the row headings: the cursor won't go to these, but the path will be found or fail -->
+	<var id="col" set="2"/>
+	<click select="text/analyze/labels/label/heading" path="/value:Word"/>
+	<click select="text/analyze/labels/label/heading" path="[2]/value:Morphemes"/>
+	<click select="text/analyze/labels/label/heading" path="[3]/value:Lex. Entries"/>
+	<click select="text/analyze/labels/label/heading" path="[4]/value:Lex. Gloss"/>
+	<click select="text/analyze/labels/label/heading" path="[5]/value:Lex. Gram. Info."/>
+	<click select="text/analyze/labels/label/heading" path="[6]/value:Word Gloss"/>
+	<click select="text/analyze/labels/label/heading" path="[7]/value:Word Cat."/>
+
+<!-- Check the order of the data in the first "pile" (but don't focus or this tool can't see into it!) -->
+	<var id="ind" set="3"/>
+	<glimpse id="Pisapha" select="text/analyze/line/pile/word" path="/value:Pisapha"/>
+	<var id="mo" set="1"/> <var id="fld" set="1"/>
+	<glimpse id="pi" select="text/analyze/line/pile/lex-data/morpheme/field" path="/value:pi-"/>
+	<var id="fld" set="2"/>
+	<glimpse id="pi-1" select="text/analyze/line/pile/lex-data/morpheme/field" path="/value:pi-1"/>
+	<var id="fld" set="3"/>
+	<glimpse id="8" select="text/analyze/line/pile/lex-data/morpheme/field" path="/value:8"/>
+	<var id="fld" set="4"/>
+	<glimpse id="Vsbj" select="text/analyze/line/pile/lex-data/morpheme/field" path="/value:V:sbj//(obj)"/>
+	<glimpse id="estas" select="text/analyze/line/pile/gloss" path="/value:estas coisas doem"/>
+	<glimpse id="V" select="text/analyze/line/pile/category" path="/value:V"/>
+
+<!-- Open the Configure Interlinear Lines dialog -->
+   <click select="//menubar/tools/configure-interlinear"/>
+
+   <model select="//configure-interlinear[@role='dialog']">
+	<on-dialog title="Configure Interlinear Lines">
+<!-- Add a Literal Translation -->
+		<click id="lt" select="available/line" path="Literal Translation"/>
+		<click id="show" select="show"/>
+<!-- Move the Literal Translation up one -->
+		<click id="up" select="move-up"/>
+<!-- Add an English Note -->
+		<click id="note" select="available/line" path="Note"/>
+		<click select="show"/>
+<!-- Move the Note up 2 and down one -->
+		<click id="up2" select="move-up"/>
+		<click id="up3" select="move-up"/>
+		<click id="down" select="move-down"/>
+<!-- Change the Note's writing system to English -->
+		<click select="ws-drop"/>
+		<insert wait="300">{DOWN}</insert><!-- Select English -->
+		<insert wait="300">~</insert><!-- Select English -->
+<!-- Move Word Cat. to the top -->
+		<click select="displayed/line" path="Word Cat."/>
+		<click id="up4" select="move-up"/>
+		<click id="up5" select="move-up"/>
+		<click id="up6" select="move-up"/>
+		<click select="ok"/>
+	</on-dialog>
+   </model>
+
+<!-- Insert a Note -->
+	<var id="col" set="2"/>
+	<click id="wordCat" select="text/analyze/labels/label/heading" path="/value:Word Cat."/>
+
+	<click wait="1000" select="//toolbar/new-note"/>
+	<var id="row" set="1"/>     <var id="col" set="1"/>
+	<click select="text/analyze/line/trans-note/label"/><!-- puts cursor in text field that wasn't there before-->
+	<var id="wise" set="This is a note to the wise!"/>
+	<insert wait="300">$wise</insert>
+	<glimpse id="seeNote" select="text/analyze/line/trans-note/text" prop="value" expect="$wise"/>
+
+<!-- Insert a Literal Translation -->
+	<click select="//toolbar/literal-translation"/>
+	<var id="col" set="1"/><!-- inserts it above the Note -->
+	<click select="text/analyze/line/trans-note/label"/><!-- puts cursor in text field that wasn't there before-->
+	<var id="litTrans" set="Literal translation is this"/>
+	<insert wait="300">$litTrans</insert>
+	<glimpse id="seeLt" select="text/analyze/line/trans-note/text" prop="value" expect="$litTrans"/>
+
+<!-- Select the third text -->
+	<var id="row" set="3"/>
+	<click select="texts/record/col"/>
+
+<!-- Go back to the first text -->
+	<var id="row" set="1"/>
+	<click select="texts/record/col" path="/value:Phatani ntima"/>
+	<var id="row" set="1"/>     <var id="col" set="2"/>
+	<glimpse id="seeNote2" select="text/analyze/line/trans-note/text" prop="value" expect="$wise"/>
+	<var id="col" set="1"/>
+	<glimpse id="seeLt2" select="text/analyze/line/trans-note/text" prop="value" expect="$litTrans"/>
+
+<!-- Delete the note -->
+	<var id="col" set="2"/>
+	<click dx="100" side="right" select="text/analyze/line/trans-note/text"/>
+	<insert wait="300">{DOWN}~</insert>
+
+<!-- Delete the lit trans -->
+	<var id="col" set="1"/>
+	<click dx="100" side="right" select="text/analyze/line/trans-note/text"/><!-- the index is now 2 -->
+	<insert wait="300">{DOWN}~</insert>
+
+  </model>
+
+<!-- Restore the Configure Interlinear Lines dialog -->
+   <click select="menubar/tools/configure-interlinear"/>
+
+   <model select="configure-interlinear[@role='dialog']">
+	<on-dialog title="Configure Interlinear Lines">
+<!-- Hide the Literal Translation -->
+		<click id="ltHide" select="displayed/line" path="Literal Translation"/>
+		<click id="hide" select="hide"/>
+<!-- Hide the English Note -->
+		<click id="noteHide" select="displayed/line" path="Note"/>
+		<click select="hide"/>
+<!-- Move Word Cat. to the bottom -->
+		<click select="displayed/line" path="Word Cat."/>
+		<click select="move-down"/>
+		<click select="move-down"/>
+		<click select="move-down"/>
+		<click select="ok"/>
+	</on-dialog>
+   </model>
+
+ <click select="menubar/view/lexicon/lexicon-edit"/>
+ <click select="toolbar/first-record"/>
+ <!-- Get the cursor off the toolbar so the next test won't die! -->
+ <var id="ind" set="*"/>
+ <click select="lexicon-edit[@role='view']/entry/slice/lexeme-form/data"/>
+ <sound frequency = "700" duration = "250"/>
+
+ </on-application>
+
+</accil>

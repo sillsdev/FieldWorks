@@ -1,0 +1,11 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<StartProgram>c:\fwte\bin\nunit\bin\nunit.exe</StartProgram>
+	<StartArguments>"C:\fwte\output\debug\TE_Tests.dll"</StartArguments>
+	<StartAction>Program</StartAction>
+  </PropertyGroup>
+  <PropertyGroup>
+	<ReferencePath>
+	</ReferencePath>
+  </PropertyGroup>
+</Project>

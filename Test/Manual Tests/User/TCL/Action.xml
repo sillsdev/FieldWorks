@@ -1,0 +1,11 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="TCL\Action.xml">
+ <title tag="tclAction">What is an action?</title>
+ <index>
+  <li>action: definition</li>
+  <li>test step: action</li>
+ </index>
+ <definition>
+  <p>The command or gesture needed to invoke the expected result in a <i>test step</i>. This may be a short list of actions if it is unlikely that they can fail individually.</p>
+ </definition>
+</concept>

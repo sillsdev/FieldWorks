@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000005">
+	<rt class="LangProject" guid="2465F3C4-30EC-4B5B-BF0F-9AA0BA23634A">
+		<CmObject />
+		<CmProject>
+			<DateCreated val="2003-07-09 09:59:47.183" />
+			<DateModified val="2007-05-22 08:50:26.907" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">FieldWorks Test Language Project</Run>
+				</AStr>
+			</Description>
+			<Name>
+				<AUni ws="en">TestLangProj</AUni>
+			</Name>
+		</CmProject>
+		<LangProject>
+			<EthnologueCode>
+				<Uni>XKAL</Uni>
+			</EthnologueCode>
+			<FieldWorkLocation>
+				<AUni ws="xkal">
+					Catalina
+					English (&lt;a'a`&lt;w'o'ￃﾧￃﾴ￢ﾀﾦ)
+					French IPA (&lt;a'a`&lt;w'o'￉ﾥￌﾌ￉ﾒ￰ﾐ﾿﾿)
+					Spanish (&lt;a'a`&lt;w'o'ￃﾧￃﾴ￢ﾀﾦ)
+					Greek basic (￡ﾼﾅ￡ﾽﾰ￡ﾽﾥￏﾌￃﾧￃﾴ￢ﾀﾦ)
+					Greek composite (&lt;a'a`&lt;w'o'ￏﾌ￡ﾽﾥ￡ﾽﾰ￡ﾼﾅ)
+
+					Greek basic (￡ﾼﾅ￡ﾽﾰ￡ﾽﾥￏﾌￃﾧￃﾴ￢ﾀﾦ)
+
+					Spanish (&lt;a'a`&lt;w'o'ￃﾧￃﾴ￢ﾀﾦ)
+
+					Greek composite (&lt;a'a`&lt;w'o'ￏﾌ￡ﾽﾥ￡ﾽﾰ￡ﾼﾅ)
+					English (&lt;a'a`&lt;w'o'ￃﾧￃﾴ￢ﾀﾦ)
+
+					Greek composite (&lt;a'a`&lt;w'o'ￏﾌ￡ﾽﾥ￡ﾽﾰ￡ﾼﾅ)
+
+					French IPA (&lt;a'a`&lt;w'o'￉ﾥￌﾌ￉ﾒ￰ﾐ﾿﾿)
+
+					English (&lt;a'a`&lt;w'o'ￃﾧￃﾴ￢ﾀﾦ&lt;a'a`&lt;w'o'ￃﾧￃﾴ￢ﾀﾦ&lt;a'a`&lt;w'o'ￃﾧￃﾴ￢ﾀﾦ)
+				</AUni>
+			</FieldWorkLocation>
+			<MainCountry>
+				<AUni ws="xkal">TexMex</AUni>
+			</MainCountry>
+			<WorldRegion>
+				<AUni ws="xkal">TexMex</AUni>
+			</WorldRegion>
+			<AffixCategories>
+				<objsur t="o" guid="37DC8E52-ABDA-4092-AFF9-33BCA6669CFA" />
+			</AffixCategories>
+			<AnalysisStatus>
+				<objsur t="o" guid="2BDD10DD-F9B2-11D3-977B-00C04F186933" />
+			</AnalysisStatus>
+			<AnalyzingAgents>
+				<objsur t="o" guid="9303883A-AD5C-4CCF-97A5-4ADD391F8DCB" />
+				<objsur t="o" guid="1257A971-FCEF-4F06-A5E2-C289DE5AAF72" />
+				<objsur t="o" guid="5093D7D7-4F18-4AAD-8C86-88389476DF15" />
+				<objsur t="o" guid="67E9B8BF-C312-458E-89C3-6E9326E48AA0" />
+			</AnalyzingAgents>
+			<AnnotationDefs>
+				<objsur t="o" guid="EA346C01-022F-4F34-B938-219CE7B65B73" />
+			</AnnotationDefs>
+			<Annotations>
+				<objsur t="o" guid="DC747A85-CEB6-491E-8B54-7FC37D7B2F80" />
+				<objsur t="o" guid="C7D0365D-9217-4425-B2F4-0D83482207FA" />
+				<objsur t="o" guid="2D4371C6-7D5E-4C9D-9C46-C3EE6213CE05" />
+				<objsur t="o" guid="CCC91718-7C3D-438F-A2E7-3C8D1FB76EBA" />
+				<objsur t="o" guid="67235EE4-0980-4321-B10D-09B3B3EB56FE" />
+				<objsur t="o" guid="916273FB-56B4-4C57-A671-C0BB7E8183EF" />
+				<objsur t="o" guid="D58F291F-59D7-45CF-BA51-7BC0D33E4837" />
+				<objsur t="o" guid="F079BCFB-9EA3-4384-A4AB-7154EDDFFE7A" />
+				<objsur t="o" guid="2FC0CE34-C71A-4465-9E0C-950ED5CCFDA3" />
+				<objsur t="o" guid="04EBD095-6F08-4DC5-A8B9-680A48F6F2F3" />
+				<objsur t="o" guid="F3CD8800-9830-459B-83DF-F28986D29A0F" />
+				<objsur t="o" guid="F591CCDD-B2DC-4E25-A237-83C0D8A6F21D" />
+				<objsur t="o" guid="05B34FE9-6666-4C5E-A312-1CCD8E252914" />
+				<objsur t="o" guid="E98410DA-BCE1-48FF-9C53-8444CDFD9460" />
+				<objsur t="o" guid="2AC0EFE5-EF58-4712-B46B-1943DCC35CB7" />
+				<objsur t="o" guid="6CE93FD4-3743-4225-9A58-46E86654FF09" />
+				<objsur t="o" guid="D8AE4A84-C265-4011-A379-7747DD6F5C7E" />
+				<objsur t="o" guid="E4F5F96D-CD08-46A8-B3DC-96F88EC3A90B" />
+				<objsur t="o" guid="FDB39531-0705-4521-A1CE-3A2C912F0E56" />
+				<objsur t="o" guid="2DD8B7DA-42E9-48CE-8194-1A4C15446EB7" />
+				<objsur t="o" guid="07747E62-9708-483B-9B42-903E452D1A81" />
+				<objsur t="o" guid="2B8F1FA8-5754-4062-9BF8-654A6BE74100" />
+				<objsur t="o" guid="827E08DF-502F-4CB9-B0FC-DF8443972194" />
+				<objsur t="o" guid="94A376EC-8E24-48A3-A2C8-C90611EABBC4" />
+				<objsur t="o" guid="1BF93E4D-CD28-4BE0-B83E-6DEAA5DEE344" />
+				<objsur t="o" guid="952529AD-26F1-4C85-8C50-721F6265EA1A" />
+				<objsur t="o" guid="72145866-CAE3-41DC-852D-5CB81D428B58" />
+				<objsur t="o" guid="7AA66C7B-2657-4EB8-ACE5-6AC7B66A85B8" />
+				<objsur t="o" guid="F06362ED-E58C-4EBF-A7B0-D8B71CDF7D48" />
+				<objsur t="o" guid="F06D7726-3101-4185-9C25-7F26FEB5915C" />
+				<objsur t="o" guid="7B35AC2E-B3CE-44EA-A44A-CADBC9926233" />
+				<objsur t="o" guid="7A049ACC-2133-4CC7-BFA7-96B9A55DE6AA" />
+				<objsur t="o" guid="4F08CCA3-53E3-41FC-8CDC-D96B5B53D5AA" />
+				<objsur t="o" guid="0F226587-8A3D-4802-8D84-02BFCBF0A812" />
+				<objsur t="o" guid="DC8DE2A5-C780-4923-908E-0A8BADF9390E" />
+				<objsur t="o" guid="74F706B8-781F-4A52-8BB6-0B0EDBDA5013" />
+				<objsur t="o" guid="900C6447-5D5E-4B7B-AE03-AD77443709C5" />
+				<objsur t="o" guid="ECEF0CBA-9269-41AB-A20B-524E8E0B54D5" />
+				<objsur t="o" guid="DE1D0755-6E72-4EA6-B6F6-A3CF11DD2C4B" />
+				<objsur t="o" guid="163842E7-FBB0-414C-B6AF-975451B6B6FB" />
+				<objsur t="o" guid="9299E1CE-2D5E-425F-83C3-B96FD730C686" />
+				<objsur t="o" guid="3D2F7BFF-1E11-4CB1-97D2-00306AB6E35D" />
+				<objsur t="o" guid="5F69C69F-4031-4450-93D3-2E2D36BDE577" />
+				<objsur t="o" guid="800BA90C-2285-4B84-ABC9-C38A592FCE76" />
+				<objsur t="o" guid="2747041C-B1F2-4F60-8E68-EB0A9D836415" />
+				<objsur t="o" guid="27256C2F-8E6A-44E2-AF56-11D28D568C6D" />
+				<objsur t="o" guid="E9C947D1-F5C5-42F4-98CE-C871E6FA3C89" />
+				<objsur t="o" guid="4E1D6F7B-077F-4A64-B79E-53B51C20692C" />
+				<objsur t="o" guid="73254F54-D325-4A11-BEB4-9B610D2524C4" />
+				<objsur t="o" guid="A1FC26F4-3346-4CD4-AAB7-58D562F0AB4C" />
+				<objsur t="o" guid="C3B5EA36-3E89-4C90-812F-4EE2064A096A" />
+				<objsur t="o" guid="0AE6C375-8FA2-4420-80A4-2D5BEC3643C7" />
+				<objsur t="o" guid="9F5AF4D4-F825-4B7E-BC1A-5126A25F0086" />
+				<objsur t="o" guid="9400F7D7-0D4F-4238-95DB-7C2B476E2D2D" />
+				<objsur t="o" guid="0561D629-851C-4C1A-BD81-6FDAE7020133" />
+				<objsur t="o" guid="E19D7B57-A052-49F6-BCA8-ACAF9BF9629E" />
+				<objsur t="o" guid="15589553-D1C8-44FA-B394-C3DB36C6AAD8" />
+				<objsur t="o" guid="2E7DDD8D-44E8-4DC5-B014-BE2A3D00ACC2" />
+				<objsur t="o" guid="9C8112DA-99D0-4D7F-86A3-C2CD822923CE" />
+				<objsur t="o" guid="160701B2-748B-47F9-9AA0-E60AACB1AB0F" />
+				<objsur t="o" guid="5D8D88A8-EBB0-4842-A694-AB9AA4BED462" />
+				<objsur t="o" guid="E828A9E1-5078-4C9E-B63C-AA2607940757" />
+				<objsur t="o" guid="AE2DD7A6-A6E2-4F94-94C0-1F516C0C205D" />
+				<objsur t="o" guid="72D8324A-285E-4974-BF8A-2E53EF2EF853" />
+				<objsur t="o" guid="DA09842D-C7D8-40D4-8100-BCDB7086602E" />
+				<objsur t="o" guid="2AA3A73C-A5E9-466D-A3D4-F28DB309BF12" />
+				<objsur t="o" guid="4AD8BE33-F56E-42C1-814A-8877C2530399" />
+				<objsur t="o" guid="E2357F8C-E747-4E42-B637-9F8932078906" />
+				<objsur t="o" guid="E47BFC46-108E-4405-878B-C7D81EA85C8A" />
+				<objsur t="o" guid="3C7FE430-3918-4F4C-8A68-3A2B8C4AC96C" />
+				<objsur t="o" guid="061B17FC-02B9-4A5D-BA2D-34A04B0FF3E4" />
+				<objsur t="o" guid="8A80551C-CCAA-407E-92BB-70E51C635256" />
+				<objsur t="o" guid="4DB476E3-1C83-47CE-AE22-D6B15B107C50" />
+				<objsur t="o" guid="EA492598-E247-400B-AEDF-39404A52DA74" />
+				<objsur t="o" guid="A0BDAD3A-04C1-4584-877C-2A194ACA8DCA" />
+				<objsur t="o" guid="285AEE2C-2505-4FF2-9F99-226990499AB4" />
+				<objsur t="o" guid="F71A24A3-001F-45EF-AD84-F960F88E9AEC" />
+				<objsur t="o" guid="A1D58100-02A0-45CF-8F71-FCD72DFC44F9" />
+				<objsur t="o" guid="5CE2CC93-0A52-476A-A76D-A51152EDBB25" />
+				<objsur t="o" guid="249EA1AF-5C13-402F-88E1-FAD790CEFD7B" />
+				<objsur t="o" guid="EF7AD7EE-29F0-4D0B-BC54-4E286874CC4E" />
+				<objsur t="o" guid="5C6A1E08-93CF-42A7-8321-A6704D5C9965" />
+			</Annotations>
+			<AnthroList>
+				<objsur t="o" guid="A82401B9-8727-45B6-AC03-5ED0B7623F16" />
+			</AnthroList>
+			<CheckLists>
+				<objsur t="o" guid="76FB50CA-F858-469C-B1DE-A73A863E9B10" />
+			</CheckLists>
+			<ConfidenceLevels>
+				<objsur t="o" guid="2BDD10F9-F9B2-11D3-977B-00C04F186933" />
+			</ConfidenceLevels>
+			<DiscourseData>
+				<objsur t="o" guid="2C1CDA34-A561-4DF0-BCE8-1ADB8D128218" />
+			</DiscourseData>
+			<Education>
+				<objsur t="o" guid="30FEB0F5-0552-44F8-819D-7FF89D91BDCE" />
+			</Education>
+			<Filters>
+				<objsur t="o" guid="253C555E-BF71-402F-A707-FF3C043BE39B" />
+				<objsur t="o" guid="FE6699B0-870F-49A0-954D-62559E2870F5" />
+				<objsur t="o" guid="AA1FC855-4D83-44F9-8D26-1758C0C88683" />
+				<objsur t="o" guid="B1E1CB88-3545-4531-9D21-F44C4BD99D10" />
+				<objsur t="o" guid="FAF74866-39ED-4FC1-A55E-51132215AB78" />
+				<objsur t="o" guid="2E72E741-7D8A-46A2-B6E8-5A0516DD6524" />
+				<objsur t="o" guid="8A918635-0481-4BE6-BDEC-5F991C834F50" />
+				<objsur t="o" guid="2FDDC903-ACB1-49A6-93EE-160298EF6FD7" />
+				<objsur t="o" guid="58A80196-17D3-4B7B-A6C8-626A3B240CC1" />
+				<objsur t="o" guid="250AD39E-404B-4860-9202-C6E9640FAB36" />
+				<objsur t="o" guid="199BD39F-7E9D-40B4-8669-A1B573315D39" />
+				<objsur t="o" guid="530C532C-E518-4E2E-AEAC-6A482F071420" />
+				<objsur t="o" guid="7CEC7EDA-5CF6-4FF9-9427-6574EE37BFCE" />
+				<objsur t="o" guid="43B768A7-14F5-40B3-B2F8-C188782DA35A" />
+				<objsur t="o" guid="D516F700-BCAD-49B4-B111-514C5E5FB2E8" />
+				<objsur t="o" guid="AA8ADCE6-887C-429F-A0FF-E132DBEDFA8D" />
+				<objsur t="o" guid="A2B3D99C-B27E-402C-A3DF-4D94C906704F" />
+				<objsur t="o" guid="F31A96EC-1D06-416C-9F07-7E66173EB72B" />
+				<objsur t="o" guid="A5FFDC8F-2FCA-4D8C-85E5-B122799DCE19" />
+				<objsur t="o" guid="2A4B6E62-AA63-4C8F-9B9E-F67C8105BCE2" />
+				<objsur t="o" guid="A7BACDB4-B702-49DC-8D23-A6509987FF7A" />
+				<objsur t="o" guid="BEFEFE60-43B7-42FF-8359-8B3C916C2B22" />
+				<objsur t="o" guid="A5BD9244-4A55-4370-878A-BF35DDAF2930" />
+				<objsur t="o" guid="7B18AA41-CB27-4A74-A25B-1CA745F5A55E" />
+				<objsur t="o" guid="F486017D-FA4D-4EA6-8C79-279450B9E08A" />
+				<objsur t="o" guid="F6D48B2F-4430-4BA1-A73C-19C50F0961A1" />
+				<objsur t="o" guid="BAC3956F-7968-4700-93A4-EB1F7966FC3F" />
+			</Filters>
+			<GenreList>
+				<objsur t="o" guid="C284680A-BDFA-4370-A95F-F1BDA3B182BF" />
+			</GenreList>
+			<LexDb>
+				<objsur t="o" guid="D7F71381-E8CF-11D3-9764-00C04F186933" />
+			</LexDb>
+			<Locations>
+				<objsur t="o" guid="2BDD11FB-F9B2-11D3-977B-00C04F186933" />
+			</Locations>
+			<MorphologicalData>
+				<objsur t="o" guid="DE9F4186-F10F-4128-A3D8-7DCFD0329127" />
+			</MorphologicalData>
+			<MsFeatureSystem>
+				<objsur t="o" guid="39A6C58C-2EC9-4262-B6FB-A002ED4E85DD" />
+			</MsFeatureSystem>
+			<Overlays>
+				<objsur t="o" guid="86F97ECB-3DD7-44C3-AEDC-E0637B06EDCC" />
+				<objsur t="o" guid="7E4CD69D-331C-47F2-8B3F-00D57AAED721" />
+				<objsur t="o" guid="69489E08-AA68-4A64-B3C0-DDAE0AA4AAC4" />
+				<objsur t="o" guid="5F2CBB69-B1D7-48BC-8489-766161D71C59" />
+				<objsur t="o" guid="C750EFE1-E58C-4858-BBB9-7F2034FA1A95" />
+				<objsur t="o" guid="CF75B69A-94CF-433C-8501-DF81C4D2A250" />
+				<objsur t="o" guid="B99DA0DA-CEFD-4DE5-B259-F26DFAD0FC20" />
+				<objsur t="o" guid="753D0799-4BEE-4ED9-AA69-26D9027C16A6" />
+				<objsur t="o" guid="88E98A57-B8B5-4DBC-AE79-6EBF96BCD4CB" />
+				<objsur t="o" guid="81EA098B-83B9-4C58-9464-B5BE85447773" />
+				<objsur t="o" guid="2F42BFCA-FBF4-4727-8A96-5BAEC2E0BBCA" />
+				<objsur t="o" guid="DBA78F16-FB5B-4423-8534-43FD70DFB6E1" />
+			</Overlays>
+			<PartsOfSpeech>
+				<objsur t="o" guid="D7F7150C-E8CF-11D3-9764-00C04F186933" />
+			</PartsOfSpeech>
+			<People>
+				<objsur t="o" guid="2BDD1201-F9B2-11D3-977B-00C04F186933" />
+			</People>
+			<PhFeatureSystem>
+				<objsur t="o" guid="10502627-4E60-46E8-8A61-BDF27F320C5E" />
+			</PhFeatureSystem>
+			<PhonologicalData>
+				<objsur t="o" guid="8EA37D3D-B2A1-4E4E-AB8E-ADA83C7459DA" />
+			</PhonologicalData>
+			<Positions>
+				<objsur t="o" guid="3322C70A-FC3E-49A0-BB91-719AE4CC6E72" />
+			</Positions>
+			<ResearchNotebook>
+				<objsur t="o" guid="2BDD10D6-F9B2-11D3-977B-00C04F186933" />
+			</ResearchNotebook>
+			<Restrictions>
+				<objsur t="o" guid="2BDD111C-F9B2-11D3-977B-00C04F186933" />
+			</Restrictions>
+			<Roles>
+				<objsur t="o" guid="2BDD113F-F9B2-11D3-977B-00C04F186933" />
+			</Roles>
+			<SemanticDomainList>
+				<objsur t="o" guid="C924BFCE-BEED-4382-95E8-62B54951C83D" />
+			</SemanticDomainList>
+			<SortSpecs>
+				<objsur t="o" guid="98AE345B-FFE5-4D44-B344-F1609B121A8D" />
+				<objsur t="o" guid="8D6FD978-D3C9-4762-8966-F7550C9C096E" />
+				<objsur t="o" guid="87436E0C-9D5E-4759-B492-9FE17111B59E" />
+				<objsur t="o" guid="00DEB7D8-913B-486B-8445-44E30412D5B5" />
+				<objsur t="o" guid="B1A5C963-DDDE-460E-B8FF-53A642E464A4" />
+				<objsur t="o" guid="8C0CE3D4-4EC4-4836-AC69-5EF6DF34EE2D" />
+				<objsur t="o" guid="84215C6D-C41E-47CC-8291-EEC49BEC6F77" />
+				<objsur t="o" guid="A6BCE435-9494-4565-9A0A-63A8AC4DB16F" />
+				<objsur t="o" guid="1E92D028-8682-4102-9FBA-BB35E8B01293" />
+				<objsur t="o" guid="C460B077-FE4A-41EA-A9B9-3B4246322EB8" />
+				<objsur t="o" guid="37A435B3-FD50-4850-8291-456649615704" />
+				<objsur t="o" guid="DE08D154-4553-4AFC-B4C4-E486DF165024" />
+				<objsur t="o" guid="FF14F35E-B718-4377-BD16-4492DDB85AF7" />
+				<objsur t="o" guid="8D753B8E-B749-4F12-97E2-7D4891DF25F8" />
+				<objsur t="o" guid="E93FEBB1-9FDC-4455-ACFD-1892D8851AB0" />
+				<objsur t="o" guid="510E8FA4-ED3A-4979-AA13-A992470812C0" />
+				<objsur t="o" guid="3ABC1D36-E0E5-489C-87A9-CDB9C73666D4" />
+			</SortSpecs>
+			<Styles>
+				<objsur t="o" guid="4D312F11-439E-11D4-B5E7-00400543A266" />
+				<objsur t="o" guid="4D312F12-439E-11D4-B5E7-00400543A266" />
+				<objsur t="o" guid="BCCBEEB1-F0D5-47AE-A3B8-608DF18D0F82" />
+				<objsur t="o" guid="F7F621DA-CEA4-4935-B20F-8E7014A3CBDE" />
+				<objsur t="o" guid="CB4A2B4D-E0C2-48B0-8D2E-38DCB4AFFB58" />
+				<objsur t="o" guid="D9368598-566D-421D-8472-DC7DC37BC4FE" />
+				<objsur t="o" guid="D4D57AD6-F09A-48F8-B4D4-130844F3E545" />
+				<objsur t="o" guid="1D6CBD30-656B-4115-B00D-29A3E9D0A3EB" />
+				<objsur t="o" guid="BC62B224-788A-4F4B-B02A-3A490080654E" />
+				<objsur t="o" guid="C70A2AF4-CEB1-4679-BCBA-6CFE6A243817" />
+				<objsur t="o" guid="AFEC1A0D-0141-4B34-B284-C98CA92BBE8D" />
+				<objsur t="o" guid="0B076448-D6DE-48E8-B178-703F10DA81C3" />
+				<objsur t="o" guid="F30FC59C-2724-4D90-8435-D2B3436CD1AD" />
+				<objsur t="o" guid="38CA1A0F-56F8-4560-97E0-340DA96B6771" />
+				<objsur t="o" guid="AFEC8D14-898A-4B5B-9936-81A30FB77CBD" />
+			</Styles>
+			<TextMarkupTags>
+				<objsur t="o" guid="1873EE7D-0442-44D3-8F40-BB284BFAF30A" />
+			</TextMarkupTags>
+			<Texts>
+				<objsur t="o" guid="BCABF849-473C-4902-957B-8DE378248B7F" />
+			</Texts>
+			<TimeOfDay>
+				<objsur t="o" guid="1FBDC211-32E4-4203-9B7F-9CAACBF31DBD" />
+			</TimeOfDay>
+			<TranslatedScripture>
+				<objsur t="o" guid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4" />
+			</TranslatedScripture>
+			<TranslationTags>
+				<objsur t="o" guid="D7F71649-E8CF-11D3-9764-00C04F186933" />
+			</TranslationTags>
+			<WeatherConditions>
+				<objsur t="o" guid="2BDD1159-F9B2-11D3-977B-00C04F186933" />
+			</WeatherConditions>
+			<AnalysisWss>
+				<objsur t="r" guid="BB99B9AD-E657-11D3-9764-00C04F186933" />
+				<objsur t="r" guid="BB99B9AE-E657-11D3-9764-00C04F186933" />
+				<objsur t="r" guid="2FEA3857-0006-4478-811E-2CAE34C4080D" />
+				<objsur t="r" guid="A639F4E0-EEF0-11D3-9770-00C04F186933" />
+				<objsur t="r" guid="CFAB6960-182A-47A0-9C54-FC9A2CC89BD9" />
+				<objsur t="r" guid="E598F643-63F2-4618-B3A5-DCF5BAA617A5" />
+				<objsur t="r" guid="BE86F7B7-425B-4281-B75D-D2E5D54167FA" />
+				<objsur t="r" guid="9F3BBA83-5E64-4FBD-8A85-9C1F60331D18" />
+				<objsur t="r" guid="3367010B-7C1E-4D6B-B7A3-8114D058F282" />
+				<objsur t="r" guid="6A387E30-5D47-4838-942E-C8CDAA44E6F5" />
+			</AnalysisWss>
+			<CurAnalysisWss>
+				<objsur t="r" guid="BB99B9AD-E657-11D3-9764-00C04F186933" />
+			</CurAnalysisWss>
+			<CurPronunWss>
+				<objsur t="r" guid="EBF583EE-ABC3-469C-8143-19648FAB3DF2" />
+			</CurPronunWss>
+			<CurVernWss>
+				<objsur t="r" guid="A7044448-B95C-4F80-8FF4-32D71C371CDF" />
+			</CurVernWss>
+			<VernWss>
+				<objsur t="r" guid="A7044448-B95C-4F80-8FF4-32D71C371CDF" />
+				<objsur t="r" guid="EBF583EE-ABC3-469C-8143-19648FAB3DF2" />
+			</VernWss>
+		</LangProject>
+	</rt>
+</languageproject>

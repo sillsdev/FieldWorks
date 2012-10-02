@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--layouts that must be available to all applications-->
+<LayoutInventory>
+  <layout class="CmObject" type="detail" name="empty">
+  </layout>
+  <layout class="CmObject" type="detail" name="default">
+  </layout>
+  <layout class="CmObject" type="jtview" name="empty">
+  </layout>
+</LayoutInventory>

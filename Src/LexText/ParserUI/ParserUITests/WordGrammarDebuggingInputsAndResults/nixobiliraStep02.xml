@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>nixobilira</form>
+  <seq step="Try to build a Stem node by prepending a derivational prefix to another Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem syncat="152" syncatAbbr="intrans" inflClass="178" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+	  <morph wordType="derivPfx">
+		<shortName>xo- (Pass): xo</shortName>
+		<derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	  </morph>
+	  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>*bili (to.see): himbilira</shortName>
+		  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to build a Full analysis node on an uninflected Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+	  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>*bili (to.see): himbilira</shortName>
+		  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem>
+	</full>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<full syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (n) of the inflectional template "Possessed noun" is incompatible with the category (trans) of the stem.</failure><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<full syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (trans) of the stem.</failure>
+	  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>*bili (to.see): himbilira</shortName>
+		  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<full syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (trans) of the stem.</failure>
+	  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>*bili (to.see): himbilira</shortName>
+		  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <morph wordType="166">
+		<shortName>-ra (Pres): ra</shortName>
+		<inflClasses>
+		  <inflClass hvo="177" abbr="1" />
+		</inflClasses>
+		<inflMsa slot="166" slotAbbr="Tense" />
+	  </morph>
+	</full>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<full syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>*bili (to.see): himbilira</shortName>
+		  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<stem syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-" blocksInflection="+">
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>*bili (to.see): himbilira</shortName>
+		  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem></stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<full syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (trans) of the stem.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>*bili (to.see): himbilira</shortName>
+		  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+</word>

@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Source\UserContent.xml">
+ <title tag="srcucon">What is user content?</title>
+ <index>
+  <li>Manual: user content</li>
+ </index>
+ <definition>
+  <p>User content is the collection of modules that testers use to understand how to use tests, write tests, create reports and build this manual. It exists primarily as a user guide for the test scripts. Each user module is found in a subdirectory of the <b>User directory</b>.</p>
+  <ul name="Each subdirectory contains modules conforming to the modularbook DTD">
+   <li>*.htm - javascript in HTML used for validation</li>
+   <li>*.xml - module files</li>
+   <li>*.gif - graphical interchange format image files</li>
+   <li>*.jpg - another image format used by HTML browsers</li>
+  </ul>
+  <p>A file named overview.xml or maintask.xml contains a summary of the modules in the subdirectory and links to them.
+When a subdirectory has a maintask file, all the modules describe tasks to be performed.
+When a subdirectory has an overview file, all the modules describe facts about the topic.</p>
+ </definition>
+ <seeAlso>
+  <li><link uri="..\XML\XML.xml" type="module">What is XML?</link></li>
+  <li><link uri="..\XML\XSL.xml" type="module">What is XSL?</link></li>
+  <li><link uri="..\XML\MarkUp.xml" type="module">What is HTML?</link></li>
+ </seeAlso>
+</concept>

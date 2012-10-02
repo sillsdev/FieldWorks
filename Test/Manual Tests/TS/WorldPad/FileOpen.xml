@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filop" num="2.1.2" abbr="fop" file="WorldPad\FileOpen.xml">
+ <title tag="filop">File-Open Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>File-Open opens a new World Pad window with the selected file in it, unless the window was empty, then it uses the existing window.</p>
+  </introduction>
+
+  <context>
+<p>This is a standard Windows dialog but the "guts" for reading the files are our own. The first words of the bug report title should be a noun phrase containing the words "File-Open".</p>
+  </context>
+
+ <case id="fopOpen" num="1" order="any">
+  <title tag="fncNew">File-Open</title>
+  <context>
+<p>When the File menu is displayed</p>
+</context>
+  <step name="1.1" link="Bug">With a new window, select File | Open.
+   <r>
+	<ul>
+	 <li>The main window is populated by the file selected.</li>
+	 <li>A new task button appears on the system taskbar.</li>
+	</ul>
+   </r>
+   <p name="bug">File-Open launches a new window</p>
+   <p name="bug">File-Open window is empty</p>
+   <p name="bug">File-Open fails to create a taskbar button</p>
+  </step>
+  <step name="1.2" link="Bug">With the application in various states (text selected or not, scrolling, split window) select File | open.
+   <r>
+	<ul>
+	 <li>A second instance of the application opens, with the main window populated by the file selected.</li>
+	 <li>A new task button appears on the system taskbar.</li>
+	</ul>
+   </r>
+   <p name="bug">File-Open fails to launch new window</p>
+   <p name="bug">File-Open new window is empty</p>
+   <p name="bug">File-Open fails to create a taskbar button</p>
+  </step>
+  <step name="1.3" link="Bug">Select File | Open repeatedly.
+   <r>
+	<ul>
+	 <li>Successive new windows are placed slightly lower and to the right of the previous one.</li>
+	 <li>The new window's size is the same as its predecessor's, unless that would make it extend off the screen, in which case it is shrunk to fit the screen.</li>
+	 <li>If that would make it too small (smaller than 400x400 pixels), the new window appears at the top-left of the screen.</li>
+	</ul>
+   </r>
+   <p name="bug">File-open fails to launch a reasonable number of new windows</p>
+  </step>
+ </case>
+
+ <case id="fopTypes" num="2" order="any">
+  <title tag="fopTypes">File Types</title>
+  <context>
+<p>When the File-Open dialog is displayed</p>
+</context>
+  <step name="2.1" link="Bug">Select files of different types to open.
+   <r>
+	<ul>
+	 <li>The files list displays only files of the selected type.</li>
+	 <li>Each file is read properly.</li>
+	</ul>
+   </r>
+   <p name="bug">File-Open dialog file type filter fails</p>
+   <p name="bug">File-Open fails to open file</p>
+   <p name="bug">File-Open fails to read file correctly</p>
+  </step>
+ </case>
+
+ <update date="Sep-18-02" author="MikeL">Test created.</update>
+
+</test>

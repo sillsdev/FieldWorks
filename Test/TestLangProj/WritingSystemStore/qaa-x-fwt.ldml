@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-07-18T14:01:19" />
+		<language
+			type="qaa" />
+		<variant
+			type="x-fwt" />
+	</identity>
+	<collations />
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="FwT" />
+		<palaso:defaultFontFamily
+			value="FieldWorks Test SIL" />
+		<palaso:defaultKeyboard
+			value="FwTest" />
+		<palaso:languageName
+			value="FwTest" />
+		<palaso:spellCheckingId
+			value="xfwt" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:windowsLCID
+			value="1058" />
+	</special>
+</ldml>

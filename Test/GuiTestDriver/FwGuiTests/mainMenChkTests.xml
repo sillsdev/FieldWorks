@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+
+  <click wait="1000" path="menu:View/menu:Status Bar" />
+  <glimpse id="StStatus" path="menu:View/menu:Status Bar" prop="checked" on-fail="skip"/>
+  <if>
+   <condition of="StStatus" is="'True'"/>
+   <then>
+	<click path="menu:View/menu:Status Bar" />
+	<glimpse path="menu:View/menu:Status Bar" prop="normal">
+	  Glimpse1: <data get="path"/> did not uncheck.
+	</glimpse>
+   </then>
+   <else>
+	<click path="menu:View/menu:Status Bar" />
+	<glimpse path="menu:View/menu:Status Bar" prop="checked">
+	  Glimpse2: <data get="path"/> did not check.
+	</glimpse>
+   </else>
+  </if>
+
+  <click path="menu:View/menu:Side Bar" />
+  <glimpse id="StSide" path="menu:View/menu:Side Bar" prop="checked" on-fail="skip"/>
+  <if>
+   <condition of="StStatus" is="'True'"/>
+   <then>
+	<click path="menu:View/menu:Side Bar" />
+	<glimpse path="menu:View/menu:Side Bar" prop="normal">
+	  Glimpse1: <data get="path"/> did not uncheck.
+	</glimpse>
+   </then>
+   <else>
+	<click path="menu:View/menu:Side Bar" />
+	<glimpse path="menu:View/menu:Side Bar" prop="checked">
+	  Glimpse2: <data get="path"/> did not check.
+	</glimpse>
+   </else>
+  </if>
+
+  </on-application>
+</accil>

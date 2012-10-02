@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="Writing\Steps.xml">
+ <title tag="wrtst">Writing test case steps</title>
+ <index>
+  <li>test cases: writing steps</li>
+ </index>
+ <introduction>
+  <p>Test case steps are executed within a test case context. Steps may depend on the order in which they are executed. A sequence of steps exercizing more than one aspect of an interface object or perhaps more than one interface object, is called a <i>scenario</i>.</p>
+  <p>Step actions include <i>selecting</i> items or controls; <i>dragging</i> after a click to move or link an item or control with another; <i>visual inspection</i> to compare layouts or images.</p>
+  <p>Each step has an action, expected results and possible bug patterns.</p>
+ </introduction>
+ <context>
+  <p>Before attempting to write a test case step, you should be in the process of</p>
+  <ul>
+   <li><link uri="SpecTestCases.xml" type="module">specifying each test case</link> for the test script.</li>
+   <li>reviewing <link uri="..\TCL\TestCase.xml" type="module">test case structure</link>.</li>
+  </ul>
+ </context>
+ <moduleGroup>
+  <li><link uri="Action.xml" type="module">Write actions</link></li>
+  <li><link uri="Result.xml" type="module">Write results</link></li>
+  <li><link uri="BugPattern.xml" type="module">Write bug patterns</link></li>
+ </moduleGroup>
+</overview>

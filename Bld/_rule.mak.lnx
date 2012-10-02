@@ -1,0 +1,18 @@
+# Build Rules
+
+# For c programs
+$(INT_DIR)/%.o: %.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $(TARGET_ARCH) \
+	  -c $(input) -o {$(INT_DIR)}$(output)
+
+# For C++ programs:
+$(INT_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) $(TARGET_ARCH) \
+	  -c $< -o $@ -MMD -MF $(@:%.o=%.d)
+
+# precompiled headers
+$(INT_DIR)/%.h.gch: %.h
+	@mkdir -p $(@D)
+	$(COMPILE.cc) -o $@ $<

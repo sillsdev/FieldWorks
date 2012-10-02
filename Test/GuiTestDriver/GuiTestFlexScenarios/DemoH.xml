@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+<include from="IncKalaba.xml"/>
+
+<!-- Andy Black's demo section H -->
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		<include from="IncStartUp.xml"/>
+		<include from="IncGrammar.xml"/>
+		<include from="IncLexicon.xml"/>
+
+<!-- H.	Derivation-->
+<!-- 1.	Back to the Grammar Sketch, derivation section.-->
+  <click path="$menuGRAMMAR;menu:Grammar Sketch" />
+  <insert>{PGDN 24}</insert>
+
+<!-- 2.	Discuss what's here.-->
+<!-- 3.	Let's add a derivational suffix ￢ﾀﾓnes that changes an adjective into a noun (something like English 'ness: good/goodness; quick/quickness).-->
+<!-- 4.	Ask them what they would need to do.  Here's the script's answer:-->
+<!-- 5.	Go to Lexicon / Lexicon-->
+  <click path="$vwLexEdit" />
+
+<!-- 6.	Click on Create new major entry button-->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+
+<!-- 7.	In the Form field, type "-nes"-->
+   <insert wait="300">-nes</insert>
+
+<!-- 8.	In the gloss field, type "quality"-->
+   <insert wait="300">{TAB 2}quality</insert>
+
+<!-- 9.	In Grammatical Properties, choose Derivational affix-->
+   <!--insert>%{T}</insert-->
+   <click path="$NL;9:Category Info./20:Category Info./$NL;43:NAMELESS"/>
+   <insert wait="300">d~</insert>
+
+<!-- 10.	Click on the Attaches to Category chooser button-->
+   <insert wait="300">%{y}</insert>
+
+<!-- a.	Open up modifier-->
+   <insert wait="300">mm</insert> <!-- second word starting with 'm' -->
+
+<!-- b.	Choose adjective.-->
+   <insert wait="300">{RIGHT}a~</insert> <!-- first word starting with 'a' looking down-->
+
+<!-- 11.	Click on the To category chooser button-->
+   <insert wait="300">%{h}</insert>
+
+<!-- a.	Choose noun.-->
+   <insert wait="300">nn~</insert>
+
+<!-- 12.	Click on the Create button.-->
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- 13.	Back to Grammar Sketch and regenerate.-->
+  <click path="$menuGRAMMAR;menu:Grammar Sketch" />
+  <click path="$Generate" />
+
+<!-- 14.	Go to Derivation section.  See newly added suffix.-->
+  <click path="$grmSkPanel" />
+  <insert>{PGDN 24}</insert>
+
+ </on-application>
+</accil>

@@ -1,0 +1,21 @@
+HKCR
+{
+	SilEncConverters31.PyScriptEncConverter.25b = s 'Python Script Converter Class'
+	{
+		CLSID = s '{50E53D69-3187-4169-B26F-83258995FE56}'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {50E53D69-3187-4169-B26F-83258995FE56} = s 'Python Script Converter Class'
+		{
+			ProgID = s 'SilEncConverters31.PyScriptEncConverter.25b'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{640AC7A0-77F8-479b-B963-1A5D243E4059}'
+		}
+	}
+}
