@@ -1,0 +1,20 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Category.xml">
+ <title tag="useCat">Categorizing bugs</title>
+ <index>
+  <li>report: category</li>
+  <li>category of a bug</li>
+  <li>setting category of a bug</li>
+ </index>
+ <introduction>
+  <p>Bugs can be tracked more closely when they are categorized. A bug is usualy categorized by the user interface object or feature that was being tested at the time it is found. In some cases, test steps must be performed that utilize features focused on by the current test. When they fail, they are categorized by the non-focus feature.</p>
+ </introduction>
+ <guidelines>
+  <p>If the category is not indicated in the bug pattern, as for a non-focus feature, here are some guidelines to identify the category of the bug:</p>
+  <ul>
+	<li>Find a test script that has a test case with a step that has the failure you encountered in a bug pattern. Search backward from the <link uri="..\Bugs\PatList.xml" type="module">Bug pattern list</link>. Search for a bug with part of a message you got, or part of the action you took.</li>
+	<li>Choose the <link uri="..\Apps\maintask.xml" type="module">application test library</link> you are using. The list of test scripts for this library is a list of user interface objects and features. Choose a category based on the subject in the title of one of the test scripts.</li>
+	<li>If you have access to the bug tracking system, find a similar bug and use the same category, or add your new information to that bug. See <link uri="Related.xml" type="module">Related bugs</link>.</li>
+  </ul>
+ </guidelines>
+</task>

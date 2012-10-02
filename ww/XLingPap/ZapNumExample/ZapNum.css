@@ -1,0 +1,71 @@
+/* WriteUpMaster.css
+   Cascading Style Sheet used with the XLingPap1.xsl XSLT template.
+
+   The user should add or modify the classes as needed.
+ */
+
+/**************************
+ class element formatting
+ **************************/
+.comment {
+  font-weight: bold;
+  color:red;
+}
+
+.symbol {
+  font-family: symbol;
+}
+
+/**************************
+ language formatting
+ **************************/
+.GlossLanguage {
+  color: blue;
+}
+
+.FreeTranslation {
+  color: black;
+  font-style: italic;
+}
+
+.vernacular {
+  font-family: PNG SILDoulos;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.TextReference {
+  color: maroon;
+}
+
+.IPA {
+  font-family: SILDoulos IPA93;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.emphasized {
+  color: red;
+}
+
+.not-italic {
+  font-style: normal;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.sub {
+  vertical-align: sub;
+  font-size: 65%;
+}
+
+.super {
+  vertical-align: super;
+  font-size: 65%;
+}
+
+.bold {
+  font-weight: bold;
+}

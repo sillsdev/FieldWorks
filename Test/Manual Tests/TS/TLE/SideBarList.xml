@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="sbli" num="4.1a" abbr="sbl" file="TLE\SideBarList.xml">
+<title tag="sbli">SideBar List Item Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>This script is a shell to link to the part of Drag and Drop tests that cover this functionality.</p>
+<p>See <link uri="../FW/DragDrop.xml#ddmove">this test</link> to test SideBar List Items.</p>
+<p name="Note">The test applies to all FieldWorks item trees though it is written for the Data Entry label bar.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. The first words of the bug report title should be a noun phrase containing the words "Side Bar List"</p>
+</context>
+
+<case id="tbinTLE" num="1" order="any">
+<title tag="tbinTLE">See Introduction</title>
+<context>
+<p>When the application is running and the side bar is visible.</p>
+</context>
+
+<step name="1.1">Use  <link uri="../FW/DragDrop.xml#ddmove">this test</link> to test the SideBar List Items.
+<r>File any errors using the words "Side Bar List" in the bug report</r>
+</step>
+</case>
+
+<update date="Sep-18-02" author="MikeL">Test Script Created.</update>
+
+</test>

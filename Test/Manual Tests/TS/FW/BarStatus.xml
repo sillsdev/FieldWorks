@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="barstatus" num="4.2" abbr="bast" file="FW\BarStatus.xml">
+<title tag="barstatus">Status Bar Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The status bar displays relevant information about the status of the application. It has four basic modes; Initial launching of the application, Menu item help, Progress and Normal Status Bar Operation. It can be <i>hidden</i> (disabled) and <i>displayed</i> (enabled) via the Views-Status Bar menu item.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/StatusBar/StatusBar.html" type="doc">Status Bar</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations affect what information and symbols are displayed in the status bar. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Status Bar"</p>
+</context>
+
+<case id="bastIni" num="1" order="any">
+<title tag="bastIni">Initial Message</title>
+<context>
+<p>When the application is launched with the status bar displayed (you may have to enable it from Views-Status Bar and restart):</p>
+</context>
+
+<step name="1.1" link="Bug">Start the FieldWorks application.
+   <r>
+<ul>
+<li>If the database is empty (or the app doesn't have one), the status bar displays the message, "For Help, press F1".</li>
+<li>Otherwise, it shows the current record id.</li>
+<li>The status bar is shown [enabled] by default.</li>
+</ul>
+</r>
+<p name="bug">Status Bar message at start-up is wrong</p>
+</step>
+
+</case>
+
+<case id="basthlp" num="2" order="any">
+<title tag="basthlp">Help Messages</title>
+<context>
+<p>When the Status bar is displayed:</p>
+</context>
+
+<step name="2.1" link="Bug">Select a menu, then drag or hover mouse over menu items.
+   <r>
+<ul>
+<li>For each item, an appropriate help message shows in the status bar.</li>
+<li>If the menu item is hidden, the status bar message indicates why.</li>
+</ul>
+</r>
+<p name="bug">Status Bar message not shown for &lt;menu item&gt;</p>
+<p name="bug">Status Bar message for &lt;menu item&gt; is wrong</p>
+<p name="bug">Status Bar message for hidden &lt;menu item&gt; is wrong</p>
+<p name="todo">Is the explanation for hidden menu items only for What's This help?</p>
+</step>
+
+</case>
+
+<case id="bastPi" num="3" order="any">
+<title tag="bastPi">Progress Indicator</title>
+<context>
+<p>When the application is running:</p>
+</context>
+
+<step name="3.1" link="Bug">Start an operation that takes some time; e.g. turn on a complex filter while viewing a large database.
+   <r>
+<ul>
+<li>If the status bar is hidden, it is temporarily shown during processing of the operation.</li>
+<li>A message in the status bar tells what is happening (e.g. "Building new filter index...").</li>
+<li>A progress bar appears, with a Cancel button next to it.</li>
+<li>The progress bar grows and the operation terminates approximately when the bar reaches full size.</li>
+<li>For some operations where progress is difficult to measure, the progress bar doesn't grow to full size, but rather slides back and forth like a radar.</li>
+</ul>
+</r>
+<p name="bug">Status Bar progress does not show at all</p>
+<p name="bug">Status Bar remains after displaying for progress</p>
+<p name="bug">Status Bar progress message is missing</p>
+<p name="bug">Status Bar progress message is wrong</p>
+<p name="bug">Status Bar cancel progress button is missing</p>
+<p name="bug">Status Bar progress bar is missing</p>
+<p name="bug">Status Bar progress bar behavior is suspicious</p>
+</step>
+<step name="3.2" link="Bug">While the progress bar is growing, press the Cancel button or the Esc key.
+   <r>
+<ul>
+<li>The operation stops.</li>
+<li>All application state is restored to what it was prior to the start of the operation.</li>
+</ul>
+</r>
+<p name="bug">Status Bar progress not stopped by cancel</p>
+<p name="bug">Status Bar progress cancel causes app problems</p>
+</step>
+<step name="3.3" link="Bug">After the operation is finished or cancelled, inspect the status bar.
+   <r>
+<ul>
+<li>If it was hidden before the operation, it should again be hidden afterward.</li>
+<li>If the status bar is shown, the progress bar and Cancel button are gone.</li>
+</ul>
+</r>
+<p name="bug">Status Bar remains after displaying for progress</p>
+<p name="bug">Status Bar (enabled) disappears after progress</p>
+<p name="bug">Status Bar progress bar remains after progress</p>
+<p name="bug">Status Bar Cancel button remains after progress</p>
+</step>
+
+</case>
+
+<case id="bastRv" num="4" order="any">
+<title tag="bastRv">Record and Side Bar Messages</title>
+<context>
+<p>When the Status bar is displayed and the app has records and a side bar:</p>
+</context>
+
+<step name="4.1" link="Bug">Switch to a different record and inspect the status bar.
+   <r>
+<ul>
+<li>It shows relevant data for the current record (e.g. Creation Date: Title).</li>
+<li>On the right is the entry number / total number of entries in the database (subject to filtering).</li>
+</ul>
+</r>
+<p name="bug">Status Bar message does not change on record change</p>
+<p name="bug">Status Bar message entry/total wrong</p>
+</step>
+<step name="4.2" link="Bug">Enable/disable some filters.
+   <r>
+<ul>
+<li>A yellow "Filtered" field shows in the status bar when and only when one or more* filters are enabled.</li>
+<li>The number of records and current record number may change based on the filter.</li>
+</ul>
+</r>
+<p name="bug">Status Bar contains no yellow enabled filter field</p>
+<p name="bug">Status Bar filtered entry/total wrong</p>
+</step>
+<step name="4.3" link="Bug">Turn on/off various sorting methods.
+   <r>
+<ul>
+<li>A green "Sorted" field shows in the status bar when and only when a sort method is enabled.</li>
+<li>The number of the current record may change based on the sorting method.</li>
+</ul>
+</r>
+<p name="bug">Status Bar contains no green enabled sort field</p>
+<p name="bug">Status Bar sorted entry number is wrong</p>
+</step>
+<step name="4.4" link="Bug">When a filter and/or sort method are enabled, hover the mouse over the Filtered and/or Sorted fields.
+   <r>A pop-up balloon shows the name(s) of the active filter(s) or sort method.</r>
+<p name="bug">Status Bar sort or filter field hover displays no balloon</p>
+<p name="bug">Status Bar sort or filter field balloon is empty</p>
+<p name="bug">Status Bar sort or filter field balloon is wrong</p>
+</step>
+<step name="4.5" link="Bug">Hover the mouse over other fields in the status bar.
+   <r>
+<ul>
+<li>Every field pops up a help balloon describing what that field shows.</li>
+<li>Fields that show data from the current record (e.g. Title) pop up a help balloon showing the name of the field they are displaying.</li>
+</ul>
+</r>
+<p name="bug">Status Bar message fields do not show balloon help</p>
+<p name="bug">Status Bar message field balloon is wrong</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Sep-27-01" author="MikeL">Put guts in it from Lars Word version</update>
+<update date="May-24-02" author="JoelC">Checked up to spec</update>
+
+</test>

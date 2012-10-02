@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NAnt build file with Linux-only targets. -->
+<project name="Linux" default="rebuild-compmap" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+
+	<!-- concatenate the different *.compmap files to one big components.map -->
+	<target name="rebuild-compmap" if="${platform::is-unix()}"
+		description="Build components.map file">
+		<concatex destfile="${dir.outputBase}/components.map"
+			verbose="${verbose}">
+			<fileset basedir="${dir.outputBase}" failonempty="false">
+				<include name="*.compmap"/>
+			</fileset>
+		</concatex>
+	</target>
+
+	<target name="initLinux" if="${platform::is-unix()}" description="call preparatory Linux targets"
+		depends="unitpp,linkToOutputDirectory,tlbs-copy,teckit,iculibs,linuxLibs,checkTLBsUpToDate">
+		<!-- also need to create symbol links to Lib/Debug and Lib/Release -->
+		<exec program="ln" commandline="-s ${fwroot}/Lib/debug ${fwroot}/Lib/Debug"
+			unless="${directory::exists(fwroot + '/Lib/Debug')}" failonerror="false"/>
+		<exec program="ln" commandline="-s ${fwroot}/Lib/release ${fwroot}/Lib/Release"
+			unless="${directory::exists(fwroot + '/Lib/Release')}" failonerror="false"/>
+		<mkdir dir="${dir.fwoutputCommon}" failonerror="false"/>
+		<copy todir="${dir.fwoutputCommon}" failonerror="false">
+			<fileset>
+				<include name="${fwroot}/Lib/linux/Common/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${dir.outputBase}" failonerror="false">
+			<fileset>
+				<include name="${dir.fwdistfiles}/strings-en.txt"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="setenvLinux" if="${platform::is-unix()}"
+		description="Set some environment variables on Linux" >
+		<!-- Need to set some environment variables. This is also done in environ
+			and in _init.mak.lnx, but we need different values depending on if we
+			do a debug or release build -->
+		<setenv>
+			<variable name="PATH"
+				path="${dir.outputBase}:${icu_lib}:${fwroot}/Lib/src/icu/source/build${arch}/bin:${fwroot}/Bin/nant/bin:%PATH%" />
+			<variable name="LD_LIBRARY_PATH"
+				path="${com_dir}/build${arch}/src/.libs:${com_dir}/build${arch}/lib:${icu_lib}:${dir.outputBase}:%LD_LIBRARY_PATH%" />
+			<variable name="MONO_PATH"
+				path="${dir.fwdistfiles}:${dir.outputBase}" />
+			<variable name="MONO_REGISTRY_PATH"
+					  path="${path::combine(dir.fwoutput, 'registry')}"/>
+			<variable name="COMPONENTS_MAP_PATH" path="${dir.outputBase}"/>
+			<variable name="BUILD_TYPE" value="${build-type}"/>
+			<variable name="BUILD_CONFIG" value="${config}" />
+		</setenv>
+	</target>
+
+	<target name="unitpp" depends="setenvLinux" if="${platform::is-unix()}"
+		description="Build unit++ executable for current platform">
+		<exec program="make" commandline="Unit++-package"
+			workingdir="${fwroot}" verbose="${verbose}"/>
+	</target>
+
+	<!-- This is to facilitate easier use of CsProj files. -->
+	<target name="linkToOutputDirectory" if="${platform::is-unix()}"
+		description="Create links from platform specific output directory to Output">
+		<mkdir dir="${fwroot}/Output" failonerror="false" verbose="${verbose}"/>
+		<exec program="ln" commandline="-T -sf ${dir.outputBase} ${fwroot}/Output/${config}"
+			failonerror="false" verbose="${verbose}"/>
+		<exec program="ln" commandline="-T -sf ${dir.fwoutput}/XMI ${fwroot}/Output/XMI"
+			failonerror="false" verbose="${verbose}"/>
+	</target>
+
+	<target name="tlbs-copy" if="${platform::is-unix()}"
+		description="Copy the type libraries">
+		<mkdir dir="${dir.fwoutputCommon}" failonerror="false" unless="${clean}" verbose="${verbose}"/>
+		<copy todir="${dir.fwoutputCommon}" failonerror="false" unless="${clean}" verbose="${verbose}">
+			<fileset basedir="${fwroot}/Lib/linux/Common">
+				<include name="**"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="teckit" if="${platform::is-unix()}"
+		description="Copy TECKit files">
+		<property name="teckit-ext" value="x86" unless="${arch == 'x86_64'}"/>
+		<property name="teckit-ext" value="${arch}" if="${arch == 'x86_64'}"/>
+		<copy todir="${dir.outputBase}" failonerror="false" unless="${clean}">
+			<fileset basedir="${dir.fwdistfiles}">
+				<include name="libTECkit_${teckit-ext}.so"/>
+				<include name="libTECkit_Compiler_${teckit-ext}.so"/>
+			</fileset>
+		</copy>
+		<delete failonerror="false" if="${clean}">
+			<fileset basedir="${dir.outputBase}">
+				<include name="libTECkit_${teckit-ext}.so"/>
+				<include name="libTECkit_Compiler_${teckit-ext}.so"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="iculibs" depends="setenvLinux" if="${platform::is-unix()}"
+		unless="${directory::exists(icu_lib)}">
+		<!-- unzip icu file -->
+		<!-- NOTE: we can't use NAnt's unzip task since we have to adjust the line endings,
+			especially for Makefiles and shell scripts (option -a). -->
+		<exec program="unzip" commandline="-qq -a -u Icu40src.zip -d .. " workingdir="${fwroot}/Lib/src/icu"
+			verbose="${verbose}"/>
+		<!-- build icu -->
+		<echo message="Starting build"/>
+		<property name="prefix" value='--prefix="$(cd ../..&amp;&amp;pwd)/install$(uname -m)"'/>
+		<exec program="sh" commandline="-c 'cd source &amp;&amp; mkdir -p build$(uname -m) &amp;&amp; cd build$(uname -m) &amp;&amp; ../configure ${prefix} &amp;&amp; make &amp;&amp; make install'"
+			  workingdir="${fwroot}/Lib/src/icu" verbose="${verbose}"/>
+	</target>
+
+	<target name="setupRegistry" depends="setenvLinux" if="${platform::is-unix()}">
+		<!-- we use our own copy of the registry, so permissions aren't a problem -->
+		<mkdir dir="${fwroot}/DistFiles/SIL/Repository" verbose="${verbose}"/>
+		<mkdir dir="${fwroot}/DistFiles/Editorial Checks" verbose="${verbose}"/>
+
+		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\EncodingConverterRepository\Registry"
+			value="${fwroot}/DistFiles/SIL/Repository/mappingRegistry.xml" verbose="${verbose}"/>
+		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\EncodingConverterRepository\MoveRepositoryTo"
+			value="${fwroot}/DistFiles/MoveRepositoryTo" verbose="${verbose}"/>
+		<writeregistry hive="LocalMachine" key="SOFTWARE\Microsoft\.NETFramework\AssemblyFolders\Primary Interop Assemblies"
+			value="${dir.outputBase}" verbose="${verbose}"/>
+		<writeregistry hive="LocalMachine" key="SOFTWARE\Firebird Project\Firebird Server\Instances\DefaultInstance"
+			value="/usr/lib/firebird/2.1" verbose="${verbose}"/>
+		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\InstallLanguageUseLog"
+			value="False" verbose="${verbose}"/>
+		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\InstallLanguageLog"
+			value="/tmp/installLanguage.log" verbose="${verbose}"/>
+	</target>
+
+	<target name="linuxLibs" if="${platform::is-unix()}" depends="iculibs,setenvLinux"
+		description="Build external libraries">
+		<exec program="make" commandline="externaltargets"
+			workingdir="${fwroot}" verbose="${verbose}"/>
+	</target>
+
+	<target name="checkTLBsUpToDate"
+		description="Check if files generated from *.idh files are current.">
+		<!-- On Linux we can't generate TLBs, so we do that on Windows and check them in.
+			But this means that whenever the *.idh files change we have to regenerate these
+			files. This task checks that they are up-to-date and fails the build early on
+			if they are outdated. We have to use unix line endings so that we get the same
+			checksum on both Windows and Linux. -->
+		<mkdir dir="${dir.fwoutput}" failonerror="false"/>
+		<concatex destfile="${dir.fwoutput}/idhfiles" useunixnewline="true" verbose="${verbose}">
+			<fileset basedir="${fwroot}/Src">
+				<include name="**/*.idh" />
+				<include name="Kernel/FwKernelTlb.idl" />
+				<include name="Language/LanguageTlb.idl" />
+				<include name="views/ViewsTlb.idl" />
+			</fileset>
+		</concatex>
+		<checksum algorithm="MD5" verbose="${verbose}">
+			<fileset>
+				<include name="${dir.fwoutput}/idhfiles"/>
+			</fileset>
+		</checksum>
+		<loadfile property="newIdhFiles" file="${dir.fwoutput}/idhfiles.MD5"/>
+		<loadfile property="oldIdhFiles" file="${fwroot}/Lib/linux/Common/idhfiles.MD5"
+			if="${file::exists(fwroot + '/Lib/linux/Common/idhfiles.MD5')}"/>
+		<fail message="TLB files are out of date. Please run 'nant idl'."
+			if="${(not file::exists(fwroot + '/Lib/linux/Common/idhfiles.MD5') or newIdhFiles != oldIdhFiles) and platform::is-unix() }"
+			unless="${buildtlb}"/>
+		<call target="idl"
+			if="${(not file::exists(fwroot + '/Lib/linux/Common/idhfiles.MD5') or newIdhFiles != oldIdhFiles) and buildtlb}"/>
+	</target>
+
+	<target name="idl" depends="setenvLinux"
+		description="Build TLB files on a Windows machine for use on Linux">
+		<exec program="make" commandline="idl"
+			workingdir="${fwroot}" verbose="${verbose}" if="${platform::is-unix()}"/>
+		<if test="${not platform::is-unix()}">
+			<copy file="${dir.fwoutput}/idhfiles.MD5" todir="${fwroot}/Lib/linux/Common"
+				verbose="${verbose}"
+				if="${file::exists(dir.fwoutput + '/idhfiles.MD5')}"/>
+			<call target="blow-away-output" failonerror="false" if="${deleteOutput}" cascade="false"/>
+			<property name="build4ux" value="1"/>
+			<call target="mktlbs"/>
+			<copy todir="${fwroot}/Lib/linux/Common" verbose="${verbose}">
+				<fileset basedir="${dir.fwoutputCommon}">
+					<include name="*Tlb*"/>
+				</fileset>
+			</copy>
+			<echo message="Extracting iids for use on Linux..."/>
+			<exec program="cmd.exe" commandline="/c ${fwroot}\Bin\extract_iids.cmd FwKernelTlb.h"
+				  workingdir="${dir.fwoutputCommon}" output="${fwroot}/Src/Kernel/FwKernel_GUIDs.cpp" verbose="${verbose}"/>
+			<exec program="cmd.exe" commandline="/c ${fwroot}\Bin\extract_iids.cmd LanguageTlb.h"
+				  workingdir="${dir.fwoutputCommon}" output="${fwroot}/Src/Language/Language_GUIDs.cpp" verbose="${verbose}"/>
+			<echo message='#include "FwKernelTlb.h"' file="${dir.outputBase}/views.tmp" verbose="${verbose}"/>
+			<exec program="cmd.exe" commandline="/c ${fwroot}\Bin\extract_iids.cmd ViewsTlb.h"
+				  workingdir="${dir.fwoutputCommon}" output="${dir.outputBase}/Views_GUIDs.cpp" verbose="${verbose}"/>
+			<concatex destfile="${fwroot}/Src/views/Views_GUIDs.cpp" useunixnewline="true" verbose="${verbose}">
+				<fileset basedir="${dir.outputBase}">
+					<include name="views.tmp" />
+					<include name="Views_GUIDs.cpp" />
+				</fileset>
+			</concatex>
+		</if>
+		<copy file="${dir.fwoutput}/idhfiles.MD5" todir="${fwroot}/Lib/linux/Common"
+			verbose="${verbose}"
+			if="${file::exists(dir.fwoutput + '/idhfiles.MD5')}"/>
+	</target>
+
+</project>

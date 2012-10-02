@@ -1,0 +1,22 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Priority.xml">
+ <title tag="usePri">Choosing a priority level</title>
+ <index>
+  <li>report: priority</li>
+  <li>priority of a bug</li>
+  <li>setting priority of a bug</li>
+ </index>
+ <introduction>
+  <p>Priority measures impact on the customer.</p>
+ </introduction>
+ <guidelines>
+  <p>If the priority is not indicated in the bug pattern, here are some guidelines to identify the priority level of a bug:</p>
+  <ul>
+	<li>Assign 1 "Blocking" if testing can't proceed until fixed</li>
+	<li>Assign 2 "High" if the bug needs to be fixed quite urgently</li>
+	<li>Assign 3 "Medium" if it is a significant problem that should be fixed before shipping</li>
+	<li>Assign 4 "Low" if it is not hindering to the user and can wait until after a release to be fixed</li>
+	<li>Assign 5 "Nice to have" if fixing it can wait until there's nothing better to do</li>
+  </ul>
+ </guidelines>
+</task>

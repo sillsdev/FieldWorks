@@ -1,0 +1,33 @@
+<html>
+   <head>
+	  <title>While processing message</title>
+   </head>
+   <body>
+	  <p>I'm working on the word.  Please wait... (You can see the current status of the parser at the lower left hand corner of this dialog.)</p>
+	  <p>If this takes a long time, then consider trying some of the following to improve the performance:
+	  <ul>
+		<li>In the Parser menu item / Edit Parameters:</li>
+		<ul>
+			<li>Set the MaxPrefixes to the maximum number of prefixes and proclitics that a well-formed word could have.</li>
+			<li>Set the MaxInfixes to the maximum number of infixes that a well-formed word could have.</li>
+			<li>Set the MaxSuffixes to the maximum number of suffixes and enclitics that a well-formed word could have.</li>
+			<li>Set the MaxRoots to the maximum number of roots that a well-formed word could have.</li>
+			<li>Set the MaxNulls to the maximum number of null allomorphs that a well-formed word could have.</li>
+			<li>Set the MaxInterfixes to the maximum number of &ldquo;interfixes&rdquo; (affixes which can also appear between roots) that a well-formed word could have.</li>
+			<li>Set the MaxAnalyses to a small number.  This limits the number of analyses that the parser will return (i.e. the parser will stop looking for more possibilities after it reaches this number).   If this value is set to 0 or -1, then it will return all the analyses it finds.</li>
+		</ul>
+		<li>Go to the Grammar area / Grammar Sketch and generate the sketch (click on the &ldquo;Generate&rdquo; button).</li>
+		<ul>
+			<li>Examine the Residue section (assuming there is one).  Try to flesh out any missing information indicated in the following sub-sections:</li>
+		<ul>
+			<li>If there are any &ldquo;Underspecified Derivational Affixes&rdquo;, try and make them fully specified.</li>
+			<li>If there are any &ldquo;Underspecified Inflectional Affixes&rdquo;, try and make them fully specified.</li>
+			<li>If there are any &ldquo;Unclassified Affixes&rdquo;, try and figure out how to fully specify them (i.e. make them be derivational or inflectional with all the needed information specified).</li>
+			<li>If there are any &ldquo;Unmarked Stems&rdquo;, try and mark them with an appropriate category.</li>
+		</ul>
+		<li>Examine the Compounding section.  If it says that there is no compounding in your language and your language does have word-internal stem compounding,  try adding compound rules.</li>
+		</ul>
+	</ul>
+	  </p>
+   </body>
+</html>

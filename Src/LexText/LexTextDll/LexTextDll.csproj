@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{1DCA1070-7701-4DC9-9042-A4F3209E55D5}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>LT.ico</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>LexTextDll</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.XWorks.LexText</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="CoreImpl, Version=6.1.1.26049, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	</Reference>
+	<Reference Include="ITextDll, Version=6.0.0.28976, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+	</Reference>
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="FwUtils, Version=5.5.0.26385, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="xCore">
+	  <Name>xCore</Name>
+	  <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework">
+	  <Name>Framework</Name>
+	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="FwControls">
+	  <Name>FwControls</Name>
+	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="FwCoreDlgs">
+	  <Name>FwCoreDlgs</Name>
+	  <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+	</Reference>
+	<Reference Include="LexTextControls">
+	  <Name>LexTextControls</Name>
+	  <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
+	</Reference>
+	<Reference Include="MessageBoxExLib">
+	  <Name>MessageBoxExLib</Name>
+	  <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
+	</Reference>
+	<Reference Include="MsHtmHstInterop">
+	  <Name>MsHtmHstInterop</Name>
+	  <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
+	</Reference>
+	<Reference Include="Reporting">
+	  <Name>Reporting</Name>
+	  <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite">
+	  <Name>RootSite</Name>
+	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="xCoreInterfaces">
+	  <Name>xCoreInterfaces</Name>
+	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLUtils, Version=6.1.1.21569, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLViews">
+	  <Name>XMLViews</Name>
+	  <HintPath>..\..\..\Output\Debug\XMLViews.dll</HintPath>
+	</Reference>
+	<Reference Include="xWorks">
+	  <Name>xWorks</Name>
+	  <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AreaListener.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FlexHelpTopicProvider.cs" />
+	<Compile Include="FlexStylesXmlAccessor.cs" />
+	<Compile Include="ImageHolder.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="LexTextApp.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LexTextStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>LexTextStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="RestoreDefaultsDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="RestoreDefaultsDlg.Designer.cs">
+	  <DependentUpon>RestoreDefaultsDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="TransductionSample.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<None Include="AssemblyInfo.cs" />
+	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<EmbeddedResource Include="HelpTopicPaths.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ImageHolder.resx">
+	  <DependentUpon>ImageHolder.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LexTextStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>PublicResXFileCodeGenerator</Generator>
+	  <LastGenOutput>LexTextStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LT.ico" />
+	<None Include="Resources\HelpTopicPaths.resx">
+	  <SubType>Designer</SubType>
+	</None>
+	<EmbeddedResource Include="RestoreDefaultsDlg.resx">
+	  <DependentUpon>RestoreDefaultsDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\areaConfiguration.xml">
+	  <Link>XML\Grammar\areaConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\DataTreeInclude.xml">
+	  <Link>XML\Grammar\DataTreeInclude.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Grammar\InflAffixTemplateInclude.xml">
+	  <Link>XML\Grammar\InflAffixTemplateInclude.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
+	  <Link>XML\Lexicon\areaConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\toolConfiguration.xml">
+	  <Link>XML\Lexicon\Edit\toolConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Main.xml">
+	  <Link>XML\Main.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
+	  <Link>XML\Word\Analyses\toolConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
+	  <Link>XML\Word\areaConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
+	  <Link>XML\Word\BulkEdit\toolConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Concordance\toolConfiguration.xml">
+	  <Link>XML\Word\Concordance\toolConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Spelling\toolConfiguration.xml">
+	  <Link>XML\Word\Spelling\toolConfiguration.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfigInclude.xml">
+	  <Link>XML\Word\Text\toolConfigInclude.xml</Link>
+	</Content>
+	<Content Include="..\..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
+	  <Link>XML\Word\Text\toolConfiguration.xml</Link>
+	</Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

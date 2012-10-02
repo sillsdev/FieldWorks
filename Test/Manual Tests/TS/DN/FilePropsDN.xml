@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filepropdn" num="2.1.7.1" abbr="fpdn" file="DN\FilePropsDN.xml">
+<title tag="filepropdn">File - Data Notebook Properties Test</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Data Notebook Properties Dialog shows the properties for the current data notebook project. Under the <i>General</i> tab are  included the name, dates created and modified, etc. The Name can be modified through this dialog; the other items are informational. </p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#FileProperties" type="doc">File - Properties</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html" type="doc">Properties Dialog </link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "File - Data Notebook Properties"</p>
+</context>
+
+<case id="fpdnAct" num="1" order="any">
+<title tag="fpdnAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke File - Data Notebook Properties (from the File menu). <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#FileProperties" type="doc">Definition of File - Properties.</link>
+<r>The Data Notebook Properties dialog box is displayed.</r>
+<p name="bug">File - Properties not working</p>
+</step>
+</case>
+
+<case id="fpdnDia" num="2" order="any">
+<title tag="fpdnDia">Exercise dialog controls</title>
+<context>
+<p>When the File - Data Notebook Properties dialog is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html" type="doc">File - Properties specification</link> to visually inspect the dialog layout of the <i>General</i> tab.
+   <r>Up to approximate size and position should be the same - especially any text and icons.</r>
+<p name="bug">File - Data Notebook Properties layout incorrect</p>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "File - Data Notebook Properties" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="fpdnGen" num="3" order="any">
+<title tag="fpdnGen">Inspect General Tab</title>
+<context>
+<p>When the File - Data Notebook Properties dialog is displayed with the General tab selected</p>
+</context>
+
+<step name="3.1"> Use Cases 1-3 of the <link uri="../FW/FileProps.xml" type="module">General Properties Dialog Test</link> to inspect the General Tab of the Data Notebook Properties Dialog.
+	<r>Report any failures as suggested using "File - Data Notebook Properties" as the name of the dialog.</r>
+</step>
+</case>
+
+<update date="May-22-02" author="RussD">Test script created.</update>
+<update date="Jun-19-02" author="RussD">Updated links.</update>
+</test>

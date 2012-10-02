@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlsws" num="4.3" abbr="tws" file="WorldPad\ToolsWS.xml">
+ <title tag="tlsws">Tools-Writing System Properties Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>The Writing System Properties dialog brings together an input method, rendering method and identifier for a writing system. It also manages the list of identifiers.</p>
+  </introduction>
+<p name="todo">
+Make references to WorldPad help more specific by telling
+the path to them.  Or even better, make a link?
+</p>
+<p name="todo">
+The Right-to-left checkbox is now smarter; need to update tests to reflect this.
+See Raid 2891.
+</p>
+<p name="todo">
+Apparently Delete is not supposed to work (you get an error dialog) if the WS is used
+in your document.  Ask for specifications of this and update test script accordingly.
+</p>
+  <context>
+<p>Combinations of keyboards, rendering and identifiers exercise the interface. The writing systems created are added and deleted in various ways. If an error in creating or changing the components of a writing system ocurrs, and a subsequent error in adding or deleting follows, report as a single bug.</p>
+  </context>
+  <guidelines>
+<p>See the WorldPad help file for tips on installing a Keyman keyboard.</p>
+  </guidelines>
+ <case id="twsInsp" num="1" order="any">
+  <title tag="twsInsp">Dialog Inspection</title>
+  <context>
+<p>When WorldPad is running</p>
+</context>
+
+  <step name="1.1" link="Bug">Click Help-WorldPad. Navigate to the "Dialog:Writing System Properties" page. Use this page while testing <link uri="..\StdCtrls\Dialog.xml">Basic Dialog</link> functionality.
+   <r>
+<ul>
+	<li>One and only one identifier in the Writing Systems list box is highlighted.</li>
+	<li>Report any failures using "Tools-Writing System Properties" as the name of the dialog</li>
+   </ul>
+</r>
+   <p name="bug">Tools-Writing System Properties list box item not highlighted</p>
+   <p name="bug">Tools-Writing System Properties multiple list box items highlighted</p>
+  </step>
+
+ </case>
+
+ <case id="twsMake" num="2" order="any">
+  <title tag="twsMake">Creating Writing Systems</title>
+  <context>
+<p>When WorldPad is running</p>
+</context>
+
+  <step name="2.1" link="Bug">Click the "Add..." button or invoke it using &lt;Alt&gt;&lt;A&gt;.
+   <r>
+<ul>
+	<li>The "Add a Writing System" dialog is displayed with focus.</li>
+	<li>The "Add a Writing System" dialog appears as in WorldPad help.</li>
+	<li>The "Enter the ID for the new writing system" edit box is empty but the cursor is in it.</li>
+   </ul>
+</r>
+   <p name="bug">Tools-Writing System Properties Add id dialog does not appear</p>
+   <p name="bug">Tools-Writing System Properties Add id dialog does not have focus</p>
+   <p name="bug">Tools-Writing System Properties Add id dialog edit box is not empty</p>
+   <p name="bug">Tools-Writing System Properties Add id dialog edit box has no cursor</p>
+   <p name="bug">Add a Writing System dialog dialog is not in WorldPad help</p>
+  </step>
+  <step name="2.2" link="Bug">While the "Add a Writing System" dialog is displayed, enter a valid ID and click OK.
+   <r>
+<ul>
+	<li>The Add a Writing System dialog disappears</li>
+	<li>The Writing System Properties dialog has focus but no cursor.</li>
+	<li>The identifier appears in the Writing Systems list box and is highlighted.</li>
+	<li>Both the top combo boxes in the Keyboard and Rendering frames show "Standard".</li>
+	<li>All of the other boxes are empty.</li>
+   </ul>
+</r>
+   <p name="Tip">See the conventions in WorldPad help on the "Writing system identifier" page.</p>
+   <p name="bug">Tools-Writing System Properties Add fails to add id to list</p>
+   <p name="bug">Tools-Writing System Properties loses focus after adding</p>
+   <p name="bug">Tools-Writing System Properties Add results in wrong defaults</p>
+   <p name="bug">Add a Writing System dialog persists</p>
+  </step>
+  <step name="2.3" link="Bug">While the "Add a Writing System" dialog is displayed, enter an invalid ID and click OK.
+   <r>
+<ul>
+	<li>The Add a Writing System dialog remains</li>
+	<li>A warning dialog "Invalid encoding ID: [id] Must be of the form 'ABC' or 'ABC[12][d[34]].'" is displayed, where [id] is what you typed in</li>
+   </ul>
+</r>
+   <p name="Clean-up">Dismiss the warning dialog.</p>
+   <p name="bug">Tools-Writing System Properties Add fails to warn about invalid IDs</p>
+   <p name="bug">Add a Writing System dialog disappears</p>
+  </step>
+  <step name="2.4" link="Bug">While the Writing System dialog is displayed, enter an ID and click Cancel or the corner "X".
+   <r>
+<ul>
+	<li>The Add a Writing System dialog disappears</li>
+	<li>The Writing System Properties dialog resumes focus with no cursor</li>
+	<li>The dialog is unchanged</li>
+   </ul>
+</r>
+   <p name="bug">Add a Writing System dialog persists</p>
+   <p name="bug">Add a Writing System cancel messes up Writing System Properties dialog</p>
+  </step>
+  <step name="2.5" link="Bug">While the Writing System dialog is displayed, enter a duplicate ID and click OK.
+   <r>
+<ul>
+	<li>The Add a Writing System dialog remains</li>
+	<li>A warning pop-up reads "Duplicate encoding ID:" showing the offending id</li>
+   </ul>
+</r>
+   <p name="Clean-up">Dismiss the warning dialog.</p>
+   <p name="bug">Tools-Writing System Properties shows no warning for added duplicate id</p>
+   <p name="bug">Tools-Writing System Properties dup id warning persists</p>
+  </step>
+
+ </case>
+
+ <case id="twsEdit" num="3" order="any">
+  <title tag="twsEdit">Editing</title>
+  <context>
+<p>When WorldPad is running and the Writing System Properties dialog is displayed</p>
+</context>
+
+  <step name="3.1" link="Bug">Select an identifier from the Writing Systems list box.
+   <r>
+<ul>
+	<li>The previously selected item displays normally</li>
+	<li>The selected list box item is highlighted</li>
+	<li>Its information is displayed in the edit boxes to the right.</li>
+   </ul>
+</r>
+   <p name="bug">Tools-Writing System Properties identifier can not be selected</p>
+   <p name="bug">Tools-Writing System Properties selected identifier data not displayed</p>
+   <p name="bug">Tools-Writing System Properties selected identifier data displayed wrong</p>
+   <p name="bug">Tools-Writing System Properties multiple identifiers selected</p>
+  </step>
+
+  <step name="3.2">Use the <link uri="..\StdCtrls\TextBox.xml">Text Box Tests</link> with the Name box.
+   <r>Report bugs using "Tools-Writing System Properties Name" as the name of the control</r>
+  </step>
+
+  <step name="3.3">Use the <link uri="..\StdCtrls\TextBox.xml">Text Box Tests</link> with the Description box.
+   <r>Report bugs using "Tools-Writing System Properties Description" as the name of the control</r>
+  </step>
+
+  <step name="3.4">Use the <link uri="..\StdCtrls\ListBox.xml">Combo Box Tests</link> with the Keyboard box.
+   <r>Report bugs using "Tools-Writing System Properties Keyboard" as the name of the control</r>
+  </step>
+
+  <step name="3.5">Use the <link uri="..\StdCtrls\ListBox.xml">Combo Box Tests</link> with the Language ID box.
+   <r>Report bugs using "Tools-Writing System Properties Language ID" as the name of the control</r>
+  </step>
+
+  <step name="3.6" link="Bug">Use the <link uri="..\StdCtrls\ListBox.xml">Combo Box Tests</link> with the Rendering box.
+   <r>
+<ul>
+	<li>When the value is changed, the Font box clears</li>
+	<li>When the value is Graphite, the Right-to-left check box is enabled.</li>
+	<li>When the value is Standard, the Right-to-left check box is enabled.</li>
+	<li>Report bugs using "Tools-Writing System Properties Rendering" as the name of the control</li>
+   </ul>
+</r>
+   <p name="bug">Tools-Writing System Properties Rendering doesn't clear font</p>
+   <p name="bug">Tools-Writing System Properties Rendering enables RtL wrong</p>
+  </step>
+
+  <step name="3.7">Use the <link uri="..\StdCtrls\CheckBox.xml">Check Box Tests</link> with Right-to-left.
+   <r>Report bugs using "Tools-Writing System Properties RtL" as the name of the control</r>
+   <p name="Note">"Graphite" in the Rendering box must be selected.</p>
+  </step>
+
+  <step name="3.8">Use the <link uri="..\StdCtrls\ListBox.xml">Combo Box Tests</link> with the Font box.
+   <r>Report bugs using "Tools-Writing System Properties Font" as the name of the control</r>
+  </step>
+
+  <step name="3.9">Use the <link uri="..\StdCtrls\MenuBtn.xml">Menu Button Tests</link> with the Font Features box.
+   <r>Report bugs using "Tools-Writing System Properties Font Features" as the name of the control</r>
+  </step>
+
+ </case>
+
+ <case id="twsDel" num="4" order="any">
+  <title tag="twsDel">Deleting</title>
+  <context>
+<p>When WorldPad is running and the Writing System Properties dialog is displayed</p>
+</context>
+
+  <step name="4.1" link="Bug">Click the "Delete.." button or invoke it using &lt;Alt&gt;&lt;D&gt;.
+   <r>
+<ul>
+	<li>The "Deleting a Writing System" dialog is displayed with focus.</li>
+	<li>The Deleting a Writing System dialog should appear as in WorldPad help.</li>
+	<li>The deleting writing system edit box displays the selected identifier; no cursor is in it.</li>
+   </ul>
+</r>
+   <p name="bug">Tools-Writing System Properties Delete id dialog does not appear</p>
+   <p name="bug">Tools-Writing System Properties Delete id dialog does not have focus</p>
+   <p name="bug">Tools-Writing System Properties Delete id dialog edit box is empty</p>
+   <p name="bug">Tools-Writing System Properties Delete id dialog edit box has a cursor</p>
+   <p name="bug">Deleting a Writing System dialog is not in WorldPad help</p>
+  </step>
+  <step name="4.2" link="Bug">While the Deleting a Writing System dialog is displayed click OK.
+   <r>
+<ul>
+	<li>The Deleting a Writing System dialog disappears</li>
+	<li>The Writing System Properties dialog has focus but no cursor</li>
+	<li>The identifier dissappears from the Writing Systems list box and the highlight remains in place as the id below moves up (or it moves up if only the default is left)</li>
+	<li>The data for the new selection is displayed</li>
+   </ul>
+</r>
+   <p name="bug">Tools-Writing System Properties Delete fails to remove id from list</p>
+   <p name="bug">Tools-Writing System Properties loses focus after deleting</p>
+   <p name="bug">Tools-Writing System Properties Delete results in wrong data display</p>
+   <p name="bug">Deleting a Writing System dialog persists</p>
+  </step>
+  <step name="4.3" link="Bug">While the Deleting a Writing System dialog is displayed, click Cancel or the corner "X".
+   <r>
+<ul>
+	<li>The Deleting a Writing System dialog disappears</li>
+	<li>The Writing System Properties dialog resumes focus with no cursor</li>
+	<li>The dialog is unchanged</li>
+   </ul>
+</r>
+   <p name="bug">Deleting a Writing System dialog persists</p>
+   <p name="bug">Deleting a Writing System cancel messes up Writing System Properties dialog</p>
+  </step>
+
+ </case>
+
+
+ <case id="twsPers" num="5" order="123">
+  <title tag="twsPers">Persistance</title>
+  <context>
+<p>When WorldPad is running and the Writing System Properties dialog is displayed</p>
+</context>
+
+  <step name="5.1" link="Bug">After editing in the Writing Systems list box, Click "OK". Click Tools-Writing System Properties. Inspect the Writing Systems list box.
+   <r>The Writing Systems list box contains the same identifiers it had when closed via "OK"</r>
+   <p name="Check">Registry key [HKEY_LOCAL_MACHINE\Software\SIL\GraphiteFonts] to use in bug reports.</p>
+   <p name="Check">Registry key [HKEY_CURRENT_USER\Software\SIL\Fieldworks\WorldPad\Encodings] to use in bug reports.</p>
+   <p name="bug">Tools-Writing System Properties identifiers do not persist</p>
+  </step>
+
+  <step name="5.2" link="Bug">Select each identifier.
+   <r>
+<ul>
+	<li>Each id has its expected data in the edit boxes</li>
+	<li>Report specific fields that have wrong data</li>
+   </ul>
+</r>
+   <p name="bug">Tools-Writing Systems: all data persists wrong</p>
+   <p name="bug">Tools-Writing Systems: &lt;field&gt; persists wrong</p>
+  </step>
+
+ </case>
+
+ <update date="May-03-02" author="LarsH">Changed "Special" to "Font Features".
+Added some todo's.</update>
+ <update date="Nov-08-01" author="LarsH">Mostly just changed label
+"Tools-Writing Systems" to "Tools-Writings Systems Properties".</update>
+ <update date="Jul-24-01" author="MikeL">Test created.</update>
+
+</test>

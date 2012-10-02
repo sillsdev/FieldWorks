@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000028">
+	<rt guid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad" class="LangProject">
+		<DateCreated val="2007-11-19 11:17:52.107" />
+		<DateModified val="2010-9-1 11:4:28.147" />
+		<Description>
+			<AStr ws="en">
+				<Run ws="en">***</Run>
+			</AStr>
+		</Description>
+		<AnalysisWss>
+			<Uni>en pt en-fonipa</Uni>
+		</AnalysisWss>
+		<CurVernWss>
+			<Uni>en en-fonipa fr</Uni>
+		</CurVernWss>
+		<CurAnalysisWss>
+			<Uni>en en-fonipa</Uni>
+		</CurAnalysisWss>
+		<CurPronunWss>
+			<Uni>en</Uni>
+		</CurPronunWss>
+		<VernWss>
+			<Uni>en fr en-fonipa</Uni>
+		</VernWss>
+
+		<LexDb>
+			<objsur guid="9c3c22f8-bf36-46e7-bc12-5c4e540ab897" t="o" />
+		</LexDb>
+
+
+		<LinkedFilesRootDir>
+			<Uni>%proj%\LinkedFiles</Uni>
+		</LinkedFilesRootDir>
+
+
+		<Pictures>
+			<objsur guid="04c76429-03a5-4868-bf43-842154f5a03a" t="o" />
+		</Pictures>
+		<Media>
+			<objsur guid="3e615e09-3b86-4fae-adfe-5fc2473214b6" t="o" />
+		</Media>
+	</rt>
+		<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--END LangProject-->
+
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--LangProject.LexDb-->
+	<rt class="LexDb" guid="9c3c22f8-bf36-46e7-bc12-5c4e540ab897" ownerguid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad">
+		<DateCreated val="2005-6-22 13:56:8.370" />
+		<DateModified val="2009-4-8 21:49:25.197" />
+		<Name>
+			<AUni ws="en">Sena Dictionary</AUni>
+		</Name>
+		<Entries>
+			<objsur t="o" guid="cd045907-e8fc-46a3-8f8d-f71bd956275f" />
+		</Entries>
+	</rt>
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--END LangProject.LexDb-->
+
+
+
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--LangProject.LexDb.LexEntry-->
+	<rt guid="cd045907-e8fc-46a3-8f8d-f71bd956275f" class="LexEntry" ownerguid="9c3c22f8-bf36-46e7-bc12-5c4e540ab897">
+		<Custom name="Plural">
+			<AStr ws="en">
+				<Run ws="en">hihkhk  create a link</Run>
+			</AStr>
+		</Custom>
+		<HomographNumber val="0" />
+		<DateCreated val="2005-6-23 15:50:47.520" />
+		<DateModified val="2010-10-25 21:40:19.848" />
+		<DoNotUseForParsing val="False" />
+		<ExcludeAsHeadword val="False" />
+
+		<Senses>
+			<objsur guid="c33c51d4-f405-4d34-99c3-5eb36881a0d1" t="o" />
+		</Senses>
+	</rt>
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--END LangProject.LexDb.LexEntry-->
+
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--LangProject.LexDb.LexEntry.LexSense-->
+	<rt guid="c33c51d4-f405-4d34-99c3-5eb36881a0d1" class="LexSense" ownerguid="cd045907-e8fc-46a3-8f8d-f71bd956275f">
+		<Definition>
+			<AStr ws="en">
+				<Run ws="en">of</Run>
+			</AStr>
+			<AStr ws="pt">
+				<Run ws="pt">de</Run>
+			</AStr>
+		</Definition>
+		<Gloss>
+			<AUni ws="en">ASSOC</AUni>
+			<AUni ws="pt">ASSOC</AUni>
+		</Gloss>
+		<AnthroNote>
+			<AStr ws="en">
+				<Run ws="en">a  Put</Run>
+				<Run ws="en" externalLink="C:\FwWW\DistFiles\Projects\Sena 3\LinkedFiles\Others\LukeGrad-BW.pdf" namedStyle="Hyperlink"> Link</Run>
+				<Run ws="en"> in here</Run>
+				<Run ws="en" externalLink="AudioVisual\Untitled5.WMV" namedStyle="Hyperlink"> here is</Run>
+				<Run ws="en"> some </Run>
+				<Run ws="en" externalLink="Pictures\Jude1.jpg" namedStyle="Hyperlink">Jude's Picture</Run>
+				<Run ws="en"> other </Run>
+				<Run ws="en" externalLink="http://icoder.wordpress.com/2008/11/12/how-to-collapse-all-projects-in-a-visual-studio-2008-solution/" namedStyle="Hyperlink">http://icoder.wordpress.com/2008/11/12/how-to-collapse-all-projects-in-a-visual-studio-2008-solution/</Run>
+				<Run ws="en"> text  </Run>
+				<Run ws="en" externalLink=" http://icoder.wordpress.com/2008/11/12/how-to-collapse-all-projects-in-a-visual-studio-2008-solution/" namedStyle="Hyperlink">URLHyperlink </Run>
+				<Run ws="en">text is added. Put in a  </Run>
+				<Run ws="en" externalLink="C:\FwWW\DistFiles\Projects\Sena 3\LinkedFiles\Pictures\RickKayak.jpg" namedStyle="Hyperlink">link</Run>
+				<Run ws="en"> to file</Run>
+			</AStr>
+		</AnthroNote>
+		<Pictures>
+			<objsur guid="ea273c32-eeaa-4d93-8f7b-b246c35b1b78" t="o" />
+			<objsur guid="ea58c330-bda3-4a5e-bb0c-405134b0274a" t="o" />
+		</Pictures>
+	</rt>
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--END LangProject.LexDb.LexEntry.LexSense-->
+
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--LangProject.LexDb.LexEntry.LexSense.CmPicture-->
+	<rt guid="ea273c32-eeaa-4d93-8f7b-b246c35b1b78" class="CmPicture" ownerguid="c33c51d4-f405-4d34-99c3-5eb36881a0d1">
+		<Caption>
+			<AStr ws="pt">
+				<Run ws="pt">Cute Jude</Run>
+			</AStr>
+		</Caption>
+		<LayoutPos val="0" />
+		<ScaleFactor val="0" />
+		<LocationRangeType val="0" />
+		<LocationMin val="0" />
+		<LocationMax val="0" />
+		<PictureFile>
+			<objsur guid="86f4d46d-7aec-4fe0-b894-10afa4f4d36c" t="r" />
+		</PictureFile>
+	</rt>
+	<rt guid="ea58c330-bda3-4a5e-bb0c-405134b0274a" class="CmPicture" ownerguid="c33c51d4-f405-4d34-99c3-5eb36881a0d1">
+		<Caption>
+			<AStr ws="pt">
+				<Run ws="pt">Rick USVI</Run>
+			</AStr>
+		</Caption>
+		<LayoutPos val="0" />
+		<ScaleFactor val="0" />
+		<LocationRangeType val="0" />
+		<LocationMin val="0" />
+		<LocationMax val="0" />
+		<PictureFile>
+			<objsur guid="d5447905-860e-4b77-aa5c-6e60d84869ec" t="r" />
+		</PictureFile>
+	</rt>	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--END LangProject.LexDb.LexEntry.LexSense.CmPicture-->
+
+
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--LangProject.Pictures-->
+	<!--LangProject.CmFolder-->
+	<rt guid="04c76429-03a5-4868-bf43-842154f5a03a" class="CmFolder" ownerguid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad">
+		<Name>
+			<AUni ws="pt">Local Pictures</AUni>
+		</Name>
+		<Files>
+			<objsur guid="86f4d46d-7aec-4fe0-b894-10afa4f4d36c" t="o" />
+			<objsur guid="86f5d46d-7aec-4fe0-b894-10afa4f4d36c" t="o" />
+			<objsur guid="86f6d46d-7aec-4fe0-b894-10afa4f4d36c" t="o" />
+			<objsur guid="86f7d46d-7aec-4fe0-b894-10afa4f4d36c" t="o" />
+			<objsur guid="d5447905-860e-4b77-aa5c-6e60d84869ec" t="o" />
+		</Files>
+	</rt>
+	<!--LangProject.Pictures.File-->
+	<!--LangProject.CmFolder.CmFile-->
+	<rt guid="86f4d46d-7aec-4fe0-b894-10afa4f4d36c" class="CmFile" ownerguid="04c76429-03a5-4868-bf43-842154f5a03a">
+		<InternalPath>
+			<Uni>Pictures\Jude1.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt guid="86f5d46d-7aec-4fe0-b894-10afa4f4d36c" class="CmFile" ownerguid="04c76429-03a5-4868-bf43-842154f5a03a">
+		<InternalPath>
+			<Uni>Pictures\Rick USVI-extraOne.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt guid="86f6d46d-7aec-4fe0-b894-10afa4f4d36c" class="CmFile" ownerguid="04c76429-03a5-4868-bf43-842154f5a03a">
+		<InternalPath>
+			<Uni>C:\FwWW\DistFiles\Projects\Sena 3\LinkedFiles\RickKayak.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt guid="86f7d46d-7aec-4fe0-b894-10afa4f4d36c" class="CmFile" ownerguid="04c76429-03a5-4868-bf43-842154f5a03a">
+		<InternalPath>
+			<Uni>C:\FwWW\DistFiles\RickKayak.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt guid="d5447905-860e-4b77-aa5c-6e60d84869ec" class="CmFile" ownerguid="04c76429-03a5-4868-bf43-842154f5a03a">
+		<InternalPath>
+			<Uni>C:\FwWW\DistFiles\Projects\Sena 3\LinkedFiles\Pictures\Rick USVI.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+	<!--LangProject.Media-->
+	<!--LangProject.CmFolder-->
+	<rt guid="3e615e09-3b86-4fae-adfe-5fc2473214b6" class="CmFolder" ownerguid="b8bdad3d-9006-46f0-83e8-ae1d1726f2ad">
+		<Name>
+			<AUni ws="pt">Local Media</AUni>
+		</Name>
+		<Files>
+			<objsur guid="c4f3760e-049e-49af-ac57-73c686100700" t="o" />
+			<objsur guid="c4f4760e-049e-49af-ac57-73c686100700" t="o" />
+			<objsur guid="c4f5760e-049e-49af-ac57-73c686100700" t="o" />
+		</Files>
+	</rt>
+	<!--LangProject.Media.File-->
+	<!--LangProject.CmFolder.CmFile-->
+	<rt guid="c4f3760e-049e-49af-ac57-73c686100700" class="CmFile" ownerguid="3e615e09-3b86-4fae-adfe-5fc2473214b6">
+		<InternalPath>
+			<Uni>AudioVisual\Untitled5.WMV</Uni>
+		</InternalPath>
+	</rt>
+	<rt guid="c4f4760e-049e-49af-ac57-73c686100700" class="CmFile" ownerguid="3e615e09-3b86-4fae-adfe-5fc2473214b6">
+		<InternalPath>
+			<Uni>C:\FwWW\DistFiles\Projects\Sena 3\LinkedFiles\AudioVisual\MacLeanKidsMovie.WMV</Uni>
+		</InternalPath>
+	</rt>
+	<rt guid="c4f5760e-049e-49af-ac57-73c686100700" class="CmFile" ownerguid="3e615e09-3b86-4fae-adfe-5fc2473214b6">
+		<InternalPath>
+			<Uni>C:\FwWW\DistFiles\AudioVisual\NotInLinkedFilesPath.WMV</Uni>
+		</InternalPath>
+	</rt>
+	<!--x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+-->
+</languageproject>

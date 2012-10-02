@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="tlsspl" num="2.7.3" abbr="tlsspl" file="FW\tlsspell.xml" ready="V2">
+<title tag="tlsspl">Tools-Spelling Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Invokes the Spell Checker dialog over the data displayed in the view.</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Spelling" type="doc">Tools-Spelling</link>
+</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Spell/Spell.html" type="doc">Tools-Spelling</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Spelling"</p>
+</context>
+<case id="tlssplAct" num="0" order="any">
+<title tag="tlssplAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Tools-Spelling. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Spell/Spell.html" type="doc">Tools-Spelling specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling dialog fails to open</p>
+<p name="bug">Tools-Spelling dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The user's favorite folders and topics are displayed.</li>
+<li>The Ignore words in UPPERCASE check box is checked.</li>
+<li>The Ignore words with numbers check box is checked.</li>
+</ul>
+</r>
+<p name="bug">Tools-SpellingTools-Spelling user's favorite folders and topics are displayed failed</p>
+<p name="bug">Tools-SpellingTools-Spelling Ignore words in UPPERCASE check box is checked failed</p>
+<p name="bug">Tools-SpellingTools-Spelling Ignore words with numbers check box is checked failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>There is no OK button on this dialog.</li>
+<li>Report any failures as suggested using "Tools-Spelling" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling has OK button</p>
+</step>
+<step name="0.4" link="Bug">Change encoding the Spelling dialog.<r>Switches between dictionaries depending upon the encoding.</r>
+<p name="bug">Tools-Spelling Change encoding  failed</p>
+</step>
+</case>
+<case id="tlsspldic" num="2" order="any">
+<title tag="tlsspldic">Not In Dictionary Text Box</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;y&gt; to test the Not in Dictionary text box.<r>
+<ul>
+<li>The shortcut "y" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Not in Dictionary".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Not in Dictionary shortcut is not &lt;y&gt;</p>
+</step>
+<step name="2.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is unrecognized word.</li>
+	<li>The value is read-only text that changes during the spell check.</li>
+   </ul>
+</r>
+<p name="bug">Tools-Spelling default vaule is not unrecognized word</p>
+	<p name="bug">Tools-SpellingNot in Dictionary value is not read-only text that changes during the spell check</p>
+   </step>
+</case>
+<case id="tlssplchto" num="3" order="any">
+<title tag="tlssplchto">Change To Text Box</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the Change To text box.<r>
+<ul>
+<li>The shortcut "T" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Change To".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Change To shortcut is not &lt;T&gt;</p>
+</step>
+<step name="3.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is first suggested word.</li>
+	<li>The value is editable text.</li>
+   </ul>
+</r>
+<p name="bug">Tools-Spelling default vaule is not first suggested word</p>
+	<p name="bug">Tools-SpellingChange To value is not editable text</p>
+   </step>
+<step name="3.3" link="Bug">When the not in dictionary word changes:
+  <r>Shows first word from the suggestions list.</r>
+<p name="bug">Tools-Spelling Spelling  not in sync with suggestions</p>
+</step>
+<step name="3.4" link="Bug">When a suggestion is selected:
+  <r>The selected suggestion shows in the text box..</r>
+<p name="bug">Tools-Spelling Spelling  not in sync with suggestion</p>
+</step>
+</case>
+<case id="tlssplsug" num="4" order="any">
+<title tag="tlssplsug">Suggestions Text Box</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="4.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;n&gt; to test the Suggestions text box.<r>
+<ul>
+<li>The shortcut "n" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Suggestions".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Suggestions shortcut is not &lt;n&gt;</p>
+</step>
+<step name="4.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is list of possible replacements.</li>
+	<li>The value is read-only text.</li>
+   </ul>
+</r>
+<p name="bug">Tools-Spelling default vaule is not list of possible replacements</p>
+	<p name="bug">Tools-SpellingSuggestions value is not read-only text</p>
+   </step>
+<step name="4.3" link="Bug">Select an item.<r>Puts the selected item in the Change To box.</r>
+<p name="bug">Tools-Spelling Select  failed</p>
+</step>
+<step name="4.4" link="Bug">When the not in dictionary word changes:
+  <r>Shows a list of possible replacements for the not in dictionary word.</r>
+<p name="bug">Tools-Spelling Spelling  not in sync with not in dictionary</p>
+</step>
+</case>
+<case id="tlssplign" num="5" order="any">
+<title tag="tlssplign">Ignore Button</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="5.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;I&gt; to test the Ignore button.<r>
+<ul>
+<li>The shortcut "I" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Ignore".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Ignore shortcut is not &lt;I&gt;</p>
+</step>
+<step name="5.2" link="Bug">
+	Click the Ignore button to test its action.
+	<r>
+<ul>
+<li>Ignores this word and continues checking.</li>
+</ul>
+</r>
+<p name="bug">Tools-SpellingSpelling fails to ignores this word and continues checking</p>
+</step>
+</case>
+<case id="tlsspliga" num="6" order="any">
+<title tag="tlsspliga">Ignore All Button</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="6.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;g&gt; to test the Ignore All button.<r>
+<ul>
+<li>The shortcut "g" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Ignore All".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Ignore All shortcut is not &lt;g&gt;</p>
+</step>
+<step name="6.2" link="Bug">
+	Click the Ignore All button to test its action.
+	<r>
+<ul>
+<li>Ignores all instances of this word in the view.</li>
+</ul>
+</r>
+<p name="bug">Tools-SpellingSpelling fails to ignores all instances of this word in the view</p>
+</step>
+</case>
+<case id="tlssplchg" num="7" order="any">
+<title tag="tlssplchg">Change Button</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="7.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;C&gt; to test the Change button.<r>
+<ul>
+<li>The shortcut "C" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Change".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Change shortcut is not &lt;C&gt;</p>
+</step>
+<step name="7.2" link="Bug">
+	Click the Change button to test its action.
+	<r>
+<ul>
+<li>Changes this word to the Change To text.</li>
+</ul>
+</r>
+<p name="bug">Tools-SpellingSpelling fails to changes this word to the Change To text</p>
+</step>
+</case>
+<case id="tlssplcha" num="8" order="any">
+<title tag="tlssplcha">Change All Button</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="8.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;l&gt; to test the Change All button.<r>
+<ul>
+<li>The shortcut "l" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Change All".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Change All shortcut is not &lt;l&gt;</p>
+</step>
+<step name="8.2" link="Bug">
+	Click the Change All button to test its action.
+	<r>
+<ul>
+<li>Changes all instances of this word in the view to the Change To text.</li>
+</ul>
+</r>
+<p name="bug">Tools-SpellingSpelling fails to changes all instances of this word in the view to the Change To text</p>
+</step>
+</case>
+<case id="tlsspladd" num="9" order="any">
+<title tag="tlsspladd">Add Button</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="9.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;A&gt; to test the Add button.<r>
+<ul>
+<li>The shortcut "A" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Add".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Add shortcut is not &lt;A&gt;</p>
+</step>
+<step name="9.2" link="Bug">
+	Click the Add button to test its action.
+	<r>
+<ul>
+<li>Adds the word to the dictionary.</li>
+</ul>
+</r>
+<p name="bug">Tools-SpellingSpelling fails to adds the word to the dictionary</p>
+</step>
+</case>
+<case id="tlsspldict" num="10" order="any">
+<title tag="tlsspldict">Dictionary Combo Box</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="10.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;t&gt; to test the Dictionary combo box.<r>
+<ul>
+<li>The shortcut "t" is underlined.</li>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "&lt;the current encoding&gt;".</li>
+<li>Report any failures using the first words, "Tools-Spelling Dictionary".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Dictionary shortcut is not &lt;t&gt;</p>
+<p name="bug">Tools-Spelling Dictionary missing drop-down</p>
+<p name="bug">Tools-Spelling Dictionary default is not "&lt;the current encoding&gt;"</p>
+</step>
+<step name="10.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+	<li>The list contains names of encodings defined in the project.</li>
+   </ul>
+</r>
+<p name="bug">Tools-SpellingDictionary drop-down not showing</p>
+	<p name="bug">Tools-SpellingDictionary drop list missing &lt;names of encodings defined in the project&gt;</p>
+   </step>
+</case>
+<case id="tlsspliguc" num="11" order="any">
+<title tag="tlsspliguc">Ignore Words In UPPERCASE Check Box</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="11.1" link="Bug">
+	Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;U&gt; to test the Ignore words in UPPERCASE check box.<r>
+<ul>
+<li>The shortcut "U" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Ignore words in UPPERCASE".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Ignore words in UPPERCASE shortcut is not &lt;U&gt;</p>
+</step>
+<step name="11.2" link="Bug">When checked:
+  <r>Spelling ignores words with all characters in uppercase.</r>
+<p name="bug">Tools-Spelling Spelling Ignore words in UPPERCASE not in sync with Spelling</p>
+</step>
+</case>
+<case id="tlssplignu" num="12" order="any">
+<title tag="tlssplignu">Ignore Words With Numbers Check Box</title>
+<context>
+<p>When the Spelling dialog  is displayed</p>
+</context>
+<step name="12.1" link="Bug">
+	Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;b&gt; to test the Ignore words with numbers check box.<r>
+<ul>
+<li>The shortcut "b" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Spelling Ignore words with numbers".</li>
+</ul>
+</r>
+<p name="bug">Tools-Spelling Ignore words with numbers shortcut is not &lt;b&gt;</p>
+</step>
+<step name="12.2" link="Bug">When checked:
+  <r>Spelling ignores words with any characters that are numbers.</r>
+<p name="bug">Tools-Spelling Spelling Ignore words with numbers not in sync with Spelling</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="Apr-23-02" author="JanetW">Fixed duplicate step numbers.</update>
+
+</test>

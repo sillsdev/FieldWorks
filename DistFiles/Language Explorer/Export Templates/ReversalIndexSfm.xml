@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="sfm" type="reversal" datatype="ReversalIndex" xslt="ReversalIndex.xsl;ReversalIndexSfm.xsl">
+	<FxtDocumentDescription dataLabel="Reversal Index" formatLabel="SFM" defaultExtension="db" filter="SFM files (*.db)|*.db|All files (*.*)|*.*">
+Export the current configured reversal index to standard format.
+	</FxtDocumentDescription>
+</template>

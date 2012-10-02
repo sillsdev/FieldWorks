@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbinsert" num="3.5" abbr="tbin" file="FW\TbInsert.xml">
+<title tag="tbinsert">Insert Toolbar Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>For inserting common types of objects, and also for those objects specific for the application. For example, the Data Notebook Editor uses the left portion of this toolbar to provide an icon for each and every type of Entry that can be inserted (e.g., Observation, Hypothesis, etc.). Note: The Insert Link command has been eliminated.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#InsertToolbar" type="doc">Insert Toolbar</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert Toolbar"</p>
+<p>For more detailed tests of functionality, use the respective tests available in other test scripts.</p>
+</context>
+
+<case id="tbinDiac" num="1" order="any">
+<title tag="tbinDiac">Exercise dialog controls</title>
+<context>
+<p>When the Insert Toolbar is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Insert Toolbar. Use <img uri="file:///C:/fw/FwSpecs/FW/App/Features/Toolbars/ToolbarInsert.gif" alt="Insert Toolbar image">
+</img> to visually inspect the Toolbar.
+   <r>
+<ul>
+<li>Use the application specific toolbar tests to check application icons
+	<ul>
+<li>
+<link uri="../DN/TbInsertDN.xml" type="module">Insert Toolbar Tests (DN)</link>
+</li>
+		<li>
+<link uri="../TLE/TbInsertTLE.xml" type="module">Insert Toolbar Tests (TLE)</link>
+</li>
+</ul>
+</li>
+<li>Up to approximate size and position the two should be the same - especially any text and icons.</li>
+</ul>
+</r>
+<p name="bug">Insert Toolbar layout incorrect</p>
+</step>
+
+<step name="1.2">Use <link uri="../StdCtrls/Toolbar.xml">Basic Toolbar Tests</link> to test basic functionality.
+   <r>Report any failures as suggested using "Insert Toolbar" as the name of the dialog.</r>
+</step>
+<step name="1.3" link="Bug">Use the <link uri="InsExtLink.xml">Insert External Link Tests</link> to test Insert Link icon functionality.
+ <r>Report failures for Each dialog as "Insert Toolbar &lt;Insert Link/dialog&gt;".</r>
+<p name="bug">Insert Toolbar ..</p>
+</step>
+
+<step name="1.4" link="Bug">Use <link uri="InsTable.xml">Insert table Tests</link>, <link uri="InsSound.xml">Insert Sound Tests</link>, <link uri="InsVideo.xml">Insert Video Tests</link>, <link uri="InsPicture.xml">Insert Picture Tests</link> and <link uri="InsObject.xml">Insert Object Tests</link> to test icon functionality.
+   <r>
+<ul>
+<li>Each icon launches its associated dialog.</li>
+<li>Report failures for Each dialog as "Insert Toolbar &lt;icon/dialog&gt;".</li>
+</ul>
+</r>
+<p name="bug">Insert Toolbar ..</p>
+<p name="note">Not in v1</p>
+</step>
+
+</case>
+
+
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Oct-01-01" author="MikeL">Put guts in test</update>
+<update date="May-31-02" author="JoelC">Updated</update>
+<update date="Jul-11-02" author="RussD">Added links to tests for application specific controls</update>
+
+</test>

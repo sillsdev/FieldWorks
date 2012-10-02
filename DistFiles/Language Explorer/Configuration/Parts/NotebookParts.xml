@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Nonstandard parts for Data Notebook. -->
+<PartInventory>
+	<bin class="RnGenericRec">
+		<part id="RnGenericRec-Detail-Title" type="detail">
+			<slice field="Title" label="Title" editor="string" labelws="true" wsempty="analysis" menu="mnuDataTree-Help"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-FurtherQuestions" type="detail">
+			<slice field="FurtherQuestions" label="Further Questions" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-ExternalMaterials" type="detail">
+			<slice field="ExternalMaterials" label="External Materials" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-SubRecordSection" type="Detail">
+			<choice>
+				<where target="owner" is="RnResearchNbk">
+					<obj field="Self" layout="SubRecordSection"/>
+				</where>
+				<where field="SubRecords" lengthatleast="1">
+					<obj field="Self" layout="SubRecordSection"/>
+				</where>
+				<otherwise>
+					<!-- doesn't show anything since length==0, but needed to get the first inserted subrecord to display automatically -->
+					<seq field="SubRecords" indent="true" layout="SubRecord"/>
+				</otherwise>
+			</choice>
+		</part>
+
+		<part id="RnGenericRec-Detail-SubRecordsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-LexEntry-SubRecordsSection"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-SubRecords" type="detail">
+			<choice>
+				<where target="owner" is="RnGenericRec">
+					<seq field="SubRecords" indent="true" layout="SubRecord"/>
+				</where>
+				<otherwise>
+					<seq field="SubRecords" indent="true" layout="SubRecord"/>
+				</otherwise>
+			</choice>
+		</part>
+
+		<part id="RnGenericRec-Detail-HeavySummary" type="detail" paramType="JtLayoutsOfThisClass">
+			<slice field="SubRecords" editor="summary" layout="default" weight="heavy" editable="no" menu="mnuDataTree-Help" header="true"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-Participants" type="Detail">
+			<slice field="Participants" label="Participants" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.RoledParticipantsSlice">
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-AnthroCodes" type="Detail">
+			<slice field="AnthroCodes" label="Anthropology Categories" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analysis" displayProperty="AbbrAndNameTSS"/>
+				<chooserInfo helpBrowser="true">
+					<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-Confidence" type="Detail">
+			<slice field="Confidence" label="Confidence" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the list of Confidence Levels" tool="confidenceEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-Locations" type="Detail">
+			<slice field="Locations" label="Locations" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the list of Locations" tool="locationsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-Researchers" type="Detail">
+			<slice field="Researchers" label="Researchers" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-Restrictions" type="Detail">
+			<slice field="Restrictions" label="Restrictions" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the list of Restrictions" tool="restrictionsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-Sources" type="Detail">
+			<slice field="Sources" label="Sources" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-Status" type="Detail">
+			<slice field="Status" label="Status" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Status list" tool="statusEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-TimeOfEvent" type="Detail">
+			<slice field="TimeOfEvent" label="Time of Event" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Time of Day list" tool="timeOfDayEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-Type" type="Detail">
+			<slice field="Type" label="Record Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams nullLabel=""/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Record Types" tool="recTypeEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="RnGenericRec-Detail-SeeAlso" type="Detail">
+			<slice field="SeeAlso" label="See Also" editor="custom" assemblyPath="LexEdDll.dll"
+			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-SupportingEvidence" type="Detail">
+			<slice field="SupportingEvidence" label="Supporting Evidence" editor="custom" assemblyPath="LexEdDll.dll"
+			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-CounterEvidence" type="Detail">
+			<slice field="CounterEvidence" label="Counter Evidence" editor="custom" assemblyPath="LexEdDll.dll"
+			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-SupersededBy" type="Detail">
+			<slice field="SupersededBy" label="Superseded By" editor="custom" assemblyPath="LexEdDll.dll"
+			 class="SIL.FieldWorks.XWorks.LexEd.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Title" type="jtview">
+			<choice>
+				<where target="owner" is="RnResearchNbk">
+					<span>
+						<properties>
+							<bold value="on" />
+						</properties>
+						<string field="Title"/>
+					</span>
+				</where>
+				<otherwise>
+					<string field="Title"/>
+				</otherwise>
+			</choice>
+		</part>
+
+		<part id="RnGenericRec-Jt-AnthroCodes" type="jtview">
+			<seq field="AnthroCodes" layout="PossibilityAbbrAndName"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-SeeAlso" type="jtview">
+			<seq field="SeeAlso" layout="Reference"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Researchers" type="jtview">
+			<seq field="Researchers" layout="PossibilityName"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Restrictions" type="jtview">
+			<seq field="Restrictions" layout="PossibilityName"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-FurtherQuestions" type="jtview">
+			<obj field="FurtherQuestions" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-ExternalMaterials" type="jtview">
+			<obj field="ExternalMaterials" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Conclusions" type="jtview">
+			<obj field="Conclusions" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Description" type="jtview">
+			<obj field="Description" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Discussion" type="jtview">
+			<obj field="Discussion" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Hypothesis" type="jtview">
+			<obj field="Hypothesis" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-PersonalNotes" type="jtview">
+			<obj field="PersonalNotes" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-ResearchPlan" type="jtview">
+			<obj field="ResearchPlan" layout="FullText"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-DateOfEvent" type="detail">
+			<slice field="DateOfEvent" label="Date of Event" editor="gendate"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-Description" type="detail">
+			<slice field="Description" label="Description" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-PersonalNotes" type="detail">
+			<slice field="PersonalNotes" label="Personal Notes" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Summary" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<style value="UiElement"/>
+					<bold value="on" />
+				</properties>
+				<string field="IndexInOwnerTSS"/>
+				<lit>&#32;</lit>
+				<obj field="Type" layout="Name"/>
+			</para>
+		</part>
+
+		<part id="RnGenericRec-Jt-SummaryCollapsed" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<bold value="on" />
+				</properties>
+				<span>
+					<properties>
+						<style value="UiElement"/>
+					</properties>
+					<string field="IndexInOwnerTSS"/>
+					<lit>&#32;</lit>
+					<obj field="Type" layout="Name"/>
+					<lit> - </lit>
+				</span>
+				<string field="Title"/>
+			</para>
+		</part>
+
+		<part id="RnGenericRec-Jt-DateOfEvent" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<gendate field="DateOfEvent" format="short"/>
+			</span>
+		</part>
+
+		<part id="RnGenericRec-Jt-Locations" type="jtview">
+			<seq field="Locations" layout="PossibilityName"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Sources" type="jtview">
+			<seq field="Sources" layout="PossibilityName"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Type" type="jtview">
+			<obj field="Type" layout="Name"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Participants" type="jtview">
+			<seq field="Participants" layout="NoRoleAndParticipants"/>
+			<seq field="Participants" layout="RoleAndParticipants"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Reference">
+			<para>
+				<string field="ShortNameTSS"/>
+			</para>
+		</part>
+
+		<part id="RnGenericRec-Jt-TimeOfEvent" type="jtview">
+			<seq field="TimeOfEvent" layout="PossibilityName"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-Hypothesis" type="detail">
+			<slice field="Hypothesis" label="Hypothesis" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-Discussion" type="detail">
+			<slice field="Discussion" label="Discussion" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-Conclusions" type="detail">
+			<slice field="Conclusions" label="Conclusion" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Detail-ResearchPlan" type="detail">
+			<slice field="ResearchPlan" label="Research Plan" editor="sttext"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-CounterEvidence" type="jtview">
+			<seq field="CounterEvidence" layout="Reference"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-Status" type="jtview">
+			<obj field="Status" layout="Name"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-SupersededBy">
+			<seq field="SupersededBy" layout="Reference"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-SupportingEvidence">
+			<seq field="SupportingEvidence" layout="Reference"/>
+		</part>
+
+		<!-- auto-generated custom field parts -->
+		<part id="RnGenericRec-Jt-CustomMultiStringForRecord_$fieldName" type="jtview">
+			<string field="$fieldName" ws="$wsName"/>
+		</part>
+		<part id="RnGenericRec-Jt-CustomSimpleStringForRecord_$fieldName" type="jtview">
+			<string field="$fieldName"/>
+		</part>
+		<part id="RnGenericRec-Jt-CustomIntegerForRecord_$fieldName" type="jtview">
+			<int field="$fieldName"/>
+		</part>
+		<part id="RnGenericRec-Jt-CustomGenDateForRecord_$fieldName" type="jtview">
+			<gendate field="$fieldName" format="short"/>
+		</part>
+		<part id="RnGenericRec-Jt-CustomStTextForRecord_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="FullText"/>
+		</part>
+		<part id="RnGenericRec-Jt-CustomPossVectorForRecord_$fieldName" type="jtview">
+			<seq field="$fieldName" layout="Name"/>
+		</part>
+		<part id="RnGenericRec-Jt-CustomPossAtomForRecord_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="Name"/>
+		</part>
+		<part id="RnGenericRec-Jt-CustomStTextForRecord_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="publishCustom"/>
+		</part>
+
+	<part id="RnGenericRec-Jt-Subrecords" type="jtview">
+	  <seq field="SubRecords" layout="SimpleTitle"/>
+	</part>
+	<part id="RnGenericRec-Jt-SimpleTitle" type="jtview">
+	  <string field="Title"/>
+	</part>
+
+	<part id="RnGenericRec-Jt-SubrecordIndex" type="jtview">
+			<string field="IndexInOwnerTSS"/>
+		</part>
+	<part id="RnGenericRec-Jt-SubrecordOf" type="jtview">
+	  <string field="SubrecordOf"/>
+	</part>
+		<!-- ADDED FOR DOCUMENT VIEW -->
+
+		<part id="RnGenericRec-Jt-SubrecordsConfig" type="jtview">
+			<div>
+				<properties>
+					<leadingindent value="36000"/>
+				</properties>
+				<seq field="SubRecords" layout="publishRecord" inheritSeps="true" numdelay="true" />
+			</div>
+		</part>
+		<part id="RnGenericRec-Jt-TitlePub" type="jtview">
+			<string field="Title"/>
+		</part>
+		<part id="RnGenericRec-Jt-TypeConfig" type="jtview">
+			<obj field="Type" layout="publishRnType"/>
+		</part>
+		<part id="RnGenericRec-Jt-SupportingTypeConfig" type="jtview">
+			<obj field="Type" layout="publishRnSupportingType"/>
+		</part>
+		<part id="RnGenericRec-Jt-CounterTypeConfig" type="jtview">
+			<obj field="Type" layout="publishRnCounterType"/>
+		</part>
+		<part id="RnGenericRec-Jt-SupersededTypeConfig" type="jtview">
+			<obj field="Type" layout="publishRnSupersededType"/>
+		</part>
+		<part id="RnGenericRec-Jt-SeeAlsoTypeConfig" type="jtview">
+			<obj field="Type" layout="publishRnSeeAlsoType"/>
+		</part>
+		<part id="RnGenericRec-Jt-ClassificationsConfig" type="jtview">
+			<obj field="Self" layout="publishClassifications" targetclass="RnGenericRec"/>
+		</part>
+		<part id="RnGenericRec-Jt-HistoryConfig" type="jtview">
+			<obj field="Self" layout="publishHistory" targetclass="RnGenericRec"/>
+		</part>
+		<part id="RnGenericRec-Jt-DateOfEventPub" type="jtview">
+			<gendate field="DateOfEvent" format="short"/>
+		</part>
+		<part id="RnGenericRec-Jt-RestrictionsConfig" type="jtview">
+			<seq field="Restrictions" layout="publishRnRestriction" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-TimeOfEventConfig" type="jtview">
+			<seq field="TimeOfEvent" layout="publishRnTimeOfEvent" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-ResearchersConfig" type="jtview">
+			<seq field="Researchers" layout="publishRnResearcher" inheritSeps="true"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-SourcesConfig" type="jtview">
+			<seq field="Sources" layout="publishRnSource" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-StatusConfig" type="jtview">
+			<obj field="Status" layout="publishRnStatus"/>
+		</part>
+		<part id="RnGenericRec-Jt-ConfidenceConfig" type="jtview">
+			<obj field="Confidence" layout="publishRnConfidence"/>
+		</part>
+		<part id="RnGenericRec-Jt-ParticipantsConfig" type="jtview">
+			<seq field="Participants" layout="publishRnParticipant" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-LocationsConfig" type="jtview">
+			<seq field="Locations" layout="publishRnLocation" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-AnthroCodesConfig" type="jtview">
+			<seq field="AnthroCodes" layout="publishRnAnthroCode" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-DateCreatedPub" type="jtview">
+			<datetime field="DateCreated"/>
+		</part>
+		<part id="RnGenericRec-Jt-DateModifiedPub" type="jtview">
+			<datetime field="DateModified"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-DescriptionConfig" type="jtview">
+			<obj field="Description" layout="publishRnDescription"/>
+		</part>
+		<part id="RnGenericRec-Jt-FurtherQuestionsConfig" type="jtview">
+			<obj field="FurtherQuestions" layout="publishRnFurtherQuestions"/>
+		</part>
+		<part id="RnGenericRec-Jt-PersonalNotesConfig" type="jtview">
+			<obj field="PersonalNotes" layout="publishRnPersonalNotes"/>
+		</part>
+		<part id="RnGenericRec-Jt-ExternalMaterialsConfig" type="jtview">
+			<obj field="ExternalMaterials" layout="publishRnExternalMaterials"/>
+		</part>
+		<part id="RnGenericRec-Jt-HypothesisConfig" type="jtview">
+			<obj field="Hypothesis" layout="publishRnHypothesis"/>
+		</part>
+		<part id="RnGenericRec-Jt-DiscussionConfig" type="jtview">
+			<obj field="Discussion" layout="publishRnDiscussion"/>
+		</part>
+		<part id="RnGenericRec-Jt-ConclusionsConfig" type="jtview">
+			<obj field="Conclusions" layout="publishRnConclusions"/>
+		</part>
+		<part id="RnGenericRec-Jt-ResearchPlanConfig" type="jtview">
+			<obj field="ResearchPlan" layout="publishRnResearchPlan"/>
+		</part>
+
+		<part id="RnGenericRec-Jt-SupportingEvidenceConfig" type="jtview">
+			<seq field="SupportingEvidence" layout="publishRnSupportingEvidence" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-CounterEvidenceConfig" type="jtview">
+			<seq field="CounterEvidence" layout="publishRnCounterEvidence" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-SupersededByConfig" type="jtview">
+			<seq field="SupersededBy" layout="publishRnSupersededBy" inheritSeps="true"/>
+		</part>
+		<part id="RnGenericRec-Jt-SeeAlsoConfig" type="jtview">
+			<seq field="SeeAlso" layout="publishRnSeeAlso" inheritSeps="true"/>
+		</part>
+	</bin>
+
+	<bin class="StText">
+		<part id="StText-Jt-RnDescriptionConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnDescription" targetclass="StTxtPara"/>
+		</part>
+		<part id="StText-Jt-RnFurtherQuestionsConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnFurtherQuestions" targetclass="StTxtPara"/>
+		</part>
+		<part id="StText-Jt-RnPersonalNotesConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnPersonalNotes" targetclass="StTxtPara"/>
+		</part>
+		<part id="StText-Jt-RnExternalMaterialsConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnExternalMaterials" targetclass="StTxtPara"/>
+		</part>
+		<part id="StText-Jt-RnHypothesisConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnHypothesis" targetclass="StTxtPara"/>
+		</part>
+		<part id="StText-Jt-RnDiscussionConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnDiscussion" targetclass="StTxtPara"/>
+		</part>
+		<part id="StText-Jt-RnConclusionsConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishRnConclusions" targetclass="StTxtPara"/>
+		</part>
+		<part id="StText-Jt-CustomConfig" type="jtview">
+			<seq field="Paragraphs" layout="publishCustom" targetclass="StTxtPara"/>
+		</part>
+	</bin>
+
+	<bin class="StTxtPara">
+		<part id="StTxtPara-Jt-ContentsPub">
+			<string field="Contents"/>
+		</part>
+	<part id="StTxtPara-Jt-publishCustom">
+	  <string field="Contents"/>
+	</part>
+  </bin>
+
+	<bin class="RnRoledPartic">
+		<part id="RnRoledPartic-Jt-NoRoleAndParticipants" type="jtview">
+			<if lengthatmost="0" field="Role">
+				<seq field="Participants" layout="bestName" inheritSeps="true"/>
+			</if>
+		</part>
+
+		<part id="RnRoledPartic-Jt-RoleAndParticipants" type="jtview">
+			<if lengthatleast="1" field="Role">
+				<para>
+					<obj field="Role" layout="empty">
+						<span>
+							<properties>
+								<bold value="on" />
+							</properties>
+							<string field="Name" ws="best analysis"/>
+						</span>
+					</obj>
+				</para>
+				<seq field="Participants" layout="PossibilityName" inheritSeps="true"/>
+			</if>
+		</part>
+
+		<part id="RnRoledPartic-Jt-ParticipantConfig" type="jtview">
+			<seq field="Participants" layout="publishRnParticipant" inheritSeps="true"/>
+		</part>
+
+		<part id="RnRoledPartic-Jt-RoleConfig" type="jtview">
+			<obj field="Role" layout="publishRnRole"/>
+		</part>
+	</bin>
+
+	<bin class="CmPerson">
+		<part id="CmPerson-Jt-NamePub" type="jtview">
+			<configureMlString field="Name"/>
+		</part>
+		<part id="CmPerson-Jt-AbbreviationPub" type="jtview">
+			<configureMlString field="Abbreviation"/>
+		</part>
+	</bin>
+
+</PartInventory>

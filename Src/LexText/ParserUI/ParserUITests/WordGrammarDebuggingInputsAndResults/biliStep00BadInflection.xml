@@ -1,0 +1,9 @@
+<word>
+  <form>bili</form>
+  <seq>
+	<morph wordType="root">
+	  <shortName>*bili (to.see): himbilira</shortName>
+	  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+	</morph>
+  </seq>
+</word>

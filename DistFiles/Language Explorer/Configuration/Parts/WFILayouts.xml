@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand crafted layouts for Wordform inventory related classes. -->
+<LayoutInventory>
+	<layout class="WfiWordform" type="detail" name="Normal">
+		<part ref="HeavySummary" param="WordformMainSummary" commandVisible="true" expansion="expanded" menu="mnuDataTree-MainWordform" hotlinks="mnuDataTree-MainWordform-Hotlinks"/>
+		<part ref="Spelling" menu="mnuDataTree-WordformSpelling"/>
+		<part ref="HumanApprovedAnalysesSection" expansion="expanded" label="User Approved (Analyses)" menu="mnuDataTree-HumanApprovedAnalysisSummary" hotlinks="mnuDataTree-HumanApprovedAnalysisSummary-Hotlinks">
+			<indent indent="true">
+				<part ref="HumanApprovedAnalyses" param="Normal" expansion="expanded"/>
+			</indent>
+		</part>
+		<part ref="HumanNoOpinionAnalysesSection" expansion="expanded" label="User Opinion Unknown (Analysis Candidates)">
+			<indent indent="true">
+				<part ref="HumanNoOpinionAnalyses" param="AsParse" expansion="expanded"/>
+			</indent>
+		</part>
+		<part ref="HumanDisapprovedAnalysesSection" expansion="expanded" label="User Disapproved (Test Case Analyses)">
+			<indent indent="true">
+				<part ref="HumanDisapprovedAnalyses" param="AsDisapproved" expansion="expanded"/>
+			</indent>
+		</part>
+	</layout>
+	<layout class="WfiAnalysis" type="detail" name="Normal">
+		<part ref="HeavySummary" param="HumanApprovedSummary" expansion="expanded" menu="mnuDataTree-HumanApprovedAnalysis" hotlinks="mnuDataTree-HumanApprovedAnalysis-Hotlinks">
+			<indent>
+				<part ref="InterlinearAnal"/>
+				<part ref="ParserOpinion"/>
+				<part ref="PartOfSpeech"/>
+				<part ref="WordGlosses" param="Normal"/>
+				<!--Now unused summary for al glosses.<part ref="WordGlossSection" expansion="expanded" label="Word Glosses">
+					<indent>
+						<part ref="WordGlosses" param="Normal"/>
+					</indent>
+				</part>-->
+			</indent>
+		</part>
+	</layout>
+	<layout class="WfiAnalysis" type="detail" name="AsParse">
+		<part ref="HeavySummary" param="HumanNoOpinionSummary" expansion="expanded" menu="mnuDataTree-ParserProducedAnalysis" hotlinks="mnuDataTree-Help">
+			<indent>
+				<part ref="InterlinearParse"/>
+				<part ref="ParserOpinion"/>
+			</indent>
+		</part>
+	</layout>
+	<layout class="WfiAnalysis" type="detail" name="AsDisapproved">
+		<part ref="HeavySummary" param="HumanDisapprovedSummary" expansion="expanded" menu="mnuDataTree-HumanDisapprovedAnalysis">
+			<indent>
+				<part ref="InterlinearParse"/>
+				<part ref="ParserOpinion"/>
+			</indent>
+		</part>
+	</layout>
+	<layout class="WfiGloss" type="detail" name="Normal">
+		<part ref="FormAllAnal"/>
+	</layout>
+</LayoutInventory>

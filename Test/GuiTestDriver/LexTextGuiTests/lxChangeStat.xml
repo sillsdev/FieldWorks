@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Bulk Change status -->
+<!--  Assumes original Kalaba database-->
+<!--  On switch to Bulk Edt Entries, assumes the focused tab will be List Choice -->
+<!--  Assumes Lexeme Form, Citation Form, Morph Type, Glosses, Definition, Grammatical Category are on -->
+<!--  Sorted by Lexeme Form in ascending order  -->
+
+<accil on-fail="assert">
+   <goal>Exercises Lexicon Bulk Edit Entries Configure Columns dialog</goal>
+
+ <bug id="LT-6046"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+<!-- Go to Lexicon/Bulk Edit Entries-->
+  <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+  <click select="toolbar/view/no-filters"/>
+
+<model select="bulk-edit-entries[@role='view']">
+
+<!--assumes default List Choice tab clicked-->
+
+	<!-- * Sort the Entries on Lexeme Form (in ascending Order) -->
+	<!--click select="entries/col/header" path="Lexeme Form"/--><!-- click to insure ordering is on Lexeme Form -->
+	<click select="//toolbar/standard/first"/>
+	<var id="row" set="1"/>
+	<var id="col" set="2"/><!-- Citation Form -->
+	<glimpse id="topHword2" select="entries/record/col" prop="value" expect="ztestsub" on-fail="skip"/>
+	<if><condition of="$topHword2" is="true"/>
+	<then><!-- bako should be at the top -->
+		<click select="entries/col/header" path="Lexeme Form"/>
+		<click select="//toolbar/standard/first"/>
+	</then>
+	</if>
+
+<!-- click Configure Columns button, uncheck Definition -->
+  <click select="entries/col/changer"/>
+  <insert wait="500">d</insert>
+
+<!-- click Configure Columns button, Add Status field -->
+  <click select="entries/col/changer"/>
+  <insert wait="500">mm~</insert>
+  <on-dialog name="ColumnConfigureDialog" title="Configure Columns...">
+	 <click path="9:Writing System[2]/34:Academic Domains"/>
+	 <insert wait="500">s</insert>
+	 <insert wait="500">s</insert>
+	 <insert wait="500">s</insert>
+	 <insert wait="500">s</insert>
+	 <insert wait="500">s</insert>
+	 <insert wait="500">s</insert>
+	 <insert wait="500">s</insert>
+	 <insert wait="500">%a</insert>
+	 <!--click path="9:Add >>/43:Add >>"/-->
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!-- Filter For Gloss "English gloss"-->
+  <insert wait="500">{F5}</insert><!-- gets the wrong column if no reset -->
+  <var id="col" set="4"/>
+  <click select="entries/col/filter/text"/>
+  <insert>f</insert>
+  <insert>~</insert>
+  <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	<!--click path="$NL;20:RootSite/$Text"/-->
+	<insert>English gloss</insert>
+	<click path="9:Whole item/45:Whole item"/>
+	<click path="$ok"/>
+  </on-dialog>
+
+<!-- Select Target Field status-->
+  <click select="list-choice/target-field/open"/>
+  <insert>s</insert>
+  <insert>~</insert>
+
+<!-- Select Change To confirmed-->
+  <click select="list-choice/change-to/none/open"/>
+  <insert>c</insert>
+  <insert>~</insert>
+	<var id="row" set="1"/>
+	<var id="col" set="5"/>
+  <glimpse wait="500" id="Egloss" select="entries/record/col" prop="value" expect="English gloss"/>
+	<var id="col" set="7"/>
+	<var id="nonblank" set="rexp#^[CAT]\w*"/><!-- reg exp. for any single word starting with c, a or t -->
+  <glimpse wait="500" id="Empty1" select="entries/record/col" prop="value" expect="$nonblank" on-pass="assert"/>
+	<var id="row" set="2"/>
+	<var id="col" set="5"/>
+  <glimpse wait="500" id="Egloss2" select="entries/record/col" prop="value" expect="English gloss"/>
+	<var id="col" set="7"/>
+  <glimpse wait="500" id="Empty2" select="entries/record/col" prop="value" expect="$nonblank" on-pass="assert"/>
+
+<!-- change status-->
+  <click select="list-choice/apply"/>
+
+<!-- check Click Copy-->
+	<var id="row" set="1"/>
+  <glimpse id="check1" select="entries/record/col" prop="value" expect="Confirmed"/>
+	<var id="row" set="2"/>
+  <glimpse id="check2" select="entries/record/col" prop="value" expect="Confirmed"/>
+
+<!-- Select Change To <Not sure>-->
+	<var id="fld" set="Confirmed"/>
+  <click select="list-choice/change-to/open"/>
+  <insert wait="1000">&lt;</insert>
+  <insert>~</insert>
+
+<!-- change status-->
+  <click select="list-choice/apply"/>
+
+	<var id="row" set="1"/>
+  <glimpse wait="1000" id="Empty2a" select="entries/record/col" prop="value" expect="$nonblank" on-pass="assert"/>
+	<var id="row" set="2"/>
+  <glimpse wait="500" id="Empty2b" select="entries/record/col" prop="value" expect="$nonblank" on-pass="assert"/>
+
+<!-- click Configure Columns button, remove Status field -->
+  <click select="entries/col/changer"/>
+  <insert wait="500">mm~</insert>
+  <on-dialog name="ColumnConfigureDialog" title="Configure Columns...">
+	 <click path="9:Current Columns[2]/34:Status"/>
+	 <insert wait="500">%r</insert> <!-- remove -->
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!-- click Configure Columns button, check Definition -->
+  <click select="entries/col/changer"/>
+  <insert>d</insert>
+
+  <var id="col" set="4"/>
+  <click select="entries/col/filter/text"/>
+  <insert>s</insert>
+  <insert>~</insert>
+
+  <!-- click List Choice tab : have to click else where first (-%-->
+  <click select="//toolbar/view/no-filters"/>
+  <click select="//toolbar/standard/first"/>
+  <click select="list-choice/tab"/>
+
+</model>
+
+ </on-application>
+</accil>

@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+	<interlinear-text>
+		<languages>
+			<language lang="xkal" font="Times New Roman" vernacular="true"/>
+			<language lang="en" font="Times New Roman"/>
+			<language lang="" font="Times New Roman"/>
+		</languages>
+		<paragraphs>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="xkal">pus</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">pus</item>
+										<item type="cf" lang="xkal">pus</item>
+										<item type="hn" lang="en">1</item>
+										<item type="gls" lang="en">green</item>
+										<item type="msa" lang="en">adj </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">green</item>
+								<item type="pos" lang="en">mod</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">yalola</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">yalo</item>
+										<item type="cf" lang="xkal">yalo</item>
+										<item type="gls" lang="en">mat</item>
+										<item type="msa" lang="en">N  (I) </item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-la</item>
+										<item type="cf" lang="xkal">-la</item>
+										<item type="gls" lang="en">1SgPoss</item>
+										<item type="msa" lang="en">N:(Possessor)</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">my mat</item>
+								<item type="pos" lang="en">N</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">nihimbilira</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">ni-</item>
+										<item type="cf" lang="xkal">ni-</item>
+										<item type="gls" lang="en">1SgSubj</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">him-</item>
+										<item type="cf" lang="xkal">hiN-</item>
+										<item type="gls" lang="en">3SgObj</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">*bili</item>
+										<item type="cf" lang="xkal">*bili</item>
+										<item type="gls" lang="en">to.see</item>
+										<item type="msa" lang="en">trans  (1) </item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-ra</item>
+										<item type="cf" lang="xkal">-ra</item>
+										<item type="gls" lang="en">Pres</item>
+										<item type="msa" lang="en">sta:Tense</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">I see</item>
+								<item type="pos" lang="en">V</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en">I see my green mat.</item>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="xkal">nihimbilira</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">ni-</item>
+										<item type="cf" lang="xkal">ni-</item>
+										<item type="gls" lang="en">1SgSubj</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">him-</item>
+										<item type="cf" lang="xkal">hiN-</item>
+										<item type="gls" lang="en">3SgObj</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">*bili</item>
+										<item type="cf" lang="xkal">*bili</item>
+										<item type="gls" lang="en">to.see</item>
+										<item type="msa" lang="en">trans  (1) </item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-ra</item>
+										<item type="cf" lang="xkal">-ra</item>
+										<item type="gls" lang="en">Pres</item>
+										<item type="msa" lang="en">sta:Tense</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">I perceive</item>
+								<item type="pos" lang="en">V</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">pus</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">pus</item>
+										<item type="cf" lang="xkal">pus</item>
+										<item type="hn" lang="en">1</item>
+										<item type="gls" lang="en">green</item>
+										<item type="msa" lang="en">adj </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">green</item>
+								<item type="pos" lang="en">mod</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">yalola</item>
+								<morphemes>
+									<morph type="" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">yalo</item>
+										<item type="cf" lang="xkal">yalo</item>
+										<item type="gls" lang="en">mat</item>
+										<item type="msa" lang="en">N  (I) </item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-la</item>
+										<item type="cf" lang="xkal">-la</item>
+										<item type="gls" lang="en">1SgPoss</item>
+										<item type="msa" lang="en">N:(Possessor)</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">my mat</item>
+								<item type="pos" lang="en">N</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en">I perceive my green mat.</item>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="xkal">hesyla</item>
+								<morphemes>
+									<morph>
+										<item type="txt" lang="xkal">hesy</item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-la</item>
+										<item type="cf" lang="xkal">-la</item>
+										<item type="gls" lang="en">1SgPoss</item>
+										<item type="msa" lang="en">N:(Possessor)</item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">nihimbilira</item>
+								<morphemes>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">ni-</item>
+										<item type="cf" lang="xkal">ni-</item>
+										<item type="gls" lang="en">1SgSubj</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">him-</item>
+										<item type="cf" lang="xkal">hiN-</item>
+										<item type="gls" lang="en">3SgObj</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">*bili</item>
+										<item type="cf" lang="xkal">*bili</item>
+										<item type="gls" lang="en">to.see</item>
+										<item type="msa" lang="en">trans  (1) </item>
+									</morph>
+									<morph type="" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-ra</item>
+										<item type="cf" lang="xkal">-ra</item>
+										<item type="gls" lang="en">Pres</item>
+										<item type="msa" lang="en">sta:Tense</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">I see</item>
+								<item type="pos" lang="en">V</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+		</paragraphs>
+	</interlinear-text>
+</document>

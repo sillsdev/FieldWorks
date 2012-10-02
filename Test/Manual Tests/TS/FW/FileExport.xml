@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filexp" num="2.1.9" abbr="flex" file="FW\FileExport.xml">
+<title tag="filexp">File - Export Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Export dialog is called in response to the File-Export command. Its purpose is to identify the name of the file to export, and the way to perform the export operation. It is implemented on Generic Application, but is highly customizable by the individual application. The Data Notebook can be exported based on the current view (Browse view is currently not supported). The Topics List Editor works similiarly.  Most applications will support several formats to export in including WorldPad (.wpx), Rich Text Format (.rtf), and others.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Export" type="doc">File - Export</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/ImportExport/Export.html" type="doc">Export Dialog</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "File - Export"</p>
+</context>
+
+<case id="flexAct" num="1" order="any">
+<title tag="flexAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke File - Export (e.g. click Export from the File menu).<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Export" type="doc">Definition of File - Export.</link>
+<r>The File Export dialog appears.</r>
+<p name="bug">File - Export not working</p>
+</step>
+</case>
+
+<case id="flexDiac" num="2" order="any">
+<title tag="flexDiac">Exercise dialog controls</title>
+<context>
+<p>When the File - Export Dialog is displayed:</p>
+</context>
+
+<step name="2.1" link="Bug">
+   Use <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/ImportExport/Export.html" type="doc">File - Export specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">File - Export layout incorrect</p>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "File - Export" as the name of the dialog.</r>
+</step>
+
+<step name="2.3">
+   Use <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link> to test the File Name text box.
+   <r>Report any failures as suggested using "File - Export: File name" as the name for the text box</r>
+</step>
+
+<step name="2.4">
+   Use <link uri="../StdCtrls/ListBox.xml" type="module">List Box/Combo Box Tests</link> to test the Export As combo box.
+   <r>Report any failures as suggested using "File - Export: Export as" as the name for the combo box</r>
+</step>
+
+<step name="2.5" link="Bug">Click the Browse. . . button.
+   <r>
+<ul>
+<li>The standard Windows Save As dialog appears.</li>
+<li>The <i>Save as Type</i> combo box is set to the format specified in "Export as".</li>
+</ul>
+</r>
+<p name="bug">File - Export: Browse button does not work.</p>
+</step>
+
+<step name="2.6" link="Bug">After selecting a file in the Save As Dialog, click OK.
+<r>
+<ul>
+<li>The Save As Dialog closes and the File Name edit box of the Export Dialog contains the file you selected.</li>
+	   <li>The Path is updated to display the new path where the export file will be saved.</li>
+   </ul>
+</r>
+<p name="bug">File - Export: Browse button does not work.</p>
+<p name="bug">File - Export: Path not updated correctly.</p>
+</step>
+
+<step name="2.7" link="Bug">Apply a different file format by choosing another selection in the Export as combo box.
+  <r>
+<ul>
+<li>The new selection for the file format is displayed in the combo box.</li>
+	 <li>The file extension for the file in the File Name text box has been updated for the new file format.</li>
+	</ul>
+</r>
+  <p name="bug">File - Export: Export as combo box not displaying correctly</p>
+  <p name="bug">File - Export: Export as combo box not updating Filename text box correctly</p>
+</step>
+
+<step name="2.8" link="Bug">Clear the File name text box so that it is empty. Try to export the data.
+<r>The OK button is disabled.  A filename must be specified to export the data.</r>
+<p name="bug">File - Export: Ok not disabled when filename information missing</p>
+</step>
+
+</case>
+
+<case id="flexcbc" num="3" order="any">
+<title tag="flexcbc">Check Box controls</title>
+<context>
+<p>When the File - Export is displayed:</p>
+</context>
+
+<step name="3.1"> Test the check box controls using
+<link uri="../StdCtrls/checkbox.xml" type="module">Check Box Tests</link>.
+   <r>
+<ul>
+<li>Check boxes should work correctly.</li>
+<li>Report any failures as suggested using "File - Export: Check Boxes" as the name of the control.</li>
+</ul>
+</r>
+</step>
+
+<step name="3.2" link="Bug">
+  Click the "Export only the current entry or the selected entries" check box, also activate using the shortcut key &lt;alt&gt;&lt;e&gt;.
+  <r>
+<ul>
+<li>The box goes from checked to unchecked or vice versa.  (The default is Unchecked. Unless there are selected entries in the active document view; then it's checked.)</li>
+	 <li>When the file is exported, it is exported with only the current entry or the selection of entries from the larger set of data (useful if there is not an existing filter to separate out the entries).</li>
+	</ul>
+</r>
+  <p name="bug">File-Export: Export only the current entry or the selected entries not working</p>
+</step>
+
+<step name="3.3" link="Bug">
+  Click the "Open file after exporting" check box, also activate using the shortcut key &lt;alt&gt;&lt;o&gt;.
+  <r>
+<ul>
+<li>The box goes from checked to unchecked or vice versa. (The default is checked.)</li>
+	 <li>When the file is exported, it is immediately opened in the external application corresponding to the file type.</li>
+	 </ul>
+  </r>
+  <p name="bug">File-Export: Open file after exporting not working</p>
+
+</step>
+
+</case>
+
+<case id="flexef" num="4" order="any">
+<title tag="flexef">Exporting Files</title>
+<context>
+<p>When the File - Export is displayed:</p>
+</context>
+
+<step name="4.1" link="Bug">
+   Try exporting data into each available format by selecting each format from the Export as combo box and choosing a place to save the file. Open the file after exporting either manually or by checking the associated check box. Press OK to export.
+   <r>Verify the data in the exported file.  The data should agree with the current view (Data Entry, Document, etc.) both in respect to content and order.</r>
+   <p name="bug">File - Export unable to export data correctly with a certain format</p>
+</step>
+
+<step name="4.2" link="Bug">
+   Try exporting data from different views (Data Entry, Document, etc.) into a single format in the same manner as 4.1.
+   <r>Verify the exporting works correctly under the different views. The exported data should agree with the current view (Data Entry, Document, etc.) both in respect to content and order.</r>
+   <p name="bug">File - Export unable to export data correctly under a certain view</p>
+   <p name="note">Browse view may not work</p>
+</step>
+
+<step name="4.3" link="Bug">
+   Use filters and sorts to alter the entries shown and the order of those entries and then export the set of entries using File-Export.
+   <r>The exported file should contain only the entries the active filter contained and they should be in the order of the active sort.</r>
+   <p name="bug">File - Export does not export correctly with active filter</p>
+   <p name="bug">File - Export does not export correctly with active sort</p>
+</step>
+
+
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-22-01" author="ShalomA">Test steps added.</update>
+<update date="Jun-06-02" author="RussD">Updated to conform to specs, added and removed some tests</update>
+<update date="Jun-19-02" author="RussD">Minor updates.</update>
+
+</test>

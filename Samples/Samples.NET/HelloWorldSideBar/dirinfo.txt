@@ -1,0 +1,9 @@
+Hello World SideBar sample:
+
+This sample demonstrates the use of the SideBar. There are three tabs added in Visual Designer.
+
+The first tab contains three buttons, added at design time. On this tab the ButtonClickEvent is set to a method that gets called if any of the three buttons is clicked.
+
+The second tab is empty at design time. At run time, if you click on the button on the right side of the form a button gets added to the tab with different context menus and click event handlers for each button.
+
+The third tab has a different context menu for each button.

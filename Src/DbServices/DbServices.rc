@@ -1,0 +1,567 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2000, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: DbServices.rc
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+
+Description:
+	Resources for Backup system
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+1 TYPELIB DbServicesTlb.tlb
+
+#include <commctrl.h>
+#include <winres.h>
+#include "Resource.h"
+#include "..\AppCore\Res\AfAppRes.h"
+#include "..\AppCore\AfDef.h"
+#include "..\widgets\res\NetworkTreeViewRes.h"
+#include "generic.rc"
+
+// Bitmaps
+kridBackupImagesLarge   BITMAP DISCARDABLE "BackupImages_large.bmp"
+kridBackupImagesSmall   BITMAP DISCARDABLE "BackupImages_small.bmp"
+kridProjImagesSmall		BITMAP DISCARDABLE "ImagesSmall.bmp"
+kridStdBtns             BITMAP DISCARDABLE "../../AppCore/Res/StdBtns.bmp"
+kridImagesNetwork		BITMAP DISCARDABLE "../widgets/res/NetworkImages.bmp"
+
+// Icons
+kridBackupIconCheck		ICON DISCARDABLE "Check.ico"
+kridBackupIconArrow		ICON DISCARDABLE "ArrowRight.ico"
+
+// General messages:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFwTitle				"FieldWorks"
+END
+
+// Messages for the backup system
+STRINGTABLE DISCARDABLE
+BEGIN
+	kridBackupTab				"Backup"
+	kridRestoreTab				"Restore"
+	kstidBkpSystem				"FieldWorks Backup System"
+	kstidBkpBrowseInfo			"Browse for Backup Folder"
+	kstidBkpSchedUser			"You are logged on as: %<0>s"
+	kstidBkpCreateDirectory		"The specified backup folder does not exist:%n%<0>s%nWould you like to create it now?"
+	kstidBkpProgressProj		"Backing up the '%<0>s' project:"
+	kstidBkpInsertDiskNum		"Insert backup disk #%<0>d into Drive %<1>s"
+	kstidBkpDiskInvalid			"This disk is not valid.%nIt may be full, unformatted, write-protected, or faulty in some other way.%nPlease insert a different disk."
+	kstidBkpAbort				"Abort backup"
+	kstidBkpQueryAbort	 		"Are you sure you wish to abort the backup operation?"
+	kstidBkpAborting			"Canceling..."
+	kstidBkpComplete			"%<0>s backed up successfully."
+	kstidBkpRemind				"You haven't backed up in %<0>d day(s)."
+	kstidBkpSchedWarnTime		"FieldWorks will begin the backup process in %<0>d seconds."
+	kstidRstNoFiles				"No files available"
+	kstidRstInsertLastDisk		"Insert last disk of backup set into Drive %<0>s"
+	kstidRstDiskInvalid			"This disk is not disk %<0>d. Please insert correct disk.%nIf you are certain that this is disk %<1>d, then it is faulty in some way."
+	kstidRstLastDiskInvalid		"This disk is not the last disk. Please insert correct disk.%nIf you are certain that this is the last disk, then it is faulty in some way."
+	kstidRstProgressProj		"Restoring the '%<0>s' project:"
+	kstidRstAbort				"Cancel restore"
+	kstidRstQueryAbort	 		"Are you sure you wish to cancel the restore operation?"
+	kstidRstDbExists			"The project '%<0>s' already exists."
+	kstidRstDbExists2			"A project named '%<0>s' already exists."
+	kstidRstDbOld				"Restored"
+	kstidRstRenameExists		"A database named '%<0>s' already exists.%nPlease select a different database name or choose%nthe Backup and Overwrite option."
+	kstidRstWrongPasswd			"Incorrect Password, please try again."
+	kstidRstComplete			"%<0>s restored successfully."
+	kstidRstFileExists			"Database File Exists"
+	kstidRstBrowseInfo			"Select File to Restore"
+	kstidNoPasswordInUse		"Note: Backup files will not be locked with a password."
+	kstidPasswordInUse			"Note: Backup files will be locked with a password."
+END
+
+// Error messages for the backup system
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidBkpPswdLenError		"The password must be at least eight letters long."
+	kstidBkpPswdPuncError		"You cannot have blank spaces or punctuation in the password."
+	kstidBkpPswdMatchError		"The passwords do not match; you must enter the same thing in both places."
+	kstidBkpTimeConvertError	"Cannot determine today's date."
+	kstidBkpFailure				"Backup has failed."
+	kstidBkpPossibleFailure		"Backup may fail."
+	kstidBkpNonFatalFailure		"Backup will still continue."
+	kstidBkpMutexError			"Cannot gain exclusive control of backup control system."
+	kstidBkpCreateDirError		"Cannot create destination directory. This might be due to a disk that is missing, write-protected or faulty, or a network that is denying you access or is faulty."
+	kstidBkpCreateDirError2		"Cannot create destination directory. The requested directory already exists as a file."
+	kstidBkpMasterDbError		"Cannot connect to Master database."
+	kstidBkpDbSaveError			"Master database cannot produce backup"
+	kstidBkpDbXmlError			"Database cannot produce XML file."
+	kstidBkpNoZipError			"Cannot set up zip module. Module XceedZip.dll may not be installed correctly."
+	kstidBkpZipError			"Zip module reports error."
+	kstidBkpSystemError			"%<0>s System reports: %<1>s"
+	kstidBkpDiskWriteError		"Cannot write to disk. Check that a disk is in drive %<0>s, and is writable."
+	kstidRstFailure				"Restore has failed."
+	kstidRstPossibleFailure		"Restore may fail."
+	kstidRstNonFatalFailure		"Restore will still continue."
+	kstidRstMutexError			"Cannot restore - a backup is taking place."
+	kstidRstUnzipError			"Failure to unzip restore information during restore."
+	kstidRstFilesMissingError	"The selected backup version contains no database or XML files."
+	kstidRstBakMissingError		"The selected backup version contains an XML file only. Do you want to use this instead?"
+	kstidRstXmlMissingError		"The selected backup version contains no XML file. Do you want to use the regular file instead?"
+	kstidRstPreserveDbFileError	"Unable to preserve existing database for recovery in case of restore failure. This will probably result in the restore failing. It is recommended that you cancel the restore, and try to solve the database problem. Do you want to continue restore?"
+	kstidRstZipHeaderError		"Information is missing from header. Zip file is probably corrupt."
+	kstidRstRenameEmptyError	"Please enter a database name."
+	kstidRstPurgeConnectError	"Unable to disconnect database users."
+	kstidRstNoBlankMdfError		"Unable to restore from XML file, as template file BlankLangProj.mdf cannot be found."
+	kstidRstNewMdfExistsError	"Unable to restore from XML file, as mdf file already exists for target database."
+	kstidRstNoBlankLdfError		"Unable to restore from XML file, as template file BlankLangProj_Log.ldf cannot be found."
+	kstidRstNewLdfExistsError	"Unable to restore from XML file, as ldf file already exists for target database."
+	kstidRstXmlDbCreateError	"Unable to restore from XML file, as template database cannot be created."
+	kstidRstXmlError			"Unable to restore from XML file."
+	kstidRstBakFileListError	"Unable to determine file list from BAK file."
+	kstidRstDbRestoreError		"Error while restoring database."
+	kstidRstDbRecvrAttachError	"Unable to re-attach original database. However, the database files are present."
+	kstidRstDbRecvrError		"Unable to recover the original database files."
+	kstidRstRegistryError		"Error accessing the registry."
+	kstidRstFileNameError		"Unforseen problem generating file names."
+	kstidRstZipError			"Error making the automatic backup during restore.%nDo you wish to continue?"
+	kstidRstNoDbName			"No source database file name to process."
+	kstidRstNoProjectName		"Failed to get project name from backup file."
+	kstidRstMsdeFailure			"The SQL database server did not return database name"
+	kstidRstIncompatibleVersn	"Backup database is incompatible with this version of FieldWorks."
+	kstidNoPrivilege			"You must be either an Administrator or a Power User to restore a database."
+	kstidMustBeAdmin			"You must be an Administrator to restore over an existing database."
+	kstidCantDetachDb			"Unable to detach the database in order to replace it. This is probably due to having another FieldWorks application open on the same database (possibly a remote connection). Close all other FieldWorks applications and then click OK. If this doesn't work, click Cancel and try rebooting the computer to clear the locked condition before retrying."
+	kstidCantWriteToRestore		"You do not have permission to write to the directory ""%<0>s"" for restoring a database.%nSee a local system administrator for help."
+	kstidCantLaunchScheduler	"The Backup Scheduler utility could not be launched."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Backup/Restore dialog. Used for configuring backups and restores. Has one tab for each
+	option.
+----------------------------------------------------------------------------------------------*/
+kridDlgBackupRestore DIALOGEX 0, 0, 217, 220
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Backup and Restore"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON	"&Start Backup",  kctidBackupStartBackup, 39,201,64,16
+	PUSHBUTTON		"&Start Restore",  kctidBackupStartRestore, 39,201,64,16
+	PUSHBUTTON		"Close",  kctidBackupClose, 108,201,50,16
+	PUSHBUTTON		"Help",kctidBackupHelp,	163,201,50,16
+	CONTROL 		"Tab1",kctidBackupTabs,"SysTabControl32",TCS_HOTTRACK |
+					TCS_RAGGEDRIGHT | WS_TABSTOP,2,1,214,197
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidBackupStartBackup	"Starts the backup operation."
+	kctidBackupStartRestore	"Starts the restore operation."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Backup tab for the Backup dialog
+----------------------------------------------------------------------------------------------*/
+kridBackupTab DIALOGEX 0, 0, 208, 182
+STYLE DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT			"&Projects to back up:",IDC_STATIC,4,5,200,8
+	CONTROL 		"ProjectList",kctidBackupProjects,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS |
+					LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP, 4,14,200,83, WS_EX_CLIENTEDGE
+	LTEXT			"&Destination:",IDC_STATIC,4,101,200,8
+	CONTROL 		"Destination",kctidBackupDestination,"ComboBoxEx32",CBS_DROPDOWN |
+					CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP, 4,110,158,50
+	PUSHBUTTON		"&Browse...",kctidBackupBrowseDestination,164,110,40,14
+	CONTROL 		"&Include a human readable (XML) backup",kctidBackupIncludeXml,"Button",
+					BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,4,130,200,10
+	LTEXT           "Note: Backup files will not be locked with a password.",
+					kctidBackupPasswordWarning,4,145,198,8
+	PUSHBUTTON		"&Reminders...",kctidBackupReminders,4,161,64,16
+	PUSHBUTTON		"S&chedule...",kctidBackupSchedule,72,161,64,16
+	PUSHBUTTON		"Pass&word...",kctidBackupPassword,140,161,64,16
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidBackupProjects				"Lists projects available for backup.  Any that have changed since the last backup are selected (checked) for backup.  You can change the selections."
+	kctidBackupDestination			"Shows the device and folder, if any, for the backup files."
+	kctidBackupBrowseDestination	"Opens a dialog where you can find and specify the backup device and if desired, the folder for the backup files."
+	kctidBackupIncludeXml			"If selected, an .xml file is created in addition to the standard .bak (binary) file.  Both are compressed in the same .zip file."
+	kctidBackupReminders			"Opens a dialog where you can set reminders for manual backups."
+	kctidBackupSchedule				"Opens a dialog where you can schedule automatic backups."
+	kctidBackupPassword				"Opens a dialog where you can specify a password to lock the backup file."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Restore tab for the Backup dialog
+----------------------------------------------------------------------------------------------*/
+kridRestoreTab DIALOGEX 0, 0, 208, 182
+STYLE DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT			"&Restore from:",IDC_STATIC,4,6,200,8
+	CONTROL 		"Source",kctidRestoreFrom,"ComboBoxEx32", CBS_DROPDOWN | CBS_AUTOHSCROLL |
+					WS_VSCROLL | WS_TABSTOP, 4,15,158,60
+	PUSHBUTTON		"&Browse...",kctidRestoreBrowseFrom,164,15,40,14
+
+	LTEXT			"&Project:",IDC_STATIC,4,35,200,8
+	CONTROL 		"Project",kctidRestoreProject,"ComboBoxEx32", CBS_DROPDOWNLIST | CBS_SORT
+					| WS_VSCROLL | WS_TABSTOP, 4,44,200,72
+	LTEXT			"&Version:",IDC_STATIC,4,65,200,8
+	CONTROL 		"VersionList",kctidRestoreVersion,"SysListView32", LVS_SHOWSELALWAYS
+					| LVS_REPORT | LVS_SINGLESEL | LVS_SORTDESCENDING | LVS_SHAREIMAGELISTS
+					| LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP, 4,74,200,90, WS_EX_CLIENTEDGE
+	CONTROL 		"Restore from the &XML file, if available.",kctidRestoreXml,"Button",
+					BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,5,168,198,10
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidRestoreFrom		"Specifies the device or drive and folder to restore from."
+	kctidRestoreBrowseFrom	"Opens a dialog where you can find and specify the backup device and if any, the folder containing the backup files.  If desired, you can also select the specific backup file (.zip) to restore; this automatically specifies the project and selects the version."
+	kctidRestoreProject		"Specifies the project that you want to restore."
+	kctidRestoreVersion		"Lists the backup versions available for the specified project so you can select one to restore."
+	kctidRestoreXml			" If selected, the restore process uses the .xml file rather than the .bak file.  If the backup contains no .xml file, restore uses the .bak file."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	File-Backup-Reminder dialog. Used for scheduling reminders.
+----------------------------------------------------------------------------------------------*/
+kridBackupReminder DIALOGEX 0, 0, 180, 104
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Backup Reminders"
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL 		"&Let me know if I haven't backed up for more than", kctidBkpRmndOn,
+					"Button", BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP, 5, 8, 175, 8
+	EDITTEXT		kctidBkpRmndDays, 17, 19, 40, 12, ES_AUTOHSCROLL
+	CONTROL 		"days", kctidBkpRmndDaysSpin, "msctls_updown32", UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS, 47, 19, 12, 12
+	LTEXT			"day(s).", IDC_STATIC, 58, 21, 27, 8
+	LTEXT			"", IDC_STATIC, 4, 36, 172, 1, SS_SUNKEN
+	LTEXT			"Warning:",	kctidBkpRmndWarn, 5, 41, 35, 8
+	LTEXT			"We highly recommend that you leave backup reminders enabled. You should disable them only if you are using some other backup software.",
+					IDC_STATIC, 37, 41, 134, 32
+	LTEXT			"", IDC_STATIC, 4, 77, 172, 1, SS_SUNKEN
+
+	PUSHBUTTON		"OK",	  kctidOk,		   13, 83, 50, 16
+	PUSHBUTTON		"Cancel", kctidCancel,	   65, 83, 50, 16
+	PUSHBUTTON		"Help",kctidBackupHelp, 117, 83, 50, 16
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidBkpRmndDays		"Specifies the number of days since the last backup before a reminder is displayed."
+	kctidBkpRmndDaysSpin	"Adjusts the number of days."
+	kctidBkpRmndOn			"When selected, turns on reminders."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	File-Backup-Password dialog. Used for securing backup files.
+----------------------------------------------------------------------------------------------*/
+kridBackupPassword DIALOGEX 0, 0, 230, 195
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Backup Password"
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL 		"&Lock backup files with a password.",kctidBkpPswdLock,"Button",
+					BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,5,5,220,10
+
+	LTEXT			"",IDC_STATIC,3,25,224,1,SS_SUNKEN
+	LTEXT			" Password", IDC_STATIC, 7, 21, 36, 8
+	LTEXT			"&Enter password:", IDC_STATIC, 5, 34, 100, 8
+	EDITTEXT		kctidBkpPswdPassword,5,44,100,12,ES_AUTOHSCROLL | ES_PASSWORD
+	LTEXT			"E&nter again to confirm:", IDC_STATIC, 5, 68, 100, 8
+	EDITTEXT		kctidBkpPswdConfirm,5,78,100,12,ES_AUTOHSCROLL | ES_PASSWORD
+
+	LTEXT			"A good password is a", IDC_STATIC, 130, 34, 95, 8
+	LTEXT			"combination of letters and", IDC_STATIC, 130, 43, 95, 8
+	LTEXT			"numbers, at least eight", IDC_STATIC, 130, 52, 95, 8
+	LTEXT			"characters long", IDC_STATIC, 130, 61, 95, 8
+
+	LTEXT			"",IDC_STATIC,3,100,224,1,SS_SUNKEN
+	LTEXT			" Memory jog", IDC_STATIC, 7, 96, 41, 8
+	LTEXT			"Enter a &phrase to help you", IDC_STATIC, 5, 110, 100, 8
+	LTEXT			"remember your password", IDC_STATIC, 5, 119, 100, 8
+	LTEXT			"(optional):", IDC_STATIC, 5, 128, 100, 8
+	EDITTEXT		kctidBkpPswdMemJog,5,138,100,12,ES_AUTOHSCROLL
+
+	LTEXT			"Warning: You MUST take care to remember your password! If you forget it, you will not be able to access your backup file.",
+					kctidBkpPswdWarn, 130, 110, 90, 40
+
+	LTEXT			"",IDC_STATIC,3,162,224,1,SS_SUNKEN
+
+	PUSHBUTTON		"OK",	  kctidOk,		 40,172,50,16
+	PUSHBUTTON		"Cancel", kctidCancel,	 92,172,50,16
+	PUSHBUTTON		"Help",kctidBackupHelp,144,172,50,16
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidBkpPswdLock		"When selected, lock backups files with a password."
+	kctidBkpPswdPassword	"Specifies the password."
+	kctidBkpPswdConfirm		"Confirms the password."
+	kctidBkpPswdMemJog		"Provides a clue or description to help you recall the password."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Backup in progress dialog.
+----------------------------------------------------------------------------------------------*/
+kridBackupInProgress DIALOGEX 0, 0, 200, 120
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Backup Progress"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT			"", kctidBkpProgAction, 5, 5, 190, 8
+	CONTROL			"", kridBkpProgIcon1,"Static",SS_ICON,5,16,32,32
+	LTEXT			"Copying the project file.", kridBkpProgActivity1,
+					30, 22, 158, 8
+	CONTROL			"", kridBkpProgIcon2,"Static",SS_ICON,5,36,32,32
+	LTEXT			"Extracting the XML version of the file.", kridBkpProgActivity2,
+					30, 42, 158, 8
+	CONTROL			"", kridBkpProgIcon3,"Static",SS_ICON,5,56,32,32
+	LTEXT			"Zipping the project file.", kridBkpProgActivity3,
+					30, 62, 158, 8
+
+	LTEXT			"",IDC_STATIC,5,80,190,1,SS_SUNKEN
+	CONTROL 		"progress", kctidBkpProgProgress, "msctls_progress32", 0, 5, 85, 190, 12
+	PUSHBUTTON		"Close", kctidBkpProgClose, 80, 100, 40, 16
+	PUSHBUTTON		"&Cancel", kctidBkpProgAbort, 80, 100, 40, 16
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Restore in progress dialog.
+----------------------------------------------------------------------------------------------*/
+kridRestoreInProgress DIALOGEX 0, 0, 200, 160
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Restore Progress"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT			"", kctidBkpProgAction, 5, 5, 190, 8
+	CONTROL			"", kridBkpProgIcon1,"Static",SS_ICON,5,16,32,32
+	LTEXT			"Unzipping the selected project.", kridBkpProgActivity1,
+					30, 22, 158, 8
+	CONTROL			"", kridBkpProgIcon2,"Static",SS_ICON,5,36,32,32
+	LTEXT			"Backing up the project, if needed.", kridBkpProgActivity2,
+					30, 42, 158, 8
+	CONTROL			"", kridBkpProgIcon3,"Static",SS_ICON,5,56,32,32
+	LTEXT			"Restoring the project from the selected backup.", kridBkpProgActivity3,
+					30, 62, 158, 8
+	CONTROL			"", kridBkpProgIcon4,"Static",SS_ICON,5,76,32,32
+	LTEXT			"Upgrading the project, if needed.", kridBkpProgActivity4,
+					30, 82, 158, 8
+	CONTROL			"", kridBkpProgIcon5,"Static",SS_ICON,5,96,32,32
+	LTEXT			"Opening the project.", kridBkpProgActivity5,
+					30, 102, 158, 8
+
+	LTEXT			"",IDC_STATIC,5,120,190,1,SS_SUNKEN
+	CONTROL 		"progress", kctidBkpProgProgress, "msctls_progress32", 0, 5, 125, 190, 12
+	PUSHBUTTON		"&Cancel", kctidBkpProgAbort, 80, 140, 40, 16
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Scheduled backup warning dialog.
+----------------------------------------------------------------------------------------------*/
+kridScheduledBackupWarning DIALOGEX 0, 0, 250, 84
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Scheduled Backup"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT			"It's time to Backup your data.", IDC_STATIC, 8, 10, 236, 8
+	LTEXT			"", kctidSchdBkpTime, 8, 25, 236, 8
+	LTEXT           "Note: Backup files will not be locked with a password.",kctidSchdPasswordWarning,8,48,236,8
+	PUSHBUTTON		"Start Now", kctidSchdNow, 51,62, 48, 16
+	PUSHBUTTON		"Options...", kctidSchdOptions, 101, 62, 48, 16
+	PUSHBUTTON		"Cancel", kctidSchdCancel, 151, 62, 48, 16
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Reminder to backup dialog.
+----------------------------------------------------------------------------------------------*/
+kridBackupNag DIALOGEX 0, 0, 250, 84
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION  | WS_SYSMENU
+CAPTION "Backup Reminder"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT			"",kctidBkpNagText,8,9,236,8
+	LTEXT			"Would you like to do it now?",IDC_STATIC,8,25,236,8
+	LTEXT           "Note: Backup files will not be locked with a password.",kctidBkpNagPasswordWarning,8,48,236,8
+	PUSHBUTTON		"&Yes", kctidBkpNagYes,29,64, 48, 16
+	PUSHBUTTON		"&No", kctidBkpNagNo,79,64, 48, 16
+	PUSHBUTTON		"&Configure...", kctidBkpNagConfigure,129,64, 48, 16
+	PUSHBUTTON		"Help", kctidBackupHelp,179,64, 48, 16
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Database connections dialog.
+	Some controls overlap others. These conflicts will be resolved on dialog initialization.
+----------------------------------------------------------------------------------------------*/
+kridConnectionsDlg DIALOGEX 0, 0, 210, 136
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "FieldWorks Shutdown Progress"
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL			"",kctidDisconnectWarnIcon,"Static",SS_ICON,5,5,25,25
+	LTEXT			"",kctidDisconnectWarnText,35,5,170,24
+	CONTROL 		"ConnectionList",kctidConnectionList,"SysListView32", LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHAREIMAGELISTS |
+					/*LVS_NOCOLUMNHEADER | LVS_SORTASCENDING | */
+					WS_BORDER | WS_TABSTOP, 5,33,200,56, WS_EX_CLIENTEDGE
+	CTEXT			"They will be notified that they have three minutes to exit.",
+					kctidDisconnectExplnText,5,96,200,8
+	DEFPUSHBUTTON	"Notify",kctidDisconnectNotify,29,116,44,16
+	RTEXT			"(Forced disconnect in",kctidDisconnectForceText1,5,96,73,8
+	LTEXT			"seconds.)",kctidDisconnectForceText2,102,96,40,8
+	CTEXT			"180",kctidTimeLeft,80,94,20,12
+	PUSHBUTTON		"Force now",kctidForceNow,144,92,50,16
+
+	LTEXT			"",IDC_STATIC,5,111,200,1,SS_SUNKEN
+	PUSHBUTTON		"Cancel",kctidCancel,83,116,44,16
+	PUSHBUTTON		"Help",kctidBackupHelp,137,116,44,16
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidConnectionList		"Lists the computers connected to the database."
+	kctidDisconnectNotify	"Notifies computers connected to the database that they must disconnect, and begins count-down to disconnection."
+	kctidForceNow			"Stops the countdown and disconnects everybody from the database immediately."
+END
+
+// Related messages:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidReasonDisconnectRestore	"You will have to disconnect remote users in order to continue the Restore."
+	kstidRemoteComputer				"Computer name"
+	kstidRemoteStatus				"Notification status"
+	kstidRemoteNotYetNotified		"Not yet notified"
+	kstidRemoteNotified				"Notified"
+	kstidRemoteUnableNotify			"Unable to notify"
+	kstidDisconnectYou				"This is you."
+	kstidDisconnectWait				"Waiting on %<0>d user(s) to disconnect from the system."
+	kstidOwnConnections				"You have %<0>d connection(s) remaining."
+	kstidPurgeConnections			"Disconnecting all users from database. Please wait."
+	kstidPurgeConnsFail				"An unexpected problem has occurred - cannot disconnect all users. Restore cannot continue."
+END
+
+// Disconnection strings specifically for Restore:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidRemoteReasonRestore		"%<0>s is doing a restore operation."
+	kstidCancelDisconnectRestore	"Are you sure you wish to abort the Restore?"
+END
+
+/*----------------------------------------------------------------------------------------------
+	Restore password dialog.
+----------------------------------------------------------------------------------------------*/
+kridRestorePasswordDlg DIALOGEX 0, 0, 200, 94
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Enter Password"
+FONT 8, "MS Sans Serif"
+BEGIN
+	RTEXT			"Restoring: ", IDC_STATIC, 5, 8, 37, 8
+	LTEXT			"", kctidDatabase, 43, 8, 150, 8
+	RTEXT			"Version: ", IDC_STATIC, 5, 17, 37, 8
+	LTEXT			"", kctidBackupVersion, 43, 17, 150, 8
+
+	LTEXT			"Enter password:", IDC_STATIC, 5, 33, 190, 8
+	LTEXT			"", kctidMemoryJog, 5, 43, 190, 8
+	// We'll define two edit windows, one for use when there is a memory jog, and one for use
+	// when there is not. The only diffence between them is that the one for use with no memory
+	// jog is positioned on top of the memory jog static control. At run time, we simply hide
+	// the window that we won't be using.
+	EDITTEXT		kctidPassword,5,53,190,12,ES_AUTOHSCROLL | ES_PASSWORD
+	EDITTEXT		kctidPasswordNoJog,5,43,190,12,ES_AUTOHSCROLL | ES_PASSWORD
+
+	LTEXT			"",IDC_STATIC,4,71,192,1,SS_SUNKEN
+	PUSHBUTTON		"OK",	  kctidOk,		 23,75,50,16
+	PUSHBUTTON		"Cancel", kctidCancel,	 75,75,50,16
+	PUSHBUTTON		"Help",kctidBackupHelp,127,75,50,16
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidPassword		"Text box for password."
+	kctidPasswordNoJog	"Text box for password."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Restore Options Dialog.
+	Dialog to handle case of an existng project, with options to overwrite or rename.
+----------------------------------------------------------------------------------------------*/
+kridRestoreDbExists DIALOGEX 0, 0, 260, 124
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Restore Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL			"", kridRestoreDbExistsIcon,"Static",SS_ICON,10,10,25,25
+	LTEXT			"", kctidRestoreDbExistsText, 40, 15, 200, 8
+	CONTROL         "Restore to a separate database file named:",
+					kctidRestoreOverwriteRenameBtn, "Button", BS_AUTORADIOBUTTON | WS_TABSTOP,
+					40,33,200,9
+	CONTROL         "Replace the current version with the backup version.",
+					kctidRestoreOverwriteReplaceBtn,"Button",
+					BS_AUTORADIOBUTTON | WS_TABSTOP,40,80,210,9
+	EDITTEXT		kctidRestoreOverwriteName,53,45,150,12,ES_AUTOHSCROLL
+	CONTROL 		"Back up and overwrite this database if it exists.",kctidRestoreOverwriteCheck,"Button",
+					BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,53,62,165,10
+
+	LTEXT			"",IDC_STATIC,4,99,252,1,SS_SUNKEN
+	PUSHBUTTON		"Restore", kctidOk, 53,104,50,16
+	PUSHBUTTON		"Cancel", kctidCancel, 105,104,50,16
+	PUSHBUTTON		"Help", kctidBackupHelp, 157,104,50,16
+END
+
+// What's this? helps:
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidRestoreOverwriteRenameBtn	"If selected, restores the backup as a different project. It uses the same project name and the new database name you specify."
+	kctidRestoreOverwriteReplaceBtn	"If selected, restores the backup version in place of the current version of the project."
+	kctidRestoreOverwriteName		"Specifies the name of the restored database. FieldWorks suggests a name by adding ""-Restored"" to the current name, but you can edit this suggestion or enter another name."
+	kctidRestoreOverwriteCheck		"If selected, overwrites any existing database with a name that matches the name in the box above."
+END
+
+
+
+/*----------------------------------------------------------------------------------------------
+	Remote warning countdown dialog.
+----------------------------------------------------------------------------------------------*/
+kridRmtWnCountdownDlg DIALOGEX 0, 0, 250, 68
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+EXSTYLE WS_EX_TOPMOST
+CAPTION "FieldWorks"
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL			"", kridRmtWnIcon, "Static", SS_ICON, 8, 10, 32, 32
+	LTEXT			"", kridRmtWnMessage, 45, 10, 200, 32
+	RTEXT			"You have", IDC_STATIC, 45, 50, 40, 8
+	LTEXT			"seconds to exit.", IDC_STATIC, 109, 50, 50, 8
+	CTEXT			"---", kctidRmtTimeLeft, 87, 48, 20, 12
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidRmtWnWarning		"The FieldWorks database %<0>s is shutting down.%n%n%<1>s"
+END

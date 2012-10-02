@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>class  options_utils::optmap</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>class  <A HREF="#DOC.DOCU">options_utils::optmap</A></H2></H2><BLOCKQUOTE> A argument option handler, based on the Command pattern.</BLOCKQUOTE>
+<HR>
+
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif> <B><A HREF="#DOC.2.1.2">optmap</A></B>(const char* <!1><A HREF="optmap.html#DOC.2.1.7">usage</A> = "")
+<DD><I> The very simple constructor for an optmap object.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif><!1><A HREF="optmap.html">optmap</A>&amp; <B><A HREF="#DOC.2.1.3">add</A></B>(const char* o, <!1><A HREF="optmap.html#DOC.2.1.1">cmd</A>* h)
+<DD><I> Adds an option that invokes the command handler.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif><!1><A HREF="optmap.html">optmap</A>&amp; <B><A HREF="#DOC.2.1.4">alias</A></B>(const char* new_opt, const char* old_opt)
+<DD><I>Adds an alias for an option</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>bool <B><A HREF="#DOC.2.1.5">parse</A></B>(int argc, const char** argv)
+<DD><I> Parse the command line.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>int <B><A HREF="#DOC.2.1.6">n</A></B>()
+<DD><I>Gets the index for the first non option argument</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>void <B><A HREF="#DOC.2.1.7">usage</A></B>(bool abort = true)
+<DD><I>display a usage string and abort()</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>const char* <B><A HREF="#DOC.2.1.8">get_arg</A></B>()
+<DD><I>get the argument of an option; mainly for cmd implementations</I>
+</DL></P>
+
+<P><DL>
+<DT><H3>Public Members</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>struct  <B><A HREF="#DOC.2.1.1">cmd</A></B>
+<DD><I> The base for all option handlers.</I>
+</DL></P>
+
+</DL>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+A argument option handler, based on the Command pattern. Each option is
+associated with a handling command object.
+
+<P>The map keeps the reverse association as well, to allow printing of a
+using line.</BLOCKQUOTE>
+<DL>
+
+<A NAME="cmd"></A>
+<A NAME="DOC.2.1.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>struct  cmd</B></TT>
+<DD>
+The base for all option handlers.
+
+<P>To handle a new kind of commands, just derive a class from this an
+overload the methods to do the work.
+<DL><DT><DD></DL><P><DL>
+
+<A NAME="do_cmd"></A>
+<A NAME="DOC.2.1.1.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   bool do_cmd(<!1><A HREF="optmap.html">optmap</A>* om) = 0</B></TT>
+<DD>
+Performing the work associated with the option.
+
+<P>To obtain an argument see <!1><A HREF="optmap.html#DOC.2.1.8">get_arg</A>
+
+<DL><DT><DT><B>Returns:</B><DD>  true if the parsing was succesfull<BR><DD></DL><P>
+<A NAME="arg"></A>
+<A NAME="DOC.2.1.1.2"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   std::string arg()</B></TT>
+<DD>return the name of the argument needed by <!1><A HREF="optmap.html#DOC.2.1.7">usage</A>
+<DL><DT><DD></DL><P></DL>
+
+<A NAME="optmap"></A>
+<A NAME="DOC.2.1.2"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B> optmap(const char* <!1><A HREF="optmap.html#DOC.2.1.7">usage</A> = "")</B></TT>
+<DD>
+The very simple constructor for an optmap object. Please note that
+copying of optmaps are not supported.
+
+<DL><DT><DT><B>Parameters:</B><DD><B></B> - <!1><A HREF="optmap.html#DOC.2.1.7">usage</A> The tail of the <!1><A HREF="optmap.html#DOC.2.1.7">usage</A> string to follow the <!1><A HREF="options.html">options</A><BR><DD></DL><P>
+<A NAME="add"></A>
+<A NAME="DOC.2.1.3"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B><!1><A HREF="optmap.html">optmap</A>&amp; add(const char* o, <!1><A HREF="optmap.html#DOC.2.1.1">cmd</A>* h)</B></TT>
+<DD>
+Adds an option that invokes the command handler.
+
+<P>This is the low level work horse for all the add methods. All the
+other adds works by adding appropriate cmd objects for doing the work.
+
+<P>
+<DL><DT><DT><B>Parameters:</B><DD><B>o</B> -
+The option name. If the length of the option is 1 it will be an old
+fashion option, otherwise it will be a GNU stype long option
+(--long-opt).
+<BR><B>h</B> -
+The pointer to the handler. The <!1><A HREF="optmap.html">optmap</A> assumes ownership of the
+pointer and delete it in the destructor.
+<BR><DT><B>Returns:</B><DD>  *this<BR><DD></DL><P>
+<A NAME="alias"></A>
+<A NAME="DOC.2.1.4"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B><!1><A HREF="optmap.html">optmap</A>&amp; alias(const char* new_opt, const char* old_opt)</B></TT>
+<DD>Adds an alias for an option
+<DL><DT><DD></DL><P>
+<A NAME="parse"></A>
+<A NAME="DOC.2.1.5"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>bool parse(int argc, const char** argv)</B></TT>
+<DD>
+Parse the command line.
+
+<DL><DT><DT><B>Returns:</B><DD>  true if the parse is valid, false otherwise.<BR><DD></DL><P>
+<A NAME="n"></A>
+<A NAME="DOC.2.1.6"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>int n()</B></TT>
+<DD>Gets the index for the first non option argument
+<DL><DT><DD></DL><P>
+<A NAME="usage"></A>
+<A NAME="DOC.2.1.7"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>void usage(bool abort = true)</B></TT>
+<DD>display a usage string and abort()
+<DL><DT><DD></DL><P>
+<A NAME="get_arg"></A>
+<A NAME="DOC.2.1.8"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>const char* get_arg()</B></TT>
+<DD>get the argument of an option; mainly for cmd implementations
+<DL><DT><DD></DL><P></DL>
+
+<HR><DL><DT><B>This class has no child classes.</B></DL>
+
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

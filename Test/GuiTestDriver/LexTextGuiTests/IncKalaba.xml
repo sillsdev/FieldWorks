@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Set up any generally needed variables etc. for use with the Kalaba database -->
+<include>
+  <var id="projectName" set="Kalaba"/>
+  <sound frequency="400" duration="500"/>
+
+</include>

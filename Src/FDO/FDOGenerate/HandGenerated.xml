@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HandGenerated>
+	<Class id="CmPicture">
+		<property name="ScaleFactor"/>
+	</Class>
+	<Class id="CmFile">
+		<property name="InternalPath"/>
+	</Class>
+	<Class id ="StFootnote">
+		<property name="FootnoteMarker"/>
+	</Class>
+	<Class id="LangProject">
+		<property name="LinkedFilesRootDir"/>
+	</Class>
+	<!-- -->
+</HandGenerated>

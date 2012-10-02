@@ -1,0 +1,617 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2003, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2003' company='SIL International'>
+//		Copyright (c) 2003, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Common Public License or the
+//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// </copyright>
+#endregion
+//
+// File: ParseFiler.cs
+// Responsibility: Randy Regnier
+// Last reviewed:
+//
+// <remarks>
+// Implements the ParseFiler.
+// </remarks>
+// buildtest ParseFiler-nodep
+// --------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using System.Diagnostics;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
+
+namespace SIL.FieldWorks.WordWorks.Parser
+{
+	/// <summary>
+	/// The event args for the WordformUpdated event.
+	/// </summary>
+	public class WordformUpdatedEventArgs : EventArgs
+	{
+		public WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority)
+		{
+			Wordform = wordform;
+			Priority = priority;
+		}
+
+		public IWfiWordform Wordform
+		{
+			get; private set;
+		}
+
+		public ParserPriority Priority
+		{
+			get; private set;
+		}
+	}
+
+	/// <summary>
+	/// Summary description for ParseFiler.
+	/// </summary>
+	public class ParseFiler : IFWDisposable
+	{
+		/// <summary>
+		/// Occurs when a wordform is updated.
+		/// </summary>
+		public event EventHandler<WordformUpdatedEventArgs> WordformUpdated;
+
+		#region internal class
+
+		private class ParseResult
+		{
+			public ParseResult(IWfiWordform wordform, uint crc, ParserPriority priority, IList<ParseAnalysis> analyses,
+				string errorMessage)
+			{
+				Wordform = wordform;
+				Crc = crc;
+				Priority = priority;
+				Analyses = analyses;
+				ErrorMessage = errorMessage;
+			}
+
+			public IWfiWordform Wordform
+			{
+				get; private set;
+			}
+
+			public uint Crc
+			{
+				get; private set;
+			}
+
+			public IList<ParseAnalysis> Analyses
+			{
+				get; private set;
+			}
+
+			public string ErrorMessage
+			{
+				get; private set;
+			}
+
+			public ParserPriority Priority
+			{
+				get; private set;
+			}
+
+			public bool IsValid
+			{
+				get
+				{
+					if (!Wordform.IsValidObject)
+						return false;
+					return Analyses.All(analysis => analysis.IsValid);
+				}
+			}
+		}
+
+		private class ParseAnalysis
+		{
+			public ParseAnalysis(IList<ParseMorph> morphs)
+			{
+				Morphs = morphs;
+			}
+
+			public IList<ParseMorph> Morphs
+			{
+				get; private set;
+			}
+
+			public bool IsValid
+			{
+				get
+				{
+					return Morphs.All(morph => morph.IsValid);
+				}
+			}
+		}
+
+		private class ParseMorph
+		{
+			public ParseMorph(IMoForm form, IMoMorphSynAnalysis msa)
+			{
+				Form = form;
+				Msa = msa;
+			}
+
+			public IMoForm Form
+			{
+				get; private set;
+			}
+
+			public IMoMorphSynAnalysis Msa
+			{
+				get; private set;
+			}
+
+			public bool IsValid
+			{
+				get
+				{
+					return Form.IsValidObject && Msa.IsValidObject;
+				}
+			}
+		}
+
+		#endregion internal class
+
+		#region Data members
+
+		private readonly FdoCache m_cache;
+		private readonly Action<TaskReport> m_taskUpdateHandler;
+		private readonly IdleQueue m_idleQueue;
+		private readonly ICmAgent m_parserAgent;
+
+		private readonly IWfiWordformRepository m_wordformRepository;
+		private readonly IWfiAnalysisFactory m_analysisFactory;
+		private readonly IWfiMorphBundleFactory m_mbFactory;
+		private readonly ICmBaseAnnotationRepository m_baseAnnotationRepository;
+		private readonly ICmBaseAnnotationFactory m_baseAnnotationFactory;
+		private readonly IMoFormRepository m_moFormRepository;
+		private readonly IMoMorphSynAnalysisRepository m_msaRepository;
+		private readonly ICmAgent m_userAgent;
+
+		/// <summary>
+		/// Set of analyses which had a recorded evaluation by this parser agent when the engine was loaded.
+		/// These evaluations are considered stale until we set a new evaluation, which removes that item from the set.
+		/// </summary>
+		private readonly HashSet<IWfiAnalysis> m_analysesWithOldEvaluation;
+		private readonly TraceSwitch m_tracingSwitch = new TraceSwitch("ParserCore.TracingSwitch", "Just regular tracking", "Off");
+		private long m_ticksFiler;
+		private int m_numberOfWordForms;
+
+		#endregion Data members
+
+		#region Properties
+
+		#endregion Properties
+
+		#region Construction and Disposal
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ParseFiler"/> class.
+		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="taskUpdateHandler">The task update handler.</param>
+		/// <param name="idleQueue">The idle queue.</param>
+		/// <param name="parserAgent">The parser agent.</param>
+		public ParseFiler(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
+		{
+			Debug.Assert(cache != null);
+			Debug.Assert(taskUpdateHandler != null);
+			Debug.Assert(idleQueue != null);
+			Debug.Assert(parserAgent != null);
+
+			m_cache = cache;
+			m_taskUpdateHandler = taskUpdateHandler;
+			m_idleQueue = idleQueue;
+			m_parserAgent = parserAgent;
+
+			var servLoc = cache.ServiceLocator;
+			m_wordformRepository = servLoc.GetInstance<IWfiWordformRepository>();
+			m_analysisFactory = servLoc.GetInstance<IWfiAnalysisFactory>();
+			m_mbFactory = servLoc.GetInstance<IWfiMorphBundleFactory>();
+			m_baseAnnotationRepository = servLoc.GetInstance<ICmBaseAnnotationRepository>();
+			m_baseAnnotationFactory = servLoc.GetInstance<ICmBaseAnnotationFactory>();
+			m_moFormRepository = servLoc.GetInstance<IMoFormRepository>();
+			m_msaRepository = servLoc.GetInstance<IMoMorphSynAnalysisRepository>();
+			m_userAgent = m_cache.LanguageProject.DefaultUserAgent;
+
+			m_analysesWithOldEvaluation = new HashSet<IWfiAnalysis>(
+				m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().Where(
+				analysis => analysis.GetAgentOpinion(m_parserAgent) != Opinions.noopinion));
+		}
+
+		#region IDisposable & Co. implementation
+		// Region last reviewed: never
+
+		/// <summary>
+		/// Check to see if the object has been disposed.
+		/// All public Properties and Methods should call this
+		/// before doing anything else.
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary>
+		/// True, if the object has been disposed.
+		/// </summary>
+		private bool m_isDisposed;
+
+		/// <summary>
+		/// See if the object has been disposed.
+		/// </summary>
+		public bool IsDisposed
+		{
+			get { return m_isDisposed; }
+		}
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~ParseFiler()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>Must not be virtual.</remarks>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		/// </remarks>
+		protected virtual void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+			// Must not be run more than once.
+			if (m_isDisposed)
+				return;
+
+			if (disposing)
+			{
+				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Total number of wordforms updated = " + m_numberOfWordForms);
+				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Total time for parser filer = " + m_ticksFiler);
+
+				if (m_numberOfWordForms != 0)
+				{
+					long lAvg = m_ticksFiler / m_numberOfWordForms;
+					Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Average time for parser filer = " + lAvg);
+				}
+			}
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_isDisposed = true;
+		}
+
+		#endregion IDisposable & Co. implementation
+
+		#endregion Construction and Disposal
+
+		#region Public methods
+		/// <summary>
+		/// Process the XML data.
+		/// </summary>
+		/// <param name="priority">The priority.</param>
+		/// <param name="parse">The XML data to process.</param>
+		/// <param name="crc">The CRC.</param>
+		/// <remarks>
+		/// The 'parser' XML string may, or may not, be well formed XML.
+		/// If there is an Exception node in the XML, then it may not be well-formed XML beyond that node,
+		/// since the XAmple parser may have choked.
+		/// This is why we can't use a DOM to get all of the XML, but we have to read it as it goes by in a stream.
+		///
+		/// ENHANCE (DamienD): right now we are not supporting malformed XML
+		/// </remarks>
+		public bool ProcessParse(ParserPriority priority, string parse, uint crc)
+		{
+			var wordformElem = XElement.Parse(parse);
+			string errorMessage = null;
+			var exceptionElem = wordformElem.Element("Exception");
+			if (exceptionElem != null)
+			{
+				var totalAnalysesValue = (string) exceptionElem.Attribute("totalAnalyses");
+				switch ((string) exceptionElem.Attribute("code"))
+				{
+					case "ReachedMaxAnalyses":
+						errorMessage = string.Format(ParserCoreStrings.ksReachedMaxAnalysesAllowed,
+							totalAnalysesValue);
+						break;
+					case "ReachedMaxBufferSize":
+						errorMessage = string.Format(ParserCoreStrings.ksReachedMaxInternalBufferSize,
+							totalAnalysesValue);
+						break;
+				}
+			}
+			else
+			{
+				errorMessage = (string) wordformElem.Element("Error");
+			}
+
+			try
+			{
+				ParseResult result;
+				using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
+				{
+					var wordform = m_wordformRepository.GetObject((int) wordformElem.Attribute("DbRef"));
+					result = new ParseResult(wordform, crc, priority,
+											 (from analysisElem in wordformElem.Descendants("WfiAnalysis")
+											  let morphs = from morphElem in analysisElem.Descendants("Morph")
+														   select new ParseMorph(
+															m_moFormRepository.GetObject(
+																(int) morphElem.Element("MoForm").Attribute("DbRef")),
+															m_msaRepository.GetObject(
+																(int) morphElem.Element("MSI").Attribute("DbRef")))
+											  where morphs.Count() > 0
+											  select new ParseAnalysis(morphs.ToList())).ToList(),
+											 errorMessage);
+				}
+				m_idleQueue.Add(IdleQueuePriority.Low, UpdateWordform, result, false);
+				return true;
+			}
+			catch (KeyNotFoundException)
+			{
+				// a wordform, form, or MSA no longer exists, so skip this parse result
+			}
+			return false;
+		}
+
+		#endregion Public methods
+
+		#region Private methods
+
+		/// <summary>
+		/// Updates the wordform. This will be run in the UI thread when the application is idle. If it can't be done right now,
+		/// it returns false, and the caller should try again later.
+		/// </summary>
+		/// <param name="parameter">The parameter.</param>
+		/// <returns></returns>
+		private bool UpdateWordform(object parameter)
+		{
+			if (IsDisposed)
+				return true;
+			// If a UOW is in progress, the application isn't really idle, so try again later. One case where this used
+			// to be true was the dialog in IText for choosing the writing system of a new text, which was run while
+			// the UOW was active.
+			if (!(m_cache.ActionHandlerAccessor as IActionHandlerExtensions).CanStartUow)
+				return false;
+
+			var result = (ParseResult) parameter;
+
+			if (!result.IsValid)
+			{
+				// the wordform or the candidate analyses are no longer valid, so just skip this parse
+				FireWordformUpdated(result.Wordform, result.Priority);
+				return true;
+			}
+			var startTime = DateTime.Now;
+			string form = result.Wordform.Form.BestVernacularAlternative.Text;
+			using (new TaskReport(String.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
+			{
+				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				{
+					// delete old problem annotations
+					var problemAnnotations = from ann in m_baseAnnotationRepository.AllInstances()
+											 where ann.BeginObjectRA == result.Wordform && ann.SourceRA == m_parserAgent
+											 select ann;
+					foreach (var problem in problemAnnotations)
+						m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);
+
+					if (result.ErrorMessage != null)
+					{
+						// there was an error, so create a problem annotation
+						var problemReport = m_baseAnnotationFactory.Create();
+						m_cache.LangProject.AnnotationsOC.Add(problemReport);
+						problemReport.CompDetails = result.ErrorMessage;
+						problemReport.SourceRA = m_parserAgent;
+						problemReport.AnnotationTypeRA = null;
+						problemReport.BeginObjectRA = result.Wordform;
+						FinishWordForm(result.Wordform);
+					}
+					else
+					{
+						// update the wordform
+						foreach (var analysis in result.Analyses)
+							ProcessAnalysis(result.Wordform, analysis);
+						FinishWordForm(result.Wordform);
+						MarkAnalysisParseFailures(result.Wordform);
+					}
+					result.Wordform.Checksum = (int)result.Crc;
+				});
+			}
+			// notify all listeners that the wordform has been updated
+			FireWordformUpdated(result.Wordform, result.Priority);
+			long ttlTicks = DateTime.Now.Ticks - startTime.Ticks;
+			m_ticksFiler += ttlTicks;
+			m_numberOfWordForms++;
+			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "parser filer(" + form + ") took : " + ttlTicks);
+			return true;
+		}
+
+		private void FireWordformUpdated(IWfiWordform wordform, ParserPriority priority)
+		{
+			if (WordformUpdated != null)
+				WordformUpdated(this, new WordformUpdatedEventArgs(wordform, priority));
+		}
+
+		/// <summary>
+		/// Process an analysis.
+		/// </summary>
+		/// <remarks>
+		/// This method contains the port of the UpdWfiAnalysisAndEval$ SP.
+		/// The SP was about 220 lines of code (not counting a commetned out section).
+		/// The C# version is about 60 lines long.
+		/// </remarks>
+		private void ProcessAnalysis(IWfiWordform wordform, ParseAnalysis analysis)
+		{
+			/*
+				Try to find matching analysis(analyses) that already exist.
+				A "match" is one in which:
+				(1) the number of morph bundles equal the number of the MoForm and
+					MorphoSyntaxAnanlysis (MSA) IDs passed in to the stored procedure, and
+				(2) The objects of each MSA+Form pair match those of the corresponding WfiMorphBundle.
+			*/
+			// Find matching analysis/analyses, if any exist.
+			var matches = new HashSet<IWfiAnalysis>();
+			foreach (var anal in wordform.AnalysesOC)
+			{
+				if (anal.MorphBundlesOS.Count == analysis.Morphs.Count)
+				{
+					// Meets match condition (1), above.
+					var mbMatch = false; //Start pessimistically.
+					var i = 0;
+					foreach (var mb in anal.MorphBundlesOS)
+					{
+						var current = analysis.Morphs[i++];
+						if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa)
+						{
+							// Possibly matches condition (2), above.
+							mbMatch = true;
+						}
+						else
+						{
+							// Fails condition (2), above.
+							mbMatch = false;
+							break; // No sense in continuing.
+						}
+					}
+					if (mbMatch)
+					{
+						// Meets matching condition (2), above.
+						matches.Add(anal);
+					}
+				}
+			}
+			if (matches.Count == 0)
+			{
+				// Create a new analysis, since there are no matches.
+				var newAnal = m_analysisFactory.Create();
+				wordform.AnalysesOC.Add(newAnal);
+				// Make WfiMorphBundle(s).
+				foreach (var morph in analysis.Morphs)
+				{
+					var mb = m_mbFactory.Create();
+					newAnal.MorphBundlesOS.Add(mb);
+					mb.MorphRA = morph.Form;
+					mb.MsaRA = morph.Msa;
+				}
+				matches.Add(newAnal);
+			}
+			// (Re)set evaluations.
+			foreach (var matchingAnal in matches)
+			{
+				m_parserAgent.SetEvaluation(matchingAnal,
+					Opinions.approves);
+				m_analysesWithOldEvaluation.Remove(matchingAnal);
+			}
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>
+		/// This is the port of the SetParseFailureEvals SP.
+		/// </remarks>
+		private void MarkAnalysisParseFailures(IWfiWordform wordform)
+		{
+			// Solves LT-1842.
+			/*
+				Get all the IDs for Analyses that belong to the wordform, but which don't have an
+				evaluation belonging to the given agent.  These will all be set to FAILED.
+			*/
+
+			var failures = from anal in wordform.AnalysesOC
+						   where anal.GetAgentOpinion(m_parserAgent) == Opinions.noopinion
+						   select anal;
+
+			foreach (var failure in failures)
+			{
+				m_parserAgent.SetEvaluation(failure,
+					Opinions.disapproves);
+				m_analysesWithOldEvaluation.Remove(failure);
+			}
+		}
+
+		#region Wordform Preparation methods
+
+		private void FinishWordForm(IWfiWordform wordform)
+		{
+			// the following is a port of the SP RemoveUnusedAnalyses
+
+			// Delete stale evaluations on analyses. The only non-stale analyses are new, positive ones, so this
+			// makes all analyses that are not known to be correct no-opinion. Later any of them that survive at all
+			// will be changed to failed (if there was no error in parsing the wordform).
+			var analysesNotUpdated = from analysis in wordform.AnalysesOC where m_analysesWithOldEvaluation.Contains(analysis) select analysis;
+			foreach (var analysis in analysesNotUpdated)
+				analysis.SetAgentOpinion(m_parserAgent, Opinions.noopinion);
+
+			// Make sure all analyses have human evaluations, if they,
+			// or glosses they own, are referred to by an ISegment.
+			//var annLookup = m_baseAnnotationRepository.AllInstances()
+			//	.Where(ann => ann.AnnotationTypeRA != null && ann.AnnotationTypeRA.Guid == CmAnnotationDefnTags.kguidAnnWordformInContext)
+			//	.ToLookup(ann => ann.InstanceOfRA);
+			var segmentAnalyses = new HashSet<IAnalysis>();
+			foreach (var seg in wordform.OccurrencesBag)
+				segmentAnalyses.UnionWith(seg.AnalysesRS.ToArray());
+			var analyses = from anal in wordform.AnalysesOC
+						   where segmentAnalyses.Contains(anal) || anal.MeaningsOC.Any(segmentAnalyses.Contains)
+						   select anal;
+			foreach (var analysis in analyses)
+				m_userAgent.SetEvaluation(analysis, Opinions.approves);
+
+			// Delete orphan analyses, which have no evaluations (Review JohnT: should we also check for no owned WfiGlosses?)
+			var orphanedAnalyses = from anal in wordform.AnalysesOC
+								   where anal.EvaluationsRC.Count == 0
+								   select anal;
+			foreach (var analysis in orphanedAnalyses)
+				m_cache.DomainDataByFlid.DeleteObj(analysis.Hvo);
+		}
+
+		#endregion Wordform Preparation methods
+
+		#endregion Private methods
+	}
+}

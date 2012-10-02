@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- ============================================================================================
+IMPORTANT NOTICE: id's given to toolbars and toolbar items must all be unique within the
+application. That doesn't just mean unique within a particular XML definition file. It means
+unique among all the XML definition files used in a single application.
+
+Item "type" Values:
+	0 = Regular Button
+	1 = Button with popup arrow that pops-ups subitems on a toolbar
+	2 = Button with popup arrow that pops-ups subitems on a menu
+	3 = Button with popup arrow that pops-ups a custom (application-defined) control.
+	4 = ComboBox
+	5 = Container for application-defined control (e.g. goto scripture passage control)
+
+Item "displaytype" Values (applies to item types 0 - 3):
+	0 = Image only (default)
+	1 = Text only
+	2 = Image and text
+
+	customizeitem - By default, only menu items are shown in the list of command items in the
+	toolbar customization dialog. However, there may be some toolbar items that aren't on the
+	menu but should be in the customization list. When applied to a toolbar item, this
+	attribute tells the adapter to put the toolbar item in the customization list even though
+	it isn't a menu item.
+
+	replacecustomizeitem - By default, only menu items are shown in the list of command items in the
+	toolbar customization dialog. However, sometimes the toolbar representation of a menu item
+	varies a little from the menu item. For example, when the undo and redo items appear on a
+	menu, they act like normal buttons. However, when they appear on a toolbar, the include a
+	drop-down arrow allowing the user to drop-down a list of actions to undo/redo. Therefore,
+	the toolbar implementation of the undo/redo command differs somewhat from the menu
+	implementation. In cases like these, it is desirable to only allow the drop-down version
+	of the buttons to be placed on toolbars. Applying this attribute to an item tells the
+	adapter to use the item to replace another one that has already been added to the
+	collection of customization items. This attribute should only be applied to toolbar items
+	and it's expected that the item being replaced is already in the customization collection.
+
+	windowlist - This attribute should only be applied to one menu item. It tells the
+	adapter the item is the first item in the list of an application's open windows. The item
+	with this attribute set to true handle's it's update handler differently from other items.
+	When the update handler is called, an argument of type WindowListInfo is passed. The
+	update handler should fill-in the list property with the list of windows that should
+	be displayed in the menu.
+
+	morewindowsitem - This attribute flags an item as the "More Windows..." item. The
+	adapter will automatically make this item visible or hidden as necessary. When there are
+	more than 10 items in the window list, the adapter will make this item visible. Otherwise
+	it will be hidden.
+
+	allowcustomizing - This attribute for toolbars determines whether or not the last item
+	on the toolbar will be the little button that allows the user to customize the items
+	that are visible on the toolbar.
+
+	settingFilesPrefix - This attribute for toolbars tells the adapter what prefix to use
+	when saving or restoring a toolbar's settings from a settings file. A settings file
+	saves all the information about a toolbar when the form it belongs to is closed. That
+	is how user customization information is saved. The file format for a toolbar's
+	settings format is: prefix.toolbarname.xml where toolbarname is replaced with the
+	toolbar's name (i.e. the name attribute of toolbar definition sections below).
+
+	onmodalform - In the event the toolbar adapter allows toolbar's to be undocked, this
+	attribute for toolbars tells the adapter the toolbars will be placed on a modal form.
+	Therefore, the adapter will not allow toolbar's to be undocked. The reason being,
+	after toolbars are undocked, they cannot be docked again since the modal form doesn't
+	allow other windows (which undocked toolbars are) in the application to gain focus.
+
+	split - This attribute determines whether or not types 1 - 3 should be split buttons.
+	In the .Net Framework ToolStrip world, this distinction is the found between
+	ToolStripDropDownButton and ToolStripSplitButton.
+============================================================================================ -->
+<TMDef>
+	<resources>
+		<localizedstrings assemblyPath="TeResources.dll" class="SIL.FieldWorks.TE.TeTMStrings"/>
+		<imageList assemblyPath="TeResources.dll"
+			class="SIL.FieldWorks.TE.TeResourceHelper"
+			field="teMenuToolBarImages"
+			labels="CmdInsertChapNum, CmdInsertVerseNum, CmdInsertVerseMode, CmdInsertFootnote,
+			CmdInsertScrSection, CmdInsertPicture, CmdAppHelp, CmdHelpAbout, CmdBtFinished, CmdBtUnFinished,
+			CmdBtChecked, CmdPrevBtUnfinished, CmdNextBtUnfinished, CmdNotRendered, CmdUseAsVernEq,
+			CmdVernEqNotAssigned, 16, CmdApplyUnTransWord, CmdBookFilterDlg, CmdNoFilter, CmdGotoPrevFootnote,
+			CmdGotoNextFootnote, CmdGotoFirstBook, CmdGotoPrevBook, CmdGotoNextBook, CmdGotoLastBook,
+			CmdGotoFirstSection, CmdGotoPrevSection, CmdGotoNextSection, CmdGotoLastSection,
+			CmdGotoFirstChapter, CmdGotoPrevChapter, CmdGotoNextChapter, CmdGotoLastChapter,
+			CmdPrevDiff, CmdNextDiff, CmdApplyFilterToKeyTerms, CmdInsertCrossRef,
+			CmdSendReferences, CmdReceiveReferences, CmdFindInDict, CmdScrChecksIgnored,
+			CmdScrChecksInconsistency, CmdScrChecksEditAnnotation, CmdScrChecksIgnoredWAnnotation,
+			CmdUpdateKeyTermEquivalents">
+			<!-- Note: the same imageList is in DiffViewTMDefinition.xml. The two lists should
+			  stay in sync! -->
+		</imageList>
+	</resources>
+	<commands>
+		<command id="CmdInsert" text="kstidInsertItemName"/>
+		<command id="CmdReference" text="kstidReferenceItemName"/>
+		<command id="CmdImport" text="kstidImportItemName"/>
+		<command id="CmdImportSFM" text="kstidImportSFMItemName"
+			textalt="kstidImportSFMItemNameAlt" category="kstidFileCategory"
+			message="ImportStandardFormat" tooltip="kstidImportSFMToolTip">
+		</command>
+		<command id="CmdImportXML" text="kstidImportXmlItemName"
+			textalt="kstidImportXmlItemNameAlt" category="kstidFileCategory"
+			message="ImportOXES" tooltip="kstidImportXmlToolTip">
+		</command>
+		<command id="CmdExport" text="kstidExportItemName"/>
+		<command id="CmdExportRTF" text="kstidExportRTFItemName"
+			textalt="kstidExportRTFItemNameAlt" category="kstidFileCategory"
+			message="FileExportRtf" tooltip="kstidExportRTFToolTip">
+		</command>
+		<command id="CmdExportUSFMParatext" text="kstidExportUSFMParatextItemName"
+			textalt="kstidExportUSFMParatextItemNameAlt" category="kstidFileCategory"
+			message="FileExportUsfmParatext" tooltip="kstidExportUSFMParatextToolTip">
+		</command>
+		<command id="CmdExportUSFMToolbox" text="kstidExportUSFMToolboxItemName"
+			textalt="kstidExportUSFMToolboxItemNameAlt" category="kstidFileCategory"
+			message="FileExportUsfmToolbox" tooltip="kstidExportUSFMToolboxToolTip">
+		</command>
+		<command id="CmdExportXML" text="kstidExportXmlItemName"
+			textalt="kstidExportXmlItemNameAlt" category="kstidFileCategory"
+			message="FileExportXml" tooltip="kstidExportXmlToolTip">
+		</command>
+		<command id="CmdExportXHTML" text="kstidExportXhtmlItemName"
+			textalt="kstidExportXhtmlItemNameAlt" category="kstidFileCategory"
+			message="FileExportXhtml" tooltip="kstidExportXhtmlToolTip">
+		</command>
+		<command id="CmdExportPs" text="kstidExportPsItemName"
+			textalt="kstidExportPsItemNameAlt" category="kstidFileCategory"
+			message="FileExportPs" tooltip="kstidExportPsToolTip">
+		</command>
+		<command id="CmdSavedVersions" text="kstidSavedVersionsItemName"
+			textalt="kstidSavedVersionsItemNameAlt" category="kstidFileCategory"
+			message="SavedVersions" tooltip="kstidSavedVersionsToolTip">
+		</command>
+		<command id="CmdProperties" text="kstidPropertiesItemName"/>
+		<command id="CmdScrProperties" text="kstidScrPropertiesItemName" category="kstidFileCategory"
+			message="ScriptureProperties" tooltip="kstidScrPropertiesToolTip">
+		</command>
+		<command id="CmdBookProperties" text="kstidBookPropertiesItemName" category="kstidFileCategory"
+			message="BookProperties" tooltip="kstidBookPropertiesToolTip">
+		</command>
+		<command id="CmdGotoFirst" text="kstidGotoFirstItemName" message="GoToRelativeItem"/>
+		<command id="CmdGotoPrev" text="kstidGotoPrevItemName" message="GoToRelativeItem"/>
+		<command id="CmdGotoNext" text="kstidGotoNextItemName" message="GoToRelativeItem"/>
+		<command id="CmdGotoLast" text="kstidGotoLastItemName" message="GoToRelativeItem"/>
+		<command id="CmdGotoRef" text="kstidGotoRefItemName" category="kstidEditCategory"
+			message="GoToReference" tooltip="kstidGotoRefToolTip">
+		</command>
+		<command id="CmdGotoFirstBook" text="kstidGotoBookItemName"
+			textalt="kstidGotoFirstBookItemNameAlt" category="kstidEditCategory"
+			message="GoToFirstBook" tooltip="kstidGotoFirstBookToolTip">
+		</command>
+		<command id="CmdGotoPrevBook" text="kstidGotoBookItemName"
+			textalt="kstidGotoPrevBookItemNameAlt" category="kstidEditCategory"
+			message="GoToPrevBook" tooltip="kstidGotoPrevBookToolTip">
+		</command>
+		<command id="CmdGotoNextBook" text="kstidGotoBookItemName"
+			textalt="kstidGotoNextBookItemNameAlt" category="kstidEditCategory"
+			message="GoToNextBook" tooltip="kstidGotoNextBookToolTip">
+		</command>
+		<command id="CmdGotoLastBook" text="kstidGotoBookItemName"
+			textalt="kstidGotoLastBookItemNameAlt" category="kstidEditCategory"
+			message="GoToLastBook" tooltip="kstidGotoLastBookToolTip">
+		</command>
+		<command id="CmdGotoFirstSection" text="kstidGotoFirstSectionItemName"
+			textalt="kstidGotoFirstSectionItemNameAlt" category="kstidEditCategory"
+			message="GoToFirstSection" tooltip="kstidGotoFirstSectionToolTip">
+		</command>
+		<command id="CmdGotoPrevSection" text="kstidGotoPrevSectionItemName"
+			textalt="kstidGotoPrevSectionItemNameAlt" category="kstidEditCategory"
+			message="GoToPrevSection" tooltip="kstidGotoPrevSectionToolTip">
+		</command>
+		<command id="CmdGotoNextSection" text="kstidGotoNextSectionItemName"
+			textalt="kstidGotoNextSectionItemNameAlt" category="kstidEditCategory"
+			message="GoToNextSection" tooltip="kstidGotoNextSectionToolTip">
+		</command>
+		<command id="CmdGotoLastSection" text="kstidGotoLastSectionItemName"
+			textalt="kstidGotoLastSectionItemNameAlt" category="kstidEditCategory"
+			message="GoToLastSection" tooltip="kstidGotoLastSectionToolTip">
+		</command>
+		<command id="CmdGotoFirstChapter" text="kstidGotoFirstChapterItemName"
+			textalt="kstidGotoFirstChapterItemNameAlt" category="kstidEditCategory"
+			message="GoToFirstChapter" tooltip="kstidGotoFirstChapterToolTip">
+		</command>
+		<command id="CmdGotoPrevChapter" text="kstidGotoPrevChapterItemName"
+			textalt="kstidGotoPrevChapterItemNameAlt" category="kstidEditCategory"
+			message="GoToPrevChapter" tooltip="kstidGotoPrevChapterToolTip">
+		</command>
+		<command id="CmdGotoNextChapter" text="kstidGotoNextChapterItemName"
+			textalt="kstidGotoNextChapterItemNameAlt" category="kstidEditCategory"
+			message="GoToNextChapter" tooltip="kstidGotoNextChapterToolTip">
+		</command>
+		<command id="CmdGotoLastChapter" text="kstidGotoLastChapterItemName"
+			textalt="kstidGotoLastChapterItemNameAlt" category="kstidEditCategory"
+			message="GoToLastChapter" tooltip="kstidGotoLastChapterToolTip">
+		</command>
+		<command id="CmdGotoPrevFootnote" text="kstidGotoPrevFootnoteItemName"
+			textalt="kstidGotoPrevFootnoteItemNameAlt" category="kstidEditCategory"
+			message="GoToPrevFootnote" tooltip="kstidGotoPrevFootnoteToolTip">
+		</command>
+		<command id="CmdGotoNextFootnote" text="kstidGotoNextFootnoteItemName"
+			textalt="kstidGotoNextFootnoteItemNameAlt" category="kstidEditCategory"
+			message="GoToNextFootnote" tooltip="kstidGotoNextFootnoteToolTip">
+		</command>
+		<command id="CmdRefresh" text="kstidRefreshItemName" category="kstidViewCategory"
+			message="ViewRefresh" tooltip="kstidRefreshToolTip" shortcutkey="F5">
+		</command>
+		<command id="CmdUpdatePageBreak" text="kstidUpdatePageBreakItemName" category="kstidViewCategory"
+			message="ViewUpdatePageBreak" tooltip="kstidUpdatePageBreakToolTip">
+		</command>
+		<command id="CmdDeleteBook" text="kstidDeleteBookItemName" category="kstidEditCategory"
+			message="EditRemoveBook" tooltip="kstidDeleteBookToolTip">
+		</command>
+		<command id="CmdDeleteFootnote" text="kstidDeleteFootnoteItemName" category="kstidEditCategory"
+			message="DeleteFootnote" tooltip="kstidDeleteFootnoteToolTip">
+		</command>
+		<command id="CmdFilters" text="kstidFiltersItemName"/>
+		<command id="CmdNoFilter" text="kstidNoFilterItemName" category="kstidViewCategory"
+			message="NoFilters" tooltip="kstidNoFilterToolTip">
+		</command>
+		<command id="CmdBookFilterDlg" text="kstidBookFilterDlgItemName" category="kstidViewCategory"
+			message="BookFilter" tooltip="kstidBookFilterDlgToolTip">
+		</command>
+		<command id="CmdBookFilterToggle" text="kstidBookFilterToggleItemName" category="kstidViewCategory"
+			message="BookFilterToggle" tooltip="kstidBookFilterToggleToolTip" image="CmdBookFilterDlg">
+		</command>
+		<command id="CmdBookFilterConfig" text="kstidBookFilterConfigItemName"
+			message="BookFilter">
+		</command>
+		<command id="CmdHdrFtrSetup" text="kstidHdrFtrSetupItemName" category="kstidViewCategory"
+			message="HeaderFooterSetup" tooltip="kstidHdrFtrSetupToolTip">
+		</command>
+		<command id="CmdFootnotes" text="kstidFootnotesItemName" category="kstidViewCategory"
+			message="ViewFootnotes" tooltip="kstidFootnotesToolTip">
+		</command>
+		<command id="CmdNotes" text="kstidNotesItemName" category="kstidViewCategory"
+			message="ViewNotes" tooltip="kstidNotesToolTip">
+		</command>
+		<command id="CmdStylePane" text="kstidStylePaneItemName" category="kstidViewCategory"
+			message="ViewStylePane" tooltip="kstidStylePaneToolTip">
+		</command>
+		<command id="CmdInsertBooks" text="kstidInsertBooksItemName"/>
+		<command id="CmdOldTestament" text="kstidOldTestamentItemName"/>
+		<command id="CmdNewTestament" text="kstidNewTestamentItemName"/>
+		<command id="CmdInsertBook" message="InsertBook"/>
+		<command id="CmdInsertNoteParent" text="kstidInsertNoteItemName" message="InsertNoteParent"/>
+		<command id="CmdInsertNote" message="InsertNote"/>
+		<command id="CmdInsertIntroSection" text="kstidInsertIntroSectionItemName" category="kstidInsertCategory"
+			message="InsertIntroSection" tooltip="kstidInsertIntroSectionToolTip">
+		</command>
+		<command id="CmdInsertScrSection" text="kstidInsertScrSectionItemName" category="kstidInsertCategory"
+			message="InsertSection" tooltip="kstidInsertScrSectionToolTip">
+		</command>
+		<command id="CmdInsertChapNum" text="kstidInsertChapNumItemName" category="kstidInsertCategory"
+			message="InsertChapterNumber" tooltip="kstidInsertChapNumToolTip">
+		</command>
+		<command id="CmdInsertVerseMode" text="kstidInsertVerseModeItemName" category="kstidInsertCategory"
+			message="InsertVerseNumbers" tooltip="kstidInsertVerseModeToolTip">
+		</command>
+		<command id="CmdInsertVerseNum" text="kstidInsertVerseNumItemName" category="kstidInsertCategory"
+			message="InsertVerseNumber" tooltip="kstidInsertVerseNumToolTip" shortcutkey="CtrlShiftV">
+		</command>
+		<command id="CmdInsertFootnote" text="kstidInsertFootnoteItemName" category="kstidInsertCategory"
+			message="InsertGeneralFootnote" tooltip="kstidInsertFootnoteToolTip"
+			contextmenutext="kstidInsertFootnoteCmnuItemName">
+		</command>
+		<command id="CmdInsertCrossRef" text="kstidInsertCrossRefItemName" category="kstidInsertCategory"
+			message="InsertCrossRefFootnote" tooltip="kstidInsertCrossRefToolTip"
+			contextmenutext="kstidInsertCrossRefCmnuItemName">
+		</command>
+		<command id="CmdInsertPicture" text="kstidInsertPictureItemName" category="kstidInsertCategory"
+			message="InsertPictureDialog" tooltip="kstidInsertPictureToolTip"
+			contextmenutext="kstidInsertPictureCmnuItemName">
+		</command>
+		<command id="CmdInsertConsultantNote" text="kstidInsertConsultantNoteItemName" category="kstidInsertCategory"
+			message="InsertNote" tooltip="kstidInsertConsultantNoteToolTip">
+		</command>
+		<command id="CmdFootnoteProperties" text="kstidFootnotePropertiesItemName" category="kstidFormatCategory"
+			message="FootnoteProperties" tooltip="kstidFootnotePropertiesToolTip">
+		</command>
+		<command id="CmdPictureProperties" text="kstidPicturePropertiesItemName" category="kstidFormatCategory"
+			message="PictureProperties" tooltip="kstidPicturePropertiesToolTip">
+		</command>
+		<command id="CmdFindInDict" text="kstidFindInDictItemName" category="kstidToolsCategory"
+			message="FindInDictionary" tooltip="kstidFindInDictToolTip" shortcutkey="CtrlD">
+		</command>
+		<command id="CmdFindRelatedWords" text="kstidFindRelatedWordsItemName" category="kstidToolsCategory"
+			message="FindRelatedWords" tooltip="kstidFindRelatedWordsToolTip">
+		</command>
+		<command id="CmdSpelling" text="kstidSpelling"/>
+		<command id="CmdReviewMisspelledWords" text="kstidReviewMisspelledWords" category="kstidToolsCategory"
+			message="ReviewMisspelledWords" tooltip="kstidReviewMisspelledWordsToolTip">
+		</command>
+		<command id="CmdCorrectMisspelledWords" text="kstidCorrectMisspelledWords" category="kstidToolsCategory"
+			message="CorrectMisspelledWords" tooltip="kstidCorrectMisspelledWordsToolTip">
+		</command>
+		<command id="CmdShowSpellingErrors" text="kstidShowSpellingErrors" category="kstidToolsCategory"
+			message="ShowSpellingErrors" tooltip="kstidShowSpellingErrorsToolTip">
+		</command>
+		<command id="CmdChangeMultipleOccurrences" text="kstidChangeMultipleOccurrences" category="kstidToolsCategory"
+			message="ChangeMultipleOccurrences" tooltip="kstidChangeMultipleOccurrencesToolTip">
+		</command>
+		<command id="CmdOptions" text="kstidOptionsItemName" category="kstidToolsCategory"
+			message="ToolsOptions" tooltip="kstidOptionsToolTip">
+		</command>
+		<command id="CmdBackTrans" text="kstidBackTransItemName"/>
+	<command id="CmdInterlinearize" text="kstidInterlinearize" category="kstidToolsCategory"
+			message="Interlinearize" tooltip="kstidInterlinearizeToolTip">
+	</command>
+	<command id="CmdInsertBackTransCV" text="kstidGenerateSecTemplateItemName" category="kstidToolsCategory"
+			message="InsertBackTransCV" tooltip="kstidGenerateSecTemplateToolTip">
+		</command>
+		<command id="CmdBtFinished" text="kstidBtFinishedItemName" category="kstidToolsCategory"
+			message="BackTranslationFinished" tooltip="kstidBtFinishedToolTip">
+		</command>
+		<command id="CmdBtUnFinished" text="kstidBtUnfinishedItemName" category="kstidToolsCategory"
+			message="BackTranslationUnfinished" tooltip="kstidBtUnfinishedToolTip">
+		</command>
+		<command id="CmdBtChecked" text="kstidBtCheckedItemName" category="kstidToolsCategory"
+			message="BackTranslationChecked" tooltip="kstidBtCheckedToolTip">
+		</command>
+		<command id="CmdPrevBtUnfinished" text="kstidBtPrevUnfinishedItemName" category="kstidToolsCategory"
+			message="BackTranslationPrevUnfinished" tooltip="kstidBtPrevUnfinishedToolTip">
+		</command>
+		<command id="CmdNextBtUnfinished" text="kstidBtNextUnfinishedItemName" category="kstidToolsCategory"
+			message="BackTranslationNextUnfinished" tooltip="kstidBtNextUnfinishedToolTip">
+		</command>
+		<command id="CmdKeyTerms" text="kstidKeyTermsItemName"/>
+		<command id="CmdScrChecks" text="kstidScrChecksItemName">
+		</command>
+		<command id="CmdApplyFilterToKeyTerms" text="kstidApplyFilterToKeyTermsItemName" category="kstidToolsCategory"
+			message="ApplyFilterToKeyTerms" tooltip="kstidApplyFilterToKeyTermsToolTip">
+		</command>
+		<command id="CmdUpdateKeyTermEquivalents" text="kstidUpdateKeyTermEquivalentsItemName" category="kstidToolsCategory"
+			message="UpdateKeyTermEquivalents" tooltip="kstidUpdateKeyTermEquivalentsToolTip">
+		</command>
+		<command id="CmdApplyUnTransWord" text="kstidApplyUnTransWordItemName" category="kstidToolsCategory"
+			message="ApplyUnTransWord" tooltip="kstidApplyUnTransWordToolTip">
+		</command>
+		<command id="CmdUseAsVernEq" text="kstidUseAsVernEqItemName" category="kstidToolsCategory"
+			message="UseAsRendering" tooltip="kstidUseAsVernEqToolTip">
+		</command>
+		<command id="CmdVernEqNotAssigned" text="kstidVernEqNotAssignedItemName"
+			category="kstidToolsCategory" message="NotYetRendered" tooltip="kstidVernEqNotAssignedToolTip">
+		</command>
+		<command id="CmdNotRendered" text="kstidNotRenderedItemName" category="kstidToolsCategory"
+			message="IgnoreUnrendered" tooltip="kstidNotRenderedToolTip">
+		</command>
+		<command id="CmdAppHelp" text="kstidAppHelpItemName" category="kstidHelpCategory"
+			message="HelpApplication" tooltip="kstidAppHelpToolTip" shortcutkey="F1">
+		</command>
+		<command id="CmdHelpAbout" text="kstidHelpAboutItemName" category="kstidHelpCategory"
+			message="HelpAbout" tooltip="kstidHelpAboutToolTip">
+		</command>
+		<command id="CmdGotoPassage" text="kstidGotoPassageItemName" category="kstidEditCategory"
+			message="GoToReference" tooltip="kstidGotoPassageToolTip">
+		</command>
+		<command id="CmdTrainingStudentManual" text="kstidTrainingStudentManual" category="kstidHelpCategory"
+			message="TrainingStudentManual">
+		</command>
+		<command id="CmdTrainingExercises" text="kstidTrainingExercises" category="kstidHelpCategory"
+			message="TrainingExercises">
+		</command>
+		<command id="CmdTrainingInstructorGuide" text="kstidTrainingInstructorGuide" category="kstidHelpCategory"
+			message="TrainingInstructorGuide">
+		</command>
+		<command id="CmdTrainingCopyPasteData" text="kstidTrainingCopyPasteData" category="kstidHelpCategory"
+			message="TrainingCopyPasteData">
+		</command>
+		<command id="CmdDemos" text="kstidHelpDemos" category="kstidHelpCategory"
+			message="Demos">
+		</command>
+		<command id="CmdSendReferences" text="kstidSendReferencesItemName" category="kstidHelpCategory"
+			message="SendReferences" tooltip="kstidSendReferencesToolTip">
+		</command>
+		<command id="CmdShowUsfmResources" text="kstidShowUsfmResourcesItemName" category="kstidHelpCategory"
+			message="ShowUsfmResources">
+		</command>
+		<command id="CmdReceiveReferences" text="kstidReceiveReferencesItemName" category="kstidHelpCategory"
+			message="ReceiveReferences" tooltip="kstidReceiveReferencesToolTip">
+		</command>
+		<command id="CmdScrChecksIgnored" text="kstidChecksStatusIgnored" category="kstidToolsCategory"
+			message="ScrChecksIgnored" tooltip="kstidChecksStatusIgnoredToolTip" shortcutkey="CtrlI"/>
+		<command id="CmdScrChecksInconsistency" text="kstidChecksStatusInconsistency" category="kstidToolsCategory"
+			message="ScrChecksInconsistency" tooltip="kstidChecksStatusInconsistencyToolTip"/>
+		<command id="CmdScrChecksIgnoredWAnnotation" text="kstidChecksStatusIgnoredWAnnotation"
+			category="kstidToolsCategory" message="ScrChecksIgnoredWAnnotation"
+			tooltip="kstidChecksStatusIgnoredWAnnotationToolTip"/>
+		<command id="CmdAddAsValidCharacter" text="kstidAddAsValidCharacter"
+			category="kstidToolsCategory" message="ScrChecksAddAsValidCharacter"
+			tooltip="kstidAddAsValidCharacterToolTip"/>
+		<command id="CmdScrChecksEditAnnotation" text="kstidChecksEditAnnotation" category="kstidToolsCategory"
+			message="ScrChecksEditAnnotation" tooltip="kstidChecksEditAnnotationToolTip"/>
+		<command id="CmdChapterVerseNumbers" text="kstidChapterVerseNumbers" category="kstidToolsCategory"
+			message="ChapterVerseNumbers" tooltip="kstidChapterVerseNumbersToolTip"/>
+		<command id="CmdValidCharacters" text="kstidValidCharacters" category="kstidToolsCategory"
+			message="ValidCharacters" tooltip="kstidValidCharactersToolTip"/>
+		<command id="CmdMatchedPairs" text="kstidMatchedPairs" category="kstidToolsCategory"
+			message="MatchedPairs" tooltip="kstidMatchedPairsToolTip"/>
+		<command id="CmdPunctuationPatterns" text="kstidPunctuationPatterns" category="kstidToolsCategory"
+			message="PunctuationPatterns" tooltip="kstidPunctuationPatternsToolTip"/>
+		<command id="CmdQuotationMarks" text="kstidQuotationMarks" category="kstidToolsCategory"
+			message="QuotationMarks" tooltip="kstidQuotationMarksToolTip"/>
+		<command id="CmdEditorialChecksHelp" text="kstidEditorialChecksHelp" category="kstidHelpCategory"
+			message="EditorialChecksHelp" tooltip="kstidEditorialChecksHelpToolTip"/>
+	</commands>
+
+	<menus>
+		<!-- *************** -->
+		<!--    FILE MENU    -->
+		<!-- *************** -->
+		<item name="mnuImport" commandid="CmdImport" insertbefore="mnuClose" begingroup="true">
+			<item name="mnuImportSFM" commandid="CmdImportSFM"/>
+			<item name="mnuImportXML" commandid="CmdImportXML"/>
+		</item>
+		<item name="mnuExport" commandid="CmdExport" insertbefore="mnuClose">
+			<item name="mnuExportRTF" commandid="CmdExportRTF"/>
+			<item name="mnuExportUSFMParatext" commandid="CmdExportUSFMParatext"/>
+			<item name="mnuExportUSFMToolbox" commandid="CmdExportUSFMToolbox"/>
+			<item name="mnuExportXML" commandid="CmdExportXML"/>
+			<item name="mnuExportXHTML" commandid="CmdExportXHTML"/>
+			<item name="mnuExportPs" commandid="CmdExportPs"/>
+		</item>
+		<item name="mnuSavedVersions" commandid="CmdSavedVersions" insertbefore="mnuClose"/>
+		<item name="mnuProperties" commandid="CmdProperties"
+			begingroup="true" insertbefore="mnuClose" cancelbegingrouponfollowingitem="true">
+			<item name="mnuScrProperties" commandid="CmdScrProperties"/>
+			<item name="mnuBookProperties" commandid="CmdBookProperties"/>
+		</item>
+
+		<!-- *************** -->
+		<!--    EDIT MENU    -->
+		<!-- *************** -->
+		<item name="mnuDeleteBook" commandid="CmdDeleteBook" addto="mnuEdit"/>
+
+		<!-- *************** -->
+		<!--    VIEW MENU    -->
+		<!-- *************** -->
+		<item name="mnuFilters" commandid="CmdFilters" insertbefore="mnuToolBars" begingroup="true">
+			<item name="mnuNoFilter" commandid="CmdNoFilter"/>
+			<!-- item name="mnuBookFilterDlg" commandid="CmdBookFilterDlg"/> -->
+		</item>
+		<item name="mnuRefresh" commandid="CmdRefresh" addto="mnuView"/>
+		<item name="mnuUpdatePageBreak" commandid="CmdUpdatePageBreak" addto="mnuView"/>
+		<item name="mnuHdrFtrSetup" commandid="CmdHdrFtrSetup" addto="mnuView" begingroup="true"/>
+		<item name="mnuFootnotes" commandid="CmdFootnotes" addto="mnuView" begingroup="true"/>
+		<item name="mnuNotes" commandid="CmdNotes" addto="mnuView"/>
+		<item name="mnuShowUsfmResources" commandid="CmdShowUsfmResources" addto="mnuView"/>
+		<item name="mnuStylePane" commandid="CmdStylePane" addto="mnuView"/>
+
+	<!-- *************** -->
+	<!-- REFERENCE MENU  -->
+	<!-- *************** -->
+	<item name="mnuReference" commandid="CmdReference" insertbefore="mnuFormat"/>
+	  <item name="mnuGotoRef" commandid="CmdGotoRef" addto="mnuReference"/>
+	  <item name="mnuGotoFirst" commandid="CmdGotoFirst" addto="mnuReference">
+		  <item name="mnuGotoFirstBook" commandid="CmdGotoFirstBook"/>
+		  <item name="mnuGotoFirstSection" commandid="CmdGotoFirstSection"/>
+		  <item name="mnuGotoFirstChapter" commandid="CmdGotoFirstChapter"/>
+	  </item>
+	  <item name="mnuGotoPrev" commandid="CmdGotoPrev" addto="mnuReference">
+		  <item name="mnuGotoPrevBook" commandid="CmdGotoPrevBook"/>
+		  <item name="mnuGotoPrevSection" commandid="CmdGotoPrevSection"/>
+		  <item name="mnuGotoPrevChapter" commandid="CmdGotoPrevChapter"/>
+		  <item name="mnuGotoPrevFootnote" commandid="CmdGotoPrevFootnote"/>
+	  </item>
+	  <item name="mnuGotoNext" commandid="CmdGotoNext" addto="mnuReference">
+		<item name="mnuGotoNextBook" commandid="CmdGotoNextBook"/>
+		<item name="mnuGotoNextSection" commandid="CmdGotoNextSection"/>
+		<item name="mnuGotoNextChapter" commandid="CmdGotoNextChapter"/>
+		<item name="mnuGotoNextFootnote" commandid="CmdGotoNextFootnote"/>
+	  </item>
+	  <item name="mnuGotoLast" commandid="CmdGotoLast" addto="mnuReference">
+		  <item name="mnuGotoLastBook" commandid="CmdGotoLastBook"/>
+		  <item name="mnuGotoLastSection" commandid="CmdGotoLastSection"/>
+		  <item name="mnuGotoLastChapter" commandid="CmdGotoLastChapter"/>
+	  </item>
+	  <item name="mnuSendReferences" commandid="CmdSendReferences" addto="mnuReference"  begingroup="true"/>
+	  <item name="mnuReceiveReferences" commandid="CmdReceiveReferences" addto="mnuReference"/>
+		<!-- *************** -->
+		<!--   INSERT MENU   -->
+		<!-- *************** -->
+		<item name="mnuInsert" commandid="CmdInsert" insertbefore="mnuFormat">
+			<item name="mnuInsertBooks" commandid="CmdInsertBooks">
+				<item name="mnuOldTestament" commandid="CmdOldTestament"/>
+				<item name="mnuNewTestament" commandid="CmdNewTestament"/>
+			</item>
+			<item name="mnuInsertIntroSection" commandid="CmdInsertIntroSection"/>
+			<item name="mnuInsertScrSection" commandid="CmdInsertScrSection"/>
+			<item name="mnuInsertChapNum" commandid="CmdInsertChapNum" begingroup="true"/>
+			<item name="mnuInsertVerseMode" commandid="CmdInsertVerseMode"/>
+			<item name="mnuInsertVerseNum" commandid="CmdInsertVerseNum"/>
+			<item name="mnuInsertFootnote" commandid="CmdInsertFootnote" begingroup="true"/>
+			<item name="mnuInsertCrossRef" commandid="CmdInsertCrossRef"/>
+			<item name="mnuInsertPicture" commandid="CmdInsertPicture"/>
+			<item name="mnuInsertNote" commandid="CmdInsertNoteParent">
+				<item name="dummyItem" commandid="dummyCmd"/> <!-- This item gets deleted when mnuIsertNote is popped-up -->
+			</item>
+		</item>
+
+		<!-- *************** -->
+		<!--   FORMAT MENU   -->
+		<!-- *************** -->
+		<item name="mnuFootnoteProperties" commandid="CmdFootnoteProperties" begingroup="true" addto="mnuFormat"/>
+		<item name="mnuPictureProperties" commandid="CmdPictureProperties" addto="mnuFormat"/>
+
+		<!-- *************** -->
+		<!--   TOOLS  MENU   -->
+		<!-- *************** -->
+		<item name="mnuFindInDict" commandid="CmdFindInDict" insertbefore="mnuUserProperties"/>
+		<item name="mnuFindRelatedWords" commandid="CmdFindRelatedWords" insertbefore="mnuUserProperties"/>
+		<item name="mnuSpelling" commandid="CmdSpelling" insertbefore="mnuUserProperties" begingroup="true">
+			<item name="mnuReviewMisspelledWords" commandid="CmdReviewMisspelledWords"/>
+			<item name="mnuCorrectMisspelledWords" commandid="CmdCorrectMisspelledWords"/>
+			<item name="mnuShowSpellingErrors" commandid="CmdShowSpellingErrors"/>
+			<item name="mnuChangeMultipleOccurrences" commandid="CmdChangeMultipleOccurrences" begingroup="true"/>
+		</item>
+		<item name="mnuBackTrans" commandid="CmdBackTrans" insertbefore="mnuUserProperties">
+
+	  <item name="mnuInterlinearize" commandid="CmdInterlinearize"/>
+	  <item name="mnuGenerateSecTemplate" commandid="CmdInsertBackTransCV"/>
+			<item name="mnuApplyUnTransWord" commandid="CmdApplyUnTransWord"/>
+			<item name="mnuBtUnFinished" commandid="CmdBtUnFinished" begingroup="true"/>
+			<item name="mnuBtFinished" commandid="CmdBtFinished"/>
+			<item name="mnuBtChecked" commandid="CmdBtChecked"/>
+			<item name="mnuPrevBtUnfinished" commandid="CmdPrevBtUnfinished" begingroup="true"/>
+			<item name="mnuNextBtUnfinished" commandid="CmdNextBtUnfinished"/>
+		</item>
+		<item name="mnuScrChecks" commandid="CmdScrChecks" insertbefore="mnuUserProperties">
+			<item name="mnuStatusIgnored" commandid="CmdScrChecksIgnored" />
+			<item name="mnuStatusIgnoredWAnnotation" commandid="CmdScrChecksIgnoredWAnnotation"/>
+			<item name="mnuStatusInconsistency" commandid="CmdScrChecksInconsistency"/>
+			<item name="mnuStatusEditAnnotation" commandid="CmdScrChecksEditAnnotation" begingroup="true"/>
+			<item name="cmnuAddAsValidCharacter" commandid="CmdAddAsValidCharacter" begingroup="true"/>
+		</item>
+		<item name="mnuKeyTerms" commandid="CmdKeyTerms" addto="mnuTools">
+			<item name="mnuUpdateEquivalents" commandid="CmdUpdateKeyTermEquivalents"/>
+			<item name="mnuUseAsVernEq" commandid="CmdUseAsVernEq" begingroup="true"/>
+			<item name="mnuNotRendered" commandid="CmdNotRendered"/>
+			<item name="mnuVernEqNotAssigned" commandid="CmdVernEqNotAssigned"/>
+			<item name="mnuApplyFilterToKeyTerms" commandid="CmdApplyFilterToKeyTerms" begingroup="true"/>
+		</item>
+		<item name="mnuOptions" commandid="CmdOptions" addto="mnuTools" begingroup="true"/>
+
+		<!-- *************** -->
+		<!--    HELP MENU    -->
+		<!-- *************** -->
+		<item name="mnuAppHelp" commandid="CmdAppHelp" insertbefore="mnuTraining"/>
+		<item name="mnuTrainingStudentManual" commandid="CmdTrainingStudentManual" addto="mnuTraining"/>
+		<item name="mnuTrainingExercises" commandid="CmdTrainingExercises" addto="mnuTraining"/>
+		<item name="mnuTrainingCopyPasteData" commandid="CmdTrainingCopyPasteData" addto="mnuTraining"/>
+		<item name="mnuTrainingInstructorGuide" commandid="CmdTrainingInstructorGuide" addto="mnuTraining"/>
+		<item name="mnuDemos" commandid="CmdDemos" addto="mnuHelp"/>
+		<item name="mnuHelpAbout" commandid="CmdHelpAbout" addto="mnuHelp" begingroup="true"/>
+	</menus>
+
+	<toolbars settingFilesPrefix="TE.TBDef.TeMainWnd">
+		<!-- ========================= -->
+		<!-- Tools Toolbar            -->
+		<!-- ========================= -->
+		<toolbar name="tbTools" text="kstidToolsToolBarText" visible="false" row="2" position="4" allowcustomizing="false">
+			<item name="tbbCmdFindInDict" commandid="CmdFindInDict" type="0"/>
+		</toolbar>
+		<!-- ========================= -->
+		<!-- Back Translation Toolbar  -->
+		<!-- ========================= -->
+		<toolbar name="tbBackTrans" text="kstidBackTransBarText" visible="false" row="2" position="2" allowcustomizing="true">
+			<item name="tbbApplyUnTransWord" commandid="CmdApplyUnTransWord" type="0"/>
+			<item name="tbbBTUnfinished" commandid="CmdBtUnFinished" type="0" begingroup="true"/>
+			<item name="tbbBTFinished" commandid="CmdBtFinished" type="0"/>
+			<item name="tbbBTChecked" commandid="CmdBtChecked" type="0"/>
+			<item name="tbbBTPrevUnfinished" commandid="CmdPrevBtUnfinished" type="0" begingroup="true"/>
+			<item name="tbbBTNextUnfinished" commandid="CmdNextBtUnfinished" type="0"/>
+		</toolbar>
+		<!-- ========================= -->
+		<!-- Goto Toolbar (navigation) -->
+		<!-- ========================= -->
+		<toolbar name="tbGoto" text="kstidGotoToolBarText" visible="true" row="0" position="1" allowcustomizing="true">
+			<item name="tbbGotoScrCtrl" commandid="CmdGotoPassage" type="5"/>
+			<item name="tbbEnableSendSync" commandid="CmdSendReferences" type="0"/>
+			<item name="tbbEnableReceiveSync" commandid="CmdReceiveReferences" type="0"/>
+			<item name="tbbViewBookFilter" commandid="CmdBookFilterToggle" type="2" split="true" begingroup="true" replacecustomizeitem="CmdBookFilterDlg">
+				<item name="tbbShowBookFilterDlg" commandid="CmdBookFilterConfig" type="0"/>
+			</item>
+			<item name="tbbFind" commandid="CmdFind" type="0" begingroup="true"/>
+			<!-- <item name="tbbFindPrev" commandid="CmdFindPrev" visible="false" type="0"/> Disabled-->
+			<item name="tbbFindNext" commandid="CmdFindNext" type="0"/>
+		</toolbar>
+		<!-- ========================= -->
+		<!-- Insert Toolbar            -->
+		<!-- ========================= -->
+		<toolbar name="tbInsert" text="kstidInsertToolBarText" visible="false" row="2" position="0" allowcustomizing="true">
+			<item name="tbbInsertScrSection" commandid="CmdInsertScrSection" type="0"/>
+			<item name="tbbInsertChapterNumber" commandid="CmdInsertChapNum" type="0"/>
+			<item name="tbbInsertVerseNumbers" commandid="CmdInsertVerseMode" type="0"/>
+			<item name="tbbInsertVerseNumber" commandid="CmdInsertVerseNum" type="0"/>
+			<item name="tbbInsertFootnote" commandid="CmdInsertFootnote" type="0"/>
+			<item name="tbbInsertCrossRef" commandid="CmdInsertCrossRef" type="0"/>
+		</toolbar>
+	</toolbars>
+
+	<contextmenus>
+		<!-- ======================================================== -->
+		<!-- Insert book context menu for the empty scripture dialog  -->
+		<!-- ======================================================== -->
+		<contextmenu name="cmnuInsertBooks">
+			<item name="cmnuOldTestament" commandid="CmdOldTestament"/>
+			<item name="cmnuNewTestament" commandid="CmdNewTestament"/>
+		</contextmenu>
+
+		<!-- ============================================== -->
+		<!-- Draft View Everywhere But On Footnote Marker   -->
+		<!-- ============================================== -->
+		<contextmenu name="cmnuDraftViewNormal">
+			<item name="cmnuAddToDictDV" commandid="CmdAddToDict" begingroup="true"/>
+			<item name="cmnuChangeMultiOccurencesDV" commandid="CmdChangeMultiOccurrences"/>
+			<item name="cmnuCutDV" commandid="CmdCut" begingroup="true"/>
+			<item name="cmnuCopyDV" commandid="CmdCopy"/>
+			<item name="cmnuPasteDV" commandid="CmdPaste"/>
+			<item name="cmnuInsertFootnoteDV" commandid="CmdInsertFootnote" begingroup="true"/>
+			<item name="cmnuInsertCrossRefFootnoteDV" commandid="CmdInsertCrossRef"/>
+			<item name="cmnuCmdFindInDictDV" commandid="CmdFindInDict" begingroup="true"/>
+			<item name="cmnuCmdFindRelatedWordsDV" commandid="CmdFindRelatedWords"/>
+		</contextmenu>
+
+		<!-- ============================================= -->
+		<!-- Draft View When On a Footnote Marker          -->
+		<!-- ============================================= -->
+		<contextmenu name="cmnuDraftViewFootnote">
+			<item name="cmnuFootnotePropertiesDVF" commandid="CmdFootnoteProperties"/>
+			<item name="cmnuDeleteFootnoteDVF" commandid="CmdDeleteFootnote"/>
+		</contextmenu>
+
+		<!-- ============================================= -->
+		<!-- Draft View When On a Picture                  -->
+		<!-- ============================================= -->
+		<contextmenu name="cmnuDraftViewPicture">
+			<item name="cmnuPicturePropertiesDVP" commandid="CmdPictureProperties"/>
+		</contextmenu>
+
+		<!-- ============================================== -->
+		<!-- Draft View in a key term view                  -->
+		<!-- ============================================== -->
+		<contextmenu name="cmnuDraftViewKeyTerms">
+			<item name="cmnuAddToDictKTV" commandid="CmdAddToDict" begingroup="true"/>
+			<item name="cmnuChangeMultiOccurencesKTV" commandid="CmdChangeMultiOccurrences"/>
+			<item name="cmnuCutKTV" commandid="CmdCut" begingroup="true"/>
+			<item name="cmnuCopyKTV" commandid="CmdCopy"/>
+			<item name="cmnuPasteKTV" commandid="CmdPaste"/>
+			<item name="cmnuInsertFootnoteKTV" commandid="CmdInsertFootnote" begingroup="true"/>
+			<item name="cmnuInsertCrossRefFootnoteKTV" commandid="CmdInsertCrossRef"/>
+			<item name="cmnuInsertPictureKTV" commandid="CmdInsertPicture"/>
+			<item name="cmnuUseAsVernEqKTV" commandid="CmdUseAsVernEq" begingroup="true"/>
+		</contextmenu>
+
+		<!-- ============================================= -->
+		<!-- Footnote View                                 -->
+		<!-- ============================================= -->
+		<contextmenu name="cmnuFootnoteView">
+			<item name="cmnuAddToDictFV" commandid="CmdAddToDict" begingroup="true"/>
+			<item name="cmnuChangeMultiOccurencesFV" commandid="CmdChangeMultiOccurrences"/>
+			<item name="cmnuCutFV" commandid="CmdCut"/>
+			<item name="cmnuCopyFV" commandid="CmdCopy"/>
+			<item name="cmnuPasteFV" commandid="CmdPaste"/>
+			<item name="cmnuFootnotePropertiesFV" commandid="CmdFootnoteProperties" begingroup="true"/>
+			<item name="cmnuDeleteFootnoteFV" commandid="CmdDeleteFootnote"/>
+		</contextmenu>
+
+		<!-- ============================================= -->
+		<!-- Back Translation                              -->
+		<!-- ============================================= -->
+		<contextmenu name="cmnuBackTranslation">
+			<item name="cmnuAddToDictBTV" commandid="CmdAddToDict" begingroup="true"/>
+			<item name="cmnuCutBT" commandid="CmdCut"/>
+			<item name="cmnuCopyBT" commandid="CmdCopy"/>
+			<item name="cmnuPasteBT" commandid="CmdPaste"/>
+			<item name="cmnuInsertFootnoteBT" commandid="CmdInsertFootnote" begingroup="true"/>
+			<item name="cmnuInsertCrossRefFootnoteBT" commandid="CmdInsertCrossRef"/>
+			<item name="cmnuInsertPictureBT" commandid="CmdInsertPicture"/>
+			<item name="mnuBtUnFinishedBT" commandid="CmdBtUnFinished" begingroup="true"/>
+			<item name="mnuBtFinishedBT" commandid="CmdBtFinished"/>
+			<item name="mnuBtCheckedBT" commandid="CmdBtChecked"/>
+		</contextmenu>
+
+		<!-- ============================================= -->
+		<!-- Keyterms Rendering View                       -->
+		<!-- ============================================= -->
+		<contextmenu name="cmnuKeyTermsRenderingView">
+			<item name="mnuUpdateEquivalents" commandid="CmdUpdateKeyTermEquivalents"/>
+			<item name="cmnuUseAsVernEqRV" commandid="CmdUseAsVernEq" begingroup="true"/>
+			<item name="cmnuNotRenderedRV" commandid="CmdNotRendered"/>
+			<item name="cmnuVernEqNotAssignedRV" commandid="CmdVernEqNotAssigned"/>
+			<item name="cmnuApplyFilterToKeyTermsRV" commandid="CmdApplyFilterToKeyTerms" begingroup="true"/>
+		</contextmenu>
+
+		<!-- ============================================= -->
+		<!-- Scr Checks Potential Inconsistencies List     -->
+		<!-- ============================================= -->
+		<contextmenu name="cmnuScrChecks" >
+			<item name="cmnuStatusIgnored" commandid="CmdScrChecksIgnored"/>
+			<item name="cmnuStatusIgnoredWAnnotation" commandid="CmdScrChecksIgnoredWAnnotation"/>
+			<item name="cmnuStatusInconsistency" commandid="CmdScrChecksInconsistency"/>
+			<item name="cmnuStatusEditComment" commandid="CmdScrChecksEditAnnotation" begingroup="true"/>
+			<item name="cmnuAddAsValidCharacter" commandid="CmdAddAsValidCharacter" begingroup="true"/>
+		</contextmenu>
+
+		<!-- ============================================= -->
+		<!-- Editorial Checks tree general                 -->
+		<!-- ============================================= -->
+		<contextmenu name="cmnuEditorialChecksTree" >
+			<item name="cmnuChapterVerseNumbers" commandid="CmdChapterVerseNumbers"/>
+			<item name="cmnuValidCharacters" commandid="CmdValidCharacters"/>
+			<item name="cmnuMatchedPairs" commandid="CmdMatchedPairs"/>
+			<item name="cmnuPunctuationPatterns" commandid="CmdPunctuationPatterns"/>
+			<item name="cmnuQuotationMarks" commandid="CmdQuotationMarks"/>
+			<item name="cmnuEditorialChecksHelp" commandid="CmdEditorialChecksHelp" begingroup="true"/>
+		</contextmenu>
+	</contextmenus>
+</TMDef>

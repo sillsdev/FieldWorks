@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<!-- Data that shows up on the status bar:
+ Location in the main window - Book: 2  Section: 3  Paragraph: 4  Anchor: 0  End: 100
+ Hover/click/What's This text - currently it's all the same.
+-->
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <click wait="1000" path="tray:Views" />
+  <click path="button:Draft" />
+  <select-text id="snip" path="view:Draft" loc="b:2/s:3/p:3" at="0" run="100"/>
+  <glimpse path="statusbar:statusBarFw/none:#ANY[1]" prop="name" expect="Book: 2  Section: 3  Paragraph: 3  Anchor: 0  End: 100 AssocPrev: False  Run No.: 0" on-fail="assert">
+   Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+  <hover-over path="menu:File/Save	Ctrl+S"/>
+  <glimpse path="statusbar:statusBarFw/none:#ANY[1]" prop="name" expect="Saves changes." on-fail="assert">
+   Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+ </on-application>
+</accil>

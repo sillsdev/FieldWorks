@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<browse role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer/">
+
+  <!-- the browse pane -->
+  <entries role="pane">
+	<var id="entryList" set="9:EntriesList/9:EntriesList/$nl"/>
+	<title path="9:XCore.PaneBar/9:Entries"/>
+	<col path="$entryList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/>
+	   <filter path="/9:FilterBar/9:FwComboBox[$col;]">
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$entryList;/20:RootSite/24:Table[$row;]">
+	   <col path="$Col;[$col;]/$Text"/>
+	</record>
+	<scroll path="$entryList;[2]/">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </entries>
+
+</browse>

@@ -1,0 +1,121 @@
+<word>
+  <form>niyuyiyximuwupe</form>
+  <resultSoFar>
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+	  <morph type="root" wordType="root">
+		<shortName>yiy (testing): wow</shortName>
+		<alloform>yiy</alloform>
+		<stemName id="45382">Present tense or 2nd Person</stemName>
+		<gloss>testing</gloss>
+		<citationForm>wow</citationForm>
+		<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+	  </morph>
+	</stem>
+	<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+	  <morph type="root" wordType="root">
+		<shortName>ximu (slowly): ximu</shortName>
+		<alloform>ximu</alloform>
+		<gloss>slowly</gloss>
+		<citationForm>ximu</citationForm>
+		<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+	  </morph>
+	</stem>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-wu (???): wu</shortName>
+	  <alloform>-wu</alloform>
+	  <gloss>???</gloss>
+	  <citationForm>wu</citationForm>
+	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<morph type="sfx" wordType="180">
+	  <shortName>-pe (Future): gu</shortName>
+	  <alloform>-pe</alloform>
+	  <gloss>Future</gloss>
+	  <citationForm>gu</citationForm>
+	  <inflClasses>
+		<inflClass hvo="179" abbr="2" />
+	  </inflClasses>
+	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		<fs id="6173">
+		  <feature>
+			<name>absolute tense</name>
+			<value>future tense</value>
+		  </feature>
+		</fs>
+	  </inflMsa>
+	</morph>
+  </resultSoFar>
+  <seq>
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+	  <morph type="root" wordType="root">
+		<shortName>yiy (testing): wow</shortName>
+		<alloform>yiy</alloform>
+		<stemName id="45382">Present tense or 2nd Person</stemName>
+		<gloss>testing</gloss>
+		<citationForm>wow</citationForm>
+		<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+	  </morph>
+	</stem>
+	<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+	  <morph type="root" wordType="root">
+		<shortName>ximu (slowly): ximu</shortName>
+		<alloform>ximu</alloform>
+		<gloss>slowly</gloss>
+		<citationForm>ximu</citationForm>
+		<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+	  </morph>
+	</stem>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-wu (???): wu</shortName>
+	  <alloform>-wu</alloform>
+	  <gloss>???</gloss>
+	  <citationForm>wu</citationForm>
+	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+	</morph>
+	<morph type="sfx" wordType="180">
+	  <shortName>-pe (Future): gu</shortName>
+	  <alloform>-pe</alloform>
+	  <gloss>Future</gloss>
+	  <citationForm>gu</citationForm>
+	  <inflClasses>
+		<inflClass hvo="179" abbr="2" />
+	  </inflClasses>
+	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		<fs id="6173">
+		  <feature>
+			<name>absolute tense</name>
+			<value>future tense</value>
+		  </feature>
+		</fs>
+	  </inflMsa>
+	</morph>
+  </seq>
+</word>

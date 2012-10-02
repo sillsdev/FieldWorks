@@ -1,0 +1,1180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidInsertItemName" xml:space="preserve">
+	<value>&amp;Insert</value>
+	<comment>Text for the insert menu item</comment>
+  </data>
+  <data name="kstidReferenceItemName" xml:space="preserve">
+	<value>&amp;Reference</value>
+	<comment>Text for the reference menu item</comment>
+  </data>
+  <data name="kstidEditDeleteNoteItemName" xml:space="preserve">
+	<value>Delete &amp;Note</value>
+	<comment>Text for the delete note menu item</comment>
+  </data>
+  <data name="kstidEditDeleteNoteItemNameAlt" xml:space="preserve">
+	<value>Delete Note</value>
+	<comment>Alternate text for the delete note item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidEditDeleteNoteToolTip" xml:space="preserve">
+	<value>Delete Note</value>
+	<comment>Tool tip for the delete note menu item</comment>
+  </data>
+  <data name="kstidViewCollapseNoteItemName" xml:space="preserve">
+	<value>&amp;Collapse All Notes</value>
+	<comment>Text for collapsing all notes menu item</comment>
+  </data>
+  <data name="kstidViewCollapseNoteItemNameAlt" xml:space="preserve">
+	<value>Collpase All Notes</value>
+	<comment>Alternate text for collapsing all notes item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidViewCollapseAllNotesToolTip" xml:space="preserve">
+	<value>Collapse All Notes</value>
+	<comment>Tool tip for the collapse all notes menu item</comment>
+  </data>
+  <data name="kstidInsertResponseCmnuItemName" xml:space="preserve">
+	<value>Insert &amp;Response</value>
+	<comment>Text for the insert response context menu item</comment>
+  </data>
+  <data name="kstidDeleteNoteCmnuItemName" xml:space="preserve">
+	<value>&amp;Delete Note</value>
+	<comment>Text for the delete note context menu item</comment>
+  </data>
+  <data name="kstidInsertResponseItemName" xml:space="preserve">
+	<value>&amp;Response</value>
+	<comment>Text for the insert response menu item</comment>
+  </data>
+  <data name="kstidInsertResponseItemNameAlt" xml:space="preserve">
+	<value>Insert Response</value>
+	<comment>Alternate text for the insert response item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidInsertResponseToolTip" xml:space="preserve">
+	<value>Insert Response</value>
+	<comment>Tool tip for the insert response menu item</comment>
+  </data>
+  <data name="kstidPasteHyperlinkCmnuItemName" xml:space="preserve">
+	<value>Paste &amp;Hyperlink</value>
+	<comment>Text for the paste hyperlink context menu item</comment>
+  </data>
+  <data name="kstidPasteHyperlinkItemName" xml:space="preserve">
+	<value>Paste &amp;Hyperlink</value>
+	<comment>Text for the paste hyperlink menu item</comment>
+  </data>
+  <data name="kstidPasteHyperlinkItemNameAlt" xml:space="preserve">
+	<value>Paste Hyperlink</value>
+	<comment>Alternate text for the paste hyperlink item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidPasteHyperlinkToolTip" xml:space="preserve">
+	<value>Paste Hyperlink</value>
+	<comment>Tool tip for the paste hyperlink menu item</comment>
+  </data>
+  <data name="kstidImportItemName" xml:space="preserve">
+	<value>&amp;Import</value>
+	<comment>Text for the import menu item</comment>
+  </data>
+  <data name="kstidImportToolTip" xml:space="preserve">
+	<value>Import</value>
+	<comment>Tool tip for the import menu item</comment>
+  </data>
+  <data name="kstidImportSFMItemName" xml:space="preserve">
+	<value>&amp;Standard Format...</value>
+	<comment>Text for the import SFM menu item</comment>
+  </data>
+  <data name="kstidImportSFMItemNameAlt" xml:space="preserve">
+	<value>Standard Format Import</value>
+	<comment>Alternate text for the import SFM item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidImportSFMToolTip" xml:space="preserve">
+	<value>Import from Standard Format</value>
+	<comment>Tool tip for the import SFM menu item</comment>
+  </data>
+  <data name="kstidExportItemName" xml:space="preserve">
+	<value>&amp;Export</value>
+	<comment>Text for the export menu item</comment>
+  </data>
+  <data name="kstidExportToolTip" xml:space="preserve">
+	<value>Export</value>
+	<comment>Tool tip for the export menu item</comment>
+  </data>
+  <data name="kstidExportRTFItemName" xml:space="preserve">
+	<value>&amp;Document (RTF)...</value>
+	<comment>Text for the export RTF menu item</comment>
+  </data>
+  <data name="kstidExportRTFItemNameAlt" xml:space="preserve">
+	<value>Export to RTF Document</value>
+	<comment>Alternate text for the export to rtf item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidExportRTFToolTip" xml:space="preserve">
+	<value>Export to RTF</value>
+	<comment>Tool tip for the export RTF menu item</comment>
+  </data>
+  <data name="kstidExportUSFMParatextItemName" xml:space="preserve">
+	<value>Standard Format (USFM-&amp;Paratext)...</value>
+	<comment>Text for the export USFM menu item for Paratext</comment>
+  </data>
+  <data name="kstidExportUSFMParatextItemNameAlt" xml:space="preserve">
+	<value>Export to Standard Format (USFM-Paratext)</value>
+	<comment>Alternate text for the export to Paratext usfm item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidExportUSFMParatextToolTip" xml:space="preserve">
+	<value>Export to USFM-Paratext</value>
+	<comment>Tool tip for the export USFM-Paratext menu item</comment>
+  </data>
+  <data name="kstidExportUSFMToolboxItemName" xml:space="preserve">
+	<value>Standard Format (USFM-&amp;Toolbox)...</value>
+	<comment>Text for the export USFM menu item for Toolbox</comment>
+  </data>
+  <data name="kstidExportUSFMToolboxItemNameAlt" xml:space="preserve">
+	<value>Export to Standard Format (USFM-Toolbox)</value>
+	<comment>Alternate text for the export to Toolbox usfm item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidExportUSFMToolboxToolTip" xml:space="preserve">
+	<value>Export to USFM-Toolbox</value>
+	<comment>Tool tip for the export USFM-Toolbox menu item</comment>
+  </data>
+  <data name="kstidExportXmlItemName" xml:space="preserve">
+	<value>Open &amp;XML for Editing Scripture...</value>
+	<comment>Text for the export XML menu item</comment>
+  </data>
+  <data name="kstidExportXmlItemNameAlt" xml:space="preserve">
+	<value>Export to Open XML for Editing Scripture</value>
+	<comment>Alternate text for the export to xml item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidExportXmlToolTip" xml:space="preserve">
+	<value>Export Open XML for Editing Scripture</value>
+	<comment>Tool tip for the export XML menu item</comment>
+  </data>
+  <data name="kstidSavedVersionsItemName" xml:space="preserve">
+	<value>Saved and Imported &amp;Versions...</value>
+	<comment>Text for the Saved and Imported Versions menu item</comment>
+  </data>
+  <data name="kstidSavedVersionsItemNameAlt" xml:space="preserve">
+	<value>Saved and Imported Versions</value>
+	<comment>Alternate text for the Saved and Imported Versions item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidSavedVersionsToolTip" xml:space="preserve">
+	<value>Saved and Imported Versions</value>
+	<comment>Tool tip for the Saved and Imported Versions menu item</comment>
+  </data>
+  <data name="kstidPropertiesItemName" xml:space="preserve">
+	<value>P&amp;roperties</value>
+	<comment>Text for the properties menu item</comment>
+  </data>
+  <data name="kstidPropertiesToolTip" xml:space="preserve">
+	<value>Properties</value>
+	<comment>Tooltip for the properties menu item</comment>
+  </data>
+  <data name="kstidScrPropertiesItemName" xml:space="preserve">
+	<value>&amp;Scripture Properties...</value>
+	<comment>Text for the scripture properties menu item</comment>
+  </data>
+  <data name="kstidScrPropertiesToolTip" xml:space="preserve">
+	<value>Scripture Properties</value>
+	<comment>Tooltip for the scripture properties menu item</comment>
+  </data>
+  <data name="kstidBookPropertiesItemName" xml:space="preserve">
+	<value>&amp;Book Properties...</value>
+	<comment>Text for the book properties menu item</comment>
+  </data>
+  <data name="kstidBookPropertiesToolTip" xml:space="preserve">
+	<value>Book Properties</value>
+	<comment>Tooltip for the book properties menu item</comment>
+  </data>
+  <data name="kstidGotoRefItemName" xml:space="preserve">
+	<value>&amp;Go To...</value>
+	<comment>Text for the goto reference menu item</comment>
+  </data>
+  <data name="kstidGotoRefToolTip" xml:space="preserve">
+	<value>Navigate to Reference</value>
+	<comment>Tooltip for the goto reference menu item</comment>
+  </data>
+  <data name="kstidGotoFirstItemName" xml:space="preserve">
+	<value>&amp;First</value>
+	<comment>Text for the goto menu item</comment>
+  </data>
+  <data name="kstidGotoFirstToolTip" xml:space="preserve">
+	<value>Navigate</value>
+	<comment>Tooltip for the goto first menu item</comment>
+  </data>
+  <data name="kstidGotoPrevItemName" xml:space="preserve">
+	<value>&amp;Previous</value>
+	<comment>Text for the goto previous menu item</comment>
+  </data>
+  <data name="kstidGotoPrevToolTip" xml:space="preserve">
+	<value>Navigate</value>
+	<comment>Tooltip for the goto previous menu item</comment>
+  </data>
+  <data name="kstidGotoNextItemName" xml:space="preserve">
+	<value>&amp;Next</value>
+	<comment>Text for the goto next menu item</comment>
+  </data>
+  <data name="kstidGotoNextToolTip" xml:space="preserve">
+	<value>Navigate</value>
+	<comment>Tooltip for the goto next menu item</comment>
+  </data>
+  <data name="kstidGotoLastItemName" xml:space="preserve">
+	<value>&amp;Last</value>
+	<comment>Text for the goto last menu item</comment>
+  </data>
+  <data name="kstidGotoLastToolTip" xml:space="preserve">
+	<value>Navigate</value>
+	<comment>Tooltip for the goto last menu item</comment>
+  </data>
+  <data name="kstidGotoBookItemName" xml:space="preserve">
+	<value>&amp;Book</value>
+	<comment>Text for the goto book menu item</comment>
+  </data>
+  <data name="kstidGotoFirstBookItemNameAlt" xml:space="preserve">
+	<value>Go To First Book</value>
+	<comment>Alternate text for the goto first book item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoPrevBookItemNameAlt" xml:space="preserve">
+	<value>Go To Previous Book</value>
+	<comment>Alternate text for the goto prev. book item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoNextBookItemNameAlt" xml:space="preserve">
+	<value>Go To Next Book</value>
+	<comment>Alternate text for the goto next book item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoLastBookItemNameAlt" xml:space="preserve">
+	<value>Go To Last Book</value>
+	<comment>Alternate text for the goto last book item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoFirstBookToolTip" xml:space="preserve">
+	<value>Go to First Book</value>
+	<comment>Tooltip for the goto first book menu item</comment>
+  </data>
+  <data name="kstidGotoPrevBookToolTip" xml:space="preserve">
+	<value>Go to Previous Book</value>
+	<comment>Tooltip for the goto previous book menu item</comment>
+  </data>
+  <data name="kstidGotoNextBookToolTip" xml:space="preserve">
+	<value>Go to Next Book</value>
+	<comment>Tooltip for the goto next book menu item</comment>
+  </data>
+  <data name="kstidGotoLastBookToolTip" xml:space="preserve">
+	<value>Go to Last Book</value>
+	<comment>Tooltip for the goto last book menu item</comment>
+  </data>
+  <data name="kstidRefreshItemName" xml:space="preserve">
+	<value>&amp;Refresh</value>
+	<comment>Text for the refresh menu item</comment>
+  </data>
+  <data name="kstidRefreshToolTip" xml:space="preserve">
+	<value>Refresh the Content of the Current View</value>
+	<comment>Tooltip for the refresh menu item</comment>
+  </data>
+  <data name="kstidUpdatePageBreakItemName" xml:space="preserve">
+	<value>Update &amp;Page Breaks</value>
+	<comment>Text for the Update Page Break menu item</comment>
+  </data>
+  <data name="kstidUpdatePageBreakToolTip" xml:space="preserve">
+	<value>Update Page Breaks</value>
+	<comment>Tooltip for the Update Page Break menu item</comment>
+  </data>
+  <data name="kstidDeleteBookItemName" xml:space="preserve">
+	<value>Delete &amp;Book</value>
+	<comment>Text for the delete book menu item</comment>
+  </data>
+  <data name="kstidDeleteBookToolTip" xml:space="preserve">
+	<value>Delete Book</value>
+	<comment>Tooltip for the delete book menu item</comment>
+  </data>
+  <data name="kstidDeleteFootnoteItemName" xml:space="preserve">
+	<value>&amp;Delete Footnote</value>
+	<comment>Text for the delete footnote menu item</comment>
+  </data>
+  <data name="kstidDeleteFootnoteToolTip" xml:space="preserve">
+	<value>Delete Footnote</value>
+	<comment>Tooltip for the delete footnote menu item</comment>
+  </data>
+  <data name="kstidGotoFirstSectionItemName" xml:space="preserve">
+	<value>&amp;Section in {0}</value>
+	<comment>Text for the goto first section menu item</comment>
+  </data>
+  <data name="kstidGotoFirstSectionToolTip" xml:space="preserve">
+	<value>Go to First Section</value>
+	<comment>Tooltip for the goto first section menu item</comment>
+  </data>
+  <data name="kstidGotoPrevSectionItemName" xml:space="preserve">
+	<value>&amp;Section</value>
+	<comment>Text for the goto previous section menu item</comment>
+  </data>
+  <data name="kstidGotoPrevSectionToolTip" xml:space="preserve">
+	<value>Go to Previous Section</value>
+	<comment>Tooltip for the goto previous section menu item</comment>
+  </data>
+  <data name="kstidGotoNextSectionItemName" xml:space="preserve">
+	<value>&amp;Section</value>
+	<comment>Text for the goto next section menu item</comment>
+  </data>
+  <data name="kstidGotoNextSectionToolTip" xml:space="preserve">
+	<value>Go to Next Section</value>
+	<comment>Tooltip for the goto next section menu item</comment>
+  </data>
+  <data name="kstidGotoLastSectionItemName" xml:space="preserve">
+	<value>&amp;Section in {0}</value>
+	<comment>Text for the goto last section menu item</comment>
+  </data>
+  <data name="kstidGotoLastSectionToolTip" xml:space="preserve">
+	<value>Go to Last Section</value>
+	<comment>Tooltip for the goto last section menu item</comment>
+  </data>
+  <data name="kstidGotoFirstSectionItemNameAlt" xml:space="preserve">
+	<value>Go To First Section</value>
+	<comment>Alternate text for the goto first section item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoPrevSectionItemNameAlt" xml:space="preserve">
+	<value>Go To Previous Section</value>
+	<comment>Alternate text for the goto prev. section item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoNextSectionItemNameAlt" xml:space="preserve">
+	<value>Go To Next Section</value>
+	<comment>Alternate text for the goto next section item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoLastSectionItemNameAlt" xml:space="preserve">
+	<value>Go To Last Section</value>
+	<comment>Alternate text for the goto last section item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoFirstChapterItemName" xml:space="preserve">
+	<value>&amp;Chapter in {0}</value>
+	<comment>Text for the goto first chapter menu item</comment>
+  </data>
+  <data name="kstidGotoFirstChapterToolTip" xml:space="preserve">
+	<value>Go to First Chapter</value>
+	<comment>Tooltip for the goto first chapter menu item</comment>
+  </data>
+  <data name="kstidGotoPrevChapterItemName" xml:space="preserve">
+	<value>&amp;Chapter</value>
+	<comment>Text for the goto previous chapter menu item</comment>
+  </data>
+  <data name="kstidGotoPrevChapterToolTip" xml:space="preserve">
+	<value>Go to Previous Chapter</value>
+	<comment>Tooltip for the goto previous chapter menu item</comment>
+  </data>
+  <data name="kstidGotoNextChapterItemName" xml:space="preserve">
+	<value>&amp;Chapter</value>
+	<comment>Text for the goto next chapter menu item</comment>
+  </data>
+  <data name="kstidGotoNextChapterToolTip" xml:space="preserve">
+	<value>Go to Next Chapter</value>
+	<comment>Tooltip for the goto next chapter menu item</comment>
+  </data>
+  <data name="kstidGotoLastChapterItemName" xml:space="preserve">
+	<value>&amp;Chapter in {0}</value>
+	<comment>Text for the goto last chapter menu item</comment>
+  </data>
+  <data name="kstidGotoLastChapterToolTip" xml:space="preserve">
+	<value>Go to Last Chapter</value>
+	<comment>Tooltip for the goto last chapter menu item</comment>
+  </data>
+  <data name="kstidGotoFirstChapterItemNameAlt" xml:space="preserve">
+	<value>Go To First Chapter</value>
+	<comment>Alternate text for the goto first chapter item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoPrevChapterItemNameAlt" xml:space="preserve">
+	<value>Go To Previous Chapter</value>
+	<comment>Alternate text for the goto prev. chapter item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoNextChapterItemNameAlt" xml:space="preserve">
+	<value>Go To Next Chapter</value>
+	<comment>Alternate text for the goto next chapter item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoLastChapterItemNameAlt" xml:space="preserve">
+	<value>Go To Last Chapter</value>
+	<comment>Alternate text for the goto last chapter item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoPrevFootnoteItemName" xml:space="preserve">
+	<value>&amp;Footnote</value>
+	<comment>Text for the goto previous footnote menu item</comment>
+  </data>
+  <data name="kstidGotoPrevFootnoteToolTip" xml:space="preserve">
+	<value>Go to Previous Footnote</value>
+	<comment>Tooltip for the goto previous footnote item</comment>
+  </data>
+  <data name="kstidGotoNextFootnoteItemName" xml:space="preserve">
+	<value>&amp;Footnote</value>
+	<comment>Text for the goto next footnote menu item</comment>
+  </data>
+  <data name="kstidGotoNextFootnoteToolTip" xml:space="preserve">
+	<value>Go to Next Footnote</value>
+	<comment>Tooltip for the goto next footnote menu item</comment>
+  </data>
+  <data name="kstidGotoPrevFootnoteItemNameAlt" xml:space="preserve">
+	<value>Go To Previous Footnote</value>
+	<comment>Alternate text for the goto prev. footnote item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidGotoNextFootnoteItemNameAlt" xml:space="preserve">
+	<value>Go To Next Footnote</value>
+	<comment>Alternate text for the goto next footnote item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidFiltersItemName" xml:space="preserve">
+	<value>&amp;Filters</value>
+	<comment>The name for the filters menu item</comment>
+  </data>
+  <data name="kstidNoFilterItemName" xml:space="preserve">
+	<value>No Filter</value>
+	<comment>The name for the no filters menu item</comment>
+  </data>
+  <data name="kstidNoFilterToolTip" xml:space="preserve">
+	<value>No Filter</value>
+	<comment>The tooltip for the no filter menu item</comment>
+  </data>
+  <data name="kstidBookFilterDlgItemName" xml:space="preserve">
+	<value>Filter by Book...</value>
+	<comment>The name for the filter by book menu item</comment>
+  </data>
+  <data name="kstidBookFilterDlgToolTip" xml:space="preserve">
+	<value>Filter by Book</value>
+	<comment>The tooltip for the filter by book menu item</comment>
+  </data>
+  <data name="kstidBookFilterToggleItemName" xml:space="preserve">
+	<value>Filter by Book</value>
+	<comment>The text for the book filter toggle toolbar item.</comment>
+  </data>
+  <data name="kstidBookFilterToggleToolTip" xml:space="preserve">
+	<value>Filter by Book</value>
+	<comment>Tooltip for the toggle book filter toolbar item.</comment>
+  </data>
+  <data name="kstidBookFilterConfigItemName" xml:space="preserve">
+	<value>Configure...</value>
+	<comment>The text on the sub-item of the book filter toolbar button.</comment>
+  </data>
+  <data name="kstidHdrFtrSetupItemName" xml:space="preserve">
+	<value>&amp;Header/Footer Setup...</value>
+	<comment>The tooltip for the header/footer setup menu item</comment>
+  </data>
+  <data name="kstidHdrFtrSetupToolTip" xml:space="preserve">
+	<value>Header/Footer Setup</value>
+	<comment>Text for the header/footer setup menu item</comment>
+  </data>
+  <data name="kstidFootnotesItemName" xml:space="preserve">
+	<value>F&amp;ootnotes</value>
+	<comment>The tooltip for the footnotes menu item</comment>
+  </data>
+  <data name="kstidFootnotesToolTip" xml:space="preserve">
+	<value>Footnotes</value>
+	<comment>Text for the footnotes menu item</comment>
+  </data>
+  <data name="kstidNotesItemName" xml:space="preserve">
+	<value>&amp;Notes</value>
+	<comment>The tooltip for the notes menu item</comment>
+  </data>
+  <data name="kstidNotesToolTip" xml:space="preserve">
+	<value>Notes</value>
+	<comment>Text for the notes menu item</comment>
+  </data>
+  <data name="kstidStylePaneItemName" xml:space="preserve">
+	<value>&amp;Style Pane</value>
+	<comment>The tooltip for the style pane menu item</comment>
+  </data>
+  <data name="kstidStylePaneToolTip" xml:space="preserve">
+	<value>Style Pane</value>
+	<comment>Text for the style pane menu item</comment>
+  </data>
+  <data name="kstidInsertBooksItemName" xml:space="preserve">
+	<value>&amp;Book</value>
+	<comment>The tooltip for the insert book menu item</comment>
+  </data>
+  <data name="kstidInsertBooksToolTip" xml:space="preserve">
+	<value>Insert Book</value>
+	<comment>Text for the insert book menu item</comment>
+  </data>
+  <data name="kstidOldTestamentItemName" xml:space="preserve">
+	<value>&amp;Old Testament</value>
+	<comment>The tooltip for the insert old testament book menu item</comment>
+  </data>
+  <data name="kstidOldTestamentToolTip" xml:space="preserve">
+	<value>Insert Old Testament Book</value>
+	<comment>Text for the insert old testament book menu item</comment>
+  </data>
+  <data name="kstidNewTestamentItemName" xml:space="preserve">
+	<value>&amp;New Testament</value>
+	<comment>The tooltip for the insert new testament book menu item</comment>
+  </data>
+  <data name="kstidNewTestamentToolTip" xml:space="preserve">
+	<value>Insert New Testament Book</value>
+	<comment>Text for the insert new testament book menu item</comment>
+  </data>
+  <data name="kstidInsertIntroSectionItemName" xml:space="preserve">
+	<value>&amp;Introduction Section</value>
+	<comment>The tooltip for the insert intro section menu item</comment>
+  </data>
+  <data name="kstidInsertIntroSectionToolTip" xml:space="preserve">
+	<value>Insert Introductory Section</value>
+	<comment>Text for the insert intro section menu item</comment>
+  </data>
+  <data name="kstidInsertScrSectionItemName" xml:space="preserve">
+	<value>&amp;Scripture Section</value>
+	<comment>The tooltip for the insert scripture section menu item</comment>
+  </data>
+  <data name="kstidInsertScrSectionToolTip" xml:space="preserve">
+	<value>Insert Scripture Section</value>
+	<comment>Text for the insert scripture section menu item</comment>
+  </data>
+  <data name="kstidInsertChapNumItemName" xml:space="preserve">
+	<value>&amp;Chapter Number</value>
+	<comment>The tooltip for the insert chapter number menu item</comment>
+  </data>
+  <data name="kstidInsertChapNumToolTip" xml:space="preserve">
+	<value>Insert Chapter Number</value>
+	<comment>Text for the insert chapter number menu item</comment>
+  </data>
+  <data name="kstidInsertVerseModeItemName" xml:space="preserve">
+	<value>Verse Numbers &amp;Mode</value>
+	<comment>The tooltip for the insert verse numbers mode menu item</comment>
+  </data>
+  <data name="kstidInsertVerseModeToolTip" xml:space="preserve">
+	<value>Insert Verse Numbers Mode</value>
+	<comment>Text for the insert verse numbers mode menu item</comment>
+  </data>
+  <data name="kstidInsertVerseNumItemName" xml:space="preserve">
+	<value>&amp;Verse Number</value>
+	<comment>The tooltip for the insert verse number menu item</comment>
+  </data>
+  <data name="kstidInsertVerseNumToolTip" xml:space="preserve">
+	<value>Insert Verse Number</value>
+	<comment>Text for the insert verse number menu item</comment>
+  </data>
+  <data name="kstidInsertFootnoteItemName" xml:space="preserve">
+	<value>&amp;General Footnote</value>
+	<comment>Text for the insert footnote menu item</comment>
+  </data>
+  <data name="kstidInsertFootnoteCmnuItemName" xml:space="preserve">
+	<value>Insert &amp;General Footnote</value>
+	<comment>Text for the insert footnote context menu item</comment>
+  </data>
+  <data name="kstidInsertFootnoteToolTip" xml:space="preserve">
+	<value>Insert General Footnote</value>
+	<comment>The tooltip for the insert footnote menu item</comment>
+  </data>
+  <data name="kstidInsertCrossRefItemName" xml:space="preserve">
+	<value>Cross-&amp;reference Footnote</value>
+	<comment>Text for the insert Cross-reference menu item</comment>
+  </data>
+  <data name="kstidInsertCrossRefCmnuItemName" xml:space="preserve">
+	<value>Insert Cross-&amp;reference Footnote</value>
+	<comment>Text for the insert Cross-reference context menu item</comment>
+  </data>
+  <data name="kstidInsertCrossRefToolTip" xml:space="preserve">
+	<value>Insert Cross-reference Footnote</value>
+	<comment>The tooltip for the insert Cross-reference menu item</comment>
+  </data>
+  <data name="kstidInsertPictureItemName" xml:space="preserve">
+	<value>&amp;Picture...</value>
+	<comment>Text for the insert picture menu item</comment>
+  </data>
+  <data name="kstidInsertPictureCmnuItemName" xml:space="preserve">
+	<value>Insert &amp;Picture...</value>
+	<comment>Text for the insert picture context menu item</comment>
+  </data>
+  <data name="kstidInsertPictureToolTip" xml:space="preserve">
+	<value>Insert Picture</value>
+	<comment>The tooltip for the insert picture menu item</comment>
+  </data>
+  <data name="kstidInsertNoteItemName" xml:space="preserve">
+	<value>&amp;Note</value>
+	<comment>Text for the insert note menu item</comment>
+  </data>
+  <data name="kstidInsertNoteToolTip" xml:space="preserve">
+	<value>Insert Note</value>
+	<comment>The tooltip for the insert note menu item</comment>
+  </data>
+  <data name="kstidInsertConsultantNoteItemName" xml:space="preserve">
+	<value>&amp;Consultant Note</value>
+	<comment>Text for the insert consultant note menu item</comment>
+  </data>
+  <data name="kstidInsertConsultantNoteToolTip" xml:space="preserve">
+	<value>Insert Consultant Note</value>
+	<comment>The tooltip for the insert consultant note menu item</comment>
+  </data>
+  <data name="kstidFootnotePropertiesItemName" xml:space="preserve">
+	<value>&amp;Footnote Properties...</value>
+	<comment>Text for the footnote properties menu item</comment>
+  </data>
+  <data name="kstidFootnotePropertiesToolTip" xml:space="preserve">
+	<value>Footnote Properties</value>
+	<comment>The tooltip for the footnote properties menu item</comment>
+  </data>
+  <data name="kstidPicturePropertiesItemName" xml:space="preserve">
+	<value>&amp;Picture Properties...</value>
+	<comment>Text for the picture properties menu item</comment>
+  </data>
+  <data name="kstidPicturePropertiesToolTip" xml:space="preserve">
+	<value>Picture Properties</value>
+	<comment>The tooltip for the picture properties menu item</comment>
+  </data>
+  <data name="kstidFindInDictItemName" xml:space="preserve">
+	<value>Find in &amp;Dictionary...</value>
+	<comment>Text for the find in dictionary menu item</comment>
+  </data>
+  <data name="kstidFindInDictToolTip" xml:space="preserve">
+	<value>Find in Dictionary</value>
+	<comment>The tooltip for the find in dictionary menu item</comment>
+  </data>
+  <data name="kstidFindRelatedWordsItemName" xml:space="preserve">
+	<value>Find &amp;Related Words</value>
+	<comment>Text for the Find Related Words menu item</comment>
+  </data>
+  <data name="kstidFindRelatedWordsToolTip" xml:space="preserve">
+	<value>Find Related Words</value>
+	<comment>The tooltip for the Find Related Words menu item</comment>
+  </data>
+  <data name="kstidBackTransItemName" xml:space="preserve">
+	<value>Back &amp;Translation</value>
+	<comment>Text for the Back Translation menu item in the Tools Menu</comment>
+  </data>
+  <data name="kstidBackTransToolTip" xml:space="preserve">
+	<value>Back Translation</value>
+	<comment>The tooltip for the Back Translation menu item</comment>
+  </data>
+  <data name="kstidKeyTermsItemName" xml:space="preserve">
+	<value>&amp;Biblical Terms</value>
+	<comment>Text for the Biblical Terms menu item</comment>
+  </data>
+  <data name="kstidKeyTermsToolTip" xml:space="preserve">
+	<value>Biblical Terms</value>
+	<comment>The tooltip for the Biblical Terms menu item</comment>
+  </data>
+  <data name="kstidScrChecksItemName" xml:space="preserve">
+	<value>&amp;Editorial Checks</value>
+	<comment>Text for the Editorial Checks menu item</comment>
+  </data>
+  <data name="kstidOptionsItemName" xml:space="preserve">
+	<value>&amp;Options...</value>
+	<comment>Text for the options menu item</comment>
+  </data>
+  <data name="kstidOptionsToolTip" xml:space="preserve">
+	<value>Options</value>
+	<comment>The tooltip for the options menu item</comment>
+  </data>
+  <data name="kstidBtFinishedItemName" xml:space="preserve">
+	<value>Mark Paragraph as &amp;Finished</value>
+	<comment>The name for the back translation paragraph finished menu/toolbar item</comment>
+  </data>
+  <data name="kstidBtFinishedToolTip" xml:space="preserve">
+	<value>Mark Paragraph as Finished</value>
+	<comment>The tooltip for the back translation paragraph finished menu/toolbar item</comment>
+  </data>
+  <data name="kstidBtUnfinishedItemName" xml:space="preserve">
+	<value>Mark Paragraph as &amp;Unfinished</value>
+	<comment>The name for the back translation unfinished paragraph menu/toolbar item</comment>
+  </data>
+  <data name="kstidBtUnfinishedToolTip" xml:space="preserve">
+	<value>Mark Paragraph as Unfinished</value>
+	<comment>The tooltip for the back translation unfinished paragraph menu/toolbar item</comment>
+  </data>
+  <data name="kstidBtCheckedItemName" xml:space="preserve">
+	<value>Mark Paragraph as &amp;Consultant Checked</value>
+	<comment>The name for the back translation paragraph checked menu/toolbar item</comment>
+  </data>
+  <data name="kstidBtCheckedToolTip" xml:space="preserve">
+	<value>Mark Paragraph as Consultant Checked</value>
+	<comment>The tooltip for the back translation paragraph checked menu/toolbar item</comment>
+  </data>
+  <data name="kstidApplyFilterToKeyTermsItemName" xml:space="preserve">
+	<value>&amp;Filter Occurrences by Book</value>
+	<comment>Text for the Filter Occurrences by Book menu/toolbar item</comment>
+  </data>
+  <data name="kstidApplyFilterToKeyTermsToolTip" xml:space="preserve">
+	<value>Filter Occurrences by Book</value>
+	<comment>The tooltip for the Filter Occurrences by Book menu/toolbar item</comment>
+  </data>
+  <data name="kstidApplyUnTransWordItemName" xml:space="preserve">
+	<value>&amp;Mark as Untranslated Word</value>
+	<comment>Text for the apply untranslated word menu/toolbar item</comment>
+  </data>
+  <data name="kstidApplyUnTransWordToolTip" xml:space="preserve">
+	<value>Mark as Untranslated Word</value>
+	<comment>The tooltip for the apply untranslated word menu/toolbar item</comment>
+  </data>
+  <data name="kstidUseAsVernEqItemName" xml:space="preserve">
+	<value>&amp;Use as Vernacular Equivalent</value>
+	<comment>Text for the biblical terms use as vernacular equivalent menu item</comment>
+  </data>
+  <data name="kstidUseAsVernEqToolTip" xml:space="preserve">
+	<value>Use as Vernacular Equivalent</value>
+	<comment>Tooltip for the biblical terms use as vernacular equivalent menu item</comment>
+  </data>
+  <data name="kstidVernEqNotAssignedItemName" xml:space="preserve">
+	<value>&amp;Vernacular Equivalent Not Assigned</value>
+	<comment>Text for the biblical terms vernacular equivalent not assigned menu item</comment>
+  </data>
+  <data name="kstidVernEqNotAssignedToolTip" xml:space="preserve">
+	<value>Vernacular Equivalent Not Assigned</value>
+	<comment>Tooltip for the biblical terms vernacular equivalent not assigned menu item</comment>
+  </data>
+  <data name="kstidNotRenderedItemName" xml:space="preserve">
+	<value>&amp;Term Not Rendered Explicitly</value>
+	<comment>Text for the biblical term note rendered explicitly menu item</comment>
+  </data>
+  <data name="kstidNotRenderedToolTip" xml:space="preserve">
+	<value>Term Not Rendered Explicitly</value>
+	<comment>Tooltip for the biblical term note rendered explicitly menu item</comment>
+  </data>
+  <data name="kstidBtPrevUnfinishedItemName" xml:space="preserve">
+	<value>Go To Previous Unfinished Paragraph</value>
+	<comment>The text for the back translation previous unfinished paragraph menu/toolbar item</comment>
+  </data>
+  <data name="kstidBtPrevUnfinishedToolTip" xml:space="preserve">
+	<value>Go to Previous Unfinished Paragraph</value>
+	<comment>The tooltip for the back translation previous unfinished paragraph menu/toolbar item</comment>
+  </data>
+  <data name="kstidBtNextUnfinishedItemName" xml:space="preserve">
+	<value>Go To Next Unfinished Paragraph</value>
+	<comment>Text for the back translation Next unfinished paragraph toolbar/menu item</comment>
+  </data>
+  <data name="kstidBtNextUnfinishedToolTip" xml:space="preserve">
+	<value>Go to Next Unfinished Paragraph</value>
+	<comment>The tooltip for the back translation Next unfinished paragraph menu/toolbar item</comment>
+  </data>
+  <data name="kstidAppHelpItemName" xml:space="preserve">
+	<value>Translation Editor...</value>
+	<comment>The text for the Translation Editor help menu/toolbar item</comment>
+  </data>
+  <data name="kstidAppHelpToolTip" xml:space="preserve">
+	<value>Contextual Help</value>
+	<comment>The tooltip for the Translation Editor help menu/toolbar item</comment>
+  </data>
+  <data name="kstidHelpAboutItemName" xml:space="preserve">
+	<value>About Translation Editor...</value>
+	<comment>The text for the help about menu/toolbar item</comment>
+  </data>
+  <data name="kstidHelpAboutToolTip" xml:space="preserve">
+	<value>About Translation Editor</value>
+	<comment>The tooltip for the help about menu/toolbar item</comment>
+  </data>
+  <data name="kstidTrainingStudentManual" xml:space="preserve">
+	<value>&amp;Student Manual...</value>
+	<comment>The menu text for the training/student manual menu item</comment>
+  </data>
+  <data name="kstidTrainingExercises" xml:space="preserve">
+	<value>&amp;Exercises...</value>
+	<comment>The menu text for the training/exercises menu item</comment>
+  </data>
+  <data name="kstidTrainingInstructorGuide" xml:space="preserve">
+	<value>&amp;Instructor Guide...</value>
+	<comment>The menu text for the training/instructor guide menu item</comment>
+  </data>
+  <data name="kstidTrainingCopyPasteData" xml:space="preserve">
+	<value>&amp;Copy-and-paste Data...</value>
+	<comment>The menu text for the training/Copy and paste guide menu item</comment>
+  </data>
+  <data name="kstidHelpDemos" xml:space="preserve">
+	<value>Demos...</value>
+	<comment>The text for the Translation Editor help demos menu item</comment>
+  </data>
+  <data name="kstidResources" xml:space="preserve">
+	<value>&amp;Resources</value>
+	<comment>The menu text for the Help/Resource menu item</comment>
+  </data>
+  <data name="kstidResourcesCheckingViaParatext" xml:space="preserve">
+	<value>&amp;Checking Scripture using Paratext...</value>
+	<comment>The menu text for the Resources/Checking Scripture via Paratext menu item</comment>
+  </data>
+  <data name="kstidGotoPassageItemName" xml:space="preserve">
+	<value>Go To Reference</value>
+	<comment>Text for the navigate to Reference control on the toolbar</comment>
+  </data>
+  <data name="kstidGotoPassageToolTip" xml:space="preserve">
+	<value>Go To Reference (Ctrl+B)</value>
+	<comment>Tool tip for the navigate to Reference control on the toolbar</comment>
+  </data>
+  <data name="kstidInsertCategory" xml:space="preserve">
+	<value>Insert</value>
+	<comment>This is the insert category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidNavigationCategory" xml:space="preserve">
+	<value>Navigation</value>
+	<comment>This is the navigation category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidBackTransCategory" xml:space="preserve">
+	<value>Back Translation</value>
+	<comment>This is the back translation category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidCheckingCategory" xml:space="preserve">
+	<value>Checking</value>
+	<comment>This is the checking category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidInsertToolBarText" xml:space="preserve">
+	<value>Insert</value>
+	<comment>This is the name of the insert toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidGotoToolBarText" xml:space="preserve">
+	<value>Navigation</value>
+	<comment>This is the name of the navigation toolbar (i.e. the toolbar containing the go to passage control) as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidBackTransBarText" xml:space="preserve">
+	<value>Back Translation</value>
+	<comment>This is the name of the back translation toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidCheckingBarText" xml:space="preserve">
+	<value>Checking</value>
+	<comment>This is the name of the checking toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidKeytermsBarText" xml:space="preserve">
+	<value>Biblical Terms</value>
+	<comment>This is the name of the biblical terms toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidDiffViewBarText" xml:space="preserve">
+	<value>Review Differences</value>
+	<comment>This is the name of the diff dialog toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidPrevDiffItemName" xml:space="preserve">
+	<value>&amp;Previous Difference</value>
+	<comment>This is the text for the previous difference menu item in the diff view dialog</comment>
+  </data>
+  <data name="kstidNextDiffItemName" xml:space="preserve">
+	<value>&amp;Next Difference</value>
+	<comment>This is the text for the next difference menu item in the diff view dialog</comment>
+  </data>
+  <data name="kstidReCenterItemName" xml:space="preserve">
+	<value>Re-&amp;Center</value>
+	<comment>This is the text for the Re-Center menu item in the diff view dialog</comment>
+  </data>
+  <data name="kstidViewToolbarItemName" xml:space="preserve">
+	<value>&amp;Toolbar</value>
+	<comment>This is the toolbar menu item in the diff view dialog</comment>
+  </data>
+  <data name="kstidGenerateSecTemplateItemName" xml:space="preserve">
+	<value>&amp;Copy Chapter/Verse Numbers</value>
+	<comment>This is the text for the item to copy chapter and verse numbers in the BT view</comment>
+  </data>
+  <data name="kstidGenerateSecTemplateToolTip" xml:space="preserve">
+	<value>Copy Chapter/Verse Numbers</value>
+	<comment>This is the tooltip for the item to copy chapter and verse numbers in the BT view</comment>
+  </data>
+  <data name="kstidReceiveReferencesToolTip" xml:space="preserve">
+	<value>Receive Scripture References</value>
+	<comment>Tool tip for receiving scripture reference menu item</comment>
+  </data>
+  <data name="kstidReceiveReferencesItemName" xml:space="preserve">
+	<value>&amp;Receive Scripture References</value>
+	<comment>Text for the Receive Scripture References menu item</comment>
+  </data>
+  <data name="kstidSendReferencesToolTip" xml:space="preserve">
+	<value>Send Scripture References</value>
+	<comment>Tool tip for sending scripture reference menu item</comment>
+  </data>
+  <data name="kstidSendReferencesItemName" xml:space="preserve">
+	<value>&amp;Send Scripture References</value>
+	<comment>Text for the Send Scripture References menu item</comment>
+  </data>
+  <data name="kstidToolsToolBarText" xml:space="preserve">
+	<value>Lexicon</value>
+	<comment>This is the name of the Tools toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidChecksEditAnnotationToolTip" xml:space="preserve">
+	<value>Edit Annotation for Ignored Inconsistency</value>
+	<comment>Tooltip for the Editorial Checks</comment>
+  </data>
+  <data name="kstidChecksStatusIgnoredToolTip" xml:space="preserve">
+	<value>Ignore Inconsistency</value>
+	<comment>Tooltip for the Editorial Checks result being ignored</comment>
+  </data>
+  <data name="kstidChecksStatusInconsistencyToolTip" xml:space="preserve">
+	<value>Do Not Ignore Inconsistency</value>
+	<comment>Tooltip for the Editorial Checks result being potentially inconsistent</comment>
+  </data>
+  <data name="kstidChecksEditAnnotation" xml:space="preserve">
+	<value>&amp;Edit Annotation for Ignored Inconsistency...</value>
+	<comment>Text for Editorial Checks/Edit Comment menu item</comment>
+  </data>
+  <data name="kstidChecksStatusIgnored" xml:space="preserve">
+	<value>&amp;Ignore Inconsistency</value>
+	<comment>Text for Editorial Checks/Status:Ignored menu item</comment>
+  </data>
+  <data name="kstidChecksStatusInconsistency" xml:space="preserve">
+	<value>Do &amp;Not Ignore Inconsistency</value>
+	<comment>Text for Editorial Checks/Status:Potential Inconsistency menu item</comment>
+  </data>
+  <data name="kstidSpelling" xml:space="preserve">
+	<value>&amp;Spelling</value>
+	<comment>Menu for spelling options</comment>
+  </data>
+  <data name="kstidReviewMisspelledWords" xml:space="preserve">
+	<value>Edit Spelling Status...</value>
+	<comment>Text for the Change Spelling Status menu item</comment>
+  </data>
+  <data name="kstidReviewMisspelledWordsToolTip" xml:space="preserve">
+	<value>Launch the Language Explorer in a view that allows you to review words marked as Undecided and easily add them to your spelling dictionary</value>
+	<comment>Tooltip for the Change Spelling Status menu item</comment>
+  </data>
+  <data name="kstidCorrectMisspelledWords" xml:space="preserve">
+	<value>View Incorrect Words in Use...</value>
+	<comment>Menu item</comment>
+  </data>
+  <data name="kstidCorrectMisspelledWordsToolTip" xml:space="preserve">
+	<value>View incorrectly spelled words in use</value>
+	<comment>Tooltip (currently unused)</comment>
+  </data>
+  <data name="kstidShowUsfmResourcesItemName" xml:space="preserve">
+	<value>Resources (&amp;USFM-Paratext)</value>
+	<comment>Menu item, turns on an extra control in many TE views.</comment>
+  </data>
+  <data name="kstidShowSpellingErrors" xml:space="preserve">
+	<value>Show Errors</value>
+	<comment>Menu item in tools menu</comment>
+  </data>
+  <data name="kstidShowSpellingErrorsToolTip" xml:space="preserve">
+	<value>Show Spelling Errors.</value>
+	<comment>Text for tooltip (may not be used unless we make a toolbar item for this)</comment>
+  </data>
+  <data name="kstidChangeMultipleOccurrences" xml:space="preserve">
+	<value>Change Multiple Occurrences...</value>
+	<comment>Menu item in tools menu</comment>
+  </data>
+  <data name="kstidChangeMultipleOccurrencesToolTip" xml:space="preserve">
+	<value>Change spelling of more than one occurrence of a word</value>
+	<comment>Text for tooltip</comment>
+  </data>
+  <data name="kstidImportXmlItemName" xml:space="preserve">
+	<value>Open &amp;XML for Editing Scripture...</value>
+	<comment>Text for the import XML menu item</comment>
+  </data>
+  <data name="kstidImportXmlItemNameAlt" xml:space="preserve">
+	<value>Import Open XML for Editing Scripture</value>
+	<comment>Alternate text for the import XML menu item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidImportXmlToolTip" xml:space="preserve">
+	<value>Import Open XML for Editing Scripture</value>
+	<comment>Tooltip for the import XML menu item</comment>
+  </data>
+  <data name="kstidEditorialChecksHelp" xml:space="preserve">
+	<value>&amp;Help</value>
+	<comment>Text for context menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidEditorialChecksHelpToolTip" xml:space="preserve">
+	<value>Context-sensitive Help for editorial checks</value>
+	<comment>Tooltip for Help menu item in context menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidValidCharacters" xml:space="preserve">
+	<value>&amp;Valid Characters...</value>
+	<comment>Text for context menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidValidCharactersToolTip" xml:space="preserve">
+	<value>Valid characters</value>
+	<comment>Tooltip for menu item for menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidChecksStatusIgnoredWAnnotation" xml:space="preserve">
+	<value>Ignore Inconsistency and Edit &amp;Annotation...</value>
+	<comment>Text for Editorial Checks/Status Ignored and Edit Annotation menu item</comment>
+  </data>
+  <data name="kstidChecksStatusIgnoredWAnnotationToolTip" xml:space="preserve">
+	<value>Ignore Inconsistency and Edit Annotation</value>
+	<comment>Tooltip for the Editorial Checks result being ignored and Annotation being edited</comment>
+  </data>
+  <data name="kstidAddAsValidCharacter" xml:space="preserve">
+	<value>Add as &amp;Valid Character</value>
+	<comment>Text for Editorial Checks/Add as Valid Character menu item</comment>
+  </data>
+  <data name="kstidAddAsValidCharacterToolTip" xml:space="preserve">
+	<value>Add as Valid Character</value>
+	<comment>Tooltip for the Editorial Checks invalid character result being added as a valid character</comment>
+  </data>
+  <data name="kstidChapterVerseNumbers" xml:space="preserve">
+	<value>&amp;Chapter/Verse Number Properties...</value>
+	<comment>Text for context menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidUpdateKeyTermEquivalentsItemName" xml:space="preserve">
+	<value>Up&amp;date Biblical Term Equivalents</value>
+  </data>
+  <data name="kstidUpdateKeyTermEquivalentsToolTip" xml:space="preserve">
+	<value>Update Biblical Term Equivalents</value>
+  </data>
+  <data name="kstidUpdateKeyTermEquivalentsProgressLoading" xml:space="preserve">
+	<value>Loading biblical terms to update</value>
+  </data>
+  <data name="kstidChapterVerseNumbersToolTip" xml:space="preserve">
+	<value>Chapter and Verse Numbers</value>
+	<comment>Tooltip for menu item for menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidExportXhtmlItemName" xml:space="preserve">
+	<value>X&amp;HTML...</value>
+	<comment>Text for the export XHTML menu item</comment>
+  </data>
+  <data name="kstidExportXhtmlItemNameAlt" xml:space="preserve">
+	<value>Export to XHTML</value>
+	<comment>Alternate text for the export to xml item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidExportXhtmlToolTip" xml:space="preserve">
+	<value>Export XHTML</value>
+	<comment>Tool tip for the export XML menu item</comment>
+  </data>
+  <data name="kstidExportPsItemName" xml:space="preserve">
+	<value>&amp;Pathway (ODT, PDF, etc.)...</value>
+	<comment>Text for the pathway menu item</comment>
+  </data>
+  <data name="kstidExportPsItemNameAlt" xml:space="preserve">
+	<value>Export using Pathway (ODT, PDF, etc.)</value>
+	<comment>Alternate text for the pathway item (used in the customize dialog).</comment>
+  </data>
+  <data name="kstidExportPsToolTip" xml:space="preserve">
+	<value>Export using Pathway (ODT, PDF, etc.)</value>
+	<comment>Tool tip for the pathway menu item</comment>
+  </data>
+  <data name="kstidMatchedPairs" xml:space="preserve">
+	<value>&amp;Matching Punctuation Pairs...</value>
+	<comment>Text for context menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidMatchedPairsToolTip" xml:space="preserve">
+	<value>Matching Punctuation Pairs</value>
+	<comment>Tooltip for menu item for menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidPunctuationPatterns" xml:space="preserve">
+	<value>&amp;Punctuation Patterns...</value>
+	<comment>Text for context menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidPunctuationPatternsToolTip" xml:space="preserve">
+	<value>Punctuation Patterns</value>
+	<comment>Tooltip for menu item for menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidQuotationMarks" xml:space="preserve">
+	<value>&amp;Quotation Marks...</value>
+	<comment>Text for context menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidQuotationMarksToolTip" xml:space="preserve">
+	<value>Quotation Marks</value>
+	<comment>Tooltip for menu item for menu associated with editorial checks list.</comment>
+  </data>
+  <data name="kstidInterlinearize" xml:space="preserve">
+	<value>Use Interlinear Text Tool</value>
+	<comment>Menu item (in Tools/Back Translation)</comment>
+  </data>
+  <data name="kstidInterlinearizeToolTip" xml:space="preserve">
+	<value>Open Language Explorer to interlinearize this text to create a back translation.</value>
+	<comment>(Note: Not currently visible in UI) Tool tip for Interlineaize...menu item</comment>
+  </data>
+  <data name="kstidExportOXESAItemName" xml:space="preserve">
+	<value>&amp;Export Open XML for Exchanging Scripture Annotations...</value>
+	<comment>Menu itme in File menu of Notes (annotations) window</comment>
+  </data>
+  <data name="kstidImportOXESAItemName" xml:space="preserve">
+	<value>&amp;Import Open XML for Exchanging Scripture Annotations...</value>
+	<comment>Menu itme in File menu of Notes (annotations) window</comment>
+  </data>
+  <data name="kstidNotesHelpItemName" xml:space="preserve">
+	<value>Translation Editor Notes...</value>
+	<comment>Text for menu item that shows the help topic for the notes window.</comment>
+  </data>
+  <data name="kstidNotesHelpToolTip" xml:space="preserve">
+	<value>Translation Editor Notes</value>
+  </data>
+</root>

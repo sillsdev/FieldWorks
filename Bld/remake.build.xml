@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<!-- Include for completely rebuild FieldWorks -->
+<project name="remake" default="remakefw" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- -->
+	<target name="remakefw" description="Completely rebuilds FieldWorks">
+		<property name="remakeSfx" value="fw"/>
+		<call target="remakeFOO" cascade="false"/>
+	</target>
+	<!-- -->
+	<target name="remakeFOO"
+		description="Do not call directly. This is called by the various main remake targets.">
+		<tstamp/>
+		<property name="build-action" value="" if="${deleteOutput}"/>
+		<property name="build-action" value="cc" unless="${deleteOutput}"/>
+
+		<call target="checkTLBsUpToDate" />
+
+		<!-- delete output -->
+		<call target="blow-away-output" failonerror="false" if="${deleteOutput}" cascade="false"/>
+		<call target="ensureDistFilesDataFolder" failonerror="false" cascade="false"/>
+		<call target="icudlls" failonerror="false" if="${deleteOutput}" cascade="false"/>
+		<call target="IcuData" failonerror="false" if="${deleteOutput}" cascade="false"/>
+
+		<call target="initLinux" />
+		<call target="remake${remakeSfx}-internal" failonerror="false" cascade="false"/>
+		<if test="${fw-remake-internal-error}">
+			<if test="${property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="${fw-build-error}; remake${remakeSfx} (${config}) failed"/>
+			</if>
+			<if test="${not property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="remake${remakeSfx} (${config}) failed"/>
+			</if>
+		</if>
+		<call target="nunitreport-text" cascade="false" unless="${property::exists('fw-build-error')}" />
+		<chkrefs/>
+		<if test="${property::exists('fw-build-error') and remake-failonerror}">
+			<fail message="${fw-build-error}"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="remakefw-internal" description="Completely rebuilds FieldWorks - don't call directly">
+		<!-- copy NUnit dlls to get rid of warning -->
+		<copy file="${fwroot}/Bin/NUnit/bin/lib/nunit.core.dll" todir="${dir.outputBase}"
+			failonerror="false" />
+		<copy file="${fwroot}/Bin/NUnit/bin/nunit.framework.dll" todir="${dir.outputBase}"
+			failonerror="false" />
+		<!-- set ${fw-remake-internal-error} to true and at the end to false. If batch file fails,
+			${fw-remake-internal-error} will remain true, so we know if anything happened -->
+		<property name="fw-remake-internal-error" value="true"/>
+		<call target="remakefw-internal-core" cascade="false"/>
+		<property name="fw-remake-internal-error" value="false"/>
+	</target>
+	<!-- -->
+	<target name="remakefw-errorhandling" description="Call remakefw but handles errors">
+		<call target="remakefw-internal" failonerror="false" cascade="false"/>
+		<call target="nunitreport" failonerror="false" cascade="false"/>
+		<call target="nunitreport-text" failonerror="false" cascade="false" unless="${property::exists('fw-remake-internal-error')}"/>
+		<if test="${fw-remake-internal-error}">
+			<if test="${property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="${fw-build-error}; remakefw (${config}) failed"/>
+			</if>
+			<if test="${not property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="remakefw (${config}) failed"/>
+			</if>
+		</if>
+	</target>
+	<!-- -->
+	<target name="remakefw-failOnError" description="Exit build with fail if there was an error">
+		<if test="${property::exists('fw-build-error')}">
+			<fail message="Build of one or more components failed"/>
+		</if>
+		<if test="${property::exists('fw-test-error')}">
+			<fail message="One or more unit tests failed"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="remakefw-internal-core" description="Completely rebuilds FieldWorks - don't call directly">
+		<call target="mkall-internal-core"/>
+	</target>
+	<!-- -->
+	<target name="linux-smoketest" description="Runs some basic tests on TE and Flex.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LinuxSmokeTest"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="remakefw-hudson" depends="remakefw-jenkins"/>
+	<target name="remakefw-jenkins" description="Completely rebuild FieldWorks for use on Jenkins continuous build machine">
+		<call target="checkTLBsUpToDate" />
+		<property name="remake-failonerror" value="false"/>
+		<property name="remakeSfx" value="fw"/>
+		<call target="remakeFOO" cascade="false"/>
+		<call target="nunitreport" failonerror="false" cascade="false"/>
+		<if test="${property::exists('fw-build-error')}">
+			<fail message="${fw-build-error}"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="remakefw-localize" description="Completely rebuilds FieldWorks with localizations for continuous build machine">
+		<property name="remakeSfx" value="fw"/>
+		<call target="remakeFOO" cascade="false"/>
+		<chkrefs/>
+		<call target="remakefw-failOnError" cascade="true"/>
+		<call target="ci-installer" cascade="false"/>
+		<call target="nunitreport-text" cascade="true" unless="${property::exists('fw-build-error')}"/>
+		<!-- want to report the result at the end again -->
+	</target>
+	<target name="blow-away-output" description="Delete output directories and other stuff"
+		depends="clear-dirs,clean-bsc,IcuData-clean">
+	</target>
+	<!-- -->
+	<target name="clear-dirs" description="Clear directories"
+		depends="clear-src,clear-distfiles,clear-extensionfiles,clear-tempfiles,clean-misc">
+		<delete dir="${dir.fwobj}" failonerror="false"/>
+
+		<!-- Make sure all the files in the output folder can be deleted -->
+		<attrib readonly="false" failonerror="false">
+			<fileset>
+				<include name="${dir.outputBase}/*.*" />
+			</fileset>
+		</attrib>
+		<delete dir="${dir.fwoutput}" failonerror="false"/>
+		<foreach item="String" in="Bounds Debug Release" delim=" " property="_dir">
+			<delete failonerror="false" verbose="true">
+				<fileset basedir="${fwroot}/Lib/${_dir}/">
+					<include name="Widgets.lib"/>
+					<include name="Ling.lib"/>
+					<include name="AfLib.lib"/>
+					<include name="DebugProcs.lib"/>
+					<include name="Generic.lib"/>
+				</fileset>
+			</delete>
+		</foreach>
+	</target>
+	<!-- -->
+	<target name="clear-tempfiles" description="Clear the temp. files generated by NUnit">
+		<delete failonerror="false" verbose="false">
+			<fileset basedir="${path::get-temp-path()}">
+				<include name="nunit20/**"/>
+				<include name="ECO*.tmp"/>
+			</fileset>
+		</delete>
+		<delete failonerror="false" file="${fwroot}/Test/tsqlunit/sqltestsok.txt"/>
+	</target>
+	<!-- -->
+	<target name="clear-src" description="Clear generated files in subdirectories of src">
+		<delete failonerror="false" verbose="true">
+			<fileset basedir="${fwroot}/Src/">
+				<include name="**/obj"/>
+				<include name="**/bin"/>
+				<include name="**/GeneratedAssemblyInfo.cs"/>
+				<include name="**/Collection.cpp"/>
+				<include name="**/asserts.log"/>
+				<include name="Common/*.*"/>
+				<include name="Common/COMInterfaces/FwKernel.cs"/>
+				<include name="Common/COMInterfaces/Views.cs"/>
+				<include name="Common/Framework/DbVersion.cs"/>
+			</fileset>
+		</delete>
+		<property name="tmpClean" value="${clean}"/>
+		<property name="clean" value="true"/>
+		<call target="GenerateFilesFromModel-clean"/>
+		<property name="clean" value="${tmpClean}"/>
+	</target>
+	<!-- -->
+	<target name="clear-distfiles" description="Clear generated files in subdirectories of DistFiles">
+		<delete failonerror="false" verbose="true">
+			<fileset basedir="${dir.fwdistfiles}">
+				<include name="XDE/allXde.xml"/>
+				<include name="Templates/Blank*.*"/>
+				<include name="Templates/*.log"/>
+				<include name="Templates/LocalizedLists-*.xml" unless="${property::exists('buildingInstallers')}"/>
+				<include name="Language Explorer/Configuration/strings-*.xml" unless="${property::exists('buildingInstallers')}"/>
+				<exclude name="Language Explorer/Configuration/strings-en.xml" unless="${property::exists('buildingInstallers')}"/>
+				<include name="**/asserts.log"/>
+			</fileset>
+		</delete>
+		<delete dir="${dir.fwdistfiles}/Icu28" failonerror="false"/>
+		<delete dir="${dir.fwdistfiles}/Editorial Checks" failonerror="false"/>
+	</target>
+	<!-- -->
+	<target name="clear-extensionfiles" description="Clear extension files in subdirectories of DistFiles">
+		<delete file="${dir.fwdistfiles}/Language Explorer/Configuration/Available Plugins/Concorder/RBRExtensions.dll" verbose="true" failonerror="false"/>
+	</target>
+	<!-- -->
+	<target name="clean-bsc" description="Blow away the BSC directory if this is a debug cleancom build and BUILD_BSC=Y">
+		<if test="${property::exists('sys.env.BUILD_BSC') and (sys.env.BUILD_BSC == 'Y' or sys.env.BUILD_BSC == 'y')}">
+			<property name="bsc-dir" value="${dir.fwobj}/SrcBrwsr"/>
+			<if test="${property::exists('sys.env.BSC_INT_DIR')}">
+				<property name="bsc-dir" value="${sys.env.BSC_INT_DIR}"/>
+			</if>
+			<delete dir="${bsc-dir}" failonerror="false"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="clean-misc" description="Blow away files that might still hang around from previous test runs">
+		<delete failonerror="false" verbose="true">
+			<fileset>
+				<include name="${dir.fwdistfiles}/Templates/CopyOfBlankLangProj.mdf"/>
+				<include name="${dir.fwdistfiles}/Templates/DummyDb_log.LDF"/>
+			</fileset>
+		</delete>
+	</target>
+	<!-- -->
+	<target name="ensureDistFilesDataFolder" description="Make sure the Distfile/Data folder exists.">
+		<mkdir dir="${dir.fwdistfiles.data}"/>
+	</target>
+	<!-- -->
+	<target name="makeallregfree" description="Make all executables regfree">
+		<foreach item="File" property="executable">
+			<in>
+				<items basedir="${dir.outputBase}">
+					<include name="*.exe"/>
+				</items>
+			</in>
+			<do>
+				<call target="regfree" cascade="true"/>
+			</do>
+		</foreach>
+	</target>
+	<!-- -->
+	<target name="ParatextManifests" description="Create manifest fragments for Paratext COM objects">
+		<foreach item="File" property="dllFile">
+			<in>
+				<items basedir="${dir.fwdistfiles}">
+					<include name="LanguageEngine.dll"/>
+					<include name="ScriptureObjects.dll"/>
+					<include name="ScriptureTextFile.dll"/>
+				</items>
+			</in>
+			<do>
+				<call target="createManifestFragment" cascade="true"/>
+			</do>
+		</foreach>
+	</target>
+	<target name="createManifestFragment">
+		<property name="manifestFile" value="${dllFile}.fragment.manifest"/>
+		<property name="manifestExists" value="${file::exists(manifestFile)}"/>
+		<p4edit view="${manifestFile}" failonerror="false" if="${manifestExists}"/>
+		<regfree executable="${dllFile}.fragment">
+			<dlls>
+				<include name="${dllFile}"/>
+			</dlls>
+		</regfree>
+		<p4add file="${manifestFile}" failonerror="false" unless="${manifestExists}"/>
+	</target>
+
+</project>

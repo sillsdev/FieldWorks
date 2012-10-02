@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<sidebar name="Sidebar" path="9:CSC.SplitContainer.One/9:SideBar/35:SideBar/" root="yes">
+  <list path="$NL2;34:" content="menubar/view/*"/>
+  <buttons path="9:navBar/">
+	<lexicon name="Lexicon"/>
+	<texts name="Texts"/>
+	<words name="Words"/>
+	<grammar name="Grammar"/>
+	<lists name="Lists"/>
+  </buttons>
+</sidebar>

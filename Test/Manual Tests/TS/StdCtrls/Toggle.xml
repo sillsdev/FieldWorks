@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="toggle" num="0.5" abbr="tog" file="StdCtrls\Toggle.xml">
+ <title tag="toggle">Toggle Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A toggle is a simple two state button control most often with immediate side-effects called "actions". The actions may be dependent on other control settings or its own state. A toggle "locks" in a depressed state until depressed another time. Those that do not "lock" are called "push buttons" or just "buttons". See <link uri="button.xml" type="module">buttons</link>.</p>
+  </introduction>
+  <context>
+<p>Each toggle may require the setting of other controls to thoroughly test its action. Testing does not require exhaustive combinations of such settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If a step fails, it may have triggered a delayed side-effect of one of the other control settings. The bug should be reported for that control, not this toggle. The first words of a bug report title for this toggle should be a noun phrase containing the name of the toggle.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, each toggle is described in a specification.</p>
+  </warning>
+ <case id="togInsp" num="1" order="any">
+  <title tag="togInsp">Toggle Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the toggle is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A toggle has a name or picture on it and is usually a 3-D rectangle. It may be "grayed out" (disabled). An underscored letter indicates an &lt;Alt&gt;&lt;alpha&gt; shortcut.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the toggle.
+   <r>The toggle and its name must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Toggle has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the toggle and its name relative to other visible controls.
+   <r>The toggle and its name should be close to the position indicated in the specification.</r>
+   <p name="bug">Toggle has incorrect location</p>
+  </step>
+
+ </case>
+ <case id="togOp" num="2" order="any">
+  <title tag="togOp">Toggle Operation</title>
+  <context>
+<p>When the toggle is enabled</p>
+</context>
+
+   <p name="Principle">The toggle is depressed by left clicking with a pointer device (usually a mouse) and often by a "short-cut" key sequence. Actions may include changes in a preview window on the control frame, launching another display component or changes in another view.</p>
+
+  <step name="2.1" link="Bug">When raised, left click the toggle.
+   <r>The toggle depresses and side-effects match the description in the specification.</r>
+   <p name="bug">Toggle does not depress</p>
+   <p name="bug">Toggle "down" side-effect incorrect</p>
+  </step>
+  <step name="2.2" link="Bug">When raised, press the short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>The toggle depresses and side-effects match the description in the specification.</r>
+   <p name="bug">Shorted toggle does not depress</p>
+   <p name="bug">Shorted toggle "down" side-effect incorrect</p>
+  </step>
+  <step name="2.3" link="Bug">When depressed, left click the toggle.
+   <r>The toggle raises and side-effects match the description in the specification.</r>
+   <p name="bug">Toggle does not raise</p>
+   <p name="bug">Toggle "up" side-effect incorrect</p>
+  </step>
+  <step name="2.4" link="Bug">When depressed, press the short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>The toggle raises and side-effects match the description in the specification.</r>
+   <p name="bug">Shorted toggle does not raise</p>
+   <p name="bug">Shorted toggle "up" side-effect incorrect</p>
+  </step>
+  <step name="2.5" link="Bug">When operating the toggle, do side-effects obscure or disable other functionality in the control frame or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Toggle operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Dec-12-00" author="MikeL">Test created.</update>
+
+</test>

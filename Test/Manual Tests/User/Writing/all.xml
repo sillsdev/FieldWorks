@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE modularbook SYSTEM "..\..\XSL\ModularBook.dtd" [
+	<!--   Modular Book files. -->
+	<!ENTITY mt SYSTEM "..\Writing\maintask.xml">
+	<!ENTITY wrtbs SYSTEM "..\Writing\BreakSpecs.xml">
+	<!ENTITY wrtid SYSTEM "..\Writing\IdTestCases.xml">
+	<!ENTITY wrtsp SYSTEM "..\Writing\SpecTestCases.xml">
+	<!ENTITY wrtst SYSTEM "..\Writing\Steps.xml">
+	<!ENTITY wrtact SYSTEM "..\Writing\Action.xml">
+	<!ENTITY wrtres SYSTEM "..\Writing\Result.xml">
+	<!ENTITY wrtbp SYSTEM "..\Writing\BugPattern.xml">
+	<!ENTITY wrtxml SYSTEM "..\Writing\XML.xml">
+	<!ENTITY wrtxlib SYSTEM "..\Writing\xlibrary.xml">
+	<!ENTITY wrtxts SYSTEM "..\Writing\xtestscript.xml">
+	<!ENTITY wrtxtc SYSTEM "..\Writing\xtestcase.xml">
+	<!ENTITY wrtxtcs SYSTEM "..\Writing\xteststep.xml">
+	<!ENTITY wrtxval SYSTEM "..\Writing\validlib.xml">
+	<!ENTITY wrtxtrb SYSTEM "..\Writing\trouble.xml">
+	<!ENTITY wrtxtls SYSTEM "..\Writing\tools.xml">
+]>
+
+<modularbook file="Writing\all.xml">
+
+<titlePage file="Writing\all.xml#tp">
+ <title tag="tp">All modular book XML in this folder</title>
+ <index>
+  <li>all title page</li>
+ </index>
+ <authors>
+  <div>Michael Lastufka (creator, drudge)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="maintask.xml" type="module">No link</link>
+ <shortcuts>
+  <link uri="maintask.xml" type="module">How to write a test script</link>
+ </shortcuts>
+</titlePage>
+
+<!-- modules defined in files -->
+
+&mt;
+&wrtbs;
+&wrtid;
+&wrtsp;
+&wrtst;
+&wrtact;
+&wrtres;
+&wrtbp;
+&wrtxml;
+&wrtxlib;
+&wrtxts;
+&wrtxtc;
+&wrtxtcs;
+&wrtxval;
+&wrtxtrb;
+&wrtxtls;
+
+</modularbook>

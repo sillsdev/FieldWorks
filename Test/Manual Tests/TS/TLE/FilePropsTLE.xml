@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fileproptle" num="2.1.7.3" abbr="fptle" file="TLE\FilePropsTLE.xml">
+<title tag="fileproptle">File - Topics List Properties Test</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Topics List Properties Dialog shows the properties for the current Topics List project. Under the <i>General</i> tab are  included the name, dates created and modified, etc. The Name can be modified through this dialog; the other items are informational. Under the <i>Detail</i> tab, the user can change properties like the current list abbreviation, sort, display and help options.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#FileProperties" type="doc">File - Properties</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html" type="doc">Properties Dialog </link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "File - Topics List Properties"</p>
+</context>
+
+<case id="fptleAct" num="1" order="any">
+<title tag="fptleAct">Activation</title>
+<context>
+<p>When the Topics List Editor application is running</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke File - Topics List Properties (from the File menu). <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#FileProperties" type="doc">Definition of File - Properties.</link>
+<r>The Topics List Properties dialog box is displayed.</r>
+<p name="bug">File - Topics List Properties not working</p>
+</step>
+
+<step name="1.2" link="Bug">Alternately, click Properties from the Tools - Topics List Dialog in Data Notebook.
+<r>The Topics List Properties dialog box is displayed.</r>
+<p name="bug">File - Topics List Properties not working</p>
+</step>
+
+</case>
+
+<case id="fptleDiac" num="2" order="any">
+<title tag="fptleDiac">Exercise dialog controls</title>
+<context>
+<p>When the File - Topics List Properties dialog is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html" type="doc">File - Properties specification</link> to visually inspect the dialog layout (both the <i>General</i> tab and the <i>Detail</i> tab).
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">File - Topics List Properties layout incorrect</p>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "File - Topics List Properties" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="fptleGen" num="3" order="any">
+<title tag="fptleGen">Inspect General Tab</title>
+<context>
+<p>When the File - Topics List Properties dialog is displayed with the General tab selected</p>
+</context>
+
+<step name="3.1"> Use Cases 1-3 of the <link uri="../FW/FileProps.xml" type="module">General Properties Dialog Test</link> to inspect the General Tab of the Topics List Properties Dialog.
+	<r>Report any failures as suggested using "File - Topics List Properties" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="fptleDet" num="4" order="any">
+<title tag="fptleDet">Inspect Detail Tab</title>
+<context>
+<p>When the File - Topics List Properties dialog is displayed with the Detail tab selected</p>
+</context>
+
+<step name="4.1" link="Bug">Use the <link uri="../StdCtrls/TextBox.xml">Text Box control</link> and the shortcut &lt;Alt&gt;&lt;A&gt; to test the Abbreviation text box.
+   <r>
+<ul>
+<li>When the list is first created, the abbreviation is a copy of the list name.</li>
+<li>Report any failures as suggested using "File-Topics List Properties Abbreviation" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">File-Topics Lists Properties Abbreviation text list name not duplicated initially</p>
+</step>
+<step name="4.2" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box control</link> and the shortcut &lt;Alt&gt;&lt;S&gt; to test the Sort items in this list (by name) check box.
+   <r>
+<ul>
+<li>When checked, sorts the items according to the contents of the Name field as per the language currently primary for that field.</li>
+<li>Otherwise, the order of the items is controlled by the user in the List Editor.</li>
+<li>Report any failures as suggested using "File-Topics List Properties Sort items" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">File-Topics Lists Properties Sort does not work right when checked</p>
+<p name="bug">File-Topics Lists Properties Sort is not in user order when not checked</p>
+</step>
+<step name="4.3" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box control</link> and the shortcut &lt;Alt&gt;&lt;d&gt; to test the No duplicate items allowed check box.
+   <r>
+<ul>
+<li>When checked, makes sure no item's abbreviation and name match any other item's</li>
+<li>Otherwise, duplicates can occur with different parent items</li>
+<li>Report any failures as suggested using "File-Topics Lists Properties No duplicate" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">File-Topics Lists Properties No duplicate allows duplicates</p>
+<p name="bug">File-Topics Lists Properties No duplicate prevents duplicates when unchecked</p>
+</step>
+<step name="4.4" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box control</link> and the shortcut &lt;Alt&gt;&lt;y&gt; to test the Support hierarchy check box.
+   <r>
+<ul>
+<li>When checked, Allows creation of levels of hierarchy for the List</li>
+<li>When checked, the Advanced... button is enabled (not available in V1)</li>
+<li>Report any failures as suggested using "File-Topics Lists Properties Hierarchy" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">File-Topics Lists Properties Hierarchy is prevented</p>
+<p name="bug">File-Topics Lists Properties Hierarchy dose not enable Advanced button</p>
+<p name="bug">File-Topics Lists Properties Hierarchy allows levels when unchecked</p>
+<p name="todo">Modify after V1</p>
+</step>
+<step name="4.5" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button control</link> and the shortcut &lt;Alt&gt;&lt;v&gt; to test the Advanced button.
+   <r>
+<ul>
+<li>Launches the Advanced List Properties dialog. (not available in V1)</li>
+<li>Report any failures as suggested using "File-Topics Lists Properties Advanced" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">File-Topics Lists Properties Advanced dialog not launched</p>
+<p name="todo">Modify after V1</p>
+</step>
+<step name="4.6" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo Box control</link> and the shortcut &lt;Alt&gt;&lt;m&gt; to test the Display items in this list as.
+   <r>
+<ul>
+<li>The options are: Abbreviation only, Name only, Abbreviation - Name</li>
+<li>Controls how lists are displayed in the chooser</li>
+<li>Report any failures as suggested using "File-Topics Lists Properties Display items" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">File-Topics Lists Properties Display has no affect on display in chooser</p>
+<p name="bug">File-Topics Lists Properties Display items has wrong choices</p>
+</step>
+<step name="4.7">Use the <link uri="../StdCtrls/TextBox.xml">Text Box control</link> and the shortcut &lt;Alt&gt;&lt;n&gt; to test the Help file name for this list.
+   <r>Report any failures as suggested using "File-Topics Lists Properties Help file" as the name of the control.</r>
+</step>
+<step name="4.8" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button control</link> and the shortcut &lt;Alt&gt;&lt;B&gt; to test the Browse button.
+   <r>
+<ul>
+<li>Opens a Windows Explorer so the user can select the file he wants</li>
+<li>Browse defaults to the Help folder under Fieldworks</li>
+<li>Report any failures as suggested using "File-Topics Lists Properties Browse" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">File-Topics Lists Properties Browse opens no dialog</p>
+<p name="bug">File-Topics Lists Properties Browse does not default to fieldworks help folder</p>
+</step>
+
+</case>
+
+<update date="May-23-02" author="RussD">Test script created.</update>
+<update date="Jun-05-02" author="LarsH">Changed TL to TLE.</update>
+<update date="Jun-13-02" author="RussD">Moved some tests from TlsList.xml to here.</update>
+</test>

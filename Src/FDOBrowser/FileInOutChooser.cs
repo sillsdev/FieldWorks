@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace FDOBrowser
+{
+	/// <summary>
+	/// see other half of class
+	/// </summary>
+	public partial class FileInOutChooser : Form
+	{
+
+		/// <summary>
+		/// Class to choose input, output files for Db4o to XML conversion
+		/// </summary>
+		public FileInOutChooser()
+		{
+			InitializeComponent();
+
+		}
+		private bool mDone;
+		private bool Done
+		{
+			get { return mDone; }
+			set { mDone = value; }
+		}
+
+		private void chooseDb4o_Click(object sender, EventArgs e)
+		{
+
+
+			Db4oFile.ShowDialog();
+			db4o.Text = Db4oFile.FileName;
+			if (Db4oFile.FileName != "")
+			{
+				string path = System.IO.Path.ChangeExtension(Db4oFile.FileName, ".fwdata");
+
+				XmlFile.FileName = path;
+				xml.Text = path;
+
+			}
+		}
+
+		private void chooseXML_Click(object sender, EventArgs e)
+		{
+			string path;
+			string bse;
+
+
+			XmlFile.ShowDialog();
+			XmlFile.FileName = xml.Text;
+
+		}
+
+
+
+		private void done_Click(object sender, EventArgs e)
+		{
+			if (Db4oFile.FileName != "" && XmlFile.FileName != "")
+			{
+				statusLabel.Text = "Processing...";
+				this.ResumeLayout();
+
+				// Here's the real work
+				var converter = new Db4oToXmlConverter();
+				converter.db4o2xml(Db4oFile.FileName, xml.Text,compressed.Checked);
+
+				Done = true;
+				statusLabel.Text = "Done";
+				this.Hide();
+			}
+			else
+				MessageBox.Show("Must choose Db4o source and Xml target");
+		}
+
+		private void cancel_Click(object sender, EventArgs e)
+		{
+			this.Hide();
+
+		}
+
+
+
+
+	}
+}

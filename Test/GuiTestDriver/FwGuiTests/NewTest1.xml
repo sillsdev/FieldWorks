@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+ <sound frequency="400" duration="500"/>
+
+  <on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+   <include from="IncStartUp.xml"/>
+   <!--click path="2:~MainMenu~/12:mnuFile/menu:mnuExport/menu:mnuExportUSFMParatext"/-->
+   <!-- %FEP are the keystokes ALT f, ALT e, ALT p /-->
+	<insert wait="0" >%FEP</insert>
+
+   <on-dialog title="Export Standard Format (USFM-Paratext)">
+	  <click path="9:Output To/20:Output To/9:Browse.../43:Browse..."/>
+	  <on-dialog title="Browse For Folder">
+
+	  <click path="$BffPANE;36:My Computer"/>
+	  <click path="$BffPANE;36:Local Disk (C:)"/>
+	  <click path="$BffPANE;43:Page down"/>
+	  <click path="$BffPANE;43:Page down"/>
+	  <click path="$BffPANE;36:Temp"/>
+	  <click path="18:Browse For Folder/$ok"/>
+	  </on-dialog>
+
+	  <click path="$ok"/>
+
+
+  </on-dialog>
+
+   <on-dialog wait="3000" title="Translation Editor" on-fail="skip">
+	  <click path="9:Yes to All/43:Yes to All"/>
+   </on-dialog>
+
+  <file-comp lookAt="files" of="C:\Temp\Sen\42MRKSen.sfm" to="C:\Temp\SenExpect\42MRKSen.sfm"/>
+
+  </on-application>
+
+</accil>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Andy Black's demo section G -->
+
+ <on-application args="-db Kalaba" title="Kalaba - FieldWorks Harvest" run="ok" on-fail="assert">
+
+<!-- G.	Parser -->
+
+<!-- 1.	Now let's go see if we can get the WordWorks parser to parse the Orizaba Nahuatl paradigm. -->
+<!-- 2.	First, we need to add the root kal ￯﾿ﾢ￯ﾾﾀ￯ﾾﾘhouse'. -->
+<!-- a.	Go to Lexicon / Lexicon -->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Lexicon/menu:Lexicon Edit"/>
+
+<!-- b.	Click on create new major entry button -->
+  <click wait="2000" path="window:Insert/toolbar:Insert/button:Entry..."/>
+
+<!-- c.	Type "kal" in the Form field -->
+  <on-dialog wait="30000" title="New Entry">
+   <insert>kal</insert>
+
+<!-- d.	Type "house" as the gloss -->
+   <insert>{TAB 2}house</insert>
+
+<!-- e.	Click on the Category chooser button -->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Category:[2]/button:NAMELESS"/>
+
+<!-- f.	Open up "noun" and choose "possessive noun" -->
+   <!--on-dialog wait="5000" title="PopupTreeTree"-->
+	<!--click path="outline:NAMELESS/olitem:noun"/-->
+	<insert>{HOME}</insert>
+	<insert>{DOWN 7}</insert>
+	<insert>{RIGHT}</insert>
+	<insert>{DOWN 4}~</insert>
+   <!--/on-dialog-->
+
+<!-- g.	Click on the Create button -->
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- 3.	Now go to Words / Analyses. -->
+  <click path="window:MenuBar/menu:View /menu:Words/menu:Analyses"/>
+
+<!-- 4.	Explain what is showing. -->
+<!-- 5.	Create a Word Set. -->
+<!-- a.	Click on Insert menu item -->
+<!-- b.	Select "Import Word Set" -->
+  <click path="window:MenuBar/menu:Insert/menu:Import Word Set..."/>
+
+<!-- c.	In the Import Word Set dialog: -->
+  <on-dialog wait="30000" title="Import Word Set">
+
+<!-- 1.	In "Name of new word set", type "House paradigm" -->
+   <insert>House paradigm</insert>
+
+<!-- 2.	Click on "Choose File(s)" -->
+   <click path="button:Choose File(s)"/>
+
+<!-- 3.	Navigate to where the OrizabaNahautlPnP.txt file is and open it. -->
+   <on-dialog wait="30000" title="Open"> <!-- File chooser system dialog -->
+	<!--insert>C:\GuiTestDriver\Scripts\LT\OrizabaNahuatlPnP.txt</insert-->
+	<insert>C:\fw\Test\GuiTestDriver\ContinuousLexTextGuiTests\OrizabaNahuatlPnP.txt</insert>
+	<click path="window:Open/button:Open"/>
+   </on-dialog>
+
+<!-- 4.	Click on the Import button. -->
+   <click path="button:Import"/>
+  </on-dialog>
+
+<!-- 6.	View a Word Set -->
+<!-- a.	Click on View menu item / Filters and select House paradigm. -->
+  <do-once until="120000">
+   <click path="window:MenuBar/menu:View /menu:Filters/menu:House paradigm"/>
+  </do-once>
+<!-- 7.	Parse words while viewing a word set -->
+<!-- a.	Click on Parser menu item / Start Parser. -->
+  <click path="window:MenuBar/menu:Parser/menu:Start Parser"/>
+
+<!-- b.	Explain what is happening. -->
+<!-- c.	Go to Parser / Parse Current Word. -->
+  <var id="analysis" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:WordsAndAnalysesMultiPane/window:wordList/window:wordList/group:Root/table:Table[3]/row:Row/cell:Cell/para:0/line:0"/>
+  <do-once until="180000">
+	<glimpse path="$analysis"/>
+  </do-once>
+  <click wait="2000" path="$analysis"/>
+  <click wait="2000" path="window:MenuBar/menu:Parser/menu:Parse Current Word"/>
+
+<!-- d.	Note the analysis that appears and explain the columns and notions about user opinion vs. parser opinion (and "predicted analyses"). -->
+<!-- e.	In the User Opinion column, click on the blue question mark (no user opinion).  Note that it changes to a green check mark (user says this is a valid analysis). -->
+  <var id="symbol" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:WordsAndAnalysesMultiPane/window:wordAnalysisList/window:wordAnalysisList/none:wordAnalysisList/window:NAMELESS[1]/group:Root/table:Table[1]/row:Row[1]/cell:Cell[1]/pic:Picture"/>
+ <do-once until="600000"> <!-- could be a long wait -->
+  <click path="$symbol"/> <!-- takes a long time to show up-->
+ </do-once>
+<!-- f.	Click on it again and it changes to a red X (user says this is not a valid analysis). -->
+  <click wait="3000" path="$symbol"/>
+
+<!-- g.	Click again and it goes back to the blue question mark. -->
+  <click wait="3000" path="$symbol"/>
+
+<!-- 8.	Trace a parse -->
+<!-- a.	Click on "mokalvan" in the Form column. -->
+  <click wait="3000" path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:WordsAndAnalysesMultiPane/window:wordList/window:wordList/group:Root/table:Table[3]/row:Row/cell:Cell/para:0/line:0"/>
+
+<!-- b.	Go to Parser menu item / Trace Word￯﾿ﾢ￯ﾾﾀ￯ﾾﾦ  The Trace Word dialog comes up. -->
+  <click path="window:MenuBar/menu:Parser/menu:Try a Word..."/>
+
+<!-- c.	Explain the dialog, -->
+<!-- d.	Click on the Trace button. -->
+  <on-dialog wait="30000" title="Try a Word">
+   <click wait="3000" path="window:Try it/button:Try it" on-fail="skip"/>
+   <click wait="10000" path="window:Try it/button:Try it"/>
+
+<!-- e.	Note the contents of the trace result. -->
+<!-- f.	Follow the successful path by opening the green tree node.  Discuss what it shows. -->
+   <!-- can't get to the tree control -->
+
+<!-- g.	Follow the unsuccessful mo- (1PlSubj) path and note how it says what went wrong for that path. -->
+   <!-- can't get to the tree control -->
+<!--click wait="1000" path="9:HtmlControl/9:SHDocVw.WebBrowser_V1/10:file://C:\Documents and Settings\lastufka.DALLAS\Local Settings\Temp\tmp650.htm/43:Show Details"/-->
+<!--click wait="1000" path="9:HtmlControl/9:SHDocVw.WebBrowser_V1/10:file://C:\Documents and Settings\lastufka\Local Settings\Temp\tmp6D6.htm/43:Show Details"/-->
+
+   <click repeat="2" path="titlebar:NAMELESS/button:Close"/>
+  </on-dialog>
+
+<!-- 9.	Go to Parser / Stop Parser. -->
+  <click path="window:MenuBar/menu:Parser/menu:Stop Parser"/>
+
+ </on-application>
+</accil>

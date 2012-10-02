@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>bilikeszi</form>
+  <seq step="Try to build a Stem node on a root.">
+	<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+	  <morph wordType="root">
+		<shortName>*bili (to.see): himbilira</shortName>
+		<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+	  </morph>
+	</stem>
+	<morph wordType="suffix">
+	  <shortName>-kes (???): kes</shortName>
+	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+	<morph wordType="102">
+	  <shortName>-zi (1SgPoss): la</shortName>
+	  <inflClasses>
+		<inflClass hvo="100" abbr="II" />
+	  </inflClasses>
+	  <inflMsa slot="102" slotAbbr="Possessor" />
+	</morph>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
+	<partial syncat="167" syncatAbbr="trans">
+	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
+	  <morph wordType="root">
+		<shortName>*bili (to.see): himbilira</shortName>
+		<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+	  </morph>
+	</partial>
+	<morph wordType="suffix">
+	  <shortName>-kes (???): kes</shortName>
+	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+	<morph wordType="102">
+	  <shortName>-zi (1SgPoss): la</shortName>
+	  <inflClasses>
+		<inflClass hvo="100" abbr="II" />
+	  </inflClasses>
+	  <inflMsa slot="102" slotAbbr="Possessor" />
+	</morph>
+  </seq>
+</word>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fwhelp" num="2.9" abbr="fwh" file="FW\FwHelp.xml">
+ <title tag="fwhelp">Help Menu Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>Help and a few ways to search and browse it make using a FieldWorks application easier.</p>
+   <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html" type="doc">Help Menu Specifications</link>
+</p>
+
+  </introduction>
+  <context>
+<p>Help is in HTML form. Testing is primarily aimed at determining whether the links from the application bring up the appropriate contexual help. The LinguaLinks Module Editor is used to create the help files so it is "guaranteed" to be internally consistent with respect to links. The help application that uses the compiled help file is tested extensively at MicroSoft so we don't need to test the buttons or contents, Index or search tabs. This test is performed alone. <link uri="../StdCtrls/Dialog.xml#dlgHlp" type="test">Basic Dialog Tests</link> to test the help system as part of the basic functionality of every dialog. <link uri="../StdCtrls/Window.xml#wndHlp" type="test">Basic Window Tests</link> to test the help system as part of the basic functionality of every FieldWorks application window.</p>
+  </context>
+ <case id="fwhch" num="0" order="any">
+  <title tag="fwhch">Contextual Help</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.1" link="Bug">Click the Help button on every dialog.
+   <r>The Contextual Help topic for the dialog should be displayed in the help viewer.</r>
+   <p name="bug">Context Help not available</p>
+   <p name="bug">Context Help brings up wrong topic.</p>
+  </step>
+  <step name="0.2" link="Bug">Push &lt;F1&gt; in every dialog.
+   <r>The Contextual Help topic for the dialog should be displayed in the help viewer.</r>
+   <p name="bug">Context Help not available</p>
+   <p name="bug">Context Help brings up wrong topic.</p>
+  </step>
+
+ </case>
+ <case id="fwhmenu" num="1" order="any">
+  <title tag="fwhmenu">Help Menu (basic items)</title>
+  <context>
+<p>When the application is running</p>
+</context>
+  <step name="1.1">
+<link uri="../StdCtrls/MenuBtn.xml" type="module">Menu Button Tests</link> to test the basic Help Menu button functions.Use &lt;Alt&gt;&lt;H&gt; to test the shortcut. Don't do the menu item tests yet.
+   <r>Report any failures as suggested using "Help Menu button" as the name of the control.</r>
+  </step>
+  <step name="1.2">When the Help menu is displayed (click Help or &lt;Alt&gt;&lt;H&gt;). <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp" type="module">Menu Item Tests</link> to test the FieldWorks item in the Help menu list.
+   <r>The help viewer should show the main help page for the FieldWorks framework. Report any failures as suggested using "Help Menu FieldWorks item" as the name of the control.</r>
+  </step>
+  <step name="1.3">When the Help menu is displayed (click Help or &lt;Alt&gt;&lt;H&gt;). <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp" type="module">Menu Item Tests</link> to test the &lt;application&gt; item in the Help menu list.
+   <r>The help viewer should show the main help page for the &lt;application&gt;. Report any failures as suggested using "Help Menu &lt;application&gt; item" as the name of the control.</r>
+  </step>
+  <step name="1.4">When the Help menu is displayed (click Help or &lt;Alt&gt;&lt;H&gt;). <link uri="../StdCtrls/Dialog.xml#dlgQst" type="module">Dialog Question Button Tests</link> to test the "What's This" Help menu item. A menu item is used instead of a dialog title bar icon but it works the same way. In a menu, only leaf items bring up a help bubble.
+   <r>Report any failures as suggested using "Help Menu "What's This" item" as the name of the control.</r>
+  </step>
+
+  <step name="1.5">When the Help menu is displayed (clik Help or &lt;Alt&gt;&lt;H&gt;).  <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp" type="module">Menu Item Tests</link> to test the Tutorials... item in the Help menu list.
+  <r>A tutorial should be launched in MS Word. Report any failures as suggested using "Help Menu Tutorial... item" as the name of the control.</r>
+  </step>
+
+  <step name="1.6" link="Bug">When the Help menu is displayed (click Help or &lt;Alt&gt;&lt;H&gt;). Click the About &lt;application&gt; menu item. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Help-About" type="doc">Help-About Specs</link>.
+   <r>The About dialog is launched.
+<ul name="It should:">
+<li>match the specification</li>
+<li>allow dismissal via an [X] title bar icon and/or "OK" button.</li>
+<li>show application name, version number and date, available memory and disk space, and an application picture.</li>
+<li>Verify that application name fits in dialog window (i.e. font is not too large, nor extremely small).</li>
+</ul>
+</r>
+   <p name="bug">Help Menu About &lt;application&gt; item fails</p>
+   <p name="bug">About &lt;application&gt; dialog layout is incorrect</p>
+   <p name="bug">About &lt;application&gt; dialog does not dismiss</p>
+  </step>
+  <step name="1.7" link="Bug">When the Help About dialog is displayed, click the [X] title bar icon and/or "OK" button.
+   <r>
+<ul>
+<li>The Help About dialog closes</li>
+<li>Focus returns to the previously active window.</li>
+</ul>
+</r>
+   <p name="bug">Help Menu About &lt;application&gt; [X] does not work</p>
+   <p name="bug">Help Menu About &lt;application&gt; &lt;OK&gt; does not work</p>
+   <p name="bug">Help Menu About &lt;application&gt; focus not returned properly</p>
+  </step>
+
+ </case>
+ <update date="Jan-08-01" author="MikeL">Test created.</update>
+ <update date="Mar-23-01" author="MikeL">Modified step 1.5, added 1.6</update>
+ <update date="Jun-13-02" author="RussD">Updated to specs.</update>
+
+</test>

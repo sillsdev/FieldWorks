@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<reusableControls/>
+  <!-- On 1 Sep in ww branch, removed BaseRecords clerk, which allowed doc view showing only top-level records.-->
+	<tools>
+		<tool label="Document" value="notebookDocument" icon="DocumentView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters>
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+						<parameters area="notebook" clerk="records" altTitleId="RnGenericRec-Plural" persistContext="Notebk" backColor="White" layout="publishRecord" layoutProperty="NotebookPublicationLayout" editable="false" configureObjectName="Document" findHelpId="khtpFindNotebook">
+							<!--elementDisplayCondition field="ExcludeAsHeadword" boolequals="false"/-->
+							<configureLayouts>
+								<layoutType label="Notebook Records" layout="publishRecord">
+									<configure class="RnGenericRec" label="Record" layout="publishRecord"/>
+								</layoutType>
+							</configureLayouts>
+							<!--filterProps>LexEntry.ComplexFormEntryBackRefs:LexEntryRef.OwningEntry;LexEntry.AllComplexFormEntryBackRefs:LexEntryRef.OwningEntry</filterProps-->
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

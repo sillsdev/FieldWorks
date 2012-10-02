@@ -1,0 +1,26 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="TCL\TestCaseLib.xml">
+ <title tag="tclWhat">What is a test case library?</title>
+ <index>
+  <li>test case library</li>
+  <li>script library</li>
+  <li>library</li>
+ </index>
+ <definition>
+  <p>An application's test case library is a collection of test scripts for each of its user interface objects. Currently, these are all executed manually. Each user interface object is developed from a set of specifications for user interface features posted on the <link uri="..\Milestone\SilIntranet.xml" type="module">SIL Internet</link>.</p>
+ </definition>
+ <partsAndFunctions>
+  <p>Here are the parts of a Test Case Library:</p>
+  <table>
+   <tr><td>Test Script Summary</td><td>Lists the test scripts in a test case library and provides some test content data.</td></tr>
+   <tr><td><link uri="TestScript.xml" type="module">Test Scripts</link></td><td>A collection of test cases organized around a specific user interface object or feature.</td></tr>
+   <tr><td><link uri="TestCase.xml" type="module">Test Cases</link></td><td>Documents the steps needed to test a single aspect of a user interface object or feature.</td></tr>
+   <tr><td><link uri="CaseStep.xml" type="module">Test Case Steps</link></td><td>A simple task that has a specified outcome.</td></tr>
+   <tr><td><link uri="..\Bugs\Pattern.xml" type="module">Bug Patterns</link></td><td>When testing finds a bug, these patterns show how the bug is to be reported.</td></tr>
+  </table>
+ </partsAndFunctions>
+ <seeAlso>
+  <li><link uri="..\Using\maintask.xml" type="module">How to use a test script</link></li>
+  <li><link uri="..\Writing\maintask.xml" type="module">How to write a test script</link></li>
+ </seeAlso>
+</concept>

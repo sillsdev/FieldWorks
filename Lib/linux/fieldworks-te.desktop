@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=FieldWorks Translation Editor
+Comment=Translation Editor helps Bible translators edit and check Scripture in a vernacular language.
+Exec=fieldworks-te
+Icon=fieldworks-te
+Terminal=false
+Type=Application
+Categories=Education;

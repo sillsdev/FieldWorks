@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="name2node.xsl"?-->
+
+<menubar name="MenuBar" root="yes" path="9:ParentOfMenuBar/9:MenuBar">
+  <file role="menu" name="File" hk="f" path="/12:File">
+	<new-fieldworks-project role="menu" name="New FieldWorks Project" k="n" icon="yes" path="/12:$name;...">
+	  <dialog title="New FieldWorks Project"/>
+	  <ex instr="explode" par1="this" par2="that"/>
+	</new-fieldworks-project>
+	<open role="menu" name="Open" k="o" ck="o" icon="yes" path="/12:$name;...">
+	  <dialog title="Open Project"/>
+	</open>
+	<close role="menu" name="Close" k="c" path="/12:$name"/>
+	<separator/>
+	<save role="menu" name="Save" k="s" ck="s" icon="yes" path="/12:$name"/>
+	<project-management role="menu" name="Project Management" k="m" path="/12:$name">
+	  <fieldworks-project-properties role="menu" name="FieldWorks Project Properties" k="w" path="/12:$name;...">
+		<dialog title="FieldWorks Project Properties"/>
+	  </fieldworks-project-properties>
+	  <backup-and-restore role="menu" name="Backup and Restore" k="b" path="/12:$name;...">
+		<dialog title="Backup and Restore" tab="backup"/>
+	  </backup-and-restore>
+	  <rename role="menu" enabled="no" name="Rename" k="r" path="/12:$name;...">
+		<dialog title="Rename"/>
+	  </rename>
+	  <delete role="menu" name="Delete" k="d" icon="yes" path="/12:$name;...">
+		<dialog title="Delete FieldWorks Project"/>
+	  </delete>
+	  <create-shortcut-on-desktop role="menu" name="Create Shortcut on Desktop" k="c" path="/12:$name"/>
+	</project-management>
+	<separator/>
+	<page-setup role="menu" enabled="no" name="Page Setup" path="/12:$name;...">
+	  <dialog title="Page Setup"/>
+	</page-setup>
+	<print role="menu" name="Print" k="p" ck="p" path="/12:$name;...">
+	  <dialog title="Print"/>
+	</print>
+	<separator/>
+	<import role="menu" name="Import" k="i" path="/12:$name">
+	  <standard-format-lexicon role="menu" name="Standard Format Lexicon" k="s" path="/12:$name;...">
+		<dialog name="btnBack" title="Import Standard Format lexical data"/>
+	  </standard-format-lexicon>
+	  <lingualinks-data role="menu" name="LinguaLinks Data" k="l" path="/12:$name;...">
+		<dialog title="Import LinguaLinks Data"/>
+	  </lingualinks-data>
+	</import>
+	<export role="menu" name="Export" k="e" path="/12:$name;...">
+	  <dialog title="Export"/>
+	</export>
+	<separator/>
+	<exit role="menu" name="Exit" k="x" path="/12:$name"/>
+  </file>
+
+  <edit role="menu" name="Edit" hk="e" path="/12:$name">
+	<undo role="menu" name="Undo" k="u" ck="z" icon="yes" path="/12:rexp#$name"/>
+	<redo role="menu" name="Redo" k="r" ck="y" icon="yes" path="/12:rexp#$name"/>
+	<separator/>
+	<cut role="menu" name="Cut" k="t" ck="x" icon="yes" path="/12:$name"/>
+	<copy role="menu" name="Copy" k="c" ck="c" icon="yes" path="/12:$name"/>
+	<paste role="menu" name="Paste" k="p" ck="v" icon="yes" path="/12:$name"/>
+	<separator/>
+	<paste-hyperlink role="menu" name="Paste Hyperlink" k="h" path="/12:$name"/>
+	<copy-location-as-hyperlink role="menu" name="Copy Location as Hyperlink" k="l" path="/12:$name"/>
+	<separator/>
+	<find-lexical-entry role="menu" name="Find lexical entry" k="f" ck="f" icon="yes" path="/12:$name;...">
+	  <dialog title="Find Lexical Entry"/>
+	</find-lexical-entry>
+	<select-all role="menu" name="Select All" k="a" ck="a" path="/12:$name"/>
+	<delete-record role="menu" name="Delete Record" k="d" ck="d" icon="yes" path="/12:$name;...">
+	  <dialog title="Delete Entry"/>
+	</delete-record>
+	<find-and-replace-text role="menu" enabled="no" name="Find and Replace Text" k="t" ck="f" icon="yes" path="/12:$name">
+	  <dialog title="Find and Replace" tab="Find"/>
+	</find-and-replace-text>
+  </edit>
+
+  <view role="menu" name="View" hk="v" path="/12:$name">
+	<refresh role="menu" name="Refresh" k="r" fk="F5" icon="yes" path="/12:$name"/>
+	<separator/>
+
+	<lexicon role="menu" name="Lexicon" k="l" path="/12:$name">
+	  <lexicon-edit role="menu" name="Lexicon Edit" icon="yes" path="/12:$name" content="view[@name='$name']">
+		  <view ref="lexicon-edit"/>
+	  </lexicon-edit>
+	  <browse role="menu" name="Browse" icon="yes" path="/12:$name">
+		  <view ref="browse"/>
+	  </browse>
+	  <dictionary role="menu" name="Dictionary" icon="yes" path="/12:$name">
+		  <view ref="dictionary"/>
+	  </dictionary>
+	  <categorized-entry role="menu" name="Categorized Entry" icon="yes" path="/12:$name">
+		 <dialog title="information"/>
+		  <view ref="categorized-entry"/>
+	  </categorized-entry>
+	  <classified-dictionary role="menu" name="Classified Dictionary" icon="yes" path="/12:$name">
+		 <dialog title="information"/>
+		  <view ref="classified-dictionary"/>
+	  </classified-dictionary>
+	  <bulk-edit-entries role="menu" name="Bulk Edit Entries" icon="yes" path="/12:$name">
+		  <view ref="bulk-edit-entries"/>
+	  </bulk-edit-entries>
+	  <bulk-edit-senses role="menu" name="Bulk Edit Senses" icon="yes" path="/12:$name">
+		  <view ref="bulk-edit-senses"/>
+	  </bulk-edit-senses>
+	  <reversal-indexes role="menu" name="Reversal Indexes" icon="yes" path="/12:$name">
+		  <view ref="reversal-indexes"/>
+	  </reversal-indexes>
+	  <bulk-edit-reversal-entries role="menu" name="Bulk Edit Reversal Entries" icon="yes" path="/12:$name">
+		  <view ref="bulk-edit-reversal-entries"/>
+	  </bulk-edit-reversal-entries>
+	</lexicon>
+
+	<texts-words role="menu" name="Texts &amp; Words" k="t" path="/12:Texts  Words">
+	  <interlinear-texts role="menu" name="Interlinear Texts" icon="yes" path="/12:$name">
+		  <view ref="interlinear-texts"/>
+	  </interlinear-texts>
+	  <!--document role="menu" name="Document" icon="yes" path="/12:$name">
+		  <view ref="TBD"/>
+	  </document-->
+	  <concordance role="menu" name="Concordance" icon="yes" path="/12:$name"/>
+	  <word-list-concordance role="menu" name="Word List Concordance" icon="yes" path="/12:$name"/>
+	  <word-analyses role="menu" name="Word Analyses" icon="yes" path="/12:$name">
+		 <view ref="word-analysis"/>
+	  </word-analyses>
+	  <bulk-edit-wordforms role="menu" name="Bulk Edit Wordforms" icon="yes" path="/12:$name"/>
+	</texts-words>
+
+	<grammar role="menu" name="Grammar" k="g" path="/12:$name">
+	  <category-edit role="menu" name="Category Edit" icon="yes" path="/12:$name"/>
+	  <categories-browse role="menu" name="Categories Browse" icon="yes" path="/12:$name"/>
+	  <compound-rules role="menu" name="Compound Rules" icon="yes" path="/12:$name"/>
+	  <phonemes role="menu" name="Phonemes" icon="yes" path="/12:$name"/>
+	  <natural-classes role="menu" name="Natural Classes" icon="yes" path="/12:$name"/>
+	  <environments role="menu" name="Environments" icon="yes" path="/12:$name"/>
+	  <ad-hoc-rules role="menu" name="Ad hoc Rules" icon="yes" path="/12:$name"/>
+	  <features role="menu" name="Features" icon="yes" path="/12:$name"/>
+	  <exception-features role="menu" name="Exception Features" icon="yes" path="/12:Exception &quot;Features&quot;"/>
+	  <grammar-sketch role="menu" name="Grammar Sketch" icon="yes" path="/12:$name"/>
+	  <problems role="menu" name="Problems" icon="yes" path="/12:$name"/>
+	</grammar>
+
+	<lists role="menu" name="Lists" k="s" path="/12:$name">
+	  <academic-domains role="menu" name="Academic Domains" icon="yes" path="/12:$name"/>
+	  <anthropology-categories role="menu" name="Anthropology Categories" icon="yes" path="/12:$name"/>
+	  <confidence-levels role="menu" name="Confidence Levels" icon="yes" path="/12:$name"/>
+	  <text-chart-markers role="menu" name="Text Chart Markers" icon="yes" path="/12:$name"/>
+	  <text-constituent-chart-templates role="menu" name="Text Constituent Chart Templates" icon="yes" path="/12:$name"/>
+	  <education-levels role="menu" name="Education Levels" icon="yes" path="/12:$name"/>
+	  <entry-types role="menu" name="Entry Types" icon="yes" path="/12:$name"/>
+	  <feature-types role="menu" name="Feature Types" icon="yes" path="/12:$name"/>
+	  <genres role="menu" name="Genres" icon="yes" path="/12:$name"/>
+	  <lexical-relations role="menu" name="Lexical Relations" icon="yes" path="/12:$name"/>
+	  <locations role="menu" name="Locations" icon="yes" path="/12:$name"/>
+	  <variant-conditions role="menu" name="Variant Conditions" icon="yes" path="/12:$name"/>
+	  <morpheme-types role="menu" name="Morpheme Types" icon="yes" path="/12:$name"/>
+	  <people role="menu" name="People" icon="yes" path="/12:$name"/>
+	  <positions role="menu" name="Positions" icon="yes" path="/12:$name"/>
+	  <restrictions role="menu" name="Restrictions" icon="yes" path="/12:$name"/>
+	  <semantic-domains role="menu" name="Semantic Domains" icon="yes" path="/12:$name"/>
+	  <sense-status role="menu" name="Sense Status" icon="yes" path="/12:$name"/>
+	  <sense-types role="menu" name="Sense Types" icon="yes" path="/12:$name"/>
+	  <status role="menu" name="Status" icon="yes" path="/12:$name"/>
+	  <translation-types role="menu" name="Translation Types" icon="yes" path="/12:$name"/>
+	  <usages role="menu" name="Usages" icon="yes" path="/12:$name"/>
+	  <reversal-index-categories role="menu" name="Reversal Index Categories" icon="yes" path="/12:$name"/>
+	</lists>
+
+	<separator/>
+	<filters role="menu" name="Filters" k="f" path="/12:$name">
+	  <no-filters role="menu" name="No Filters" icon="yes" path="/12:$name"/>
+	</filters>
+
+	<show-dictionary-preview role="menu" name="Show Dictionary Preview" k="d" icon="yes" path="/12:$name"/>
+	<show-hidden-fields role="menu" name="Show Hidden Fields" k="s" path="/12:$name"/>
+  </view>
+
+  <data role="menu" name="Data" hk="d" path="/12:$name">
+	<first-record role="menu" name="First record" k="f" icon="yes" path="/12:$name"/>
+	<previous-record role="menu" name="Previous record" k="p" ak="p" icon="yes" path="/12:$name"/>
+	<next-record role="menu" name="Next record" k="n" ak="n" icon="yes" path="/12:$name"/>
+	<last-record role="menu" name="Last record" k="l" icon="yes" path="/12:$name"/>
+  </data>
+
+  <insert role="menu" name="Insert" hk="i" path="/12:$name">
+
+	<!-- Lexicon -->
+	<var id="lxSetA" set="Lexicon Edit, Browse, Dictionary, Bulk Edit Entries, Bulk Edit Reversal Entries"/>
+	<entry role="menu" name="Entry" k="e" ck="e" icon="yes" path="/12:$name;..."  tool="Lexicon" view="$lxSetA">
+	  <dialog title="New Entry"/>
+	</entry>
+	<sense role="menu" name="Sense" k="s" path="/12:$name" tool="Lexicon" view="Lexicon Edit"/>
+	<allomorph role="menu" name="Allomorph" k="l" path="/12:$name" tool="Lexicon" view="Lexicon Edit"/>
+	<pronunciation role="menu" name="Pronunciation" k="p" path="/12:$name" tool="Lexicon" view="Lexicon Edit"/>
+	<separator/>
+	<subsense role="menu" name="Subsense" path="/12:$name; (in sense)" tool="Lexicon" view="Lexicon Edit"/>
+	<picture role="menu" name="Picture" k="p" path="/12:$name" tool="Lexicon" view="Lexicon Edit"/>
+	<reversal-index role="menu" name="Reversal Index" path="/12:$name" tool="Lexicon" view="Reversal Indexes, Bulk Edit Reversal Entries">
+	  <dialog title="Create Reversal Index"/>
+	</reversal-index>
+	<reversal-entry role="menu" name="Reversal Entry" icon="yes" path="/12:$name" tool="Lexicon" view="Reversal Indexes"/>
+
+	<!-- Texts -->
+	<new-text role="menu" name="New Text" k="t" ck="t" path="/12:$name" tool="Texts"/>
+	<separator/>
+	<free-translation role="menu" name="Free Translation" k="f" path="/12:$name" tool="Texts" view="Document, Edit/tab:Interlinearize"/>
+	<literal-translation role="menu" name="Literal Translation" k="l" ck="l" path="/12:$name" tool="Texts" view="Document, Edit/tab:Interlinearize"/>
+	<note role="menu" name="Note" k="n" path="/12:$name" tool="Texts" view="Document, Edit/tab:Interlinearize"/>
+
+	<!-- Words -->
+	<import-word-set role="menu" name="Import Word Set" k="i" path="/12:$name;..." tool="Words">
+	  <dialog title="Import Word Set"/>
+	</import-word-set>
+	<add-approved-analysis role="menu" name="Add Approved Analysis" icon="yes" path="/12:$name" tool="Words" view="Analyses">
+	  <dialog title="Insert Morpheme Breaks"/>
+	</add-approved-analysis>
+	<separator view="'Concordance/tab:Interlinearize"/>
+	<free-translation role="menu" name="Free Translation" k="f" path="/12:$name" tool="Words" view="'Concordance/tab:Interlinearize"/>
+	<literal-translation role="menu" name="Literal Translation" k="l" ck="l" path="/12:$name" tool="Words" view="'Concordance/tab:Interlinearize"/>
+	<note role="menu" name="Note" k="n" path="/12:$name" tool="Words" view="'Concordance/tab:Interlinearize"/>
+
+	<!-- Grammar -->
+	<category role="menu" name="Category" k="c" ck="i" icon="yes" path="/12:$name; (or Part of Speech)" tool="Grammar" view="Category Edit, Categories Browse"/>
+	<subcategory role="menu" name="Subcategory" icon="yes" path="/12:$name;..." tool="Grammar" view="Category Edit">
+	  <dialog title="Add from Catalog"/>
+	</subcategory>
+	<affix-template role="menu" name="Affix Template" path="/12:$name" tool="Grammar" view="Category Edit"/>
+	<affix-slot role="menu" name="Affix Slot" path="/12:$name" tool="Grammar" view="Category Edit"/>
+	<inflection-class role="menu" name="Inflection Class" path="/12:$name" tool="Grammar" view="Category Edit"/>
+	<headed-compound role="menu" name="Headed Compound" icon="yes" path="/12:$name" tool="Grammar" view="Compound Rules"/>
+	<non-headed-compound role="menu" name="Non-headed Compound" icon="yes" path="/12:$name" tool="Grammar" view="Compound Rules"/>
+	<phoneme role="menu" name="Phoneme" icon="yes" ck="i" path="/12:$name" tool="Grammar" view="Phonemes"/>
+	<insert-representation role="menu" name="Insert Representation" icon="yes" path="/12:$name" tool="Grammar" view="Phonemes"/>
+	<natural-class role="menu" name="Natural Class" icon="yes" ck="i" path="/12:$name" tool="Grammar" view="Natural Classes"/>
+	<environment role="menu" name="Environment" icon="yes" ck="i" path="/12:$name" tool="Grammar" view="Environments"/>
+	<rule-to-prevent-morpheme-co-occurrence role="menu" name="Rule to prevent morpheme co-occurrence" icon="yes" path="/12:$name" tool="Grammar" view="Ad hoc Rules"/>
+	<rule-to-prevent-allomorph-co-occurrence role="menu" name="Rule to prevent allomorph co-occurrence" icon="yes" path="/12:$name" tool="Grammar" view="Ad hoc Rules"/>
+	<group-of-ad-hoc-rules role="menu" name="Group of ad hoc rules" icon="yes" path="/12:$name" tool="Grammar" view="Ad hoc Rules"/>
+	<feature role="menu" name="Feature" icon="yes" k="f" path="/12:$name" tool="Grammar" view="Features"/>
+	<complex-feature role="menu" name="Complex Feature" icon="yes" k="c" path="/12:$name" tool="Grammar" view="Features"/>
+	<exception-feature role="menu" name="Exception Feature" icon="yes" k="e" path="/12:Exception &quot;Feature&quot;" tool="Grammar" view="Exception Features"/>
+
+	<!-- Lists -->
+	<academic-domain role="menu" name="Academic Domain" icon="yes" k="a" path="/12:$name" tool="Lists" view="$name"/>
+	<ad-subitem role="menu" name="Subitem" icon="yes" path="/12:$name" tool="Lists" view="Academic Domain"/>
+	<anthropology-category role="menu" name="Anthropology Category" k="a" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<subcategory role="menu" name="Subcategory" icon="yes" path="/12:$name" tool="Lists" view="Anthropology Category"/>
+	<confidence-level role="menu" name="Confidence Level" k="c" icon="yes" path="/12:$name" tool="Lists" view="Confidence Level"/>
+
+	<text-chart-marker role="menu" name="List Item" k="l" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<tcm-subitem role="menu" name="Subitem" icon="yes" path="/12:$name" tool="Lists" view="List Item"/>
+
+	<text-constituent-chart-template role="menu" name="List Item" k="l" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<tcct-subitem role="menu" name="Subitem" icon="yes" path="/12:$name" tool="Lists" view="List Item"/>
+
+	<education-level role="menu" name="Education Level" icon="yes" k="e" path="/12:$name" tool="Lists" view="$name"/>
+	<entry-type role="menu" name="Entry Type" k="e" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<feature-type role="menu" name="Feature Type" k="f" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+
+	<genres role="menu" name="Genre" k="l" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<g-subitem role="menu" name="Subitem" icon="yes" path="/12:$name" tool="Lists" view="Genre"/>
+
+	<lexical-relation role="menu" name="Lexical Relation" k="l" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<location role="menu" name="Location" k="l" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<l-subitem role="menu" name="Subitem" icon="yes" path="/12:$name" tool="Lists" view="Location"/>
+
+	<variant-condition role="menu" name="Variant Condition" icon="yes" k="m" path="/12:$name" tool="Lists" view="$name"/>
+
+	<!-- nothing extra in the insert menu for morpheme-type -->
+
+	<person role="menu" name="Person" k="p" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<position role="menu" name="Position" k="p" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<restriction role="menu" name="Restriction" icon="yes" k="r" path="/12:$name" tool="Lists" view="$name"/>
+	<semantic-domain role="menu" name="Semantic Domain" icon="yes" k="s" path="/12:$name" tool="Lists" view="$name"/>
+	<subdomain role="menu" name="Subdomain" icon="yes" path="/12:$name" tool="Lists" view="Semantic Domains"/>
+	<sense-status role="menu" name="Sense Status" k="s" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<sense-type role="menu" name="Sense Type" k="s" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<status role="menu" name="Status" k="s" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<translation-type role="menu" name="Translation Type" k="t" icon="yes" path="/12:$name" tool="Lists" view="$name"/>
+	<usage role="menu" name="Usage" icon="yes" k="u" path="/12:$name" tool="Lists" view="$name"/>
+	<u-subitem role="menu" name="Subitem" icon="yes" path="/12:$name" tool="Lists" view="Usage"/>
+	<reversal-index role="menu" name="Reversal Index" path="/12:$name" tool="Lists" view="$name"/>
+	<category role="menu" name="Category" icon="yes" ck="i" path="/12:$name" tool="Lists" view="$name"/>
+
+	<separator view="not(Grammar/Grammar Sketch, Grammar/Problems, Lists/Morpheme Types)"/>
+
+	<special-character role="menu" name="Special character" k="c" icon="yes" path="/12:$name;...">
+	  <dialog title="Character Map"/>
+	</special-character>
+	<external-link role="menu" name="External Link" k="x" icon="yes" path="/12:$name">
+	  <dialog title="Open"/>
+	</external-link>
+  </insert>
+
+  <format role="menu" name="Format" hk="f" path="/12:$name">
+	<styles role="menu" name="Styles" k="s" path="/12:$name;...">
+	  <dialog name="Style"/>
+	</styles>
+	<writing-system role="menu" name="Writing System" k="w" path="/12:$name">
+	  <list src="script" select="//model/Format/wsList[1]"/>
+	</writing-system>
+	<setup-writing-systems role="menu" name="Setup Writing Systems" k="u" path="/12:$name;...">
+	  <dialog name="FieldWorks Project Properties"/>
+	</setup-writing-systems>
+  </format>
+
+  <tools role="menu" name="Tools" hk="t" path="/12:$name">
+	<merge-with-entry role="menu" name="Merge with entry" k="m" path="/12:$name;...">
+	  <dialog title="Merge Entry"/>
+	</merge-with-entry>
+	<utilities role="menu" name="Utilities" k="u" path="/12:$name;...">
+	  <dialog title="FieldWorks Project Utilities"/>
+	</utilities>
+	<separator/>
+	<custom-fields role="menu" name="Custom Fields" k="f" path="/12:$name;...">
+	  <dialog title="Custom Fields"/>
+	</custom-fields>
+	<configure-columns role="menu" name="Configure Columns" k="c" path="/12:$name;...">
+	  <dialog name="ColumnConfigureDialog" title="Configure Columns..."/>
+	</configure-columns>
+	<create-spelling-dictionary role="menu" name="Create Spelling Dictionary" path="/12:$name"/>
+	<use-spelling-dictionary role="menu" name="Use Spelling Dictionary" k="d" path="/12:$name"/>
+	<guess-word-breaks role="menu" name="Guess Word Breaks" path="/12:$name"/>
+	<find-in-dictionary role="menu" name="Find In Dictionary" k="d" path="/12:$name;...">
+	  <dialog title="Dictionary Entry"/>
+	</find-in-dictionary>
+	<configure-dictionary role="menu" name="Configure Dictionary" k="d" path="/12:$name;...">
+	  <dialog title="Configure Dictionary View"/>
+	</configure-dictionary>
+	<configure-interlinear role="menu" name="Configure Interlinear" path="/12:$name;...">
+	  <dialog title="Configure Interlinear Lines"/>
+	</configure-interlinear>
+	<separator/>
+	<options role="menu" name="Options" k="o" path="/12:$name;...">
+	  <dialog name="LexOptionsDlg" title="Options"/>
+	</options>
+  </tools>
+
+  <parser role="menu" name="Parser" hk="p" path="/12:$name">
+	<start-parser role="menu" name="Parse all words" k="p" path="/12:$name">
+	  <enables menu="stop-parser"/>
+	  <enables menu="reparse-all-words"/>
+	  <enables menu="parse-current-word"/>
+	  <enables menu="try-a-word"/>
+	  <disables menu="start-parser"/>
+	</start-parser>
+	<stop-parser role="menu" enabled="no" name="Stop Parser" k="s" path="/12:$name">
+	  <disables menu="stop-parser"/>
+	  <disables menu="reparse-all-words"/>
+	  <disables menu="parse-current-word"/>
+	  <disables menu="try-a-word"/>
+	  <enables menu="start-parser"/>
+	</stop-parser>
+	<reparse-all-words role="menu" enabled="no" name="Reparse all words" k="r" path="/12:$name"/>
+	<separator/>
+	<parse-current-word role="menu" enabled="no" name="Parse Current Word" k="c" path="/12:$name"/>
+	<try-a-word role="menu" enabled="no" name="Try a Word" k="t" path="/12:$name;...">
+	  <dialog title="Try a Word"/>
+	</try-a-word>
+	<separator/>
+	<edit-parser-parameters role="menu" name="Edit Parser Parameters" k="e" path="/12:$name">
+	  <dialog title="Parser Parameters"/>
+	</edit-parser-parameters>
+  </parser>
+
+  <window role="menu" name="Window" hk="w" path="/12:$name">
+	<new-window role="menu" name="New Window" k="n" path="/12:$name"/>
+  </window>
+
+  <help role="menu" name="Help" hk="h" path="/12:$name">
+	<language-explorer role="menu" name="Language Explorer" k="l" fk="F1" path="/12:$name;...">
+	  <dialog name="FieldWorks Language Explorer Help"/>
+	</language-explorer>
+	<training role="menu" name="Training" k="t" path="/12:$name">
+	  <user-manual role="menu" name="User Manual" k="u" path="/12:$name;...">
+		<dialog name="Flex User Manual.doc (Read-Only) - Microsoft Word"/>
+	  </user-manual>
+	  <exercises role="menu" name="Exercises" k="e" path="/12:$name;...">
+		<dialog name="FLEx Exercises.doc (Read-Only) - Microsoft Word"/>
+	  </exercises>
+	</training>
+	<demo-movies role="menu" name="Demo Movies" k="d" path="/12:$name">
+	  <welcome role="menu" name="Welcome" k="w" path="/12:$name">
+		<dialog name="Error"/>
+	  </welcome>
+	  <overview role="menu" name="Overview" k="o" path="/12:$name">
+		<dialog name="Error"/>
+	  </overview>
+	  <configuring-columns role="menu" name="Configuring columns" k="c" path="/12:$name">
+		<dialog name="Error"/>
+	  </configuring-columns>
+	  <filtering role="menu" name="Filtering" k="f" path="/12:$name">
+		<dialog name="Error"/>
+	  </filtering>
+	  <sorting role="menu" name="Sorting" k="s" path="/12:$name">
+		<dialog name="Error"/>
+	  </sorting>
+	  <fields role="menu" name="Fields" k="e" path="/12:$name">
+		<dialog name="Error"/>
+	  </fields>
+	  <lexicon role="menu" name="Lexicon" k="l" path="/12:$name">
+		<new-entry role="menu" name="New entry" k="n" path="/12:$name">
+		  <dialog name="Error"/>
+		</new-entry>
+		<find-entry role="menu" name="Find entry" k="f" path="/12:$name">
+		  <dialog name="Error"/>
+		</find-entry>
+		<grammatical-info.-pos role="menu" name="Grammatical info. (POS)" k="g" path="/12:$name">
+		  <dialog name="Error"/>
+		</grammatical-info.-pos>
+		<lexical-relations role="menu" name="Lexical relations" k="l" path="/12:$name">
+		  <dialog name="Error"/>
+		</lexical-relations>
+		<subentry-derivative role="menu" name="Subentry (derivative)" k="s" path="/12:$name">
+		  <dialog name="Error"/>
+		</subentry-derivative>
+		<minor-entry-variant role="menu" name="Minor entry (variant)" k="m" path="/12:$name">
+		  <dialog name="Error"/>
+		</minor-entry-variant>
+		<categorized-entry role="menu" name="Categorized entry" k="c" path="/12:$name">
+		  <dialog name="Error"/>
+		</categorized-entry>
+		<bulk-edit-list-choice role="menu" name="Bulk Edit (list choice)" k="b" path="/12:$name">
+		  <dialog name="Error"/>
+		</bulk-edit-list-choice>
+		<bulk-edit-copy role="menu" name="Bulk Edit (copy)" k="e" path="/12:$name">
+		  <dialog name="Error"/>
+		</bulk-edit-copy>
+		<bulk-edit-click-copy role="menu" name="Bulk Edit (click copy)" k="l" path="/12:$name">
+		  <dialog name="Error"/>
+		</bulk-edit-click-copy>
+	  </lexicon>
+	  <interlinearizing role="menu" name="Interlinearizing" k="i" path="/12:$name">
+		<dialog name="Error"/>
+	  </interlinearizing>
+	  <words-assign-analysis role="menu" name="Words (assign analysis)" k="a" path="/12:$name">
+	   <dialog name="Error"/>
+	  </words-assign-analysis>
+	  <grammar-new-template role="menu" name="Grammar (new template)" k="g" path="/12:$name">
+		<dialog name="Error"/>
+	  </grammar-new-template>
+	  <play-all-32-minutes role="menu" name="Play all (32 minutes)" k="p" path="/12:$name">
+		<dialog name="Error"/>
+	  </play-all-32-minutes>
+	</demo-movies>
+	<resources role="menu" name="Resources" k="r" path="/12:$name">
+	  <styles role="menu" name="Styles" k="s" path="/12:$name">
+		<dialog name="Error"/>
+	  </styles>
+	  <styles role="menu" name="Styles" k="s" path="/12:$name">
+		<dialog name="Error"/>
+	  </styles>
+	  <styles role="menu" name="Styles" k="s" path="/12:$name">
+		<dialog name="Error"/>
+	  </styles>
+	</resources>
+	<about-language-explorer role="menu" name="About Language Explorer" k="a" path="/12:$name;...">
+	  <dialog name="About SIL FieldWorks Language Explorer"/>
+	</about-language-explorer>
+  </help>
+</menubar>

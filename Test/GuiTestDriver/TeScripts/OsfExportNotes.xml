@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALVI OTHERSF IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- set case specific variables -->
+		<var id="NotesMstrResultsFile" select="tests/test[@case='$TestCase;']/@mfr-notes"/>
+		<var id="ActualState" set="$NotesMstrResultsFile"/>
+
+		<var id="Notes_File_Exists" set="C:\\GuiTestResults\\ImportOtherSF\\Test Case $TestCase; Notes.sf" file-exists="TRUE"/>
+
+		<click select="menubar/file/export/standard-format-t"/>
+
+		<on-dialog title="Export Standard Format (USFM-Toolbox)" until="10000">
+
+			<!--"Export what" check box group-->
+			<var id="GuiChkBox" set="44:Scripture"/>
+			<glimpse id="ChkBoxState10" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+			<var id="ActualState" set="$ChkBoxState10"/>
+			<var id="DesiredState" set="FALSE"/>
+			<include from="IncCheckBox.xml"/>
+
+			<var id="GuiChkBox" set="44:Back Translations (interleaved)"/>
+			<glimpse id="ChkBoxState11" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+			<var id="ActualState" set="$ChkBoxState11"/>
+			<var id="DesiredState" set="FALSE"/>
+			<include from="IncCheckBox.xml"/>
+
+			<var id="GuiChkBox" set="44:Annotations (interleaved)"/>
+			<glimpse id="ChkBoxState12" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+			<var id="ActualState" set="$ChkBoxState12"/>
+			<var id="DesiredState" set="TRUE"/>
+			<include from="IncCheckBox.xml"/>
+
+			<!--"Output To" radio button group-->
+			<var id="GuiRadioBtn1" set="9:One file per book/45:One file per book"/>
+			<var id="GuiRadioBtn2" set="9:Single file/45:Single file"/>
+			<!--Click the 2nd radio button, "Single file"-->
+			<var id="RB1_DesiredState" set="FALSE"/>
+			<include from="IncRadioButton.xml"/>
+
+			<click path="9:Browse...[2]/43:Browse..."/>
+
+			<on-dialog title="Save As" until="10000">
+				<insert>C:\GuiTestResults\ImportOtherSF\Test Case $TestCase; Notes.sf</insert>
+				<click path="$Save"/>
+				<if>
+					<condition of="$Notes_File_Exists" is="TRUE"/>
+					<then>
+						<click path="$Yes"/>
+					</then>
+				</if>
+			</on-dialog>
+			<click path="$OK"/>
+		</on-dialog>
+
+		<on-dialog title="Translation Editor" until="10000" on-fail="skip">
+			<click path="$Yes"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

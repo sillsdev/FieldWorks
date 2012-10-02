@@ -1,0 +1,22 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2002, SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: DbServicesPs.idl
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+Description:
+	Defines Language Services Interfaces for proxy / stub generation.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+#include "Common.idh"
+
+#define NO_COCLASSES
+
+#include "BackupDelegates.idh"
+#include "DbBackup.idh"
+#include "DbDisconnect.idh"
+#include "RemoteWarn.idh"

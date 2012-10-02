@@ -1,0 +1,162 @@
+<!-- references are organized by author.
+	 The intent is that only those references which are cited via a citation
+	 element are to appear in the list of references.
+	   The label attribute allows one to change how the title will appear.
+	   The version attribute can be used to keep track of which XLingPap version a master references file is (or was when it was created).
+-->
+<!ELEMENT references (refAuthor*)>
+<!ATTLIST references
+	label CDATA #IMPLIED
+	version CDATA #IMPLIED
+>
+<!-- the citename is the string to use in a citation within the text body -->
+<!ELEMENT refAuthor (refWork+)>
+<!ATTLIST refAuthor
+	name CDATA #REQUIRED
+	citename CDATA #REQUIRED
+>
+<!-- Every work has a date and a title.
+	 There are a number of kinds of references, each of which has different
+	 content. -->
+<!ELEMENT refWork (authorRole?, refDate, refTitle, (article | book | collection | dissertation | ms | paper | proceedings | thesis | webPage), url?, comment?)>
+<!ATTLIST refWork
+	id ID #REQUIRED
+>
+<!-- An author's role in the work.  For example, editor, illustrator, author and illustrator, etc. -->
+<!ELEMENT authorRole (#PCDATA)>
+<!ATTLIST authorRole
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT refDate (#PCDATA)>
+<!ATTLIST refDate
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT refTitle (#PCDATA | %embedded;)*>
+<!ATTLIST refTitle
+	xml:lang CDATA #IMPLIED
+>
+<!-- journal article -->
+<!ELEMENT article (jTitle, jVol, jPages, location?, publisher?)>
+<!ELEMENT jTitle (#PCDATA)>
+<!ATTLIST jTitle
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT jVol (#PCDATA)>
+<!ATTLIST jVol
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT jPages (#PCDATA)>
+<!ATTLIST jPages
+	xml:lang CDATA #IMPLIED
+>
+<!-- book -->
+<!ELEMENT book (translatedBy?, edition?, series?, location, publisher, bookTotalPages?)>
+<!ELEMENT translatedBy (#PCDATA)>
+<!ATTLIST translatedBy
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT edition (#PCDATA)>
+<!ATTLIST edition
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT series (#PCDATA)>
+<!ATTLIST series
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT publisher (#PCDATA)>
+<!ATTLIST publisher
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT location (#PCDATA)>
+<!ATTLIST location
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT bookTotalPages (#PCDATA)>
+<!ATTLIST bookTotalPages
+	xml:lang CDATA #IMPLIED
+>
+<!-- paper from a collection volume -->
+<!ELEMENT collection (collEd, collTitle, collVol?, collPages?, location?, publisher)>
+<!ELEMENT collEd (#PCDATA)>
+<!ATTLIST collEd
+	plural (no | yes) "yes"
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT collTitle (#PCDATA)>
+<!ATTLIST collTitle
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT collVol (#PCDATA)>
+<!ATTLIST collVol
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT collPages (#PCDATA)>
+<!ATTLIST collPages
+	xml:lang CDATA #IMPLIED
+>
+<!-- PhD dissertation -->
+<!ELEMENT dissertation (location?, institution, published?)>
+<!ELEMENT institution (#PCDATA)>
+<!ATTLIST institution
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT published (location, publisher, pubDate)>
+<!ELEMENT pubDate (#PCDATA)>
+<!ATTLIST pubDate
+	xml:lang CDATA #IMPLIED
+>
+<!-- ms (manuscript) -->
+<!ELEMENT ms (location?, institution)>
+<!-- paper presented at a conference -->
+<!ELEMENT paper (conference, location?)>
+<!ELEMENT conference (#PCDATA)>
+<!ATTLIST conference
+	xml:lang CDATA #IMPLIED
+>
+<!-- proceedings paper from a conference -->
+<!ELEMENT proceedings (procEd?, procTitle, procVol?, procPages?, location?, publisher?)>
+<!ELEMENT procEd (#PCDATA)>
+<!ATTLIST procEd
+	plural (no | yes) "yes"
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT procTitle (#PCDATA)>
+<!ATTLIST procTitle
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT procVol (#PCDATA)>
+<!ATTLIST procVol
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT procPages (#PCDATA)>
+<!ATTLIST procPages
+	xml:lang CDATA #IMPLIED
+>
+<!-- MA thesis -->
+<!ELEMENT thesis (location?, institution, published?)>
+<!-- web page -->
+<!ELEMENT webPage (edition?, location?, (institution | publisher)?, url, dateAccessed?)>
+<!ELEMENT url (#PCDATA)>
+<!ATTLIST url
+	xml:lang CDATA #IMPLIED
+>
+<!ELEMENT dateAccessed (#PCDATA)>
+<!ATTLIST dateAccessed
+	xml:lang CDATA #IMPLIED
+>
+<!-- In a citation,
+	 one may optionally not include the author's name
+		   (e.g. when one is citing multiple works by the same author);
+	 one may include parentheses around the date ("both", the default), or
+	   one may have no parentheses or just initial or just final.
+	 one may optionally include page numbers (page).
+ -->
+<!ELEMENT citation EMPTY>
+<!ATTLIST citation
+	ref IDREF #REQUIRED
+	page CDATA #IMPLIED
+	author (yes | no) "yes"
+	paren (both | none | initial | final) #IMPLIED
+>
+<!ENTITY % XLingPapCharacterEntities SYSTEM  "XLingPapCharacterEntities.dtd">
+%XLingPapCharacterEntities;

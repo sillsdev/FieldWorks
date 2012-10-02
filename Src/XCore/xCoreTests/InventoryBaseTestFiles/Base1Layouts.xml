@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<layoutInventory>
+	<layout class="LexSense" type="jtview" name="Test1" match="test1">
+		<group label="main" ws="vernacular" rubbish="nonsense" dummy="base">
+		</group>
+	</layout>
+	<layout class="LexSense" type="jtview" name="Test2" match="test2">
+	</layout>
+	<layout class="LexEntry" type="jtview" name="Test1" match="test3" visible="always" ws="vernacular">
+		<group label="main">
+			<part ref="LexEntry-Jt-Citationform" visible="always" ws="vernacular"/>
+			<part ref="LexEntry-Jt-Senses" visible="always" part="default"/>
+		</group>
+		<group label="second">
+			<part ref="LexEntry-Jt-Citationform" visible="always" ws="vernacular"/>
+			<part ref="LexEntry-Jt-Senses" visible="always" part="default"/>
+		</group>
+		<group label="third">
+			<part ref="LexEntry-Jt-Citationform" visible="always" ws="vernacular"/>
+			<part ref="LexEntry-Jt-Senses" visible="always" part="default"/>
+			<part ref="LexEntry-Jt-Forms" visible="always" part="default"/>
+		</group>
+	</layout>
+	<layout class="LexSense" type="detail" name="Test1" match="test4">
+	</layout>
+	<layout class="LexEntry" type="jtview" name="DerivedForOverride" base="Test1" match="DO2">
+		<group label="second" ws="vernacular">
+		</group>
+	</layout>
+	<part ref="nonsense" match="test5">
+	</part>
+	<layout class="LexEntry" type="detail" name="TestGetUnify1">
+		<group label="main"/>
+		<group label="second"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="TestGetUnify2">
+		<group label="main" visibility="always"/>
+		<group label="third"/>
+	</layout>
+
+</layoutInventory>

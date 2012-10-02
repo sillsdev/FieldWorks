@@ -1,0 +1,474 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: TestHarnessTlb.idl
+Responsibility: Darrell Zook
+Last reviewed: Not yet.
+------------------------------------------------------------------------------------------------
+
+Usage:
+	Include defines like these in your main.h (provide a unique GUID, but use the
+	name CLSID_Test exactly).
+
+	#define TESTPROGID "SIL.LingServ.Test"
+	DEFINE_GUID(CLSID_Test
+		0x4ebf70e1, 0xc73c, 0x11d2, 0x80, 0x78, 0x0, 0x0, 0xc0, 0xfb, 0x81, 0xb5);
+
+	Make a subclass of TestBase (see $/Test/TestBase.h and .cpp) for each test.
+	A DLL can have many tests.
+	Make one static instance of each test class.
+	Override the Run method with code to actually perform the test.
+		To write output to the log or to report a failure, use the functions decsibed below.
+	Pass the name of your test to the constructor of TestBase. It should be identifiable
+	even if other modules' tests are in the same list--e.g., Cellar Basic Tests, not
+	just Basic Tests. Also a cookie for the test must be passed to the constructor of TestBase.
+	This cookie must be unique for all the tests in one dll.
+
+	Remember to register your DLL before trying to use it! Registering the DLL will add it to
+	the list of dlls that TestMan and RunTest use.
+
+	To run tests for build verification, execute the program TestMan in Fieldworks\bin.
+	Select All DLLs, then All Tests, then Run Tests. It should report 0 failures, apart from
+	possible baselining failures (see "More about baselining" below).
+
+	Information for debugging a test
+	--------------------------------
+
+	To debug a single test (in MSVC++), do the following steps:
+		Go to the Project\Settings dialog box.
+		Click on the "Debug" tab at the top of the dialog.
+		Choose "General" in the Category combo box.
+		Type the pathname to FieldWorks\Bin\RunTest.exe in the "Executable for debug session"
+			field.
+		Type the appropriate arguments for RunTest in the "Program arguments" field. For more
+			information on the arguments RunTest takes, see below.
+			Example: Type "log.txt SIL.Cellar.Test 0" to run the first test in CellarTst.dll
+		Choose "Additional Dlls" in the Category combo box.
+		Make sure the DLL you are testing is listed in the list box that appears.
+
+	Instructions for debugging a VB test are given in the "How to write a VB test.txt" file
+	in the Fieldworks\Test\VBTestTemplate directory.
+
+	RunTest command line arguments
+	------------------------------
+
+		RunTest LogFile [ProgID] [Test]
+
+			LogFile		->	Name of the output log file. This file will be stored in the
+							FieldWorks\TestLog\Log directory.
+			ProgID		->	Specifies the dll containing the test(s) that will be run. If
+							this parameter is not included, all tests in all registered
+							dlls will be run.
+			Test		->	Specifies the 0-based index of the test to be run in the dll
+							given by ProgID. If this parameter is not included, all the
+							tests in the dll given by ProgID will be run. If the ProgID
+							parameter is not included, this parameter is ignored.
+
+	Information for writing a test
+	------------------------------
+
+	The following example shows how to create a new test so that the Test Manager will find it.
+		The line with m_stuBsl is not required if your test does not use baselining.
+		Note that the name and the cookie of the test is passed to the constructor of TestBase.
+
+		class TestBaselining : public TestBase
+		{
+		public:
+			TestBaselining::TestBaselining() : TestBase(L"Testing baselining", 1)
+			{
+				m_stuBsl = "BslTestFile";
+			}
+			Run();
+		}
+
+	The following functions are available in TestBase for logging messages.
+
+		TestHrFail functions will write the following output to the log file if FAILED(hr) is true:
+			"Test <TestName> failed with code <hr> at step <psz>."
+		It will also cancel the test and raise the error count.
+			HRESULT TestHrFail(HRESULT hr, LPCSTR pszs);
+			HRESULT TestHrFail(HRESULT hr, LPCOLESTR pszw);
+			HRESULT TestHrFail(HRESULT hr, char * prgch, int cch);
+			HRESULT TestHrFail(HRESULT hr, wchar * prgwch, int cch);
+			HRESULT TestHrFailFormat(HRESULT hr, LPCSTR * pszs, ...);
+			HRESULT TestHrFailFormat(HRESULT hr, LPCOLESTR * pszw, ...);
+
+		Log functions will just write a string out to the log file.
+			HRESULT Log(LPCSTR pszs);
+			HRESULT Log(LPCOLESTR pszw);
+			HRESULT Log(char * prgch, int cch);
+			HRESULT Log(wchar * prgwch, int cch);
+			HRESULT LogFormat(LPCSTR * pszs, ...);
+			HRESULT LogFormat(LPCOLESTR * pszw, ...);
+
+		Failure functions write a string out to the log file and increment the failure count.
+			HRESULT Failure(LPCSTR pszs);
+			HRESULT Failure(LPCOLESTR pszw);
+			HRESULT Failure(char * prgch, int cch);
+			HRESULT Failure(wchar_t * prgwch, int cch);
+			HRESULT FailureFormat(LPCSTR pszs, ...);
+			HRESULT FailureFormat(LPCOLESTR pszw, ...);
+
+		Baseline functions write a string out to the baseline file.
+			HRESULT Baseline(LPCSTR pszs);
+			HRESULT Baseline(LPCOLESTR pszw);
+			HRESULT Baseline(char * prgch, int cch);
+			HRESULT Baseline(wchar_t * prgwch, int cch);
+			HRESULT BaselineFormat(LPCSTR pszs, ...);
+			HRESULT BaselineFormat(LPCOLESTR pszw, ...);
+
+	The log file is written to the FieldWorks\TestLog\Log directory.
+	Baseline files are written to the FieldWorks\TestLog\Log directory.
+	Correct baseline files are stored in VSS in the FieldWorks\TestLog\Baseline directory.
+
+	More about baselining
+	---------------------
+
+	Your test can produce output which is sent to a file for automatic comparison (at the end
+	of the test) with an existing baseline file. The existing (old) one is deemed
+	to be "correct" and any difference between the current (new) one and the old one is logged
+	as an additional test failure.
+
+	When a test is first run there will normally be no baseline for comparison (though you could
+	create one by hand if desired). In this case a failure is logged when the test is completed.
+	After the first run of a test, make sure that the baseline output file is correct. Once it
+	is, rename the extension to bso, move it to the FieldWorks\TestLog\Baseline directory, and
+	check it into source control.
+
+	In order to use baselining in a test, set m_stuBsl in the constructor of your test to the
+	filename of the baseline file (without a path or extension) as shown in the example above,
+
+	In the above example, a new baseline file called BslTestFile.bsn would be created in the
+	FieldWorks\TestLog\Log directory. At the end of the test, it would be compared with
+	FieldWorks\TestLog\Baseline\BslTestFile.bso.
+
+	Calling Baseline() without specifying a baseline name in your constructor will result in a
+	failure being logged to the log file. Differences in the baseline files are logged as
+	failures in the log file.
+----------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------
+Interfaces for writing test suites.
+----------------------------------------------------------------------------------------------*/
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+#include "Common.idh"
+
+
+DeclareLibrary(SilTestLib, 1.0, "SIL Test", a1b23520-c5bc-11d2-8078-0000c0fb81b5)
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	// Forward declarations.
+	interface ISilTest;
+	interface ISilTestSite;
+	interface ISilTestHarness;
+	interface ISilTestHarnessSite;
+
+	/*----------------------------------------------------------------------------------------------
+		Interface used to set up logging and run a series of tests.
+		hungarian: tst
+	----------------------------------------------------------------------------------------------*/
+	DeclareInterface(SilTest, Unknown, a1b23521-c5bc-11d2-8078-0000c0fb81b5)
+	{
+		// This is called before a test is run. The SilTestSite should be stored
+		// somehow since it should be used for any logging functions.
+		HRESULT Initialize(
+			[in] ISilTestSite * ptstsi);
+
+		// This is called after a test is run. Free any resources that were allocated
+		// during the course of the test.
+		HRESULT Close();
+
+		// Run the requested test.
+		// If the HRESULT indicates it succeeded, other tests may be run.
+		// If a failure is indicated, the client should unload and restart the DLL being tested
+		// before running more tests.
+		HRESULT RunTest(
+			[in] int nCookie);
+
+		// This method returns the baseline file used by the test associated with the
+		// requested cookie. pbstr should be set to NULL or an empty BSTR if the test doesn't
+		// use a baseline file.
+		HRESULT BaselineFile(
+			[in] int nCookie,
+			[out, retval] BSTR * pbstr);
+	};
+
+	/*------------------------------------------------------------------------------------------
+		Interface used to set up logging and run a series of tests.
+		hungarian: tstsi
+	------------------------------------------------------------------------------------------*/
+	DeclareInterface(SilTestSite, Unknown, C0CAA461-516C-11d3-9273-00400543A57F)
+	{
+		HRESULT SetLogFile(
+			[in] BSTR bstrLogFile);
+
+		HRESULT SetBaselineFile(
+			[in] BSTR bstrBslFile);
+
+		HRESULT BeginTest(
+			[in] int itst,
+			[in] BSTR bstrProgId,
+			[in] BSTR bstrTestName);
+
+		HRESULT EndTest(
+			[in] int itst,
+			[in] BSTR bstrProgId,
+			[in] BSTR bstrTestName,
+			[in] HRESULT hr);
+
+		// write text for baseline comparison: include any desired newline characters
+		[restricted] HRESULT Baseline(
+			[in, size_is(cch)] const CHAR * prgch,
+			[in] int cch);
+
+		[restricted] HRESULT BaselineW(
+			[in, size_is(cch)] const OLECHAR * prgwch,
+			[in] int cch);
+
+		HRESULT BaselineBstr(
+			[in] BSTR bstr);
+
+		// Write a string to the log file. Each call produces one line in output
+		[restricted] HRESULT Log(
+			[in, size_is(cch)] const CHAR * prgch,
+			[in] int cch);
+
+		[restricted] HRESULT LogW(
+			[in, size_is(cch)] const OLECHAR * prgwch,
+			[in] int cch);
+
+		HRESULT LogBstr(
+			[in] BSTR bstr);
+
+		// Write a string to the log file and cancel the test.
+		[restricted] HRESULT Failure(
+			[in, size_is(cch)] const CHAR * prgch,
+			[in] int cch);
+
+		[restricted] HRESULT FailureW(
+			[in, size_is(cch)] const OLECHAR * prgwch,
+			[in] int cch);
+
+		HRESULT FailureBstr(
+			[in] BSTR bstr);
+
+		// Set up an IStream for XML dumps to the baseline file
+		HRESULT GetBaselineStream(
+			[out] IStream ** ppstr);
+
+		[propget] HRESULT FailureCount(
+			[out, retval] int * pcFailure);
+
+		[propget] HRESULT MsToRun(
+			[out, retval] int * pcMs);
+	};
+
+	/*------------------------------------------------------------------------------------------
+		Interface used to communicate between the VB Test Manager (or the C++ RunTest.exe)
+		and the Test Harness. The Test Harness can supply data concerning available tests
+		and the results of tests which are run. The Test Manager can request particular
+		tests to be run.
+
+		Each test is given a unique number (index) which will be used when requesting which
+		tests to run. This index will be between 0 and the value returned from TestCount
+		(0 <= index < TestCount()).
+
+		NOTE: Initialize must be called before any other methods. Every other method will
+			return E_UNEXPECTED if Initialize is not called first.
+
+		hungarian: tsth
+	------------------------------------------------------------------------------------------*/
+	DeclareInterface(SilTestHarness, Unknown, FB01C0A1-5496-11d3-9273-00400543A57F)
+	{
+		// Load the information for all the tests from the registry. This must be called
+		// before any other method is called or any property is accessed.
+		HRESULT Initialize();
+
+
+		// Get the total number of tests in all the registered test dlls.
+		[propget] HRESULT TestCount(
+			[out, retval] int * pctst);
+
+		// Get the name of the test with the given index (0 based).
+		[propget] HRESULT TestName(
+			[in] int itst,
+			[out, retval] BSTR * pbstrName);
+
+
+		// Get the total number of registered test dlls.
+		[propget] HRESULT DllCount(
+			[out, retval] int * pcdll);
+
+		// Get the ProgId of the dll with the given index (0 based).
+		[propget] HRESULT DllProgId(
+			[in] int idll,
+			[out, retval] BSTR * pbstrProgId);
+
+		// Get the range of tests within the dll with the given index (0 based).
+		HRESULT GetTestRangeInDll(
+			[in] int idll,
+			[out] int * pitstMin,
+			[out] int * pitstLim);
+
+
+		// Return a count of the groups that have been registerd on the system.
+		[propget] HRESULT GroupCount(
+			[out, retval] int * pctstg);
+
+		// Return the name of a group.
+		[propget] HRESULT GroupName(
+			[in] int itstg,
+			[out, retval] BSTR * pbstrName);
+
+		// Return the size (number of tests) of a group.
+		[propget] HRESULT GroupSize(
+			[in] int itstg,
+			[out, retval] int * pctst);
+
+		// Return the type of a group (public/private)
+		[propget] HRESULT IsGroupPublic(
+			[in] int itstg,
+			[out, retval] BOOL * pfPublic);
+
+		[propget] HRESULT CanModifyPublicGroups(
+			[out, retval] BOOL * pfCanModify);
+
+		// Return the global index of a test in a group. The index that is returned can be
+		// used as an index for TestName.
+		HRESULT GetGroupTestIndex(
+			[in] int itstg,
+			[in] int itst,
+			[out, retval] int * pitstInTotal);
+
+		// Add a test to a group. The index of the test is the same index that is used for
+		// TestName (i.e. the global index of the test, not the index of the test within
+		// its DLL). This method should return E_ACCESSDENIED if the change cannot be made
+		// due to read-only access.
+		HRESULT AddTestToGroup(
+			[in] int itstg,
+			[in] int itst);
+
+		// Delete a test from a group. This method should return E_ACCESSDENIED if the
+		// change cannot be made due to read-only access.
+		HRESULT DeleteTestFromGroup(
+			[in] int itstg,
+			[in] int itstInGroup);
+
+		// Create a new group. If this group should be initialized with the contents of
+		// another group (i.e. a copy of that group), set itstg to the index of the other
+		// group. Otherwise, set itstg to -1 to create an empty group. pitstg will be set
+		// to the index of the new group within other groups of the same type. This
+		// method should return E_ACCESSDENIED if the change cannot be made due to
+		// read-only access.
+		HRESULT CreateNewGroup(
+			[in] BSTR bstrName,
+			[in] int itstg,
+			[in] BOOL fPublic,
+			[out, retval] int * pitstg);
+
+		// Delete a group. This method should return E_ACCESSDENIED if the change cannot
+		// be made due to read-only access.
+		HRESULT DeleteGroup(
+			[in] int itstg);
+
+
+		// Run the requested tests. They are given as an array of integer indices.
+		// The indices correspond to those used previously in calls to TestName.
+		HRESULT RunTests(
+			[in, size_is(ctst)] int * prgitst,
+			[in] int ctst,
+			[in] BSTR bstrLog,
+			[in] ISilTestHarnessSite * ptsthsi);
+
+		// Run the test which has the given progid and the given index within that progid
+		// If itstb is -1, all tests in the given dll are run.
+		HRESULT RunSingle(
+			[in] BSTR bstrProgId,
+			[in] int itstInDll,
+			[in] BSTR bstrLog,
+			[in] ISilTestHarnessSite * ptsthsi);
+
+		// Run the tests belonging to a group.
+		HRESULT RunGroup(
+			[in] int itstg,
+			[in] BSTR bstrLog,
+			[in] ISilTestHarnessSite * ptsthsi);
+	};
+
+
+	/*------------------------------------------------------------------------------------------
+		Interface used by the Test harness to communicate test results to the Test Manager.
+		Also allows the Test Manager to request cancellation of a test or of the test process.
+		hungarian: tsthsi
+	------------------------------------------------------------------------------------------*/
+	DeclareInterface(SilTestHarnessSite, Unknown, C2145AA1-593C-11d3-9273-00400543A57F)
+	{
+		// Test harness informs Test Manager of the result of a test.
+		// Any outstanding tests are abandoned if fcancel is returned as true.
+		HRESULT TestResult(
+			[in] int itstb,				// test index
+			[in] int cFailures,			// number of failures
+			[in] int nFlags,			// flags for additional info (e.g. test aborted)
+			[in] int cMs,				// number of milliseconds the test took
+			[out, retval] int * pfCancel); // Test Manager sets true if user has requested cancel
+
+		// Test harness asks Test Manager whether this test should be cancelled before
+		// it has finished. This call would be made periodically (say every 10 seconds).
+		HRESULT QueryCancel(
+			[in] int itstb,				// test index
+			[out, retval] int * pfCancel); // Test Manager sets true if user has requested cancel
+
+		// ************ I think we will need a "Completed" method in due time, so that the Test
+		// Harness can tell the Test Manager that tests have finished and give it a status such
+		// as Aborted by user, Assert error, or whatever. Would need this in multi-threaded case.
+	};
+
+
+	/*------------------------------------------------------------------------------------------
+		Interface used by Visual Basic tests to call the WarnProc and AssertProc functions
+		defined in DebugProcs.dll. This allows VB tests to use the same error logging system
+		as VC++ tests.
+		hungarian: tstdp
+	------------------------------------------------------------------------------------------*/
+	DeclareInterface(SilDebugProcs, Unknown, 99DF5C20-8712-11d3-B588-0050DA1BF4D9)
+	{
+		HRESULT WarnProc(
+			[in] BSTR bstrExplanation,
+			[in] BSTR bstrSource);
+
+		HRESULT AssertProc(
+			[in] BSTR bstrExplanation,
+			[in] BSTR bstrSource);
+
+		HRESULT HideWarnings(
+			[in] BOOL fHide);
+
+		HRESULT HideAsserts(
+			[in] BOOL fHide);
+
+		HRESULT HideErrors(
+			[in] BOOL fHide);
+	};
+
+
+	DeclareCoClass(SilTestHarness, AB816E81-5721-11d3-9273-00400543A57F)
+	{
+		interface ISilTestHarness;
+	};
+
+	DeclareCoClass(SilTestSite, E87D07A0-8C84-11d3-A196-00E029272DB4)
+	{
+		interface ISilTestSite;
+	};
+
+	DeclareCoClass(SilDebugProcs, 99DF5C21-8712-11d3-B588-0050DA1BF4D9)
+	{
+		interface ISilDebugProcs;
+	};
+};

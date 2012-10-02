@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<EncConverterPlugins xmlns="http://www.sil.org/computing/schemas/ECPlugins.xsd">
+  <ECPluginDetails ImplementationName="SIL.TechHindiWebPage"
+				   ImplementationProgId="SilEncConverters31.TechHindiSiteEncConverter"
+				   Priority="2"
+				   DisplayName="Technical Hindi (Google group) Html Converter"
+				   ConfiguratorProgId="SilEncConverters31.TechHindiSiteConfig"
+				   AssemblyReference="SilIndicEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+</EncConverterPlugins>

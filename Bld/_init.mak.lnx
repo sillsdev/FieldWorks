@@ -1,0 +1,90 @@
+# need to set BUILD_ROOT before including this file
+# to check env var an error if BUILD_ROOT isn't set
+
+# need to set BUILD_PRODUCT before incuding this file
+
+# GCC46 is 1 if running GCC >= 4.6, otherwise 0
+GCC46 := $(shell expr `gcc -dumpversion | cut -f1-2 -d.` \>= 4.6)
+
+ARCH := $(shell uname -m)
+SRC = $(BUILD_ROOT)/Src
+LIBRARIES = $(BUILD_ROOT)/..
+
+COM_DIR = $(LIBRARIES)/COM
+WIN32BASE_DIR = $(LIBRARIES)/Win32Base
+WIN32MORE_DIR = $(LIBRARIES)/Win32More
+
+WIN32BASE_INC = $(WIN32BASE_DIR)/include
+COM_INC = $(COM_DIR)/include
+WIN32MORE_INC = $(WIN32MORE_DIR)/include
+
+WIN32BASE_LIB = $(WIN32BASE_DIR)/src/build$(ARCH)
+COM_LIB = $(COM_DIR)/build$(ARCH)/src/.libs
+WIN32MORE_LIB = $(WIN32MORE_DIR)/src/build$(ARCH)
+
+FWINCLUDE = $(BUILD_ROOT)/Include
+FWOUTPUT  = $(BUILD_ROOT)/Output_$(ARCH)
+COM_OUT_DIR = $(FWOUTPUT)/Common
+
+
+
+# defines the root dir for where the object files get built
+OBJ_DIR=$(BUILD_ROOT)/Obj_$(ARCH)
+
+# default BUILD_TYPE is debug
+#
+# b : Bounds
+# d : Debug
+# r : Release
+# p : Profile
+ifndef BUILD_TYPE
+BUILD_TYPE=d
+endif
+ifndef BUILD_CONFIG
+BUILD_CONFIG=Debug
+endif
+
+# defines the root dir for where the intermetidate files get built
+INT_DIR=$(OBJ_DIR)/$(BUILD_CONFIG)/$(BUILD_PRODUCT)
+
+OUT_DIR = $(FWOUTPUT)/$(BUILD_CONFIG)
+
+# todo work out a way of executing these
+CREATE_OUT_DIR=$(shell mkdir -p $(OUT_DIR))
+CREATE_INT_DIR=$(shell mkdir -p $(INT_DIR))
+
+# includes are the special rules
+include $(BUILD_ROOT)/Bld/_rule.mak.lnx
+
+# list of useful defines.
+GENERIC_OBJ = $(OBJ_DIR)/$(BUILD_CONFIG)/$(GENERIC_NAME)
+KERNEL_OBJ = $(OBJ_DIR)/$(BUILD_CONFIG)/$(KERNEL_NAME)
+LANGUAGE_OBJ= $(OBJ_DIR)/$(BUILD_CONFIG)/$(LANGUAGE_NAME)
+APPCORE_OBJ= $(OBJ_DIR)/$(BUILD_CONFIG)/$(APPCORE_NAME)
+TEXT_OBJ= $(OBJ_DIR)/$(BUILD_CONFIG)/$(TEXT_NAME)
+CELLAR_OBJ= $(OBJ_DIR)/$(BUILD_CONFIG)/$(CELLAR_NAME)
+GRENGINE_OBJ= $(OBJ_DIR)/$(BUILD_CONFIG)/$(GRENGINE_NAME)
+VIEWS_OBJ= $(OBJ_DIR)/$(BUILD_CONFIG)/$(VIEWS_NAME)
+DBACCESS_OBJ= $(OBJ_DIR)/$(BUILD_CONFIG)/$(DBACCESS_NAME)
+
+GENERIC_SRC = $(SRC)/$(GENERIC_NAME)
+KERNEL_SRC = $(SRC)/$(KERNEL_NAME)
+LANGUAGE_SRC = $(SRC)/$(LANGUAGE_NAME)
+APPCORE_SRC = $(SRC)/$(APPCORE_NAME)
+TEXT_SRC = $(SRC)/$(TEXT_NAME)
+CELLAR_SRC = $(SRC)/$(CELLAR_NAME)
+GRENGINE_SRC = $(SRC)/Graphite/$(GRENGINE_NAME)
+VIEWS_SRC = $(SRC)/$(VIEWS_NAME)
+DBACCESS_SRC = $(SRC)/$(DBACCESS_NAME)
+
+# Include user specific settings
+-include $(BUILD_ROOT)/Bld/_user.mak.lnx
+
+ICU_INSTALL_DIR ?= $(BUILD_ROOT)/Lib/src/icu/install$(ARCH)
+ICU_BIN_DIR = $(ICU_INSTALL_DIR)/bin
+ICU_LIB_DIR = $(ICU_INSTALL_DIR)/lib
+
+# Use our own icu-config by putting it first in the path
+PATH := $(shell $(BUILD_ROOT)/Bin/abs.py $(ICU_BIN_DIR)):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
+
+export PATH

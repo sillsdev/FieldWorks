@@ -1,0 +1,1022 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by Andy Black (SIL International) -->
+<!DOCTYPE masterGlossList SYSTEM "C:\fw\Src\LexText\Morphology\MGA\GlossLists\masterGlossList.dtd">
+<masterGlossList afterSeparator="." complexNameFirst="yes" complexNameSeparator=":">
+	<item id="tadjective" type="group" status="visible" posid="Adjective">
+		<abbrev ws="en">adjective</abbrev>
+		<term ws="en">adjective-related</term>
+		<def ws="en">Morphosyntactic features that are generally associated with adjectives and adjective phrases.</def>
+		<item id="fDeg" type="feature">
+			<abbrev ws="en">Deg</abbrev>
+			<term ws="en">degree</term>
+			<item id="vPositive" type="value">
+				<abbrev ws="en">Positive</abbrev>
+				<term ws="en">positive</term>
+			</item>
+			<item id="vComp" type="value">
+				<abbrev ws="en">Comp</abbrev>
+				<term ws="en">comparative</term>
+			</item>
+			<item id="vSup" type="value">
+				<abbrev ws="en">Sup</abbrev>
+				<term ws="en">superlative</term>
+			</item>
+		</item>
+		<item id="cAdjAgr" type="complex" embed="tCommonAgr tCaseAgr" carry="no">
+			<abbrev ws="en">AdjAgr</abbrev>
+			<term ws="en">adjective  agreement</term>
+		</item>
+	</item>
+	<item id="tarticle" type="group" status="visible" posid="Determiner">
+		<abbrev ws="en">article</abbrev>
+		<term ws="en">article-related</term>
+		<def ws="en">Morphosyntactic features that are generally associated with articles or determiners.</def>
+		<item id="cArtAgr" type="complex" embed="tCommonAgr tCaseAgr" carry="no">
+			<abbrev ws="en">ArAgr</abbrev>
+			<term ws="en">article agreement</term>
+		</item>
+		<item id="fArtSubtype" type="feature">
+			<abbrev ws="en">ArtSubtype</abbrev>
+			<term ws="en">subtype</term>
+			<item id="vArtDem" type="value">
+				<abbrev ws="en">ArtDem</abbrev>
+				<term ws="en">demonstrative</term>
+				<def ws="en">A demonstrative article or determiner is a demonstrative that appears with a head noun in a noun phrase.  For example, the word that in the sentence I like that book. </def>
+			</item>
+		</item>
+	</item>
+	<item id="tpronoun" type="group" status="visible" posid="Pronoun">
+		<abbrev ws="en">pronoun</abbrev>
+		<term ws="en">pronoun-related</term>
+		<item id="cProAgr" type="complex" embed="tPersonAgr tCommonAgr tCaseAgr" carry="no">
+			<abbrev ws="en">ProAgr</abbrev>
+			<term ws="en">pronoun agreement</term>
+		</item>
+		<item id="fProSubtype" type="feature">
+			<abbrev ws="en">ProSubtype</abbrev>
+			<term ws="en">subtype</term>
+			<item id="vPoss" type="value">
+				<abbrev ws="en">Poss</abbrev>
+				<term ws="en">possessive</term>
+			</item>
+			<item id="vDem" type="value">
+				<abbrev ws="en">Dem</abbrev>
+				<term ws="en">demonstrative</term>
+				<def ws="en">A demonstrative pronoun is a demonstrative that stands alone in a noun phrase.  For example, the word that in the sentence I like that. </def>
+			</item>
+			<item id="vRefl" type="value">
+				<abbrev ws="en">Refl</abbrev>
+				<term ws="en">reflexive</term>
+			</item>
+			<item id="vRecip" type="value">
+				<abbrev ws="en">Recip</abbrev>
+				<term ws="en">reciprocal</term>
+			</item>
+		</item>
+	</item>
+	<item id="tnoun" type="group" status="visible" posid="Noun">
+		<abbrev ws="en">noun</abbrev>
+		<term ws="en">noun-related</term>
+		<def ws="en">Morphosyntactic features that are generally associated with nouns and noun phrases.</def>
+		<item id="cNounAgr" type="complex" embed="tCommonAgr tCaseAgr " carry="no">
+			<abbrev ws="en">NounAgr</abbrev>
+			<term ws="en">noun agreement</term>
+		</item>
+		<!--
+	<item id="cNomCase" term="case agreement" abbrev="NomCase" type="complex" embed="tCaseAgr" carry="no"/>
+	-->
+		<item id="fdefiniteness" type="feature" cellar="18806620CB21CC1">
+			<abbrev ws="en">definiteness</abbrev>
+			<term ws="en">definiteness</term>
+			<item id="vDefIdent" type="value" cellar="18806500CB21CBF">
+				<abbrev ws="en">DefIdent</abbrev>
+				<term ws="en">definite identifiability</term>
+			</item>
+			<item id="vGenTerm" type="value" cellar="1880A460CB21D29">
+				<abbrev ws="en">GenTerm</abbrev>
+				<term ws="en">generic term</term>
+			</item>
+			<item id="vIndef" type="value" cellar="1880C500CB21D63">
+				<abbrev ws="en">Indef</abbrev>
+				<term ws="en">indefiniteness</term>
+			</item>
+			<item id="vNonSpec" type="value" cellar="18810590CB21DCC">
+				<abbrev ws="en">NonSpec</abbrev>
+				<term ws="en">nonspecificity</term>
+			</item>
+			<item id="vSpec" type="value" cellar="18818700CB21EA2">
+				<abbrev ws="en">Spec</abbrev>
+				<term ws="en">specificity</term>
+			</item>
+		</item>
+		<!--
+	<item id="cNounAgr" term="common agreement" abbrev="NounAgr" type="complex" embed="tCommonAgr" carry="no"/>
+-->
+		<item id="fSemanticRole" type="feature" cellar="18801150CB28312">
+			<abbrev ws="en">SemanticRole</abbrev>
+			<term ws="en">semantic role</term>
+			<item id="vAccomp" type="value" cellar="18800CA0CB21C1F">
+				<abbrev ws="en">Accomp</abbrev>
+				<term ws="en">accompaniment</term>
+			</item>
+			<item id="vAgt" type="value" cellar="188018D0CB21C32">
+				<abbrev ws="en">Agt</abbrev>
+				<term ws="en">agent</term>
+			</item>
+			<item id="vBenefic" type="value" cellar="18803020CB21C57">
+				<abbrev ws="en">Benefic</abbrev>
+				<term ws="en">beneficiary</term>
+			</item>
+			<item id="vCauser" type="value" cellar="18803930CB21C66">
+				<abbrev ws="en">Causer</abbrev>
+				<term ws="en">causer</term>
+			</item>
+			<item id="vCounterAgt" type="value" cellar="18805ED0CB21CB5">
+				<abbrev ws="en">CounterAgt</abbrev>
+				<term ws="en">counter-agent</term>
+			</item>
+			<item id="vDatRole" type="value" cellar="18806190CB21CBA">
+				<abbrev ws="en">DatRole</abbrev>
+				<term ws="en">dative</term>
+			</item>
+			<item id="vExp" type="value" cellar="188091D0CB21D09">
+				<abbrev ws="en">Exp</abbrev>
+				<term ws="en">experiencer</term>
+			</item>
+			<item id="vFact" type="value" cellar="18809650CB21D11">
+				<abbrev ws="en">Fact</abbrev>
+				<term ws="en">factitive</term>
+			</item>
+			<item id="vGoal" type="value" cellar="1880A7E0CB21D2E">
+				<abbrev ws="en">Goal</abbrev>
+				<term ws="en">goal</term>
+			</item>
+			<item id="vInstRole" type="value" cellar="1880D140CB21D77">
+				<abbrev ws="en">InstRole</abbrev>
+				<term ws="en">instrument</term>
+			</item>
+			<item id="vLocRole" type="value" cellar="1880E0C0CB21D91">
+				<abbrev ws="en">LocRole</abbrev>
+				<term ws="en">locative</term>
+			</item>
+			<item id="vManner" type="value" cellar="1880E270CB21D93">
+				<abbrev ws="en">Manner</abbrev>
+				<term ws="en">manner</term>
+			</item>
+			<item id="vMeas" type="value" cellar="1880E880CB21D9D">
+				<abbrev ws="en">Meas</abbrev>
+				<term ws="en">measure</term>
+			</item>
+			<item id="vPath" type="value" cellar="188121E0CB21DF9">
+				<abbrev ws="en">Path</abbrev>
+				<term ws="en">path</term>
+			</item>
+			<item id="vPat" type="value" cellar="18812370CB21DFB">
+				<abbrev ws="en">Pat</abbrev>
+				<term ws="en">patient</term>
+			</item>
+			<item id="vRange" type="value" cellar="18815C50CB21E59">
+				<abbrev ws="en">Range</abbrev>
+				<term ws="en">range</term>
+			</item>
+			<item id="vResult" type="value" cellar="18817260CB21E7D">
+				<abbrev ws="en">Result</abbrev>
+				<term ws="en">result</term>
+			</item>
+			<item id="vSrc" type="value" cellar="188184F0CB21E9E">
+				<abbrev ws="en">Src</abbrev>
+				<term ws="en">source</term>
+			</item>
+			<item id="vTime" type="value" cellar="1881A260CB21ED5">
+				<abbrev ws="en">Time</abbrev>
+				<term ws="en">time</term>
+			</item>
+		</item>
+		<item id="cPossessorAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+			<abbrev ws="en">PossAgr</abbrev>
+			<term ws="en">possessor agreement</term>
+		</item>
+	</item>
+	<item id="tverb" type="group" status="visible" posid="Verb">
+		<abbrev ws="en">verb</abbrev>
+		<term ws="en">verb-related</term>
+		<def ws="en">Morphosyntactic features that are generally associated with verbs and verb phrases.</def>
+		<item id="faspect" type="feature" cellar="18802700CB21C49">
+			<abbrev ws="en">aspect</abbrev>
+			<term ws="en">aspect</term>
+			<item id="xAor" type="xref" target="vPerfv">
+				<abbrev ws="en">Aor</abbrev>
+				<term ws="en">aorist aspect</term>
+			</item>
+			<item id="vAtelic" type="value">
+				<abbrev ws="en">Atelic</abbrev>
+				<term ws="en">atelic aspect</term>
+				<def ws="en">A term used in the grammatical analysis of aspect, to refer to an event where the activity has no clear terminal point. They contrast with telic verbs.</def>
+				<citation>Crystal 1997:33</citation>
+			</item>
+			<item id="vAtten" type="value">
+				<abbrev ws="en">Atten</abbrev>
+				<term ws="en">attenuative aspect</term>
+				<def ws="en">A term sometimes used in grammar and semantics, referring to a reduced quality or quantity of the state or activity expressed by the verb ('a little', 'less'). In some languages (e.g., Hungarian) the contrast is a formal part of the aspect system.</def>
+				<citation>Crystal 1997:33</citation>
+			</item>
+			<item id="vCess" type="value" cellar="18803B10CB21C6A">
+				<abbrev ws="en">Cess</abbrev>
+				<term ws="en">cessative aspect</term>
+			</item>
+			<item id="xCompl" type="xref" target="vTelic">
+				<abbrev ws="en">Compl</abbrev>
+				<term ws="en">completive aspect</term>
+			</item>
+			<item id="vCont" type="value" cellar="188053D0CB21CA2">
+				<abbrev ws="en">Cont</abbrev>
+				<term ws="en">continuous aspect</term>
+			</item>
+			<item id="vDist" type="value" cellar="18807590CB21CDC">
+				<abbrev ws="en">Dist</abbrev>
+				<term ws="en">distributive aspect</term>
+			</item>
+			<item id="vDur" type="xref" target="vCont">
+				<abbrev ws="en">Dur</abbrev>
+				<term ws="en">durative aspect</term>
+				<def ws="en">Used in grammatical analysis of aspect, to refer to an event involving a period of time (cf. 'continuous', 'progressive'); it contrasts with 'non-durative' or 'punctual'.</def>
+				<citation>Crystal 1997:128</citation>
+			</item>
+			<item id="vFreq" type="value">
+				<abbrev ws="en">Freq</abbrev>
+				<term ws="en">frequentative aspect</term>
+				<def ws="en">Used in the grammatical classification of verbs to refer to the expression of repeated action. In some languages (e.g. Russian) the class may be marked morphologically, but in English the meaning is normally expressed through adverbials of frequency, e.g. again, regularly, often.</def>
+				<citation>Crystal 1997:159</citation>
+			</item>
+			<item id="vHab" type="value" cellar="1880AA50CB21D32">
+				<abbrev ws="en">Hab</abbrev>
+				<term ws="en">habitual aspect</term>
+			</item>
+			<item id="vImpfv" type="value" cellar="1880BD40CB21D54">
+				<abbrev ws="en">Impfv</abbrev>
+				<term ws="en">imperfective aspect</term>
+			</item>
+			<item id="xIncep" type="xref" target="vInchoa">
+				<abbrev ws="en">Incep</abbrev>
+				<term ws="en">inceptive aspect</term>
+				<def ws="en">Used to refer to a type of aspectual relationship in which the beginning of an action is specified. Same as 'inchoative'.</def>
+				<citation>Crystal 1997:192</citation>
+			</item>
+			<item id="vInchoa" type="value" cellar="1880C350CB21D60">
+				<abbrev ws="en">Inchoa</abbrev>
+				<term ws="en">inchoative aspect</term>
+			</item>
+			<item id="vIter" type="value" cellar="1880DA60CB21D86">
+				<abbrev ws="en">Iter</abbrev>
+				<term ws="en">iterative aspect</term>
+			</item>
+			<item id="vPerfv" type="value" cellar="188126A0CB21E00">
+				<abbrev ws="en">Perfv</abbrev>
+				<term ws="en">perfective aspect</term>
+			</item>
+			<item id="vProg" type="value" cellar="18814ED0CB21E43">
+				<abbrev ws="en">Prog</abbrev>
+				<term ws="en">progressive aspect</term>
+			</item>
+			<item id="xPunct" type="xref" target="vPerfv">
+				<abbrev ws="en">Punct</abbrev>
+				<term ws="en">punctual aspect</term>
+				<def ws="en">Used in analysis of aspect to refer to a momentary event, thought of as having no temporal duration; it thus contrasts with durative or continuous events, where a period of time is involved.</def>
+			</item>
+			<item id="xStv" type="xref" target="vPerfv">
+				<abbrev ws="en">Stv</abbrev>
+				<term ws="en">stative</term>
+				<def ws="en"/>
+				<citation>Crystal 1997:361-2</citation>
+			</item>
+			<item id="vTelic" type="value">
+				<abbrev ws="en">Telic</abbrev>
+				<term ws="en">telic aspect</term>
+				<def ws="en">A term used in grammatical analysis of aspect, to refer to an event where the activity has a clear terminal point. These verbs contrast with atelic verbs. </def>
+				<citation>Crystal 1997:348</citation>
+			</item>
+		</item>
+		<item id="fmood" type="feature" cellar="1880F4B0CB21DB0">
+			<abbrev ws="en">mood</abbrev>
+			<term ws="en">mood and modality</term>
+			<item id="vAleth" type="value" cellar="18801970CB21C33">
+				<abbrev ws="en">Aleth</abbrev>
+				<term ws="en">alethic modality</term>
+			</item>
+			<item id="vAssump" type="value" cellar="18802870CB21C4B">
+				<abbrev ws="en">Assump</abbrev>
+				<term ws="en">assumptive mood</term>
+			</item>
+			<item id="vAudit" type="value" cellar="18802AE0CB21C4F">
+				<abbrev ws="en">Audit</abbrev>
+				<term ws="en">auditory evidential</term>
+			</item>
+			<item id="vCommis" type="value" cellar="18804480CB21C8A">
+				<abbrev ws="en">Commis</abbrev>
+				<term ws="en">commissive modality</term>
+			</item>
+			<item id="vDecl" type="value" cellar="18806290CB21CBB">
+				<abbrev ws="en">Decl</abbrev>
+				<term ws="en">declarative mood</term>
+			</item>
+			<item id="vDeduct" type="value" cellar="18806370CB21CBD">
+				<abbrev ws="en">Deduct</abbrev>
+				<term ws="en">deductive mood</term>
+			</item>
+			<item id="vDelib" type="value" cellar="18806960CB21CC6">
+				<abbrev ws="en">Delib</abbrev>
+				<term ws="en">deliberative mood</term>
+			</item>
+			<item id="vDeon" type="value" cellar="18806AB0CB21CC8">
+				<abbrev ws="en">Deon</abbrev>
+				<term ws="en">deontic modality</term>
+			</item>
+			<item id="vDirectiv" type="value" cellar="18807180CB21CD3">
+				<abbrev ws="en">Directiv</abbrev>
+				<term ws="en">directive modality</term>
+			</item>
+			<item id="vDubit" type="value" cellar="18807890CB21CE1">
+				<abbrev ws="en">Dubit</abbrev>
+				<term ws="en">dubitative mood</term>
+			</item>
+			<item id="vEpis" type="value" cellar="18808540CB21CF5">
+				<abbrev ws="en">Epis</abbrev>
+				<term ws="en">epistemic modality</term>
+			</item>
+			<item id="vEvi" type="value" cellar="18808BA0CB21D00">
+				<abbrev ws="en">Evi</abbrev>
+				<term ws="en">evidentiality modality</term>
+			</item>
+			<item id="vHypo" type="value" cellar="1880B1C0CB21D3F">
+				<abbrev ws="en">Hypo</abbrev>
+				<term ws="en">hypothetical mood</term>
+			</item>
+			<item id="vImmImpv" type="value" cellar="1880BB70CB21D51">
+				<abbrev ws="en">ImmImpv</abbrev>
+				<term ws="en">immediate imperative mood</term>
+			</item>
+			<item id="vImpv" type="value" cellar="1880BC40CB21D53">
+				<abbrev ws="en">Impv</abbrev>
+				<term ws="en">imperative mood</term>
+			</item>
+			<item id="vImprec" type="value" cellar="1880C160CB21D5B">
+				<abbrev ws="en">Imprec</abbrev>
+				<term ws="en">imprecative mood</term>
+			</item>
+			<item id="vInterog" type="value" cellar="1880D6F0CB21D80">
+				<abbrev ws="en">Interog</abbrev>
+				<term ws="en">interrogative mood</term>
+			</item>
+			<item id="virrealis" type="value" cellar="1880D940CB21D84">
+				<abbrev ws="en">irrealis</abbrev>
+				<term ws="en">irrealis modality</term>
+			</item>
+			<item id="vJudg" type="value" cellar="1880DB10CB21D88">
+				<abbrev ws="en">Judg</abbrev>
+				<term ws="en">judgment modality</term>
+			</item>
+			<item id="vJuss" type="value" cellar="1880DB90CB21D88">
+				<abbrev ws="en">Juss</abbrev>
+				<term ws="en">jussive mood</term>
+			</item>
+			<item id="vNec" type="value" cellar="1880F940CB21DB7">
+				<abbrev ws="en">Nec</abbrev>
+				<term ws="en">necessity modality</term>
+			</item>
+			<item id="vNonvis" type="value" cellar="18810630CB21DCD">
+				<abbrev ws="en">Nonvis</abbrev>
+				<term ws="en">nonvisual evidential</term>
+			</item>
+			<item id="vOblig" type="value" cellar="18810BD0CB21DD6">
+				<abbrev ws="en">Oblig</abbrev>
+				<term ws="en">obligative mood</term>
+			</item>
+			<item id="vOpt" type="value" cellar="188110F0CB21DDE">
+				<abbrev ws="en">Opt</abbrev>
+				<term ws="en">optative mood</term>
+			</item>
+			<item id="vPermis" type="value" cellar="18812BD0CB21E08">
+				<abbrev ws="en">Permis</abbrev>
+				<term ws="en">permissive mood</term>
+			</item>
+			<item id="vPossbl" type="value" cellar="18813420CB21E15">
+				<abbrev ws="en">Possbl</abbrev>
+				<term ws="en">possibility modality</term>
+			</item>
+			<item id="vPrec" type="value" cellar="18813A30CB21E22">
+				<abbrev ws="en">Prec</abbrev>
+				<term ws="en">precative mood</term>
+			</item>
+			<item id="vProhib" type="value" cellar="18814FB0CB21E44">
+				<abbrev ws="en">Prohib</abbrev>
+				<term ws="en">prohibitive mood</term>
+			</item>
+			<item id="vQuot" type="value" cellar="18815B70CB21E58">
+				<abbrev ws="en">Quot</abbrev>
+				<term ws="en">quotative evidential</term>
+			</item>
+			<item id="vReal" type="value" cellar="18815D40CB21E5A">
+				<abbrev ws="en">Real</abbrev>
+				<term ws="en">realis modality</term>
+			</item>
+			<item id="vSensor" type="value" cellar="188179D0CB21E8A">
+				<abbrev ws="en">Sensor</abbrev>
+				<term ws="en">sensory evidential</term>
+			</item>
+			<item id="vSpecu" type="value" cellar="18818860CB21EA4">
+				<abbrev ws="en">Specu</abbrev>
+				<term ws="en">speculative mood</term>
+			</item>
+			<item id="vSubjnct" type="value" cellar="18819090CB21EB5">
+				<abbrev ws="en">Subjnct</abbrev>
+				<term ws="en">subjunctive mood</term>
+			</item>
+			<item id="vVis" type="value" cellar="1881B210CB21EF1">
+				<abbrev ws="en">Vis</abbrev>
+				<term ws="en">visual evidential</term>
+			</item>
+			<item id="vVolit" type="value" cellar="1881B420CB21EF4">
+				<abbrev ws="en">Volit</abbrev>
+				<term ws="en">volitive modality</term>
+			</item>
+		</item>
+		<item id="gAgreement" type="group">
+			<abbrev ws="en"/>
+			<term ws="en">agreement</term>
+			<item id="cSubjAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+				<abbrev ws="en">SUBJ</abbrev>
+				<term ws="en">subject agreement</term>
+			</item>
+			<item id="cObjAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+				<abbrev ws="en">OBJ</abbrev>
+				<term ws="en">object agreement</term>
+			</item>
+			<item id="cErgAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+				<abbrev ws="en">ERG</abbrev>
+				<term ws="en">ergative agreement</term>
+			</item>
+			<item id="cAbsAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+				<abbrev ws="en">ABS</abbrev>
+				<term ws="en">absolutive agreement</term>
+			</item>
+		</item>
+		<item id="fpolarity" type="feature" cellar="188130D0CB21E10">
+			<abbrev ws="en">polarity</abbrev>
+			<term ws="en">polarity</term>
+			<item id="vPlus" type="value">
+				<abbrev ws="en">Plus</abbrev>
+				<term ws="en">affirmative</term>
+			</item>
+			<item id="vMinus" type="value">
+				<abbrev ws="en">Minus</abbrev>
+				<term ws="en">negative</term>
+			</item>
+		</item>
+		<item id="fswitchRef" type="feature" cellar="18819820CB21EC2">
+			<abbrev ws="en">switchRef</abbrev>
+			<term ws="en">switch reference</term>
+			<item id="vDiffSubjMrkr" type="value" cellar="18806E50CB21CCE">
+				<abbrev ws="en">DiffSubjMrkr</abbrev>
+				<term ws="en">different subject marker</term>
+			</item>
+			<item id="vSameSubjMrkr" type="value" cellar="18817550CB21E82">
+				<abbrev ws="en">SameSubjMrkr</abbrev>
+				<term ws="en">same subject marker</term>
+			</item>
+		</item>
+		<item id="ftense" type="feature" cellar="18819EF0CB21ECF">
+			<abbrev ws="en">tense</abbrev>
+			<term ws="en">tense</term>
+			<item id="gTense" type="group" cellar="18800AE0CB21C1C">
+				<term ws="en">absolute tense</term>
+				<item id="vCloseFut" type="value" cellar="18804080CB21C84">
+					<abbrev ws="en">CloseFut</abbrev>
+					<term ws="en">close future tense</term>
+				</item>
+				<item id="vFut" type="value" cellar="1880A130CB21D23">
+					<abbrev ws="en">Fut</abbrev>
+					<term ws="en">future tense </term>
+				</item>
+				<item id="vHestPst" type="value" cellar="1880ACB0CB21D36">
+					<abbrev ws="en">HestPst</abbrev>
+					<term ws="en">hesternal past tense</term>
+				</item>
+				<item id="vHodFut" type="value" cellar="1880AD20CB21D37">
+					<abbrev ws="en">HodFut</abbrev>
+					<term ws="en">hodiernal future tense</term>
+				</item>
+				<item id="vHodPst" type="value" cellar="1880AD80CB21D38">
+					<abbrev ws="en">HodPst</abbrev>
+					<term ws="en">hodiernal past tense</term>
+				</item>
+				<item id="vImmPst" type="value" cellar="1880BBE0CB21D52">
+					<abbrev ws="en">ImmPst</abbrev>
+					<term ws="en">immediate past tense</term>
+				</item>
+				<item id="vNonFut" type="value" cellar="18810380CB21DC8">
+					<abbrev ws="en">NonFut</abbrev>
+					<term ws="en">nonfuture tense</term>
+				</item>
+				<item id="vNonPst" type="value" cellar="188103E0CB21DC9">
+					<abbrev ws="en">NonPst</abbrev>
+					<term ws="en">nonpast tense</term>
+				</item>
+				<item id="vNonRecPst" type="value" cellar="18810450CB21DC9">
+					<abbrev ws="en">NonRecPst</abbrev>
+					<term ws="en">nonrecent past tense</term>
+				</item>
+				<item id="vNonRemPst" type="value" cellar="188104B0CB21DCA">
+					<abbrev ws="en">NonRemPst</abbrev>
+					<term ws="en">nonremote past tense</term>
+				</item>
+				<item id="vNotYet" type="value" cellar="18810690CB21DCD">
+					<abbrev ws="en">NotYet</abbrev>
+					<term ws="en">not-yet tense</term>
+				</item>
+				<item id="vPst" type="value" cellar="18812160CB21DF8">
+					<abbrev ws="en">Pst</abbrev>
+					<term ws="en">past tense </term>
+				</item>
+				<item id="vPostHodFut" type="value" cellar="188134A0CB21E16">
+					<abbrev ws="en">PostHodFut</abbrev>
+					<term ws="en">post-hodiernal future tense</term>
+				</item>
+				<item id="vPredFut" type="value" cellar="18813E80CB21E29">
+					<abbrev ws="en">PredFut</abbrev>
+					<term ws="en">predictive future tense</term>
+				</item>
+				<item id="vPreHestPst" type="value" cellar="18814070CB21E2C">
+					<abbrev ws="en">PreHestPst</abbrev>
+					<term ws="en">prehesternal past tense</term>
+				</item>
+				<item id="vPreHodPst" type="value" cellar="188140D0CB21E2D">
+					<abbrev ws="en">PreHodPst</abbrev>
+					<term ws="en">prehodiernal past tense</term>
+				</item>
+				<item id="vPres" type="value" cellar="18814510CB21E33">
+					<abbrev ws="en">Pres</abbrev>
+					<term ws="en">present tense</term>
+				</item>
+				<item id="vPret" type="value" cellar="18814A10CB21E3B">
+					<abbrev ws="en">Pret</abbrev>
+					<term ws="en">preterit</term>
+				</item>
+				<item id="vRecPst" type="value" cellar="18815F30CB21E5E">
+					<abbrev ws="en">RecPst</abbrev>
+					<term ws="en">recent past tense</term>
+				</item>
+				<item id="vRemFut" type="value" cellar="18816EC0CB21E77">
+					<abbrev ws="en">RemFut</abbrev>
+					<term ws="en">remote future tense</term>
+				</item>
+				<item id="vRemPst" type="value" cellar="18816F30CB21E78">
+					<abbrev ws="en">RemPst</abbrev>
+					<term ws="en">remote past tense</term>
+				</item>
+				<item id="vStill" type="value" cellar="18818B80CB21EAD">
+					<abbrev ws="en">Still</abbrev>
+					<term ws="en">still tense</term>
+				</item>
+			</item>
+			<item id="gAbsoluteRelativeTense" type="group" cellar="18800B40CB21C1D">
+				<term ws="en">absolute-relative tense</term>
+				<item id="vFutPerf" type="value" cellar="1880A0A0CB21D23">
+					<abbrev ws="en">FutPerf</abbrev>
+					<term ws="en">future perfect tense</term>
+				</item>
+				<item id="vFutInFut" type="value" cellar="1880A1A0CB21D24">
+					<abbrev ws="en">FutInFut</abbrev>
+					<term ws="en">future-in-future tense</term>
+				</item>
+				<item id="vFutInPst" type="value" cellar="1880A230CB21D25">
+					<abbrev ws="en">FutInPst</abbrev>
+					<term ws="en">future-in-past tense</term>
+				</item>
+				<item id="vFutPerfInPst" type="value" cellar="1880A2C0CB21D26">
+					<abbrev ws="en">FutPerfInPst</abbrev>
+					<term ws="en">future-perfect-in-past tense</term>
+				</item>
+				<item id="vPstPerf" type="value" cellar="188120C0CB21DF7">
+					<abbrev ws="en">PstPerf</abbrev>
+					<term ws="en">past perfect tense</term>
+				</item>
+			</item>
+			<item id="gRelativeTense" type="group" cellar="18816C90CB21E73">
+				<term ws="en">relative tense</term>
+				<item id="vRelFut" type="value" cellar="18816980CB21E6E">
+					<abbrev ws="en">RelFut</abbrev>
+					<term ws="en">relative future tense</term>
+				</item>
+				<item id="vRelNonFut" type="value" cellar="18816A10CB21E6F">
+					<abbrev ws="en">RelNonFut</abbrev>
+					<term ws="en">relative nonfuture tense</term>
+				</item>
+				<item id="vRelNonPst" type="value" cellar="18816A90CB21E70">
+					<abbrev ws="en">RelNonPst</abbrev>
+					<term ws="en">relative nonpast tense</term>
+				</item>
+				<item id="vRelPst" type="value" cellar="18816AF0CB21E70">
+					<abbrev ws="en">RelPst</abbrev>
+					<term ws="en">relative past tense</term>
+				</item>
+				<item id="vRelPres" type="value" cellar="18816B70CB21E71">
+					<abbrev ws="en">RelPres</abbrev>
+					<term ws="en">relative present tense</term>
+				</item>
+			</item>
+		</item>
+		<item id="ftransitivity" type="feature" cellar="1881A560CB21EDA">
+			<abbrev ws="en">transitivity</abbrev>
+			<term ws="en">transitivity</term>
+			<item id="vDiTrans" type="value" cellar="18807690CB21CDD">
+				<abbrev ws="en">DiTrans</abbrev>
+				<term ws="en">ditransitivity</term>
+			</item>
+			<item id="vInTrans" type="value" cellar="1880D840CB21D83">
+				<abbrev ws="en">InTrans</abbrev>
+				<term ws="en">intransitivity</term>
+			</item>
+			<item id="vTrans" type="value" cellar="1881A4D0CB21ED9">
+				<abbrev ws="en">Trans</abbrev>
+				<term ws="en">transitive verb</term>
+			</item>
+		</item>
+		<item id="fvoice" type="feature" cellar="1881B320CB21EF3">
+			<abbrev ws="en">voice</abbrev>
+			<term ws="en">voice </term>
+			<item id="vAct" type="value" cellar="18800E70CB21C22">
+				<abbrev ws="en">Act</abbrev>
+				<term ws="en">active voice</term>
+			</item>
+			<item id="vAntiPass" type="value" cellar="18802270CB21C41">
+				<abbrev ws="en">AntiPass</abbrev>
+				<term ws="en">antipassive voice</term>
+			</item>
+			<item id="vImpersPass" type="value">
+				<abbrev ws="en">ImpersPass</abbrev>
+				<term ws="en">impersonal passive</term>
+			</item>
+			<item id="vMedPass" type="value" cellar="1880E980CB21D9F">
+				<abbrev ws="en">MedPass</abbrev>
+				<term ws="en">mediopassive voice</term>
+			</item>
+			<item id="vMid" type="value" cellar="1880EE90CB21DA7">
+				<abbrev ws="en">Mid</abbrev>
+				<term ws="en">middle voice</term>
+			</item>
+			<item id="vPass" type="value" cellar="18811FF0CB21DF6">
+				<abbrev ws="en">Pass</abbrev>
+				<term ws="en">passive voice </term>
+			</item>
+			<item id="vPersPass" type="value">
+				<abbrev ws="en">PersPass</abbrev>
+				<term ws="en">personal passive</term>
+			</item>
+			<item id="vSynthPass" type="value">
+				<abbrev ws="en">SynthPass</abbrev>
+				<term ws="en">synthetic passive voice</term>
+			</item>
+		</item>
+		<item id="ffocus" type="feature">
+			<abbrev ws="en">focus</abbrev>
+			<term ws="en">voice/focus in Philippine-type languages</term>
+			<def ws="en">Philippine-type languages (e.g. Tagalog and Cebuano as well as some in Malaysia) have a voice or focus system in which the verb selects the semantic role of the grammatical subject.  The verb has an affix which says what the semantic role of the subject is.</def>
+			<citation>Brown and Miller 1999:408</citation>
+			<item id="vAF" type="value">
+				<abbrev ws="en">AF</abbrev>
+				<term ws="en">actor voice/focus</term>
+				<def ws="en">The subject has the semantic role of actor.</def>
+			</item>
+			<item id="vGF" type="value">
+				<abbrev ws="en">GF</abbrev>
+				<term ws="en">goal voice/focus</term>
+				<def ws="en">The subject has the semantic role of goal or recipient.  It is sometimes also referred to as dative voice.</def>
+			</item>
+			<item id="vIF" type="value">
+				<abbrev ws="en">IF</abbrev>
+				<term ws="en">instrumental voice/focus</term>
+				<def ws="en">The subject has the semantic role of instrument.</def>
+			</item>
+			<item id="vPF" type="value">
+				<abbrev ws="en">PF</abbrev>
+				<term ws="en">patient voice/focus</term>
+				<def ws="en">The subject has the semantic role of patient.  It is sometimes also referred to as object voice.</def>
+			</item>
+		</item>
+	</item>
+	<item id="tCaseAgr" type="fsType" status="hidden">
+		<abbrev ws="en">CaseAgr</abbrev>
+		<term ws="en">case agreement</term>
+		<item id="fcase" type="feature" cellar="18803600CB21C61">
+			<abbrev ws="en">case</abbrev>
+			<term ws="en">case</term>
+			<item id="vAbl" type="value" cellar="18800910CB21C19">
+				<abbrev ws="en">Abl</abbrev>
+				<term ws="en"> ablative case</term>
+			</item>
+			<item id="vAbs" type="value" cellar="18800BA0CB21C1E">
+				<abbrev ws="en">Abs</abbrev>
+				<term ws="en"> absolutive case</term>
+			</item>
+			<item id="vAcc" type="value" cellar="18800DD0CB21C21">
+				<abbrev ws="en">Acc</abbrev>
+				<term ws="en"> accusative case</term>
+			</item>
+			<item id="vAll" type="value" cellar="18801AA0CB21C35">
+				<abbrev ws="en">All</abbrev>
+				<term ws="en"> allative case</term>
+			</item>
+			<item id="vBen" type="value" cellar="18802FB0CB21C57">
+				<abbrev ws="en">Ben</abbrev>
+				<term ws="en"> benefactive case</term>
+			</item>
+			<item id="vDat" type="value" cellar="18806100CB21CB9">
+				<abbrev ws="en">Dat</abbrev>
+				<term ws="en"> dative case</term>
+			</item>
+			<item id="vErg" type="value" cellar="188088A0CB21CFB">
+				<abbrev ws="en">Erg</abbrev>
+				<term ws="en"> ergative case</term>
+			</item>
+			<item id="vGen" type="value" cellar="1880A550CB21D2A">
+				<abbrev ws="en">Gen</abbrev>
+				<term ws="en"> genitive case</term>
+			</item>
+			<item id="vIll" type="value" cellar="1880B450CB21D44">
+				<abbrev ws="en">Ill</abbrev>
+				<term ws="en"> illative case</term>
+			</item>
+			<item id="vInst" type="value" cellar="1880D1E0CB21D78">
+				<abbrev ws="en">Inst</abbrev>
+				<term ws="en"> instrumental case</term>
+			</item>
+			<item id="vLoc" type="value" cellar="1880E010CB21D90">
+				<abbrev ws="en">Loc</abbrev>
+				<term ws="en"> locative case</term>
+			</item>
+			<item id="vNom" type="value" cellar="18810060CB21DC3">
+				<abbrev ws="en">Nom</abbrev>
+				<term ws="en"> nominative case</term>
+			</item>
+			<item id="vVoc" type="value" cellar="1881B270CB21EF2">
+				<abbrev ws="en">Voc</abbrev>
+				<term ws="en"> vocative case</term>
+			</item>
+			<item id="glessCommonCasesGroup" type="group">
+				<abbrev ws="en">lessCommonCasesGroup</abbrev>
+				<term ws="en">less common cases</term>
+				<item id="vAbess" type="value" cellar="18800880CB21C16">
+					<abbrev ws="en">Abess</abbrev>
+					<term ws="en">abessive case</term>
+				</item>
+				<item id="vCausCase" type="value" cellar="188038B0CB21C65">
+					<abbrev ws="en">CausCase</abbrev>
+					<term ws="en">causative case</term>
+				</item>
+				<item id="vComit" type="value" cellar="18804250CB21C87">
+					<abbrev ws="en">Comit</abbrev>
+					<term ws="en">comitative case</term>
+				</item>
+				<item id="vDel" type="value" cellar="18806810CB21CC4">
+					<abbrev ws="en">Del</abbrev>
+					<term ws="en">delative case</term>
+				</item>
+				<item id="vElat" type="value" cellar="18807B10CB21CE5">
+					<abbrev ws="en">Elat</abbrev>
+					<term ws="en">elative case</term>
+				</item>
+				<item id="vEqua" type="value" cellar="18808680CB21CF7">
+					<abbrev ws="en">Equa</abbrev>
+					<term ws="en">equative case</term>
+				</item>
+				<item id="vEss" type="value" cellar="18808930CB21CFC">
+					<abbrev ws="en">Ess</abbrev>
+					<term ws="en">essive case</term>
+				</item>
+				<item id="vIness" type="value" cellar="1880C960CB21D6A">
+					<abbrev ws="en">Iness</abbrev>
+					<term ws="en">inessive case</term>
+				</item>
+				<item id="vLat" type="value" cellar="1880DD80CB21D8C">
+					<abbrev ws="en">Lat</abbrev>
+					<term ws="en">lative case</term>
+				</item>
+				<item id="vParti" type="value" cellar="18811D90CB21DF2">
+					<abbrev ws="en">Parti</abbrev>
+					<term ws="en">partitive case</term>
+				</item>
+				<item id="vProlat" type="value" cellar="18815080CB21E45">
+					<abbrev ws="en">Prolat</abbrev>
+					<term ws="en">prolative case</term>
+				</item>
+				<item id="vSuperEss" type="value" cellar="18819690CB21EBF">
+					<abbrev ws="en">SuperEss</abbrev>
+					<term ws="en">superessive case</term>
+				</item>
+				<item id="vTranslat" type="value" cellar="1881A5F0CB21EDB">
+					<abbrev ws="en">Translat</abbrev>
+					<term ws="en">translative case</term>
+				</item>
+			</item>
+		</item>
+	</item>
+	<item id="tPersonAgr" type="fsType" status="hidden">
+		<abbrev ws="en">Agr</abbrev>
+		<term ws="en">person agreement</term>
+		<item id="fPers" type="feature" cellar="18812C60CB21E09">
+			<abbrev ws="en">Pers</abbrev>
+			<term ws="en">person</term>
+			<item id="v1" type="value" cellar="18809AD0CB21D19" afterSeparator="">
+				<abbrev ws="en">1</abbrev>
+				<term ws="en">first person</term>
+			</item>
+			<item id="v1Ex" type="value" cellar="18808D80CB21D03" afterSeparator="">
+				<abbrev ws="en">1Ex</abbrev>
+				<term ws="en">first person exclusive</term>
+			</item>
+			<item id="v1Incl" type="value" cellar="1880C3F0CB21D61" afterSeparator="">
+				<abbrev ws="en">1Incl</abbrev>
+				<term ws="en">first person inclusive</term>
+			</item>
+			<item id="v2" type="value" cellar="18817740CB21E86" afterSeparator="">
+				<abbrev ws="en">2</abbrev>
+				<term ws="en">second person</term>
+			</item>
+			<item id="v3" type="value" cellar="1881A0E0CB21ED2" afterSeparator="">
+				<abbrev ws="en">3</abbrev>
+				<term ws="en">third person</term>
+			</item>
+			<item id="v3Obv" type="value" cellar="18810D70CB21DD9" afterSeparator="">
+				<abbrev ws="en">3Obv</abbrev>
+				<term ws="en">obviative person</term>
+			</item>
+			<item id="v3Prox" type="value" cellar="18815740CB21E51" afterSeparator="">
+				<abbrev ws="en">3Prox</abbrev>
+				<term ws="en">proximate person</term>
+			</item>
+		</item>
+	</item>
+	<item id="tCommonAgr" type="fsType" status="hidden">
+		<abbrev ws="en">Agr</abbrev>
+		<term ws="en">common agreement</term>
+		<item id="fgender" type="feature" cellar="1880A920CB21D30">
+			<abbrev ws="en">Gen</abbrev>
+			<term ws="en">gender</term>
+			<item id="vMasc" type="value" cellar="1880E510CB21D98">
+				<abbrev ws="en">Masc</abbrev>
+				<term ws="en">masculine gender</term>
+			</item>
+			<item id="vFem" type="value" cellar="188097E0CB21D14">
+				<abbrev ws="en">Fem</abbrev>
+				<term ws="en">feminine gender</term>
+			</item>
+			<item id="vNeut" type="value" cellar="1880FB20CB21DBA">
+				<abbrev ws="en">Neut</abbrev>
+				<term ws="en">neuter gender</term>
+			</item>
+		</item>
+		<item id="fNum" type="feature" cellar="18810990CB21DD2">
+			<abbrev ws="en">Num</abbrev>
+			<term ws="en">number</term>
+			<item id="vSg" type="value" cellar="18818150CB21E97">
+				<abbrev ws="en">Sg</abbrev>
+				<term ws="en">singular number</term>
+			</item>
+			<item id="vPl" type="value" cellar="18813020CB21E0F">
+				<abbrev ws="en">Pl</abbrev>
+				<term ws="en">plural number</term>
+			</item>
+			<item id="vDual" type="value" cellar="18807810CB21CE0">
+				<abbrev ws="en">Dual</abbrev>
+				<term ws="en">dual number</term>
+			</item>
+			<item id="vTrial" type="value" cellar="1881A740CB21EDD">
+				<abbrev ws="en">Trial</abbrev>
+				<term ws="en">trial number</term>
+			</item>
+			<item id="vPaucal" type="value">
+				<abbrev ws="en">Paucal</abbrev>
+				<term ws="en">paucal number</term>
+				<def ws="en">few</def>
+				<citation>Crystal 1997:265</citation>
+			</item>
+		</item>
+		<item id="fclass" type="feature" cellar="18810850CB21DD0">
+			<abbrev ws="en">class</abbrev>
+			<term ws="en">noun class</term>
+			<item id="vAnim" type="value" cellar="18801F90CB21C3D">
+				<abbrev ws="en">Anim</abbrev>
+				<term ws="en">animate class</term>
+			</item>
+			<item id="vHum" type="value" cellar="1880B0A0CB21D3D">
+				<abbrev ws="en">Hum</abbrev>
+				<term ws="en">human class</term>
+			</item>
+			<item id="vInanim" type="value" cellar="1880C2D0CB21D5F">
+				<abbrev ws="en">Inanim</abbrev>
+				<term ws="en">inanimate class</term>
+			</item>
+		</item>
+		<item id="fBantuClass" type="feature">
+			<abbrev ws="en">class</abbrev>
+			<term ws="en">Bantu noun class</term>
+			<def ws="en">Noun classes for Bantu languages</def>
+			<item id="vBantuClass1" type="value">
+				<abbrev ws="en">NC1</abbrev>
+				<term ws="en">Noun class 1</term>
+			</item>
+			<item id="vBantuClass2" type="value">
+				<abbrev ws="en">NC2</abbrev>
+				<term ws="en">Noun class 2</term>
+			</item>
+			<item id="vBantuClass3" type="value">
+				<abbrev ws="en">NC3</abbrev>
+				<term ws="en">Noun class 3</term>
+			</item>
+			<item id="vBantuClass4" type="value">
+				<abbrev ws="en">NC4</abbrev>
+				<term ws="en">Noun class 4</term>
+			</item>
+			<item id="vBantuClass5" type="value">
+				<abbrev ws="en">NC5</abbrev>
+				<term ws="en">Noun class 5</term>
+			</item>
+			<item id="vBantuClass6" type="value">
+				<abbrev ws="en">NC6</abbrev>
+				<term ws="en">Noun class 6</term>
+			</item>
+			<item id="vBantuClass7" type="value">
+				<abbrev ws="en">NC7</abbrev>
+				<term ws="en">Noun class 7</term>
+			</item>
+			<item id="vBantuClass8" type="value">
+				<abbrev ws="en">NC8</abbrev>
+				<term ws="en">Noun class 8</term>
+			</item>
+			<item id="vBantuClass9" type="value">
+				<abbrev ws="en">NC9</abbrev>
+				<term ws="en">Noun class 9</term>
+			</item>
+			<item id="vBantuClass10" type="value">
+				<abbrev ws="en">NC10</abbrev>
+				<term ws="en">Noun class 10</term>
+			</item>
+			<item id="vBantuClass11" type="value">
+				<abbrev ws="en">NC11</abbrev>
+				<term ws="en">Noun class 11</term>
+			</item>
+			<item id="vBantuClass12" type="value">
+				<abbrev ws="en">NC12</abbrev>
+				<term ws="en">Noun class 12</term>
+			</item>
+			<item id="vBantuClass13" type="value">
+				<abbrev ws="en">NC13</abbrev>
+				<term ws="en">Noun class 13</term>
+			</item>
+			<item id="vBantuClass14" type="value">
+				<abbrev ws="en">NC14</abbrev>
+				<term ws="en">Noun class 14</term>
+			</item>
+			<item id="vBantuClass15" type="value">
+				<abbrev ws="en">NC15</abbrev>
+				<term ws="en">Noun class 15</term>
+			</item>
+			<item id="vBantuClass16" type="value">
+				<abbrev ws="en">NC16</abbrev>
+				<term ws="en">Noun class 16</term>
+			</item>
+			<item id="vBantuClass17" type="value">
+				<abbrev ws="en">NC17</abbrev>
+				<term ws="en">Noun class 17</term>
+			</item>
+			<item id="vBantuClass18" type="value">
+				<abbrev ws="en">NC18</abbrev>
+				<term ws="en">Noun class 18</term>
+			</item>
+			<item id="vBantuClass19" type="value">
+				<abbrev ws="en">NC19</abbrev>
+				<term ws="en">Noun class 19</term>
+			</item>
+			<item id="vBantuClass20" type="value">
+				<abbrev ws="en">NC20</abbrev>
+				<term ws="en">Noun class 20</term>
+			</item>
+			<item id="vBantuClass21" type="value">
+				<abbrev ws="en">NC21</abbrev>
+				<term ws="en">Noun class 21</term>
+			</item>
+			<item id="vBantuClass22" type="value">
+				<abbrev ws="en">NC22</abbrev>
+				<term ws="en">Noun class 22</term>
+			</item>
+			<item id="vBantuClass23" type="value">
+				<abbrev ws="en">NC23</abbrev>
+				<term ws="en">Noun class 23</term>
+			</item>
+			<item id="vBantuClass24" type="value">
+				<abbrev ws="en">NC24</abbrev>
+				<term ws="en">Noun class 24</term>
+			</item>
+		</item>
+	</item>
+</masterGlossList>

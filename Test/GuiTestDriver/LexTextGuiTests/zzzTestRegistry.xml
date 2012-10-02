@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Tests.xsl"?>
+
+<tests label="Regression and Scenario Tests"  >
+
+	<test file="abPres1.xml" note="TBD" />
+	<test file="abPres2.xml" note="TBD" />
+	<test file="abPres3.xml" note="TBD" />
+	<test file="abPres4.xml" note="TBD" />
+	<test file="abPres5.xml" note="TBD" />
+
+	<test file="cipPart1.xml" note="TBD" />
+	<test file="cipPart2.xml" note="TBD" />
+	<test file="cipPart3.xml" note="TBD" />
+	<test file="cipPart4.xml" note="intsavetakohitero almost parses: Word analysis node seems to be too small" log="FWR-2169 Environment slice index changes in view" />
+	<test file="cipPart5.xml" note="TBD" />
+	<test file="cipPart6.xml" note="TBD" />
+	<test file="cipPart7.xml" note="TBD" />
+
+	<test file="Demo.xml" note="TBD" />
+	<test file="DemoD.xml" note="TBD" />
+	<test file="DemoF.xml" note="TBD" />
+	<test file="DemoG.xml" note="FWR-2225 Crash filtering on imported wordset" />
+	<test file="DemoH.xml" note="TBD" />
+	<test file="DemoI.xml" note="TBD" />
+	<test file="DemoJ.xml" note="TBD" />
+	<test file="DemoK.xml" note="TBD" />
+
+	<!--test file="aBackUpAndChange.xml"/-->
+	<!--test file="bExportLift.xml"/-->
+	<!--test file="cImpNoConflict.xml"/-->
+	<!--test file="dImpOverwrite.xml"/-->
+	<!--test file="eImpNewSense.xml"/-->
+	<!--test file="fImpTNoConflict.xml"/-->
+	<!--test file="gImpTOverwrite.xml"/-->
+	<!--test file="hImpTNewSense.xml"/-->
+	<!--test file=""/-->
+
+<!-- dGrammar -->
+	<test file="gmaVisitViews.xml" note="TBD" />
+	<test file="gmCatEd.xml" note="TBD"  />
+	<test file="gmdAddDelNatClass.xml" note="TBD" />
+	<test file="gmEFinsDel.xml" note="TBD" />
+	<test file="gmFeaInsDel.xml" note="TBD" />
+	<test file="gmhCategories.xml" note="TBD" />
+	<test file="gmmCatBrowseFilter.xml" note="TBD" />
+	<test file="gmPhonemes.xml" note="TBD" />
+	<test file="gmrLT_2693.xml" note="TBD" />
+
+<!-- eLists -->
+	<test file="liaVisitViews.xml" note="TBD" />
+	<test file="liFTinsDel.xml" note="TBD" />
+	<test file="liLink2Edit.xml" note="TBD" />
+	<test file="limAddDelItem.xml" note="TBD" />
+	<test file="liqEditLists.xml" note="TBD" />
+
+<!-- aLexicon -->
+	<test file="lxaaVisitViews.xml" note="TBD" log="Fails first time 8/25/10 Cat Entry takes too long to form"/>
+	<test file="lxabDataNav.xml" note="TBD" />
+	<test file="lxacShowAllFields.xml" note="TBD" />
+	<test file="lxBEentries.xml" note="TBD" log="Fails first time: drop-down fails to open" />
+	<test file="lxBkCopy.xml" note="FWR-2204 Crash clicking while busy" />
+	<test file="lxCatEntry.xml" note="TBD" />
+	<test file="lxChangeStat.xml" note="TBD" />
+	<test file="lxCkCopy.xml" note="FWR-2204 Crash clicking while busy" />
+
+<!-- aLexicon2 -->
+	<test file="lxClassDict.xml" note="TBD" />
+	<test file="lxConfDict.xml" note="TBD" />
+	<test file="lxdBulkEdit.xml" note="TBD" />
+	<test file="lxdBulkRepSetup.xml" note="TBD" />
+	<test file="lxDictionaryFind.xml" note="TBD" />
+	<test file="lxDictLex.xml" note="TBD" />
+	<test file="lxeBulkReplace.xml" note="TBD" log="Fails to pass first time 8/25/10: (replace1) nila is not there" />
+	<test file="lxfaRegExp.xml" note="TBD" />
+
+<!-- aLexicon3 -->
+	<test file="lxEditCat.xml" note="TBD" />
+	<test file="lxfREBulkReplace.xml" note="TBD" />
+	<test file="lxgCombExp.xml" note="TBD" />
+	<test file="lxMergeEntry.xml" note="TBD" log="add &lt;/head&gt;"/>
+	<test file="lxShortcuts.xml" note="TBD" />
+	<test file="lxuLT_2882.xml" note="TBD" />
+	<test file="lxEditPics.xml" note="TBD" />
+	<test file="lxzFindExample.xml" note="TBD" />
+
+<!-- ProgManage -->
+	<test file="paaSounds.xml" note="TBD" />
+	<test file="pabHyperlink.xml" note="TBD" />
+	<test file="pmeVernacularWsSwap.xml" note="TBD" />
+	<test file="pmgAddDelStyle.xml" note="TBD" />
+	<test file="pmgEditFindUndo.xml" note="TBD" log="Failed 1st time: created 2 blank texts" />
+	<test file="pmgExtLink2Dn.xml" note="*FWR-2220 Deleted External Link not really gone"/>
+	<test file="pmgHelp.xml" note="TBD" />
+	<test file="pmgHelp2.xml" note="TBD" />
+
+<!-- ProgManage2 -->
+	<test file="pmgLT_2602.xml" note="TBD" />
+	<test file="pmgProp.xml" note="TBD" />
+	<test file="pmgShortcuts.xml" note="*TBD" log="Catch exception in Glimpse/WaitForProcessIdle when Flex Closes" />
+	<test file="pmgStartTE.xml" note="TBD" />
+	<test file="pmzImport.xml" note="*TBD" log="Fails 1st run"/>
+	<!--test file="pmpDelProject.xml" note="FWR-624 No longer a File/Project Management/Delete menu item" /-->
+
+   <!--test file="RestoreKalaba.xml" note="No Restore dialog" /-->
+
+ <!-- fTools -->
+	<test file="tlsApplyStyles.xml" note="TBD" />
+	<test file="tlsCustomFields.xml" note="TBD" />
+	<test file="tlsFilterForItems.xml" note="TBD"  />
+	<test file="tlsOptionsDiag.xml" note="TBD" />
+	<test file="tlsDelete.xml" note="*TBD d33" log="FWR-1143 Are bulk edits supposed to delete apart from delete tab? Needs 5 &lt;/head>s and Required white space was missing &quot;Delete Exception &quot;Feature&quot;&quot;" />
+
+<!--  bTexts -->
+	<test file="txaVisitViews.xml" note="TBD" />
+	<test file="txEdit.xml" note="TBD" />
+	<test file="txTryStyles.xml" note="FWR-2167 Crash applying 8th style after styles deleted" />
+	<test file="txSortLxGm.xml" note="TBD" log="Fails first run" />
+	<test file="txtShortcuts.xml" note="TBD" log="texts don't sort right the first time"/>
+	<test file="txDiscourse.xml" note="TBD" log="commented out glimpse id=emptyTable" />
+	<test file="txfConfigIL.xml" note="TBD" />
+	<test file="txGlossTab.xml" note="TBD" />
+
+<!-- cWords -->
+	<test file="wdAnaStat.xml" note="TBD" />
+	<test file="wdaVisitViews.xml" note="TBD" />
+	<test file="wdbAnalysisCols.xml" note="TBD" log="Word 'A' sometimes there"/>
+	<test file="wdcAnalysisChecks.xml" note="TBD" log="Word 'A' sometimes there" />
+	<test file="wdConcDic.xml" note="TBD"/>
+	<test file="wdInsDelGloss.xml" note="*TBD" />
+	<test file="wdShortcuts.xml" note="*TBD" />
+	<test file="wdSStat.xml" note="TBD" />
+	<test file="wdwritSysDia.xml" note="TBD" />
+
+<!-- cWords2 -->
+	<test file="wdInsertScripture.xml" note="TBD" log="Help page not in yet" />
+	<test file="wdzAssignAnalysis.xml" note="TBD" />
+	<test file="wdzSpelling.xml" note="TBD" />
+
+</tests>

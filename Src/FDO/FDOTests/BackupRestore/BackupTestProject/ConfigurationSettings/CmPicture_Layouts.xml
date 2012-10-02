@@ -1,0 +1,18 @@
+﻿<LayoutInventory>
+  <layout class="CmPicture" type="jtview" name="publishStemPile" version="9">
+	<part ref="ThumbnailPub" label="Thumbnail" visibility="ifdata" flowType="para" after=" " />
+	<sublayout name="publishStemCaption" group="para" />
+  </layout>
+  <layout class="CmPicture" type="jtview" name="publishStemCaption" version="9">
+	<part ref="SenseNumber" label="Sense Number" visibility="ifdata" before="" after=" " css="pictureSense" />
+	<part ref="CaptionPub" label="Caption" visibility="ifdata" before="" after="" ws="analysis" wsType="analysis" css="pictureLabel" sep=" " />
+  </layout>
+  <layout class="CmPicture" type="jtview" name="publishRootPile" version="9">
+	<part ref="ThumbnailPub" label="Thumbnail" visibility="ifdata" flowType="none" after=" " />
+	<sublayout name="publishRootCaption" group="para" />
+  </layout>
+  <layout class="CmPicture" type="jtview" name="publishRootCaption" version="9">
+	<part ref="SenseNumber" label="Sense Number" visibility="ifdata" before="" after=" " css="pictureSense" />
+	<part ref="CaptionPub" label="Caption" visibility="ifdata" before="" after="" ws="analysis" wsType="analysis" css="pictureLabel" sep=" " />
+  </layout>
+</LayoutInventory>

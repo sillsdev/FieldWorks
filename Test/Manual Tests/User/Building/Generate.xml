@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Building\Generate.xml">
+ <title tag="bldgen">Use batch files to generate all HTML content</title>
+ <index>
+  <li>manual: generate</li>
+  <li>generate manual</li>
+ </index>
+ <steps>
+  <p>You will generate all the "topic" pages for the help file.
+Project files are also generated for each help file section.</p>
+  <step>The TS\*\*List.htm files should not be in <link uri="..\Source\DocControl.xml">document control</link> because they are generated. However, they seem to get put there from time to time. So, be sure these files are not Read-only or they will not generate.</step>
+  <step>Launch <link uri="..\Source\DocControl.xml">Perforce</link>.</step>
+  <step>Open the source tree under "//depot+Test+Manual Tests+HelpFiles".</step>
+  <step>Select the three TestHelp.hh* files.</step>
+  <step>Right-Click and select "Open for Edit".</step>
+  <step>To generate all the test cases, manual module pages and to rebuild the TestHelp.hh* files, double click the GenAll.bat file in the HelpFiles directory.
+   <p name="Note">No errors should be indicated.</p>
+  </step>
+ </steps>
+ <label name="Things to know">
+  <p>The front and back matter for the help project files is contained in the *.hh? files in the "User" folder.</p>
+  <p>The batch file uses Internet Explorer XML transforms (XSLT) via a batch interface. The stylesheets that drive the transformations are stored in the various XSL folders in the test file structure.</p>
+ </label>
+</task>

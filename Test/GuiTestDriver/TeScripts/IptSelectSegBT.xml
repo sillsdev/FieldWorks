@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<click select="menubar/tools/options"/>
+
+		<on-dialog title="Options" until="10000" on-fail="skip">
+			<click path="9:NAMELESS/37:Advanced"/>
+
+			<click path="44:Segmented Back Translation"/>
+
+			<!--"Export what" check box group-->
+			<var id="GuiChkBox" set="44:Segmented Back Translation"/>
+			<glimpse id="ChkBoxState1" path="$GuiChkBox" prop="checked" on-fail="skip"/>
+			<var id="ActualState" set="$ChkBoxState1"/>
+			<var id="DesiredState" set="TRUE"/>
+			<include from="IncCheckBox.xml"/>
+
+			<click path="$OK"/>
+
+			<on-dialog title="Translation Editor" until="10000" on-fail="skip">
+				<click path="$OK"/>
+			</on-dialog>
+
+		</on-dialog>
+
+		<!--Shut down TE for a restart with Seg BT turned ON-->
+		<click select="menubar/file/exit"/>
+
+	</on-application>
+
+</accil>

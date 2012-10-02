@@ -1,0 +1,141 @@
+;Generic startup file for morpher tests.
+;Open a new language for testing purposes (msg 6510):
+(open_language message Phonology Test Language)
+;First a morpher_set command, which should result in msg 6502:
+(morpher_set message
+  (*pfeatures*
+				(voc      (+ -)
+				 cons     (+ -)
+				 high     (+ -)
+				 low      (+ -)
+				 back     (+ -)
+				 round    (+ -)
+				 vd       (+ -)
+				 poa      (bilabial labiodental alveolar velar)
+				 asp      (+ -)
+				 del_rel  (+ -)
+				 ATR      (+ -)
+				 strident (+ -)
+				 cont     (+ -)
+				 nasal    (+ -)
+				)
+		)
+)
+;Then we run three load_char_def_table commands, each of
+; which should result in a msg 6501:
+(load_char_def_table message
+  <char_table
+  name table1
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd + cont +))
+	  (i   (cons - voc + high + low - back - round - vd + cont +))
+	  (u   (cons - voc + high + low - back + round + vd + cont +))
+	  (o   (cons - voc + high - low - back + round + vd + cont +))
+	  (uû  (cons - voc + high + low - back - round + vd + cont +))
+	  (   (cons - voc + high + low - back + round - vd + cont +))
+	  (p   (cons + voc - poa bilabial vd - asp - strident - cont - nasal -))
+	  (t   (cons + voc - poa alveolar vd - asp - del_rel - strident - cont - nasal -))
+	  (k   (cons + voc - poa velar    vd - asp - strident - cont - nasal -))
+	  (ts  (cons + voc - poa alveolar vd - asp - del_rel + strident + cont - nasal -))
+	  (pH  (cons + voc - poa bilabial vd - asp + strident - cont - nasal -))
+	  (tH  (cons + voc - poa alveolar vd - asp + del_rel - strident - cont - nasal -))
+	  (kH  (cons + voc - poa velar    vd - asp + strident - cont - nasal -))
+	  (tsH (cons + voc - poa alveolar vd - asp + del_rel + strident + cont - nasal -))
+	  (b   (cons + voc - poa bilabial vd +  cont - nasal -))
+	  (d   (cons + voc - poa alveolar vd + strident - cont - nasal -))
+	  (g   (cons + voc - poa velar    vd +  cont - nasal -))
+	  (m   (cons + voc - poa bilabial vd +  cont - nasal +))
+	  (n   (cons + voc - poa alveolar vd + strident - cont - nasal +))
+	  (ê   (cons + voc - poa velar    vd +  cont - nasal +))
+	  (s   (cons + voc - poa alveolar vd - asp - del_rel - strident + cont +))
+	  (z   (cons + voc - poa alveolar vd + asp - del_rel - strident + cont +))
+	  (f   (cons + voc - poa labiodental vd - asp - strident + cont +))
+	  (v   (cons + voc - poa labiodental vd + asp - strident + cont +))
+	)
+  >
+)
+(load_char_def_table message
+  <char_table
+  name table2
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd + cont +))
+	  (i   (cons - voc + high + low - back - round - vd + cont +))
+	  (u   (cons - voc + high + low - back + round + vd + cont +))
+	  (uû  (cons - voc + high + low - back - round + vd + cont +))
+	  (o   (cons - voc + high - low - back + round + vd + cont +))
+	  (p   (cons + voc - poa bilabial vd -  cont - nasal -))
+	  (t   (cons + voc - poa alveolar vd -  del_rel - strident - cont - nasal -))
+	  (k   (cons + voc - poa velar    vd -  cont - nasal -))
+	  (ts  (cons + voc - poa alveolar vd -  del_rel + strident + cont - nasal -))
+	  (b   (cons + voc - poa bilabial vd +  cont - nasal -))
+	  (d   (cons + voc - poa alveolar vd + strident - cont - nasal -))
+	  (g   (cons + voc - poa velar    vd +  cont - nasal -))
+	  (m   (cons + voc - poa bilabial vd +  cont - nasal +))
+	  (n   (cons + voc - poa alveolar vd + strident - cont - nasal +))
+	  (ê   (cons + voc - poa velar    vd +  cont - nasal +))
+	  (s   (cons + voc - poa alveolar vd - asp - del_rel - strident + cont +))
+	  (z   (cons + voc - poa alveolar vd + asp - del_rel - strident + cont +))
+	  (f   (cons + voc - poa labiodental vd - asp - strident + cont +))
+	  (v   (cons + voc - poa labiodental vd + asp - strident + cont +))
+	)
+	bdry_defs (+ # ! . $)
+  >
+)
+(load_char_def_table message
+		<char_table
+		name table3
+		encoding test encoding
+		seg_defs
+				(
+				  (a   (cons - voc + high - low + back + round - vd + ATR + cont +))
+				  (a·  (cons - voc + high - low + back + round - vd + ATR - cont +))
+				  (i   (cons - voc + high + low - back - round - vd + cont +))
+				  (u   (cons - voc + high + low - back + round + vd + cont +))
+				  (uû  (cons - voc + high + low - back - round + vd + cont +))
+				  (   (cons - voc + high + low - back + round - vd + cont +))
+				  (o   (cons - voc + high - low - back + round + vd + cont +))
+				  (p   (cons + voc - poa bilabial vd - cont - nasal -))
+				  (t   (cons + voc - poa alveolar vd - del_rel - strident - cont - nasal -))
+				  (k   (cons + voc - poa velar    vd - cont - nasal -))
+				  (ts  (cons + voc - poa alveolar vd - del_rel + strident + cont - nasal -))
+				  (b   (cons + voc - poa bilabial vd +  cont - nasal -))
+				  (d   (cons + voc - poa alveolar vd + strident - cont - nasal -))
+				  (g   (cons + voc - poa velar    vd +  cont - nasal -))
+				  (m   (cons + voc - poa bilabial vd +  cont - nasal +))
+				  (n   (cons + voc - poa alveolar vd + strident - cont - nasal +))
+				  (ê   (cons + voc - poa velar    vd +  cont - nasal +))
+				  (s   (cons + voc - poa alveolar vd - asp - del_rel - strident + cont +))
+				  (z   (cons + voc - poa alveolar vd + asp - del_rel - strident + cont +))
+				  (f   (cons + voc - poa labiodental vd - asp - strident + cont +))
+				  (v   (cons + voc - poa labiodental vd + asp - strident + cont +))
+				)
+				bdry_defs (+ # ! .)
+				>
+)
+;Now load the strata (msg 6502):
+(morpher_set message
+  (*strata* (morphophonemic allophonic)))
+;...and set their ctables (msg 6550):
+(set_stratum message <stratum_setting nm morphophonemic type ctable value table3>)
+(set_stratum message <stratum_setting nm allophonic type ctable value table1>)
+(set_stratum message <stratum_setting nm *surface* type ctable value table1>)
+;...their cyclicity (msg 6552):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value noncyclic>)
+(set_stratum message <stratum_setting nm allophonic type cyclicity value noncyclic>)
+;...the order of their prules (msg 6555):
+(set_stratum message <stratum_setting nm morphophonemic type prule value linear>)
+(set_stratum message <stratum_setting nm allophonic type prule value linear>)
+;...and the order of the mrules (msg 6556):
+(set_stratum message <stratum_setting nm morphophonemic type mrule value linear>)
+(set_stratum message <stratum_setting nm allophonic type mrule value linear>)
+
+;Load in a dictionary file.  Two lex entries are purposely incorrect, and
+; will result in error msgs 6024 and 6009:
+(morpher_set message (*quit_on_error* false))
+(merge_in_dictionary_file message
+		diction.txt)
+(morpher_set message (*quit_on_error* true))

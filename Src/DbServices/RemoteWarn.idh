@@ -1,0 +1,112 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: RemoteWarn.idh
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+Description:
+	Defines the following interface:
+		IRemoteDbWarn - Enables warnings to be sent to a remote machine.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+import "unknwn.idl";
+
+/***********************************************************************************************
+	Interface RemoteDbWarn
+
+	This interface enables warnings to be sent to a remote machine (connected to the local
+	database).
+
+	@b{Notes}
+	@list{
+	Access permission will have to be given by the remote machine before a remote COM interface
+	can be used. This can be done using interface IDbWarnSetup.}
+
+	@h3{Restrictions}
+	@list{
+	None.}
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	To give a warning (usually of impending disconnection) to a remotely connected user.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstanceEx() with CLSID_FwRemote, and specify the remote machine and
+	CLSCTX_REMOTE_SERVER.
+
+	@h3{Hungarian: rdbw}
+***********************************************************************************************/
+DeclareInterface(RemoteDbWarn, Unknown, 004C42AE-CB07-47b5-A936-D9CA4AC466D7)
+{
+	// Issues a warning message for the user to acknowledge.
+	// @param bstrMessage Context-sensitive message to display.
+	// @param nFlags Standard MessageBox flags (e.g. MB_OK, MB_YESNO...)
+	// @param [out] pnResponse MessageBox response id.
+	HRESULT WarnSimple(
+		[in] BSTR bstrMessage,
+		[in] int nFlags,
+		[out, retval] int * pnResponse);
+
+	// Issues a warning message with a timeout counter that auto-decrements.
+	// @param bstrMessage Context-sensitive message to display.
+	// @param nTimeLeft Number of seconds to count down before auto-canceling.
+	HRESULT WarnWithTimeout(
+		[in] BSTR bstrMessage,
+		[in] int nTimeLeft);
+
+	// Cancels current warning message.
+	HRESULT Cancel();
+}
+
+
+/***********************************************************************************************
+	Interface DbWarnSetup
+
+	This interface enables permision to be give and revoked for remote warnings.
+
+	@b{Notes}
+	@list{
+	None.}
+
+	@h3{Restrictions}
+	@list{
+	None.}
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	Whenever you want to receive important warning messages from other machines.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwRemote or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: dbws}
+***********************************************************************************************/
+DeclareInterface(DbWarnSetup, Unknown, 06082023-C2BA-4425-90FD-2F76B74CCBE7)
+{
+	// Enables remote warnings to be received.
+	HRESULT PermitRemoteWarnings();
+
+	// Bans remote warnings.
+	HRESULT RefuseRemoteWarnings();
+}
+
+
+/***********************************************************************************************
+	CoClass definitions.
+***********************************************************************************************/
+#ifndef NO_COCLASSES
+
+DeclareCoClass(FwRemote, 0732A981-4921-4d4b-9E1D-AF9362E2708D)
+{
+	interface IRemoteDbWarn;
+	interface IDbWarnSetup;
+};
+
+#endif // NO_COCLASSES

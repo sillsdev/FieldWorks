@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Conceptual Intro to Parsing test -->
+<!-- Section 2.1.2.7  Part 23 to 27 -->
+
+<accil on-fail="assert">
+
+  <bug id="LT-5507" desc="Empty Inflection Feature dialog crashes"/>
+  <bug id="LT-7354" desc="Crash in empty Inflection Feature dialog via space"/>
+
+ <var id="projectName" set="CIPTest"/>
+
+<!--  -->
+<on-application args="-db $projectName" title="$projectName$FlexSig" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncGrammar.xml"/>
+		 <include from="IncLexicon.xml"/>
+		 <include from="IncTexts.xml"/>
+		 <include from="IncWords.xml"/>
+
+  <var id="refField" set="$multiEdFIELD;9:custom[*]/$sp;"/>
+  <var id="refField2" set="$grmCeEDIT;9:defaultvectorreference[*]/$sp;"/>
+
+<!--skip-->
+
+<!-- 23.	Go to Grammar / Features -->
+  <click path="$menuGRAMMAR;menu:Features"/>
+<!-- a.	Add a feature (i.e. call up the feature catalog) -->
+  <click path="$insGrmFe"/>
+  <on-dialog title="Add Inflection Feature from Catalog">
+<!-- i.	Open up "noun-related" -->
+	<insert>n{Right}</insert>
+<!-- ii.	Open up "noun agreement" -->
+	<insert>n{Right}</insert>
+<!-- iii.	Open up "gender" -->
+	<insert>g{Right}</insert>
+<!-- iv.	Select both masculine and feminine -->
+	<insert>m </insert><!-- the space actually checks it -->
+	<insert>f </insert>
+<!-- v.	Click on Add -->
+	<click path="$add"/>
+  </on-dialog>
+
+  <insert wait="2000">{ESC}</insert><!-- wait for the display to draw -->
+<!-- 24.	Go to Grammar / Category Edit -->
+  <click path="$menuGRAMMAR;menu:Category Edit"/>
+<!-- a.	Add a new Category -->
+  <click path="$insGrmCat"/>
+<!-- b.	Click on the link to create a custom category. -->
+  <on-dialog title="Add from Catalog">
+	<var id="custCat" set="The category I need is not in the catalog. Create a custom category"/>
+	<click path="9:$custCat;/41:$custCat;/30:$custCat"/>
+  </on-dialog>
+<!-- c.	Name: Noun Spanish -->
+  <click path="$gmCeName"/>
+  <insert wait="2000">Noun Spanish</insert>
+<!-- d.	Abbreviation: NSpa -->
+   <click path="$gmCeAbbr"/>
+   <insert>NSpa</insert>
+
+<!-- e.	Create affix template: -->
+  <click side="right" path="$gmCeAfxTmpl"/>
+  <insert>{DOWN}~</insert><!-- Create affix template -->
+<!-- i.	Name: Spanish Noun -->
+  <click path="$gmCeField;Template Name"/>
+  <insert>Spanish Noun</insert>
+
+<!-- ii.	Insert an obligatory slot after the Stem and rename it to  "Gender" -->
+  <click side="right" path="$grmCeHeader;/$Text;/value:rexp#STEM"/>
+  <insert>{DOWN}~</insert><!-- insert slot after Stem -->
+  <on-dialog title="Choose Slot">
+	 <click path="$addObSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+  <click dx="50" path="$grmCeHeader;[2]/$Text;"/>
+  <insert>{HOME}+{END}</insert><!-- select the old name -->
+  <insert>Gender</insert>
+  <var id="Gender" set="$grmCeHeader;[2]/$Text;/value:rexp#Gender"/>
+
+<!-- 1.	Add inflectional morpheme to Gender -->
+  <click side="right" path="$Gender"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Gender -->
+<!-- 2.	Create new inflectional affix -->
+
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- 3.	Lexeme form: -a -->
+	<insert wait="500">a</insert>
+<!-- 4.	Gloss: Fem -->
+	<click path="$neGloss"/>
+	<insert wait="500">Fem</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 5.	Add inflectional morpheme to Gender -->
+  <click side="right" path="$Gender"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Gender -->
+<!-- 6.	Create new inflectional affix -->
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- 7.	Lexeme form: -o -->
+	<insert wait="500">o</insert>
+<!-- 8.	Gloss: Masc -->
+	<click path="$neGloss"/>
+	<insert wait="500">Masc</insert>
+	<click wait="2000" path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- f.	Click on Inflectable Features field -->
+  <click dx="50" path="$refField2;1/9:Inflectable Features"/>
+
+<!-- i.	Open up the chooser -->
+  <click path="$refField2;2/9:Inflectable Features/9:.../$NL;43:NAMELESS"/>
+  <on-dialog title="Choose Inflectable Features">
+<!-- ii.	Select noun agreement -->
+	<insert wait="300">n </insert>
+	<click path="$ok"/>
+  </on-dialog>
+
+<!-- 25.	Go to Lexicon / Lexicon Edit -->
+  <click path="$vwLexEdit"/>
+
+<!-- a.	Create a new entry: cas / stem / house / category of Noun Spanish -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert wait="500">cas</insert>
+	<click path="$neGloss"/>
+	<insert wait="400">house</insert>
+	<insert wait="300">%{Y}</insert><!-- category -->
+	<insert wait="300">nnn~</insert><!-- Noun Spanish -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- i.	Show Hidden Fields -->
+  <insert wait="2000">{TAB}</insert><!-- wait, the click thinks it succceeds -->
+  <click path="$multiEdHidden"/>
+<!-- ii.	Near the bottom, click on Inflection Features and open up the chooser -->
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Features"/>
+  <click path="$refField;2/9:Inflection Features/$NL2;43:NAMELESS"/>
+
+  <on-dialog name="MsaInflectionFeatureListDlg" title="Choose Inflection Features">
+<!-- iii.	Select feminine gender -->
+	<insert wait="300">f </insert>
+<!-- iv.	Click on OK -->
+	 <click path="9:m_btnOK/43:m_btnOK"/>
+  </on-dialog>
+<!-- v.	Set the Field Visibility of the Inflection Features field to "Always visible" -->
+  <click side="right" dx="50" path="$refField;1/9:Inflection Features"/>
+  <insert>{DOWN}{RIGHT}{DOWN}~</insert><!-- Always visible -->
+
+<!-- b.	Create a new entry: cas / stem / case / category of Noun Spanish -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert wait="500">cas</insert>
+	<insert wait="2000">{TAB}</insert><!-- just wait, too many timing issues here -->
+	<click path="$neGloss"/>
+	<insert wait="500">case</insert>
+	<insert wait="400">%{Y}</insert><!-- category -->
+	<insert wait="400">nnn~</insert><!-- Noun Spanish -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- i.	Set its inflection features to masculine gender -->
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Features"/>
+  <click path="$refField;2/9:Inflection Features/$NL2;43:NAMELESS"/>
+  <on-dialog name="MsaInflectionFeatureListDlg" title="Choose Inflection Features">
+	<insert wait="300">m </insert>
+	 <click path="9:m_btnOK/43:m_btnOK"/>
+  </on-dialog>
+
+<!-- c.	Create a new entry: -it / suffix / Dim /  Derivational / Attaches to category of Noun Spanish / Changes to category of Noun Spanish -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert wait="500">-it</insert>
+	<click path="$neGloss"/>
+	<insert wait="500">Dim</insert>
+	<!--insert>%{T}</insert--><!-- Affix type doesn't work-->
+	<click path="$NL;9:Category Info./20:Category Info./9:Not Sure/20:RootSite/$Text"/>
+	<insert wait="500">d~</insert><!-- Derivational -->
+	<insert wait="200">%{Y}</insert><!-- category -->
+	<insert wait="200">nnn~</insert><!-- Noun Spanish -->
+	<insert wait="500">%{H}</insert><!-- Changes to -->
+	<insert wait="500">nnn~</insert><!-- Noun Spanish -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- i.	Set its inflection class to Zapotec class 2  this makes it unparsable >
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:To Inflection Class"/>
+  <click path="$refField;2/9:To Inflection Class/9:.../$NL;43:NAMELESS"/>
+  <on-dialog title="Choose To Inflection Class">
+	 <click path="$NL;36:Zapotec class 2"/>
+	 <click path="$ok"/>
+  </on-dialog-->
+
+<!-- vi.	Uncheck Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+
+<!-- d.	Find the -a Fem entry -->
+  <click path="$lxFindLex"/>
+  <on-dialog title="Find Lexical Entry">
+	<insert wait="500">-a</insert>
+	<click path="$goto"/>
+  </on-dialog>
+
+<!--/skip-->
+
+<!-- i.	Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+<!-- ii.	Near the bottom, click on Inflection Features and open up the chooser -->
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Features"/>
+  <click path="$refField;2/9:Inflection Features/$NL2;43:NAMELESS"/>
+<!-- 1.	Select feminine gender. -->
+  <on-dialog name="MsaInflectionFeatureListDlg" title="Choose Inflection Features">
+	<insert wait="1000">f </insert>
+	 <click path="9:m_btnOK/43:m_btnOK"/>
+  </on-dialog>
+<!-- 2.	Set Visibility for Inflection Features to "Always visible" -->
+  <click side="right" dx="50" path="$refField;1/9:Inflection Features"/>
+  <insert>{DOWN}{RIGHT}{DOWN}~</insert><!-- Always visible -->
+<!-- iii.	Uncheck Show Hidden fields -->
+  <click path="$multiEdHidden"/>
+
+<!-- e.	Find the -o Masc entry -->
+  <click path="$lxFindLex"/>
+  <on-dialog title="Find Lexical Entry">
+	<insert wait="5000">-o</insert>
+	<click path="$goto"/>
+  </on-dialog>
+
+<!-- i.	Set its inflection features to masculine gender -->
+  <click path="$multiEdHidden"/>
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Features"/>
+  <click path="$refField;2/9:Inflection Features/$NL2;43:NAMELESS"/>
+  <on-dialog name="MsaInflectionFeatureListDlg" title="Choose Inflection Features">
+	<insert wait="500">m </insert>
+	 <click path="9:m_btnOK/43:m_btnOK"/>
+  </on-dialog>
+  <click path="$multiEdHidden"/>
+
+<!--/skip-->
+
+<!-- 26.	Go to Texts / Edit -->
+ <click path="$menuTEXTS;menu:Interlinear Texts"/>
+<!-- a.	In the "Inflection Examples" text, click on Baseline tab -->
+  <click until="1000000" path="$txtBaseline"/>
+<!-- b.	Type the following line at the end -->
+  <click path="$txtBLInput"/>
+  <insert wait="500">^{END}</insert>
+  <insert wait="500">~</insert>
+<!-- i.	casa caso casita casito -->
+  <insert>casa caso casita casito</insert>
+<!-- c.	Click on the Interlinearize tab -->
+  <click path="$txtInterlinear"/>
+<!-- d.	Do menu Parser / Reparse all words -->
+  <click wait="60000" path="$menuPARSER;menu:Start Parser"/><!-- gets turned off somehow -->
+  <!--click path="$menuPARSER;menu:Reparse all words"/-->
+
+  <click path="$txtBaseline"/><!-- get the cursor off the toolbar so the menu can be found. -->
+
+<!-- 27.	Go to Words / Analyses -->
+  <click path="$menuTEXTS;menu:Word Analyses"/>
+	<click path="$refresh"/>
+	<click path="$menuPARSER;menu:Start Parser"/>
+	<insert wait="10000">{ESC}</insert><!-- esc does nothing, so it's just waiting -->
+
+<!-- a.	All words should have a 1 in both the Number in Corpus and Predicted Analyses. -->
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:casa"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:casita"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:casa"/>
+<do-once until="999999">
+  <glimpse id="1" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+</do-once>
+<do-once until="999999">
+  <glimpse id="2" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+</do-once>
+
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:casito"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:casita"/>
+<glimpse id="3" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="4" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:caso"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:casito"/>
+<glimpse id="5" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="6" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:caso"/>
+<glimpse id="7" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="8" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+
+ </on-application>
+
+</accil>

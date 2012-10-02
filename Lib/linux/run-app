@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Run a FieldWorks application
+
+scriptdir=$(dirname "$0")
+prefix=$(readlink -en "$scriptdir/../..")
+lib=$prefix/lib/fieldworks
+share=$prefix/share/fieldworks
+sharedWs=/var/lib/fieldworks/SIL/WritingSystemStore
+
+"$share/setup-user"
+
+if ! "$lib/cpol-action" check
+then
+	zenity --error --text="\
+This software cannot be run. Essential parts of it require agreement to the Code Project Open License.
+
+If you wish to indicate your agreement to this license, please reconfigure the package. \
+This can be done from Synaptic Package Manager using Package > Configure..."
+	exit 1
+fi
+
+# test for write permissions in global writing system store
+if [ $(find $sharedWs -not -writable -print | wc -l) -gt 0 ]
+then
+	zenity --error --text="\
+This software cannot be run.
+
+Missing write permissions on essential files or directories in
+$sharedWs."
+	exit 1
+fi
+
+cd "$lib"; RUNMODE="INSTALLED" source environ; cd -
+cd "$share" # Temporary
+exec mono --debug "$lib/FieldWorks.exe" -app "$@"

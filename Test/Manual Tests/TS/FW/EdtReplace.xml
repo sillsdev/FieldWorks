@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtrep" num="2.2.11" abbr="edrp" file="FW\EdtReplace.xml">
+<title tag="edtrep">Edit-Replace Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The function of the Replace tab is identical to the Find tab except for the additional elements.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Replace" type="doc">Edit-Replace</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/FindandReplace/FindnReplace.html#Replace%20Tab" type="doc">Replace Tab</link>
+</p>
+</introduction>
+<context>
+<p>Part of this dialog is tested using the <link uri="EdtFind.xml" type="module">Edit-Find Tests</link>. A few setting combinations are possible via the "More" button. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Edit-Replace"</p>
+</context>
+
+<case id="edrpAct" num="1" order="any">
+<title tag="edrpAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Edit-Replace. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/FindandReplace/FindnReplace.html#Replace%20Tab" type="doc">Edit-Replace specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">Edit-Replace layout incorrect</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>There is no "OK" button.</li>
+<li>Report any failures as suggested using "Edit-Replace" as the name of the dialog.</li>
+</ul>
+</r>
+</step>
+<step name="1.3" link="Bug">Invoke Edit-Replace. While the dialog is displayed, click on the application and edit some editable text.
+   <r>
+<ul>
+<li>The dialog loses focus. (title bar dims)</li>
+<li>The application text can be edited.</li>
+</ul>
+</r>
+<p name="bug">Edit-Replace Replace dialog won't lose focus</p>
+</step>
+<step name="1.4" link="Bug">When the dialog does not have focus, click on the dialog.
+   <r>The dialog gets the focus. (title bar brightens, controls are active)</r>
+<p name="bug">Edit-Replace Replace dialog won't gain focus</p>
+</step>
+
+</case>
+
+<case id="edrpEx" num="2" order="any">
+<title tag="edrpEx">Exercise dialog controls</title>
+<context>
+<p>When the Edit-Replace is displayed:</p>
+</context>
+
+<step name="2.1">Use the <link uri="EdtFind.xml" type="module">Edit-Find Tests</link> to test the Find What text box and the More/Less, Find Next buttons.
+   <r>
+<ul>
+<li>Use the Edit-Replace menu button and dialog where Edit-Find is written.</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">Use the <link uri="../StdCtrls/TextBox.xml">Text Box Tests</link> and the shortcut &lt;Alt&gt;&lt;h&gt; to test the Replace with control.
+   <r>
+<ul>
+<li>When no text is selected and Edit-Replace is invoked, Replace with retains the last replace string</li>
+<li>When text is selected and Edit-Replace is invoked, Replace with is empty</li>
+</ul>
+</r>
+<p name="bug">Edit-Replace Replace with fails to retain last replace string</p>
+<p name="bug">Edit-Replace Replace with fails to clear</p>
+</step>
+<step name="2.3" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;R&gt; with the Replace button.
+<r>
+<ul>
+<li>If there is no Find What text, this button is disabled</li>
+<li>If there is a Quick Find combo box on a visible toolbar, it is updated, if necessary, to display the current Find What text</li>
+<li>The main window status bar shows the progress, e.g., "Searching entry 45 of 3540..." until a match is found or there is nothing left to search</li>
+<li>If the search hasn't started, the first instance after the original cursor position, even in a writing system different from the Find What text, that has matching underlying text is highlighted otherwise, it is replaced</li>
+<li>The main window changes/scrolls to show the first matched or replaced text after the original cursor position</li>
+<li>Replaced text has the same writing system as the Replace with text</li>
+<li>Once Replace has been used, the Cancel button changes to Close</li>
+<li>Replace is disabled after the last replace is made</li>
+<li>Replace is not supported within a list reference field</li>
+</ul>
+</r>
+<p name="bug">Edit-Replace Replace is enabled but Find what is empty</p>
+<p name="bug">Edit-Replace Replace fails to update Quick Find</p>
+<p name="bug">Edit-Replace Replace does not show status</p>
+<p name="bug">Edit-Replace Replace fails to disable after no more matches</p>
+<p name="bug">Edit-Replace replaced text has wrong writing system</p>
+<p name="bug">Edit-Replace fails to Replace matches in other writing systems</p>
+<p name="bug">Edit-Replace fails to Replace matches</p>
+<p name="bug">Edit-Replace fails to scroll</p>
+<p name="bug">Edit-Replace use of Replace fails to change Cancel to Close</p>
+<p name="bug">Edit-Replace allowed within a list reference field</p>
+</step>
+<step name="2.4" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;A&gt; to test the Replace All button.
+   <r>
+<ul>
+<li>If there is no Find What text, this button is disabled</li>
+<li>The main window status bar shows the progress, e.g., "Searching entry 45 of 3540..." until there is nothing left to search</li>
+<li>Every instance of the Find What text is replaced by the Replace with text</li>
+<li>Instances in writing systems different from the Find What text that have matching underlying text are replaced</li>
+<li>Replaced text has the same writing system as the Replace with text</li>
+<li>When finished, a window opens to report how many replacements were made</li>
+<li>Once Replace All has been used, the Cancel button changes to Close</li>
+<li>Replace is not supported within a list reference field</li>
+</ul>
+</r>
+<p name="bug">Edit-Replace Replace all is enabled but Find what is empty</p>
+<p name="bug">Edit-Replace Replace all does not show status</p>
+<p name="bug">Edit-Replace Replace all replaced text has wrong writing system</p>
+<p name="bug">Edit-Replace fails to Replace All matches in other writing systems</p>
+<p name="bug">Edit-Replace fails to Replace All matches</p>
+<p name="bug">Edit-Replace Replace all shows no matche number report</p>
+<p name="bug">Edit-Replace use of Replace All fails to change Cancel to Close</p>
+<p name="bug">Edit-Replace allowed within a list reference field</p>
+</step>
+
+</case>
+
+<case id="edfdSe" num="3" order="any">
+<title tag="edfdSe">Side effects</title>
+<context>
+<p>When the Edit-Replace dialog is displayed:</p>
+</context>
+
+<step name="3.1" link="Bug">Enter some Replace with text. Highlight it and select a writing system from More-Format-Writing System. Click Find Next and Replace.
+   <r>
+<ul>
+<li>The replaced text has the same writing system as the Replace with text</li>
+<li>When a style is in effect for the surounding text or paragraph, the replaced text has that style, but specific to its writing system</li>
+<li>When there is no style, the replaced text has the same settings as the surounding paragraph and text</li>
+</ul>
+</r>
+<p name="bug">Edit-Replace fails to Replace matches in other writing systems</p>
+<p name="bug">Edit-Replace fails to Replace matches in the correct style</p>
+<p name="bug">Edit-Replace fails to Replace matches with correct paragraph settings</p>
+<p name="bug">Edit-Replace fails to Replace matches with correct text settings</p>
+</step>
+<step name="3.2" link="Bug">Enter some Replace with text. Click Find Next, then Replace or Replace all.
+   <r>Replace and Find Next and Replace all coordinate searches together.</r>
+<p name="bug">Edit-Replace fails to coordinate Replace and Find Next and Replace all</p>
+</step>
+
+</case>
+
+<case id="edfdOvl" num="4" order="any">
+<title tag="edfdOvl">Replace with Overlays</title>
+<context>
+<p>When the Edit-Replace dialog is displayed with an Overlay turned on</p>
+</context>
+
+<step name="4.1" link="Bug">
+Try replacing an overlay tag with a different tag by putting one in the Find What box and another in the Replace With box.
+<r>The tag entered in Replace With replaces the tags that were found.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="4.2" link="Bug">
+Try adding an overlay to a text string by putting the string in the Find What box and the string with the desired tag in the Replace With box. Use Replace all to tag all the strings with that tag.
+<r>All the matching strings should be tagged with the overlay tag.</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="4.3" link="Bug">
+Try using replace with some of the other settings available under the More button in addition to overlays.
+<r>The find and replace should be refined for the settings under More.</r>
+<p name="bug">
+</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-07-01" author="MikeL">Put in the guts of the test</update>
+<update date="Aug-23-01" author="MikeL">Brought up to new spec</update>
+<update date="May-24-02" author="JoelC">Added result for trying to replace in a list reference field</update>
+
+</test>

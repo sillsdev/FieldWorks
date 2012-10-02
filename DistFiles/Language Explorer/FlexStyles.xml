@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Styles SYSTEM "../Styles.dtd">
+<!-- IMPORTANT NOTE TO MAINTAINERS
+	*********************************************************************************************
+	ANY change to this Stylesheet must be accompanied by the generation of a new version using
+	guidgen. Be sure to validate any changes against ../Styles.dtd.
+	*********************************************************************************************
+-->
+<Styles date="2010-10-13" DTDver="D8066E53-262D-43f4-914E-A1BDD0693893" label="Flex Dictionary">
+	<markup version="BE714A36-BD4E-4856-9E36-0943B2187621">
+		<!--
+		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
+		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
+		importer will not allow context changes for built-in styles. -->
+		<tag id="Normal" userlevel="0" context="general" type="paragraph">
+			<usage wsId="en">Normal is a parent style that all other paragraph styles are usually based on.</usage>
+			<help category="Paragraph_Elements"/>
+			<font size="10 pt"/>
+			<paragraph next="Normal" lineSpacing="12 pt" lineSpacingType="atleast" spaceBefore="0 pt" spaceAfter="6 pt"/>
+		</tag>
+		<!-- These are currently also defined in NewLangProj. This definition will supercede that -->
+		<tag id="Heading_1" userlevel="1" context="general" type="paragraph">
+			<usage wsId="en">Major headings (1, 2, 3)</usage>
+			<help category="Paragraph_Elements"/>
+			<font bold="true" size="14 pt"/>
+			<paragraph basedOn="Normal" next="Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
+		</tag>
+		<tag id="Heading_2" userlevel="1" context="general" type="paragraph">
+			<usage wsId="en">Second-level headings (1.1, 1.2, 1.3)</usage>
+			<help category="Paragraph_Elements"/>
+			<font bold="true" italic="true" size="12 pt"/>
+			<paragraph basedOn="Normal" next="Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
+		</tag>
+		<tag id="Heading_3" userlevel="1" context="general" type="paragraph">
+			<usage wsId="en">Third-level headings (1.1.1, 1.1.2, 1.1.3)</usage>
+			<help category="Paragraph_Elements"/>
+			<font bold="false" italic="true" size="12 pt"/>
+			<paragraph basedOn="Normal" next="Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
+		</tag>
+		<tag id="Numbered_List" userlevel="1" context="general" type="paragraph">
+			<usage wsId="en">A numbered list of paragraphs</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Normal" next="Numbered_List" bulNumScheme="Arabic" bulNumStartAt="1" firstLine="-18 pt"/>
+		</tag>
+		<tag id="Bulleted_List" userlevel="1" context="general" type="paragraph">
+			<usage wsId="en">A bulleted list of paragraphs</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Normal" next="Bulleted_List" bulNumScheme="Bullet:1" bulNumStartAt="1" firstLine="-18 pt"/>
+		</tag>
+		<tag id="Block_Quote" userlevel="1" context="general" type="paragraph">
+			<usage wsId="en">Extended (paragraph size or larger) quotation</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Normal" next="Block_Quote" indentLeft="36 pt" indentRight="36 pt"/>
+		</tag>
+		<tag id="Emphasized_Text" userlevel="1" context="general" type="character">
+			<usage wsId="en">Material to be emphasized</usage>
+			<help category="Paragraph_Elements"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Strong" userlevel="1" context="general" type="character">
+			<usage wsId="en">Material to stand out boldly</usage>
+			<help category="Paragraph_Elements"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Writing_System_Abbreviation" userlevel="1" context="general" type="character">
+			<help category="Paragraph_Elements"/>
+			<font size="8 pt" italic="true"/>
+		</tag>
+		<tag id="Hyperlink" userlevel="1" context="internal" type="character">
+			<usage wsId="en">Links to other material via URLs</usage>
+			<help category="Paragraph_Elements"/>
+			<font color="blue" underline="single" underlineColor="blue"/>
+		</tag>
+		<tag id="Added_Text" userlevel="1" context="general" type="character">
+			<usage wsId="en">Material marked as being added</usage>
+			<help category="Paragraph_Elements"/>
+			<font color="seagreen" underline="single" underlineColor="seagreen"/>
+		</tag>
+		<tag id="Deleted_Text" userlevel="1" context="general" type="character">
+			<usage wsId="en">Material marked as being deleted</usage>
+			<help category="Paragraph_Elements"/>
+			<font color="red" underline="strikethrough" underlineColor="red"/>
+		</tag>
+		<!-- These are only defined here, and this is the current main purpose of having this file -->
+		<tag id="Dictionary-Normal" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Base style for everything in the Dictionary view.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Normal" indentLeft="9 pt" hanging="36 pt" spaceBefore="1 pt" spaceAfter="2 pt"/>
+		</tag>
+		<tag id="Dictionary-Pictures" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">The paragraph of pictures that follows the main paragraph (if there are pictures).</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
+		</tag>
+		<tag id="Dictionary-Subentry" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Each paragraph of Subentry information that is added to the entry if there are subentries.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
+		</tag>
+		<tag id="Dictionary-Headword" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">The main headword at the very start of the entry.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Dictionary-CrossReferences" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for cross-references to other entries.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Dictionary-Contrasting" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for items in the entry that need to be distinguished from neighboring items.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Dictionary-Vernacular" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for items in the entry that contain vernacular text.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Classified-MainEntry" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">In a classified dictionary, the heading giving the classification name</usage>
+			<help category="Flex_Classified_Styles"/>
+			<font bold="true" italic="false" size="12 pt"/>
+			<paragraph basedOn="Normal" next="Classified-Item" spaceBefore="8 pt" spaceAfter="2 pt"/>
+		</tag>
+		<tag id="Classified-Item" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">In a classified dictionary, the individual item paragraphs</usage>
+			<help category="Flex_Classified_Styles"/>
+			<font/>
+			<paragraph basedOn="Normal" spaceBefore="2 pt" indentLeft="9 pt" hanging="9 pt"/>
+		</tag>
+		<tag id="Classified-Headword" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for the headword in a classified dictionary.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Classified-POS" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for the grammatical information in a classified dictionary.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Classified-Defn" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for the definition and/or gloss in a classified dictionary.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font />
+		</tag>
+		<tag id="UiElement" userlevel="1" context="internal" type="character" use="special">
+			<usage wsId="en">This is a special style used for certain parts of the FieldWorks user interface. You should not normally modify it.</usage>
+			<help category="System"/>
+			<font>
+				<override wsId="en" family="Microsoft Sans Serif" size="10 pt"/>
+				<override wsId="es" family="Microsoft Sans Serif" size="10 pt"/>
+				<override wsId="fr" family="Microsoft Sans Serif" size="10 pt"/>
+				<override wsId="id" family="Microsoft Sans Serif" size="10 pt"/>
+				<override wsId="pt" family="Microsoft Sans Serif" size="10 pt"/>
+			</font>
+		</tag>
+	</markup>
+	<replacements>
+		<change old="External_Link" new="Hyperlink"/>
+		<change old="Internal_Link" new="Hyperlink"/>
+		<change old="Language_Code" new="Writing_System_Abbreviation"/>
+	</replacements>
+	<!-- this element is not currently used in Flex, but ImportMappingSets is not allowed to be empty, so has a dummy-->
+	<ImportMappingSets>
+		<ImportMapping name="Flex Default">
+			<mapping id="dummyXXYYZZNo" type="excluded" />
+		</ImportMapping>
+	</ImportMappingSets>
+</Styles>

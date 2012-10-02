@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenBldAcTestSrc", "GenBldAcTestSrc\GenBldAcTestSrc.csproj", "{AB2F146B-CE18-4A82-B34A-C2D8081319EA}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		CanCheckoutShared = true
+		SolutionUniqueID = {CDF44136-F5B9-42EA-8661-D3CA1987406C}
+		SccProjectUniqueName1 = GenBldAcTestSrc\\GenBldAcTestSrc.csproj
+		SccLocalPath1 = .
+		CanCheckoutShared = true
+		SccProjectFilePathRelativizedFromConnection1 = GenBldAcTestSrc\\
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{AB2F146B-CE18-4A82-B34A-C2D8081319EA}.Debug.ActiveCfg = Debug|.NET
+		{AB2F146B-CE18-4A82-B34A-C2D8081319EA}.Debug.Build.0 = Debug|.NET
+		{AB2F146B-CE18-4A82-B34A-C2D8081319EA}.Release.ActiveCfg = Release|.NET
+		{AB2F146B-CE18-4A82-B34A-C2D8081319EA}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filnc" num="2.1.1" abbr="fnc" file="WorldPad\FileNewClose.xml">
+ <title tag="filnc">File New and Close Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>File-New creates a new World Pad window with the selected file in it.</p>
+   <p>File-Close shuts the current window and makes sure your file is saved. If there are no more WorldPad windows open, it opens a new window with nothing in it.</p>
+  </introduction>
+
+  <context>
+<p>If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "File New" or "File-Close".</p>
+  </context>
+
+ <case id="fncNew" num="1" order="any">
+  <title tag="fncNew">File-New</title>
+  <context>
+<p>When the File menu is displayed</p>
+</context>
+  <step name="1.1" link="Bug">With the application in various states (text selected or not, scrolling, split window) select File | New.
+   <r>
+	<ul>
+	 <li>A second instance of the application opens, with an empty main window.</li>
+	 <li>A new task button appears on the system taskbar.</li>
+	</ul>
+   </r>
+   <p name="bug">File-New fails to launch new window</p>
+   <p name="bug">File-New new window is not empty</p>
+   <p name="bug">File-New fails to create a taskbar button</p>
+  </step>
+  <step name="1.2" link="Bug">Select File | New repeatedly.
+   <r>
+	<ul>
+	 <li>Successive new windows are placed slightly lower and to the right of the previous one.</li>
+	 <li>The new window's size is the same as its predecessor's, unless that would make it extend off the screen, in which case it is shrunk to fit the screen.</li>
+	 <li>If that would make it too small (smaller than 400x400 pixels), the new window appears at the top-left of the screen.</li>
+	</ul>
+   </r>
+   <p name="bug">File-New fails to launch a reasonable number of new windows</p>
+  </step>
+ </case>
+
+ <case id="fncClose" num="2" order="any">
+  <title tag="fncClose">File-Close</title>
+  <context>
+<p>When the File menu is displayed</p>
+</context>
+  <step name="2.1" link="Bug">With the application in various states (text selected or not, scrolling, split window) and with different numbers of windows open, select File | Close.
+   <r>
+	<ul>
+	 <li>The active window is shut down.</li>
+	 <li>Its task button on the system taskbar disappears.</li>
+	 <li>If this is the last World Pad window, then an empty new one is created.</li>
+	</ul>
+   </r>
+   <p name="bug">File-Close fails to close window</p>
+   <p name="bug">File-Close fails to close window</p>
+   <p name="bug">File-Close task button persists</p>
+  </step>
+ </case>
+
+ <update date="Sep-18-02" author="MikeL">Test created.</update>
+
+</test>

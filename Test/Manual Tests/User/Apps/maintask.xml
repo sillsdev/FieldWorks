@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Apps\maintask.xml">
+ <title tag="app">Testing a FieldWorks application</title>
+ <index>
+  <li>application testing</li>
+  <li>testing overview</li>
+ </index>
+ <prerequisites>
+  <p>Before you begin, make sure you have:</p>
+  <ul>
+   <li>Read about how to use a test script and report the bugs you find. <link uri="..\Using\maintask.xml" type="module">Details</link></li>
+   <li>Installed the software you want to test. <link uri="..\Starting\InstallApp.xml">Details</link></li>
+  </ul>
+ </prerequisites>
+ <warning>
+  <p><img uri="Kitty.gif" alt="Ching chases bugs. Beware: it's cat-Ching!"/></p>
+ </warning>
+ <thingsToDo>
+  <p>Here are some FieldWorks applications you can test:</p>
+  <step link="Begin" uri="..\..\TS\DN\TestList.htm">Test Data Notebook (DN)</step>
+  <step link="Begin" uri="..\..\TS\WorldPad\TestList.htm">Test WorldPad (WP)</step>
+  <step link="Begin" uri="..\..\TS\TLE\TestList.htm">Test Topics List Editor (TLE)</step>
+ </thingsToDo>
+</task>

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<!--test to evalute jumping to hyperlinks This test really does not do anything yet
+   I need a way to click on a text to make this test useful but do not have the ability to do so yet
+   The problem is accessibility inside of DN-->
+
+<accil on-fail="assert">
+ <on-application wait="1000" path="C:\Program Files\FieldWorks" exe="FWNotebook.exe"  id="DNID" args="-db &quot;TokPisin&quot;" run="yes">
+
+  <click path="item:Document"/>
+  <click path="button:Find (Ctrl+F)"/>
+
+  <!-- search for bilong in the Tok Pisin Bible -->
+  <on-dialog wait="1000" title="Find and Replace">
+   <insert>matmat</insert>
+   <click path="button:Find Next"/>
+   <click path="button:Close"/>
+  </on-dialog>
+
+  <insert>{LEFT 2}</insert>
+  <click wait="3000" path="#focus"/>
+  <!--click wait="1000" path="#focus"/-->
+<!-- give time for FLEx to come up -->
+
+  <!-- open the Language explorer looking for the word >
+  <on-application run="no" wait="4000" exe="flex.exe">
+	<on-dialog wait="1000" title="Dictionary Entry">
+	 <click path="button:Open Lexicon"/>
+	</on-dialog>
+
+	   <glimpse path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:LexItemsAndDetailMultiPane/window:TestEditMulti/window:normalEdit/window:RecordEditView.DataTree/window:multistring/grp:Lexeme Form/para:0/line:0" prop="value" expect="matmat">
+	  Failed should have found <data of="$.expect"/> but found <data of="$.value"/>
+   </glimpse>
+
+   <click wait="1000" path="window:MenuBar/menu:File/menu:Exit"/>
+
+  </on-application-->
+
+ </on-application>
+</accil>

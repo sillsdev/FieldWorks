@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Andy Black (SIL International) -->
+<!DOCTYPE lingPaper SYSTEM "..\XLingPap\XLingPap.dtd">
+<?xml-stylesheet type="text/xsl" href="..\XLingPap\XLingPap1.xsl"?>
+<lingPaper css="StageTestList.css">
+  <frontMatter>
+	<title>M3 Stage 1 Test List</title>
+	<author>H. Andrew Black</author>
+	<date>06-Sep-2001</date>
+	<version>1.1</version>
+  </frontMatter>
+  <section1 id="sIntro">
+	<secTitle>Introduction</secTitle>
+	<p>This document lists the items in M3 that need to be tested during Stage 1 development.</p>
+  </section1>
+  <section1 id="sList">
+	<secTitle>The List</secTitle>
+	<p>The following lists the classes and properties that need to be tested during Stage 1.  It assumes that if a class has a <object class="property">Name</object> and/or a <object class="property">Description</object> property, that these properties should also be tested. </p>
+	<ul>
+	  <li>Etic glosses (while no overt underlying feature structures are needed for Stage 1, they could still be present)</li>
+	  <li>
+		<object class="class">MoMorphType</object>
+	  </li>
+	  <li>
+		<object class="class">PartOfSpeech</object>:
+<ul>
+		  <li>
+			<object class="property">AffixTemplates</object>
+			<ul>
+			  <li>
+				<object class="property">Slots</object>
+			  </li>
+			  <li>
+				<object class="property">PrefixSlots</object>
+			  </li>
+			  <li>
+				<object class="property">SuffixSlots</object>
+			  </li>
+			</ul>
+		  </li>
+		  <li>
+			<object class="property">AffixSlots</object>
+			<ul>
+			  <li>
+				<object class="property">Affixes</object>
+			  </li>
+			</ul>
+		  </li>
+		</ul>
+	  </li>
+	  <li>
+		<object class="class">MoMorphoSyntaxInfo</object>
+		<ul>
+		  <li>
+			<object class="property">Components</object>
+		  </li>
+		</ul>
+	  </li>
+	  <li>
+		<object class="class">MoStemMsi</object>
+		<ul>
+		  <li>
+			<object class="property">PartOfSpeech</object>
+		  </li>
+		</ul>
+	  </li>
+	  <li>
+		<object class="class">MoDerivationalAffixMsi</object>
+		<ul>
+		  <li>
+			<object class="property">FromPartOfSpeech</object>
+		  </li>
+		  <li>
+			<object class="property">ToPartOfSpeech</object>
+		  </li>
+		  <li>
+			<object class="property">AffixCategory</object>
+		  </li>
+		</ul>
+	  </li>
+	  <li>
+		<object class="class">MoInflectionalAffixMsi</object>
+		<ul>
+		  <li>
+			<object class="property">AffixCategory</object>
+		  </li>
+		  <li>maybe something tied to our set of etic glosses?  I'm not real sure at this stage: there is an InflectionFeatures property that owns an FS and presumably the content of that FS will correspond to something in our etic gloss underlying feature system.</li>
+		</ul>
+	  </li>
+	  <li>
+		<object class="class">PhPhonologicalData</object>
+		<ul>
+		  <li>
+			<object class="property">PhonemeSets</object>
+			<ul>
+			  <li>
+				<object class="property">Phonemes</object>
+				<ul>
+				  <li>
+					<object class="property">Codes</object>
+				  </li>
+				</ul>
+			  </li>
+			  <li>
+				<object class="property">BoundaryMarkers</object>
+				<ul>
+				  <li>
+					<object class="property">Codes</object>
+				  </li>
+				</ul>
+			  </li>
+			</ul>
+		  </li>
+		  <li>
+			<object class="property">NaturalClasses</object>
+			<ul>
+			  <li>
+				<object class="class">PhNCSegments</object>
+				<ul>
+				  <li>
+					<object class="property">Segments</object>
+				  </li>
+				</ul>
+			  </li>
+			</ul>
+		  </li>
+		  <li>
+			<object class="property">Environments</object>
+			<ul>
+			  <li>
+				<object class="property">LeftContext</object>
+			  </li>
+			  <li>
+				<object class="property">RightContext</object>
+			  </li>
+			</ul>
+		  </li>
+		  <li>
+			<object class="property">Contexts</object>
+		  </li>
+		  <ul>
+			<li>
+			  <object class="class">PhSimpleContext</object>
+			  <ul>
+				<li>
+				  <object class="class">PhSimpleContextSeg</object>
+				  <ul>
+					<li>
+					  <object class="property">FeatureStructure</object> (which refers to a <object class="class">PhPhoneme</object>)</li>
+				  </ul>
+				</li>
+				<li>
+				  <object class="class">PhSimpleContextBdry</object>
+				  <ul>
+					<li>
+					  <object class="property">FeatureStructure</object> (which refers to a <object class="class">PhBdryMarker</object>)</li>
+				  </ul>
+				</li>
+				<li>
+				  <object class="class">PhSimpleContextNC</object>
+				  <ul>
+					<li>
+					  <object class="property">FeatureStructure</object> (which refers to a <object class="class">PhNaturalClass</object>)</li>
+				  </ul>
+				</li>
+			  </ul>
+			</li>
+			<li>
+			  <object class="class">PhIterationContext</object>
+			  <ul>
+				<li>
+				  <object class="property">Minimum</object>
+				</li>
+				<li>
+				  <object class="property">Maximum</object>
+				</li>
+				<li>
+				  <object class="property">Member</object>
+				</li>
+			  </ul>
+			</li>
+			<li>
+			  <object class="class">PhSequenceContext</object>
+			  <ul>
+				<li>
+				  <object class="property">Members</object>
+				</li>
+			  </ul>
+			</li>
+		  </ul>
+		</ul>
+	  </li>
+	  <li>
+		<object class="class">MoMorphologicalData</object>
+		<ul>
+		  <li>
+			<object class="property">CompoundRules</object>
+			<ul>
+			  <li>
+				<object class="property">LeftPartOfSpeech</object>
+			  </li>
+			  <li>
+				<object class="property">RightPartOfSpeech</object>
+			  </li>
+			  <li>
+				<object class="property">Linker</object>
+			  </li>
+			  <li>
+				<object class="class">MoEndocentricCompound</object>
+				<ul>
+				  <li>
+					<object class="property">HeadLast</object>
+				  </li>
+				</ul>
+			  </li>
+			  <li>
+				<object class="class">MoExocentricCompound</object>
+				<ul>
+				  <li>
+					<object class="property">ToPartOfSpeech</object>
+				  </li>
+				</ul>
+			  </li>
+			</ul>
+		  </li>
+		  <li>
+			<object class="property">AdhocCoProhibitions</object>
+			<ul>
+			  <li>
+				<object class="property">Adjacency</object>
+			  </li>
+			  <li>
+				<object class="class">MoAllomorphAdhocCoProhibition</object>
+				<ul>
+				  <li>
+					<object class="property">Allomorphs</object>
+				  </li>
+				</ul>
+			  </li>
+			  <li>
+				<object class="class">MoMorphemeAdhocCoProhibition</object>
+				<ul>
+				  <li>
+					<object class="property">Morphemes</object>
+				  </li>
+				</ul>
+			  </li>
+			</ul>
+		  </li>
+		  <li>
+			<object class="property">PhoneEnvs</object> (I think this is no longer needed - it's under PhPhonologicalData above)</li>
+		  <li>
+			<object class="property">AnalyzingAgents</object>
+			<endnote id="eUnsure">
+			  <p>I believe that these are to be included in Stage 1, but I'm not totally sure.</p>
+			</endnote>
+		  </li>
+		  <li>
+			<object class="property">TestSets</object>
+			<endnoteRef ref="eUnsure"/>
+		  </li>
+		</ul>
+	  </li>
+<li><object class="class">MoForm</object>
+<ul>
+<li><object class="property">Form</object></li>
+<li><object class="property">SecEnvConstraint</object></li>
+<li><object class="property">MorphType</object></li>
+</ul>
+</li>
+<li><object class="class">MoAffixAllomorph</object>
+<ul>
+<li><object class="property">InflectionClasses</object></li>
+<li><object class="property">MsEnvPartOfSpeech</object></li>
+<li><object class="property">PhoneEnviron</object></li>
+<li><object class="property">Position</object></li>
+</ul>
+</li>
+<li><object class="class">MoStemAllomorph</object>
+<ul>
+<li><object class="property">PhoneEnviron</object></li>
+</ul>
+</li>
+	</ul>
+  </section1>
+  <backMatter>
+	<endnotes/>
+  </backMatter>
+<comment>
+06-Sep-2001  1.1  Andy Black  Added MoForm, etc. information unintentially left out of version 1.0
+04-Sep-2001  1.0  Andy Black  Initial draft
+</comment>
+</lingPaper>

@@ -1,0 +1,179 @@
+;Test generation with realizational rules.
+
+;First load some nat classes (msg 6541):
+(load_nat_class message <nat_class name null features ()>)
+(load_nat_class message <nat_class name alv_stop features (cons + strident - del_rel - poa alveolar)>)
+(load_nat_class message <nat_class name voiceless_c features (cons + vd -)>)
+(load_nat_class message <nat_class name labiodental features (cons + poa labiodental)>)
+(load_nat_class message <nat_class name voiced features (vd +)>)
+(load_nat_class message <nat_class name voiceless features (vd -)>)
+(load_nat_class message <nat_class name strident features (cons + strident +)>)
+(load_nat_class message <nat_class name d features (cons + strident - del_rel - poa alveolar vd +)>)
+;Load two simple realizational rules (msg 6505, twice).
+; These are similar to the "ordinary" mrules in LOADMRUL.ARI.
+; English -ed suffix:
+(load_morpher_rule message
+  <rz_rule nm ed_rz
+		   str morphophonemic
+		   rz_f (tense (past))
+		   gl PAST
+		   subrules (<msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									   (<simp_cntxt class alv_stop>)
+									  )
+						  >
+					   out <m_rhs p_out (1 2 (d table3))>
+					 >
+					 <msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+										<simp_cntxt class voiceless_c>
+									   )
+									  )
+						  >
+					   out <m_rhs p_out (1 (t table3))>
+					 >
+					 <msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					   out <m_rhs p_out (1 <simp_cntxt class d>)>
+					 >
+					)
+  >
+)
+;English -s suffix:
+(load_morpher_rule message
+  <rz_rule nm s_rz
+		   str morphophonemic
+		   rz_f (pers (3) tense (pres))
+		   gl 3PRES
+		   subrules (<msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									   (<simp_cntxt class labiodental>)
+									  )
+						  >
+					   out <m_rhs p_out (1 (2 <simp_cntxt class voiced>) (z table3))>
+					 >
+					 <msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+										<simp_cntxt class strident>
+									   )
+									  )
+						  >
+					   out <m_rhs p_out (1 (z table3))>
+					 >
+					 <msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									   (<simp_cntxt class voiceless_c>)
+									  )
+						  >
+					   out <m_rhs p_out (1 2 (s table3))>
+					 >
+					 <msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					   out <m_rhs p_out (1 (z table3))>
+					 >
+					)
+	>
+)
+;The above two rules will belong to a single slot; the following rule will
+; belong to a different slot:
+(load_morpher_rule message
+  <rz_rule nm evidential
+		   str morphophonemic
+		   rz_f (evidential (witnessed))
+		   gl WIT
+		   subrules (<msub
+					   in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					   out <m_rhs p_out (1 (uv table3))>
+					 >
+					)
+	>
+)
+
+;First test with an inflectional template that has a nonexistent rule.
+; Loading the template should be OK, msg 6565:
+(set_stratum message <stratum_setting nm morphophonemic type templates
+					  value (<affix_template nm verb r_pos (V) slots ((nonesuch ed_rz) (evidential))>)>)
+
+;But when we try generation, we should get error msg 6059 because of
+; the nonexistent rule:
+(generate_word pretty_print
+	   (<lex id rz1 sh sag gl sag pos V str morphophonemic>
+		(()())
+		(evidential (witnessed))
+		*NA*
+		*NA*
+	   )
+)
+
+;Now define a corrected inflectional template for the above rules:
+(set_stratum message <stratum_setting nm morphophonemic type templates
+					  value (<affix_template nm verb r_pos (V) slots ((s_rz ed_rz) (evidential))>)>)
+
+;Turn on rule tracing:
+(trace_morpher_rule message (true true))
+;Try generation.  First we generate with a single realizational suffix:
+(generate_word pretty_print
+	   (<lex id rz1 sh sag gl sag pos V str morphophonemic>
+		(()())
+		(evidential (witnessed))
+		*NA*
+		*NA*
+	   )
+)
+
+;...and with two suffixes:
+(generate_word pretty_print
+	   (<lex id rz1 sh sag gl sag pos V str morphophonemic>
+		(()())
+		(evidential (witnessed) pers (3) tense (pres))
+		*NA*
+		*NA*
+	   )
+)
+
+;Now test blocking.  Since the stem already has the past tense feature,
+; the suffix should not get added.  (Note that the lex entry is already
+; in the lexicon.)  We'll turn on tracing of blocking, to show the
+; blocking struc:
+(trace_blocking message true)
+;First we generate with "si", which should be replaced by "sau":
+(generate_word pretty_print (bl1 (()()) (tense (past)) *NA* *NA*))
+;Then we generate with "sau", which should undergo no change
+; (blocking is vacuous):
+(generate_word pretty_print (bl2 (()()) (tense (past)) *NA* *NA*))
+;And we should not be able to generate starting with a lex entry whose
+; head features contradict those of the realizational features (i.e. we
+; should get an error):
+(generate_word pretty_print (bl3 (()()) (tense (past)) *NA* *NA*))
+
+;Also check on tracing of templates:
+(trace_morpher_templates (true true))
+;First test has no rules applying inside the template:
+(generate_word pretty_print (bl1 (()()) (tense (past)) *NA* *NA*))
+;Second test has a rule applying inside the template:
+(generate_word pretty_print
+	   (<lex id rz1 sh sag gl sag pos V str morphophonemic>
+		(()())
+		(evidential (witnessed))
+		*NA*
+		*NA*
+	   )
+)
+
+;Clean up the tracing:
+(trace_morpher_templates message (false false))
+(trace_blocking message false)
+(trace_morpher_rule message (false false))
+;Clean up the rules:
+(remove_morpher_rule ed_rz)
+(remove_morpher_rule s_rz)
+(remove_morpher_rule evidential)
+;Clean up the natural classes:
+(remove_nat_class message null)
+(remove_nat_class message alv_stop)
+(remove_nat_class message voiceless_c)
+(remove_nat_class message labiodental)
+(remove_nat_class message voiced)
+(remove_nat_class message voiceless)
+(remove_nat_class message strident)
+(remove_nat_class message d)

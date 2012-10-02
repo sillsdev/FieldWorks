@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE modularbook SYSTEM "..\..\User\XSL\ModularBook.dtd" []-->
+<?xml-stylesheet type="text/xsl" href="..\XSL\TCLlist.xsl"?>
+<modularbook file="StdCtrls\all.xml">
+
+<titlePage file="StdCtrls\all.xml">
+ <title tag="tp">Standard Control Test Library</title>
+ <index>
+  <li>title page</li>
+ </index>
+ <authors>
+  <div>Michael Lastufka (creator, drudge)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="maintask.xml" type="module">No link</link>
+ <shortcuts>
+  <link uri="maintask.xml" type="module">Testing a FieldWorks application</link>
+ </shortcuts>
+</titlePage>
+
+<!-- Test Scripts defined in files -->
+
+<include-test>Cursor.xml</include-test>
+<include-test>CheckBox.xml</include-test>
+<include-test>RadioBtn.xml</include-test>
+<include-test>Button.xml</include-test>
+<include-test>TlbButton.xml</include-test>
+<include-test>Toggle.xml</include-test>
+<include-test>MenuBtn.xml</include-test>
+<include-test>TextBox.xml</include-test>
+<include-test>ListBox.xml</include-test>
+<include-test>ScrollBar.xml</include-test>
+<include-test>SpinCtrl.xml</include-test>
+<include-test>ColorPal.xml</include-test>
+<include-test>MsgBox.xml</include-test>
+<include-test>Dialog.xml</include-test>
+<include-test>Window.xml</include-test>
+<include-test>PrintDlg.xml</include-test>
+<include-test>DatePicker.xml</include-test>
+<include-test>TaskbarBtn.xml</include-test>
+<include-test>Splash.xml</include-test>
+<include-test>ToolBar.xml</include-test>
+<include-test>Tree.xml</include-test>
+
+</modularbook>

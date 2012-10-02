@@ -1,0 +1,85 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: DbDisconnect.idh
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+Description:
+	Defines the following interface:
+		IDisconnectDb - Use this to disconnect remote users from your database.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+import "unknwn.idl";
+
+/***********************************************************************************************
+	Interface IDisconnectDb
+
+	This interface enables you to get all remote users off your database, in a sensitive, caring
+	manner.
+
+	@b{Notes}
+	@list{
+	You must use importlib("DbAccessTlb.tlb"); in the .idl file to provide a declaration for
+	interface IOleDbCommand.}
+
+	@h3{Restrictions}
+	@list{
+	None.}
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	When you need to get people disconnected from your database, other than yourself in your
+	calling application. (Self-disconnection you must do yourself.)
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwDisconnect or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: dscdb}
+***********************************************************************************************/
+DeclareInterface(DisconnectDb, Unknown, 0CC74E0C-3017-4c02-A507-3FB8CE621CDC)
+{
+	// Initialization.
+	// @param bstrDatabase Name of database to disconnect people from.
+	// @param bstrServer Name of server where database is located.
+	// @param bstrReason The reason to give to user to explain disconnection.
+	// @param bstrExternalReason The explanation to give remote users for the disconnection.
+	// @param fConfirmCancel True if user must confirm a cancelation request.
+	// @param bstrCancelQuestion The question to ask if user must confirm cancelation request.
+	// @param hwndParent Handle to parent window to use for dialog(s).
+	HRESULT Init(
+		[in] BSTR bstrDatabase,
+		[in] BSTR bstrServer,
+		[in] BSTR bstrReason,
+		[in] BSTR bstrExternalReason,
+		[in] ComBool fConfirmCancel,
+		[in] BSTR bstrCancelQuestion,
+		[in] int hwndParent);
+
+	// Check who is connected to our database.
+	// @param nResponse [out] One of the enumerated types defined in class ${DisconnectDb}
+	HRESULT CheckConnections([out, retval] int * pnResponse);
+
+	// Starts off the disconnection process. This may take some time.
+	// @param pfResult True if all people got disconnected, false if user canceled (or error).
+	HRESULT DisconnectAll([out, retval] ComBool * pfResult);
+
+	// Force everybody off our database immediately.
+	HRESULT ForceDisconnectAll();
+}
+
+/***********************************************************************************************
+	CoClass definition.
+***********************************************************************************************/
+#ifndef NO_COCLASSES
+
+DeclareCoClass(FwDisconnect, 008B93C5-866A-4238-963B-3F6C51B5BB03)
+{
+	interface IDisconnectDb;
+};
+
+#endif // NO_COCLASSES

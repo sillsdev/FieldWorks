@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <accil on-fail="assert">
+
+	<goal>Visits the words tool views</goal>
+
+	<bug id="FWR-1298" desc="Crash going to Texts &amp; Words/Concordance"/>
+	<bug id="FWR-603" desc="No view Bulk Edit Wordforms" />
+	<bug id="FWR-315" desc="Crash generating Grammar Sketch" />
+	<bug id="LT-9011" desc="BE Wordforms - Bulk Copy tab crash on click"/>
+
+<var id="projectName" set="Kalaba"/>
+<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+   <model select="menubar/view/texts-words/*">
+	 <click path="$guiPath"/>
+	 <!-- sometimes it opens on a tab with a nag dialog -->
+			 <on-dialog wait="500" until="1000" title="New Feature" name="MessageBoxExForm" on-fail="skip">
+				 <click path="$ok"/>
+			 </on-dialog>
+	 <!-- not all views have tabs, so skip if there arn't any -->
+	 <model select="/fwuiml/$nodeName;[@role='view']//tab" on-fail="skip">
+	   <click path="$guiPath"/>
+	   <var id="title" select="../dialog/@name"/>
+	   <var id="action" select="../dialog/@dismiss"/>
+	   <if><condition of="$title" is="'#NoSelection#'"/>
+		   <else>
+			 <on-dialog wait="500" until="1000" title="Information" name="MessageBoxExForm" on-fail="skip">
+				 <click path="$action"/>
+			 </on-dialog>
+		   </else>
+	   </if>
+	 </model>
+   </model>
+
+</on-application>
+</accil>

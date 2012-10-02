@@ -1,0 +1,537 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	IDD_DIALOG1, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 179
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 88
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_VIEWBAR_IMAGES_LARGE BITMAP  DISCARDABLE     "ViewBarImages_large.bmp"
+IDB_VIEWBAR_IMAGES_SMALL BITMAP  DISCARDABLE     "ViewBarImages_small.bmp"
+IDR_TOOLBAR_STANDARD    BITMAP  DISCARDABLE     "ToolbarStandard.bmp"
+IDR_TOOLBAR_FORMATTING  BITMAP  DISCARDABLE     "ToolbarFormatting.bmp"
+IDR_TOOLBAR_DATA        BITMAP  DISCARDABLE     "ToolbarData.bmp"
+IDR_TOOLBAR_VIEW        BITMAP  DISCARDABLE     "ToolbarView.bmp"
+IDR_TOOLBAR_INSERT      BITMAP  DISCARDABLE     "ToolbarInsert.bmp"
+IDR_TOOLBAR_TOOLS       BITMAP  DISCARDABLE     "ToolbarTools.bmp"
+IDR_TOOLBAR_WINDOW      BITMAP  DISCARDABLE     "ToolbarWindow.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_APPNMENU MENU DISCARDABLE
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&Close",                      FILE_CLOSE_WINDOW, CHECKED GRAYED
+		MENUITEM "&Save Language Project",      FILE_SAVE_PROJECT, GRAYED
+		MENUITEM "S&ave Special...",            FILE_SAVE_SPECIAL
+		MENUITEM SEPARATOR
+		MENUITEM "Page Set&up...",              FILE_PAGE_SETUP
+		MENUITEM "Print Pre&view",              FILE_PRINT_PREVIEW
+		MENUITEM "&Print...",                   FILE_PRINT
+		MENUITEM SEPARATOR
+		MENUITEM "&Backup...",                  FILE_BACKUP
+		MENUITEM "&Import...",                  FILE_IMPORT
+		MENUITEM "E&xport...",                  FILE_EXPORT
+		MENUITEM "P&roperties...",              FILE_PROPERTIES
+		MENUITEM SEPARATOR
+		MENUITEM "&Exit",                       FILE_EXIT_FIELDWORKS
+	END
+	POPUP "&Edit"
+	BEGIN
+		MENUITEM "&Undo",                       EDIT_UNDO
+		MENUITEM "&Redo",                       EDIT_REDO
+		MENUITEM SEPARATOR
+		MENUITEM "Cu&t",                        EDIT_CUT
+		MENUITEM "&Copy",                       EDIT_COPY
+		MENUITEM "&Paste",                      EDIT_PASTE
+		MENUITEM "Paste &Special...",           EDIT_PASTE_SPECIAL
+		MENUITEM "Select A&ll",                 EDIT_SELECT_ALL
+		MENUITEM SEPARATOR
+		MENUITEM "&Delete...",                  EDIT_DELETE
+	END
+	POPUP "&View"
+	BEGIN
+		MENUITEM "&Data Entry",                 VIEW_DATA_ENTRY
+		MENUITEM "&Browse",                     VIEW_BROWSE
+		MENUITEM "Do&cument",                   VIEW_DOCUMENT
+		MENUITEM "&Outline",                    VIEW_OUTLINE
+		MENUITEM SEPARATOR
+		POPUP "&Toolbars"
+		BEGIN
+			MENUITEM "&Standard",                   VIEW_TOOLBARS_STANDARD
+			MENUITEM "&Formatting",                 VIEW_TOOLBARS_FORMATTING
+			MENUITEM "&Data",                       VIEW_TOOLBARS_DATA
+			MENUITEM "&View",                       VIEW_TOOLBARS_VIEW
+			MENUITEM "&Insert",                     VIEW_TOOLBARS_INSERT
+			MENUITEM "&Tools",                      VIEW_TOOLBARS_TOOLS
+			MENUITEM "&Window",                     VIEW_TOOLBARS_WINDOW
+		END
+		MENUITEM "&View Bar",                   VIEW_VIEWBAR
+		MENUITEM "&Status Bar",                 VIEW_STATUS_BAR
+		MENUITEM SEPARATOR
+		POPUP "Synchronize With Other &Apps"
+		BEGIN
+			MENUITEM "&Send Context",               VIEW_SYNCHRONIZE_SEND
+			MENUITEM "&Receive Context",            VIEW_SYNCHRONIZE_RECEIVE
+			MENUITEM SEPARATOR
+			MENUITEM "&Configure Synchronization...",
+													VIEW_SYNCHRONIZE_CONFIGURE
+
+		END
+	END
+	POPUP "&Data"
+	BEGIN
+		MENUITEM "&First",                      DATA_FIRST, CHECKED
+		MENUITEM "&Previous",                   DATA_PREVIOUS, CHECKED
+		MENUITEM "&Next",                       DATA_NEXT, CHECKED
+		MENUITEM "&Last",                       DATA_LAST
+		MENUITEM SEPARATOR
+		MENUITEM "&History",                    DATA_HISTORY
+		MENUITEM "F&avorites",                  DATA_FAVORITES, CHECKED
+		MENUITEM "&Organize Favorites",         DATA_ORGANIZE_FAVORITES
+		MENUITEM SEPARATOR
+		MENUITEM "&Search...",                  DATA_SEARCH
+		MENUITEM "Ne&xt Match",                 DATA_NEXT_MATCH
+		MENUITEM "Pre&vious Match",             DATA_PREVIOUS_MATCH
+		MENUITEM "&Replace...",                 DATA_REPLACE
+		MENUITEM SEPARATOR
+		MENUITEM "Sor&t...",                    DATA_SORT
+		MENUITEM "&Convert...",                 DATA_CONVERT
+	END
+	POPUP "&Insert"
+	BEGIN
+		POPUP "&Entry"
+		BEGIN
+			MENUITEM "&Observation",                INSERT_ENTRY_OBSERVATION
+			MENUITEM "Formal &Interview",           INSERT_ENTRY_FORMAL_INTERVIEW
+
+			MENUITEM "&Conversation",               INSERT_ENTRY_CONVERSATION
+
+			MENUITEM "&Performance",                INSERT_ENTRY_PERFORMANCE
+			MENUITEM "&Map Entry",                  INSERT_ENTRY_MAP_ENTRY
+			MENUITEM "&Almanac Record",             INSERT_ENTRY_ALMANAC_RECORD
+
+			MENUITEM "&Literature Summary",         INSERT_ENTRY_LITERATURE_SUMMARY
+
+			MENUITEM "&Tagged Text",                INSERT_ENTRY_TAGGED_TEXT
+			MENUITEM SEPARATOR
+			MENUITEM "&Hypothesis",                 INSERT_ENTRY_HYPOTHESIS
+		END
+		POPUP "S&ub-Entry"
+		BEGIN
+			MENUITEM "&Observation",                INSERT_SUBENTRY_OBSERVATION
+
+			MENUITEM "Formal &Interview",           INSERT_SUBENTRY_FORMAL_INTERVIEW
+
+			MENUITEM "&Conversation",               INSERT_SUBENTRY_CONVERSATION
+
+			MENUITEM "&Performance",                INSERT_SUBENTRY_PERFORMANCE
+
+			MENUITEM "&Map Entry",                  INSERT_SUBENTRY_MAP_ENTRY
+
+			MENUITEM "&Almanac Record",             INSERT_SUBENTRY_ALMANAC_RECORD
+
+			MENUITEM "&Literature Summary",         INSERT_SUBENTRY_LITERATURE_SUMMARY
+
+			MENUITEM "&Tagged Text",                INSERT_SUBENTRY_TAGGED_TEXT
+
+			MENUITEM SEPARATOR
+			MENUITEM "&Hypothesis",                 INSERT_SUBENTRY_HYPOTHESIS
+
+		END
+		MENUITEM SEPARATOR
+		MENUITEM "&Link...",                    INSERT_LINK
+		MENUITEM SEPARATOR
+		MENUITEM "&Table...",                   INSERT_TABLE
+		MENUITEM "&Sound...",                   INSERT_SOUND
+		MENUITEM "&Video...",                   INSERT_VIDEO
+		MENUITEM "&Picture...",                 INSERT_PICTURE
+		MENUITEM "&Object...",                  INSERT_OBJECT
+	END
+	POPUP "F&ormat"
+	BEGIN
+		MENUITEM "&Font...",                    FORMAT_FONT
+		MENUITEM "&Writing System...",          FORMAT_WRITING_SYSTEM
+		MENUITEM "&Paragraph...",               FORMAT_PARAGRAPH
+		MENUITEM "&List...",                    FORMAT_LIST
+		MENUITEM "&Border...",                  FORMAT_BORDER
+		MENUITEM "&Table...",                   FORMAT_TABLE
+		MENUITEM SEPARATOR
+		MENUITEM "&Styles...",                  FORMAT_STYLES
+	END
+	POPUP "&Tools"
+	BEGIN
+		MENUITEM "&Reminders...",               TOOLS_REMINDERS
+		MENUITEM "&Auto Tagging...",            TOOLS_AUTO_TAGGING
+		MENUITEM "&Spelling...",                TOOLS_SPELLING
+		MENUITEM "&Version History...",         TOOLS_VERSION_HISTORY
+		MENUITEM SEPARATOR
+		POPUP "Re&ports"
+		BEGIN
+			MENUITEM "&Outlines and Categories...", TOOLS_REPORTS_OUTLINES_AND_CATEGORIES
+
+			MENUITEM "&Summary Information...",     TOOLS_REPORTS_SUMMARY_INFORMATION
+
+			MENUITEM "&Annual Cycle...",            TOOLS_REPORTS_ANNUAL_CYCLE
+
+		END
+		MENUITEM SEPARATOR
+		MENUITEM "&Lists...",                   TOOLS_LISTS
+		MENUITEM SEPARATOR
+		MENUITEM "&FieldWorks Explorer...",     TOOLS_EXPLORER
+		MENUITEM "Show Selection &Using",       TOOLS_SHOW_SELECTION_USING
+		MENUITEM SEPARATOR
+		MENUITEM "&Options...",                 TOOLS_OPTIONS
+		MENUITEM "&Customize...",               TOOLS_CUSTOMIZE
+	END
+	POPUP "&Window"
+	BEGIN
+		MENUITEM "&New",                        WINDOW_NEW
+		MENUITEM "&Split",                      WINDOW_SPLIT
+	END
+	POPUP "&Help"
+	BEGIN
+		POPUP "&FieldWorks"
+		BEGIN
+			MENUITEM "&Contents...",                HELP_FIELDWORKS_CONTENTS
+			MENUITEM "&Index...",                   HELP_FIELDWORKS_INDEX
+			MENUITEM "&Find...",                    HELP_FIELDWORKS_FIND
+		END
+		MENUITEM SEPARATOR
+		MENUITEM "&Research Notebook...",       HELP_APPLICATION
+		MENUITEM "&How do I...",                HELP_HOW_DO_I
+		MENUITEM "&What's This?...",            HELP_WHATS_THIS
+		MENUITEM "&Tutorials...",               HELP_TUTORIALS
+		MENUITEM SEPARATOR
+		MENUITEM "&About...",                   HELP_ABOUT_APPLICATION
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_TOOLBAR_STANDARD TOOLBAR MOVEABLE PURE  16, 15
+BEGIN
+	BUTTON      FILE_SAVE_PROJECT
+	BUTTON      FILE_PRINT
+	BUTTON      FILE_PRINT_PREVIEW
+	SEPARATOR
+	BUTTON      EDIT_CUT
+	BUTTON      EDIT_COPY
+	BUTTON      EDIT_PASTE
+	SEPARATOR
+	BUTTON      EDIT_UNDO
+	BUTTON      EDIT_REDO
+	SEPARATOR
+	BUTTON      HELP_CONTEXTBALOON
+END
+
+IDR_TOOLBAR_FORMATTING TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      FORMATTB_STYLE
+	BUTTON      FORMATTB_WRITING_SYSTEM
+	BUTTON      FORMATTB_FONT
+	BUTTON      FORMATTB_FONT_SIZE
+	SEPARATOR
+	BUTTON      FORMATTB_BOLD
+	BUTTON      FORMATTB_ITALIC
+	SEPARATOR
+	BUTTON      FORMATTB_ALIGN_LEFT
+	BUTTON      FORMATTB_ALIGN_CENTER
+	BUTTON      FORMATTB_ALIGN_RIGHT
+	SEPARATOR
+	BUTTON      FORMATTB_LIST_NUMBER
+	BUTTON      FORMATTB_LIST_BULLET
+	BUTTON      FORMATTB_UNINDENT
+	BUTTON      FORMATTB_INDENT
+	SEPARATOR
+	BUTTON      FORMATTB_APPLY_BORDER
+	BUTTON      FORMATTB_APPLY_BACKGROUND_COLOR
+	BUTTON      FORMATTB_APPLY_FOREGROUND_COLOR
+END
+
+IDR_TOOLBAR_DATA TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      DATA_FIRST
+	BUTTON      DATA_PREVIOUS
+	BUTTON      DATA_NEXT
+	BUTTON      DATA_LAST
+	SEPARATOR
+	BUTTON      DATA_SEARCH_QUICK
+	SEPARATOR
+	BUTTON      DATA_SEARCH
+	BUTTON      DATA_NEXT_MATCH
+	BUTTON      DATA_PREVIOUS_MATCH
+	SEPARATOR
+	BUTTON      DATA_SORT
+	BUTTON      DATA_REPLACE
+	SEPARATOR
+	BUTTON      DATA_HISTORY
+	BUTTON      DATA_FAVORITES
+END
+
+IDR_TOOLBAR_VIEW TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      VIEW_DATA_ENTRY
+	BUTTON      VIEW_DOCUMENT
+	BUTTON      VIEW_BROWSE
+	BUTTON      VIEW_OUTLINE
+	SEPARATOR
+	BUTTON      VIEW_SYNCHRONIZE_SEND
+	BUTTON      VIEW_SYNCHRONIZE_RECEIVE
+END
+
+IDR_TOOLBAR_INSERT TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      INSERT_ENTRY_OBSERVATION
+	BUTTON      INSERT_ENTRY_FORMAL_INTERVIEW
+	BUTTON      INSERT_ENTRY_CONVERSATION
+	BUTTON      INSERT_ENTRY_PERFORMANCE
+	BUTTON      INSERT_ENTRY_MAP_ENTRY
+	BUTTON      INSERT_ENTRY_ALMANAC_RECORD
+	BUTTON      INSERT_ENTRY_LITERATURE_SUMMARY
+	BUTTON      INSERT_ENTRY_TAGGED_TEXT
+	SEPARATOR
+	BUTTON      INSERT_ENTRY_HYPOTHESIS
+	SEPARATOR
+	BUTTON      INSERT_LINK
+	SEPARATOR
+	BUTTON      INSERT_TABLE
+	BUTTON      INSERT_SOUND
+	BUTTON      INSERT_VIDEO
+	BUTTON      INSERT_PICTURE
+	BUTTON      INSERT_OBJECT
+END
+
+IDR_TOOLBAR_TOOLS TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      TOOLS_REMINDERS
+	BUTTON      TOOLS_AUTO_TAGGING
+	BUTTON      TOOLS_SPELLING
+	BUTTON      TOOLS_VERSION_HISTORY
+	SEPARATOR
+	BUTTON      TOOLS_REPORTS_OUTLINES_AND_CATEGORIES
+	BUTTON      TOOLS_REPORTS_SUMMARY_INFORMATION
+	BUTTON      TOOLS_REPORTS_ANNUAL_CYCLE
+	SEPARATOR
+	BUTTON      TOOLS_LISTS
+	BUTTON      TOOLS_EXPLORER
+	BUTTON      TOOLS_SHOW_SELECTION_USING
+	BUTTON      FILE_BACKUP
+END
+
+IDR_TOOLBAR_WINDOW TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      WINDOW_NEW
+	BUTTON      WINDOW_SPLIT
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS DISCARDABLE
+BEGIN
+	"P",            FILE_PRINT,             VIRTKEY, CONTROL, NOINVERT
+	"Q",            FILE_EXIT_FIELDWORKS,   VIRTKEY, CONTROL, NOINVERT
+	"S",            FILE_SAVE_PROJECT,      VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	IDCR_BLACK              "Black"
+	IDCR_BROWN              "Brown"
+	IDCR_DARK_OLIVE_GREEN   "Dark Olive Green"
+	IDCR_DARK_GREEN         "Dark Green"
+	IDCR_DARK_TEAL          "Dark Teal"
+	IDCR_DARK_BLUE          "Dark Blue"
+	IDCR_INDIGO             "Indigo"
+	IDCR_DARK_GREY          "Very Dark Grey"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	IDCR_DARK_RED           "Dark Red"
+	IDCR_ORANGE             "Orange"
+	IDCR_DARK_YELLOW        "Dark Yellow"
+	IDCR_GREEN              "Green"
+	IDCR_TEAL               "Teal"
+	IDCR_BLUE               "Blue"
+	IDCR_BLUE_GREY          "Blue-Grey"
+	IDCR_GREY_40            "Dark Grey"
+	IDCR_RED                "red"
+	IDCR_LIGHT_ORANGE       "Light Orange"
+	IDCR_LIME               "Lime"
+	IDCR_SEA_GREEN          "Sea-Green"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	IDCR_AQUA               "Aqua"
+	IDCR_LIGHT_BLUE         "Light Blue"
+	IDCR_VIOLET             "Violet"
+	IDCR_GREY_50            "Grey"
+	IDCR_PINK               "Pink"
+	IDCR_GOLD               "Gold"
+	IDCR_YELLOW             "Yellow"
+	IDCR_BRIGHT_GREEN       "Bright Green"
+	IDCR_TURQUOISE          "Turquoise"
+	IDCR_SKY_BLUE           "Sky-Blue"
+	IDCR_PLUM               "Plum"
+	IDCR_LIGHT_GREY         "Light Grey"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	IDCR_ROSE               "Rose"
+	IDCR_TAN                "Tan"
+	IDCR_LIGHT_YELLOW       "Light Yellow"
+	IDCR_PALE_GREEN         "Pale Green"
+	IDCR_PALE_TURQUOISE     "Pale Turquoise"
+	IDCR_PALE_BLUE          "Pale Blue"
+	IDCR_LAVENDER           "Lavender"
+	IDCR_WHITE              "White"
+END
+
+IDD_BP DIALOGEX 0, 0, 237, 165
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Border"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "&Color:",IDC_STATIC,20,10,35,10
+	PUSHBUTTON      "",IDC_COLOR,20,20,50,15
+	LTEXT           "&Width:",IDC_STATIC,20,45,35,10
+	COMBOBOX        IDC_WIDTH,15,55,65,135,CBS_DROPDOWNLIST |
+					CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_TABSTOP
+	CTEXT           "Click boxes below to apply borders",IDC_STATIC,125,5,70,
+					20
+	CONTROL         "&Top",IDC_TOP,"Button",BS_AUTOCHECKBOX | BS_NOTIFY |
+					WS_TABSTOP,145,25,30,10
+	CONTROL         "&Right",IDC_RIGHT,"Button",BS_AUTOCHECKBOX | BS_NOTIFY |
+					WS_TABSTOP,202,70,30,10
+	CONTROL         "&Bottom",IDC_BOTTOM,"Button",BS_AUTOCHECKBOX |
+					BS_NOTIFY | WS_TABSTOP,140,125,35,10
+	CONTROL         "&Left",IDC_LEFT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT |
+					BS_RIGHT | BS_NOTIFY | WS_TABSTOP,85,70,28,13
+	CTEXT           "&None",IDC_STATIC,15,85,20,10
+	CONTROL         104,IDC_NONE,"Static",SS_BITMAP | SS_NOTIFY,15,95,27,30,
+					WS_EX_CLIENTEDGE
+	CTEXT           "&All",IDC_STATIC,50,85,20,10
+	CONTROL         105,IDC_ALL,"Static",SS_BITMAP | SS_NOTIFY,52,95,27,30,
+					WS_EX_CLIENTEDGE
+	PUSHBUTTON      "OK",IDOK,126,145,50,15
+	PUSHBUTTON      "Cancel",IDCANCEL,180,145,50,15
+	CONTROL         "",IDC_DIAGRAM,"Button",BS_OWNERDRAW | BS_FLAT,115,35,85,
+					90
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

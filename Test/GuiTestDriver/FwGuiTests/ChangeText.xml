@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for Formatting Toolbar Styles combo box
+	 This is a start any way!
+-->
+
+<accil on-fail="assert">
+	<on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+		<click path="sidebar:Views" />
+		<click path="sidebar:Draft" />
+		<select-text id="before" path="view:Draft" loc="b:1/s:5/p:1" at="36" run="21" />
+		<click path="toolbar:toolBarFwFormat/combobox:/button:Open/list:Quoted Text" />
+		<select-text id="after" path="view:Draft" loc="b:1/s:5/p:1" at="36" run="21" />
+		<match-strings id="ok" of="before" to="after" expect='&lt;xmldiff>&lt;node match="1">&lt;node match="1">&lt;add type="2" name="namedStyle">Quoted Text&lt;/add>&lt;change match="1">s! 17Every good gift&lt;/change>&lt;/node>&lt;remove match="2-3" />&lt;/node>&lt;/xmldiff>' on-fail="assert">
+			Match-strings found these differences from what was expected: <data get="diffs" />
+		</match-strings>
+		<!--select-text path="view:Draft" loc="b:1/s:5/p:1" at="36" run="21" />
+		<click path="toolbar:toolBarFwFormat/combobox:/button:Open/list:Default Paragraph Characters" />
+		<select-text id="select-num" path="view:Draft" loc="b:1/s:5/p:1" at="39" run="2" />
+		<click path="toolbar:toolBarFwFormat/combobox:/button:Open/list:Verse Number" /-->
+		<click path="split:Undo" /> <!--split button is not supported, it defaults to NONE -->
+		<select-text id="restored" path="view:Draft" loc="b:1/s:5/p:1" at="36" run="21" />
+		<match-strings id="again" of="before" to="restored" on-fail="assert">
+			Match-strings found these differences from the original: <data get="diffs" />
+		</match-strings>
+	</on-application>
+</accil>

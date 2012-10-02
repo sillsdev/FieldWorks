@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 	you do not have to specify the text attribute if it is identical to the id one.
+		e.g. <string id="Anywhere"/> is equivalent to <string id="Anywhere" txt="Anywhere"/>
+-->
+<!-- Strings which are shared by more than 1 application go in this file. -->
+<!-- For LexText we're going to put all strings here, rather then work up code to do includes.  2004.08.18 -->
+<strings>
+  <group id="Misc">
+	<string id="No Records" txt="No Records"/>
+  </group>
+  <group id="ClassNames">
+<!-- Common -->
+	<string id="CmBaseAnnotation" txt="Problem Report"/>
+	<string id="CmDomainQ" txt="Question"/>
+	<string id="CmPicture" txt="Picture"/>
+	<string id="CmTranslation" txt="Translation"/>
+<!-- Lexicon -->
+	<string id="LexEntry" txt="Entry"/>
+	<string id="LexSense" txt="Sense"/>
+	<string id="LexExampleSentence" txt="Example"/>
+	<string id="LexEtymology" txt="Etymology"/>
+	<string id="ReversalIndex" txt="Reversal Index"/>
+	<string id="ReversalIndexEntry" txt="Reversal Entry"/>
+	<string id="LexReference" txt="Lexical Relation"/>
+	<string id="LexPronunciation" txt="Pronunciation"/>
+	<string id="LexEntryRef" txt="Entry Reference Type"/>
+<!-- Texts -->
+	<string id="StText" txt="Text"/>
+	<string id="StFootnote" txt="Text"/>
+	<string id="Text" txt="Text"/>
+<!-- Lists -->
+	<string id="CmSemanticDomain" txt="Semantic Domain"/>
+	<string id="CmPossibility" txt="List Item"/>
+	<string id="CmCustomItem" txt="List Item"/>
+	<string id="CmPerson" txt="Person"/>
+	<string id="CmLocation" txt="Location"/>
+	<string id="CmAnnotationDefn" txt="Annotation Definition"/>
+	<string id="CmAnthroItem" txt="Anthropology Category"/>
+	<string id="MoMorphType" txt="Morpheme Type"/>
+	<string id="LexEntryType" txt="Entry Type"/>
+	<string id="LexRefType" txt="Lexical Relation"/>
+	<string id="FsClosedFeature" txt="Feature"/>
+	<string id="FsComplexFeature" txt="Complex Feature"/>
+	<string id="FsClosedValue" txt="Feature"/>
+	<string id="FsComplexValue" txt="Complex Feature"/>
+	<string id="FsFeatStruc" txt="Feature Structure"/>
+	<string id="FsFeatStrucType" txt="Feature Type"/>
+	<string id="FsSymFeatVal" txt="Feature Value"/>
+<!-- Morphology/Grammar -->
+	<string id="MoStemAllomorph" txt="Stem Form"/>
+	<string id="MoAffixAllomorph" txt="Affix Form"/>
+	<string id="MoStemMsa" txt="Stem Analysis"/>
+	<string id="MoStemName" txt="Stem Name"/>
+	<string id="MoDerivAffMsa" txt="Derivational Affix Analysis"/>
+	<string id="MoInflAffMsa" txt="Inflectional Affix Analysis"/>
+	<string id="MoUnclassifiedAffixMsa" txt="'I'm not sure' Affix Analysis"/>
+	<string id="MoAdhocProhibGr" txt="Group of Ad hoc Rules"/>
+	<string id="MoAlloAdhocProhib" txt="Rule to Prevent Allomorph Co-occurrence"/>
+	<string id="MoMorphAdhocProhib" txt="Rule to Prevent Morpheme Co-occurrence"/>
+	<string id="MoBinaryCompoundRule" txt="Binary Compound Rule"/>
+	<string id="MoCompoundRule" txt="Compound Rule"/>
+	<string id="MoEndoCompound" txt="Left- or Right-Headed Compound Rule"/>
+	<string id="MoExoCompound" txt="Non-headed Compound Rule"/>
+	<string id="PartOfSpeech" txt="Category (or Part of Speech)..."/>
+	<string id="PhBdryMarker" txt="Boundary Marker"/>
+	<string id="PhCode" txt="Grapheme"/>
+	<string id="PhPhoneme" txt="Phoneme"/>
+	<string id="PhEnvironment" txt="Environment"/>
+	<string id="PhNCFeatures" txt="Natural Class (Features)"/>
+	<string id="PhNCSegments" txt="Natural Class (Phonemes)"/>
+	<string id="PhRegularRule" txt="Phonological Rule"/>
+	<string id="PhMetathesisRule" txt="Metathesis Rule"/>
+	<string id="MoInflAffixSlot" txt="Inflectional Affix Slot"/>
+	<string id="MoInflAffixTemplate" txt="Inflectional Affix Template"/>
+	<string id="MoInflClass" txt="Inflection Class"/>
+<!-- Notebook -->
+	<string id="RnGenericRec" txt="Record"/>
+<!-- ParseBench -->
+	<string id="WfiGloss" txt="Word Gloss"/>
+	<string id="WfiWordform" txt="Wordform"/>
+	<string id="WfiAnalysis" txt="Analysis"/>
+	<string id="WfiMorphBundle" txt="Analysis"/><!-- not really, but code makes it so for deleting... -->
+  </group>
+  <group id="PossibilityListItemTypeNames">
+	<string id="ConfidenceLevels" txt="Confidence Level"/>
+	<string id="DomainTypes" txt="Academic Domain"/>
+	<string id="Education" txt="Education Level"/>
+	<string id="Roles" txt="Role"/>
+	<string id="GenreList" txt="Genre"/>
+	<string id="ProdRestrict" txt="Exception &quot;Feature&quot;"/>
+	<string id="Positions" txt="Position"/>
+	<string id="Restrictions" txt="Restriction"/>
+	<string id="Status" txt="Status"/>
+	<string id="SenseTypes" txt="Sense Type"/>
+	<string id="TranslationTags" txt="Translation Type"/>
+	<string id="UsageTypes" txt="Usage"/>
+	<string id="ComplexEntryTypes" txt="Complex Form Type"/>
+	<string id="VariantEntryTypes" txt="Variant Type"/>
+	<string id="People" txt="Person"/>
+	<string id="NoteCategories" txt="Note Category"/>
+	<string id="RecTypes" txt="Notebook Record Type"/>
+	<string id="TextMarkupTags" txt="Text Markup Tag"/>
+	<string id="ChartMarkers" txt="Text Chart Marker"/>
+	<string id="ConstChartTempl" txt="Text Constituent Chart Template"/>
+	<string id="PhonologicalFeatures" txt="Phonological Features"/>
+	<string id="TimeOfDay" txt="Time Of Day"/>
+  </group>
+  <group id="AlternativeTypeNames">
+	<string id="Feature-Phonological" txt="Phonological Feature"/>
+	<string id="Feature Structure-MoStemName" txt="Feature Set"/>
+  </group>
+  <group id="AlternativeTitles">
+<!-- Grammar Browse Views -->
+	<string id="PartOfSpeech-Plural" txt="Categories (or Parts of Speech)"/>
+	<string id="MoCompoundRule-Plural" txt="Compound Rules"/>
+	<string id="PhPhoneme-Plural" txt="Phonemes"/>
+	<string id="PhNCSegments-Plural" txt="Natural Classes"/>
+	<string id="PhEnvironment-Plural" txt="Environments"/>
+	<string id="PhSegmentRule-Plural" txt="Phonological Rules"/>
+	<string id="MoAdhocProhib-Plural" txt="Ad hoc Co-occurrence Prevention Rules"/>
+	<string id="FsFeatDefn-Plural" txt="Inflection Features"/>
+	<string id="FsFeatDefn-Phonological" txt="Phonological Features"/>
+	<string id="FsFeatDefn-PhonologicalValues" txt="Phonological Feature and Values"/>
+	<string id="ProdRestrict-Plural" txt='Exception "Features"'/>
+<!-- Lexicon Views-->
+	<string id="LexEntry-Plural" txt="Entries"/>
+	<string id="LexSense-Plural" txt="Senses"/>
+	<string id="LexPronunciation-Plural" txt="Pronunciations"/>
+	<string id="LexExampleSentence-Plural" txt="Examples"/>
+	<string id="CmTranslation-Plural" txt="Translations"/>
+	<string id="MoForm-Plural" txt="Allomorphs"/>
+	<string id="ReversalIndexEntry-Plural" txt="Reversal Entries"/>
+	<string id="ReversalIndex-Plural" txt="Reversals"/>
+	<string id="LexSense-Classified" txt="Classified Senses"/>
+	<string id="AllEntryRefs" txt="Complex or Variant Entry References"/>
+	<string id="LexEntryRef-Plural" txt="Complex or Variant Entry References"/>
+<!-- Lexicon Reversal -->
+	<string id="ReversalIndexEntry-DocList" txt="Reversal Index"/>
+<!-- Text Area -->
+	<string id="Text-Plural" txt="Texts"/>
+<!-- Words Area -->
+	<string id="WfiWordform-Full" txt="Wordform Analyses"/>
+	<string id="WfiWordform-Plural" txt="Wordforms"/>
+	<string id="WfiAnalysis-Plural" txt="Analyses"/>
+	<string id="Concordance-Matches" txt="Concordance Results"/>
+	<string id="Concordance-Context" txt="Full Context"/>
+	<string id="WordListConcordance-Matches" txt="Concordance"/>
+<!-- Notebook Area -->
+	<string id="RnGenericRec-Plural" txt="Records"/>
+<!-- Lists -->
+	<string id="FsFeatStrucType-Plural" txt="Feature Types"/>
+	<string id="complexEntryType" txt="Complex Form Type"/>
+	<string id="variantType" txt="Variant Type"/>
+  </group>   <!-- end <group id="AlternativeTitles"> -->
+  <group id="EmptyTitles">
+<!-- Grammar Browse Views -->
+	<string id="No-PartsOfSpeech" txt="No Categories"/>
+	<string id="No-MoCompoundRules" txt="No Compound Rules"/>
+	<string id="No-PhPhonemes" txt="No Phonemes"/>
+	<string id="No-PhNCSegments" txt="No Natural Classes"/>
+	<string id="No-PhEnvironments" txt="No Environments"/>
+	<string id="No-PhSegmentRules" txt="No Phonological Rules"/>
+	<string id="No-MoAdhocProhibs" txt="No Ad hoc Co-occurrence Prevention Rules"/>
+	<string id="No-FsFeatDefns" txt="No Inflection Features"/>
+	<string id="No-FsFeatDefn-Phonological" txt="No Phonological Features"/>
+	<string id="No-ProdRestricts" txt='No Exception "Features"'/>
+	<string id="No-Problems" txt="No Problems"/>
+<!-- Lexicon Views-->
+	<string id="No-LexEntries" txt="No Entries"/>
+	<string id="No-ReversalIndexEntries" txt="No Reversal Entries"/>
+<!-- Notebook Area -->
+	<string id="No-RnGenericRecs" txt="No Records"/>
+<!-- Lists -->
+	<string id="No-AnthroItems" txt="No Anthropology Categories"/>
+	<string id="No-AcademicDomains" txt="No Academic Domains"/>
+	<string id="No-ConfidenceLevels" txt="No Confidence Levels"/>
+	<string id="No-ListItems" txt="No List items"/>
+	<string id="No-EducationLevels" txt="No Education Levels"/>
+	<string id="No-Roles" txt="No Roles"/>
+	<string id="No-FsFeatStrucTypes" txt="No Feature Types"/>
+	<string id="No-Genres" txt="No Genres"/>
+	<string id="No-LexicalRelations" txt="No Lexical Relations"/>
+	<string id="No-Locations" txt="No Locations"/>
+	<string id="No-MorphemeTypes" txt="No Morpheme Types"/>
+	<string id="No-Positions" txt="No Positions"/>
+	<string id="No-Restrictions" txt="No Restrictions"/>
+	<string id="No-SemanticDomains" txt="No SemanticDomains"/>
+	<string id="No-SenseStatus" txt="No Status"/>
+	<string id="No-SenseTypes" txt="No Sense Types"/>
+	<string id="No-Status" txt="No Status"/>
+	<string id="No-TextMarkupTags" txt="No Text Markup Tags"/>
+	<string id="No-TimesOfDay" txt="No Times Of Day"/>
+	<string id="No-Usages" txt="No Usages"/>
+	<string id="No-RecTypes" txt="No Notebook Record Types"/>
+	<string id="No-NoteCategories" txt="No Note Categories"/>
+	<string id="No-ChartMarkers" txt="No Text Chart Markers"/>
+	<string id="No-ConstChartTempl" txt="No Text Constituent Chart Templates"/>
+  </group>   <!-- end <group id="EmptyTitles"> -->
+  <group id="DialogTitles">
+	<string id="CreateEntry" txt="New Entry"/>
+	<string id="AffixSlotOrCategory" txt="Affix Slot or Category"/>
+	<string id="CategoryTitle" txt="Category..."/>
+	<string id="FromCategoryTitle" txt="From Category"/>
+	<string id="ToCategoryTitle" txt="To Category"/>
+  </group>
+  <group id="DialogStrings">
+	<string id="EditMorphBreaks-Example1" txt="blackbird → {0}black{1} {0}bird{1}"/>
+	<string id="EditMorphBreaks-Example2" txt="wanted → want {0}ed{1}"/>
+	<string id="EditMorphBreaks-stemExample" txt="[{0}aa{1} ]"/>
+	<string id="EditMorphBreaks-affixExample" txt="[{0}a{1}]"/>
+	<string id="NoMorphType" txt="unknown morph type"/>
+	<string id="ChangeLexemeMorphTypeShowAllTypes" txt="_Show all types"/>
+	<string id="ChangeMorphTypeLoseInflCls" txt="The inflection class will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseInfixLoc" txt="The infix position will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseInflClsInfixLoc" txt="The inflection class and infix position will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseInflClsGramInfo" txt="The inflection class and some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseInfixLocGramInfo" txt="The infix position and some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseInflClsInfixLocGramInfo" txt="The inflection class, infix position, and some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseRuleInflClsGramInfo" txt="The affix process rule, inflection class, and some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseRuleInflCls" txt="The affix process rule and inflection class will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseRule" txt="The affix process rule will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseGramInfo" txt="Some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseStemName" txt="The stem name will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseStemNameGramInfo" txt="The stem name and some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeLexemeMorphTypeCaption" txt="Warning!"/>
+	<string id="ChangeLexemeMorphTypeUndo" txt="Undo Change Morpheme Type"/>
+	<string id="ChangeLexemeMorphTypeRedo" txt="Redo Change Morpheme Type"/>
+  </group>
+  <group id="DocumentGeneration" description="used by the grammar sketch editor (others in the future?)">
+	<string id="Cleaning" txt="Cleaning"/>
+	<string id="Complete" txt="Complete"/>
+  </group>
+  <group id="Linguistics">
+	<group id="Morphology">
+	  <group id="Adjacency">
+<!-- notice, if txt is left off, then output = the id -->
+		<string id="Anywhere" txt="anywhere around"/>
+		<string id="Somewhere to left" txt="somewhere before"/>
+		<string id="Somewhere to right" txt="somewhere after"/>
+		<string id="Adjacent to left" txt="adjacent before"/>
+		<string id="Adjacent to right" txt="adjacent after"/>
+	  </group>
+	  <group id="TemplateTable">
+		<string id="Stem" txt="STEM"/>
+<!-- slot chooser -->
+		<string id="SlotChooserTitle" txt="Choose Slot"/>
+		<string id="SlotChooserInstructionalText" txt="The following slots are available for the category {0}."/>
+		<string id="ObligatorySlot" txt="Add an obligatory slot to {0}"/>
+		<string id="OptionalSlot" txt="Add an optional slot to {0}"/>
+<!-- slot names -->
+		<string id="NewSlotName" txt="Type slot name here"/>
+		<string id="UnnamedSlotName" txt="Unnamed"/>
+<!-- inflectional affix chooser -->
+		<string id="InflAffixChooserTitle" txt="Choose Inflectional Affixes"/>
+		<string id="InflAffixChooserInstructionalTextReq" txt="The following inflectional affixes may be added to the obligatory slot {0}."/>
+		<string id="InflAffixChooserInstructionalTextOpt" txt="The following inflectional affixes may be added to the optional slot {0}."/>
+		<string id="InflAffix" txt=" Create new inflectional affix "/>
+	  </group>
+	  <group id="MorphSketch">
+		<string id="MorphSketchFileName" txt="MorphSketch"/>
+		<string id="BackButtonToolTip" txt="Back in Sketch"/>
+		<string id="ForwardButtonToolTip" txt="Forward in Sketch"/>
+		<string id="SaveAsWebpageDialogTitle" txt="Save as Webpage"/>
+	  </group>
+	  <group id="TryAWord">
+		<string id="OnlyOneWordMessage" txt="Sorry, I can only process one word at a time."/>
+		<string id="OnlyOneWordCaption" txt="One Word"/>
+		<string id="NoLexInfoForMorphsMessage" txt="At least one morpheme does not have any lexical information specified.  You won't like the results.  Please make sure every morpheme has the lexical information you want."/>
+		<string id="NoLexInfoForMorphsCaption" txt="Missing Lexical Information"/>
+		<string id="ParserStatusRunning" txt=""/>
+		<string id="ParserStatusStopped" txt="No Parser Loaded"/>
+		<!-- what goes before and after the parser status information -->
+		<string id="ParserStatusPrefix" txt=""/>
+		<string id="ParserStatusSuffix" txt=""/>
+	  </group>
+	  <group id="FeatureChooser">
+		<string id="InflectionFeatureTitle" txt="Choose Inflection Features"/>
+		<string id="InflectionFeaturePrompt" txt="Inflection features for {0}:"/>
+		<string id="InflectionFeatureLink" txt="The inflection feature I need is not shown here.  Add inflection features to {0}."/>
+	  </group>
+	  <group id="MGA">
+		<string id="ItemConflictDlgMessage" txt="Sorry, but the selected gloss conflicts with '{0}' which has already been inserted."/>
+		<string id="ItemConflictDlgCaption" txt="Conflicting Gloss Items"/>
+	  </group>
+	  <group id="RemoveParserAnalyses">
+		<string id="Label" txt="Remove Parser approved analyses"/>
+		<string id="WhenDescription" txt="Run this utility when you think there are problems of any kind with the analyses that are returned by the parser, or when you simply want to remove all parser approved analyses."/>
+		<string id="WhatDescription" txt="This utility removes all parser approved analyses from the system. It does not remove analyses that are approved/disapproved of by a human being, however. "/>
+		<string id="RedoDescription" txt="You cannot use 'Undo' to cancel the effect of this utility. You can restore current parser approved analyses by simply running the parser on your words again."/>
+	  </group>
+	  <group id="NaturalClassChooser">
+		<string id="kstidChooseNaturalClass" txt="Choose Natural Class"/>
+		<string id="kstidNaturalClassListing" txt="The following natural classes have been specified in the grammar area."/>
+		<string id="kstidGotoNaturalClassList" txt="Edit the Natural Classes"/>
+	  </group>
+	  <group id="RuleDirection">
+		<string id="LeftToRightIterative" txt="left-to-right iterative"/>
+		<string id="RightToLeftIterative" txt="right-to-left iterative"/>
+		<string id="Simultaneous" txt="simultaneous"/>
+	  </group>
+	</group>
+	<group id="WFI">
+	  <group id="SpellingStatus">
+<!-- notice, if txt is left off, then output = the id -->
+		<string id="UndecidedSpellingStatus" txt="Undecided"/>
+		<string id="CorrectSpellingStatus" txt="Correct"/>
+		<string id="IncorrectSpellingStatus" txt="Incorrect"/>
+	  </group>
+	</group>
+  </group>
+  <group id="LexiconTools">
+	<string id="InsertSymmetricReference" txt="Insert {0} Relation"/>
+	<string id="InsertAsymmetricReference" txt="Insert {0} Relation (to this {1})"/>
+	<string id="" txt=""/>
+  </group>
+  <group id="Type">
+	<string id="Subentry" txt="Complex Form"/>
+	<string id="Main entry" txt="Normal"/>
+	<string id="Minor entry" txt="Variant Form"/>
+  </group>
+  <group id="Gender">
+	<string id="Unknown" txt="Unknown"/>
+	<string id="Male" txt="Male"/>
+	<string id="Female" txt="Female"/>
+  </group>
+  <group id="MappingType">
+	<string id="SenseCollection" txt="Sense Collection (e.g. synonym)"/>
+	<string id="SensePair" txt="Sense Pair (e.g. Antonym)"/>
+	<string id="SensePair2" txt="Sense Pair - 2 relation names (e.g. individual/group)"/>
+	<string id="SenseTree" txt="Sense Tree (e.g. part/whole)"/>
+	<string id="SenseSequence" txt="Sense Sequence/scale (e.g. calendar)"/>
+	<string id="EntryCollection" txt="Entry Collection"/>
+	<string id="EntryPair" txt="Entry Pair"/>
+	<string id="EntryPair2" txt="Entry Pair - 2 relation names"/>
+	<string id="EntryTree" txt="Entry Tree"/>
+	<string id="EntrySequence" txt="Entry Sequence/scale"/>
+	<string id="EntrySenseCollection" txt="Entry/Sense collection"/>
+	<string id="EntrySensePair" txt="Entry/Sense Pair "/>
+	<string id="EntrySensePair2" txt="Entry/Sense Pair - 2 relation names"/>
+	<string id="EntrySenseTree" txt="Entry/Sense Tree"/>
+	<string id="EntrySenseSequence" txt="Entry/Sense Sequence/scale"/>
+  </group>
+  <group id="LabelAbbreviations">
+<!-- (sorted by abbreviation) -->
+<!-- NOTE: the 'ϰ' char is Galatia SIL 0x03F0 (UTF-8) -->
+	<string id="Is Abstract Form" txt="ab"/>
+	<string id="Anthropology Categories" txt="ac"/>
+	<string id="Affix Allomorph" txt="al"/>
+	<string id="Affix Form" txt="al"/>
+	<string id="Stem Allomorph" txt="al"/>
+	<string id="Stem Form" txt="al"/>
+	<string id="Antonym" txt="an"/>
+<!-- Lexical Relation -->
+	<string id="Bibliography" txt="bb"/>
+	<string id="Compare" txt="cf"/>
+<!-- Lexical Relation -->
+	<string id="Cross References" txt="cf"/>
+	<string id="Inflection Classes" txt="cl"/>
+	<string id="Comment" txt="cm"/>
+	<string id="Condition" txt="cn"/>
+	<string id="CV Pattern" txt="cv"/>
+	<string id="Definition" txt="dϰ"/>
+	<string id="Summary Definition" txt="df"/>
+	<string id="Date Modified" txt="dt"/>
+	<string id="Etymology" txt="et"/>
+	<string id="Encyclopedic Info" txt="eϰ"/>
+	<string id="Specifics" txt="gs"/>
+<!-- Lexical Relation: specifics relation (to this whole) -->
+	<string id="Gloss" txt="gϰ"/>
+	<string id="Environments" txt="in"/>
+	<string id="Infix Positions" txt="ip"/>
+	<string id="Academic Domains" txt="is"/>
+	<string id="Citation Form" txt="lc"/>
+	<string id="Location" txt="lo"/>
+	<string id="Literal Meaning" txt="lt"/>
+	<string id="Lexeme" txt="lx"/>
+<!-- (Morph) -->
+	<string id="Lexeme Form" txt="lx"/>
+	<string id="Primary Entry References" txt="mn"/>
+	<string id="Morph Type" txt="mt"/>
+	<string id="Anthropology Note" txt="na"/>
+	<string id="Discourse Note" txt="nd"/>
+	<string id="Grammar Note" txt="ng"/>
+	<string id="Phonology Note" txt="np"/>
+	<string id="Sociolinguistics Note" txt="ns"/>
+	<string id="Note" txt="nt"/>
+	<string id="General Note" txt="nt"/>
+	<string id="Restrictions" txt="oϰ"/>
+	<string id="Pronunciation" txt="ph"/>
+	<string id="Category Info." txt="ps"/>
+<!-- (Part of Speech) -->
+	<string id="Grammatical Info." txt="ps"/>
+	<string id="Parts" txt="pw"/>
+<!-- Lexical Relation: parts relation (to this whole) -->
+	<string id="Reference" txt="rf"/>
+	<string id="Reversal Entries" txt="rϰ"/>
+	<string id="Lexical Relations" txt="rl"/>
+	<string id="Scientific Name" txt="sc"/>
+	<string id="Semantic Domains" txt="sd"/>
+	<string id="Slots" txt="sl"/>
+	<string id="Semantics Note" txt="sm"/>
+	<string id="Sense Number" txt="sn"/>
+	<string id="Source" txt="so"/>
+	<string id="Status" txt="st"/>
+	<string id="Synonyms" txt="sy"/>
+	<string id="Tone" txt="tn"/>
+	<string id="Entry Type" txt="tp"/>
+	<string id="Sense Type" txt="ts"/>
+	<string id="Type" txt="ty"/>
+	<string id="Usages" txt="uϰ"/>
+	<string id="Underlying Form" txt="uf"/>
+	<string id="Dialectal Variant" txt="vd"/>
+	<string id="Free Variant" txt="vf"/>
+	<string id="Inflectional Variant" txt="vi"/>
+	<string id="Spelling Variant" txt="vs"/>
+	<string id="Exclude As Headword" txt="xh"/>
+<!-- visibility="never" -->
+	<string id="Translation" txt="xt"/>
+	<string id="Example" txt="xv"/>
+	<string id="Import Residue" txt="xx"/>
+	<string id="Calendar" txt="yr"/>
+<!-- Lexical Relation -->
+<!-- These are not defined in Full Edit, but have some correspondence to XML|MDF|CARLA and/or GeneratedParts -->
+<!--
+		<string id="Anthro Codes" txt="ac"/>
+		<string id="Alternate Form" txt="al"/>
+		<string id="Homograph Number" txt="hm"/>
+		<string id="Lexical Function" txt="lf"/>
+		<string id="Lexical Function and Lexeme" txt="lf"/>
+		<string id="Lexical Function Lexeme" txt="lv"/>
+		<string id="Main Entry/Sense Reference" txt="mn"/>
+		<string id="Main Sense Reference" txt="mn"/>
+		<string id="Compound" txt="se"/>
+		<string id="Derivation" txt="se"/>
+		<string id="Idiom" txt="se"/>
+		<string id="Keyterm Phrase" txt="se"/>
+		<string id="Phrasal Verb" txt="se"/>
+		<string id="Saying" txt="se"/>
+		<string id="Comment" txt="vϰ"/>
+		<string id="Translation" txt="xe"/>
+		<string id="Translation" txt="xn"/>
+		<string id="Translation" txt="xr"/>
+		<string id="Date" txt="??"/>
+	-->
+  </group>
+  <group id="DetailControls">
+	<group id="ReferenceComboBox">
+	  <string id="NullItemLabel" txt="&lt;Empty&gt;"/>
+	</group>
+	<group id="MSAReferenceComboBox">
+	  <string id="NullItemLabel" txt="&lt;Not Sure&gt;"/>
+	  <string id="AddNewGramFunc" txt="Specify Grammatical Info..."/>
+	  <string id="ModifyGramFunc" txt="Modify this Grammatical Info..."/>
+	  <string id="SpecifyDifferentGramFunc" txt="Specify different Grammatical Info..."/>
+	  <string id="CreateGramFunc" txt="Create New Grammatical Info."/>
+	  <string id="EditGramFunc" txt="Edit Grammatical Info."/>
+	</group>
+  </group>
+</strings>

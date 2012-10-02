@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<root>
+	<clerks>
+		<clerk id="SemanticDomainList">
+			<recordList owner="LangProject" property="SemanticDomainList">
+				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+			</recordList>
+			<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analorvern" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+			<filters/>
+			<sortMethods>
+				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+			</sortMethods>
+		</clerk>
+		<clerk id="RDEwords" clerkProvidingOwner="SemanticDomainList">
+			<recordList class="CmSemanticDomain" field="ReferringSenses"/>
+			<sortMethods/>
+		</clerk>
+	</clerks>
+	<tools>
+		<tool label="Categorized Entry" value="rapidDataEntry" icon="BrowseView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="SemanticDomainList" PaneBarGroupId="PaneBar-ShowHiddenFields-rapidDataEntry">
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+						<parameters area="lexicon" id="SemanticCategoryAndItems" splitterBarOrientation="horizontal" defaultFocusControl="RecordBrowseView">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters clerk="SemanticDomainList" id="SemanticDomainList" filterPath="Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml" treeBarAvailability="Required" layout="RDE" msgBoxTrigger="CategorizedEntry-Intro" allowInsertDeleteRecord="false">
+									<menuHandler>
+										<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryMenuHandler"/>
+									</menuHandler>
+								</parameters>
+							</control>
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="wordList" clerk="RDEwords" filterBar="false" disableConfigButton="true" forceReloadListOnInitOrChangeRoot="true" editRowModelClass="LexSense" editRowAssembly="FDO.dll" editRowClass="SIL.FieldWorks.FDO.ILexSense" editRowSaveMethod="RDENewSense" editRowMergeMethod="RDEMergeSense" ShowOwnerShortname="true" TitleFormat="Words for {0}" treeBarAvailability="Required">
+									<columns>
+										<column label="Word" width="40%" ws="$ws=vernacular">
+											<obj class="LexSense" field="OwningEntry" layout="empty">
+												<obj field="LexemeForm" layout="empty">
+													<string field="Form" ws="vernacular"/>
+												</obj>
+											</obj>
+										</column>
+										<column label="Definition" width="60%" ws="$ws=analysis">
+											<string class="LexSense" field="Definition" ws="analysis"/>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<!--of Browse view-->
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+			<!--of MultiPane-->
+			<defaultProperties>
+				<property name="AllowInsertLinkToFile" bool="false" persist="false"/>
+				<property name="AllowShowNormalFields" bool="false" persist="false"/>
+			</defaultProperties>
+		</tool>
+	<tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">
+	  <control>
+		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+		<parameters PaneBarGroupId="PaneBar-ShowFailingItems-Classified">
+		  <control>
+			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+			<parameters area="lexicon" clerk="SemanticDomainList" altTitleId="LexSense-Classified" persistContext="ClassDict" backColor="White" layout="classifiedDict" editable="false" allowInsertDeleteRecord="false" msgBoxTrigger="ClassifiedDictionary-Intro">
+			  <elementDisplayCondition field="ReferringSenses" lengthatleast="1"/>
+			</parameters>
+		  </control>
+		</parameters>
+	  </control>
+	</tool>
+	<tool label="Bulk Edit Entries" value="bulkEditEntriesOrSenses" icon="BrowseView">
+	  <control>
+		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+		<parameters id="EntryOrSenseBulkEdit">
+		  <control>
+			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+			<parameters area="lexicon" id="EntryOrSenseBulkEdit" clerk="entriesOrChildren" filterBar="true" bulkEdit="true" selectColumn="true"
+							bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation"
+							bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets">
+			  <!--include browse view columns-->
+			  <columns generate="childPartsForParentLayouts">
+				<include path="../browseDialogColumns.xml" query="doc/browseColumns/column">
+				  <overrides>
+					<column layout="EntryHeadwordForEntry" visibility="menu"/>
+					<column layout="MorphTypeForEntry" visibility="always"/>
+					<column layout="GrammaticalCategoryForSense" visibility="always"/>
+					<column layout="IsAHeadwordForEntry" visibility="menu"/>
+					<column layout="GrammaticalInfoFullForSense" visibility="menu"/>
+					<column layout="GrammaticalInfoAbbrForSense" visibility="menu"/>
+					<column layout="InflectionClassForStem" visibility="menu"/>
+					<column layout="InflectionFeaturesForSense" visibility="menu"/>
+					<column layout="DomainsOfSensesForSense" visibility="menu"/>
+					<column layout="ReversalEntriesForSense" visibility="menu"/>
+				  </overrides>
+				</include>
+				<!-- include common custom field definitions -->
+				<include path="../browseDialogColumns.xml" query="doc/browseColumns/generate"/>
+			  </columns>
+			</parameters>
+			<!--of Browse view-->
+		  </control>
+		</parameters>
+	  </control>
+	</tool>
+  </tools>
+</root>

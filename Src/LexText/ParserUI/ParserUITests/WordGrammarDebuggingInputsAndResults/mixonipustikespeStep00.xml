@@ -1,0 +1,36 @@
+<word>
+  <form>mixonipustikespe</form>
+  <seq>
+	<morph wordType="181">
+	  <shortName>mi- (1SgObj): mi</shortName>
+	  <inflMsa slot="181" slotAbbr="Object"/>
+	</morph>
+	<morph wordType="derivPfx">
+	  <shortName>xo- (Pass): xo</shortName>
+	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+"/>
+	</morph>
+	<morph wordType="prefix">
+	  <shortName>ni- (who.knows): ni</shortName>
+	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-"/>
+	</morph>
+	<morph wordType="root">
+	  <shortName>pus (green): pus</shortName>
+	  <stemMsa cat="70" catAbbr="adj" inflClass="0" requiresInfl="-"/>
+	</morph>
+	<morph wordType="derivSfx">
+	  <shortName>-ti (Caus): ti</shortName>
+	  <derivMsa fromCat="152" fromCatAbbr="intrans" toCat="167" toCatAbbr="trans" fromInflClass="0" toInflClass="177" toInflClassAbbr="1" requiresInfl="+"/>
+	</morph>
+	<morph wordType="suffix">
+	  <shortName>-kes (???): kes</shortName>
+	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-"/>
+	</morph>
+	<morph wordType="179">
+	  <shortName>-pe (Future): gu</shortName>
+	  <inflClasses>
+		<inflClass hvo="178" abbr="2"/>
+	  </inflClasses>
+	  <inflMsa slot="179" slotAbbr="Tense"/>
+	</morph>
+  </seq>
+</word>

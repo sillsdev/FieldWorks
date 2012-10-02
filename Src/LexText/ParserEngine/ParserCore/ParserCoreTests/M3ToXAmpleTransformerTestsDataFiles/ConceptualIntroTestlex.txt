@@ -1,0 +1,922 @@
+
+\lx 14641
+\g house
+\c W
+\wc root
+\mp RootPOS258
+\a kal {14642}
+
+\lx 14645
+\g 1SgPoss
+\c W/W
+\o -NaN -NaN
+\wc 14672
+\a no {14646}
+\eType prefix
+
+\lx 14649
+\g 2SgdPoss
+\c W/W
+\o -NaN -NaN
+\wc 14672
+\a mo {14650}
+\eType prefix
+
+\lx 14653
+\g 3SgPoss
+\c W/W
+\o -NaN -NaN
+\wc 14672
+\a i {14654}
+\eType prefix
+
+\lx 14657
+\g 1PlPoss
+\c W/W
+\o -NaN -NaN
+\wc 14672
+\a to {14658}
+\eType prefix
+
+\lx 14661
+\g 2PlPoss
+\c W/W
+\o -NaN -NaN
+\wc 14672
+\a amo {14662}
+\eType prefix
+
+\lx 14665
+\g 3PlPoss
+\c W/W
+\o -NaN -NaN
+\wc 14672
+\a in {14666}
+\eType prefix
+
+\lx 14669
+\g PossPl
+\c W/W
+\o NaN NaN
+\wc 14673
+\a van {14670}
+\eType suffix
+
+\lx 14786
+\g 1SgSubj
+\c W/W
+\o -NaN -NaN
+\wc 14846
+\a ni {14787}
+\eType prefix
+
+\lx 16554
+\g 1SgSubj
+\c W/W
+\o -NaN -NaN
+\wc 16553
+\a ni {14787}
+\eType prefix
+
+\lx 14792
+\g 2SgSubj
+\c W/W
+\o -NaN -NaN
+\wc 14846
+\a ti {14793}
+\eType prefix
+
+\lx 14796
+\g 1PlSubj
+\c W/W
+\o -NaN -NaN
+\wc 14811
+\a ti {14797}
+\eType prefix
+
+\lx 14800
+\g 2PlSubj
+\c W/W
+\o -NaN -NaN
+\wc 14811
+\a an {14801}
+\eType prefix
+
+\lx 14804
+\g Pl
+\c W/W
+\o NaN NaN
+\wc 14812
+\a h {14805}
+\eType suffix
+
+\lx 14808
+\g die
+\c W
+\wc root
+\mp RootPOS14788
+\a miki {14809}
+
+\lx 14864
+\g 3M
+\c W/W
+\o -NaN -NaN
+\wc 14925
+\a i {14865}
+\eType prefix
+
+\lx 14868
+\g FUT
+\c W/W
+\o -NaN -NaN
+\wc 14926
+\a n {14869}
+\eType prefix
+
+\lx 14877
+\g tell
+\c W
+\wc root
+\mp RootPOS260
+\a tsave {14878}
+
+\lx 14929
+\g DAT
+\c W/W
+\o 1
+\wc derivSfx
+\a tako {14901} / [14900]_  | / [V] _
+
+\a ako {14882}
+
+ ~/ [14900]_  | ~/ [V] _
+
+\eType suffix
+\fd FromPOS260
+
+\lx 14930
+\g PAS
+\c W/W
+\o 1
+\wc derivSfx
+\a hi {14886}
+\eType suffix
+\fd FromPOS260
+
+\lx 14889
+\g F
+\c W/W
+\o NaN NaN
+\wc 14927
+\a te {14895} / [14900]_  | / [V] _
+
+\a e {14890}
+
+ ~/ [14900]_  | ~/ [V] _
+
+\eType suffix
+
+\lx 14893
+\g 3FO
+\c W/W
+\o NaN NaN
+\wc 14928
+\a ro {14894}
+\eType suffix
+
+\lx 14944
+\g Fut
+\c W/W
+\o -NaN -NaN
+\wc 14968
+\a q {14969} ICA14966 +/ _ ... {InflClass14966} +/ _ ... {ToInflClass14966}
+\a w {15820} ICA14965 +/ _ ... {InflClass14965} +/ _ ... {ToInflClass14965} / _ [14900]  | / _ [V]
+
+\a u {14945} ICA14965 +/ _ ... {InflClass14965} +/ _ ... {ToInflClass14965}
+
+ ~/ _ [14900]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 14963
+\g pass.trans
+\c W
+\wc root
+\mp RootPOS14788
+\mp InflClass14966
+\a te {14949}
+
+\lx 14964
+\g pass.trans
+\c W
+\wc root
+\mp RootPOS14789
+\mp InflClass14965
+\a te {14949}
+
+\lx 14952
+\g 1PlIncl
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a cho {14953}
+\mp Enclitic
+
+\lx 14952
+\g 1PlIncl
+\c Prt
+\wc clitic
+\a cho {14953}
+\fd CliticPOS0
+
+\lx 14960
+\g limp
+\c W
+\wc root
+\mp RootPOS260
+\mp InflClass14965
+\a qke'nia' {14961}
+
+\lx 14972
+\g encourage
+\c W
+\wc root
+\mp RootPOS260
+\mp InflClass14966
+\a tiqpla'qch {14973}
+
+\lx 15031
+\g reason
+\c W
+\wc root
+\mp RootPOS258
+\mp InflClass15033
+\a caus {15032}
+
+\lx 15040
+\g year
+\c W
+\wc root
+\mp RootPOS258
+\mp InflClass15034
+\a ann {15041}
+
+\lx 15044
+\g citizen
+\c W
+\wc root
+\mp RootPOS258
+\mp InflClass15035
+\a civ {15045}
+
+\lx 15048
+\g hand
+\c W
+\wc root
+\mp RootPOS258
+\mp InflClass15036
+\a man {15049}
+
+\lx 15052
+\g day
+\c W
+\wc root
+\mp RootPOS258
+\mp InflClass15037
+\a di {15053}
+
+\lx 15056
+\g DatPl
+\c W/W
+\o NaN NaN
+\wc 15062
+\a ibus {15058} ICA15035ICA15036 +/ {InflClass15035} ... _ +/ {ToInflClass15035} ... _ +/ {InflClass15036} ... _ +/ {ToInflClass15036} ... _
+\a ebus {15059} ICA15037 +/ {InflClass15037} ... _ +/ {ToInflClass15037} ... _
+\a is {15057} ICA15033ICA15034 +/ {InflClass15033} ... _ +/ {ToInflClass15033} ... _ +/ {InflClass15034} ... _ +/ {ToInflClass15034} ... _
+\eType suffix
+
+\lx 15104
+\g case
+\c W
+\wc root
+\mp RootPOS258
+\fd MSFS15106
+\a cas {15105}
+
+\lx 15111
+\g case
+\c W
+\wc root
+\mp RootPOS258
+\fd MSFS15112
+\a cas {15105}
+
+\lx 15118
+\g Fem
+\c W/W
+\o NaN NaN
+\wc 15129
+\fd InflectionFS15189
+\a a {15119}
+\eType suffix
+
+\lx 15122
+\g Masc
+\c W/W
+\o NaN NaN
+\wc 15129
+\fd InflectionFS15185
+\a o {15123}
+\eType suffix
+
+\lx 15126
+\g Dim
+\c W/W
+\o 1
+\wc derivSfx
+\a it {15127}
+\eType suffix
+\fd FromPOS258
+
+\lx 15317
+\g institute
+\c W
+\wc root
+\mp RootPOS15290
+\a institut {15215} / _ [14900]  | / _ [V]
+
+\a institute {15214}
+
+ ~/ _ [14900]  | ~/ _ [V]
+
+
+\lx 15526
+\g nomlzr
+\c W/W
+\o 1
+\wc derivSfx
+\a ion {15225}
+\eType suffix
+\fd FromPOS15290
+\fd ToPOS15525
+
+\lx 15534
+\g adjzer
+\c W/W
+\o 1
+\wc derivSfx
+\a al {15230}
+\eType suffix
+\fd FromPOS15525
+\fd ToPOS15226
+
+\lx 15293
+\g verbzer
+\c W/W
+\o 1
+\wc derivSfx
+\a iz {15235} / _ [14900]  | / _ [V]
+
+\a ize {15234} /_#  | /_#
+
+
+ ~/ _ [14900]  | ~/ _ [V]
+
+\eType suffix
+\fd FromPOS15226
+\fd ToPOS15290
+
+\lx 15653
+\g nom2
+\c W/W
+\o 1
+\wc derivSfx
+\a ation {15240}
+\eType suffix
+\fd FromPOS15290
+\fd ToPOS15525
+
+\lx 15243
+\g advbzer
+\c W/W
+\o 1
+\wc derivSfx
+\a ly {15244}
+\eType suffix
+\fd FromPOS15226
+\fd ToPOS257
+
+\lx 15689
+\g wash
+\c W
+\wc root
+\mp RootPOS15681
+\a yıka {15690}
+
+\lx 15693
+\g begin
+\c W
+\wc root
+\mp RootPOS15681
+\a başl {15695}
+\a başla {15694}
+
+\lx 15698
+\g smoke
+\c W
+\wc root
+\mp RootPOS15681
+\a iç {15699}
+
+\lx 15702
+\g Past
+\c W/W
+\o NaN NaN
+\wc 15727
+\a dı {15703}
+\eType suffix
+
+\lx 15714
+\g Pass
+\c W/W
+\o 1
+\wc derivSfx
+\a n {15716} / [14900]_  | / [V] _
+
+\a il {15715}
+
+ ~/ [14900]_  | ~/ [V] _
+
+\eType suffix
+\fd FromPOS15681
+\fd ToPOS15680
+
+\lx 15719
+\g Prog
+\c W/W
+\o NaN NaN
+\wc 15726
+\a ıyor {15762}
+\a iyor {15720}
+\eType suffix
+
+\lx 15723
+\g Neg
+\c W/W
+\o NaN NaN
+\wc 15733
+\a mez {15724}
+\eType suffix
+
+\lx 15731
+\g 3pl
+\c W/W
+\o NaN NaN
+\wc 15728
+\a lar {15732}
+\eType suffix
+
+\lx 15780
+\g drag
+\c W
+\wc root
+\mp RootPOS260
+\mp InflClass14966
+\a xop {15781}
+
+\lx 15784
+\g Rep
+\c W/W
+\o -1
+\wc derivPfx
+\a a {15785}
+\eType prefix
+\fd FromPOS260
+\mp ToInflClass14965
+
+\lx 15788
+\g laugh
+\c W
+\wc root
+\mp RootPOS260
+\mp InflClass14965
+\a chiqch {15789}
+
+\lx 15838
+\g Pres
+\c W/W
+\o -NaN -NaN
+\wc 15835
+\a 0 {15840} ICA15842 +/ _ ... {InflClass15842} +/ _ ... {ToInflClass15842}
+\a t {15839} ICA15841 +/ _ ... {InflClass15841} +/ _ ... {ToInflClass15841}
+\eType prefix
+
+\lx 15849
+\g ask
+\c W
+\wc root
+\mp RootPOS15833
+\mp InflClass15841
+\a jancha {15851}
+\a janchi {15850}
+
+\lx 15854
+\g 1aSgSubjAct
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a a {15855}
+\mp Enclitic
+
+\lx 15854
+\g 1aSgSubjAct
+\c Prt
+\wc clitic
+\a a {15855}
+\fd CliticPOS0
+
+\lx 15858
+\g Apl
+\c W/W
+\o 1
+\wc derivSfx
+\a hen {15865}
+\a h {15859}
+\eType suffix
+\fd FromPOS15833
+
+\lx 15862
+\g get angry
+\c W
+\wc root
+\mp RootPOS15833
+\mp InflClass15842
+\a ninkakon {15864}
+\a ninkaon {15863}
+
+\lx 15906
+\g press
+\c W
+\wc root
+\mp RootPOS15902
+\a apret {15907}
+
+\lx 15911
+\g Inf
+\c W/W
+\o 1
+\wc derivSfx
+\a ar {15912}
+\eType suffix
+\fd FromPOS15902
+\fd ToPOS15908
+
+\lx 15915
+\g Nom
+\c W/W
+\o 1
+\wc derivSfx
+\a ón {15916}
+\eType suffix
+\fd FromPOS15902
+\fd ToPOS15903
+\fd ToMSFS15917
+
+\lx 15923
+\g shear
+\c W
+\wc root
+\mp RootPOS15902
+\a trasquil {15924}
+
+\lx 15960
+\g Imp
+\c W/W
+\o NaN NaN
+\wc 15957
+\a ykaa {15961}
+\eType suffix
+
+\lx 15965
+\g 1Obj
+\c W/W
+\o NaN NaN
+\wc 15962
+\a maa {15966}
+\eType suffix
+
+\lx 15973
+\g 2Pos
+\c W/W
+\o NaN NaN
+\wc 15969
+\a yki {15974}
+\eType suffix
+
+\lx 15977
+\g Pur
+\c W/W
+\o NaN NaN
+\wc 15970
+\a paq {15978}
+\eType suffix
+
+\lx 15981
+\g see
+\c W
+\wc root
+\mp RootPOS15955
+\a rika {15982}
+
+\lx 15985
+\g Nom
+\c W/W
+\o 1
+\wc derivSfx
+\a na {15986}
+\eType suffix
+\fd FromPOS15955
+\fd ToPOS15967
+
+\lx 16014
+\g jug
+\c W
+\wc root
+\mp RootPOS16010
+\a kom {16015}
+
+\lx 16018
+\g drink
+\c W
+\wc root
+\mp RootPOS16009
+\a i {16019}
+
+\lx 16022
+\g Intensifier
+\c W/W
+\o -1
+\wc derivPfx
+\a ka {16023}
+\eType prefix
+\fd FromPOS16009
+
+\lx 16026
+\g leave
+\c W
+\wc root
+\mp RootPOS16009
+\a kava {16027}
+
+\lx 16030
+\g Abs
+\c W/W
+\o 1
+\wc derivSfx
+\a itl {16053}
+\a li {16392} / l _  | / l _
+
+\a tli {16575} /[15220]_  | /[C] _
+
+
+ ~/ l _  | ~/ l _
+
+\a tl {16031}
+
+ ~/ l _  | ~/ l _
+
+
+ ~/[15220]_  | ~/[C] _
+
+\eType suffix
+\fd FromPOS16009
+\fd ToPOS16010
+\mp FromExcpFeat16066Plus
+\mcc 16030 +/ {ExcpFeat16066Plus} ... _ +/ {ToExcpFeat16066Plus} ... _
+
+\lx 16052
+\g Abs
+\c W/W
+\o 1 31999
+\wc  suffix
+\fd FromPOS16010
+\a itl {16053}
+\a li {16392} / l _  | / l _
+
+\a tli {16575} /[15220]_  | /[C] _
+
+
+ ~/ l _  | ~/ l _
+
+\a tl {16031}
+
+ ~/ l _  | ~/ l _
+
+
+ ~/[15220]_  | ~/[C] _
+
+\eType suffix
+
+\lx 16056
+\g peanut
+\c W
+\wc root
+\mp RootPOS16010
+\a kakava {16057}
+
+\lx 16069
+\g rain
+\c W
+\wc root
+\mp RootPOS16009
+\mp ExcpFeat16066Plus
+\a kiavi {16070}
+
+\lx 16370
+\g black
+\c W
+\wc root
+\mp RootPOS15226
+\a tlil {16371}
+
+\lx 16374
+\g snake
+\c W
+\wc root
+\mp RootPOS16010
+\a kowa {16375}
+
+\lx 16378
+\g big
+\c W
+\wc root
+\mp RootPOS15226
+\a wey {16379}
+
+\lx 16386
+\g tortilla
+\c W
+\wc root
+\mp RootPOS16010
+\a tlaxkal {16387}
+
+\lx 16390
+\g old
+\c W
+\wc root
+\mp RootPOS15226
+\a sol {16391}
+
+\lx 16459
+\g S
+\c W/W
+\o -NaN -NaN
+\wc 14968
+\a s {16460}
+\eType prefix
+
+\lx 16463
+\g Pres
+\c W/W
+\o -NaN -NaN
+\wc 14968
+\a ch {16464}
+\eType prefix
+
+\lx 16467
+\g go
+\c W
+\wc root
+\mp RootPOS260
+\a ej {16468}
+
+\lx 16471
+\g bite
+\c W
+\wc root
+\mp RootPOS260
+\a pip {16472}
+
+\lx 16475
+\g 3fam
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a pe' {16476}
+\mp Enclitic
+
+\lx 16475
+\g 3fam
+\c Prt
+\wc clitic
+\a pe' {16476}
+\fd CliticPOS0
+
+\lx 16479
+\g 3resp
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a e' {16480}
+\mp Enclitic
+
+\lx 16479
+\g 3resp
+\c Prt
+\wc clitic
+\a e' {16480}
+\fd CliticPOS0
+
+\lx 16532
+\g rapidly
+\c W
+\wc root
+\mp RootPOS257
+\a to {16531}
+
+\lx 16529
+\g repeatedly
+\c W
+\wc root
+\mp RootPOS257
+\a qchaqch {16528}
+
+\lx 16561
+\g 3Obj
+\c W/W
+\o -NaN -NaN
+\wc 16558
+\a k {16562}
+\eType prefix
+
+\lx 16565
+\g medicine
+\c W
+\wc root
+\mp RootPOS16010
+\a pah {16566}
+
+\lx 16569
+\g swallow
+\c W
+\wc root
+\mp RootPOS16556
+\a tolova {16570}
+
+\lx 16581
+\g meat
+\c W
+\wc root
+\mp RootPOS16010
+\a naka {16582}
+
+\lx 16585
+\g eat
+\c W
+\wc root
+\mp RootPOS16556
+\a kua {16586}
+
+\lx 16671
+\g house
+\c W
+\wc root
+\mp RootPOS15967
+\a wasi {16672}
+
+\lx 16691
+\g 3P
+\c W/W
+\o 1
+\wc derivSfx
+\a n {16676}
+\eType suffix nterfix
+\fd FromPOS15967
+
+\lx 16688
+\g Ind
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a ra {16689}
+\mp Enclitic
+
+\lx 16688
+\g Ind
+\c Prt
+\wc clitic
+\a ra {16689}
+\fd CliticPOS0
+
+\lx 16706
+\g Delme
+\c W/W
+\o -31999 -1
+\wc  prefixinginterfix
+\a po {16707}
+\eType prefix nterfix

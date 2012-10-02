@@ -1,0 +1,11 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="TCL\Result.xml">
+ <title tag="tclResult">What is a Result?</title>
+ <index>
+  <li>result: definition</li>
+  <li>test step: result</li>
+ </index>
+ <definition>
+  <p>A description of the expected outcome of a <i>test step</i>. This may be a list of results affecting many user interface objects.</p>
+ </definition>
+</concept>

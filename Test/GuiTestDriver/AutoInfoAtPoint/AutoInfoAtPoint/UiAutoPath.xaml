@@ -1,0 +1,27 @@
+﻿<Window Name="appWin" x:Class="AutoInfoAtPoint.UiAutoPath"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="UI Auto Path" Height="423.291" Width="829.917">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="262*" />
+			<RowDefinition Height="0*" />
+		</Grid.RowDefinitions>
+		<Button MouseDown="button1_MouseDown" MouseUp="button1_MouseUp" Name="button1" HorizontalAlignment="Left" Margin="14,10,0,0" Width="60" Height="60" VerticalAlignment="Top" Cursor="Cross">
+			<Image Name="image1" Margin="0,0,0,0" Stretch="Fill" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" >
+			<Image.Source>
+				<!-- To save significant application memory, set the DecodePixelWidth or
+	 DecodePixelHeight of the BitmapImage value of the image source to the desired
+	 height and width of the rendered image. If you don't do this, the application will
+	 cache the image as though it were rendered as its normal size rather then just
+	 the size that is displayed. -->
+				<!-- Note: In order to preserve aspect ratio, only set either DecodePixelWidth
+		 or DecodePixelHeight but not both. -->
+				<BitmapImage DecodePixelWidth="50"
+	 UriSource="/AutoInfoAtPoint;component/Pointer.png" />
+			</Image.Source>
+			</Image>
+		</Button>
+		<Label Margin="8,76,12,12" Name="label1" AllowDrop="True">Label</Label>
+	</Grid>
+</Window>

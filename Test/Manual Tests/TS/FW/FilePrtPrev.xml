@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="printprev" num="2.1.3" abbr="fppv" file="FW\FilePrtPrev.xml" ready="V2">
+<title tag="printprev">File-Print Preview Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Places the window into Print Preview mode, where the pages are displayed exactly as they appear when sent to the printer. In the print preview mode, there is a tool bar with buttons for Next Page, Prev Page, Zoom In, Zoom Out, Two Pages (toggle with One Page, Print, Close, etc). The current view is what is previewed (e.g., if the user is displaying a Proof View of the Lexical Database, then Print Preview will display this proof view).</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-PrintPreview" type="doc">File-Print Preview</link>
+</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/PrintPreview/PrintPreview.html" type="doc">File-Print Preview</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>  The first words of the bug report title should be a noun phrase containing the words "File-Print Preview"</p>
+</context>
+<case id="fppvAct" num="0" order="any">
+<title tag="fppvAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke File-Print Preview. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/PrintPreview/PrintPreview.html" type="doc">File-Print Preview specification</link> to visually inspect the layout of the window controls.
+   <r>
+<ul>
+<li>The window opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview window fails to open</p>
+<p name="bug">File-Print Preview window layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the window comes up, verify that:
+	<r>
+<ul>
+<li>The page is zoomed completely out.</li>
+<li>The entire page is visible.</li>
+</ul>
+</r>
+<p name="bug">File-Print PreviewFile-Print Preview page is zoomed completely out failed</p>
+<p name="bug">File-Print PreviewFile-Print Preview entire page is visible failed</p>
+</step>
+<step name="0.3" link="Bug">Resize the  window.<r>Print Preview dynamically resizes to keep the zoomed out status..</r>
+<p name="bug">File-Print Preview Resize  failed</p>
+</step>
+<step name="0.4" link="Bug">Edit the  window.<r>Spelling corrections and other small changes are possible..</r>
+<p name="bug">File-Print Preview Edit  failed</p>
+</step>
+</case>
+<case id="fppvprt" num="3" order="any">
+<title tag="fppvprt">Print Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Print button.<r>
+<ul>
+<li>Report any failures using the first words, "File-Print Preview Print".</li>
+</ul>
+</r>
+</step>
+<step name="3.2" link="Bug">
+	Click the Print button to test its action.
+	<r>
+<ul>
+<li>Invokes the Print dialog.</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview fails to Invokes the Print dialog</p>
+</step>
+</case>
+<case id="fppvnpg" num="4" order="any">
+<title tag="fppvnpg">Next Page Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="4.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Next Page button.<r>
+<ul>
+<li>It is enabled when there is a next page.</li>
+<li>Report any failures using the first words, "File-Print Preview Next Page".</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview Next Page disabled when there is a next page</p>
+</step>
+<step name="4.2" link="Bug">When one page is shown, click the Next Page button.<r>Advances the preview to show the next page.</r>
+<p name="bug">File-Print Preview click When one page is shown failed</p>
+</step>
+<step name="4.3" link="Bug">When two pages are shown, click the Next Page button.<r>Next Page advances two pages.</r>
+<p name="bug">File-Print Preview click When two pages are shown failed</p>
+</step>
+</case>
+<case id="fppvppg" num="5" order="any">
+<title tag="fppvppg">Prev Page Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="5.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Prev Page button.<r>
+<ul>
+<li>It is enabled when there is a previous page.</li>
+<li>Report any failures using the first words, "File-Print Preview Prev Page".</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview Prev Page disabled when there is a previous page</p>
+</step>
+<step name="5.2" link="Bug">When one page is shown, click the Prev Page button.<r>Reverses the preview to show the previous page.</r>
+<p name="bug">File-Print Preview click When one page is shown failed</p>
+</step>
+<step name="5.3" link="Bug">When two pages are shown, click the Prev Page button.<r>Prev Page goes back two pages.</r>
+<p name="bug">File-Print Preview click When two pages are shown failed</p>
+</step>
+</case>
+<case id="fppvtopg" num="6" order="any">
+<title tag="fppvtopg">One Page/Two Pages Toggle</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="6.1" link="Bug">
+	Use the <link uri="../StdCtrls/toggle.xml">Toggle Tests</link> to test the One Page/Two Pages toggle.<r>
+<ul>
+<li>It is enabled when two or more pages can be printed.</li>
+<li>Report any failures using the first words, "File-Print Preview One Page/Two Pages".</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview One Page/Two Pages disabled when two or more pages can be printed</p>
+</step>
+<step name="6.2" link="Bug">When the label is 'One Page', click the One Page/Two Pages toggle.<r>Shows one page in the preview area.</r>
+<p name="bug">File-Print Preview click When the label is 'One Page' failed</p>
+</step>
+<step name="6.3" link="Bug">When the label is 'Two Pages', click the One Page/Two Pages toggle.<r>Shows two pages in the preview area.</r>
+<p name="bug">File-Print Preview click When the label is 'Two Pages' failed</p>
+</step>
+</case>
+<case id="fppvzin" num="7" order="any">
+<title tag="fppvzin">Zoom In Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="7.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Zoom In button.<r>
+<ul>
+<li>It is enabled when not zoomed to actual print size.</li>
+<li>Report any failures using the first words, "File-Print Preview Zoom In".</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview Zoom In disabled when not zoomed to actual print size</p>
+</step>
+<step name="7.2" link="Bug">When not yet clicked, click the Zoom In button.<r>Zooms in halfway to actual print size.</r>
+<p name="bug">File-Print Preview click When not yet clicked failed</p>
+</step>
+<step name="7.3" link="Bug">After clicking once, click the Zoom In button.<r>Zooms in to actual print size.</r>
+<p name="bug">File-Print Preview click After clicking once failed</p>
+</step>
+</case>
+<case id="fppvzot" num="8" order="any">
+<title tag="fppvzot">Zoom Out Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="8.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Zoom Out button.<r>
+<ul>
+<li>It is enabled when not zoomed out to window size.</li>
+<li>Report any failures using the first words, "File-Print Preview Zoom Out".</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview Zoom Out disabled when not zoomed out to window size</p>
+</step>
+<step name="8.2" link="Bug">When not yet clicked, click the Zoom Out button.<r>Zooms out halfway from actual print size.</r>
+<p name="bug">File-Print Preview click When not yet clicked failed</p>
+</step>
+<step name="8.3" link="Bug">After clicking once, click the Zoom Out button.<r>Zooms out to fit the window.</r>
+<p name="bug">File-Print Preview click After clicking once failed</p>
+</step>
+</case>
+<case id="fppvsu" num="9" order="any">
+<title tag="fppvsu">Setup Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="9.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Setup button.<r>
+<ul>
+<li>Report any failures using the first words, "File-Print Preview Setup".</li>
+</ul>
+</r>
+</step>
+<step name="9.2" link="Bug">
+	Click the Setup button to test its action.
+	<r>
+<ul>
+<li>Brings up the Page Setup dialog.</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview fails to brings up the Page Setup dialog</p>
+</step>
+</case>
+<case id="fppvcl" num="10" order="any">
+<title tag="fppvcl">Close Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="10.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Close button.<r>
+<ul>
+<li>Report any failures using the first words, "File-Print Preview Close".</li>
+</ul>
+</r>
+</step>
+<step name="10.2" link="Bug">
+	Click the Close button to test its action.
+	<r>
+<ul>
+<li>Closes the Print Preview mode.</li>
+<li>Returns focus to the previous window.</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview fails to closes the Print Preview mode</p>
+<p name="bug">File-Print Preview fails to returns focus to the previous window</p>
+</step>
+</case>
+<case id="fppvhlp" num="11" order="any">
+<title tag="fppvhlp">Help Button</title>
+<context>
+<p>When the  window  is displayed</p>
+</context>
+<step name="11.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Help button.<r>
+<ul>
+<li>Report any failures using the first words, "File-Print Preview Help".</li>
+</ul>
+</r>
+</step>
+<step name="11.2" link="Bug">
+	Click the Help button to test its action.
+	<r>
+<ul>
+<li>Brings up a help window describing the Print Preview mode.</li>
+</ul>
+</r>
+<p name="bug">File-Print Preview fails to brings up a help window describing the Print Preview mode</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="Apr-16-02" author="JanetW">Corrected duplicate step numbers.</update>
+
+</test>

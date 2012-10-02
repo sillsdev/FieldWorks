@@ -1,0 +1,3157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- schema created 5/25/2010 3:26:19 PM for FieldWorks model version 7000018 -->
+<grammar datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+		 xmlns="http://relaxng.org/ns/structure/1.0"
+		 xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+
+<define name="basic-Time">
+	<attribute name="val"/>
+	<empty/>
+</define>
+
+<define name="basic-GenDate">
+	<attribute name="val"><data type="integer"/></attribute>
+	<empty/>
+</define>
+
+<define name="basic-Boolean">
+	<attribute name="val">
+		<choice>
+			<value>true</value>
+			<value>false</value>
+			<value>True</value>
+			<value>False</value>
+		</choice>
+	</attribute>
+	<empty/>
+</define>
+
+<define name="basic-Integer">
+	<attribute name="val"><data type="integer"/></attribute>
+	<empty/>
+</define>
+
+<define name="basic-Guid">
+	<attribute name="val">
+		<data type="string">
+			<param name="pattern">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}</param>
+		</data>
+	</attribute>
+	<empty/>
+</define>
+
+<define name="String-Runs">
+	<zeroOrMore>
+		<element name="Run">
+			<attribute name="ws"/>
+			<ref name="common-property-attributes"/>
+			<ref name="Run-Prop-Attributes"/>
+			  <optional>
+				<attribute name="contextString">
+					<data type="string">
+						<param name="pattern">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}</param>
+					</data>
+				</attribute>
+			</optional>
+			  <optional><attribute name="externalLink"/></optional>
+			  <optional><attribute name="fontVariations"/></optional>
+			  <optional>
+				<attribute name="link">
+					<data type="string">
+						<param name="pattern">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}</param>
+					</data>
+				</attribute>
+			</optional>
+			  <optional>
+				<attribute name="moveableObj">
+					<data type="string">
+						<param name="pattern">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}</param>
+					</data>
+				</attribute>
+			</optional>
+			  <optional>
+				<attribute name="ownlink">
+					<data type="string">
+						<param name="pattern">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}</param>
+					</data>
+				</attribute>
+			</optional>
+			  <optional>
+				<attribute name="paraStyle"/></optional>
+			  <optional><attribute name="tabList"/></optional>
+			  <optional>
+				<attribute name="tags">
+					<data type="string">
+						<param name="pattern">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}(\s+[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})*</param>
+					</data>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="type">
+					<choice>
+						<value>chars</value>
+						<value>picture</value>
+					</choice>
+				</attribute>
+	</optional>
+	  <optional><attribute name="wsStyle"/></optional>
+			<text/>
+		</element>
+	</zeroOrMore>
+</define>
+
+<define name="common-property-attributes">
+	  <optional><attribute name="backcolor"/></optional>
+	<optional>
+		<attribute name="bold">
+			<choice>
+				<value>invert</value>
+				<value>off</value>
+				<value>on</value>
+			</choice>
+		</attribute>
+	</optional>
+	  <optional><attribute name="forecolor"/></optional>
+	<optional>
+		<attribute name="italic">
+			<choice>
+				<value>invert</value>
+				<value>off</value>
+				<value>on</value>
+			</choice>
+		</attribute>
+	</optional>
+	<optional>
+		<attribute name="superscript">
+			<choice>
+				<value>off</value>
+				<value>sub</value>
+				<value>super</value>
+			</choice>
+		</attribute>
+	</optional>
+	  <optional><attribute name="undercolor"/></optional>
+	<optional>
+		<attribute name="underline">
+			<choice>
+				<value>dashed</value>
+				<value>dotted</value>
+				<value>double</value>
+				<value>none</value>
+				<value>single</value>
+				<value>squiggle</value>
+				<value>strikethrough</value>
+			</choice>
+		</attribute>
+	</optional>
+</define>
+
+<define name="Run-Prop-Attributes">
+	<optional><attribute name="bulNumTxtAft"/></optional>
+	<optional><attribute name="bulNumTxtBef"/></optional>
+	<optional><attribute name="charStyle"/></optional>
+	  <optional><attribute name="fontFamily"/></optional>
+	<optional><attribute name="fontsize"><data type="integer"/></attribute></optional>
+	<optional>
+		<attribute name="fontsizeUnit">
+			<choice>
+				<value>mpt</value>
+				<value>rel</value>
+			</choice>
+		</attribute>
+	</optional>
+	  <optional><attribute name="namedStyle"/></optional>
+	  <optional><attribute name="offset"><data type="integer"/></attribute></optional>
+	  <optional>
+		<attribute name="offsetUnit">
+			<choice>
+				<value>mpt</value>
+				<value>rel</value>
+			</choice>
+		</attribute>
+	</optional>
+	<optional>
+		<attribute name="spellcheck">
+			<choice>
+				<value>normal</value>
+				<value>doNotCheck</value>
+				<value>forceCheck</value>
+			</choice>
+		</attribute>
+	</optional>
+	  <optional><attribute name="wsBase"/></optional>
+</define>
+
+<define name="basic-String">
+	<optional>
+		<element name="Str"><ref name="String-Runs"/></element>
+	</optional>
+</define>
+
+<define name="basic-MultiString">
+	<zeroOrMore>
+		<element name="AStr">
+			<attribute name="ws"/>
+			<ref name="String-Runs"/>
+		</element>
+	</zeroOrMore>
+</define>
+
+<define name="basic-Unicode">
+	<optional>
+		<element name="Uni"><text/></element>
+	</optional>
+</define>
+
+<define name="basic-MultiUnicode">
+	<zeroOrMore>
+		<element name="AUni">
+			<attribute name="ws"/>
+			<text/>
+		</element>
+	</zeroOrMore>
+</define>
+
+<define name="eight-bit-unsigned">
+	<data type="integer">
+		<param name="pattern">([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])</param>
+	</data>
+</define>
+<define name="number-millipoint">
+	<data type="string">
+		<param name="pattern">[0-9]+mpt</param>
+	</data>
+</define>
+<define name="basic-TextPropBinary">
+	<optional>
+		<element name="Prop">
+			<ref name="common-property-attributes"/>
+			<ref name="Run-Prop-Attributes"/>
+			<optional>
+				<attribute name="align">
+					<choice>
+						<value>leading</value>
+						<value>left</value>
+						<value>center</value>
+						<value>right</value>
+						<value>trailing</value>
+						<value>justify</value>
+					</choice>
+				</attribute>
+			</optional>
+			<optional><attribute name="borderBottom"><data type="integer"/></attribute></optional>
+			<optional><attribute name="borderColor"/></optional>
+			<optional><attribute name="borderLeading"><data type="integer"/></attribute></optional>
+			<optional><attribute name="borderTop"><data type="integer"/></attribute></optional>
+			<optional><attribute name="borderTrailing"><data type="integer"/></attribute></optional>
+			<optional><attribute name="bulNumScheme"><ref name="eight-bit-unsigned"/></attribute></optional>
+			<optional><attribute name="bulNumStartAt"><data type="integer"/></attribute></optional>
+			<optional><attribute name="firstIndent"><data type="integer"/></attribute></optional>
+			<optional><attribute name="keepTogether"><ref name="eight-bit-unsigned"/></attribute></optional>
+			<optional><attribute name="keepWithNext"><ref name="eight-bit-unsigned"/></attribute></optional>
+			<optional><attribute name="leadingIndent"><data type="integer"/></attribute></optional>
+			<optional><attribute name="lineHeight"><data type="integer"/></attribute></optional>
+			<optional>
+				<attribute name="lineHeightType">
+					<choice>
+						<value>exact</value>
+						<value>atLeast</value>
+					</choice>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="lineHeightUnit">
+					<choice>
+						<value>mpt</value>
+						<value>rel</value>
+					</choice>
+				</attribute>
+			</optional>
+			<optional><attribute name="MarginTop"><data type="integer"/></attribute></optional>
+			<optional><attribute name="padBottom"><data type="integer"/></attribute></optional>
+			<optional><attribute name="padLeading"><data type="integer"/></attribute></optional>
+			<optional><attribute name="padTop"><data type="integer"/></attribute></optional>
+			<optional><attribute name="padTrailing"><data type="integer"/></attribute></optional>
+			<optional><attribute name="paracolor"/></optional>
+			<optional><attribute name="rightToLeft"><ref name="eight-bit-unsigned"/></attribute></optional>
+			<optional><attribute name="spaceAfter"><data type="integer"/></attribute></optional>
+			<optional><attribute name="spaceBefore"/></optional>
+			<optional><attribute name="tabDef"><data type="integer"/></attribute></optional>
+			<optional><attribute name="trailingIndent"><data type="integer"/></attribute></optional>
+			<optional><attribute name="widowOrphan"><ref name="eight-bit-unsigned"/></attribute></optional>
+			<optional><attribute name="ws"/></optional>
+			<optional>
+				<element name="BulNumFontInfo">
+					<ref name="common-property-attributes"/>
+					  <optional><attribute name="fontFamily"/></optional>
+					<optional><attribute name="fontsize"><ref name="number-millipoint"/></attribute></optional>
+					<optional><attribute name="offset"><ref name="number-millipoint"/></attribute></optional>
+					<empty/>
+				</element>
+			</optional>
+			<optional>
+				<element name="WsStyles9999">
+					<zeroOrMore>
+						<element name="WsProp">
+							<attribute name="ws"/>
+							<ref name="common-property-attributes"/>
+							  <optional><attribute name="fontFamily"/></optional>
+							<optional><attribute name="fontVariations"/></optional>
+							<optional>
+								<attribute name="fontsize"><data type="integer"/></attribute>
+								<attribute name="fontsizeUnit"><value>mpt</value></attribute>
+							</optional>
+							<optional>
+								<attribute name="offset"><data type="integer"/></attribute>
+								<attribute name="offsetUnit"><value>mpt</value></attribute>
+							</optional>
+							<empty/>
+						</element>
+					</zeroOrMore>
+				</element>
+			</optional>
+		</element>
+	</optional>
+</define>
+
+<define name="basic-Binary">
+	<element name="Binary">
+		<data type="string">
+			<param name="pattern">[\s0-9A-Fa-f]*</param>
+		</data>
+	</element>
+</define>
+
+<define name="owning-atomic">
+	<optional>
+		<element name="objsur">
+			<attribute name="guid"/>
+			<attribute name="t"><value>o</value></attribute>
+			<empty/>
+		</element>
+	</optional>
+</define>
+
+<define name="owning-multiple">
+	<zeroOrMore>
+		<element name="objsur">
+			<attribute name="guid"/>
+			<attribute name="t"><value>o</value></attribute>
+			<empty/>
+		</element>
+	</zeroOrMore>
+</define>
+
+<define name="reference-atomic">
+	<optional>
+		<element name="objsur">
+			<attribute name="guid"/>
+			<attribute name="t"><value>r</value></attribute>
+			<empty/>
+		</element>
+	</optional>
+</define>
+
+<define name="reference-multiple">
+	<zeroOrMore>
+		<element name="objsur">
+			<attribute name="guid"/>
+			<attribute name="t"><value>r</value></attribute>
+			<empty/>
+		</element>
+	</zeroOrMore>
+</define>
+
+<define name="CustomFields">
+	<zeroOrMore>
+		<element name="Custom">
+			<attribute name="name"/>
+			<choice>
+				<ref name="basic-Boolean"/>
+				<ref name="basic-Integer"/>
+				<ref name="basic-Guid"/>
+				<ref name="basic-String"/>
+				<ref name="basic-MultiString"/>
+				<ref name="basic-Unicode"/>
+				<ref name="basic-MultiUnicode"/>
+				<ref name="basic-Binary"/>
+				<ref name="basic-Time"/>
+				<ref name="basic-GenDate"/>
+				<ref name="reference-atomic"/>
+				<ref name="reference-multiple"/>
+			</choice>
+		</element>
+	</zeroOrMore>
+</define>
+
+<define name="CmObject">
+	<attribute name="class"><value>CmObject</value></attribute>
+	<empty/>
+</define>
+
+<define name="CmFolder">
+	<attribute name="class"><value>CmFolder</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="SubFolders"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Files"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="Note">
+	<attribute name="class"><value>Note</value></attribute>
+	<interleave>
+		<optional><element name="Content"><ref name="basic-MultiString"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsComplexFeature">
+	<attribute name="class"><value>FsComplexFeature</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Default"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="GlossAbbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="RightGlossSep"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ShowInGloss"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DisplayToRightOfValues"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CatalogSourceId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Type"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="Segment">
+	<attribute name="class"><value>Segment</value></attribute>
+	<interleave>
+		<optional><element name="BeginOffset"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="FreeTranslation"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="LiteralTranslation"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Notes"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Analyses"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmPossibility">
+	<attribute name="class"><value>CmPossibility</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmPossibilityList">
+	<attribute name="class"><value>CmPossibilityList</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Depth"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PreventChoiceAboveLevel"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="IsSorted"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsClosed"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="PreventDuplicates"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="PreventNodeChoices"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Possibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="HelpFile"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="UseExtendedFields"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DisplayOption"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ItemClsid"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="IsVernacular"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="WritingSystem"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="WsSelector"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ListVersion"><ref name="basic-Guid"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmFilter">
+	<attribute name="class"><value>CmFilter</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ClassId"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="FieldId"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="FieldInfo"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="App"><ref name="basic-Guid"/></element></optional>
+		<optional><element name="Type"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Rows"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ColumnInfo"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ShowPrompt"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PromptText"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmRow">
+	<attribute name="class"><value>CmRow</value></attribute>
+	<interleave>
+		<optional><element name="Cells"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmCell">
+	<attribute name="class"><value>CmCell</value></attribute>
+	<interleave>
+		<optional><element name="Contents"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmLocation">
+	<attribute name="class"><value>CmLocation</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Alias"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmPerson">
+	<attribute name="class"><value>CmPerson</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Alias"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Gender"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="DateOfBirth"><ref name="basic-GenDate"/></element></optional>
+		<optional><element name="PlaceOfBirth"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="IsResearcher"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="PlacesOfResidence"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Education"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateOfDeath"><ref name="basic-GenDate"/></element></optional>
+		<optional><element name="Positions"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="StText">
+	<attribute name="class"><value>StText</value></attribute>
+	<interleave>
+		<optional><element name="Paragraphs"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RightToLeft"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Tags"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="StTxtPara">
+	<attribute name="class"><value>StTxtPara</value></attribute>
+	<interleave>
+		<optional><element name="StyleRules"><ref name="basic-TextPropBinary"/></element></optional>
+		<optional><element name="Label"><ref name="basic-String"/></element></optional>
+		<optional><element name="Contents"><ref name="basic-String"/></element></optional>
+		<optional><element name="ParseIsCurrent"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="TextObjects"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="AnalyzedTextObjects"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Segments"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Translations"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="StStyle">
+	<attribute name="class"><value>StStyle</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="BasedOn"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Next"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Type"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Rules"><ref name="basic-TextPropBinary"/></element></optional>
+		<optional><element name="IsPublishedTextStyle"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsBuiltIn"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsModified"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="UserLevel"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Context"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Structure"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Function"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Usage"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="UserView">
+	<attribute name="class"><value>UserView</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Type"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="App"><ref name="basic-Guid"/></element></optional>
+		<optional><element name="Records"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Details"><ref name="basic-Binary"/></element></optional>
+		<optional><element name="System"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="SubType"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="UserViewRec">
+	<attribute name="class"><value>UserViewRec</value></attribute>
+	<interleave>
+		<optional><element name="Clsid"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Level"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Fields"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Details"><ref name="basic-Binary"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="UserViewField">
+	<attribute name="class"><value>UserViewField</value></attribute>
+	<interleave>
+		<optional><element name="Label"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="HelpString"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Type"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Flid"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Visibility"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Required"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Style"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="SubfieldOf"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Details"><ref name="basic-Binary"/></element></optional>
+		<optional><element name="IsCustomField"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="PossList"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="WritingSystem"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="WsSelector"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmOverlay">
+	<attribute name="class"><value>CmOverlay</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="PossList"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="PossItems"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="TextTag">
+	<attribute name="class"><value>TextTag</value></attribute>
+	<interleave>
+		<optional><element name="BeginSegment"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="EndSegment"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="BeginAnalysisIndex"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="EndAnalysisIndex"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Tag"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmAgent">
+	<attribute name="class"><value>CmAgent</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="StateInformation"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Human"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Notes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Version"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Approves"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Disapproves"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LgWritingSystem">
+	<attribute name="class"><value>LgWritingSystem</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Locale"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Abbr"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DefaultMonospace"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="DefaultSansSerif"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="DefaultSerif"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="FontVariation"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="KeyboardType"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="RightToLeft"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Collations"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="ICULocale"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="KeymanKeyboard"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="LegacyMapping"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="SansFontVariation"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="LastModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DefaultBodyFont"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="BodyFontFeatures"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ValidChars"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="SpellCheckDictionary"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="MatchedPairs"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="PunctuationPatterns"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="CapitalizationInfo"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="QuotationMarks"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmAnthroItem">
+	<attribute name="class"><value>CmAnthroItem</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmCustomItem">
+	<attribute name="class"><value>CmCustomItem</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CrossReference">
+	<attribute name="class"><value>CrossReference</value></attribute>
+	<interleave>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmTranslation">
+	<attribute name="class"><value>CmTranslation</value></attribute>
+	<interleave>
+		<optional><element name="Translation"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Type"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LgCollation">
+	<attribute name="class"><value>LgCollation</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="WinLCID"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="WinCollation"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="IcuResourceName"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="IcuResourceText"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ICURules"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmSortSpec">
+	<attribute name="class"><value>CmSortSpec</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="App"><ref name="basic-Guid"/></element></optional>
+		<optional><element name="ClassId"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PrimaryField"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="PrimaryCollType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PrimaryReverse"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="SecondaryField"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="SecondaryCollType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="SecondaryReverse"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="TertiaryField"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="TertiaryCollType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="TertiaryReverse"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IncludeSubentries"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="PrimaryWs"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="SecondaryWs"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="TertiaryWs"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="PrimaryCollation"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="SecondaryCollation"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="TertiaryCollation"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmAgentEvaluation">
+	<attribute name="class"><value>CmAgentEvaluation</value></attribute>
+	<empty/>
+</define>
+
+<define name="CmAnnotationDefn">
+	<attribute name="class"><value>CmAnnotationDefn</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="AllowsComment"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="AllowsFeatureStructure"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="AllowsInstanceOf"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="InstanceOfSignature"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UserCanCreate"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CanCreateOrphan"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="PromptUser"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CopyCutPastable"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="ZeroWidth"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Multi"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Severity"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="MaxDupOccur"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmIndirectAnnotation">
+	<attribute name="class"><value>CmIndirectAnnotation</value></attribute>
+	<interleave>
+		<optional><element name="CompDetails"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="AnnotationType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Source"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="InstanceOf"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Text"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Features"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="AppliesTo"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmBaseAnnotation">
+	<attribute name="class"><value>CmBaseAnnotation</value></attribute>
+	<interleave>
+		<optional><element name="CompDetails"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="AnnotationType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Source"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="InstanceOf"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Text"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Features"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="BeginOffset"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Flid"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="EndOffset"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BeginObject"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="EndObject"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="OtherObjects"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="WritingSystem"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="WsSelector"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BeginRef"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="EndRef"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmMediaAnnotation">
+	<attribute name="class"><value>CmMediaAnnotation</value></attribute>
+	<interleave>
+		<optional><element name="CompDetails"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="AnnotationType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Source"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="InstanceOf"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Text"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Features"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="StFootnote">
+	<attribute name="class"><value>StFootnote</value></attribute>
+	<interleave>
+		<optional><element name="Paragraphs"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RightToLeft"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Tags"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="FootnoteMarker"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="UserConfigAcct">
+	<attribute name="class"><value>UserConfigAcct</value></attribute>
+	<interleave>
+		<optional><element name="Sid"><ref name="basic-Binary"/></element></optional>
+		<optional><element name="UserLevel"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="HasMaintenance"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="UserAppFeatAct">
+	<attribute name="class"><value>UserAppFeatAct</value></attribute>
+	<interleave>
+		<optional><element name="UserConfigAcct"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ApplicationId"><ref name="basic-Guid"/></element></optional>
+		<optional><element name="FeatureId"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ActivatedLevel"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="Publication">
+	<attribute name="class"><value>Publication</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-String"/></element></optional>
+		<optional><element name="PageHeight"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PageWidth"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="IsLandscape"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="GutterMargin"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="GutterLoc"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Divisions"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="FootnoteSepWidth"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PaperHeight"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PaperWidth"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BindingEdge"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="SheetLayout"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="SheetsPerSig"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BaseFontSize"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BaseLineSpacing"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PubDivision">
+	<attribute name="class"><value>PubDivision</value></attribute>
+	<interleave>
+		<optional><element name="DifferentFirstHF"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DifferentEvenHF"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="StartAt"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PageLayout"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="HFSet"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="NumColumns"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PubPageLayout">
+	<attribute name="class"><value>PubPageLayout</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-String"/></element></optional>
+		<optional><element name="MarginTop"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="MarginBottom"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="MarginInside"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="MarginOutside"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PosHeader"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="PosFooter"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="IsBuiltIn"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsModified"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PubHFSet">
+	<attribute name="class"><value>PubHFSet</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-String"/></element></optional>
+		<optional><element name="DefaultHeader"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DefaultFooter"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FirstHeader"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FirstFooter"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="EvenHeader"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="EvenFooter"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PubHeader">
+	<attribute name="class"><value>PubHeader</value></attribute>
+	<interleave>
+		<optional><element name="InsideAlignedText"><ref name="basic-String"/></element></optional>
+		<optional><element name="CenteredText"><ref name="basic-String"/></element></optional>
+		<optional><element name="OutsideAlignedText"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmFile">
+	<attribute name="class"><value>CmFile</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="OriginalPath"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="InternalPath"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Copyright"><ref name="basic-MultiString"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmPicture">
+	<attribute name="class"><value>CmPicture</value></attribute>
+	<interleave>
+		<optional><element name="PictureFile"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Caption"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="LayoutPos"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ScaleFactor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="LocationRangeType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="LocationMin"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="LocationMax"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsFeatureSystem">
+	<attribute name="class"><value>FsFeatureSystem</value></attribute>
+	<interleave>
+		<optional><element name="Types"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Features"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsClosedFeature">
+	<attribute name="class"><value>FsClosedFeature</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Default"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="GlossAbbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="RightGlossSep"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ShowInGloss"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DisplayToRightOfValues"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CatalogSourceId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Values"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsClosedValue">
+	<attribute name="class"><value>FsClosedValue</value></attribute>
+	<interleave>
+		<optional><element name="RefNumber"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ValueState"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Feature"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Value"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsComplexValue">
+	<attribute name="class"><value>FsComplexValue</value></attribute>
+	<interleave>
+		<optional><element name="RefNumber"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ValueState"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Feature"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Value"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsDisjunctiveValue">
+	<attribute name="class"><value>FsDisjunctiveValue</value></attribute>
+	<interleave>
+		<optional><element name="RefNumber"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ValueState"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Feature"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Value"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsFeatStruc">
+	<attribute name="class"><value>FsFeatStruc</value></attribute>
+	<interleave>
+		<optional><element name="FeatureDisjunctions"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="FeatureSpecs"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Type"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsFeatStrucDisj">
+	<attribute name="class"><value>FsFeatStrucDisj</value></attribute>
+	<interleave>
+		<optional><element name="Contents"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsFeatStrucType">
+	<attribute name="class"><value>FsFeatStrucType</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Features"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="CatalogSourceId"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsNegatedValue">
+	<attribute name="class"><value>FsNegatedValue</value></attribute>
+	<interleave>
+		<optional><element name="RefNumber"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ValueState"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Feature"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Value"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsOpenFeature">
+	<attribute name="class"><value>FsOpenFeature</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Default"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="GlossAbbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="RightGlossSep"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ShowInGloss"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DisplayToRightOfValues"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CatalogSourceId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="WritingSystem"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="WsSelector"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsOpenValue">
+	<attribute name="class"><value>FsOpenValue</value></attribute>
+	<interleave>
+		<optional><element name="RefNumber"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ValueState"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Feature"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Value"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsSharedValue">
+	<attribute name="class"><value>FsSharedValue</value></attribute>
+	<interleave>
+		<optional><element name="RefNumber"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ValueState"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Feature"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Value"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="FsSymFeatVal">
+	<attribute name="class"><value>FsSymFeatVal</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="GlossAbbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="RightGlossSep"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ShowInGloss"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CatalogSourceId"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmSemanticDomain">
+	<attribute name="class"><value>CmSemanticDomain</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="LouwNidaCodes"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="OcmCodes"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="OcmRefs"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="RelatedDomains"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Questions"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmDomainQ">
+	<attribute name="class"><value>CmDomainQ</value></attribute>
+	<interleave>
+		<optional><element name="Question"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ExampleWords"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ExampleSentences"><ref name="basic-MultiString"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="StJournalText">
+	<attribute name="class"><value>StJournalText</value></attribute>
+	<interleave>
+		<optional><element name="Paragraphs"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RightToLeft"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Tags"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="CreatedBy"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ModifiedBy"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmMedia">
+	<attribute name="class"><value>CmMedia</value></attribute>
+	<interleave>
+		<optional><element name="Label"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="MediaFile"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="CmResource">
+	<attribute name="class"><value>CmResource</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Version"><ref name="basic-Guid"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="Scripture">
+	<attribute name="class"><value>Scripture</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ScriptureBooks"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Styles"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RefSepr"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ChapterVerseSepr"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="VerseSepr"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Bridge"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ImportSettings"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ArchivedDrafts"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="FootnoteMarkerSymbol"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="DisplayFootnoteReference"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="RestartFootnoteSequence"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="RestartFootnoteBoundary"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UseScriptDigits"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="ScriptDigitZero"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ConvertCVDigitsOnExport"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Versification"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="VersePunct"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ChapterLabel"><ref name="basic-String"/></element></optional>
+		<optional><element name="PsalmLabel"><ref name="basic-String"/></element></optional>
+		<optional><element name="BookAnnotations"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="NoteCategories"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FootnoteMarkerType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="DisplayCrossRefReference"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CrossRefMarkerSymbol"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="CrossRefMarkerType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="CrossRefsCombinedWithFootnotes"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DisplaySymbolInFootnote"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DisplaySymbolInCrossRef"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Resources"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrBook">
+	<attribute name="class"><value>ScrBook</value></attribute>
+	<interleave>
+		<optional><element name="Sections"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="BookId"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Title"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Abbrev"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="IdText"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Footnotes"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Diffs"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="UseChapterNumHeading"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="CanonicalNum"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrRefSystem">
+	<attribute name="class"><value>ScrRefSystem</value></attribute>
+	<interleave>
+		<optional><element name="Books"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrBookRef">
+	<attribute name="class"><value>ScrBookRef</value></attribute>
+	<interleave>
+		<optional><element name="BookName"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="BookAbbrev"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="BookNameAlt"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrSection">
+	<attribute name="class"><value>ScrSection</value></attribute>
+	<interleave>
+		<optional><element name="Heading"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Content"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="VerseRefStart"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="VerseRefEnd"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="VerseRefMin"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="VerseRefMax"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrImportSet">
+	<attribute name="class"><value>ScrImportSet</value></attribute>
+	<interleave>
+		<optional><element name="ImportType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ImportProjToken"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ScriptureSources"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="BackTransSources"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="NoteSources"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ScriptureMappings"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="NoteMappings"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrDraft">
+	<attribute name="class"><value>ScrDraft</value></attribute>
+	<interleave>
+		<optional><element name="Description"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Books"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Type"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Protected"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrDifference">
+	<attribute name="class"><value>ScrDifference</value></attribute>
+	<interleave>
+		<optional><element name="RefStart"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="RefEnd"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="DiffType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="RevMin"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="RevLim"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="RevParagraph"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrImportP6Project">
+	<attribute name="class"><value>ScrImportP6Project</value></attribute>
+	<interleave>
+		<optional><element name="ICULocale"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="NoteType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ParatextID"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrImportSFFiles">
+	<attribute name="class"><value>ScrImportSFFiles</value></attribute>
+	<interleave>
+		<optional><element name="ICULocale"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="NoteType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="FileFormat"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Files"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrMarkerMapping">
+	<attribute name="class"><value>ScrMarkerMapping</value></attribute>
+	<interleave>
+		<optional><element name="BeginMarker"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="EndMarker"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Excluded"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Target"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Domain"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ICULocale"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Style"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="NoteType"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrBookAnnotations">
+	<attribute name="class"><value>ScrBookAnnotations</value></attribute>
+	<interleave>
+		<optional><element name="Notes"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ChkHistRecs"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrScriptureNote">
+	<attribute name="class"><value>ScrScriptureNote</value></attribute>
+	<interleave>
+		<optional><element name="CompDetails"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="AnnotationType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Source"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="InstanceOf"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Text"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Features"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="BeginOffset"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Flid"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="EndOffset"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BeginObject"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="EndObject"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="OtherObjects"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="WritingSystem"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="WsSelector"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BeginRef"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="EndRef"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ResolutionStatus"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Categories"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Quote"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Recommendation"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Resolution"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Responses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="DateResolved"><ref name="basic-Time"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrCheckRun">
+	<attribute name="class"><value>ScrCheckRun</value></attribute>
+	<interleave>
+		<optional><element name="CheckId"><ref name="basic-Guid"/></element></optional>
+		<optional><element name="RunDate"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Result"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrTxtPara">
+	<attribute name="class"><value>ScrTxtPara</value></attribute>
+	<interleave>
+		<optional><element name="StyleRules"><ref name="basic-TextPropBinary"/></element></optional>
+		<optional><element name="Label"><ref name="basic-String"/></element></optional>
+		<optional><element name="Contents"><ref name="basic-String"/></element></optional>
+		<optional><element name="ParseIsCurrent"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="TextObjects"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="AnalyzedTextObjects"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Segments"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Translations"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ScrFootnote">
+	<attribute name="class"><value>ScrFootnote</value></attribute>
+	<interleave>
+		<optional><element name="Paragraphs"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RightToLeft"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Tags"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="FootnoteMarker"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="RnResearchNbk">
+	<attribute name="class"><value>RnResearchNbk</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Records"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Reminders"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RecTypes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="CrossReferences"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="RnGenericRec">
+	<attribute name="class"><value>RnGenericRec</value></attribute>
+	<interleave>
+		<optional><element name="Title"><ref name="basic-String"/></element></optional>
+		<optional><element name="VersionHistory"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Reminders"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="AnthroCodes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="PhraseTags"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="SubRecords"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="CrossReferences"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ExternalMaterials"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FurtherQuestions"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="SeeAlso"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="DateOfEvent"><ref name="basic-GenDate"/></element></optional>
+		<optional><element name="CounterEvidence"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="SupersededBy"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="SupportingEvidence"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Conclusions"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Hypothesis"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="ResearchPlan"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Locations"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Sources"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="TimeOfEvent"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Type"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Description"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Participants"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="PersonalNotes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="Reminder">
+	<attribute name="class"><value>Reminder</value></attribute>
+	<interleave>
+		<optional><element name="Description"><ref name="basic-String"/></element></optional>
+		<optional><element name="Date"><ref name="basic-GenDate"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="RnRoledPartic">
+	<attribute name="class"><value>RnRoledPartic</value></attribute>
+	<interleave>
+		<optional><element name="Participants"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Role"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoStemMsa">
+	<attribute name="class"><value>MoStemMsa</value></attribute>
+	<interleave>
+		<optional><element name="Components"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="GlossString"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="GlossBundle"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="MsFeatures"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="PartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="InflectionClass"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="FromPartsOfSpeech"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexEntry">
+	<attribute name="class"><value>LexEntry</value></attribute>
+	<interleave>
+		<optional><element name="HomographNumber"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="CitationForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="MorphoSyntaxAnalyses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Senses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Bibliography"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Etymology"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Restrictions"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="SummaryDefinition"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="LiteralMeaning"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="MainEntriesOrSenses"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="DoNotUseForParsing"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="ExcludeAsHeadword"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="LexemeForm"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="AlternateForms"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Pronunciations"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ImportResidue"><ref name="basic-String"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="EntryRefs"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ConstChartRow">
+	<attribute name="class"><value>ConstChartRow</value></attribute>
+	<interleave>
+		<optional><element name="Notes"><ref name="basic-String"/></element></optional>
+		<optional><element name="ClauseType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="EndParagraph"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="EndSentence"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="StartDependentClauseGroup"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="EndDependentClauseGroup"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Cells"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Label"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexExampleSentence">
+	<attribute name="class"><value>LexExampleSentence</value></attribute>
+	<interleave>
+		<optional><element name="Example"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Reference"><ref name="basic-String"/></element></optional>
+		<optional><element name="Translations"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexDb">
+	<attribute name="class"><value>LexDb</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Entries"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Appendixes"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SenseTypes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="UsageTypes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DomainTypes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="MorphTypes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="LexicalFormIndex"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="AllomorphIndex"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Introduction"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="IsHeadwordCitationForm"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsBodyInSeparateSubentry"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Status"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="ReversalIndexes"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="References"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Resources"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="VariantEntryTypes"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="ComplexEntryTypes"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ConstChartWordGroup">
+	<attribute name="class"><value>ConstChartWordGroup</value></attribute>
+	<interleave>
+		<optional><element name="Column"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="MergesAfter"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="MergesBefore"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="BeginSegment"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="EndSegment"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="BeginAnalysisIndex"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="EndAnalysisIndex"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ConstChartMovedTextMarker">
+	<attribute name="class"><value>ConstChartMovedTextMarker</value></attribute>
+	<interleave>
+		<optional><element name="Column"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="MergesAfter"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="MergesBefore"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="WordGroup"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Preposed"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ConstChartClauseMarker">
+	<attribute name="class"><value>ConstChartClauseMarker</value></attribute>
+	<interleave>
+		<optional><element name="Column"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="MergesAfter"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="MergesBefore"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="DependentClauses"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ConstChartTag">
+	<attribute name="class"><value>ConstChartTag</value></attribute>
+	<interleave>
+		<optional><element name="Column"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="MergesAfter"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="MergesBefore"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Tag"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PunctuationForm">
+	<attribute name="class"><value>PunctuationForm</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexPronunciation">
+	<attribute name="class"><value>LexPronunciation</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Location"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="MediaFiles"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="CVPattern"><ref name="basic-String"/></element></optional>
+		<optional><element name="Tone"><ref name="basic-String"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexSense">
+	<attribute name="class"><value>LexSense</value></attribute>
+	<interleave>
+		<optional><element name="MorphoSyntaxAnalysis"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="AnthroCodes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Senses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Appendixes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Definition"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="DomainTypes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Examples"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Gloss"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="ReversalEntries"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ScientificName"><ref name="basic-String"/></element></optional>
+		<optional><element name="SenseType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ThesaurusItems"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="UsageTypes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="AnthroNote"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Bibliography"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="DiscourseNote"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="EncyclopedicInfo"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="GeneralNote"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="GrammarNote"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="PhonologyNote"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Restrictions"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="SemanticsNote"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SocioLinguisticsNote"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Source"><ref name="basic-String"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="SemanticDomains"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Pictures"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ImportResidue"><ref name="basic-String"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoAffixAllomorph">
+	<attribute name="class"><value>MoAffixAllomorph</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="MorphType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="IsAbstract"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="InflectionClasses"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="MsEnvFeatures"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="PhoneEnv"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="MsEnvPartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Position"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoAffixProcess">
+	<attribute name="class"><value>MoAffixProcess</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="MorphType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="IsAbstract"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="InflectionClasses"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Input"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Output"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoDerivAffMsa">
+	<attribute name="class"><value>MoDerivAffMsa</value></attribute>
+	<interleave>
+		<optional><element name="Components"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="GlossString"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="GlossBundle"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="FromMsFeatures"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="ToMsFeatures"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FromPartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ToPartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="FromInflectionClass"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ToInflectionClass"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="AffixCategory"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="FromStemName"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="FromProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ToProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoDerivStepMsa">
+	<attribute name="class"><value>MoDerivStepMsa</value></attribute>
+	<interleave>
+		<optional><element name="Components"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="GlossString"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="GlossBundle"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="PartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="MsFeatures"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="InflFeats"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="InflectionClass"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoEndoCompound">
+	<attribute name="class"><value>MoEndoCompound</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ToProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LeftMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="RightMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Linker"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="HeadLast"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="OverridingMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoExoCompound">
+	<attribute name="class"><value>MoExoCompound</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ToProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LeftMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="RightMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Linker"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="ToMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInflAffixSlot">
+	<attribute name="class"><value>MoInflAffixSlot</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Optional"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInflAffixTemplate">
+	<attribute name="class"><value>MoInflAffixTemplate</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Slots"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Region"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="PrefixSlots"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="SuffixSlots"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Final"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInflAffMsa">
+	<attribute name="class"><value>MoInflAffMsa</value></attribute>
+	<interleave>
+		<optional><element name="Components"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="GlossString"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="GlossBundle"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="InflFeats"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="AffixCategory"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="PartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Slots"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="FromProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInflClass">
+	<attribute name="class"><value>MoInflClass</value></attribute>
+	<interleave>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Subclasses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RulesOfReferral"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="StemNames"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ReferenceForms"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoMorphData">
+	<attribute name="class"><value>MoMorphData</value></attribute>
+	<interleave>
+		<optional><element name="Strata"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="CompoundRules"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="AdhocCoProhibitions"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="AnalyzingAgents"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="TestSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="GlossSystem"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="ParserParameters"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ProdRestrict"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoMorphType">
+	<attribute name="class"><value>MoMorphType</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Postfix"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Prefix"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="SecondaryOrder"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoReferralRule">
+	<attribute name="class"><value>MoReferralRule</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Input"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Output"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoStemAllomorph">
+	<attribute name="class"><value>MoStemAllomorph</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="MorphType"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="IsAbstract"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="PhoneEnv"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="StemName"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexAppendix">
+	<attribute name="class"><value>LexAppendix</value></attribute>
+	<interleave>
+		<optional><element name="Contents"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoStemName">
+	<attribute name="class"><value>MoStemName</value></attribute>
+	<interleave>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Regions"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="DefaultAffix"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DefaultStem"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoStratum">
+	<attribute name="class"><value>MoStratum</value></attribute>
+	<interleave>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Phonemes"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PartOfSpeech">
+	<attribute name="class"><value>PartOfSpeech</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="InherFeatVal"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="EmptyParadigmCells"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RulesOfReferral"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="InflectionClasses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="AffixTemplates"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="AffixSlots"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="StemNames"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="BearableFeatures"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="InflectableFeats"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ReferenceForms"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="DefaultFeatures"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DefaultInflectionClass"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="CatalogSourceId"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ReversalIndex">
+	<attribute name="class"><value>ReversalIndex</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="PartsOfSpeech"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Entries"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="WritingSystem"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ReversalIndexEntry">
+	<attribute name="class"><value>ReversalIndexEntry</value></attribute>
+	<interleave>
+		<optional><element name="Subentries"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="PartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ReversalForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="Text">
+	<attribute name="class"><value>Text</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Source"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SoundFilePath"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="Contents"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Genres"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="IsTranslated"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="WfiAnalysis">
+	<attribute name="class"><value>WfiAnalysis</value></attribute>
+	<interleave>
+		<optional><element name="Category"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="MsFeatures"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Stems"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Derivation"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Meanings"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="MorphBundles"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="CompoundRuleApps"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="InflTemplateApps"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Evaluations"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="WfiGloss">
+	<attribute name="class"><value>WfiGloss</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="WfiWordform">
+	<attribute name="class"><value>WfiWordform</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Analyses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SpellingStatus"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Checksum"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="WordFormLookup">
+	<attribute name="class"><value>WordFormLookup</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-String"/></element></optional>
+		<optional><element name="ThesaurusCentral"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="ThesaurusItems"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="AnthroCentral"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="AnthroCodes"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="WordformLookupList">
+	<attribute name="class"><value>WordformLookupList</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Wordforms"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="WritingSystem"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInsertPhones">
+	<attribute name="class"><value>MoInsertPhones</value></attribute>
+	<interleave>
+		<optional><element name="Content"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInsertNC">
+	<attribute name="class"><value>MoInsertNC</value></attribute>
+	<interleave>
+		<optional><element name="Content"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoModifyFromInput">
+	<attribute name="class"><value>MoModifyFromInput</value></attribute>
+	<interleave>
+		<optional><element name="Content"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Modification"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoCompoundRuleApp">
+	<attribute name="class"><value>MoCompoundRuleApp</value></attribute>
+	<interleave>
+		<optional><element name="OutputForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="LeftForm"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="RightForm"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Linker"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoDerivAffApp">
+	<attribute name="class"><value>MoDerivAffApp</value></attribute>
+	<interleave>
+		<optional><element name="OutputForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="AffixForm"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="AffixMsa"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="OutputMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInflAffixSlotApp">
+	<attribute name="class"><value>MoInflAffixSlotApp</value></attribute>
+	<interleave>
+		<optional><element name="OutputForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Slot"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="AffixForm"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="AffixMsa"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoInflTemplateApp">
+	<attribute name="class"><value>MoInflTemplateApp</value></attribute>
+	<interleave>
+		<optional><element name="OutputForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Template"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="SlotApps"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoPhonolRuleApp">
+	<attribute name="class"><value>MoPhonolRuleApp</value></attribute>
+	<interleave>
+		<optional><element name="OutputForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Rule"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="VacuousApp"><ref name="basic-Boolean"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoStratumApp">
+	<attribute name="class"><value>MoStratumApp</value></attribute>
+	<interleave>
+		<optional><element name="OutputForm"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="CompoundRuleApps"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="DerivAffApp"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="TemplateApp"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="PRuleApps"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhIterationContext">
+	<attribute name="class"><value>PhIterationContext</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Minimum"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Maximum"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Member"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhSequenceContext">
+	<attribute name="class"><value>PhSequenceContext</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Members"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhSimpleContextBdry">
+	<attribute name="class"><value>PhSimpleContextBdry</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FeatureStructure"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhSimpleContextNC">
+	<attribute name="class"><value>PhSimpleContextNC</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FeatureStructure"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="PlusConstr"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="MinusConstr"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhSimpleContextSeg">
+	<attribute name="class"><value>PhSimpleContextSeg</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="FeatureStructure"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhVariable">
+	<attribute name="class"><value>PhVariable</value></attribute>
+	<empty/>
+</define>
+
+<define name="PhPhonemeSet">
+	<attribute name="class"><value>PhPhonemeSet</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Phonemes"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="BoundaryMarkers"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhBdryMarker">
+	<attribute name="class"><value>PhBdryMarker</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Codes"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhPhoneme">
+	<attribute name="class"><value>PhPhoneme</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Codes"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="BasicIPASymbol"><ref name="basic-String"/></element></optional>
+		<optional><element name="Features"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhNCFeatures">
+	<attribute name="class"><value>PhNCFeatures</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Features"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhNCSegments">
+	<attribute name="class"><value>PhNCSegments</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Segments"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhFeatureConstraint">
+	<attribute name="class"><value>PhFeatureConstraint</value></attribute>
+	<interleave>
+		<optional><element name="Feature"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhEnvironment">
+	<attribute name="class"><value>PhEnvironment</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="LeftContext"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="RightContext"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="AMPLEStringSegment"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="StringRepresentation"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhCode">
+	<attribute name="class"><value>PhCode</value></attribute>
+	<interleave>
+		<optional><element name="Representation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhPhonData">
+	<attribute name="class"><value>PhPhonData</value></attribute>
+	<interleave>
+		<optional><element name="PhonemeSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Environments"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="NaturalClasses"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Contexts"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="FeatConstraints"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="PhonRuleFeats"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="PhonRules"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoDeriv">
+	<attribute name="class"><value>MoDeriv</value></attribute>
+	<interleave>
+		<optional><element name="StemForm"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="StemMsa"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="InflectionalFeats"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="StratumApps"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoAlloAdhocProhib">
+	<attribute name="class"><value>MoAlloAdhocProhib</value></attribute>
+	<interleave>
+		<optional><element name="Adjacency"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Allomorphs"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="FirstAllomorph"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="RestOfAllos"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoMorphAdhocProhib">
+	<attribute name="class"><value>MoMorphAdhocProhib</value></attribute>
+	<interleave>
+		<optional><element name="Adjacency"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Morphemes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="FirstMorpheme"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="RestOfMorphs"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoCopyFromInput">
+	<attribute name="class"><value>MoCopyFromInput</value></attribute>
+	<interleave>
+		<optional><element name="Content"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="WfiWordSet">
+	<attribute name="class"><value>WfiWordSet</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Cases"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoBinaryCompoundRule">
+	<attribute name="class"><value>MoBinaryCompoundRule</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ToProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LeftMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="RightMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Linker"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoCoordinateCompound">
+	<attribute name="class"><value>MoCoordinateCompound</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Stratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="ToProdRestrict"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LeftMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="RightMsa"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Linker"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoGlossSystem">
+	<attribute name="class"><value>MoGlossSystem</value></attribute>
+	<interleave>
+		<optional><element name="Glosses"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoGlossItem">
+	<attribute name="class"><value>MoGlossItem</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Type"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="AfterSeparator"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ComplexNameSeparator"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ComplexNameFirst"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Status"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="FeatStructFrag"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="GlossItems"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Target"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="EticID"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoAdhocProhibGr">
+	<attribute name="class"><value>MoAdhocProhibGr</value></attribute>
+	<interleave>
+		<optional><element name="Adjacency"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Members"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="WfiMorphBundle">
+	<attribute name="class"><value>WfiMorphBundle</value></attribute>
+	<interleave>
+		<optional><element name="Form"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Morph"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Msa"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Sense"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexEtymology">
+	<attribute name="class"><value>LexEtymology</value></attribute>
+	<interleave>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Form"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Gloss"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Source"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ChkRef">
+	<attribute name="class"><value>ChkRef</value></attribute>
+	<interleave>
+		<optional><element name="Ref"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="KeyWord"><ref name="basic-String"/></element></optional>
+		<optional><element name="Status"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Rendering"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Location"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="MoUnclassifiedAffixMsa">
+	<attribute name="class"><value>MoUnclassifiedAffixMsa</value></attribute>
+	<interleave>
+		<optional><element name="Components"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="GlossString"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="GlossBundle"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="PartOfSpeech"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexEntryType">
+	<attribute name="class"><value>LexEntryType</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="ReverseAbbr"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexRefType">
+	<attribute name="class"><value>LexRefType</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="ReverseAbbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="MappingType"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Members"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ReverseName"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexReference">
+	<attribute name="class"><value>LexReference</value></attribute>
+	<interleave>
+		<optional><element name="Comment"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Targets"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ChkSense">
+	<attribute name="class"><value>ChkSense</value></attribute>
+	<interleave>
+		<optional><element name="Explanation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Sense"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="DsConstChart">
+	<attribute name="class"><value>DsConstChart</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Publications"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="HeaderFooterSets"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Template"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="BasedOn"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Rows"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="DsDiscourseData">
+	<attribute name="class"><value>DsDiscourseData</value></attribute>
+	<interleave>
+		<optional><element name="ConstChartTempl"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Charts"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ChartMarkers"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ChkTerm">
+	<attribute name="class"><value>ChkTerm</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Occurrences"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SeeAlso"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Renderings"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="TermId"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="ChkRendering">
+	<attribute name="class"><value>ChkRendering</value></attribute>
+	<interleave>
+		<optional><element name="SurfaceForm"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Meaning"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Explanation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LexEntryRef">
+	<attribute name="class"><value>LexEntryRef</value></attribute>
+	<interleave>
+		<optional><element name="VariantEntryTypes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ComplexEntryTypes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="PrimaryLexemes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ComponentLexemes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HideMinorEntry"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Summary"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="LiftResidue"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="RefType"><ref name="basic-Integer"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhSegmentRule">
+	<attribute name="class"><value>PhSegmentRule</value></attribute>
+	<interleave>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Direction"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="InitialStratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="FinalStratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="StrucDesc"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhRegularRule">
+	<attribute name="class"><value>PhRegularRule</value></attribute>
+	<interleave>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Direction"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="InitialStratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="FinalStratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="StrucDesc"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="RightHandSides"><ref name="owning-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhMetathesisRule">
+	<attribute name="class"><value>PhMetathesisRule</value></attribute>
+	<interleave>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Direction"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="InitialStratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="FinalStratum"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="StrucDesc"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="StrucChange"><ref name="basic-String"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhSegRuleRHS">
+	<attribute name="class"><value>PhSegRuleRHS</value></attribute>
+	<interleave>
+		<optional><element name="LeftContext"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="RightContext"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="StrucChange"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="InputPOSes"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ExclRuleFeats"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ReqRuleFeats"><ref name="reference-multiple"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="PhPhonRuleFeat">
+	<attribute name="class"><value>PhPhonRuleFeat</value></attribute>
+	<interleave>
+		<optional><element name="Name"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Abbreviation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="SubPossibilities"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SortSpec"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Restrictions"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="Confidence"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="Status"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Discussion"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Researchers"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="HelpId"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="ForeColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="BackColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderColor"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="UnderStyle"><ref name="basic-Integer"/></element></optional>
+		<optional><element name="Hidden"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="IsProtected"><ref name="basic-Boolean"/></element></optional>
+		<optional><element name="Item"><ref name="reference-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<define name="LangProject">
+	<attribute name="class"><value>LangProject</value></attribute>
+	<interleave>
+		<optional><element name="DateCreated"><ref name="basic-Time"/></element></optional>
+		<optional><element name="DateModified"><ref name="basic-Time"/></element></optional>
+		<optional><element name="Description"><ref name="basic-MultiString"/></element></optional>
+		<optional><element name="EthnologueCode"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="WorldRegion"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="MainCountry"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="FieldWorkLocation"><ref name="basic-MultiUnicode"/></element></optional>
+		<optional><element name="PartsOfSpeech"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Texts"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="TranslationTags"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Thesaurus"><ref name="reference-atomic"/></element></optional>
+		<optional><element name="WordformLookupLists"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="AnthroList"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="LexDb"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="ResearchNotebook"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="AnalysisWss"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="CurVernWss"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="CurAnalysisWss"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="CurPronunWss"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="MsFeatureSystem"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="MorphologicalData"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Styles"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Filters"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ConfidenceLevels"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Restrictions"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Roles"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="AnalysisStatus"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Locations"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="People"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Education"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="TimeOfDay"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="AffixCategories"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="PhonologicalData"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Positions"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Overlays"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="AnalyzingAgents"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="TranslatedScripture"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="VernWss"><ref name="reference-multiple"/></element></optional>
+		<optional><element name="ExtLinkRootDir"><ref name="basic-Unicode"/></element></optional>
+		<optional><element name="SortSpecs"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Annotations"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="UserAccounts"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="ActivatedFeatures"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="AnnotationDefs"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="Pictures"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="SemanticDomainList"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="CheckLists"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="Media"><ref name="owning-multiple"/></element></optional>
+		<optional><element name="GenreList"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="DiscourseData"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="TextMarkupTags"><ref name="owning-atomic"/></element></optional>
+		<optional><element name="PhFeatureSystem"><ref name="owning-atomic"/></element></optional>
+		<optional><ref name="CustomFields"/></optional>
+	</interleave>
+</define>
+
+<start>
+	<element name="languageproject">
+		<attribute name="version"><value>7000018</value></attribute>
+		<optional>
+			<element name="AdditionalFields">
+				<zeroOrMore>
+					<element name="CustomField">
+					<attribute name="name"/>
+					<attribute name="class"/>
+					<attribute name="type"/>
+					<optional><attribute name="destclass"/></optional>
+					<optional><attribute name="wsSelector"/></optional>
+					<optional><attribute name="listRoot"/></optional>
+					<optional><attribute name="helpString"/></optional>
+					</element>
+				</zeroOrMore>
+			</element>
+		</optional>
+		<zeroOrMore>
+			<element name="rt">
+				<attribute name="guid"/>
+				<optional><attribute name="ownerguid"/></optional>
+				<choice>
+					<ref name="CmObject"/>
+					<ref name="CmFolder"/>
+					<ref name="Note"/>
+					<ref name="FsComplexFeature"/>
+					<ref name="Segment"/>
+					<ref name="CmPossibility"/>
+					<ref name="CmPossibilityList"/>
+					<ref name="CmFilter"/>
+					<ref name="CmRow"/>
+					<ref name="CmCell"/>
+					<ref name="CmLocation"/>
+					<ref name="CmPerson"/>
+					<ref name="StText"/>
+					<ref name="StTxtPara"/>
+					<ref name="StStyle"/>
+					<ref name="UserView"/>
+					<ref name="UserViewRec"/>
+					<ref name="UserViewField"/>
+					<ref name="CmOverlay"/>
+					<ref name="TextTag"/>
+					<ref name="CmAgent"/>
+					<ref name="LgWritingSystem"/>
+					<ref name="CmAnthroItem"/>
+					<ref name="CmCustomItem"/>
+					<ref name="CrossReference"/>
+					<ref name="CmTranslation"/>
+					<ref name="LgCollation"/>
+					<ref name="CmSortSpec"/>
+					<ref name="CmAgentEvaluation"/>
+					<ref name="CmAnnotationDefn"/>
+					<ref name="CmIndirectAnnotation"/>
+					<ref name="CmBaseAnnotation"/>
+					<ref name="CmMediaAnnotation"/>
+					<ref name="StFootnote"/>
+					<ref name="UserConfigAcct"/>
+					<ref name="UserAppFeatAct"/>
+					<ref name="Publication"/>
+					<ref name="PubDivision"/>
+					<ref name="PubPageLayout"/>
+					<ref name="PubHFSet"/>
+					<ref name="PubHeader"/>
+					<ref name="CmFile"/>
+					<ref name="CmPicture"/>
+					<ref name="FsFeatureSystem"/>
+					<ref name="FsClosedFeature"/>
+					<ref name="FsClosedValue"/>
+					<ref name="FsComplexValue"/>
+					<ref name="FsDisjunctiveValue"/>
+					<ref name="FsFeatStruc"/>
+					<ref name="FsFeatStrucDisj"/>
+					<ref name="FsFeatStrucType"/>
+					<ref name="FsNegatedValue"/>
+					<ref name="FsOpenFeature"/>
+					<ref name="FsOpenValue"/>
+					<ref name="FsSharedValue"/>
+					<ref name="FsSymFeatVal"/>
+					<ref name="CmSemanticDomain"/>
+					<ref name="CmDomainQ"/>
+					<ref name="StJournalText"/>
+					<ref name="CmMedia"/>
+					<ref name="CmResource"/>
+					<ref name="Scripture"/>
+					<ref name="ScrBook"/>
+					<ref name="ScrRefSystem"/>
+					<ref name="ScrBookRef"/>
+					<ref name="ScrSection"/>
+					<ref name="ScrImportSet"/>
+					<ref name="ScrDraft"/>
+					<ref name="ScrDifference"/>
+					<ref name="ScrImportP6Project"/>
+					<ref name="ScrImportSFFiles"/>
+					<ref name="ScrMarkerMapping"/>
+					<ref name="ScrBookAnnotations"/>
+					<ref name="ScrScriptureNote"/>
+					<ref name="ScrCheckRun"/>
+					<ref name="ScrTxtPara"/>
+					<ref name="ScrFootnote"/>
+					<ref name="RnResearchNbk"/>
+					<ref name="RnGenericRec"/>
+					<ref name="Reminder"/>
+					<ref name="RnRoledPartic"/>
+					<ref name="MoStemMsa"/>
+					<ref name="LexEntry"/>
+					<ref name="ConstChartRow"/>
+					<ref name="LexExampleSentence"/>
+					<ref name="LexDb"/>
+					<ref name="ConstChartWordGroup"/>
+					<ref name="ConstChartMovedTextMarker"/>
+					<ref name="ConstChartClauseMarker"/>
+					<ref name="ConstChartTag"/>
+					<ref name="PunctuationForm"/>
+					<ref name="LexPronunciation"/>
+					<ref name="LexSense"/>
+					<ref name="MoAffixAllomorph"/>
+					<ref name="MoAffixProcess"/>
+					<ref name="MoDerivAffMsa"/>
+					<ref name="MoDerivStepMsa"/>
+					<ref name="MoEndoCompound"/>
+					<ref name="MoExoCompound"/>
+					<ref name="MoInflAffixSlot"/>
+					<ref name="MoInflAffixTemplate"/>
+					<ref name="MoInflAffMsa"/>
+					<ref name="MoInflClass"/>
+					<ref name="MoMorphData"/>
+					<ref name="MoMorphType"/>
+					<ref name="MoReferralRule"/>
+					<ref name="MoStemAllomorph"/>
+					<ref name="LexAppendix"/>
+					<ref name="MoStemName"/>
+					<ref name="MoStratum"/>
+					<ref name="PartOfSpeech"/>
+					<ref name="ReversalIndex"/>
+					<ref name="ReversalIndexEntry"/>
+					<ref name="Text"/>
+					<ref name="WfiAnalysis"/>
+					<ref name="WfiGloss"/>
+					<ref name="WfiWordform"/>
+					<ref name="WordFormLookup"/>
+					<ref name="WordformLookupList"/>
+					<ref name="MoInsertPhones"/>
+					<ref name="MoInsertNC"/>
+					<ref name="MoModifyFromInput"/>
+					<ref name="MoCompoundRuleApp"/>
+					<ref name="MoDerivAffApp"/>
+					<ref name="MoInflAffixSlotApp"/>
+					<ref name="MoInflTemplateApp"/>
+					<ref name="MoPhonolRuleApp"/>
+					<ref name="MoStratumApp"/>
+					<ref name="PhIterationContext"/>
+					<ref name="PhSequenceContext"/>
+					<ref name="PhSimpleContextBdry"/>
+					<ref name="PhSimpleContextNC"/>
+					<ref name="PhSimpleContextSeg"/>
+					<ref name="PhVariable"/>
+					<ref name="PhPhonemeSet"/>
+					<ref name="PhBdryMarker"/>
+					<ref name="PhPhoneme"/>
+					<ref name="PhNCFeatures"/>
+					<ref name="PhNCSegments"/>
+					<ref name="PhFeatureConstraint"/>
+					<ref name="PhEnvironment"/>
+					<ref name="PhCode"/>
+					<ref name="PhPhonData"/>
+					<ref name="MoDeriv"/>
+					<ref name="MoAlloAdhocProhib"/>
+					<ref name="MoMorphAdhocProhib"/>
+					<ref name="MoCopyFromInput"/>
+					<ref name="WfiWordSet"/>
+					<ref name="MoBinaryCompoundRule"/>
+					<ref name="MoCoordinateCompound"/>
+					<ref name="MoGlossSystem"/>
+					<ref name="MoGlossItem"/>
+					<ref name="MoAdhocProhibGr"/>
+					<ref name="WfiMorphBundle"/>
+					<ref name="LexEtymology"/>
+					<ref name="ChkRef"/>
+					<ref name="MoUnclassifiedAffixMsa"/>
+					<ref name="LexEntryType"/>
+					<ref name="LexRefType"/>
+					<ref name="LexReference"/>
+					<ref name="ChkSense"/>
+					<ref name="DsConstChart"/>
+					<ref name="DsDiscourseData"/>
+					<ref name="ChkTerm"/>
+					<ref name="ChkRendering"/>
+					<ref name="LexEntryRef"/>
+					<ref name="PhSegmentRule"/>
+					<ref name="PhRegularRule"/>
+					<ref name="PhMetathesisRule"/>
+					<ref name="PhSegRuleRHS"/>
+					<ref name="PhPhonRuleFeat"/>
+					<ref name="LangProject"/>
+				</choice>
+			</element>
+		</zeroOrMore>
+	</element>
+</start>
+
+</grammar>

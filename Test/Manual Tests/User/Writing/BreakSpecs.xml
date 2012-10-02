@@ -1,0 +1,38 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\BreakSpecs.xml">
+ <title tag="wrtbs">Breaking specifications into objects</title>
+ <index>
+  <li>specifications: breaking up</li>
+  <li>making test objects from specs</li>
+  <li>finding test objects in specs</li>
+  <li>test objects from specs</li>
+ </index>
+ <introduction>
+  <p>A project specification tells the "what" about a part of the user interface or an interface function. It does not concern itself with COM interface, class, data nor method specifications.</p>
+  <p>Specifications often describe more than one means of significant user interaction. Each becomes a test script for that center of activity.</p>
+  <p>Testible objects include:</p>
+  <ul>
+   <li>main application window</li>
+   <li>view (child window)</li>
+   <li>dialog</li>
+   <li>menu</li>
+   <li>toolbar</li>
+   <li>action (command)</li>
+   <li>font</li>
+   <li>Installer</li>
+  </ul>
+ </introduction>
+ <guidelines>
+  <p>Here are some guidelines for breaking specifications into testible objects:</p>
+  <ul>
+	<li>Scan the specification for any of the above objects. Those mentioned or pictured in the specification become candidates for test scripts. Make a list of them and apply the rest of these guidelines.</li>
+	<li>Break out actions into their own test scripts only if they exercise subsystems that are not tested thoroughly through a more fine-grained interface.
+	 <p name="Example 1">Redo/Undo or a Save menu item probably don't have a more fine-grained dialog to exercise them; Redo/Undo would be in one test script, Save in another possibly with Open and Open as.</p>
+	 <p name="Example 2">A Print item on a menu or toolbar button would have a separate test script unless there is a "Page setup" action which can be used to test the printing capabilities more completely.</p></li>
+	<li>Main windows, menus, toolbars and frame-like sections (a side-bar, navigation bar, etc) are containers that have functionality apart from the actions of their embedded controls. Make a separte test script for each. Test scripts for these include references to their basic tests and many of their actions or the objects launched by their actions (which other than launching something are trivial). Only unique relatively simple actions should be included in these test scripts.</li>
+	<li>Warning, progress and other informational dialogs should become part of another testscript. If it would fit in more than one test script, make it a standard control, FieldWorks basic or application common test script. It would then be refered to from other test scripts.</li>
+	<li>Fonts, especially Graphite fonts, often warrent separate test scripts. Behavior in paragraphs with different boundaries and styles and useability of keying sequences are determining factors.</li>
+	<li>Make a separte test script for each installer. These test scripts emphasize different installation scenarios rather than testing individual dialogs. If a dialog merits separate attention, it is usually included as a set of test cases. Installation dialogs tend to be similar across applications and can refer to standard dialogs. Where they depart, they tend to be dramatically unique.</li>
+  </ul>
+ </guidelines>
+</task>

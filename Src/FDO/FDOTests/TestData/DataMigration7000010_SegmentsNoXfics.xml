@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+
+	<!-- Test part of code that deals with extant old segments and xfics. -->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1b">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="27" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-4486-A32F-944490F0C024" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmBaseAnnotation" guid="22a8431f-f975-412f-a261-8bd1a4e1be1b">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="27" />
+			<EndOffset val="43" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="60BF79A0-9579-4486-A32F-944490F0C024" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be5c" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Free translation -->
+				<objsur guid="9ac9637a-56b9-4f05-a0e1-4243fbfb57db" t="r" />
+			</AnnotationType>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">Free Trans.</Run>
+				</AStr>
+				<AStr ws="es">
+					<Run ws="es">Trad. Libre.</Run>
+				</AStr>
+			</Comment>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Segment base annotation -->
+				<objsur guid="22a8431f-f974-412f-a261-8bd1a4e1be1b" t="r" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be5d" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Literal translation -->
+				<objsur guid="B0B1BB21-724D-470A-BE94-3D9A436008B8" t="r" />
+			</AnnotationType>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">Lit. Trans.</Run>
+				</AStr>
+				<AStr ws="es">
+					<Run ws="es">Trad. Lit.</Run>
+				</AStr>
+			</Comment>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Segment base annotation -->
+				<objsur guid="22a8431f-f974-412f-a261-8bd1a4e1be1b" t="r" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="22a8432f-f974-412f-a261-8bd1a4e1be5d" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Nt. -->
+				<objsur guid="7FFC4EAB-856A-43CC-BC11-0DB55738C15B" t="r" />
+			</AnnotationType>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">Note1.</Run>
+				</AStr>
+				<AStr ws="es">
+					<Run ws="es">Nota1.</Run>
+				</AStr>
+			</Comment>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Segment base annotation -->
+				<objsur guid="22a8431f-f974-412f-a261-8bd1a4e1be1b" t="r" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="22a8433f-f974-412f-a261-8bd1a4e1be5d" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Nt. -->
+				<objsur guid="7FFC4EAB-856A-43CC-BC11-0DB55738C15B" t="r" />
+			</AnnotationType>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">Note2.</Run>
+				</AStr>
+				<AStr ws="es">
+					<Run ws="es">Nota2.</Run>
+				</AStr>
+			</Comment>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Segment base annotation -->
+				<objsur guid="22a8431f-f974-412f-a261-8bd1a4e1be1b" t="r" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<rt class="StTxtPara" guid="60BF79A0-9579-4486-A32F-944490F0C024" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Paragraph with everything. Second sentence.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+</languageproject>

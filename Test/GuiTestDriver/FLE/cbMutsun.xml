@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+   <goal>TBD</goal>
+
+   <bug id="FWR-2165" desc="Crash switching to Word Analysis first time"/>
+   <bug id="FWR-1031" desc="Crash deleting text baseline"/>
+   <bug id="FWR-659" desc="Crash in Tagakaulo concordance search"/>
+
+   <!-- In the Mutsun database:
+		 Interlinear (first - no words stuff) Arroyo's ...
+		 Analysis
+		 Concordance/* search for " .*" (regular expression
+		 Find example scentence (look for hanni(1) OFF SENSE 1
+	-->
+
+	<var id="projectName" set="Mutsun"/>
+	<var id="ProjType" set="XML"/>
+	<var id="ProjExt" set="fwdata"/>
+	<!--var id="ProjType" set="DB4OCS"/>
+	<var id="ProjExt" set="db4o"/-->
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+	<on-application run = "ok" args='-app FLEx -db "C:\GuiTestDriver\Projects\$projectName;\$projectName;.$ProjExt;"' close = "no" on-fail = "assert">
+	   <!-- verify that the view is Lexicon Edit -->
+	   <var id="sbLxEdit" select="sidebar/area/list" ind="1" add="Lexicon Edit"/>
+	   <glimpse id="LxEditSel" path="$sbLxEdit" prop="selected"/>
+
+	   <var id="firstRec" select="toolbar/standard/first"/>
+
+	   <!-- Interlinear (first - no words stuff) Arroyo's ... -->
+	   <var id="txInterlinear" select="menubar/view/texts-words/interlinear-texts"/>
+	   <model select="interlinear-texts[@role='view']/text/analyze">
+		  <monitor-time expect="999999999" desc="Mutsun db Texts Edit, click Interlinearize tab">
+			 <click path="$txInterlinear"/>
+			 <click wait="24000" select="tab"/>
+			 <click path="$firstRec"/>
+		  </monitor-time>
+	   </model>
+
+	   <!-- Time to open Words/Analysis view after interlinear -->
+	   <monitor-time expect="999999999" desc="Mutsun db, Interlinear to Words Analysis">
+		  <click select="menubar/view/texts-words/word-analyses"/>
+		  <click wait="7000" select="word-analysis[@role='view']/wordforms/title"/>
+	   </monitor-time>
+
+	   <!-- Time to search Concordance/* for " .*" (regular expression -->
+	   <click select="menubar/view/texts-words/concordance"/>
+	   <monitor-time expect="999999999" desc="Mutsun db Concordance, search for .* reg. expr.">
+		   <click select="concordance/criteria/for-the-text/value"/>
+		   <insert wait="300">{END}+{HOME} .*</insert>
+		   <click select="concordance/criteria/use-regular-expressions"/>
+		   <click select="concordance/criteria/search"/>
+		   <on-dialog title="Notice" name="TBD" >
+			   <click path="18:Notice/$ok"/>
+		   </on-dialog>
+		   <click select="concordance/criteria/label"/>
+	   </monitor-time>
+
+	   <!-- Find example scentence (look for hanni(1) OFF SENSE 1 -->
+	   <click select="menubar/view/lexicon/lexicon-edit"/>
+	   <!-- verify that the view is Lexicon Edit -->
+	   <glimpse id="LexEdSel2" path="$sbLxEdit" prop="selected"/>
+	   <click path="$firstRec"/>
+	   <click select="toolbar/insert/find-lexical-entry"/>
+	   <on-dialog title="Find Lexical Entry" select="//find-entry[@role='dialog']">
+		  <insert wait="300" pause="300">hanni</insert>
+		  <insert wait="2000">{TAB}</insert>  <!-- wait for the search to finish -->
+		  <click path="9:Go To/43:Go To"/>  <!-- go to the first one -->
+	   </on-dialog>
+
+	   <!--model wait="5000" select="lexicon-edit[@role='view']"-->
+	   <model select="lexicon-edit[@role='view']">
+		  <click dx="50" select="entry/slice/string-field/label" path="$fld" ind="*ind" fld="Gloss" row="1"/>
+		  <glimpse id="noWhere" select="entry/slice/string-field/text" expect="where?" />
+
+	<!-- Right-click the first example: there are 4. The new one becomes the 2nd.  -->
+		  <click side="right" select="entry/slice/string-field/label" path="$fld" ind="*ind" fld="Example"/>
+		  <monitor-time expect="999999999" desc="Mutsun db Lex Edit, find an example sentence">
+			 <insert wait="300">{DOWN 5}</insert> <!-- select find example sentence -->
+			 <insert wait="300">~</insert>
+			 <on-dialog title="Find Example Sentence" name="FindExampleSentenceDlg">
+				  <var id="fe-base" set="$NL2;9:ConcOccurrenceList/9:ConcOccurrenceList/$NL;"/>
+				  <var id="exOcc" set="$fe-base;9:HeaderListView/33:HeaderListView/$NL;25:Occurrence"/>
+				  <var id="exRec" set="$fe-base;20:RootSite/24:Table"/>
+				  <click dx="5" dy="5" path="$exRec;/$Col;/40:Picture"/><!-- mark the first checkbox -->
+				  <click path="$add"/>
+				  </on-dialog>
+			 <glimpse id="noAnnepe" select="entry/slice/string-field/text" expect="annepe aka?" />
+		  </monitor-time>
+
+		  <!-- Delete the example -->
+		  <var id="ind" add="2"/> <!-- delete the 2nd example -->
+		  <click side="right" select="entry/slice/string-field/label" path="$fld"/>
+		  <insert wait="300">{DOWN 2}</insert> <!-- select delete example -->
+		  <insert wait="300">~</insert>
+		  <on-dialog title="Delete Example" name="ConfirmDeleteObjectDlg">
+			 <click path="9:Delete/43:Delete"/>
+		  </on-dialog>
+
+	   </model>
+
+	</on-application>
+
+</accil>

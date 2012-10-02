@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.SharpViews.Hookups;
+
+namespace SIL.FieldWorks.SharpViews.SharpViewsTests
+{
+	class MockMultiAccessor : IViewMultiString
+	{
+		public int VernWs;
+		public int AnalysisWs;
+
+		public MockMultiAccessor(int vws, int aws)
+		{
+			VernWs = vws;
+			AnalysisWs = aws;
+		}
+
+		private Dictionary<int, ITsString> m_values = new Dictionary<int, ITsString>();
+
+		#region IMultiAccessorBase Members
+
+		public SIL.FieldWorks.Common.COMInterfaces.ITsString AnalysisDefaultWritingSystem
+		{
+			get
+			{
+				return m_values[AnalysisWs];
+			}
+			set
+			{
+				set_String(AnalysisWs, value);
+			}
+		}
+
+		public void SetAnalysisDefaultWritingSystem(string val)
+		{
+			AnalysisDefaultWritingSystem = TsStrFactoryClass.Create().MakeString(val, AnalysisWs);
+		}
+
+		public void SetVernacularDefaultWritingSystem(string val)
+		{
+			VernacularDefaultWritingSystem = TsStrFactoryClass.Create().MakeString(val, VernWs);
+		}
+
+		public ITsString VernacularDefaultWritingSystem
+		{
+			get
+			{
+				return m_values[VernWs];
+			}
+			set
+			{
+				set_String(VernWs, value);
+			}
+		}
+
+		public ITsString get_String(int ws)
+		{
+			return m_values[ws];
+		}
+
+		public void set_String(int ws, ITsString tss)
+		{
+			m_values[ws] = tss;
+			if (StringChanged != null)
+				StringChanged(this, new MlsChangedEventArgs(ws));
+		}
+
+		public event EventHandler<MlsChangedEventArgs> StringChanged;
+
+		#endregion
+	}
+}

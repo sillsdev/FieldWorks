@@ -1,0 +1,304 @@
+(message (
+ <hc6508 fname C:\DATA\HC\MORPHER\TESTS\HEBREW\HEBREW.IN > ) )
+;$Id: hebrew.in 1.20 1997/11/24 17:16:16 Mike_Maxwell Exp $
+;  modified from PC-KIMMO file HEBREW.RUL by Mike Maxwell
+; Data from Generative Phonology, by Kenstowicz and Kisseberth,
+; Academic Press, 1979, pp. 134-135.
+; Hebrew Itpa'el pattern. Assume that all verb roots have lexical
+; forms according to the patterns CVCeC or CVCCeC.
+; $ = alveopalatal sibilant (s-wedge)
+; x = velar fricative
+; ? = glottal stop
+; q = pharyngeal stop (backwards question mark)
+; H = pharyngeal fricative (h with a dot under it)
+(message (
+ <hc6510 lname Hebrew > ) )
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Ff from Hyman "Phonology: Theory and Analysis", Holt, Rinehart and Winston, pg. 241-244
+;bilabial =     [-back -high -low +ant -cor]
+;alveolar =     [-back -high -low +ant +cor]
+;alveopalatal = [-back +high -low -ant +cor]
+;velar =        [+back +high -low -ant -cor]
+;pharyngeal =   [+back -high +low -ant -cor]
+;glottal =      [-back -high +low -ant -cor]
+;Note that the Cs have to be specified for all the features used with alpha variables
+(message (
+ <hc6501 table_name table1 > ) )
+;Now set the strata (just one):
+(message (
+ <hc6502 var_name '*strata*' > ) )
+;...and set their ctables (msg 6550):
+(message (
+ <hc6550 sname morphophonemic ctable_name table1 > ) )
+(message (
+ <hc6550 sname '*surface*' ctable_name table1 > ) )
+;...and the cyclicity of the morphophonemic stratum (msg 6552):
+(message (
+ <hc6552 sname morphophonemic > ) )
+;...and the order of the prules and mrules:
+(message (
+ <hc6555 sname morphophonemic > ) )
+(message (
+ <hc6556 sname morphophonemic > ) )
+(message (
+ <hc6515 n 29 fname c:\data\hc\morpher\tests\hebrew\hebrew.dic > ) )
+;Load the natural classes:
+(message (
+ <hc6541 nat_class_name null > ) )
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6541 nat_class_name vowel > ) )
+(message (
+ <hc6541 nat_class_name voiced > ) )
+(message (
+ <hc6541 nat_class_name voiceless > ) )
+(message (
+ <hc6541 nat_class_name nonson_vd > ) )
+(message (
+ <hc6541 nat_class_name strident_cons > ) )
+(message (
+ <hc6541 nat_class_name bp > ) )
+(message (
+ <hc6541 nat_class_name dt > ) )
+(message (
+ <hc6541 nat_class_name t > ) )
+(message (
+ <hc6541 nat_class_name 'Q' > ) )
+(message (
+ <hc6541 nat_class_name pharyngeal > ) )
+(message (
+ <hc6541 nat_class_name i > ) )
+(message (
+ <hc6541 nat_class_name e > ) )
+(message (
+ <hc6541 nat_class_name a > ) )
+(message (
+ <hc6541 nat_class_name low_back > ) )
+;-----------------------------PHONOLOGICAL RULES
+; glottal/pharyngeal stop Deletion
+; LR: it+male?+ti  it+male?
+; SR: it0male00ti  it0male0
+;Must be ordered before lowering (qv)
+;RULE "14 Q:0 correspondences" (doesn't correspond to anything in HC)
+; Q = ? q
+;RULE "15 Deletion 2, Q:0 <=> ___[C|#]" 3 6
+; The HC anal is a little different: they delete before /t/ (note phonetic similarity, and allophonic
+; variation in English between these two) and __#:
+; {q ?} --> 0 / V __ {t #}
+(message (
+ <hc6505 rname 'Q_deletion' > ) )
+; Lowering
+; LR: it+parnes+ti  it+motet+ti
+; SR: it0parnas0ti  it0mota00ti
+; IAW PC-KIMMO file, "doesn't occur before ?:0"; we handle it by ordering this rule after Q-delete
+; (see K&K first three words under (d) on pg. 135).  (Note that the CC is obligatory.)
+; Ordered before D_deletion, which counterbleeds this rule.
+;RULE "3 Lowering, e:a <= ___CC(+:0)i#"
+;RULE "4 Lowering, e:a => ___CC(+:0)i#"
+(message (
+ <hc6505 rname lowering > ) )
+; Deletion 1
+; LR: it+motet+ti  it+boded+ti
+; SR: it0mota00ti  id0boda00ti
+;RULE "8 Deletion 1, D:0 <=> ___(+:0)t" 3 6
+; {d t} -> 0 / __ + t
+; Bleeds syncope and degemination.  Ordered after lowering, which it counterbleeds.
+(message (
+ <hc6505 rname 'D_deletion' > ) )
+; Syncope
+; In analysis used in PC-KIMMO, occurs only between non-identical consonants; I have reanalyzed it
+; to be deletion between any two Cs, followed by epenthesis between two identical Cs.
+; LR: it+Hamek+u  it+xamem+u
+; SR: it0Ham0k0u  it0xamem0u
+;RULE "9 Syncope, e:0 => VC___C(+:0)V#"
+;RULE "10 Syncope, e:0 <= VC___C(+:0)V#"
+;Order: syncope before degemination before before voicing 2
+(message (
+ <hc6505 rname syncope > ) )
+(message (
+ <hc6505 rname degemination > ) )
+; Voicing 1
+; LR: it+balbel
+; SR: id0balbel
+; B = b g z  (there are no ex's of /t/ before d, so I have assumed it works there too--MM)
+;RULE "5 Voicing 1, t:d <=> ___(+:0)B" 3 5
+(message (
+ <hc6505 rname voicing1 > ) )
+; Voicing 2
+; LR: it+labe$+u
+; SR: it0lap0$0u
+;RULE "6 Voicing 2, b:p <=> ___V:0$"
+; I have reanalyzed this as b -> p / __[-vd], which is ordered after syncope and degemination
+(message (
+ <hc6505 rname voicing2 > ) )
+; Metathesis
+; LR: it+saper  it+zaken
+; SR: is0taper  iz0daken
+;RULE "11 Metathesis, t:{s,z,$,c} <= ___(+:0){s,z,$,c}:t"
+;Since HC has no direct framework for metathesis, we analyze as two rules.  Allows /d/ to methathesize
+; also (see 'age' and 'hurry' in K&K p.135)
+; 0 --> {t d} / {t d} [C +strident] __
+; {t d} --> 0 / __ [C +strident] {t d}
+; in that order
+(message (
+ <hc6505 rname metathesis1 > ) )
+(message (
+ <hc6505 rname metathesis2 > ) )
+; Devoicing
+; LR: it+zarez+ti
+; SR: iz0daras0ti
+;RULE "13 Devoicing, z:s <=> ___(+:0)t" 3 5
+(message (
+ <hc6505 rname devoicing > ) )
+; Epenthesis
+; LR: it+pate0H
+; SR: it0pateaH
+; This epenthetic a is the so-called "furtive patah".
+;RULE "16 Epenthesis, 0:a <=> e___P:#" (where P = pharyngeal)
+(message (
+ <hc6505 rname epenthesis > ) )
+;--------------------------------MORPHOLOGICAL RULES
+(message (
+ <hc6505 rname first_sg > ) )
+(message (
+ <hc6505 rname third_sgf > ) )
+(message (
+ <hc6505 rname it_prefix > ) )
+;(trace_morpher_rule message (true true first_sg))
+;(trace_morpher_rule message (true true third_sgf))
+;(trace_morpher_rule message (true true it_prefix))
+;(trace_lexical_lookup true)
+;Don't let errors stop us:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;-----------------------TEST ITEMS
+(message (word_analysis
+ <lex id 17 sh istaparti gl get a haircut -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 4 sh itparnasti gl earn -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 4 sh itparnes gl earn IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 4 sh itparnesu gl earn -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 5 sh itparsamti gl become famous -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 5 sh itparsem gl become famous IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 5 sh itparsemu gl become famous -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh idbalbalti gl be confused -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh idbalbel gl be confused IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh idbalbelu gl be confused -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh idgalgalti gl revolve -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh idgalgel gl revolve IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh idgalgelu gl revolve -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 8 sh itHamakti gl turn away -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 8 sh itHamek gl turn away IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 8 sh itHamku gl turn away -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 9 sh itlaba$ti gl get dressed -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 9 sh itlabe$ gl get dressed IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 9 sh itlap$u gl get dressed -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 10 sh idbadarti gl make fun -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 10 sh idbader gl make fun IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 10 sh idbadru gl make fun -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh idgara$ti gl divorce -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh idgare$ gl divorce IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh idgar$u gl divorce -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh itpalalti gl pray -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh itpalel gl pray IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh itpalelu gl pray -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh itxamamti gl warm -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh itxamem gl warm IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh itxamemu gl warm -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 14 sh itmotati gl quake -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 14 sh itmotet gl quake IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 14 sh itmotetu gl quake -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 15 sh it?o$a$ti gl recover consciousness -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 15 sh it?o$e$ gl recover consciousness IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 15 sh it?o$e$u gl recover consciousness -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 16 sh idbodati gl seclude oneself -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 16 sh idboded gl seclude oneself IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 16 sh idbodedu gl seclude oneself -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 17 sh istaparti gl get a haircut -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 17 sh istaper gl get a haircut IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 17 sh istapru gl get a haircut -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 18 sh istarakti gl comb hair -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 18 sh istarek gl comb hair IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 18 sh istarku gl comb hair -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 19 sh i$taparti gl improve -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 19 sh i$taper gl improve IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 19 sh i$tapru gl improve -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 20 sh ictalamti gl have one's photo taken -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 20 sh ictalem gl have one's photo taken IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 20 sh ictalmu gl have one's photo taken -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 21 sh izdakanti gl age -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 21 sh izdaken gl age IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 21 sh izdaknu gl age -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 22 sh izdarasti gl hurry -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 22 sh izdarez gl hurry IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 22 sh izdarzu gl hurry -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 23 sh itamamti gl feign innocence -1SG IT- pos 'V' mrs (first_sg it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 23 sh itamem gl feign innocence IT- pos 'V' mrs (it_prefix ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 23 sh itamemu gl feign innocence -3SGF IT- pos 'V' mrs (third_sgf it_prefix ) str '*surface*' > ) )
+(message (
+ <hc6521 fname C:\DATA\HC\MORPHER\TESTS\HEBREW\HEBREW.IN > ) )
+(message (
+ <hc6508 fname stdin > ) )
+(message (
+ <hc6522 fname standard out > ) )

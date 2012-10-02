@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlsshoselu" num="2.7.8" abbr="tlsu" file="FW\TlsShoSelUse.xml" ready="V2">
+<title tag="tlsshoselu">Tools-Show Selection Using Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Brings up a cascading sub-menu showing possible applications that can be launched according to the current context. Applications such as the Lexical Database Editor or the Text Editor are displayed if the current selection is on an object that is readily editable by such an application. If the user selects an application from this submenu, then that application is launched (or brought to the top if it is already running) and positioned to display the selected object. The menu item is grayed out if there is not context defined, or if there is no application available from the selected context. A selection, at its topmost level, will be either a single object or a sequence of objects. (There may well be many objects embedded or referenced within it, but we are interested only in the top-level objects.) Thus it is for these objects that the cascading menu will show the available tools. Thus a menu item might be "Major Entry Editor on abdul", or "Possibilities List editor for Locations". As the latter example points out, for some objects we will be interested in the containing object; e.g., for a Possibilities List Item we are going to want to display the tools for the Possibilities List itself.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Show Selection Using" type="doc">Tools-Show Selection Using</link>
+</p>
+<p name="todo">This test script requires editing to fit the specifications listed above. This is just a template to start out with.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Show Selection Using"</p>
+</context>
+
+<case id="tlsuAct" num="0" order="any">
+<title tag="tlsuAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">Invoke Tools-Show Selection Using. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Show Selection Using" type="doc">Definition of Tools-Show Selection Using.</link>
+<r>Expected result.</r>
+<p name="bug">Tools-Show Selection Using not working</p>
+</step>
+<step name="0.1" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Show Selection Using ..</p>
+</step>
+
+</case>
+
+<case id="tlsuDiac" num="1" order="any">
+<title tag="tlsuDiac">Exercise dialog controls</title>
+<context>
+<p>When the Tools-Show Selection Using is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Tools-Show Selection Using. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Show Selection Using" type="doc">Tools-Show Selection Using specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">Tools-Show Selection Using layout incorrect</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Tools-Show Selection Using" as the name of the dialog.</r>
+</step>
+<step name="1.3" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Show Selection Using ..</p>
+</step>
+
+</case>
+
+<case id="tlsu??" num="2" order="any">
+<title tag="tlsu??">Other controls</title>
+<context>
+<p>When the Tools-Show Selection Using is displayed:</p>
+</context>
+
+<step name="2.1">
+<link uri="../StdCtrls/??.xml" type="module">?? control</link> and use the shortcut &lt;Alt&gt;&lt;?&gt; to test the ?? control.
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Report any failures as suggested using "Tools-Show Selection Using ??" as the name of the control.</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Show Selection Using ..</p>
+</step>
+
+</case>
+
+<case id="tlsuSe" num="3" order="any">
+<title tag="tlsuSe">Side effects</title>
+<context>
+<p>When the Tools-Show Selection Using is displayed:</p>
+</context>
+
+<step name="3.1">Exercise the Tools-Show Selection Using on selected paragraphs with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly, resembling the form of the preview.</li>
+<li>
+</li>
+</ul>
+</r>
+<p name="bug">Tools-Show Selection Using control sequence causes problem</p>
+</step>
+<step name="3.2" link="Bug">Exercise the Tools-Show Selection Using on selected paragraphs with different settings. Exit the application, restart it and verify that the settings persist by bringing up the Tools-Show Selection Using again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly.</li>
+<li>The settings persist after leaving and re-entering the application.</li>
+</ul>
+</r>
+<p name="bug">Tools-Show Selection Using &lt;attribute&gt; does not persist</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+
+</test>

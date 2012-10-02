@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ConversionCompleteString" xml:space="preserve">
+	<value>
+The conversion of the Adapt It project configuration file and knowledge bases
+is complete! The next time you open AdaptIt Unicode, your new Unicode project
+'{0}' will be available.
+
+If you would like the adapted texts to be converted to Unicode as well, then
+click the 'Retry' button below.
+
+However beware: only the SFM fields that aren't filtered will be converted! If you
+have legacy data in filtered SFM fields, that data will not be converted to Unicode
+(and will likely be unrecoverable after that).
+
+If you need better control over the conversion process, it is recommended that you
+manually export the file(s) with the regular (Legacy) version of AdaptIt as either
+RTF or SFM files, and use SILConverters' Bulk Word document converter or Bulk SFM
+file converter applications, respectively, to convert them.
+
+To turn filtering on or off for certain SFM fields, click 'Edit', 'Preferences' in
+Adapt It and using the 'Filtering' tab before attempting the conversion here.
+</value>
+  </data>
+  <data name="FilteredFieldConversionHelp" xml:space="preserve">
+	<value>
+This table lists all of the filtered fields found in the current document. Check the box in the
+'Convert' column for all fields that contain legacy data in the Source language. Those fields
+will be converted to Unicode using the configured Source language converter.
+
+If a field contains English data (e.g. an English back translation) or arabic numeral data
+(e.g. verse or chapter numbers), then they don't need to be checked because such Ascii data
+are already in the proper format (aka. UTF-8).
+
+If you checked the box on installation that said, "I am using USFM or SILPNG", then certain
+SFM fields will not be shown in this list even if they occur in the filtered part of your
+imported SFM documents. These SFM fields (c.f. \f* (footnote) and \x* (cross-reference)) will
+automatically be converted using the source language converter.
+
+If you want more control over which fields are converted or not (e.g. if you aren't using USFM
+or SILPNG), then you can edit the Windows registry and change the key
+HKEY_CURRENT_USER\Software\SIL\AdaptIt2Unicode[UsingUSFM] to be equal to "No"
+instead of "Yes". Then all of the filtered SF markers encountered will be listed here for you
+to select whether they are to be converted or not.
+
+You can click on the cells in the 'Example Data' column to show other examples.
+
+Note that the 'Example Results' column shows what the result would look like only if
+you check the box in the 'Convert' column. If you don't check the 'Convert' box, then
+the data will remain as it is in the 'Example Data' column.
+
+So, if you see gibberish in the 'Example Data' column (which might be 'English' data
+being displayed with a legacy font), then you probably want to convert such fields.
+If the 'Example Results' column displays gibberish, then you probably don't want to
+convert such fields.
+
+When you're finished, click 'OK' to process the adaptation file(s) with these settings.
+	</value>
+  </data>
+</root>

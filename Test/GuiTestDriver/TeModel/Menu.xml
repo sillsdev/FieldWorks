@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<menubar name="~MainMenu~" root="yes" path="9:~MainMenu~">
+	<file role="menu item" name="mnuFile" hk="f" path="/12:mnuFile">
+		<new-fieldworks-project role="menu item" name="mnuNew" k="n" icon="yes" path="/12:$name">
+			<dialog title="New FieldWorks Project"/>
+		</new-fieldworks-project>
+		<open role="menu item" name="mnuOpen" k="o" ck="o" icon="yes" path="/12:$name">
+			<dialog title="Open Project"/>
+		</open>
+		<close role="menu item" name="mnuClose" k="c" path="/12:$name"/>
+		<save role="menu item" name="mnuSave" k="s" ck="s" icon="yes" path="/12:$name" enabled="false"/>
+		<project-management role="menu item" name="mnuProjManagement" k="m" path="/12:$name">
+			<fieldworks-project-properties role="menu item" name="mnuProjProperties" k="w" path="/12:$name">
+				<dialog title="FieldWorks Project Properties"/>
+			</fieldworks-project-properties>
+			<backup-and-restore role="menu item" name="mnuBackupRestore" k="b" path="/12:$name">
+				<dialog title="Backup and Restore"/>
+			</backup-and-restore>
+			<rename role="menu item" name="mnuRename" k="r" path="/12:$name" enabled="false">
+				<dialog title="Rename"/>
+			</rename>
+			<delete-fieldWorks-project role="menu item" name="mnuDeleteProj" k="d" icon="yes" path="/12:$name">
+				<dialog title="Delete FieldWorks Project"/>
+			</delete-fieldWorks-project>
+			<create-shortcut-on-desktop role="menu item" name="mnuCreateShortcut" k="c" path="/12:$name"/>
+		</project-management>
+		<separator/>
+		<page-setup role="menu item" enabled="no" name="mnuPageSetup" path="/12:$name">
+			<dialog title="Page Setup - Print Layout"/>
+		</page-setup>
+		<print role="menu item" name="mnuPrint" k="p" ck="p" path="/12:$name" enabled="false">
+			<dialog title="Print"/>
+		</print>
+		<separator/>
+		<import role="menu item" name="mnuImport" k="i" path="/12:$name">
+			<standard-format role="menu item" name="mnuImportSFM" k="s" path="/12:$name">
+				<dialog name="btnBack" title="Standard Format Import Setup"/>
+			</standard-format>
+			<open-xml role="menu item" name="mnuImportXML" k="x" path="/12:$name">
+				<dialog name="btnBack" title="Import Open XML for Editing Scripture"/>
+			</open-xml>
+		</import>
+		<export role="menu item" name="mnuExport" k="e" path="/12:$name">
+			<document role="menu item" name="mnuExportRTF" k="d" path="/12:$name">
+				<dialog name="btnBack" title="Export Document (RTF)"/>
+			</document>
+			<standard-format-p role="menu item" name="mnuExportUSFMParatext" k="p" path="/12:$name">
+				<dialog name="btnBack" title="Export Standard Format (USFM-Paratext)"/>
+			</standard-format-p>
+			<standard-format-t role="menu item" name="mnuExportUSFMToolbox" k="t" path="/12:$name">
+				<dialog name="btnBack" title="Export Standard Format (USFM-Toolbox)"/>
+			</standard-format-t>
+			<open-xml role="menu item" name="mnuExportXML" k="x" path="/12:$name">
+				<dialog name="btnBack" title="Export Open XML for Editing Scripture"/>
+			</open-xml>
+		</export>
+		<saved-versions role="menu item" name="Saved Versions" k="v" path="/12:mnuSavedVersions">
+			<dialog title="Saved Versions"/>
+		</saved-versions>
+		<separator/>
+		<properties role="menu item" name="mnuProperties" k="p" path="/12:$name">
+			<scripture-properties role="menu item" name="mnuScrProperties" k="s" path="/12:$name">
+				<dialog title="Scripture Properties"/>
+			</scripture-properties>
+			<book-properties role="menu item" name="mnuBookProperties" k="b" path="/12:$name">
+				<dialog name="Book Properties dialog" title="Properties for "/>
+			</book-properties>
+		</properties>
+		<exit role="menu item" name="mnuExit" k="x" path="/12:$name"/>
+	</file>
+
+	<edit role="menu item" name="mnuEdit" hk="e" path="/12:mnuEdit">
+		<undo role="menu item" name="mnuUndo" k="u" ck="z" icon="yes" path="/12:$name"/>
+		<redo role="menu item" name="mnuRedo" k="r" ck="y" icon="yes" path="/12:$name" enabled="false"/>
+		<separator/>
+		<cut role="menu item" name="mnuCut" k="t" ck="x" icon="yes" path="/12:$name" enabled="false"/>
+		<copy role="menu item" name="mnuCopy" k="c" ck="c" icon="yes" path="/12:$name" enabled="false"/>
+		<paste role="menu item" name="mnuPaste" k="p" ck="v" icon="yes" path="/12:$name"/>
+		<select-all role="menu item" name="mnuSelectAll" k="a" ck="a" path="/12:$name" enabled="false"/>
+		<separator/>
+		<find role="menu item" name="mnuFind" k="f" ck="f" icon="yes" path="/12:$name;">
+			<dialog title="Find and Replace" tab="Find"/>
+		</find>
+		<find-next role="menu item" name="mnuFindNext" k="x" ck="g" icon="yes" path="/12:$name">
+			<dialog title="Find and Replace" tab="Find"/>
+		</find-next>
+		<replace role="menu item" name="mnuReplace" k="e" ck="h" icon="yes" path="/12:$name;">
+			<dialog title="Find and Replace" tab="Replace"/>
+		</replace>
+		<separator/>
+		<delete role="menu item" name="mnuDelete" k="d" k2="{DELETE}" icon="yes" path="/12:$name"/>
+		<delete-book role="menu item" name="mnuDeleteBook" k="b" path="/12:$name">
+			<dialog title="Translation Editor"/>
+		</delete-book>
+	</edit>
+
+	<view role="menu item" name="mnuView" hk="v" path="/12:mnuView">
+		<scripture role="menu item" name="Scripture" path="/12:$name">
+			<draft role="menu item" name="Draft" icon="yes" path="/12:$name">
+				<view ref="draft-scripture"/>
+			</draft>
+			<print-layout role="menu item" name="Print Layout" icon="yes" path="/12:$name">
+				<view ref="print-layout"/>
+			</print-layout>
+			<correction-printout role="menu item" name="Correction Printout" icon="yes" path="/12:$name">
+				<view ref="correction-printout"/>
+			</correction-printout>
+			<trial-publication role="menu item" name="Trial Publication" icon="yes" path="/12:$name">
+				<view ref="trial-publication"/>
+			</trial-publication>
+		</scripture>
+		<back-translation role="menu item" name="Back Translation" path="/12:$name">
+			<draft role="menu item" name="Draft" icon="yes" path="/12:$name">
+				<view ref="draft-back"/>
+			</draft>
+			<parallel-print-layout role="menu item" name="Parallel Print Layout" icon="yes" path="/12:$name">
+				<view ref="parallel-print-layout"/>
+			</parallel-print-layout>
+			<consultant-check role="menu item" name="Consultant Check" icon="yes" path="/12:$name">
+				<view ref="consultant-check"/>
+			</consultant-check>
+			<simple-print-layout role="menu item" name="Simple Print Layout" icon="yes" path="/12:$name">
+				<view ref="simple-print-layout"/>
+			</simple-print-layout>
+			<separator/>
+			<configure role="menu item" name="Configure" icon="yes" path="/12:$name;...">
+				<dialog title="Back Translation Writing System"/>
+			</configure>
+		</back-translation>
+		<checking role="menu item" name="Checking" path="/12:$name">
+			<key-terms role="menu item" name="Key Terms" icon="yes" path="/12:$name">
+				<view ref="key-terms"/>
+			</key-terms>
+		</checking>
+		<publications role="menu item" name="Publications" path="/12:$name" enabled="false"/>
+		<separator/>
+		<filters role="menu item" name="mnuFilters" k="f" path="/12:$name">
+			<no-fliter role="menu item" name="mnuNoFilter" icon="yes" path="/12:$name"/>
+			<filter-by-book role="menu item" name="Filter by Book" icon="yes" path="/12:$name;...">
+				<dialog title="Filter by Book"/>
+			</filter-by-book>
+		</filters>
+		<separator/>
+		<toolbars role="menu item" name="mnuToolBars" k="t" path="/12:$name">
+			<back-translation role="menu item" name="Back Translation" icon="yes" path="/12:$name">
+				<toolbar ref="back-translation"/>
+			</back-translation>
+			<formatting role="menu item" name="Formatting" icon="yes" path="/12:$name">
+				<toolbar ref="formatting"/>
+			</formatting>
+			<insert role="menu item" name="Insert" icon="yes" path="/12:$name">
+				<toolbar ref="insert"/>
+			</insert>
+			<key-terms role="menu item" name="Key Terms" icon="yes" path="/12:$name">
+				<toolbar ref="key-terms"/>
+			</key-terms>
+			<navigate role="menu item" name="Navigation" icon="yes" path="/12:$name">
+				<toolbar ref="navigate"/>
+			</navigate>
+			<standard role="menu item" name="Standard" icon="yes" path="/12:$name">
+				<toolbar ref="standard"/>
+			</standard>
+			<separator/>
+			<customize role="menu item" name="Customize" icon="yes" k="c" path="/12:$name;...">
+				<dialog title="Customize"/>
+			</customize>
+		</toolbars>
+		<side-bar role="menu item" name="mnuSideBar" icon="yes" k="l" path="/12:$name"/>
+		<status-bar role="menu item" name="mnuStatusBar" icon="yes" k="a" path="/12:$name"/>
+		<full-window role="menu item" name="mnuFullWindow" icon="yes" k="u" ck="w" path="/12:$name"/>
+		<refresh role="menu item" name="mnuRefresh" k="r" fk="F5" icon="yes" path="/12:$name"/>
+		<update-page-breaks role="menu item" name="mnuUpdatePageBreak" k="p" path="/12:$name" enabled="false"/>
+		<separator/>
+		<header-footer-setup role="menu item" name="mnuHdrFtrSetup" k="h" path="/12:$name;">
+			<dialog title="Header / Footer Setup"/>
+		</header-footer-setup>
+		<separator/>
+		<footnotes role="menu item" name="mnuFootnotes" k="o" path="/12:$name"/>
+		<notes role="menu item" name="mnuNotes" k="n" path="/12:$name">
+			<application title="Translation Editor Notes"/>
+		</notes>
+		<style-pane role="menu item" name="mnuStylePane" k="s" path="/12:$name">
+			<pane ref="style-pane"/>
+		</style-pane>
+	</view>
+
+	<reference role="menu item" name="mnuReference" hk="r" path="/12:mnuReference">
+		<go-to role="menu item" name="mnuGotoRef" k="s" path="/12:$name;">
+			<dialog title="Go To Reference"/>
+		</go-to>
+		<first role="menu item" name="mnuGotoFirst" k="s" path="/12:$name">
+			<book role="menu item" name="mnuGotoFirstBook" icon="yes" k="b" path="/12:$name"/>
+			<section role="menu item" name="mnuGotoFirstSection" icon="yes" k="s" path="/12:$name"/>
+			<chapter role="menu item" name="mnuGotoFirstChapter" icon="yes" k="c" path="/12:$name"/>
+		</first>
+		<previous role="menu item" name="mnuGotoPrev" k="s" path="/12:$name">
+			<book role="menu item" name="mnuGotoPrevBook" icon="yes" k="b" path="/12:$name"/>
+			<section role="menu item" name="mnuGotoPrevSection" icon="yes" k="s" path="/12:$name"/>
+			<chapter role="menu item" name="mnuGotoPrevChapter" icon="yes" k="c" path="/12:$name"/>
+			<footnote role="menu item" name="mnuGotoPrevFootnote" icon="yes" k="f" path="/12:$name"/>
+		</previous>
+		<next role="menu item" name="mnuGotoNext" k="s" path="/12:$name">
+			<book role="menu item" name="mnuGotoNextBook" icon="yes" k="b" path="/12:$name"/>
+			<section role="menu item" name="mnuGotoNextSection" icon="yes" k="s" path="/12:$name"/>
+			<chapter role="menu item" name="mnuGotoNextChapter" icon="yes" k="c" path="/12:$name"/>
+			<footnote role="menu item" name="mnuGotoNextFootnote" icon="yes" k="f" path="/12:$name"/>
+		</next>
+		<last role="menu item" name="mnuGotoLast" k="s" path="/12:$name">
+			<book role="menu item" name="mnuGotoLastBook" icon="yes" k="b" path="/12:$name"/>
+			<section role="menu item" name="mnuGotoLastSection" icon="yes" k="s" path="/12:$name"/>
+			<chapter role="menu item" name="mnuGotoLastChapter" icon="yes" k="c" path="/12:$name"/>
+		</last>
+		<send-scripture-references role="menu item" name="mnuSendReferences" k="s" icon="yes" path="/12:$name"/>
+		<receive-scripture-references role="menu item" name="mnuReceiveReferences" k="s" icon="yes" path="/12:$name"/>
+	</reference>
+
+	<insert role="menu item" name="mnuInsert" hk="i" path="/12:mnuInsert">
+		<book role="menu item" name="mnuInsertBooks" k="b" path="/12:$name" view="draft-scripture print-layout correction-printout draft-back parallel-print-layout consultant-check key-terms">
+			<old-testament role="menu item" name="mnuOldTestament" k="o" path="/12:$name">
+				<list/>
+			</old-testament>
+			<new-testament role="menu item" name="mnuNewTestament" k="n" path="/12:$name">
+				<list/>
+			</new-testament>
+		</book>
+		<introduction-section role="menu item" name="mnuInsertIntroSection" k="i" path="/12:$name" view="print-layout correction-printout parallel-print-layout"/>
+		<scripture-section role="menu item" name="mnuInsertScrSection" k="s" icon="yes" path="/12:$name" view="draft-scripture key-terms"/>
+		<separator/>
+		<chapter-number role="menu item" name="mnuInsertChapNum" k="c" icon="yes" path="/12:$name" view="draft-scripture key-terms"/>
+		<verse-numbers-mode role="menu item" name="mnuInsertVerseMode" k="m" icon="yes" path="/12:$name" view="draft-scripture print-layout correction-printout draft-back parallel-print-layout key-terms"/>
+		<verse-number role="menu item" name="mnuInsertVerseNum" sck="v" icon="yes" path="/12:$name" view="draft-scripture key-terms"/>
+		<separator/>
+		<general-footnote role="menu item" name="mnuInsertFootnote" k="g" icon="yes" path="/12:$name" view="draft-scripture print-layout correction-printout draft-back parallel-print-layout key-terms"/>
+		<cross-reference-footnote role="menu item" name="mnuInsertCrossRef" k="r" icon="yes" path="/12:$name" view="draft-scripture print-layout correction-printout draft-back parallel-print-layout key-terms"/>
+		<picture role="menu item" name="mnuInsertPicture" k="p" icon="yes" path="/12:$name;" view="draft-scripture print-layout correction-printout parallel-print-layout key-terms">
+			<dialog title="Choose Picture"/>
+		</picture>
+		<note role="menu item" name="mnuInsertNote" k="n" path="/12:$name" view="draft-scripture print-layout correction-printout draft-back parallel-print-layout consultant-check key-terms">
+			<consultant-note role="menu item" name="Consultant Note" path="/12:$name">
+				<application title="Translation Editor Notes"/>
+			</consultant-note>
+			<translator-note role="menu item" name="Translator Note" path="/12:$name">
+				<application title="Translation Editor Notes"/>
+			</translator-note>
+		</note>
+	</insert>
+
+	<format role="menu item" name="mnuFormat " hk="f" path="/12:mnuFormat">
+		<styles role="menu item" name="mnuStyle" icon="yes" k="s" path="/12:$name;">
+			<dialog name="Style"/>
+		</styles>
+		<apply-style role="menu item" name="mnuApplyStyle" k="y" path="/12:$name;">
+			<dialog name="Apply Style"/>
+		</apply-style>
+		<separator/>
+		<remove-character-style role="menu item" name="mnuRemoveCharStyle" icon="yes" k="c" path="/12:$name">
+			<dialog name="Style"/>
+		</remove-character-style>
+		<reset-paragraph-style role="menu item" name="mnuResetParaStyle" icon="yes" k="a" path="/12:$name">
+			<dialog name="Style"/>
+		</reset-paragraph-style>
+		<separator/>
+		<footnote-properties role="menu item" name="mnuFootnoteProperties" k="f" path="/12:$name;">
+			<dialog name="Scripture Properties"/>
+		</footnote-properties>
+		<picture-properties role="menu item" name="mnuPictureProperties" k="f" path="/12:$name;" enabled="false">
+			<dialog name="Picture Properties"/>
+		</picture-properties>
+	</format>
+
+	<tools role="menu item" name="mnuTools" hk="t" path="/12:mnuTools">
+		<find-in-dictionary role="menu item" name="mnuFindInDict" k="d" path="/12:$name;">
+			<dialog title="Find in Dictionary"/>
+		</find-in-dictionary>
+		<find-related-words role="menu item" name="mnuFindRelatedWords" k="r" path="/12:$name">
+			<dialog title="Find related words"/>
+		</find-related-words>
+		<separator/>
+		<back-translation role="menu item" name="mnuBackTrans" k="b" path="/12:$name">
+			<copy-chapter-verse-numbers role="menu item" name="mnuGenerateSecTemplate" k="c" path="/12:$name" enabled="false"/>
+			<mark-as-untranslated-word role="menu item" name="mnuApplyUnTransWord" icon="yes" k="m" path="/12:$name" enabled="false"/>
+			<separator/>
+			<mark-paragraph-as-unfinished role="menu item" name="mnuBtUnFinished" icon="yes" k="u" path="/12:$name" enabled="false"/>
+			<mark-paragraph-as-finished role="menu item" name="mnuBtFinished" icon="yes" k="f" path="/12:$name" enabled="false"/>
+			<mark-paragraph-as-consultant-checked role="menu item" name="mnuBtChecked" icon="yes" k="c" path="/12:$name" enabled="false"/>
+			<separator/>
+			<go-to-previous-unfinished-paragraph role="menu item" name="mnuPrevBtUnfinished" icon="yes" path="/12:$name" enabled="false"/>
+			<go-to-next-unfinished-paragraph role="menu item" name="mnuNextBtUnfinished" icon="yes" path="/12:$name" enabled="false"/>
+		</back-translation>
+		<key-terms role="menu item" name="mnuKeyTerms" icon="yes" k="k" path="/12:$name">
+			<use-as-vernacular-equivalent role="menu item" name="mnuUseAsVernEq" k="u" path="/12:$name" enabled="false"/>
+			<term-not-rendered-explicitly role="menu item" name="mnuNotRendered" k="t" path="/12:$name" enabled="false"/>
+			<vernacular-equivalent-not-assigned role="menu item" name="mnuVernEqNotAssigned" k="v" path="/12:$name" enabled="false"/>
+			<separator/>
+			<apply-filter-to-key-terms-list role="menu item" name="mnuApplyFilterToKeyTerms" k="a" path="/12:$name" enabled="false"/>
+		</key-terms>
+		<options role="menu item" name="mnuOptions" k="o" path="/12:$name;">
+			<dialog name="Options" title="Options"/>
+		</options>
+	</tools>
+
+	<window role="menu item" name="mnuWindow" hk="w" path="/12:mnuWindow">
+		<new-window role="menu item" name="mnuNewWindow" icon="yes" k="n" path="/12:$name"/>
+		<separator/>
+		<cascade role="menu item" name="mnuCascade" icon="yes" k="c" path="/12:$name"/>
+		<tile role="menu item" name="mnuTile" icon="yes" k="t" path="/12:$name"/>
+		<tile-side-by-side role="menu item" name="mnuTileSideBySide" icon="yes" k="b" path="/12:$name"/>
+		<separator/>
+		<mru-window role="list" icon="yes" k="#" path="/12:$name"/>
+	</window>
+
+	<help role="menu item" name="mnuHelp" hk="h" path="/12:mnuHelp">
+		<translation-editor role="menu item" name="mnuAppHelp" icon="yes" fk="F1" path="/12:$name;">
+			<dialog name="FieldWorks Translation Editor Help"/>
+		</translation-editor>
+		<training role="menu item" name="mnuTraining" icon="yes" k="t" path="/12:$name">
+			<student-manual role="menu item" name="mnuTrainingStudentManual" k="s" path="/12:$name;">
+				<application name="TE Student Manual.doc (Read-Only) - Microsoft Word"/>
+			</student-manual>
+			<exercises role="menu item" name="mnuTrainingExercises" k="e" path="/12:$name;">
+				<application name="TE Exercises.doc (Read-Only) - Microsoft Word"/>
+			</exercises>
+			<copy-and-paste-data role="menu item" name="mnuTrainingCopyPasteData" k="c" path="/12:$name;">
+				<application name="TE Copy-and-paste Data.rtf (Read-Only) - Microsoft Word"/>
+			</copy-and-paste-data>
+			<instructor-guide role="menu item" name="mnuTrainingInstructorGuide" k="i" path="/12:$name;">
+				<dialog name="TE Instructor Guide.doc (Read-Only) - Microsoft Word"/>
+			</instructor-guide>
+		</training>
+		<demos role="menu item" name="mnuDemos" k="d" path="/12:$name;">
+			<dialog name="Translation Editor"/>
+		</demos>
+		<resources role="menu item" name="mnuResources" k="r" path="/12:$name">
+			<checking-scripture-using-paratext role="menu item" name="mnuParatextScriptureChecking" k="c" path="/12:$name;">
+				<application name="Checking Scripture using Paratext.doc (Read-Only) - Microsoft Word"/>
+			</checking-scripture-using-paratext>
+		</resources>
+		<separator/>
+		<about-translation-editor role="menu item" name="mnuHelpAbout" path="/12:$name;">
+			<dialog name="About SIL FieldWorks Translation Editor"/>
+		</about-translation-editor>
+	</help>
+</menubar>

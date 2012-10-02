@@ -1,0 +1,583 @@
+; GUR Gir.map
+;Copyright (c) 2002 NLCI
+
+; Mapping table for NLCI's GUR Gir font version 05
+; New version by rde based on vijaya_kumar@kastanet.org's Winscript  Gujarati map:
+
+EncodingName			"CDAC-ISFOC_GUJARATI"
+DescriptiveName		    "Winscript and iLeap Gujarati"
+Version			        "1.0"
+Contact			        "mailto:vijaya_kumar@kastanet.org"
+RegistrationAuthority	"NLCI"
+RegistrationName		"Gujarati-Winscript"
+pass(Byte)
+213 < 199 211
+212 < 199 210
+211 < 197 210
+pass(Byte)
+class[conss]= (72 73 74 163 164 82 85 87 89 90  92 93 94 96 97 98 99 100 101 102 103 104 113 114 115 116 117 119 120 173 176 179 190 191 192 193 194 )
+class[off_cons]= ( 75 76 77 78 79 80 81 83 84 95 105 108 109 110 111 112 113 116 121 122 123 124  126 161 165 166 167 168 169 170 171 177 178 180 181 182 183 184 185 186 187 188 189 )
+class[flet] =( 196 197 198 199 200 )
+class[ra] =(199 )
+class[Amat]=(201)
+class[Umat]= (202)
+class[Xra]=(196)
+class[Dmat]= (149 )
+class[Vrma]= (195 196 )
+class[Imat]=(210 224 228 232)
+
+;206 169 72 237 < 169 202 72 237
+206 [off_cons]=offcons [conss]?=con [off_cons]?=offcons2 <  @offcons 202 @con @offcons2
+201 195 < 63
+;[conss]?=con  < @cons
+[Umat]?=Umat1 [off_cons]?= offcons1 [conss]?=con [Amat]?= Amat1 [flet] =flet1 < @Umat1 @flet1 @offcons1 @con @Amat1
+;202 169 201 198 < 202 198 169 201
+206 [off_cons]=offcons1  [off_cons]=offcons2  < 202 @offcons1 @offcons2
+207 [off_cons]=offcons1  [off_cons]=offcons2  < 203 @offcons1 @offcons2
+208 [off_cons]=offcons1  [off_cons]=offcons2  < 204 @offcons1 @offcons2
+209 [off_cons]=offcons1  [off_cons]=offcons2  < 205 @offcons1 @offcons2
+
+
+RHSFlags			(ExpectsNFD)
+;***************************************************
+; Pass 1: Break the Speical Letter
+;***************************************************
+pass(Byte)
+
+206	>	202
+
+200	<>	199 197
+203	<>	202 197
+204	<>	202 199
+205	<>	202 199 197
+
+207	<>	202 197
+208	<>	202 199
+209	<> 	202 199 197
+211	<>	210 197
+212	<>	210 199
+213	<>	210 199 197
+215	<>	214 195
+216	<>	214
+217	<>	214
+219	<>	218 195
+220	>	218
+221	>	218
+;223	<>	222
+225	<>	224 197
+226	<>	224 199
+227	<>	224 199 197
+229	<>	228 197
+230	<>	228 199
+230	<	199 228
+231	<>	228 199 197
+233	<>	232 197
+234	<>	232 199
+235	<>	232 199 197
+
+
+;***************************************************
+; Pass 2: Remove Space
+;***************************************************
+
+pass(Byte)
+
+class[spe_mat] =(149 195 198 214 218 222 223 224 228 232)
+class[k_cons] = (72 73 74 163 164)
+class[w_cons] = (82)
+class[c_cons] = (85)
+class[j_cons] = (87 89 90)
+class[jj_cons] = (93 94)
+class[t_cons] = (96 97 98)
+class[tt_cons] = (99 100)
+class[d_cons] = (101 102 103)
+class[dd_cons] = (104)
+class[q_cons] = (113 114 115 116 117 119 120)
+class[r_cons] = (173 176)
+class[h_cons] = (190 191)
+
+
+
+
+class[conss]= (72 73 74 163 164 82 85 87 89 90  92 93 94 96 97 98 99 100 101 102 103 104 113 114 115 116 117 119 120 173 176 179 190 191 192 193 194 )
+class[off_cons]= ( 75 76 77 78 79 80 81 83 84 95 105 108 109 110 111 112 113 116 121 122 123 124 125 126 161 165 166 167 168 169 170 171 177 178 180 181 182 183 184 185 186 187 188 189 )
+class[flet] =( 196 197 198 )
+class[ra] =(199 )
+class[Amat]=(201)
+class[Umat]= (202)
+class[Xra]=(196)
+class[Dmat]= (149 )
+class[Vrma]= (195 196 )
+class[Imat]=(210 224 228 232)
+[Imat]= Imat1 198 <198 @Imat1
+[k_cons] 149 237	<>	[k_cons] 149
+[k_cons] 195 237	<>	[k_cons] 195
+[k_cons] 198 237	<>	[k_cons] 198
+[k_cons] 214 237	<>	[k_cons] 214
+[k_cons] 218 237	<>	[k_cons] 218
+[k_cons] 222 237	<>	[k_cons] 222
+[k_cons] 223 237	<>	[k_cons] 223
+[k_cons] 222 223 237	<>	[k_cons] 222 223
+[k_cons] 224 237	<>	[k_cons] 224
+[k_cons] 228 237	<>	[k_cons] 228
+[k_cons] 232 237	<>	[k_cons] 232
+
+[w_cons] 149 238	<>	[w_cons] 149
+[w_cons] 195 238	<>	[w_cons] 195
+[w_cons] 198 238	<>	[w_cons] 198
+[w_cons] 214 238	<>	[w_cons] 214
+[w_cons] 218 238	<>	[w_cons] 218
+[w_cons] 222 238	<>	[w_cons] 222
+[w_cons] 223 238	<>	[w_cons] 223
+[w_cons] 222 223 238	<>	[w_cons] 222 223
+[w_cons] 224 238	<>	[w_cons] 224
+[w_cons] 228 238	<>	[w_cons] 228
+[w_cons] 232 238	<>	[w_cons] 232
+
+[c_cons] 149 239	<>	[c_cons] 149
+[c_cons] 195 239	<>	[c_cons] 195
+[c_cons] 198 239	<>	[c_cons] 198
+[c_cons] 214 239	<>	[c_cons] 214
+[c_cons] 218 239	<>	[c_cons] 218
+[c_cons] 222 239	<>	[c_cons] 222
+[c_cons] 223 239	<>	[c_cons] 223
+[c_cons] 222 223 239	<>	[c_cons] 222 223
+[c_cons] 224 239	<>	[c_cons] 224
+[c_cons] 228 239	<>	[c_cons] 228
+[c_cons] 232 239	<>	[c_cons] 232
+
+[j_cons] 149 240	<>	[j_cons] 149
+[j_cons] 195 240	<>	[j_cons] 195
+[j_cons] 198 240	<>	[j_cons] 198
+[j_cons] 214 240	<>	[j_cons] 214
+[j_cons] 218 240	<>	[j_cons] 218
+[j_cons] 222 240	<>	[j_cons] 222
+[j_cons] 223 240	<>	[j_cons] 223
+[j_cons] 222 223 240	<>	[j_cons] 222 223
+[j_cons] 224 240	<>	[j_cons] 224
+[j_cons] 228 240	<>	[j_cons] 228
+[j_cons] 232 240	<>	[j_cons] 232
+
+[jj_cons] 149 241	<>	[jj_cons] 149
+[jj_cons] 195 241	<>	[jj_cons] 195
+[jj_cons] 198 241	<>	[jj_cons] 198
+[jj_cons] 214 241	<>	[jj_cons] 214
+[jj_cons] 218 241	<>	[jj_cons] 218
+[jj_cons] 222 241	<>	[jj_cons] 222
+[jj_cons] 223 241	<>	[jj_cons] 223
+[jj_cons] 222 223 241	<>	[jj_cons] 222 223
+[jj_cons] 224 241	<>	[jj_cons] 224
+[jj_cons] 228 241	<>	[jj_cons] 228
+[jj_cons] 232 241	<>	[jj_cons] 232
+
+[t_cons] 149 242	<>	[t_cons] 149
+[t_cons] 195 242	<>	[t_cons] 195
+[t_cons] 198 242	<>	[t_cons] 198
+[t_cons] 214 242	<>	[t_cons] 214
+[t_cons] 218 242	<>	[t_cons] 218
+[t_cons] 222 242	<>	[t_cons] 222
+[t_cons] 223 242	<>	[t_cons] 223
+[t_cons] 222 223 242	<>	[t_cons] 222 223
+[t_cons] 224 242	<>	[t_cons] 224
+[t_cons] 228 242	<>	[t_cons] 228
+[t_cons] 232 242	<>	[t_cons] 232
+
+[tt_cons] 149 243	<>	[tt_cons] 149
+[tt_cons] 195 243	<>	[tt_cons] 195
+[tt_cons] 198 243	<>	[tt_cons] 198
+[tt_cons] 214 243	<>	[tt_cons] 214
+[tt_cons] 218 243	<>	[tt_cons] 218
+[tt_cons] 222 243	<>	[tt_cons] 222
+[tt_cons] 223 243	<>	[tt_cons] 223
+[tt_cons] 222 223 243	<>	[tt_cons] 222 223
+[tt_cons] 224 243	<>	[tt_cons] 224
+[tt_cons] 228 243	<>	[tt_cons] 228
+[tt_cons] 232 243	<>	[tt_cons] 232
+
+[d_cons] 149 244	<>	[d_cons] 149
+[d_cons] 195 244	<>	[d_cons] 195
+[d_cons] 198 244	<>	[d_cons] 198
+[d_cons] 214 244	<>	[d_cons] 214
+[d_cons] 218 244	<>	[d_cons] 218
+[d_cons] 222 244	<>	[d_cons] 222
+[d_cons] 223 244	<>	[d_cons] 223
+[d_cons] 222 223 244	<>	[d_cons] 222 223
+[d_cons] 224 244	<>	[d_cons] 224
+[d_cons] 228 244	<>	[d_cons] 228
+[d_cons] 232 244	<>	[d_cons] 232
+
+
+[dd_cons] 149 245	<>	[dd_cons] 149
+[dd_cons] 195 245	<>	[dd_cons] 195
+[dd_cons] 198 245	<>	[dd_cons] 198
+[dd_cons] 214 245	<>	[dd_cons] 214
+[dd_cons] 218 245	<>	[dd_cons] 218
+[dd_cons] 222 245	<>	[dd_cons] 222
+[dd_cons] 223 245	<>	[dd_cons] 223
+[dd_cons] 222 223 245	<>	[dd_cons] 222 223
+[dd_cons] 224 245	<>	[dd_cons] 224
+[dd_cons] 228 245	<>	[dd_cons] 228
+[dd_cons] 232 245	<>	[dd_cons] 232
+
+[q_cons] 149 246	<>	[q_cons] 149
+[q_cons] 195 246	<>	[q_cons] 195
+[q_cons] 198 246	<>	[q_cons] 198
+[q_cons] 214 246	<>	[q_cons] 214
+[q_cons] 218 246	<>	[q_cons] 218
+[q_cons] 222 246	<>	[q_cons] 222
+[q_cons] 223 246	<>	[q_cons] 223
+[q_cons] 222 223 246	<>	[q_cons] 222 223
+[q_cons] 224 246	<>	[q_cons] 224
+[q_cons] 228 246	<>	[q_cons] 228
+[q_cons] 232 246	<>	[q_cons] 232
+
+[r_cons] 149 247	<>	[r_cons] 149
+[r_cons] 195 247	<>	[r_cons] 195
+[r_cons] 198 247	<>	[r_cons] 198
+[r_cons] 214 247	<>	[r_cons] 214
+[r_cons] 218 247	<>	[r_cons] 218
+[r_cons] 222 247	<>	[r_cons] 222
+[r_cons] 223 247	<>	[r_cons] 223
+[r_cons] 222 223 247	<>	[r_cons] 222 223
+[r_cons] 224 247	<>	[r_cons] 224
+[r_cons] 228 247	<>	[r_cons] 228
+[r_cons] 232 247	<>	[r_cons] 232
+
+[h_cons] 149 250	<>	[h_cons] 149
+[h_cons] 195 250	<>	[h_cons] 195
+[h_cons] 198 250	<>	[h_cons] 198
+[h_cons] 214 250	<>	[h_cons] 214
+[h_cons] 218 250	<>	[h_cons] 218
+[h_cons] 222 250	<>	[h_cons] 222
+[h_cons] 223 250	<>	[h_cons] 223
+[h_cons] 222 223 250	<>	[h_cons] 222 223
+[h_cons] 224 250	<>	[h_cons] 224
+[h_cons] 228 250	<>	[h_cons] 228
+[h_cons] 232 250	<>	[h_cons] 232
+
+
+
+;vowels
+62 251	<>	62
+69 236	<>	69
+;consonants
+72 237	<>	72 / _ ^[spe_mat]
+73 237	<>	73 / _ ^[spe_mat]
+74 237	<>	74 / _ ^[spe_mat]
+82 238	<>	82 / _ ^[spe_mat]
+85 239	<>	85 / _ ^[spe_mat]
+87 240	<>	87 / _ ^[spe_mat]
+89 240 <> 	89 / _ ^[spe_mat]
+90 240	<>	90 / _ ^[spe_mat]
+93 241	<>	93 / _ ^[spe_mat]
+94 241	<>	94 / _ ^[spe_mat]
+96 242	<>	96 / _ ^[spe_mat]
+97 242	<>	97 / _ ^[spe_mat]
+98 242	<>	98 / _ ^[spe_mat]
+99 243	<>	99 / _ ^[spe_mat]
+100 243	<>	100 / _ ^[spe_mat]
+101 244	<>	101 / _ ^[spe_mat]
+102 244	<>	102 / _ ^[spe_mat]
+103 244	<>	103 / _ ^[spe_mat]
+104 245	<>	104 / _ ^[spe_mat]
+113 246	<>	113 / _ ^[spe_mat]
+114 246	<>	114 / _ ^[spe_mat]
+115 246	<>	115 / _ ^[spe_mat]
+116 246	<>	116 / _ ^[spe_mat]
+117 246	<>	117 / _ ^[spe_mat]
+119 246	<>	119 / _ ^[spe_mat]
+120 246	<>	120 / _ ^[spe_mat]
+163 237	<>	163 / _ ^[spe_mat]
+164 237	<>	164 / _ ^[spe_mat]
+173 247	<>	173 / _ ^[spe_mat]
+176 247	<>	176 / _ ^[spe_mat]
+190 250	<>	190 / _ ^[spe_mat]
+191 250	<>	191 / _ ^[spe_mat]
+
+
+
+pass(byte)
+class[conss]= (72 73 74 163 164 82 85 87 89 90  92 93 94 96 97 98 99 100 101 102 103 104 113 114 115 116 117 119 120 173 176 179 190 191 192 193 194 )
+class[off_cons]= ( 75 76 77 78 79 80 81 83 84 95 105 108 109 110 111 112 113 116 121 122 123 124 125 126 161 165 166 167 168 169 170 171 177 178 180 181 182 183 184 185 186 187 188 189 )
+class[flet] =( 196 197 198 )
+class[ra] =(199 )
+class[Amat]=(201)
+class[Umat]= (202)
+class[Xra]=(196)
+class[Dmat]= (149 )
+class[Vrma]= (195 196 )
+class[Imat]=(210 224 228 232)
+72 210 199 197 < 199 72 197 210
+
+
+[Umat]=Umat1 [ra]?=ra1 [flet]?=flet1 [off_cons]?=offcons1 [conss]?= con [Vrma]?= Vrma1 [conss]?= con1  [off_cons]?=offcons [Amat]?=Amat1 [flet]?=flet2 > @ra1  @offcons1 @con @Vrma1 @con1 @offcons @Amat1 @Umat1 @flet1 @flet2
+[conss]?= con [off_cons]?=offcons1  [Dmat]?=Dmat1 [Amat]?=Amat1  [ra]=ra1 [flet]?=flet1  <> @ra1 @con @offcons1 @Amat1   @Dmat1 @flet1
+
+
+pass(byte)
+class[conss]= (72 73 74 163 164 82 85 87 89 90  92 93 94 96 97 98 99 100 101 102 103 104 113 114 115 116 117 119 120 173 176 179 190 191 192 193 194 )
+class[off_cons]= ( 75 76 77 78 79 80 81 83 84 95 105 108 109 110 111 112 113 116 121 122 123 124 125 126 161 165 166 167 168 169 170 171 177 178 180 181 182 183 184 185 186 187 188 189 )
+class[flet] =( 196 197 198 )
+class[ra] =(199 )
+class[Amat]=(201)
+class[Umat]= (202)
+class[Xra]=(196)
+class[Dmat]= (149 )
+class[Vrma]= (195 196 )
+class[Imat]=(210 224 228 232)
+
+; this for off cons with down marker
+
+[Umat]?=Umat1 [ra]?=ra1 [flet]?=flet1  [conss]?= con1 [off_cons]?=offcons1 [conss]?= con2 [off_cons]=offcons2  [Xra]?=Xra1 [Dmat]?=Dmat1 [Amat]?=Amat1 [Amat]?=Amat2  [Imat]?=Imat1 [ra]?=ra2 [flet]?=flet2  > @ra1 @ra2  @con1 @offcons1 @con2 @offcons2 @Amat1 @Xra1 @Amat2 @Imat1  @Dmat1 @Umat1 @flet1 @flet2
+
+; this is for full cons. above and this rule are same. if you make two different for full cons and offcons that iwll be good for understaning
+[Umat]?=Umat1 [ra]?=ra1 [flet]?=flet1  [conss]?= con1 [off_cons]?=offcons1 [conss]= con2 [off_cons]?=offcons2  [Xra]?=Xra1 [Dmat]?=Dmat1 [Amat]?=Amat1 [Amat]?=Amat2  [Imat]?=Imat1 [ra]?=ra2 [flet]?=flet2  > @ra1 @ra2  @con1 @offcons1 @con2 @offcons2 @Amat1 @Xra1 @Amat2 @Imat1  @Dmat1 @Umat1 @flet1 @flet2
+
+202  [ra]?=ra1 [flet]?=flet1  [conss]?=con [off_cons]?=offcons [Amat]?=amat [Xra]?=xra1 < @ra1 @con @offcons @amat @xra1 202 @flet1
+
+pass(byte)
+236 >
+237 >
+238 >
+239 >
+240 >
+241 >
+242 >
+243 >
+244 >
+245 >
+246 >
+247 >
+248 >
+249 >
+250 >
+251 >
+252 >
+253 >
+254 >
+255 >
+197 197 > 197
+196 196 > 196
+195 195 > 195
+199 199 > 199
+224 224 > 224
+214 214 > 214
+
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 4: map byte codes to Unicodes
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; This pass deals with "basic" byte codes; it never sees the "presentation form"
+; byte codes for half forms/conjuncts/positional variants
+
+pass(Byte_Unicode)
+
+ByteClass[CTL] = ( 0 .. 31 127 )
+UniClass[CTL]  = ( 0 .. 31 127 )
+[CTL] <> [CTL]
+ ;Vowels
+43 201 232	<>	gujarati_vowel_candra_o
+43 201 224	<>	gujarati_letter_o
+43 201 228	<>	gujarati_letter_au
+43 232	<>	gujarati_vowel_candra_e
+43 224	<>	gujarati_letter_e
+43 228	<>	gujarati_letter_ai
+43 201	<>	gujarati_letter_aa
+61	<>	gujarati_letter_i gujarati_sign_anusvara
+64	<>	gujarati_letter_ii gujarati_sign_anusvara
+66	<>	gujarati_letter_u gujarati_sign_anusvara
+68	<>	gujarati_letter_uu gujarati_sign_anusvara
+43	<>	gujarati_letter_a
+60	<>	gujarati_letter_i
+62	<>	gujarati_letter_ii
+65	<>	gujarati_letter_u
+67	<>	gujarati_letter_uu
+69	<>	gujarati_letter_vocalic_r
+70	<>	gujarati_letter_vocalic_rr
+
+
+95 201	<>	gujarati_letter_nya
+;consonants
+88 	<> 	gujarati_letter_ja  gujarati_vowel_sign_aa
+88 224 <> gujarati_letter_ja  gujarati_vowel_sign_o
+88 228 <> gujarati_letter_ja  gujarati_vowel_sign_au
+76 201	<>	gujarati_letter_kha
+77 201	<>	gujarati_letter_kha gujarati_sign_virama gujarati_letter_ra
+78 201	<> 	gujarati_letter_ga
+79 201	<> 	gujarati_letter_ga gujarati_sign_virama gujarati_letter_ra
+80 201	<> 	gujarati_letter_gha
+81 201	<> 	gujarati_letter_gha gujarati_sign_virama gujarati_letter_ra
+83 201	<> 	gujarati_letter_ca
+84 201	<> 	gujarati_letter_ca gujarati_sign_virama gujarati_letter_ra
+105 201	<>	gujarati_letter_nna
+108 201	<>	gujarati_letter_ta
+109 201	<>	gujarati_letter_ta gujarati_sign_virama gujarati_letter_ra
+110 201	<>	gujarati_letter_ta gujarati_sign_virama gujarati_letter_ta
+111 201	<>	gujarati_letter_tha
+112 201	<>	gujarati_letter_tha gujarati_sign_virama gujarati_letter_ra
+121 201	<>	gujarati_letter_dha
+122 201	<>	gujarati_letter_dha gujarati_sign_virama gujarati_letter_ra
+123 201	<>	gujarati_letter_na
+124 201	<>	gujarati_letter_na gujarati_sign_virama gujarati_letter_ra
+125 201	<>	gujarati_letter_na gujarati_sign_virama gujarati_letter_na
+126 201	<>	gujarati_letter_pa
+161 201	<>	gujarati_letter_pa gujarati_sign_virama gujarati_letter_ra
+165 201	<>	gujarati_letter_ba
+166 201	<>	gujarati_letter_ba gujarati_sign_virama gujarati_letter_ra
+167 201	<>	gujarati_letter_bha
+168 201	<>	gujarati_letter_bha gujarati_sign_virama gujarati_letter_ra
+169 201	<>	gujarati_letter_ma
+170 201	<>	gujarati_letter_ma gujarati_sign_virama gujarati_letter_ra
+171 201	<>	gujarati_letter_ya
+177 201	<>	gujarati_letter_la
+180 201	<>	gujarati_letter_va
+181 201	<>	gujarati_letter_va gujarati_sign_virama gujarati_letter_ra
+182 201	<>	gujarati_letter_sha
+184 201	<>	gujarati_letter_sha gujarati_sign_virama gujarati_letter_ra
+185 201	<>	gujarati_letter_sha gujarati_sign_virama gujarati_letter_va
+186 201	<>	gujarati_letter_ssa
+187 201	<>	gujarati_letter_sa
+188 201	<>	gujarati_letter_sa gujarati_sign_virama gujarati_letter_ra
+
+
+
+71	<>	gujarati_letter_ka gujarati_sign_virama
+72	<>	gujarati_letter_ka
+73	<>	gujarati_letter_ka gujarati_sign_virama gujarati_letter_ka
+74	<>	gujarati_letter_ka gujarati_sign_virama gujarati_letter_ra
+;75	<>	gujarati_letter
+76 	<>	gujarati_letter_kha gujarati_sign_virama
+77 	<>	gujarati_letter_kha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama 0x200d
+78 	<> 	gujarati_letter_ga gujarati_sign_virama
+79 	<> 	gujarati_letter_ga gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama 0x200d
+80 	<> 	gujarati_letter_gha gujarati_sign_virama
+81 	<> 	gujarati_letter_gha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama 0x200d
+82	<>	gujarati_letter_nga
+83 	<> 	gujarati_letter_ca gujarati_sign_virama
+84 	<> 	gujarati_letter_ca gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama 0x200d
+85	<>	gujarati_letter_cha
+86	<> 	gujarati_letter_ja gujarati_sign_virama
+87 	<> 	gujarati_letter_ja
+
+89 	<> 	gujarati_letter_ja gujarati_vowel_sign_ii
+90	<>	gujarati_letter_ja gujarati_sign_virama gujarati_letter_ra
+92	<>	gujarati_letter_jha gujarati_sign_virama
+93	<>	gujarati_letter_jha
+94	<>	gujarati_letter_jha gujarati_sign_virama gujarati_letter_ra
+95	<>	gujarati_letter_nya gujarati_sign_virama
+
+96	<>	gujarati_letter_tta
+97	<>	gujarati_letter_tta gujarati_sign_virama gujarati_letter_tta
+98	<>	gujarati_letter_tta gujarati_sign_virama gujarati_letter_ttha
+99	<>	gujarati_letter_ttha
+100	<>	gujarati_letter_ttha gujarati_sign_virama gujarati_letter_ttha
+101	<>	gujarati_letter_dda
+102	<>	gujarati_letter_dda gujarati_sign_virama gujarati_letter_dda
+103	<>	gujarati_letter_dda gujarati_sign_virama gujarati_letter_ddha
+104	<>	gujarati_letter_ddha
+105	<>	gujarati_letter_nna gujarati_sign_virama
+106	<>	gujarati_letter_nna gujarati_vowel_sign_u
+107	<>	gujarati_letter_nna gujarati_vowel_sign_uu
+
+108 	<>	gujarati_letter_ta gujarati_sign_virama
+109 	<>	gujarati_letter_ta gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+110 	<>	gujarati_letter_ta gujarati_sign_virama gujarati_letter_ta gujarati_sign_virama
+111 	<>	gujarati_letter_ta gujarati_sign_virama
+112 	<>	gujarati_letter_tha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+113	<>	gujarati_letter_da
+114	<>	gujarati_letter_da gujarati_sign_virama gujarati_letter_ra
+115	<>	gujarati_letter_da gujarati_sign_virama gujarati_letter_ma
+116	<>	gujarati_letter_da gujarati_sign_virama gujarati_letter_da
+117	<>	gujarati_letter_da gujarati_sign_virama gujarati_letter_dha
+118	<>	gujarati_letter_da gujarati_sign_virama gujarati_letter_ya
+119 	<>	gujarati_letter_da gujarati_sign_virama gujarati_letter_va
+120	<>	gujarati_letter_da gujarati_sign_virama gujarati_letter_ha
+121	<>	gujarati_letter_dha gujarati_sign_virama
+122	<>	gujarati_letter_dha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+123	<>	gujarati_letter_na gujarati_sign_virama
+124	<>	gujarati_letter_na gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+125	<>	gujarati_letter_na gujarati_sign_virama gujarati_letter_na gujarati_sign_virama
+126	<>	gujarati_letter_pa gujarati_sign_virama
+161	<>	gujarati_letter_pa gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+162 	<>	gujarati_letter_pha gujarati_sign_virama
+163 	<>	gujarati_letter_pha
+164 	<>	gujarati_letter_pha gujarati_sign_virama gujarati_letter_ra
+165	<>	gujarati_letter_ba gujarati_sign_virama
+166	<>	gujarati_letter_ba gujarati_sign_virama gujarati_letter_ra
+167	<>	gujarati_letter_bha gujarati_sign_virama
+168	<>	gujarati_letter_bha gujarati_sign_virama gujarati_letter_ra
+169	<>	gujarati_letter_ma gujarati_sign_virama
+;170	<>	gujarati_letter_ma gujarati_sign_virama gujarati_letter_ra
+171	<>	gujarati_letter_ya gujarati_sign_virama
+173	<>	gujarati_letter_ra
+176	<>	gujarati_letter_ra gujarati_vowel_sign_uu
+177 	<>	gujarati_letter_la gujarati_sign_virama
+178 	<>	gujarati_letter_lla gujarati_sign_virama
+179 	<>	gujarati_letter_lla
+180 	<>	gujarati_letter_va gujarati_sign_virama
+181 	<>	gujarati_letter_va gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+182 	<>	gujarati_letter_sha gujarati_sign_virama
+184 	<>	gujarati_letter_sha gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+185 	<>	gujarati_letter_sha gujarati_sign_virama gujarati_letter_va gujarati_sign_virama
+186 	<>	gujarati_letter_ssa gujarati_sign_virama
+187 	<>	gujarati_letter_sa gujarati_sign_virama
+188 	<>	gujarati_letter_sa gujarati_sign_virama gujarati_letter_ra gujarati_sign_virama
+189 	<>	gujarati_letter_ha gujarati_sign_virama
+190 	<>	gujarati_letter_ha
+191 	<>	gujarati_letter_ha gujarati_sign_virama gujarati_letter_ra
+193 	<>	gujarati_letter_ha gujarati_sign_virama gujarati_letter_ma
+194 	<>	gujarati_letter_ha gujarati_sign_virama gujarati_letter_ya
+
+; Others
+149	<>	gujarati_sign_nukta
+195	<>	  gujarati_sign_virama ; U+200C
+196	<>	gujarati_sign_virama gujarati_letter_ra
+197	<>	gujarati_sign_anusvara
+198 	<>	gujarati_sign_candrabindu
+199	<>	gujarati_letter_ra gujarati_sign_virama
+37	<>	gujarati_sign_avagraha
+38	<>	gujarati_sign_visarga
+; Matras
+201 232 	<>	gujarati_vowel_sign_candra_o
+201 224	<>	gujarati_vowel_sign_o
+201 228	<>	gujarati_vowel_sign_au
+222 223	<>	gujarati_vowel_sign_vocalic_rr
+201	<>	gujarati_vowel_sign_aa
+202	<>	gujarati_vowel_sign_i
+210	<>	gujarati_vowel_sign_ii
+214	<>	gujarati_vowel_sign_u
+218	<>	gujarati_vowel_sign_uu
+222	<>	gujarati_vowel_sign_vocalic_r
+;150	<>	gujarati_vowel_sign_vocalic_rr
+224	<>	gujarati_vowel_sign_e
+228	<>	gujarati_vowel_sign_ai
+232	<>	gujarati_vowel_sign_candra_e
+;	Signs and Others
+32	<>	32
+33	<>	exclamation_mark
+34	<>	quotation_mark
+;35	<>	number_sign
+;36	<>
+37	<>	gujarati_sign_avagraha
+38	<>	gujarati_sign_visarga
+39	<>	apostrophe
+40	<>	left_parenthesis
+41	<>	right_parenthesis
+42	<>	asterisk
+44	<>	comma
+45	<>	hyphen_minus
+46	<>	full_stop
+47	<>	solidus
+48	<>	gujarati_digit_zero
+49	<>	gujarati_digit_one
+50	<>	gujarati_digit_two
+51	<>	gujarati_digit_three
+52	<>	gujarati_digit_four
+53	<>	gujarati_digit_five
+54	<>	gujarati_digit_six
+55	<>	gujarati_digit_seven
+56	<>	gujarati_digit_eight
+57	<>	gujarati_digit_nine
+58  <>  colon
+63 <> question_mark
+59 <> 59

@@ -1,0 +1,287 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidLoadingProject" xml:space="preserve">
+	<value>Loading Project {0}...</value>
+	<comment>Splash screen message</comment>
+  </data>
+  <data name="kstidFieldWorksDidNotRespond" xml:space="preserve">
+	<value>Another instance of FieldWorks appears to be running, but did not respond properly to a request from this one. This is a bug; please report it to FlexErrors@sil.org. We recommend that you shut down all FieldWorks applications and try again. If you still get this message, restart your computer. (Experts may also try to recover by killing any FieldWorks processes using TaskManager.) Do you want to Retry now?</value>
+	<comment>Message reporting a bug when a second instance of FieldWorks tries to check whether another one is open on the same project.</comment>
+  </data>
+  <data name="ksFailed" xml:space="preserve">
+	<value>Failed</value>
+  </data>
+  <data name="kstidStartupProblem" xml:space="preserve">
+	<value>Startup Problem</value>
+	<comment>Caption that goes with kstidFieldWorksDidNotRespond.</comment>
+  </data>
+  <data name="kstidAboutToConvertToNonShared" xml:space="preserve">
+	<value>FieldWorks will now begin converting your projects to the non-shared format. This may take some time, and requires everyone to close the shared projects they currently have open (except FieldWorks will close the current one on this computer for you and reopen it after the conversion).</value>
+  </data>
+  <data name="kstidNoProjectName" xml:space="preserve">
+	<value>FieldWorks project name not specified.</value>
+	<comment>Message shown when TE or FLEx is started with one of the MySQL project types but no database name is supplied.</comment>
+  </data>
+  <data name="kstidThisApplicationIsBusy" xml:space="preserve">
+	<value>{0} is running but cannot open a window for project {1} because FieldWorks is busy. If you wait until FieldWorks has finished, {0} will continue.</value>
+	<comment>Message shown when TE or FLEx is started when the application already exists but can not be brought to the front because of a major change to the FieldWorks data.</comment>
+  </data>
+  <data name="kstidChooseCommand" xml:space="preserve">
+	<value>Choose a command:</value>
+	<comment>Label text in Unable to Open Project dialog box (replaces "To get started, choose a command:", which appears in the Welcometo FieldWorks dialog box.)</comment>
+  </data>
+  <data name="kstidUnableToOpenLastProject" xml:space="preserve">
+	<value>The last time {0} started, it stopped responding when attempting to open the FieldWorks project:
+{1}</value>
+	<comment>Message shown on the Unable to Open Project dialog box when TE or FLEx prevously crashed on startup</comment>
+  </data>
+  <data name="kstidAboutToConvertCaption" xml:space="preserve">
+	<value>About to Convert</value>
+	<comment>Caption for dialog with message kstidAboutToConverToShared or ksticAboutToConvertToNonShared.</comment>
+  </data>
+  <data name="kstidFileNotFound" xml:space="preserve">
+	<value>File does not exist:
+{0}</value>
+	<comment>Message shown on the Unable to Open Project dialog box when a FieldWorks project file could not be found</comment>
+  </data>
+  <data name="ksRestoringOldFwBackupFailed" xml:space="preserve">
+	<value>Restoring from an old FieldWorks backup failed.</value>
+  </data>
+  <data name="kstidGlobalWsChangedCaption" xml:space="preserve">
+	<value>Global Writing Systems Changed</value>
+  </data>
+  <data name="kstidOtherApplicationBusy" xml:space="preserve">
+	<value>{0} cannot open project {1} because {2} is busy. If you wait until {2} has finished, {0} will continue.</value>
+	<comment>Message shown when TE or FLEx is started when the other application is doing something that can't be interrupted.</comment>
+  </data>
+  <data name="kstidAboutToConvertToShared" xml:space="preserve">
+	<value>FieldWorks will now begin converting your projects to the shared format. This may take some time, and requires you to close all other projects you currently have open.</value>
+  </data>
+  <data name="kstidGlobalWsChangedMsg" xml:space="preserve">
+	<value>The following writing systems were updated in another project. Would you like to use those changes in this project ({1}) too?
+{0}</value>
+  </data>
+  <data name="kstidUnableToOpenProjectCaption" xml:space="preserve">
+	<value>Unable to Open Project</value>
+	<comment>Caption for Unable to Open Project dialog box</comment>
+  </data>
+  <data name="kstidInvalidFwProjType" xml:space="preserve">
+	<value>Invalid FieldWorks project type.</value>
+	<comment>Message shown on the Unable to Open Project dialog box when TE or FLEx is started without a valid project type. Must be specified on the command line or inferable from the project name.</comment>
+  </data>
+  <data name="kstidCacheInitFailure" xml:space="preserve">
+	<value>Unable to initialize the data.</value>
+	<comment>Message shown on the Unable to Open Project dialog box when the cache cannot be initialized.</comment>
+  </data>
+  <data name="kstidOtherApplicationHasDialog" xml:space="preserve">
+	<value>{0} cannot open project {1} because a dialog box is open in {2}. Close any dialog boxes in {2} to continue.</value>
+	<comment>Message shown when TE or FLEx is started when the other application has an open modal dialog box.</comment>
+  </data>
+  <data name="kstidRenamingProject" xml:space="preserve">
+	<value>Renaming project...</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="OpenFile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/OpenFile.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DatabaseNew" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/DatabaseNew.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Download" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/Download.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ksCannotMoveProjects" xml:space="preserve">
+	<value>FieldWorks is unable to move the following projects to the new location.</value>
+  </data>
+  <data name="ksYouCanTryToMoveProjects" xml:space="preserve">
+	<value>You can try to move the projects to the new location yourself in Windows Explorer.</value>
+  </data>
+  <data name="ksProblemsMovingProjects" xml:space="preserve">
+	<value>Problems moving some Projects</value>
+  </data>
+  <data name="ksProjectNameAndServerFmt" xml:space="preserve">
+	<value>{0} - {1}</value>
+  </data>
+  <data name="kstidInvalidServer" xml:space="preserve">
+	<value>Server name could not be resolved to a valid host:
+{0}
+{1}</value>
+  </data>
+  <data name="ksInsufficientPrivilegesToUpdateProjectLocationCaption" xml:space="preserve">
+	<value>Unable to modify project locations.</value>
+  </data>
+  <data name="ksInsufficientPrivilegesToUpdateProjectLocationText" xml:space="preserve">
+	<value>Administrator privileges are required to modify project locations. </value>
+  </data>
+  <data name="kstidCannotAccessProjectPath" xml:space="preserve">
+	<value>Unable to access the project data folder:
+{0}
+Ensure that this folder is shared and that you have permission to access it.</value>
+  </data>
+  <data name="ksChangeProjectLocationFailed" xml:space="preserve">
+	<value>Could not change Projects location</value>
+  </data>
+  <data name="ksChangeProjectLocationFailedDetails" xml:space="preserve">
+	<value>The attempt to change the location of the projects folder has failed. This is usually because you do not have administrator privileges in this account (or you answered 'no' when asked whether it was OK to make changes to your machine). Because the project folder location affects all users of this computer, administrator privilege is required to change it.</value>
+  </data>
+  <data name="kstidSaving" xml:space="preserve">
+	<value>Saving project {0}...</value>
+	<comment>Splash screen message when changes made during application initialization are being saved</comment>
+  </data>
+  <data name="ksBackupErrorDuringRestore" xml:space="preserve">
+	<value>Do you want to continue with the restore?</value>
+  </data>
+  <data name="ksMovingProject" xml:space="preserve">
+	<value>Moving project {0}</value>
+	<comment>Must contain {0}, the project name</comment>
+  </data>
+  <data name="ksMovingProjectsCaption" xml:space="preserve">
+	<value>FieldWorks: Moving projects from {0} to {1}</value>
+	<comment>Must contain {0} and {1}, two directory paths</comment>
+  </data>
+  <data name="ksErrorCaption" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <data name="ksLockFileLocked" xml:space="preserve">
+	<value>FieldWorks cannot open the project {0} because another program is using it. Please close the other program and try again. Note: sometimes this message may come up when there appears to be no other program using the file. The simplest way to fix this is to log off and on again. Other options are discussed in Help.</value>
+	<comment>Must contain {0} which is a project name</comment>
+  </data>
+  <data name="ksDoYouWantToMigrate" xml:space="preserve">
+	<value>Do you want to migrate existing projects from an older version of FieldWorks?</value>
+  </data>
+  <data name="ksMigrateProjects" xml:space="preserve">
+	<value>Migrate projects</value>
+  </data>
+  <data name="ksErrorMigratingProjects" xml:space="preserve">
+	<value>An error occurred trying to migrate existing projects from an older version of FieldWorks:</value>
+  </data>
+  <data name="ksMigratingProjectsFailed" xml:space="preserve">
+	<value>Migrating existing projects failed totally.</value>
+  </data>
+  <data name="ksProjectsFailedToMigrate" xml:space="preserve">
+	<value>{0} project(s) failed to migrate properly.</value>
+  </data>
+  <data name="ksProjectLinksStillOld" xml:space="preserve">
+	<value>The files this project links to are currently still located in the old FieldWorks folder. Would you like to store those files in the new folder for this project?</value>
+  </data>
+  <data name="ksReviewLocationOfLinkedFiles" xml:space="preserve">
+	<value>Review the location of Linked Files</value>
+  </data>
+</root>

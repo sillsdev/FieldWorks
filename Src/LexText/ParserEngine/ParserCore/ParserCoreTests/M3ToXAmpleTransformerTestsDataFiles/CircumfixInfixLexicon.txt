@@ -1,0 +1,80 @@
+
+\lx 15044
+\g carry
+\c W
+\wc root
+\mp RootPOS262
+\a tuu {14987}
+
+\lx 14990
+\g perfective
+\c W/W
+\o -NaN -NaN
+\wc 15021
+\a ́ {14992}
+\eType infix
+\loc prefix root / # [14998][15018]_  | / # [C] [V] _
+
+\mcc 14990 +/ _ ... 14990 +/ 14990 ... _
+
+
+\lx 14990
+\g perfective
+\c W/W
+\o NaN NaN
+\wc 15022
+\a lá {14993}
+\eType suffix
+\mcc 14990 +/ _ ... 14990 +/ 14990 ... _
+
+
+\lx 15058
+\g act corruptly
+\c W
+\wc root
+\mp RootPOS262
+\a hbl {15059}
+
+\lx 15110
+\g InfAbs
+\c W/W
+\o 1
+\wc derivCircumPfx
+\a a {15112}
+\a o {15113}
+\eType infix
+\loc prefix root /#[14998]_  | /#[C]_
+		 /#[14998][14998]_  | /#[C][C]_
+
+\fd FromPOS262
+\fd ToPOS259
+\mcc 15110 +/ _ ... 15110 +/ 15110 ... _
+
+\fd Infix
+
+\lx 15147
+\g InfAbsInfl
+\c W/W
+\o -NaN -NaN
+\wc 15132
+\a a {15149}
+\a oXXXX {15150}
+\eType infix
+\loc prefix root /#[14998]_  | /#[C]_
+		 /#[14998][14998]_  | /#[C][C]_
+
+\mcc 15147 +/ _ ... 15147 +/ 15147 ... _
+
+
+\lx 15147
+\g InfAbsInfl
+\c W/W
+\o -NaN -NaN
+\wc 15136
+\a a {15149}
+\a oXXXX {15150}
+\eType infix
+\loc prefix root /#[14998]_  | /#[C]_
+		 /#[14998][14998]_  | /#[C][C]_
+
+\mcc 15147 +/ _ ... 15147 +/ 15147 ... _

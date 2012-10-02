@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000032">
+<rt guid="2a425bc1-0d34-4d2f-8b78-75c6fec9d7e6" class="LangProject">
+<DateCreated val="2009-1-23 12:11:14.487" />
+<DateModified val="2010-7-1 11:14:18.570" />
+<AnalysisWss>
+<Uni>en x-rtl</Uni>
+</AnalysisWss>
+<CurVernWss>
+<Uni>x-kal</Uni>
+</CurVernWss>
+<CurAnalysisWss>
+<Uni>en x-rtl</Uni>
+</CurAnalysisWss>
+<CurPronunWss>
+<Uni>x-kal</Uni>
+</CurPronunWss>
+<VernWss>
+<Uni>id x-kal x-kal-etic</Uni>
+</VernWss>
+<ExtLinkRootDir>
+<Uni>C:\DFW\distfiles</Uni>
+</ExtLinkRootDir>
+</rt>
+</languageproject>

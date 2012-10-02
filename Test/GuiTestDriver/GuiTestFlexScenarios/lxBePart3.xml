@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 3 -->
+
+<accil on-fail="assert">
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+   <var id="changeIt" set="Select the target field and the list choice to change it to"/>
+   <var id="arrow" set="  "/>
+   <var id="copyIt" set="Copy the contents of the source field to the target field"/>
+   <var id="oldVal" set="When the old value is not empty..."/>
+
+<!-- Go to Lexicon/Bulk Edit Entries -->
+   <click path="$menuLEXICON;menu:Bulk Edit Entries"/>
+
+<!-- Display Citation Form column -->
+   <click path="$beeConfigCol"/>
+   <insert>mm~</insert><!-- more -->
+   <on-dialog title="Configure Columns...">
+	  <click path="9:Writing System[2]/34:Citation Form"/>
+	  <!--click path="/9:Add >>/43:Add >>"/-->
+	  <insert>%a</insert><!-- Add >> -->
+	  <click path="$ok"/>
+	  <on-dialog title="Duplicate column found">
+		 <click path="$ok"/>
+	  </on-dialog>
+	  <!-- click path="9:Current Columns[2]/34:Citation Form"/ can't tell between the two -->
+	  <click path="9:Writing System[2]/34:Citation Form"/>
+	  <!--click path="9:Remove/43:Remove"/-->
+	  <insert wait="2000">%r</insert><!-- Remove -->
+	  <click path="9:Writing System[2]/34:Citation Form"/><!-- click this since it's visible -->
+	  <!--click path="9:Writing System[2]/34:Import Residue (Entry)"/ clicks below dialog -->
+	  <insert wait="500">i</insert><!-- Import Residue (Entry) -->
+	  <!--click path="/9:Add >>/43:Add >>"/-->
+	  <insert wait="500">%a</insert><!-- Add >> -->
+	  <click path="$ok"/>
+   </on-dialog>
+
+<!-- Goto Bulk Copy tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:Bulk Copy"/>
+   <click path="$NoFilters"/><!-- Turn off all filters -->
+   <click path="$firstRec"/><!-- Select the first record -->
+   <glimpse id="Not1422" path="9:StatusBar/41:1//1422"/>
+   <click path="$beeConfigCol"/>
+   <insert>mm~</insert><!-- more -->
+   <on-dialog title="Configure Columns...">
+	  <click path="9:Current Columns[2]/34:Import Residue (Entry)"/>
+	  <click path="$NL;43:NAMELESS"/><!-- move up -->
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$ok"/>
+   </on-dialog>
+
+<!-- widen the Import Residue (Entry) header so you can see the entire label (can't yet) -->
+
+<!-- Check all -->
+   <click path="$beeChecks"/>
+   <insert>{DOWN}~</insert>
+
+<!-- Copy Lexeme Form to Import Residue (Entry) -->
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/60:$copyIt;/9:Bulk Copy/9:Target Field[2]/43:Open"/>
+   <insert>l~</insert><!-- Lexeme Form -->
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/60:$copyIt;/9:Bulk Copy/$NL;43:Open"/>
+   <insert>i~</insert><!-- Import Residue (Entry) -->
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+
+   <insert wait="30000">^{HOME}</insert>
+   <click path="$firstRec"/>
+<!-- check that each Import Residue (Entry) value = Lexeme Form value for that record -->
+   <glimpse id="1" path="$beeRec;[1]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="1a" path="$beeRec;[1]/$Col;[3]/$Text" prop="value" expect="$1.value"/>
+   <glimpse id="4" path="$beeRec;[4]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="4a" path="$beeRec;[4]/$Col;[3]/$Text" prop="value" expect="$4.value"/>
+   <glimpse id="8" path="$beeRec;[8]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="8a" path="$beeRec;[8]/$Col;[3]/$Text" prop="value" expect="$8.value"/>
+   <glimpse id="12" path="$beeRec;[12]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="12a" path="$beeRec;[12]/$Col;[3]/$Text" prop="value" expect="$12.value"/>
+
+   <insert wait="2000">^z</insert><!-- Undo --><bug id="LT-5811"/>
+   <insert wait="2000">^y</insert><!-- Redo -->
+   <insert wait="2000">^z</insert><!-- Undo -->
+
+   <click path="$firstRec"/>
+<!-- check that each Import Residue (Entry) value is empty -->
+   <glimpse id="1b" path="$beeRec;[1]/$Col;[3]/$Text" prop="value" expect=""/>
+   <glimpse id="4b" path="$beeRec;[4]/$Col;[3]/$Text" prop="value" expect=" "/>
+   <glimpse id="8b" path="$beeRec;[8]/$Col;[3]/$Text" prop="value" expect=""/>
+   <glimpse id="12b" path="$beeRec;[12]/$Col;[3]/$Text" prop="value" expect=""/>
+
+   <click path="$beeRec;[1]/$Col;[3]/$Text"/>
+   <insert>ennie</insert>
+   <click path="$beeRec;[4]/$Col;[3]/$Text"/>
+   <insert>meanie</insert>
+   <click path="$beeRec;[8]/$Col;[3]/$Text"/>
+   <insert>minie</insert>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$firstRec"/>
+   <glimpse id="1c" path="$beeRec;[1]/$Col;[3]/$Text" prop="value" expect="ennie"/>
+   <glimpse id="4c" path="$beeRec;[4]/$Col;[3]/$Text" prop="value" expect=" meanie"/>
+   <glimpse id="8c" path="$beeRec;[8]/$Col;[3]/$Text" prop="value" expect="minie"/>
+   <glimpse id="2" path="$beeRec;[2]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="2a" path="$beeRec;[2]/$Col;[3]/$Text" prop="value" expect=" $arrow; $2.value"/>
+   <glimpse id="3" path="$beeRec;[3]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="3a" path="$beeRec;[3]/$Col;[3]/$Text" prop="value" expect=" $arrow; $3.value"/>
+   <glimpse id="7" path="$beeRec;[7]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="7a" path="$beeRec;[7]/$Col;[3]/$Text" prop="value" expect=" $arrow; $7.value"/>
+   <glimpse id="12f" path="$beeRec;[12]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="12c" path="$beeRec;[12]/$Col;[3]/$Text" prop="value" expect=" $arrow; $12f.value"/>
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/60:$copyIt;/9:Bulk Copy/$nl;[2]/9:$oldVal;/20:$oldVal;/9:Overwrite/45:Overwrite"/>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$firstRec"/>
+   <glimpse id="1f" path="$beeRec;[1]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="1d" path="$beeRec;[1]/$Col;[3]/$Text" prop="value" expect="ennie $arrow; $1f.value"/>
+   <glimpse id="4f" path="$beeRec;[4]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="4d" path="$beeRec;[4]/$Col;[3]/$Text" prop="value" expect=" meanie $arrow; $4f.value"/>
+   <glimpse id="8f" path="$beeRec;[8]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="8d" path="$beeRec;[8]/$Col;[3]/$Text" prop="value" expect="minie $arrow; $8f.value"/>
+   <glimpse id="2f" path="$beeRec;[2]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="2b" path="$beeRec;[2]/$Col;[3]/$Text" prop="value" expect=" $arrow; $2f.value"/>
+   <glimpse id="3f" path="$beeRec;[3]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="3b" path="$beeRec;[3]/$Col;[3]/$Text" prop="value" expect=" $arrow; $3f.value"/>
+   <glimpse id="7f" path="$beeRec;[7]/$Col;[2]/$Text" prop="value" on-fail="pass"/>
+   <glimpse id="7b" path="$beeRec;[7]/$Col;[3]/$Text" prop="value" expect=" $arrow; $7f.value"/>
+   <glimpse id="12d" path="$beeRec;[12]/$Col;[3]/$Text" prop="value" expect=" $arrow; $12f.value"/>
+
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/60:$copyIt;/9:Bulk Copy/$nl;[2]/9:$oldVal;/20:$oldVal;/9:Add after old value, sep. by/45:Add after old value, sep. by"/>
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/60:$copyIt;/9:Bulk Copy/$nl;[2]/9:$oldVal;/20:$oldVal;/9: /20:RootSite/$Text"/>
+   <insert>;</insert>
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$firstRec"/>
+   <glimpse id="1e" path="$beeRec;[1]/$Col;[3]/$Text" prop="value" expect="ennie $arrow; ennie ;$1f.value"/>
+   <glimpse id="4e" path="$beeRec;[4]/$Col;[3]/$Text" prop="value" expect=" meanie $arrow;  meanie ;$4f.value"/>
+   <glimpse id="8e" path="$beeRec;[8]/$Col;[3]/$Text" prop="value" expect="minie $arrow; minie ;$8f.value"/>
+   <glimpse id="2c" path="$beeRec;[2]/$Col;[3]/$Text" prop="value" expect=" $arrow; $2f.value"/>
+   <glimpse id="3c" path="$beeRec;[3]/$Col;[3]/$Text" prop="value" expect=" $arrow; $3f.value"/>
+   <glimpse id="7c" path="$beeRec;[7]/$Col;[3]/$Text" prop="value" expect=" $arrow; $7f.value"/>
+   <glimpse id="12e" path="$beeRec;[12]/$Col;[3]/$Text" prop="value" expect=" $arrow; $12f.value"/>
+   <click path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+   <insert wait="2000">^z</insert><!-- Undo -->
+   <click path="$tbSTANDARD;43:Save"/>
+
+ </on-application>
+</accil>

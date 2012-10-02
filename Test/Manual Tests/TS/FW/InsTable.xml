@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="inscom" num="2.5.6" abbr="incom" file="FW\InsTable.xml" ready="V2">
+<title tag="inscom">Insert-Table Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Inserts a table into the current text cursor position. A dialog is displayed that queries for the number of rows and columns to initially place in the table.</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/InsertMenu.html#Insert-Table" type="doc">Insert-Table</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert-Table"</p>
+</context>
+<case id="incomAct" num="0" order="any">
+<title tag="incomAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Insert-Table. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/InsertMenu.html#Insert-Table" type="doc">Insert-Table specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Insert-Table dialog fails to open</p>
+<p name="bug">Insert-Table dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The columns is set to 5.</li>
+<li>The rows is set to 2.</li>
+</ul>
+</r>
+<p name="bug">Insert-TableInsert-Table columns is set to 5 failed</p>
+<p name="bug">Insert-TableInsert-Table rows is set to 2 failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The a table is created.</li>
+<li>The created table has Number of columns columns.</li>
+<li>The created table has Number of rows rows.</li>
+<li>The created border is 1 pt black.</li>
+<li>The created table background is white.</li>
+<li>The created table width spans from margin to margin.</li>
+<li>The created columns have equal width.</li>
+<li>Report any failures as suggested using "Insert-Table" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-Table dialog remains after OK</p>
+<p name="bug">Insert-Table a table is created failed</p>
+<p name="bug">Insert-Table created table has Number of columns columns failed</p>
+<p name="bug">Insert-Table created table has Number of rows rows failed</p>
+<p name="bug">Insert-Table created border is 1 pt black failed</p>
+<p name="bug">Insert-Table created table background is white failed</p>
+<p name="bug">Insert-Table created table width spans from margin to margin failed</p>
+<p name="bug">Insert-Table created columns have equal width failed</p>
+</step>
+</case>
+<case id="incomcols" num="1" order="any">
+<title tag="incomcols">Number Of Columns Spin Control</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="1.1" link="Bug">
+	Use the <link uri="../StdCtrls/SpinCtrl.xml">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;c&gt; to test the Number of columns spin control.<r>
+<ul>
+<li>The shortcut "c" is underlined.</li>
+<li>The minimum value is 1.</li>
+<li>The maximum value is 50.</li>
+<li>Report any failures using the first words, "Insert-Table Number of columns".</li>
+</ul>
+</r>
+<p name="bug">Insert-Table Number of columns shortcut is not &lt;c&gt;</p>
+<p name="bug">Insert-Table Number of columns min not 1</p>
+<p name="bug">Insert-Table Number of columns max not 50</p>
+</step>
+<step name="1.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is 5.</li>
+	<li>The spin widget increments <i>1</i> per click.</li>
+	<li>When the left mouse button is depressed over two seconds then it <i>increases increment speed</i>.</li>
+   </ul>
+</r>
+<p name="bug">Insert-TableNumber of columns default vaule is not 5</p>
+	<p name="bug">Insert-TableNumber of columns spinner increment not 1</p>
+	<p name="bug">Insert-TableNumber of columns mouse-down does not increases increment speed</p>
+   </step>
+</case>
+<case id="incomrows" num="2" order="any">
+<title tag="incomrows">Number Of Rows Spin Control</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/SpinCtrl.xml">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;r&gt; to test the Number of rows spin control.<r>
+<ul>
+<li>The shortcut "r" is underlined.</li>
+<li>The minimum value is 1.</li>
+<li>The maximum value is 50.</li>
+<li>Report any failures using the first words, "Insert-Table Number of rows".</li>
+</ul>
+</r>
+<p name="bug">Insert-Table Number of rows shortcut is not &lt;r&gt;</p>
+<p name="bug">Insert-Table Number of rows min not 1</p>
+<p name="bug">Insert-Table Number of rows max not 50</p>
+</step>
+<step name="2.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is 2.</li>
+	<li>The spin widget increments <i>1</i> per click.</li>
+	<li>When the left mouse button is depressed over two seconds then it <i>increases increment speed</i>.</li>
+   </ul>
+</r>
+<p name="bug">Insert-TableNumber of rows default vaule is not 2</p>
+	<p name="bug">Insert-TableNumber of rows spinner increment not 1</p>
+	<p name="bug">Insert-TableNumber of rows mouse-down does not increases increment speed</p>
+   </step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+
+</test>

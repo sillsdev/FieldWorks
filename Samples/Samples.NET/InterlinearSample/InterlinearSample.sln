@@ -1,0 +1,39 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterlinearSample", "InterlinearSample.csproj", "{531E1B62-83C3-4FA6-90A6-236A551F88B4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "views", "..\..\..\Src\views\views.vcproj", "{C86CA2EB-81B5-4411-B5B7-E983314E02DA}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = ..\\..\\..\\Src\\views\\views.vcproj
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = ..\\..\\..\\Src\\views
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Bounds
+		ConfigName.1 = Debug
+		ConfigName.2 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{531E1B62-83C3-4FA6-90A6-236A551F88B4}.Bounds.ActiveCfg = Release|.NET
+		{531E1B62-83C3-4FA6-90A6-236A551F88B4}.Bounds.Build.0 = Release|.NET
+		{531E1B62-83C3-4FA6-90A6-236A551F88B4}.Debug.ActiveCfg = Debug|.NET
+		{531E1B62-83C3-4FA6-90A6-236A551F88B4}.Debug.Build.0 = Debug|.NET
+		{531E1B62-83C3-4FA6-90A6-236A551F88B4}.Release.ActiveCfg = Release|.NET
+		{531E1B62-83C3-4FA6-90A6-236A551F88B4}.Release.Build.0 = Release|.NET
+		{C86CA2EB-81B5-4411-B5B7-E983314E02DA}.Bounds.ActiveCfg = Bounds|Win32
+		{C86CA2EB-81B5-4411-B5B7-E983314E02DA}.Bounds.Build.0 = Bounds|Win32
+		{C86CA2EB-81B5-4411-B5B7-E983314E02DA}.Debug.ActiveCfg = Debug|Win32
+		{C86CA2EB-81B5-4411-B5B7-E983314E02DA}.Debug.Build.0 = Debug|Win32
+		{C86CA2EB-81B5-4411-B5B7-E983314E02DA}.Release.ActiveCfg = Release|Win32
+		{C86CA2EB-81B5-4411-B5B7-E983314E02DA}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

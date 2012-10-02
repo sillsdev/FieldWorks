@@ -1,0 +1,1081 @@
+<html>
+<head><!--Sitemap 1.0--></head>
+<body>
+ <ul>
+  <li><object type="text/sitemap">
+	<param name="Name" value="FieldWorks Test Manual" />
+	<param name="Local" value="TitlePage.htm" />
+   </object>
+  </li>
+  <ul>
+   <li><object type="text/sitemap">
+	 <param name="Name" value="Welcome to the FieldWorks Test Manual" />
+	 <param name="Local" value="Welcome.htm" />
+	</object>
+   </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Testing a FieldWorks application"/>
+	<param name="Local" value="Apps\maintask.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Software Bugs"/>
+	<param name="Local" value="Bugs\overview.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a bug?"/>
+	<param name="Local" value="Bugs\Bug.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a bug pattern?"/>
+	<param name="Local" value="Bugs\Pattern.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a bug report?"/>
+	<param name="Local" value="Bugs\Report.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Bug pattern list"/>
+	<param name="Local" value="Bugs\PatList.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to build this manual"/>
+	<param name="Local" value="Building\maintask.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Set up directory structures"/>
+	<param name="Local" value="Building\Dir.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Use batch files to generate all HTML content"/>
+	<param name="Local" value="Building\Generate.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Compile the TestHelp manual"/>
+	<param name="Local" value="Building\Compile.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Check in manual files"/>
+	<param name="Local" value="Building\CheckIn.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Milestone testing"/>
+	<param name="Local" value="Milestone\overview.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is the Language Software Test Department?"/>
+	<param name="Local" value="Milestone\LSTD.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is an off-site tester?"/>
+	<param name="Local" value="Milestone\Offsite.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is the SIL Intranet?"/>
+	<param name="Local" value="Milestone\SilIntranet.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Manual source"/>
+	<param name="Local" value="Source\overview.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is test case content?"/>
+	<param name="Local" value="Source\TcContent.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is user content?"/>
+	<param name="Local" value="Source\UserContent.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is the document control system?"/>
+	<param name="Local" value="Source\DocControl.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Getting started"/>
+	<param name="Local" value="Starting\maintask.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Connecting to the SIL Intranet"/>
+	<param name="Local" value="Starting\Connect.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to download a FieldWorks application"/>
+	<param name="Local" value="Starting\dldApp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to install a FieldWorks application"/>
+	<param name="Local" value="Starting\InstallApp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to download the FieldWorks Test Manual"/>
+	<param name="Local" value="Starting\dldTestMan.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Test case library"/>
+	<param name="Local" value="TCL\overview.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a test case library?"/>
+	<param name="Local" value="TCL\TestCaseLib.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a test script?"/>
+	<param name="Local" value="TCL\TestScript.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a test case?"/>
+	<param name="Local" value="TCL\TestCase.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a test case step?"/>
+	<param name="Local" value="TCL\CaseStep.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is an action?"/>
+	<param name="Local" value="TCL\Action.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a Result?"/>
+	<param name="Local" value="TCL\Result.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to use a test script"/>
+	<param name="Local" value="Using\maintask.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Creating a bug report"/>
+	<param name="Local" value="Using\Report.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to link related bugs"/>
+	<param name="Local" value="Using\Related.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Bug Report Data"/>
+	<param name="Local" value="Using\Fields.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Naming bugs"/>
+	<param name="Local" value="Using\Name.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Categorizing bugs"/>
+	<param name="Local" value="Using\Category.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Choosing a priority level"/>
+	<param name="Local" value="Using\Priority.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Choosing a severity level"/>
+	<param name="Local" value="Using\Severity.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Describing bugs"/>
+	<param name="Local" value="Using\Describe.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to submit a bug"/>
+	<param name="Local" value="Using\Submit.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="How to write a test script"/>
+	<param name="Local" value="Writing\maintask.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Breaking specifications into objects"/>
+	<param name="Local" value="Writing\BreakSpecs.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Identifying test cases"/>
+	<param name="Local" value="Writing\IdTestCases.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Specifying a test case"/>
+	<param name="Local" value="Writing\SpecTestCases.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Writing test case steps"/>
+	<param name="Local" value="Writing\Steps.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Writing an action"/>
+	<param name="Local" value="Writing\Action.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Writing a result"/>
+	<param name="Local" value="Writing\Result.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Writing a bug pattern"/>
+	<param name="Local" value="Writing\BugPattern.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Test scripts in XML"/>
+	<param name="Local" value="Writing\XML.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Using the XML authoring tools"/>
+	<param name="Local" value="Writing\tools.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Setting up a test script library in XML"/>
+	<param name="Local" value="Writing\xlibrary.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Trouble-shooting your XML test script"/>
+	<param name="Local" value="Writing\trouble.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Rendering a test script in XML"/>
+	<param name="Local" value="Writing\xtestscript.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Rendering a test case in XML"/>
+	<param name="Local" value="Writing\xtestcase.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Rendering a test step in XML"/>
+	<param name="Local" value="Writing\xteststep.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Validating your XML test script - Did I get it right?"/>
+	<param name="Local" value="Writing\validlib.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Test case library XML"/>
+	<param name="Local" value="XML\overview.htm"/>
+   </object>
+  </li>
+  <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is XML?"/>
+	<param name="Local" value="XML\XML.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is XSL?"/>
+	<param name="Local" value="XML\XSL.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is markup?"/>
+	<param name="Local" value="XML\MarkUp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a batch file?"/>
+	<param name="Local" value="XML\Batch.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="What is a text editor?"/>
+	<param name="Local" value="XML\Editor.htm"/>
+   </object>
+  </li>
+  </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="WorldPad Test Library"/>
+	<param name="Local" value="WorldPad\TestList.htm"/>
+   </object>
+  </li>
+   <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="File-Open Tests"/>
+	<param name="Local" value="WorldPad\FileOpen.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File New and Close Tests"/>
+	<param name="Local" value="WorldPad\FileNewClose.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File-Save and Save As Tests"/>
+	<param name="Local" value="WorldPad\FileSave.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="IPA Graphite Font Tests"/>
+	<param name="Local" value="WorldPad\fntIPA.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Writing System Properties Tests"/>
+	<param name="Local" value="WorldPad\ToolsWS.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options Tests"/>
+	<param name="Local" value="WorldPad\ToolsOptions.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Bug Patterns"/>
+	<param name="Local" value="WorldPad\PatList.htm"/>
+   </object>
+  </li>
+   </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Data Notebook Test Library"/>
+	<param name="Local" value="DN\TestList.htm"/>
+   </object>
+  </li>
+   <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Subentry Tests"/>
+	<param name="Local" value="DN\InsertSubentry.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Event Tests"/>
+	<param name="Local" value="DN\InsertEvent.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Analysis Tests"/>
+	<param name="Local" value="DN\InsertAnalysis.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Overlays Dialog Tests"/>
+	<param name="Local" value="DN\OptOverlays.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Views-Document View Tests"/>
+	<param name="Local" value="DN\OptVwDoc.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Views-Data Entry Tests"/>
+	<param name="Local" value="DN\OptVwDE.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Views-Browse View Tests"/>
+	<param name="Local" value="DN\OptVwBrowse.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Data Notebook Properties Test"/>
+	<param name="Local" value="DN\FilePropsDN.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Bug Patterns"/>
+	<param name="Local" value="DN\PatList.htm"/>
+   </object>
+  </li>
+   </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="FieldWorks Test Library"/>
+	<param name="Local" value="FW\TestList.htm"/>
+   </object>
+  </li>
+   <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Start up and No Entry Condition Tests"/>
+	<param name="Local" value="FW\StartUp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File-Backup/Restore Tests"/>
+	<param name="Local" value="FW\BackupRestore.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - New Language Project Wizard Tests"/>
+	<param name="Local" value="FW\FileNewProject.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Open Language Project Tests"/>
+	<param name="Local" value="FW\FileOpenProject.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File-Save Tests"/>
+	<param name="Local" value="FW\FileSave.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File-Page Setup Dialog Tests"/>
+	<param name="Local" value="FW\PgSetup.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File-Print Preview Tests"/>
+	<param name="Local" value="FW\FilePrtPrev.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Import > XML Format Tests"/>
+	<param name="Local" value="FW\FileImport.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Import > Standard Format Tests"/>
+	<param name="Local" value="FW\FileImportStandard.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Export Tests"/>
+	<param name="Local" value="FW\FileExport.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="General Properties Test"/>
+	<param name="Local" value="FW\FileProps.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Project Properties Test"/>
+	<param name="Local" value="FW\FilePropsProj.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - New Language Definition Wizard Tests"/>
+	<param name="Local" value="FW\FileNewLang.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Writing System Properties Tests"/>
+	<param name="Local" value="FW\WritSysProp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File-Exit Tests"/>
+	<param name="Local" value="FW\FileExit.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Undo Tests"/>
+	<param name="Local" value="FW\EdtUndo.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Redo Tests"/>
+	<param name="Local" value="FW\EdtRedo.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Cut, Copy and Paste Tests"/>
+	<param name="Local" value="FW\Edtccp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Select All Tests"/>
+	<param name="Local" value="FW\EdtSelectAll.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Find Tests"/>
+	<param name="Local" value="FW\EdtFind.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Next Match Tests"/>
+	<param name="Local" value="FW\EdtNxtMat.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Previous Match Tests"/>
+	<param name="Local" value="FW\EdtPrvMat.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Replace Tests"/>
+	<param name="Local" value="FW\EdtReplace.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Delete Tests"/>
+	<param name="Local" value="FW\EdtDel.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Edit-Delete Effects Dialog Tests"/>
+	<param name="Local" value="FW\EdtDelEffDiag.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="View-Views Tests"/>
+	<param name="Local" value="FW\VwViews.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="View-Filters Tests"/>
+	<param name="Local" value="FW\VwFilter.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="View-Sort Methods Tests"/>
+	<param name="Local" value="FW\VwSortM.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="View-Overlays Tests"/>
+	<param name="Local" value="FW\VwOverlay.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="View-Toolbars Tests"/>
+	<param name="Local" value="FW\VwToolbar.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="View-Side Bar Tests"/>
+	<param name="Local" value="FW\VwSideBar.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="View-Status bar Tests"/>
+	<param name="Local" value="FW\VwStatusbar.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Data First, Previous, Next, Last Tests"/>
+	<param name="Local" value="FW\DataNav.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Data-History Tests"/>
+	<param name="Local" value="FW\DataHistory.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Data-Organize Favorites Tests"/>
+	<param name="Local" value="FW\DatOrgFav.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Data-Modify Templates Tests"/>
+	<param name="Local" value="FW\DatModTemp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Comment Tests"/>
+	<param name="Local" value="FW\InsComment.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-External Link Tests"/>
+	<param name="Local" value="FW\InsExtLink.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Table Tests"/>
+	<param name="Local" value="FW\InsTable.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Sound Tests"/>
+	<param name="Local" value="FW\InsSound.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Video Tests"/>
+	<param name="Local" value="FW\InsVideo.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Picture Tests"/>
+	<param name="Local" value="FW\InsPicture.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert-Object Tests"/>
+	<param name="Local" value="FW\InsObject.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Format-Font Dialog Tests"/>
+	<param name="Local" value="FW\FmtFont.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Format-Writing system Tests"/>
+	<param name="Local" value="FW\FmtWS.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Format-Paragraph Dialog Tests"/>
+	<param name="Local" value="FW\FmtPara.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Format-Bullets and Numbering Tests"/>
+	<param name="Local" value="FW\FmtBnN.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Format-Border Dialog Tests"/>
+	<param name="Local" value="FW\FmtBrdr.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Format-Style Dialog Tests"/>
+	<param name="Local" value="FW\FmtStyle.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Spelling Tests"/>
+	<param name="Local" value="FW\tlsspell.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Reports Tests"/>
+	<param name="Local" value="FW\TlsReport.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Lists Tests"/>
+	<param name="Local" value="FW\TlsList.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-FieldWorks Explorer Tests"/>
+	<param name="Local" value="FW\TlsExplore.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Show Selection Using Tests"/>
+	<param name="Local" value="FW\TlsShoSelUse.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-General tests"/>
+	<param name="Local" value="FW\OptGen.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Custom Fields Tab Tests"/>
+	<param name="Local" value="FW\OptCFields.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Filters Tab Tests"/>
+	<param name="Local" value="FW\OptFilters.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Overlays Tab Tests"/>
+	<param name="Local" value="FW\OptOverlays.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Options-Sort Methods Tab Tests"/>
+	<param name="Local" value="FW\OptSortMeth.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Overlays Usage Tests"/>
+	<param name="Local" value="FW\OverlaysUsage.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools-Customize Tests"/>
+	<param name="Local" value="FW\TlsCustomize.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Window Menu Tests"/>
+	<param name="Local" value="FW\Window.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Help Menu Tests"/>
+	<param name="Local" value="FW\FwHelp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Help-(Application) Tests"/>
+	<param name="Local" value="FW\HlpApp.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Help-How Do I Tests"/>
+	<param name="Local" value="FW\HlpHow.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Help-Tutorials Tests"/>
+	<param name="Local" value="FW\HlpTutor.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Help-About (AppName) Tests"/>
+	<param name="Local" value="FW\HlpAbout.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Installation Program Tests"/>
+	<param name="Local" value="FW\Install.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Side Bar Tests"/>
+	<param name="Local" value="FW\BarSide.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Standard Toolbar Tests"/>
+	<param name="Local" value="FW\TbStandard.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Format Toolbar Tests"/>
+	<param name="Local" value="FW\TbFormat.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Window Toolbar Tests"/>
+	<param name="Local" value="FW\TbWindow.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Data Toolbar Tests"/>
+	<param name="Local" value="FW\TbData.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert Toolbar Tests"/>
+	<param name="Local" value="FW\TbInsert.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tools Toolbar Tests"/>
+	<param name="Local" value="FW\TbTools.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Status Bar Tests"/>
+	<param name="Local" value="FW\BarStatus.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="List Chooser Dialog Tests"/>
+	<param name="Local" value="FW\ChcList.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Drag and Drop Tests"/>
+	<param name="Local" value="FW\DragDrop.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Data Entry View Usage Tests"/>
+	<param name="Local" value="FW\DataEntryView.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Browse View Usage Tests"/>
+	<param name="Local" value="FW\BrowseView.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Document View Usage Tests"/>
+	<param name="Local" value="FW\DocumentView.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Filter Usage Tests"/>
+	<param name="Local" value="FW\FilterUsage.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Sort Usage Tests"/>
+	<param name="Local" value="FW\SortUsage.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Backup/Restore Dialog Tests"/>
+	<param name="Local" value="FW\BackupRestoreDlg.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Backup Schedule Dialog Tests"/>
+	<param name="Local" value="FW\BackupScheduleDlg.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Backup Reminder Dialog Tests"/>
+	<param name="Local" value="FW\BackupReminderDlg.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Backup Password Tests"/>
+	<param name="Local" value="FW\BackupPasswordDlg.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Synchronization Tests"/>
+	<param name="Local" value="FW\Sync.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Bug Patterns"/>
+	<param name="Local" value="FW\PatList.htm"/>
+   </object>
+  </li>
+   </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Topics List Editor Test Library"/>
+	<param name="Local" value="TLE\TestList.htm"/>
+   </object>
+  </li>
+   <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Open Topics List Tests"/>
+	<param name="Local" value="TLE\FileOpenTLE.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="File - Topics List Properties Test"/>
+	<param name="Local" value="TLE\FilePropsTLE.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert Toolbar Tests (TLE)"/>
+	<param name="Local" value="TLE\TbInsertTLE.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Insert Item Tests"/>
+	<param name="Local" value="TLE\InsertItem.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="SideBar List Item Tests"/>
+	<param name="Local" value="TLE\SideBarList.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Bug Patterns"/>
+	<param name="Local" value="TLE\PatList.htm"/>
+   </object>
+  </li>
+   </ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Standard Control Test Library"/>
+	<param name="Local" value="StdCtrls\TestList.htm"/>
+   </object>
+  </li>
+   <ul>
+
+  <li><object type="text/sitemap">
+	<param name="Name" value="Standard Cursor Tests"/>
+	<param name="Local" value="StdCtrls\Cursor.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Check Box Tests"/>
+	<param name="Local" value="StdCtrls\CheckBox.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Radio Button Tests"/>
+	<param name="Local" value="StdCtrls\RadioBtn.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Button Tests"/>
+	<param name="Local" value="StdCtrls\Button.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Toolbar Button Tests"/>
+	<param name="Local" value="StdCtrls\TlbButton.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Toggle Tests"/>
+	<param name="Local" value="StdCtrls\Toggle.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Menu Button Tests"/>
+	<param name="Local" value="StdCtrls\MenuBtn.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Text Box Tests"/>
+	<param name="Local" value="StdCtrls\TextBox.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="List Box / Combo Box Tests"/>
+	<param name="Local" value="StdCtrls\ListBox.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Scroll Bar Tests"/>
+	<param name="Local" value="StdCtrls\ScrollBar.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Spin Control Tests"/>
+	<param name="Local" value="StdCtrls\SpinCtrl.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Color Pallet Tests"/>
+	<param name="Local" value="StdCtrls\ColorPal.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Message Box Tests"/>
+	<param name="Local" value="StdCtrls\MsgBox.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Dialog Basic Tests"/>
+	<param name="Local" value="StdCtrls\Dialog.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Window Basic Tests"/>
+	<param name="Local" value="StdCtrls\Window.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Standard Print Dialog Tests"/>
+	<param name="Local" value="StdCtrls\PrintDlg.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Date Picker Tests"/>
+	<param name="Local" value="StdCtrls\DatePicker.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Taskbar Button Tests"/>
+	<param name="Local" value="StdCtrls\TaskbarBtn.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Splash Screen Tests"/>
+	<param name="Local" value="StdCtrls\Splash.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Toolbar Tests"/>
+	<param name="Local" value="StdCtrls\ToolBar.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Tree Control Tests"/>
+	<param name="Local" value="StdCtrls\Tree.htm"/>
+   </object>
+  </li>
+  <li><object type="text/sitemap">
+	<param name="Name" value="Bug Patterns"/>
+	<param name="Local" value="StdCtrls\PatList.htm"/>
+   </object>
+  </li>
+   </ul>
+  </ul>
+</body>
+</html>
+

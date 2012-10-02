@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+	<on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+		<!--click wait="1000" path="button:Minimize" />
+		<click wait="1000" path="button:Restore" /-->
+		<!-- need a glimpse to make sure the window is visible,
+			 it green bars even when restore doesn't work -->
+		<click wait="1000" path="button:Maximize" />
+		<click wait="1000" path="button:Restore" />
+		<click path="button:Close" />
+	</on-application>
+</accil>

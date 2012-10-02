@@ -1,0 +1,31 @@
+<word>
+  <form>kasakes</form>
+  <resultSoFar>
+	<full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
+	  <stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>kasa (house): kasa</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
+		</morph>
+	  </stem>
+	</full>
+	<morph wordType="suffix">
+	  <shortName>-kes (???): kes</shortName>
+	  <unclassMsa fromCat="145" fromCatAbbr="v" />
+	</morph>
+  </resultSoFar>
+  <seq>
+	<full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
+	  <stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>kasa (house): kasa</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
+		</morph>
+	  </stem>
+	</full>
+	<morph wordType="suffix">
+	  <shortName>-kes (???): kes</shortName>
+	  <unclassMsa fromCat="145" fromCatAbbr="v" />
+	</morph>
+  </seq>
+</word>

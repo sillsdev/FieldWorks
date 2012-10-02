@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+   <goal>TBD</goal>
+
+ <bug id="FWR-XXXX" desc="Switch to Word List Concordance sorts repeatedly"/>
+ <bug id="FWR-1745" desc="Words dissappear in Word List Concordance"/>
+ <bug id="FWR-659" desc="Crash in Tagakaulo concordance search"/>
+
+	  <!-- Time switch to Words analysis (1st time) from Lexicon Edit view. -->
+	  <!-- Concordance view sorted by instances/* -->
+	  <!-- Wordlist Concordance view (sort glosses)/*look for reg expr ".*" -->
+	  <!-- WordList Concordance view (sort form)/*switch to different occurances in concordance results -->
+	  <!-- Grammar sketch -->
+	  <!-- Time switch to wordlist concordance after grammar -->
+	  <!-- Concordance (old wl concord/new concordance)  Select na/*Search for na (whole item) -->
+	  <!-- select different reference -->
+
+	<var id="projectName" set="Tagakaulo"/>
+	 <!--var id="ProjType" set="XML"/-->
+	<var id="ProjExt" set="fwdata"/>
+	<!--var id="ProjType" set="DB4OCS"/>
+	<var id="ProjExt" set="db4o"/-->
+
+	 <!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+	<on-application run = "ok"  args='-app FLEx -db "C:\GuiTestDriver\Projects\$projectName;\$projectName;.$ProjExt;"' close = "no" on-fail = "assert">
+	   <!-- verify that the view is Lexicon Edit -->
+	   <glimpse select="sidebar/area/list" path="Lexicon Edit" ind="1" prop="selected"/>
+
+	  <!-- Words analysis (1st time) -->
+	  <monitor-time expect="999999999" desc="Tagakaulo db, Lex Edit to Words Analysis">
+		<click select="menubar/view/texts-words/word-analyses"/>
+		<click wait="10000" select="word-analysis/wordforms/record/col" row="1" col="1"/>
+	  </monitor-time>
+
+	  <!-- Concordance view sorted by instances/* -->
+	  <click select="menubar/view/texts-words/word-list-concordance"/>
+	  <monitor-time expect="999999999" desc="Tagakaulo db, Words Analysis sort by num in corpus">
+		<click select="word-list-concordance/wordforms/col/header" path="Number in Corpus"/>
+		<click select="word-list-concordance/wordforms/title"/>
+	  </monitor-time>
+
+	  <!-- Wordlist Concordance view (sort glosses)/*look for reg expr ".*" -->
+	  <monitor-time expect="999999999" desc="Tagakaulo db, Words Analysis sort by Word Glosses">
+		<click select="word-list-concordance/wordforms/col/header" path="Word Glosses"/>
+		<click wait="3000" select="word-list-concordance/wordforms/title"/>
+	  </monitor-time>
+
+	  <!-- WordList Concordance view (sort form)/*switch to different occurances in concordance results -->
+	  <monitor-time expect="999999999" desc="Tagakaulo db, Words Analysis sort by Form">
+		<click select="word-list-concordance/wordforms/col/header" path="Form"/>
+		<click wait="5000" select="word-list-concordance/wordforms/title"/>
+	  </monitor-time>
+
+	   <!-- Time generating the Grammar Sketch -->
+	   <click select="menubar/view/grammar/grammar-sketch"/>
+	   <monitor-time expect="999999999" desc="Tagakaulo db, generate Grammar Sketch">
+		  <click select="grammar-sketch/generate"/>
+		  <insert wait="6000">x</insert><!-- falls out of idle before generation is done, so force a wait -->
+		  <click select="grammar-sketch/back"/>
+		</monitor-time>
+
+	  <!-- Time switch to wordlist concordance after grammar -->
+	   <monitor-time expect="999999999" desc="Tagakaulo db, Grammar Sketch to Word List Concordance">
+		  <click select="menubar/view/texts-words/word-list-concordance"/>
+		  <click select="word-list-concordance/wordforms/title"/>
+		</monitor-time>
+
+	  <!-- Concordance (old wl concord/new concordance)  Select na/*Search for na (whole item) -->
+	   <click select="menubar/view/texts-words/concordance"/>
+	   <click select="concordance/full-context/interlinear/analyze/tab"/>
+	   <!--click select="concordance/full-context/interlinear/analyze/tab"/5.2-->
+	   <monitor-time expect="999999999" desc="Tagakaulo db Concordance, search for na">
+		   <click select="concordance/criteria/for-the-text/value"/>
+		   <insert wait="300">na</insert>
+		   <click select="concordance/criteria/anywhere"/>
+		   <click select="concordance/criteria/search"/>
+		   <on-dialog title="Notice" name="TBD" >
+			   <click path="18:Notice/9:OK/43:OK"/>
+		   </on-dialog>
+		   <click select="concordance/criteria/label"/>
+		</monitor-time>
+
+	  <!-- select different reference -->
+	   <monitor-time expect="999999999" desc="Tagakaulo db Concordance, select 13th record">
+		  <click select="concordance/results/record/col" row="13"/>
+		  <click select="concordance/criteria/label"/>
+	   </monitor-time>
+
+	</on-application>
+
+</accil>

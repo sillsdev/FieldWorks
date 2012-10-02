@@ -1,0 +1,39 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\xtestscript.xml">
+ <title tag="wrtts">Rendering a test script in XML</title>
+ <index>
+  <li>XML: test script</li>
+ </index>
+
+ <prerequisites>
+  <p>Before starting an XML test script, you should:</p>
+  <ul>
+   <li>Know how to write a test script.</li>
+   <li>Set up the <link uri="tools.xml" type="module">XML authoring tools</link>.</li>
+   <li>Review the structure of a <link uri="..\TCL\TestScript.xml" type="module">test script</link>.</li>
+   <li>Review our <link uri="..\XML\overview.xml" type="module">general description of XML</link>.</li>
+  </ul>
+ </prerequisites>
+
+ <guidelines>
+  <p>Here are some guidelines for creating a test script in XML:</p>
+  <ul>
+   <li>Make a copy of the Sample.xml and give it a short test script name. This is your new test script XML file.</li>
+   <li>Make an &lt;insert-test> element for this new test script file in the <i>folder-name</i>.xml file (test script library file).</li>
+   <li>Open the test script *.xml file you made and edit/create the following tags with your own information:
+	<ul>
+	 <li>test - set id(entifyer), num(ber), abbr(eviation) and file. id has to be unique for all test scripts. The number is unique to the library. Keep the abbr short, it's used to make testcase identifiers. The file name is the name of the test script file with its directory name prepended - like "FW\FmtPara.xml".</li>
+	 <li>title - The tag attribute is set to the same value as test@id ( test - id(entifyer) ). The full name of this test script is the content of the title tag.</li>
+	 <li>index - Each index item is a list item (li). Use only simple text with no extra markup. These items become the index items in the Test Help file. Create a list item for each word, or phrase that will help a tester find this test. Use variations of the test title, synonyms and names of main test objects found in this script.</li>
+	 <li>introduction - This is optional. If there is something that cannot be adequately explained or addressed in a test case or test step, mention it here. An introduction may have more than one paragraph (p) followed by only one list (ul).</li>
+	 <li>context - This is optional. Document usage concerns here indicating how much coverage is left to the user and what to do if there are errors. Phrasing for some bug report titles may be indicated.</li>
+	 <li>warning - This is optional. Write up any dangerous operations the tester should know about in a few paragraphs. Document deviations from specifications that the development team has acknowledged in the item list; otherwise they are reportable bugs.</li>
+	 <li>update - Add an update tag when you start working on this file (ex. see the end of Sample.xml). Use the current date and your short identifyer. Indicate in the content what you did. Only add one each time you send the file to the test department.</li>
+	 <li>other tags - The next pages of this manual and the dtd indicates other tags that can be used.</li>
+	</ul>
+   </li>
+   <li>Add <link uri="xtestcase.xml" type="module">test cases</link>.</li>
+   <li>Test the validity of your base <i>folder-name</i>.xml file by double clicking the *.htm file in your directory. It should display all the modules you listed as &lt;insert-test> elements on one page separated by lines. If it does not, you need to <link uri="trouble.xml" type="module">trouble shoot</link> your new test script.</li>
+  </ul>
+ </guidelines>
+</task>

@@ -1,0 +1,741 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:XmlConvertersMM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_1F75D6812DB489B539BDC1C3F90EE2C7"
+		"OwnerKey" = "8:_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_9058B6D21E1D724622565CEC08F1AD03"
+		"OwnerKey" = "8:_1F75D6812DB489B539BDC1C3F90EE2C7"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_96A83E4637F001D4BF50C4947F977FD3"
+		"OwnerKey" = "8:_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_96A83E4637F001D4BF50C4947F977FD3"
+		"OwnerKey" = "8:_1F75D6812DB489B539BDC1C3F90EE2C7"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_AE5AA9FD8453E1E9AAA6C5E44C1D1678"
+		"OwnerKey" = "8:_96A83E4637F001D4BF50C4947F977FD3"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_1F75D6812DB489B539BDC1C3F90EE2C7"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_96A83E4637F001D4BF50C4947F977FD3"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\XmlConvertersMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\XmlConvertersMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1F75D6812DB489B539BDC1C3F90EE2C7"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_1F75D6812DB489B539BDC1C3F90EE2C7"
+					{
+					"Name" = "8:SilEncConverters40.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:SilEncConverters40.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_7D280739E91640158E30F4CCE990278E"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9058B6D21E1D724622565CEC08F1AD03"
+			{
+			"SourcePath" = "8:SilEncConverters40.tlb"
+			"TargetName" = "8:SilEncConverters40.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_7D280739E91640158E30F4CCE990278E"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_96A83E4637F001D4BF50C4947F977FD3"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_96A83E4637F001D4BF50C4947F977FD3"
+					{
+					"Name" = "8:ECInterfaces.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:ECInterfaces.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_7D280739E91640158E30F4CCE990278E"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AE5AA9FD8453E1E9AAA6C5E44C1D1678"
+			{
+			"SourcePath" = "8:ECInterfaces.tlb"
+			"TargetName" = "8:ECInterfaces.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_7D280739E91640158E30F4CCE990278E"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SilConvertersXML, Version=4.0.0.0, Culture=neutral, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+					{
+					"Name" = "8:SilConvertersXML.exe"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SilConvertersXML.exe"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_7D280739E91640158E30F4CCE990278E"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_7D280739E91640158E30F4CCE990278E"
+			{
+			"DefaultLocation" = "8:[ProgramFilesFolder]SIL\\SILConverters"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+				}
+			}
+			"{1525181F-901A-416C-8A58-119130FE478E}:_928B378597374A22958E7D12D33C00C0"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_18C9C70EFB7C46B1BC3C399A2AA3599B"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_B88B2DD1F23C410CACC7CA5C076A6748"
+						"Folders"
+						{
+						}
+					}
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:XmlConverters40MergeModule.5E1BE9D89CE14EE589AB715FAE85F6F8"
+		"Version" = "8:4.0.0.0"
+		"Title" = "8:XmlConvertersMM"
+		"Subject" = "8:Convert XML documents using SILConverters"
+		"Author" = "8:SIL"
+		"Keywords" = "8:SILConverters; XML; Encoding Conversion; XPath"
+		"Comments" = "8:Merge module containing the XML Converters program"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_38B1D66391BA4DB68A55D5B064AE44BA"
+					{
+					"Name" = "8:SOFTWARE"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_F3034E56BE3E4728BB42EE076A5C4F29"
+							{
+							"Name" = "8:Classes"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_81238632DD694A7CAAC94C5FAE4148D3"
+									{
+									"Name" = "8:Applications"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_0FD6F5D823544CFAB8620CA087137E30"
+											{
+											"Name" = "8:SilConvertersXML.exe"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_20C646F138824B2683127B9A6B51E950"
+													{
+													"Name" = "8:shell"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+															"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_0D4FAB0C99DB4C76AD8011A9ED6B10CA"
+															{
+															"Name" = "8:open"
+															"Condition" = "8:"
+															"AlwaysCreate" = "11:FALSE"
+															"DeleteAtUninstall" = "11:FALSE"
+															"Transitive" = "11:FALSE"
+																"Keys"
+																{
+																	"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_6D0EC74B74E749299085441F1D6BDFC3"
+																	{
+																	"Name" = "8:command"
+																	"Condition" = "8:"
+																	"AlwaysCreate" = "11:FALSE"
+																	"DeleteAtUninstall" = "11:FALSE"
+																	"Transitive" = "11:FALSE"
+																		"Keys"
+																		{
+																		}
+																		"Values"
+																		{
+																			"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_DD65D93E94D040988B415822F45E7664"
+																			{
+																			"Name" = "8:"
+																			"Condition" = "8:"
+																			"Transitive" = "11:FALSE"
+																			"ValueTypes" = "3:1"
+																			"Value" = "8:\"[TARGETDIR]SilConvertersXML.exe\" \"%1\""
+																			}
+																		}
+																	}
+																}
+																"Values"
+																{
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_061A7E5BAC164ABD971C6551A6E78662"
+																	{
+																	"Name" = "8:"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:&Open"
+																	}
+																}
+															}
+														}
+														"Values"
+														{
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+										}
+										"Values"
+										{
+										}
+									}
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_C5F7B7BC05BB4D8091E2A8725D4EB0AB"
+									{
+									"Name" = "8:.xml"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_09B6782458E74F6BB73E71816A1C87CF"
+											{
+											"Name" = "8:OpenWithList"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D1022BB23EB94BC09B40620FBE0EC34F"
+													{
+													"Name" = "8:SilConvertersXML.exe"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+														}
+														"Values"
+														{
+															"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_17ED8573C0FB49B28ED76C06CE7A20D2"
+															{
+															"Name" = "8:"
+															"Condition" = "8:"
+															"Transitive" = "11:FALSE"
+															"ValueTypes" = "3:1"
+															"Value" = "8:"
+															}
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+										}
+										"Values"
+										{
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_10CECF2A427A42E39B7F2760DA31C0AF"
+											{
+											"Name" = "8:"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:xmlfile"
+											}
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_880F9F8F616F491EB709F500AA616ED7"
+											{
+											"Name" = "8:PerceivedType"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:text"
+											}
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_942CEC49122641B29A871CB0B737558C"
+											{
+											"Name" = "8:Content Type"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:text/xml"
+											}
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_89D8F8346095455AAAE166CE24DD9447"
+					{
+					"Name" = "8:Applications"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_BCC7C443A7454720BC1D959E13FD5B6A"
+							{
+							"Name" = "8:SilConvertersXML.exe"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_E703B3B35CE74EA7A44BDBE5CEC5AC21"
+									{
+									"Name" = "8:shell"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_623666C220C04D4BA262166926DC152F"
+											{
+											"Name" = "8:open"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_6B912C0C18A54C63A4905D440205CC11"
+													{
+													"Name" = "8:command"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+														}
+														"Values"
+														{
+															"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_9A17EA48578643ADB79FF4B6AC9C8CF0"
+															{
+															"Name" = "8:"
+															"Condition" = "8:"
+															"Transitive" = "11:FALSE"
+															"ValueTypes" = "3:1"
+															"Value" = "8:\"[TARGETDIR]SilConvertersXML.exe\" \"%1\""
+															}
+														}
+													}
+												}
+												"Values"
+												{
+													"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_3B85AA54C8C640FC850C685EDFC81E4D"
+													{
+													"Name" = "8:"
+													"Condition" = "8:"
+													"Transitive" = "11:FALSE"
+													"ValueTypes" = "3:1"
+													"Value" = "8:&Open"
+													}
+												}
+											}
+										}
+										"Values"
+										{
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D50D45FA0B1746C48D5E11ED14AFBB48"
+					{
+					"Name" = "8:.xml"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_2C506916D9204E96A23EB3FB0536178E"
+							{
+							"Name" = "8:OpenWithList"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_3932D8540D0542EF8F5708CE3038A154"
+									{
+									"Name" = "8:SilConvertersXML.exe"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+										}
+										"Values"
+										{
+											"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_D0FFACE90EA44E14A076F0487174A739"
+											{
+											"Name" = "8:"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"ValueTypes" = "3:1"
+											"Value" = "8:"
+											}
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+							"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_0B2B966D39A54379A153A2C17ECF8EFC"
+							{
+							"Name" = "8:"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"ValueTypes" = "3:1"
+							"Value" = "8:xmlfile"
+							}
+							"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_235464C93B2B45A6A5ED3B25E67EBD47"
+							{
+							"Name" = "8:Content Type"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"ValueTypes" = "3:1"
+							"Value" = "8:text/xml"
+							}
+							"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_5F2BE085E7F7436B9FB72FDFCEFA0C21"
+							{
+							"Name" = "8:PerceivedType"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"ValueTypes" = "3:1"
+							"Value" = "8:text"
+							}
+						}
+					}
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D07BF9364F554533A9E2D28332B1CBA9"
+			{
+			"Name" = "8:XML Data Converters"
+			"Arguments" = "8:"
+			"Description" = "8:Convert your XML documents with SIL Converters"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:32512"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+			"Folder" = "8:_18C9C70EFB7C46B1BC3C399A2AA3599B"
+			"WorkingFolder" = "8:_7D280739E91640158E30F4CCE990278E"
+			"Icon" = "8:_FD39ABA610EA4D6E9C1B4560C0E48CF0"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtccp" num="2.2.3" abbr="edc" file="FW\Edtccp.xml">
+ <title tag="edtccp">Edit-Cut, Copy and Paste Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The edit menu provides an alternate way to cut copy and paste selected text. To completely test this functionality test the <link uri="../StdCtrls/Cursor.xml" type="module">shortcut keys</link> to achieve the same functions. Some of the steps in the standard controls cut, copy and paste test are the same as in this one but the bugs are different.</p>
+<p>To select text, move the cursor to the start of the text you want to select. Hold down the left mouse button and drag across the text or down across lines of text. When you let the button up, highlighting indicates what text was selected. Selection is part of the copy and cut functions.</p>
+  </introduction>
+  <context>
+<p>Because of the structure of selectable objects, functions like copying, cutting and pasting can be complex and have different results even depending on the order in which the operations are applied. Testing does not require exhaustive combinations of these gestures, but should identify critical ones and seek reasonable coverage. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Edit-(command)".</p>
+<p name="Note">In the <i>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/CutCopyAndPasteBehavior.html" type="doc">specific paste behavior</link>
+</i> table: "Atomic Ref" refers to single-reference fields like single tags, and enums like Confidence. "Sequence Ref" ["Atomic Seq" is a typo] refers to multiple-reference fields, such as OCM tags. "All others" would include Date and integer fields.</p>
+  </context>
+
+ <case id="edccut" num="1" order="any">
+  <title tag="edccut">Cutting</title>
+  <context>
+<p>When the application is running and there is selectable text displayed in an active window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Cut" type="doc">Edit-Cut</link> and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/CutCopyAndPasteBehavior.html" type="doc">Cut, Copy and Paste behavior</link>.</p>
+  <step name="1.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Edit-Cut menu item. Use short-cut &lt;ctrl&gt;&lt;x&gt;.
+   <r>
+<ul>
+	<li>The Cut item is disabled when NO text is selected.</li>
+	<li>The Cut item is enabled when text is selected.</li>
+	<li>Report any failures as suggested using "Edit-Cut" as the name of the menu item.</li>
+   </ul>
+</r>
+  </step>
+  <step name="1.2" link="Bug">While some text is selected, click Edit-Cut. Try this with words, sentences, paragraphs and parts thereof.
+   <r>The selected text disappears.</r>
+   <p name="bug">Edit-Cut fails</p>
+  </step>
+  <step name="1.3" link="Bug">After cutting some text, use an external program, such as the <link uri="C:/WINDOWS/CLIPBRD.EXE" type="doc">ClipBoard Viewer</link> (maybe under Start - Programs - Accessories) to view the clipboard.
+   <r>
+<ul>
+	<li>The text that was cut appears in the clipboard.</li>
+	<li>Any objects, such as pictures, that were cut appear as "[OBJ]".</li>
+   </ul>
+</r>
+   <p name="bug">Edit-Cut object not on clipboard</p>
+  </step>
+  <step name="1.4" link="Bug">Select a non-selectable object. Attempt to cut it.
+   <r>Cut is disabled for non-selectable items.</r>
+   <p name="bug">Edit-Cut works for non-selectable objects</p>
+  </step>
+  <step name="1.5" link="Bug">Try the preceding steps in each application view.
+   <r>Cut works on selectable, but not on non-selectable objects in each view.</r>
+   <p name="bug">Edit-Cut does not work properly in view X</p>
+  </step>
+ </case>
+
+ <case id="edccopy" num="2" order="any">
+  <title tag="edccopy">Copying</title>
+  <context>
+<p>When the application is running and there is selectable text displayed in an active window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Copy" type="doc">Edit-Copy</link> and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/CutCopyAndPasteBehavior.html" type="doc">Cut, Copy and Paste behavior</link>.</p>
+  <step name="2.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Edit-Copy menu item. Use short-cut &lt;ctrl&gt;&lt;c&gt;.
+   <r>
+<ul>
+	<li>The Copy item is disabled when NO text is selected.</li>
+	<li>The Copy item is enabled when text is selected.</li>
+	<li>Report any failures as suggested using "Edit-Copy" as the name of the menu item.</li>
+   </ul>
+</r>
+  </step>
+  <step name="2.2" link="Bug">While some text is selected, click Edit-Copy. Try this with words, sentences, paragraphs and parts thereof.
+   <r>Nothing obvious happens (in particular, the selected text does not disappear or change).</r>
+   <p name="bug">Edit-Copy affects selection</p>
+  </step>
+  <step name="2.3" link="Bug">After copying some text, use an external program, such as the <link uri="C:/WINDOWS/CLIPBRD.EXE" type="doc">ClipBoard Viewer</link> (maybe under Start - Programs - Accessories) to view the clipboard.
+   <r>
+<ul>
+	<li>The text that was copied appears in the clipboard.</li>
+	<li>Any objects, such as pictures, that were cut appear as "[OBJ]".</li>
+   </ul>
+</r>
+   <p name="bug">Edit-Copy object not on clipboard</p>
+  </step>
+  <step name="2.4" link="Bug">Select a non-selectable object. Attempt to copy it.
+   <r>Copy is disabled for non-selectable items.</r>
+   <p name="bug">Edit-Copy works for non-selectable objects</p>
+  </step>
+  <step name="2.5" link="Bug">Try copying multiple items from multiple item field.
+   <r>Check to see if items copied to clipboard as text and seperated by "; " (semi-colon followed by space).</r>
+   <p name="bug">Edit-Copy does not work properly in view X</p>
+   <p name="note">See raid report #1174 for more details</p>
+  </step>
+  <step name="2.6" link="Bug">Try the preceding steps in each application view.
+   <r>Copy works on selectable, but not on non-selectable objects in each view.</r>
+   <p name="bug">Edit-Copy does not work properly in view X</p>
+  </step>
+ </case>
+
+ <case id="edcpst" num="3" order="any">
+  <title tag="edcpst">Paste</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Paste" type="doc">Edit-Paste</link> and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/CutCopyAndPasteBehavior.html" type="doc">Cut, Copy and Paste behavior</link>.</p>
+  <p name="Variation">Try mixing non-structured view text, structured text, different views, external text and non-selectable text (to make sure it doesn't copy or change) as source and destination of cut/copy-paste operations.</p>
+  <step name="3.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Edit-Paste menu item. Use short-cut &lt;ctrl&gt;&lt;v&gt;.
+   <r>
+<ul>
+	<li>The Paste item is disabled when NO text is on the clipboard.</li>
+	<li>The Paste item is enabled when text is on the clipboard.</li>
+	<li>Report any failures as suggested using "Edit-Paste" as the name of the menu item.</li>
+   </ul>
+</r>
+  </step>
+  <step name="3.2" link="Bug">When there are objects on the clipboard (from cut and/or copy operations in this application and others), place the cursor to insert into selectable text. Paste via Edit-Paste.
+   <r>
+<ul>
+	<li>The text from the clipboard is inserted at the cursor.</li>
+	<li>The inserted text retains the direct formatting of the original (but not formatting due to field style settings).</li>
+	<li>Paragraph formatting will only transfer into a FieldWorks structured text field.</li>
+   </ul>
+</r>
+   <p name="bug">Edit-Paste fails to insert text properly</p>
+  </step>
+  <step name="3.3" link="Bug">While there is something on the clipboard, select some text. Paste via Edit-Paste.
+   <r>
+<ul>
+	<li>The selected text is replaced by the contents of the clipboard.</li>
+	<li>Changes are reflected in other views.</li>
+   </ul>
+</r>
+   <p name="bug">Edit-Paste fails to replace selection</p>
+   <p name="bug">Edit-Paste changes not reflected in other views</p>
+   <p name="bug">Edit-Paste changes other views inappropriately</p>
+  </step>
+  <step name="3.4" link="Bug">While there is something on the clipboard, select some text in a non-editable field. Paste via Edit-Paste.
+   <r>Nothing happens in this view or any other.</r>
+   <p name="bug">Edit-Paste replaces non-editable selection</p>
+   <p name="bug">Edit-Paste changes other views inappropriately</p>
+  </step>
+
+  <step name="3.5" link="Bug">Try pasting text or an item into a field that has in-place insertion (any list reference field).
+  <r>
+<ul>
+<li>The text is placed in the field and follows the rules for in-place insertion</li>
+	 <li>If the pasted text does not match any items, a red squiggly line appears underneath the item</li>
+	 <li>Upon moving out of the field the new item is created for the list and inserted in the field for that entry</li>
+	 <li>Any paste that exceeds 120 characters is cut off at that point and a Bing notifies the user</li>
+  </ul>
+</r>
+  <p name="bug">Edit-paste does not work correctly for in-place insertion fields</p>
+  <p name="note">See raid report #3277 for discussion on this</p>
+  </step>
+
+  <step name="3.6" link="Bug">Try pasting multiple items copied from multiple item field.
+   <r>
+	<ul>
+	 <li>When pasting to text field, check to see that items pasted as text and seperated by "; " (semi-colon followed by space).</li>
+	 <li>When pasting to multiple item field, check to see that the items are pasted if the fields can accept those items. Else, paste has no effect.</li>
+	</ul>
+   </r>
+   <p name="bug">Edit-Copy does not work properly in view X</p>
+   <p name="note">See raid report #1174 for discussion on this</p>
+  </step>
+  <step name="3.7" link="Bug">Try the preceding steps in each application view.
+   <r>Paste inserts into or replaces selectable, but not non-selectable objects in each view.</r>
+   <p name="bug">Edit-Paste does not work properly in view X</p>
+  </step>
+ </case>
+
+ <case id="edccpc" num="4" order="any">
+  <title tag="edccpc">Copy-Paste combinations</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <p name="Variation">The following are some possibilities. Feel free to test other permutations.</p>
+  <step name="4.1" link="Bug">Select and copy a word from a title (or other view text). Try pasting at the beginning, middle and end of the title.
+   <r>Copying should work on the same line of text.</r>
+   <p name="bug">Edit-Copy fails to insert text on same line</p>
+  </step>
+  <step name="4.2" link="Bug">Overlap pastes in title; when the insertion point is inside the selection you copied or select text to be replaced that overlaps the copied selection.
+   <r>The copied text is inserted properly or the selected text is replaced properly.</r>
+   <p name="bug">Edit-Paste fails to insert a copy</p>
+   <p name="bug">Edit-Paste fails to replace selection</p>
+  </step>
+  <step name="4.3" link="Bug">Try coping and pasting a picture or run of paragraphs, across non-selectable text, etc..
+   <r>Copy and paste work on selectable, but not on non-selectable objects.</r>
+   <p name="bug">Edit-Copy does not work properly when ...</p>
+  </step>
+  <step name="4.4" link="Bug">Select and copy text that includes a paragraph break. Place the cursor in a simple (non-structured) text field.
+   <r>The pasted text will replace the paragraph break with a space.</r>
+   <p name="bug">Edit-Paste space does not replace paragraph break</p>
+  </step>
+  <step name="4.5" link="Bug">Copy/cut and paste text from one veiw to another.
+   <r>The copied text is inserted properly or the selected text is replaced properly.</r>
+   <p name="bug">Edit-Paste fails in target view</p>
+  </step>
+  <step name="4.6" link="Bug">Copy/cut and paste text to field with fixed items, eg Anthropology Categories.
+   <r>If the field can accept the items on the clip board, then they will be pasted. Else, nothing should be pasted.</r>
+   <p name="bug">Edit-Paste fails in target field</p>
+  </step>
+  <step name="4.7" link="Bug">Copy/cut and paste text to NotePad, Word, or some other external program.
+   <r>Text and paragraph breaks are transferred correctly, but without formatting or pictures.</r>
+   <p name="bug">Edit-Paste fails in target external application</p>
+  </step>
+  <step name="4.8" link="Bug">Copy/cut and paste text from NotePad, Word, or some other external program to one of the fieldworks application's views.
+   <r>Text and paragraph breaks are transferred correctly, but without formatting or pictures.</r>
+   <p name="bug">Edit-Paste fails from external application</p>
+  </step>
+ </case>
+
+ <update date="Apr-04-01" author="MikeL">File created.</update>
+ <update date="Jul-13-01" author="MikeL">Shalom's additional cases were added.</update>
+ <update date="May-23-02" author="JoelC">Added steps for cut, copy and paste into fields with multiple items.</update>
+ <update date="Jun-04-02" author="RussD">Minor changes.</update>
+ <update date="Jul-31-02" author="RussD">Added references to raid reports to address spec concerns</update>
+</test>

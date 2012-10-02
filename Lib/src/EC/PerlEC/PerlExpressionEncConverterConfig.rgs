@@ -1,0 +1,21 @@
+HKCR
+{
+	SilEncConverters31.PerlExpressionEncConverterConfig.5100b = s 'Perl Expression Configurator Class'
+	{
+		CLSID = s '{C027C2C5-D99C-47d0-A1C4-2CDC851C30EC}'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {C027C2C5-D99C-47d0-A1C4-2CDC851C30EC} = s 'Perl Expression Configurator Class'
+		{
+			ProgID = s 'SilEncConverters31.PerlExpressionEncConverterConfig.5100b'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{85811A3D-27F5-4141-9A24-50914E87A964}'
+		}
+	}
+}

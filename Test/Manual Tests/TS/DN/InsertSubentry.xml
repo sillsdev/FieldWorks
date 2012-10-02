@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="InsSub" num="2.5.3" abbr="InsSub" file="DN\InsertSubentry.xml">
+ <title tag="InsSub">Insert-Subentry Tests</title>
+ <index>
+<li>Subentry</li>
+		<li>Insert: Subentry</li>
+ </index>
+
+
+  <introduction>
+
+<p>Insert a subentry record.
+
+ </p>
+
+
+  </introduction>
+
+  <context>
+
+<p>    See specs at
+
+
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc">DN Data Entry View</link>
+
+</p>
+  </context>
+
+
+
+
+<!--  CASE 1 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-->
+ <case id="InsSub" num="1.0" order="any">
+  <title tag="InsSub">Insert Subentry</title>
+  <context>
+<p>With a language project open in DN</p>
+</context>
+
+<!-- Step 1.1 -->
+  <step name="1.1" link="Bug">
+
+	 Observe the current number of records displayed in the status bar (the N in M/N).  While in DE view, select Insert : Subentry : Event (from Insert menu or toolbar).
+
+
+	<r>DE view remains in effect.  A new subentry labeled 'Event' appears at the end of the current record, already expanded.  Its Event Type is "Observation"; the other fields are empty.  The visible fields are those which are "Always" visible by default (Title, Event Type, Description, Tags, Date of Event, Participants , Locations, Confidence, Researchers), as specified in
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc">DN Data Entry View</link>
+ - unless visibility settings have been changed.  The record number displayed in the lower right corner in the status bar stays the same as it was, i.e. M/N. </r>
+
+	<p name="bug">
+</p>
+  </step>
+
+
+<!-- Step 1.2 -->
+  <step name="1.2" link="Bug">
+
+	 Observe the current number of records displayed in the status bar (the N in M/N).  While in DE view, select Insert : Subentry : Analysis (from Insert menu or toolbar).
+
+
+	<r>DE view remains in effect.  A new subentry labeled 'Analysis' appears at the end of the current record, already expanded.  All its fields are empty.  The visible fields are those which are "Always" visible by default (Title, Hypothesis, Research Plan, Discussion, Conclusions, Tags, Status, Confidence, Researchers), as specified in
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc">DN Data Entry View</link>
+- unless visibility settings have been changed.  The record number displayed in the lower right corner in the status bar stays the same as it was, i.e. M/N.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 1.3 -->
+  <step name="1.3" link="Bug">
+
+	 While in Browse view, try to select Insert : Subentry : Event or : Analysis from the menu or the Insert toolbar.
+
+	<r>All are disabled in Browse view.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 1.4 -->
+  <step name="1.4" link="Bug">
+
+	 While in Document view, try to select Insert : Subentry : Event or : Analysis from the menu or the Insert toolbar.
+
+	<r>All are disabled in Document view.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+
+<!-- Step 1.5 -->
+  <step name="1.5" link="Bug">
+
+	 Change some of the visibility settings for DE view, under Fields in: Event Entry, on the Tools - Options - Views dialog.  Then select Insert : Subentry : Event.
+
+	<r>The set of visible fields reflects the changes made to the DE view settings.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 1.6 -->
+  <step name="1.6" link="Bug">
+
+	 Change some of the visibility settings for DE view, under Fields in: Analysis Entry, on the Tools - Options - Views dialog.  Then select Insert : Subentry : Analysis.
+
+	<r>The set of visible fields reflects the changes made to the DE view settings.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+
+<!-- Step 1.7 -->
+  <step name="1.7" link="Bug">
+
+	 With the cursor in a subentry, insert a subentry.
+
+	<r>The new subentry appears as a sub of the current subentry, not at the top level. [Raid #1177]</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 2.0 -->
+  <step name="2.0" link="Bug">
+
+	 After inserting a new subentry, change to Doc or Browse mode.  Look for the new subentry.
+
+	<r>The new subentry should be available from all modes.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 2.1   I removed this because it's apparently not part of
+the spec for subentries.  And rightly so I think.  -Lars
+  <step name="2.1" link="Bug">
+
+	 While a filter is in effect that excludes empty records, select Insert : Subentry : Event or : Analysis.
+
+	<r>A warning dialog appears, saying, "This action requires that filters be turned off." Filter is automatically turned off and new subentry appears as in 1.1.</r>
+
+	<p name="bug"></p>
+  </step>
+-->
+
+</case>
+
+
+<!--***********************************************-->
+
+
+
+
+
+
+ <update date="May-2-01" author="RickM">Put into XML format</update>
+ <update date="Sep-7-01" author="LarsH">Updates</update>
+
+</test>

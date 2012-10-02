@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 9: Bulk Edit Senses Reversal Entries test -->
+
+<accil on-fail="assert">
+
+<!--  -->
+<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+   <var id="arrow" set="  "/>
+
+<!-- Goto "cadu" -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">cadu</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+   <!-- click path="$LexEditRec;[*ind]/$Col;[1]/$Text;/value:cadu"/ -->
+
+   <click path="$multiEdHidden"/>
+   <click path="$lxFldLexemeForm"/>
+   <click path="$lxFIELDS;43:Page down"/>
+
+<!-- Portuguese Name -->
+   <click path="$lxFIELDS;9:custom[2]/20:Reversal Entries/24:Table/$Col;[2]"/>
+   <insert>Fidora</insert>
+<!-- English Name -->
+   <click path="$lxFIELDS;9:custom[2]/20:Reversal Entries/24:Table/28:Row[2]/29:Cell[2]"/>
+   <insert>Fred</insert>
+
+   <click path="$multiEdHidden"/>
+
+<!-- Go to Bulk Edit Senses -->
+   <click path="$menuLEXICON;menu:Bulk Edit Senses"/>
+
+<!-- create an English Reversals column -->
+   <click path="$besConfigCol"/>
+   <insert wait="500">m</insert>
+   <on-dialog title="Configure Columns...">
+	  <click path="9:Writing System[2]/34:Academic Domains"/>
+	  <insert>rr</insert><!-- reversals -->
+	  <insert>%{A}</insert> <!-- alt + A -->
+<!-- click on the Writing System box widget -->
+	  <click path="$nl;[3]/43:Open"/><!-- English is the default -->
+	  <!--insert wait="500">e~</insert--><!-- English is not the default though it looks like it-->
+	  <insert>{DOWN}</insert><!-- Portuguese -->
+	  <click path="$nl;[3]/43:Open"/><!-- English is the default -->
+	  <insert>{UP}</insert><!-- English -->
+	  <!-- move it left 3 columns -->
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$ok"/>
+   </on-dialog>
+
+<!-- create a Portuguese Reversals column -->
+   <click path="$besConfigCol"/>
+   <insert wait="500">m</insert>
+   <on-dialog title="Configure Columns...">
+	  <click path="9:Writing System[2]/34:Academic Domains"/>
+	  <insert>rr</insert><!-- reversals -->
+	  <insert>%{A}</insert> <!-- alt + A -->
+<!-- click on the Writing System box widget -->
+	  <click path="$nl;[3]/43:Open"/>
+	  <insert>{DOWN}</insert><!-- Portuguese -->
+	  <!--insert>p~</insert--><!-- Portuguese : this way doesn't work -->
+	  <!-- move it left 3 columns -->
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$ok"/>
+   </on-dialog>
+
+<!-- create a Portuguese Import Residue (Senses) column -->
+   <click path="$besConfigCol"/>
+   <insert wait="500">m</insert>
+   <on-dialog title="Configure Columns...">
+	  <click path="9:Writing System[2]/34:Academic Domains"/>
+	  <insert>ii</insert><!-- reversals -->
+	  <insert>%{A}</insert> <!-- alt + A -->
+<!-- click on the Writing System box widget -->
+	  <click path="$nl;[3]/43:Open"/>
+	  <insert>{DOWN}</insert><!-- Portuguese -->
+	  <!--insert>p~</insert--><!-- Portuguese -->
+	  <!-- move it left 3 columns -->
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$NL;43:NAMELESS"/>
+	  <click path="$ok"/>
+   </on-dialog>
+
+   <click path="$besFilter;[2]"/><!-- fliter on non-blanks in English reversals field -->
+   <insert>n~</insert>
+   <click path="$refresh"/>
+
+   <click path="$besRec;[1]/$Col;[2]/$Text"/>
+   <glimpse path="$besRec;[1]/$Col;[3]/$Text" prop="value" expect="Fred"/>
+   <glimpse path="$besRec;[1]/$Col;[4]/$Text" prop="value" expect="Fidora"/>
+
+<!-- Click Copy -->
+   <click path="$BES;9:BulkEditBar/9:$besSelTarg;[2]/37:Click Copy"/>
+<!-- Set target to Reversals (Por) -->
+   <click path="$BES;9:BulkEditBar/9:$besClickTarg;[2]/60:$besClickTarg;/9:Click Copy/9:Target Field[2]/41:Target Field"/>
+   <insert>r~</insert><!-- Reversals (Por) -->
+   <click path="$besCCtargNE;9:Append/45:Append"/>
+   <click path="$besCCtargNE;20:RootSite/$Text"/><!-- Separated by -->
+   <insert>;</insert>
+   <click path="$besRec;/$Col;[6]/$Text"/><!-- click in Grammatical Category -->
+   <glimpse path="$besRec;/$Col;[4]/$Text" prop="value" expect="Fidora;Nome" />
+   <!-- click side="right" path="$besRec;/$Col;[2]/$Text"/--><!-- click cadu to go to Lexicon Edit o o o It doesn't work -->
+
+<!-- go to Lexican Edit -->
+   <click path="$vwLexEdit"/>
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">cadu</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+
+   <glimpse path="$lxFIELDS;9:custom/20:Reversal Entries/24:Table/$Col;[2]/$Text;/text:String" prop="value" expect="Fidora"/>
+   <glimpse path="$lxFIELDS;9:custom/20:Reversal Entries/24:Table/$Col;[2]/$Text;/text:String[2]" prop="value" expect="Nome"/>
+   <glimpse path="$lxFIELDS;9:custom/20:Reversal Entries/24:Table/28:Row[2]/29:Cell[2]/$Text" prop="value" expect="Fred"/>
+
+<!-- go to Lexican Reversal Indexes -->
+   <click path="$menuLEXICON;menu:Reversal Indexes"/>
+   <!-- Click writing system selection widget -->
+   <click path="$RI;9:Reversal/9:InformationBar/9:Reversal Index/$nl;[2]/"/>
+   <insert>{DOWN 2}~</insert><!-- select Portugese -->
+<!-- Verify copied words -->
+   <click path="$riRec;[*]/$Text;/value:Fidora  cadu"/><!-- Fidora  cadu -->
+   <glimpse path="$riForm" prop="value" expect="Fidora"/>
+   <glimpse path="$riSenses;/text:String" prop="value" expect="cadu "/>
+   <click path="$riRec;[*]/$Text;/value:Nome  cadu"/><!-- Nome  cadu -->
+   <glimpse path="$riForm" prop="value" expect="Nome"/>
+   <glimpse path="$riSenses;/text:String" prop="value" expect="cadu "/>
+
+<!-- Go to Bulk Edit Senses -->
+   <click path="$menuLEXICON;menu:Bulk Edit Senses"/>
+   <click path="$BES;9:BulkEditBar/9:$besSelTarg;[2]/37:Bulk Replace"/>
+   <click path="$besReplTarget"/>
+   <insert>{DOWN}~</insert><!-- Reversals (Por) -->
+
+   <click path="$besReplSetup"/>
+   <on-dialog title="Find and Replace">
+	  <insert>o</insert><!-- Find what: -->
+	  <insert>{TAB}</insert><!-- Replace with: -->
+	  <insert>aoaw</insert><!-- Replace with: -->
+	  <click path="$ok"/>
+   </on-dialog>
+   <click path="$besPreview"/>
+   <glimpse path="$besRec;/$Col;[4]/$Text" prop="value" expect="Fidora;Nome $arrow; Fidaoawra;Naoawme" />
+   <click path="$besApply"/>
+   <glimpse path="$besRec;/$Col;[4]/$Text" prop="value" expect="Fidaoawra;Naoawme" />
+
+<!-- more replace exercises here -->
+
+<!-- Delete the English Reversals field contents -->
+   <click path="$besReplPANEL;37:Delete"/><!-- Delete tab -->
+   <click path="$besApply"/><!-- Delete the English one -->
+
+<!-- Is it really gone? -->
+   <glimpse path="$besRec;/$Col;[3]/$Text" prop="value" expect="" />
+<!-- go to Lexican Edit -->
+   <click path="$vwLexEdit"/>
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">cadu</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+
+   <glimpse path="$lxFIELDS;9:custom/20:Reversal Entries/24:Table/$Col;[2]/$Text;/text:String" prop="value" expect="Fidaoawra"/>
+   <glimpse path="$lxFIELDS;9:custom/20:Reversal Entries/24:Table/$Col;[2]/$Text;/text:String[2]" prop="value" expect="Naoawme"/>
+   <glimpse path="$lxFIELDS;9:custom/20:Reversal Entries/24:Table/28:Row[2]/29:Cell[2]/$Text" prop="value" expect=""/>
+
+<!-- Go to Bulk Edit Senses -->
+   <click path="$menuLEXICON;menu:Bulk Edit Senses"/>
+   <click path="$BES;9:BulkEditBar/9:$besSelTarg;[2]/37:Delete"/>
+   <click path="$NoFilters"/><!-- Turn off all filters -->
+   <click path="$besFilter;[3]"/><!-- fliter on non-blanks in Portugese reversals field -->
+   <insert>n~</insert>
+
+<!-- Delete the Portugese Reversals field contents -->
+   <click path="$besDelTarget"/><!-- set Target -->
+   <insert>{DOWN}~</insert><!-- Reversals (Por) -->
+   <click path="$besApply"/><!-- Delete the Portugese one -->
+
+<!-- Is it really gone? -->
+   <glimpse path="$besRec;/$Col;[4]/$Text" prop="value" expect="" />
+
+<!-- go to Lexican Edit -->
+   <click path="$vwLexEdit"/>
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">cadu</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+   <!-- With all reversal fields of an entry gone, it shouldn't even show the field -->
+   <glimpse path="$lxFIELDS;9:custom/20:Reversal Entries" on-pass="assert"/>
+
+ </on-application>
+</accil>

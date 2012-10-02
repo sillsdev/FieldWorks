@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT phonEnv (#PCDATA)>
+<!ATTLIST phonEnv
+status (success | syntax | class | segment) "success"
+pos CDATA #IMPLIED
+syntaxErrType (unknown | missingOpenParen | missingClosingParen | missingOpenSquareBracket | missingClosingSquareBracket) "unknown"
+>

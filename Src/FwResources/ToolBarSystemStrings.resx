@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="ResMimeType">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="Version">
+		<value>1.0.0.0</value>
+	</resheader>
+	<resheader name="Reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="Writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="kstidResetPopupMenu">
+		<value>Reset</value>
+	</data>
+	<data name="kstidDeletePopupMenu">
+		<value>Delete</value>
+	</data>
+	<data name="kstidNamePopupMenu">
+		<value>Name:</value>
+	</data>
+	<data name="kstidDefaultStylePopupMenu">
+		<value>Default Style</value>
+	</data>
+	<data name="kstidTextOnlyAlwaysPopupMenu">
+		<value>Text Only (Always)</value>
+	</data>
+	<data name="kstidImageTextAlwaysPopupMenu">
+		<value>Image and Text (Always)</value>
+	</data>
+	<data name="kstidBeginGroupPopupMenu">
+		<value>Begin Group</value>
+	</data>
+	<data name="kstidCustomizeCaption">
+		<value>Customize</value>
+	</data>
+	<data name="kstidToolbarsTab">
+		<value>Toolbars</value>
+	</data>
+	<data name="kstidCommandsTab">
+		<value>Commands</value>
+	</data>
+	<data name="kstidOptionsTab">
+		<value>Options</value>
+	</data>
+	<data name="kstidKeyboardButton">
+		<value>&amp;Keyboard...</value>
+	</data>
+	<data name="kstidCloseButton">
+		<value>Close</value>
+	</data>
+	<data name="kstidNewButton">
+		<value>&amp;New...</value>
+	</data>
+	<data name="kstidRenameButton">
+		<value>&amp;Rename...</value>
+	</data>
+	<data name="kstidDeleteButton">
+		<value>Delete</value>
+	</data>
+	<data name="kstidResetButton">
+		<value>&amp;Reset...</value>
+	</data>
+	<data name="kstidCommandInstruction">
+		<value>To add a command to a tool bar select the category and drag the command out of this box to the tool bar.</value>
+	</data>
+	<data name="kstidCategoriesLabel">
+		<value>Cate&amp;gories:</value>
+	</data>
+	<data name="kstidCommandsLabel">
+		<value>Comman&amp;ds:</value>
+	</data>
+	<data name="kstidToolbarsLabel">
+		<value>Toolb&amp;ars:</value>
+	</data>
+	<data name="kstidPersonalizedMenusAndToolbarsLabel">
+		<value>Personalized Menus and Toolbars</value>
+	</data>
+	<data name="kstidFullMenusCheckbox">
+		<value>&amp;Always show full menus</value>
+	</data>
+	<data name="kstidMenusAfterDelayCheckbox">
+		<value>Show &amp;full menus after a short delay</value>
+	</data>
+	<data name="kstidResetUsageButton">
+		<value>&amp;Reset my usage data</value>
+	</data>
+	<data name="kstidOtherLabel">
+		<value>Other:</value>
+	</data>
+	<data name="kstidShowScreenTipsCheckbox">
+		<value>Show &amp;tooltips on tool bars</value>
+	</data>
+	<data name="kstidShowShortcutCheckbox">
+		<value>Show &amp;shortcut keys in tooltips</value>
+	</data>
+	<data name="kstidMenuAnimationLabel">
+		<value>Menu Animation:</value>
+	</data>
+	<data name="kstidNoneComboItem">
+		<value>(None)</value>
+	</data>
+	<data name="kstidSystemDefaultComboItem">
+		<value>System Default</value>
+	</data>
+	<data name="kstidRandomComboItem">
+		<value>Random</value>
+	</data>
+	<data name="kstidUnfoldComboItem">
+		<value>Unfold</value>
+	</data>
+	<data name="kstidSlideComboItem">
+		<value>Slide</value>
+	</data>
+	<data name="kstidFadeComboItem">
+		<value>Fade</value>
+	</data>
+	<data name="kstidComfirmDeleteMessage">
+		<value>Are you sure you want to delete the &lt;barname&gt; toolbar?</value>
+	</data>
+	<data name="kstidAddRemoveButtonsMenu">
+		<value>&amp;Add or Remove Buttons</value>
+	</data>
+	<data name="kstidResetBarMenu">
+		<value>Reset Bar</value>
+	</data>
+	<data name="kstidCustomizeMenu">
+		<value>Customize...</value>
+	</data>
+	<data name="kstidBarOptionsMenu">
+		<value>Bar Options</value>
+	</data>
+	<data name="kstidNewToolbarCaption">
+		<value>New Toolbar</value>
+	</data>
+	<data name="kstidRenameToolbarCaption">
+		<value>Rename Toolbar</value>
+	</data>
+	<data name="kstidToolbarName">
+		<value>&amp;Toolbar Name:</value>
+	</data>
+	<data name="kstidOK">
+		<value>OK</value>
+	</data>
+	<data name="kstidCancel">
+		<value>Cancel</value>
+	</data>
+	<data name="kstidInvalidNameMessage">
+		<value>Toolbar name cannot be empty.</value>
+	</data>
+	<data name="kstidSysMnuMinimize">
+		<value>Minimize</value>
+	</data>
+	<data name="kstidSysMnuRestore">
+		<value>Restore</value>
+	</data>
+	<data name="kstidSysMnuClose">
+		<value>Close</value>
+	</data>
+	<data name="kstidSysMnuRestore">
+		<value>Restore</value>
+	</data>
+	<data name="kstidSysMnuMove">
+		<value>Move</value>
+	</data>
+	<data name="kstidSysMnuSize">
+		<value>Size</value>
+	</data>
+	<data name="kstidSysMnuMinimize">
+		<value>Minimize</value>
+	</data>
+	<data name="kstidSysMnuMaximize">
+		<value>Maximize</value>
+	</data>
+	<data name="kstidSysMnuClose">
+		<value>Close</value>
+	</data>
+	<data name="kstidSysMnuNext">
+		<value>Next</value>
+	</data>
+	<data name="kstidAutoHideTooltip">
+		<value>Auto-Hide</value>
+	</data>
+	<data name="kstidCustomizeTooltip">
+		<value>Customize</value>
+	</data>
+	<data name="kstidCloseTooltip">
+		<value>Close</value>
+	</data>
+	<data name="kstidMoreButtons">
+		<value>More Buttons</value>
+	</data>
+	<data name="kstidCustomBar">
+		<value>Custom Bar</value>
+	</data>
+	<data name="kstidShowMoreButtonsNavBar">
+		<value>Show &amp;More Buttons</value>
+	</data>
+	<data name="kstidShowFewerButtonsNavBar">
+		<value>Show &amp;Fewer Buttons</value>
+	</data>
+	<data name="kstidNavigationPaneOptionsNavBar">
+		<value>Na&amp;vigation Pane Options...</value>
+	</data>
+</root>

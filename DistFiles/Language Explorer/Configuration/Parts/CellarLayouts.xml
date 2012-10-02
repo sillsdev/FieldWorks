@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand crafted layouts for Cellar related classes. -->
+<LayoutInventory>
+
+  <!-- A group of layouts that may be selected for configuration in document views -->
+  <layout class="CmPossibility" type="jtview" name="bestAnalysisAbbr" label="Abbreviation (Best Analysis)">
+	<part ref="ConfigureAbbr" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="bestAnalysisName" label="Name (Best Analysis)">
+	<part ref="ConfigureName" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="bestAnalysisNameAbbr" label="Name (Abbr) (Best Analysis)">
+	<part ref="ConfigureName" ws="best analorvern"/>
+	<part ref="ConfigureAbbr" before=" (" after=")" visibility="ifdata" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="bestAnalysisAbbrName" label="Abbr: Name (Best Analysis)">
+	<part ref="ConfigureAbbr" after=": " visibility="ifdata" ws="best analorvern"/>
+	<part ref="ConfigureName" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="advanced1" label="Configurable Item Layout 1">
+	<part ref="ConfigureAbbr" label="Item Abbreviation" after=" " visibility="ifdata" ws="best analorvern"/>
+	<part ref="ConfigureName" label="Item Name" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="advanced2" label="Configurable Item Layout 2">
+	<part ref="ConfigureAbbr" label="Item Abbreviation" after=" " visibility="ifdata" ws="best analorvern"/>
+	<part ref="ConfigureName" label="Item Name" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="advanced3" label="Configurable Item Layout 3">
+	<part ref="ConfigureAbbr" label="Item Abbreviation" after=" " visibility="ifdata" ws="best analorvern"/>
+	<part ref="ConfigureName" label="Item Name" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="advanced4" label="Configurable Item Layout 4">
+	<part ref="ConfigureAbbr" label="Item Abbreviation" after=" " visibility="ifdata" ws="best analorvern"/>
+	<part ref="ConfigureName" label="Item Name" ws="best analorvern"/>
+  </layout>
+  <layout class="CmPossibility" type="jtview" name="advanced5" label="Configurable Item Layout 5">
+	<part ref="ConfigureAbbr" label="Item Abbreviation" after=" " visibility="ifdata" ws="best analorvern"/>
+	<part ref="ConfigureName" label="Item Name" ws="best analorvern"/>
+  </layout>
+
+  <!-- Used in example sentence chooser -->
+  <layout class="Segment" type="jtview" name="publicationNew">
+	  <part ref="BaselineText" label="Sentence" before="" after="" visibility="ifdata" sep=" " showLabels="false" style="Dictionary-Vernacular" flowType="para"/>
+	  <part ref="FreeTrans" label="Free Translations" before="" after="" visibility="ifdata" sep="" flowType="para"/>
+	<part ref="LitTrans" label="Literal Translations" before="" after="" visibility="ifdata" sep="" flowType="para"/>
+  </layout>
+
+  <layout class="Note" type="jtview" name="preview">
+	<part ref="Content" label="Note Content" before="" after="" visibility="ifdata" sep="" flowType="para"/>
+  </layout>
+
+  <layout class="CmIndirectAnnotation" type="jtview" name="publicationNew">
+	<part ref="TypePub" label="Type" before=" " after="" visibility="ifdata" />
+	<part ref="CommentPub" label="Translation" before="" after=" " visibility="ifdata" sep=" " ws="all analysis" showLabels="false"/>
+  </layout>
+
+	<layout class="CmBaseAnnotation" type="detail" name="Edit">
+		<part ref="BeginObjectLink"/>
+		<part ref="TextOnly"/>
+	</layout>
+	<layout class="Text" type="detail" name="FullInformation">
+		<part ref="TitleAllWs"/>
+		<part ref="AbbreviationAllWs"/>
+		<part ref="SourceAllWs"/>
+		<part ref="IsTranslated"/>
+		<part ref="Genres"/>
+		<part ref="CommentAllWs"/>
+	</layout>
+	<layout class="StText" type="detail" name="FullInformation">
+		<part ref="TitleAllWs"/>
+		<part ref="IsTranslation"/>
+	</layout>
+	<layout class="StText" type="jtview" name="FullText">
+		<part ref="Paragraphs"/>
+	</layout>
+	<layout class="StTxtPara" type="jtview" name="FullText">
+		<part ref="Contents"/>
+	</layout>
+	<layout class="StText" type="jtview" name="FullTextFakePara">
+		<part ref="ParagraphsFakePara"/>
+	</layout>
+	<layout class="StTxtPara" type="jtview" name="FullTextFakePara">
+		<part ref="ContentsFakePara"/>
+	</layout>
+</LayoutInventory>

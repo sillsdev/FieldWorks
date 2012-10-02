@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filesave" num="2.1.4" abbr="flsv" file="WorldPad\FileSave.xml">
+ <title tag="filesave">File-Save and Save As Tests</title>
+ <index>
+  <li>test</li>
+ </index>
+
+  <introduction>
+   <p>Issues the save command, which saves any pending changes to the file.</p>
+<p>There is also a Save As command.</p>
+  </introduction>
+
+  <context>
+<p>The menu item is always enabled regardless of whether changes have been made or not.</p>
+<p> See spec at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Save" type="doc">File-Save</link>.
+</p>
+  </context>
+
+ <case id="flsvBehav" num="1.0" order="any">
+  <title tag="flsvBehav">Save Behavior</title>
+  <context>
+<p>When the application is running</p>
+</context>
+
+  <step name="1.1" link="Bug">
+	Inspect Save button status in application.
+	<r>The File-Save menu item and the Save toolbar button are enabled (they always are).</r>
+	<p name="bug">File-Save item not enabled</p>
+  </step>
+  <step name="1.2" link="Bug">
+	When the app is just openned, make some changes. Click Save or press &lt;Ctrl>&lt;S>.
+	<r>The Save As dialog is displayed.</r>
+	<p name="bug">File-Save initially fails to bring up Save As dialog</p>
+  </step>
+  <step name="1.3" link="Bug">
+	Make some changes. Close the application.
+	<r>A prompt to save the changes is displayed.
+	 <ul>
+	  <li>The "yes" button causes the file to be saved to the existing file. The  dialog and application windows disappear.</li>
+	  <li>With a new file, the "yes" button causes the Save As dialog to appear. The previous dialog disappears.</li>
+	  <li>The "no" button makes the dialog disappear. The application window closes.</li>
+	  <li>The "cancel" button makes the dialog disappear. The application window remains open.</li>
+	 </ul>
+	</r>
+	<p name="bug">File-Save prompt not displayed on exit</p>
+  </step>
+  <step name="1.4" link="Bug">
+	When no changes have been made since the last save close the application.
+	<r>The application closes without any prompt.</r>
+	<p name="bug">File-Save prompt displayed on exit with no changes made</p>
+  </step>
+ </case>
+
+ <case id="flsvAs" num="2.0" order="any">
+  <title tag="flsvAs">Save As Inspection</title>
+  <context>
+  <p>There is currently no spec for Save As.
+ However some information can be obtained from the WorldPad online help,
+ under "File Formats used by WorldPad".</p>
+  </context>
+
+  <step name="2.1" link="Bug">
+	Inspect the File-Save As... item when the app first starts up, and
+	when some modifications have been made, and after saving.
+	<r>The File - Save As item is always enabled.</r>
+	<p name="bug">File-Save As not enabled</p>
+  </step>
+  <step name="2.2" link="Bug">
+	Invoke the File-Save As... menu item.
+	<r>The standard Windows "Save As" dialog appears. In the "Save as Type"
+ dropdown list, the following types appear:
+	 <ul>
+	  <li>WorldPad XML (*.wpx)</li>
+	  <li>WorldPad template (*.wpt)</li>
+	  <li>and Plain Text (*.txt).</li>
+	 </ul>
+	</r>
+	<p name="bug">File-Save As file types incorrect</p>
+	<p name="bug">File-Save As has extra file types</p>
+	<p name="bug">File-Save As is missing file types</p>
+  </step>
+ </case>
+
+ <case id="flsvAsd" num="3.0" order="any">
+  <title tag="flsvAsd">Save As Dialog</title>
+  <context>
+  <p>When the Save As dialog is open</p>
+  </context>
+
+  <step name="3.1" link="Bug">Supply a file name that already exists on disk. Click OK.
+	<r>A Save As confirmation dialog appears asking "<i>file name</i> already exists. Do you want to replace it?".
+	 <ul>
+	  <li>The "yes" button causes the file to be saved to the existing file. The confirmation dialog disappears.</li>
+	  <li>The "no" button makes the confirmation dialog disappear. The Save As dialog is active and the file is not replaced (open it to see).</li>
+	 </ul>
+	</r>
+	<p name="bug">File-Save As confirmation dialog not launched</p>
+	<p name="bug">File-Save As confirmation dialog no button fails</p>
+	<p name="bug">File-Save As confirmation dialog yes button fails</p>
+  </step>
+  <step name="3.2" link="Bug">
+	Click Cancel.
+	<r>The Save As dialog disappears and the application window remains open.</r>
+	<p name="bug">File-Save As Cancel fails to cancel dialog</p>
+	<p name="bug">File-Save As Cancel makes app window close</p>
+  </step>
+  <step name="3.3" link="Bug">
+	Save a file containing a graphite font as "Plain Text".
+	<r>A "Saving as Plain Text" dialog appears even if it was last saved this way.
+	 <ul>
+	  <li>Selecting ANSI and clicking OK brings up an information dialog stating that "Your data could not be formatted correctly ...".</li>
+	  <li>Selecting a different text encoding and clicking OK saves the file.</li>
+	  <li>Clicking "Cancel" closes the dialog but not the main window.</li>
+	  <li>Clicking "Help" opens the Help dialog to the "File Formats" page.</li>
+	 </ul>
+	</r>
+	<p name="bug">File-Save As Plain Text launches no dialog</p>
+	<p name="bug">Saving as Plain Text ANSI provides no information dialog</p>
+	<p name="bug">Saving as Plain Text can't be canceled</p>
+	<p name="bug">Saving as Plain Text Help is incorrect</p>
+  </step>
+ </case>
+
+ <case id="flsvType" num="4.0" order="any">
+  <title tag="flsvType">File Type Tests</title>
+  <context>
+  <p>After the file is saved</p>
+  </context>
+
+  <step name="4.1" link="Bug">Inspect the folder where the file is created.
+   <r>The file appears with the correct name and extension for its type.</r>
+	<p name="note">You may have to uncheck "Hide extensions for known file types" in the Tools-Folder Options-View list in your Windows Explorer window.</p>
+	<p name="bug">File-Save As creates wrong file name</p>
+	<p name="bug">File-Save As creates wrong file extension</p>
+  </step>
+  <step name="4.2" link="Bug">
+	Open the file by double-clicking, drag and drop or via the File-Open dialog.
+	<r>The file opens and appears the same as when it was saved.</r>
+	<p name="bug">File-Save As file not openned correctly</p>
+  </step>
+  <step name="4.3" link="Bug">
+	Open the file in NotePad or some other editor (at some point a UniCode aware editor may be needed).
+	<r>
+	 <ul>
+	  <li>The file content appears correct according to the file type.</li>
+	  <li>File marks and mark up looks correct.</li>
+	 </ul>
+	</r>
+	<p name="note">Tester must be somewhat familiar with the internal file representations.</p>
+	<p name="bug">File-Save As botches file content</p>
+  </step>
+ </case>
+
+ <update date="Feb-01-01" author="JanetW">Added tests for browse and document views.</update>
+ <update date="Apr-17-01" author="RickM">Put into XML format</update>
+ <update date="May-10-01" author="JanetW">Generalized for FW</update>
+ <update date="Aug-31-01" author="LarsH">Added tests for Save As and other
+ WorldPad behavior</update>
+ <update date="Jun-03-02" author="RussD">Changed to conform to specs (save is always enabled).</update>
+ <update date="Sep-18-02" author="MikeL">Completed updates to M6.</update>
+
+</test>

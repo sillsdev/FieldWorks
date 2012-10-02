@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="XLingPap1.xsl" type="text/xsl"?>
+<!DOCTYPE lingPaper SYSTEM "XLingPap.dtd">
+<lingPaper>
+  <language id="lngEng" name="English">english</language>
+  <language id="lngNah" name="Nahuatl">nahuatl</language>
+  <language id="lngSpn" name="Spanish">spanish</language>
+  <language id="lngCar" name="Carolinian">carolinian</language>
+  <frontMatter>
+	<title>Sample XLingPap Paper</title>
+	<author>H. Andrew Black</author>
+	<date>21 June, 2001</date>
+	<version>1.0</version>
+	<!--The following triggers the addition of a table of contents for the content (N.B. not for any charts or tables). -->
+	<contents showLevel="4"/>
+	<abstract>
+	  <p>This paper illustrates the various elements available in the XML/XSLT-based linguistic paper markup scheme called XLingPap. It provides examples of the various markups and shows how they can be rendered in HTML.</p>
+	</abstract>
+  </frontMatter>
+  <section1 id="secIntr">
+	<secTitle>Introduction  <langData lang="lngCar">to this paper</langData>
+	</secTitle>
+	<p>This is the first section and it is an introduction.</p>
+  </section1>
+  <section1 id="secSecWithSubs">
+	<secTitle>Section with subsections</secTitle>
+	<p>This section has subsections.</p>
+	<section2 id="secSub1">
+	  <secTitle>First subsection</secTitle>
+	  <p>This is the first subsection.  It has its own subsection.</p>
+	  <section3 id="secSub12">
+		<secTitle>A sub-sub-section</secTitle>
+		<p>This is a subsubsection.</p>
+		<section4 id="secSub4">
+		  <secTitle>Fourth level section</secTitle>
+		  <p>This is a section, nested four levels deep.</p>
+		  <section5 id="secSub5">
+			<secTitle>Fifth level section</secTitle>
+			<p>This is a section, nested five levels deep.</p>
+			<section6 id="secSub6">
+			  <secTitle>Sixth level section</secTitle>
+			  <p>This is a section, nested six levels deep.  Six levels is the maximum allowed.</p>
+			</section6>
+		  </section5>
+		</section4>
+	  </section3>
+	</section2>
+	<section2 id="secSub2">
+	  <secTitle>Second subsection</secTitle>
+	  <p>This is the second subsection.</p>
+	</section2>
+  </section1>
+  <section1 id="secSampleReferences">
+	<secTitle>Section references</secTitle>
+	<p>One can refer to sections by using a <object class="element">&lt;sectionRef&gt;</object> element tag.  For example, we could say, See section <sectionRef sec="secSub12"/> or see section <sectionRef sec="secIntr"/>.
+	</p>
+	<p>A hyperlink is made between the reference and the section header.</p>
+	<section2 id="secEN">
+	  <secTitle>Endnotes</secTitle>
+	  <p>One can also use endnotes.  For example, the word 'following' in the following<endnote id="f1">
+		  <p>This is the first endnote.  It can contain just text or paragraphs or other main items.</p>
+		</endnote>
+ has an endnote.</p>
+	  <p>There is a second endnote at the end of this sentence.<endnote id="f3">
+		  <p>This has two paragraphs with a chart in between.</p>
+		  <chart>This is a chart</chart>
+		  <p>This is the second paragraph.</p>
+		</endnote>
+	  </p>
+	  <p>The sentence ends with a complex endnote.<endnote id="f5">
+		  <p>For example, consider this word:</p>
+		  <example num="xFootnote">
+			<word>
+			  <langData lang="lngCar">vernacular word</langData>
+			  <langData lang="lngEng">"gloss"</langData>
+			</word>
+		  </example>
+		  <p>It has exceptional qualities.</p>
+		</endnote>
+	  </p>
+	</section2>
+  </section1>
+  <section1 id="secEx">
+	<secTitle>Examples</secTitle>
+	<p>XLingPap has several types of examples.  Any type may be automatically numbered or not, merely by specifying or not specifying the <object class="attribute">num</object> attribute of the <object class="element">&lt;example&gt;</object> element tag.</p>
+	<section2 id="sExWord">
+	  <secTitle>Word examples</secTitle>
+	  <p>Word examples consist of a single word and its gloss, usually.  A single word example is given below.</p>
+	  <example num="xW1">
+		<word>
+		  <langData lang="lngNah">nikita</langData>
+		  <gloss lang="lngEng">"I saw it."</gloss>
+		</word>
+	  </example>
+	</section2>
+	<section2 id="sExListWord">
+	  <secTitle>List of Words examples</secTitle>
+	  <p>Lists of words examples consist of a list of words and their glosses, usually.  A list of words example is given below.</p>
+	  <example num="xLW2">
+		<listWord letter="xLW2d">
+		  <langData lang="lngNah">nikita</langData>
+		  <gloss lang="lngEng">"I see it."</gloss>
+		</listWord>
+		<listWord letter="xLW2s">
+		  <langData lang="lngNah">tikita</langData>
+		  <gloss lang="lngEng">"You(sg) see it."</gloss>
+		</listWord>
+		<listWord letter="xLW2e">
+		  <langData lang="lngNah">kita</langData>
+		  <gloss lang="lngEng">"He/she/it sees it."</gloss>
+		</listWord>
+		<listWord letter="xLW2g">
+		  <langData lang="lngNah">tikitah</langData>
+		  <gloss lang="lngEng">"We see it."</gloss>
+		</listWord>
+		<listWord letter="xLW2t">
+		  <langData lang="lngNah">ankitah</langData>
+		  <gloss lang="lngEng">"You(pl) see it."</gloss>
+		</listWord>
+		<listWord letter="xLW2u">
+		  <langData lang="lngNah">kitah</langData>
+		  <gloss lang="lngEng">"They see it."</gloss>
+		</listWord>
+	  </example>
+	</section2>
+	<section2 id="secExSingle">
+	  <secTitle>Single line examples</secTitle>
+	  <p>Single line examples consist of but one line.  The following is an English example.</p>
+	  <example num="ex102">
+		<single>
+		  <langData lang="lngEng">This is an example of a single line.</langData>
+		</single>
+	  </example>
+	</section2>
+	<section2 id="secExListSingle">
+	  <secTitle>List of single line examples</secTitle>
+	  <p>A list of single line examples consist of but one line each.  The key difference between just a single example and a list of single examples is that the latter are indented and each line is prefixed by an alphabetic letter.  The following is an English example.</p>
+	  <example num="ex103">
+		<listSingle letter="ex103d">
+		  <langData lang="lngEng">This is the first example.</langData>
+		</listSingle>
+		<listSingle letter="ex103g">
+		  <langData lang="lngEng">Which is the second example?</langData>
+		</listSingle>
+		<listSingle letter="ex103a">
+		  <langData lang="lngEng">If you'd like, this is the third example.</langData>
+		</listSingle>
+	  </example>
+	</section2>
+	<section2 id="secExInterlinear">
+	  <secTitle>Single interlinear examples</secTitle>
+	  <p>Single interlinear examples consist of several lines of aligned text along with one or more lines of an unaligned free translation.  The following is a Nahuatl/English example.</p>
+	  <example num="ex10">
+		<interlinear>
+		<lineGroup>
+		  <line>
+			<langData lang="lngNah">In  Wan onikitak in kowat.</langData>
+		  </line>
+		  <line>
+			<langData lang="lngNah">in Wan o-ni-k-ita-k in kowat</langData>
+		  </line>
+		  <line>
+			<gloss lang="lngEng">the John PST-1-3O-see-PRET the snake</gloss>
+		  </line>
+</lineGroup>
+		  <free>
+			<gloss lang="lngEng">"John saw the snake."</gloss>
+		  </free>
+		</interlinear>
+	  </example>
+	  <p>Note that the XSLT file does all that is needed to do the aligning.  (With the exception that it will not be able to automatically break long lines.)</p>
+	</section2>
+	<section2 id="secExListInterlinear">
+	  <secTitle>List of interlinear examples</secTitle>
+	  <p>A list of interlinear examples consist of interlinear examples.  The key difference between just a single interlinear example and a list of interlinear examples is that the latter are indented and each interlinear unit is prefixed by an alphabetic letter.  The following is a Nahuatl/ English example.</p>
+	  <example num="ex16">
+		<listInterlinear letter="ex16d">
+<lineGroup>
+		  <line>
+			<langData lang="lngNah">In  Wan onikitak in kowat. <exampleRef equal="yes" num="ex16"/>
+			</langData>
+		  </line>
+		  <line>
+			<langData lang="lngNah">in Wan o-ni-k-ita-k in kowat</langData>
+		  </line>
+		  <line>
+			<langData lang="lngEng">the John PST-1-3O-see-PRET the snake</langData>
+		  </line>
+</lineGroup>
+		  <free>
+			<gloss lang="lngEng">"John saw the snake."</gloss>
+		  </free>
+		</listInterlinear>
+		<listInterlinear letter="ex16g">
+		<lineGroup>
+		  <line>
+			<langData lang="lngNah">Onikitak in  Wan in kowat.</langData>
+		  </line>
+		  <line>
+			<langData lang="lngNah">o-ni-k-ita-k in Wan in kowat</langData>
+		  </line>
+		  <line>
+			<langData lang="lngEng">PST-1-3O-see-PRET the John the snake</langData>
+		  </line>
+</lineGroup>          <free>
+			<gloss lang="lngEng">"John saw the snake."</gloss>
+		  </free>
+		</listInterlinear>
+	  </example>
+	</section2>
+	<section2 id="sExRef">
+	  <secTitle>References to examples</secTitle>
+	  <p>One can also make references to example by number.  For example, in example <exampleRef equal="no" num="ex16"/> or in example <exampleRef equal="no" letter="ex16g"/> or example <exampleRef equal="no" num="ex102"/> or example <exampleRef equal="no" num="ex103"/> or example <exampleRef equal="no" letter="ex103a"/> or example <exampleRef equal="no" num="ex10"/>.  One can also have it add an equal sign within the parentheses (to indicate that a particular example is equal to another one, presumably shown earlier): e.g. <exampleRef equal="yes" letter="ex103a"/>.
+	  </p>
+	  <p>A hyperlink is made between the reference and the example in the text.</p>
+	</section2>
+  </section1>
+  <section1 id="secTables">
+	<secTitle>Tables</secTitle>
+	<p>One can also create tables.  One defines the rows and column elements, etc.<comment>This is a comment which the author can add to make a note.  Most HTML rendering templates will ignore comments.</comment>
+	</p>
+	<table>
+	  <headerRow>
+		<headerCol>
+		  <langData lang="lngEng">Column1</langData>
+		</headerCol>
+		<headerCol>
+		  <langData lang="lngEng">Column2</langData>
+		</headerCol>
+		<headerCol>
+		  <langData lang="lngEng">Column3</langData>
+		</headerCol>
+	  </headerRow>
+	  <row>
+		<col>
+		  <langData lang="lngEng">Row1, Col1</langData>
+		</col>
+		<col>
+		  <langData lang="lngEng">Row1, Col2</langData>
+		</col>
+		<col>
+		  <langData lang="lngEng">Row1, Col3</langData>
+		</col>
+	  </row>
+	  <row>
+		<col>
+		  <langData lang="lngEng">Row2, Col1</langData>
+		</col>
+		<col>
+		  <langData lang="lngEng">Row2, Col2</langData>
+		</col>
+		<col>
+		  <langData lang="lngEng">Row2, Col3</langData>
+		</col>
+	  </row>
+	</table>
+	<p>Tables can also be numbered like examples.</p>
+	<example>
+	  <table>
+		<caption>
+		  <gloss lang="lngEng">Orthographic vowel symbols in Carolinian</gloss>
+		</caption>
+		<row class="exampleTableHeaderRow">
+		  <col>
+			<gloss lang="lngEng"/>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<gloss lang="lngEng">Front</gloss>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<gloss lang="lngEng">Central</gloss>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<gloss lang="lngEng">Back</gloss>
+		  </col>
+		</row>
+		<row>
+		  <col>
+			<gloss lang="lngEng">High</gloss>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">i</langData>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">ú</langData>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">u</langData>
+		  </col>
+		</row>
+		<row>
+		  <col>
+			<gloss lang="lngEng">Mid</gloss>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">e</langData>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">é</langData>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">o</langData>
+		  </col>
+		</row>
+		<row>
+		  <col>
+			<gloss lang="lngEng">Low</gloss>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">á</langData>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">a</langData>
+		  </col>
+		  <col class="CarolinianVowelChartCol">
+			<langData lang="lngCar">ó</langData>
+		  </col>
+		</row>
+	  </table>
+	</example>
+  </section1>
+  <section1 id="secCharts">
+	<secTitle>Charts</secTitle>
+	<p>One can also create charts.  These currently simply have whatever content you put in them.  One such possiblity is to use a reference to a gif file.  They also can have a caption.</p>
+	<chart>
+	  This is the contents of a chart.&lt;br&gt;
+This is the second line.
+	</chart>
+	<p>Charts can also be used as numbered examples:</p>
+	<example num="xChartEx">
+	  <chart>&lt;img align="top" src="ParseC.gif" alt="ParseC constraint image" /&gt;
+</chart>
+	</example>
+  </section1>
+  <section1 id="secTrees">
+	<secTitle>Trees</secTitle>
+	<p>One can also create tree diagrams.  These currently simply have whatever content you put in them.  One such possiblity is to use a reference to a gif file.</p>
+	<tree>I'm a tree that is not also an example.</tree>
+	<p>Trees may be included as numbered examples.</p>
+	<example num="xTree">
+	  <tree>Hi, I'm a tree.</tree>
+	</example>
+  </section1>
+  <section1 id="sQuotes">
+	<secTitle>Quotes</secTitle>
+	<p>One may make quotes within a text or block quotes.  John said, <q>Today has been a good day!</q>
+	</p>
+	<p>Here is a block quote.</p>
+	<blockquote>For He Himself is our peace, who made both group sinto one, and broke down the barrier of the dividing wall, by abolishing in His flesh the enmity, which is the Law of commandments contained in ordinances, that in Himself He might make the two into one new man, thus establishing peace, and might reconcile them both in one body to God through the cross, bu it having put to death the enmity.<endnote id="f4">
+		<p>Eph. 2:14-16, NASB</p>
+	  </endnote>
+	</blockquote>
+  </section1>
+  <section1 id="sLists">
+	<secTitle>Lists</secTitle>
+	<p>Two kinds of lists are available, numbered and unnumbered (or bulleted).</p>
+	<ol>
+	  <li>This is the first item in the numbered list.</li>
+	  <li>This is the second.</li>
+	  <li>Here's the third.</li>
+	</ol>
+	<ul>
+	  <li>First bulleted item.</li>
+	  <li>Second one.</li>
+	  <li>And here's the third.</li>
+	</ul>
+	<p>Lists may be nested or mixed.</p>
+	<ol>
+	  <li>First line.</li>
+	  <ol>
+		<li>First under first.</li>
+		<li>Second under first.</li>
+		<ol>
+		  <li>First third level.</li>
+		  <li>Second third level.</li>
+		  <ol>
+			<li> First fourth level.</li>
+			<li>Second fourth level.</li>
+		  </ol>
+		</ol>
+	  </ol>
+	  <li>Second line.</li>
+	  <ul>
+		<li>First bullet point</li>
+		<li>Second bullet point.</li>
+		<ul>
+		  <li>Nested bullet point 1</li>
+		  <li>Nested bullet two.</li>
+		</ul>
+	  </ul>
+	</ol>
+	<p>One may also use definition lists.</p>
+	<dl>
+	  <dt>Term 1</dt>
+	  <dd>Definition 1</dd>
+	  <dt>Term 2</dt>
+	  <dd>Defintion 2</dd>
+	</dl>
+  </section1>
+  <section1 id="secCitations">
+	<secTitle>Citations</secTitle>
+	<p>One can make citations to references, too.  The default is to give the author's name (as defined by the <object class="attribute">citeAuthor</object> attribute in the <object class="element">&lt;reference&gt;</object> element) followed by the date enclosed in parentheses.  For example, one might say, "cf. <citation author="yes" ref="rIto1989"/>" or "<citation author="yes" ref="rAkinlabi1984"/>."</p>
+	<section2 id="secCitPage">
+	  <secTitle>Adding page numbers</secTitle>
+	  <p>One can also indicate page numbers in a reference, by using the <object class="attribute">page</object> attribute of the <object class="element">&lt;citation&gt;</object> element.   For example, "cf. <citation author="yes" page="223" ref="rIto1989"/>." or "cf. <citation author="yes" page="221-246" ref="rDixon1988"/>.</p>
+	</section2>
+	<section2 id="secCitParen">
+	  <secTitle>Controlling the parentheses around dates</secTitle>
+	  <p>In certain instances, one may wish to not have the date enclosed in parentheses. One may want the author's name and date to be enclosed in parentheses.  For example, "cf. (<citation author="yes" paren="final" ref="rIto1989"/>."
+</p>
+	  <p>One may want to list several works by a single author:  "cf. <citation author="yes" paren="initial" ref="rIto1986"/>, <citation author="no" paren="none" ref="rIto1989"/>, <citation author="no" paren="final" ref="rIto1990"/>.  The last two ciations also use the option to not include the author.</p>
+	</section2>
+	<section2 id="secCitAlpha">
+	  <secTitle>Dealing with multiple works by the same author in the same year</secTitle>
+	  <p>If an author has more than one work published in the same year, then one usually appends a letter after the date.  This is handled automatically by XLingPap.</p>
+	  <p>For example, if one cites <citation author="yes" ref="rDixon1977b"/> and also <citation author="yes" ref="rDixon1977c"/>, then the letter is appended properly.</p>
+	</section2>
+	<section2 id="secCitHyper">
+	  <secTitle>Hyperlinks</secTitle>
+	  <p>A hyperlink is made between the citation and the reference entry in the references section.</p>
+	</section2>
+	<section2 id="secCitRefList">
+	  <secTitle>Only cited references appear in the references</secTitle>
+	  <p>If a reference is not cited somewhere in the text, then it will not be listed in the list of references.  This means that one can maintain a single file of all the references one has ever cited, but only those used in the current paper will appear.</p>
+	  <p>Further note that if there are multiple works by the same author in a given year, the letter will be appended to the year only if two or more of these works in the same year are cited somewhere in the text.  If there is lettering, the lettering will begin at 'a', 'b', etc. as appropriate.</p>
+	  <p>Here are some citations just to allow some kinds of reference entries to appear below in the references section.  <citation author="yes" ref="rAlfonsoEtAl1982"/>
+		<!-- @@@ -->
+	  </p>
+	</section2>
+  </section1>
+  <backMatter>
+	<appendix id="aa">
+	  <secTitle>First Appendix</secTitle>
+	  <p>This is an appendix.  It has all possible number of section nesting.</p>
+	  <section1 id="a1">
+		<secTitle>First appendix section</secTitle>
+		<p>One can also add appendices.  They will be numbered like sections, except using initial capital letters.</p>
+		<section2 id="a12">
+		  <secTitle>Subsection in an appendix</secTitle>
+		  <p>One can have subsections, too.  They may be nested up to six levels,  just like regular sections.</p>
+		  <section3 id="a123">
+			<secTitle>Sub-sub-section of an appendix</secTitle>
+			<section4 id="a1234">
+			  <secTitle>Fourth level section in appendix</secTitle>
+			  <section5 id="a12345">
+				<secTitle>Fifth level section in appendix</secTitle>
+				<section6 id="a123456">
+				  <secTitle>Sixth level section in appendix</secTitle>
+				</section6>
+			  </section5>
+			</section4>
+		  </section3>
+		</section2>
+	  </section1>
+	</appendix>
+	<appendix id="aA2">
+	  <secTitle>Second Appendix</secTitle>
+	  <p>This is the beginning of the second appendix. And it has a reference to example <exampleRef equal="no" num="ex103d"/>.</p>
+	  <section1 id="a2">
+		<secTitle>Second appendix</secTitle>
+		<p>This is an example of another appendix.</p>
+	  </section1>
+	</appendix>
+	<!--
+		ENDNOTES
+-->
+	<endnotes/>
+	<!--
+		REFERENCES
+-->
+	<references>
+	  <refAuthor citeName="Akinlabi" name="Akinlabi, Akinbiyi">
+		<refWork id="rAkinlabi1984">
+		  <refDate>1984</refDate>
+		  <refTitle>Tonal underspecification and Yoruba tone</refTitle>
+		  <ms>
+			<institution>Univeristy of Ibadan</institution>
+		  </ms>
+		</refWork>
+	  </refAuthor>
+	  <refAuthor citeName="Alfonso et al." name="Alfonso, P., K. Honda, T. Baer, and K. Harris">
+		<refWork id="rAlfonsoEtAl1982">
+		  <refDate>1982</refDate>
+		  <refTitle>Multi-channel study of tongue EMG during vowel production</refTitle>
+		  <paper>
+			<conference>103rd Meeting of the Acoustical Society of America</conference>
+		  </paper>
+		</refWork>
+	  </refAuthor>
+	  <refAuthor citeName="Dixon" name="Dixon, Robert">
+		<refWork id="rDixon1977a">
+		  <refDate>1977</refDate>
+		  <refTitle>A grammar of Yidin<object class="super">y</object>
+		  </refTitle>
+		  <book>
+			<publisher>Cambridge University Press</publisher>
+			<location>Cambridge</location>
+		  </book>
+		</refWork>
+		<refWork id="rDixon1977b">
+		  <refDate>1977</refDate>
+		  <refTitle>Some phonological rules in Yidin<object class="super">y</object>
+		  </refTitle>
+		  <article>
+			<jTitle>Linguistic Inquiry</jTitle>
+			<jVol>8</jVol>
+			<jPages>1-34</jPages>
+		  </article>
+		</refWork>
+		<refWork id="rDixon1977c">
+		  <refDate>1977</refDate>
+		  <refTitle>Something made up to test year-letter</refTitle>
+		  <article>
+			<jTitle>Linguistic Inquiry</jTitle>
+			<jVol>8</jVol>
+			<jPages>185-86</jPages>
+		  </article>
+		</refWork>
+		<refWork id="rDixon1988">
+		  <refDate>1988</refDate>
+		  <refTitle>A grammar of Boumaa Fijian</refTitle>
+		  <book>
+			<publisher>University of Chicago Press</publisher>
+			<location>Chicago</location>
+		  </book>
+		</refWork>
+	  </refAuthor>
+	  <refAuthor citeName="Itô" name="Itô, Junko">
+		<refWork id="rIto1986">
+		  <refDate>1986</refDate>
+		  <refTitle>Syllable theory in prosodic phonology</refTitle>
+		  <dissertation>
+			<institution>University of Massachusetts</institution>
+			<location>Amherst</location>
+			<published>
+			  <publisher>Garland Press</publisher>
+			  <location>New York</location>
+			  <pubDate>1988</pubDate>
+			</published>
+		  </dissertation>
+		</refWork>
+		<refWork id="rIto1989">
+		  <refDate>1989</refDate>
+		  <refTitle>A prosodic theory of epenthesis</refTitle>
+		  <article>
+			<jTitle>Natural Language and Linguistic Theory</jTitle>
+			<jVol>7</jVol>
+			<jPages>217-59</jPages>
+		  </article>
+		</refWork>
+		<refWork id="rIto1990">
+		  <refDate>1990</refDate>
+		  <refTitle>Prosodic minimality in Japanese</refTitle>
+		  <proceedings>
+			<procEd plural="yes">  Michael Ziolkowski, Manuela Noske, and Karen Deaton</procEd>
+			<procTitle>CLS 26-II: Papers from the parasession on the syllable in phonetics and phonology</procTitle>
+			<procVol>26</procVol>
+			<procPage>213-39</procPage>
+			<publisher>Chicago Linguistics Society, University of Chicago</publisher>
+			<location>Chicago</location>
+		  </proceedings>
+		</refWork>
+	  </refAuthor>
+	  <refAuthor citeName="Mester" name="Mester, Armin">
+		<refWork id="rMester1990">
+		  <refDate>1990</refDate>
+		  <refTitle>Patterns of truncation</refTitle>
+		  <article>
+			<jTitle>Linguistic Inquiry</jTitle>
+			<jVol>21</jVol>
+			<jPages>478-85</jPages>
+		  </article>
+		</refWork>
+	  </refAuthor>
+	  <refAuthor citeName="Spencer" name="Spencer, Andrew">
+		<refWork id="rSpencer1991">
+		  <refDate>1991</refDate>
+		  <refTitle>Morphological Theory</refTitle>
+		  <book>
+			<publisher>Basil Blackwell</publisher>
+			<location>Cambridge, Massachusetts</location>
+		  </book>
+		</refWork>
+	  </refAuthor>
+	</references>
+  </backMatter>
+</lingPaper>

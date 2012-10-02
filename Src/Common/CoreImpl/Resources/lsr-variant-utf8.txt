@@ -1,0 +1,40 @@
+# List of all variants in the IANA language subtag registry as of 2010-03-25
+# Obtained from langtag.net
+
+1606nict	2007-03-20	Late Middle French (to 1606)	frm
+1694acad	2007-03-20	Early Modern French	fr
+1901	2005-10-16	Traditional German orthography	de
+1959acad	2008-09-30	"Academic" ("governmental") variant of Belarusian as  codified in 1959	be
+1994	2007-07-28	Standardized Resian orthography	sl-rozaj / sl-rozaj-biske / sl-rozaj-njiva / sl-rozaj-osojs / sl-rozaj-solba
+1996	2005-10-16	German orthography of 1996	de
+alalc97	2009-12-09	ALA-LC Romanization, 1997 edition
+aluku	2009-09-05	Aluku dialect / Boni dialect	djk
+arevela	2006-09-18	Eastern Armenian	hy
+arevmda	2006-09-18	Western Armenian	hy
+baku1926	2007-04-18	Unified Turkic Latin Alphabet (Historical)	az / ba / crh / kk / krc / ky / sah / tk / tt / uz
+biske	2007-07-05	The San Giorgio dialect of Resian / The Bila dialect of Resian	sl-rozaj
+boont	2006-09-18	Boontling	en
+fonipa	2006-12-11	International Phonetic Alphabet
+fonupa	2006-12-11	Uralic Phonetic Alphabet
+hepburn	2009-10-01	Hepburn romanization	ja-Latn
+heploc	2009-10-01	Hepburn romanization, Library of Congress method	ja-Latn-hepburn
+hognorsk	2010-01-02	Norwegian in Høgnorsk (High Norwegian) orthography	nn
+kkcor	2008-10-14	Common Cornish orthography of Revived Cornish	kw
+lipaw	2007-08-11	The Lipovaz dialect of Resian / The Lipovec dialect of Resian	sl-rozaj
+monoton	2006-12-11	Monotonic Greek	el
+ndyuka	2009-09-05	Ndyuka dialect / Aukan dialect	djk
+nedis	2005-10-16	Natisone dialect / Nadiza dialect	sl
+njiva	2007-07-05	The Gniva dialect of Resian / The Njiva dialect of Resian	sl-rozaj
+osojs	2007-07-05	The Oseacco dialect of Resian / The Osojane dialect of Resian	sl-rozaj
+pamaka	2009-09-05	Pamaka dialect	djk
+pinyin	2008-10-14	Pinyin romanization	zh-Latn / bo-Latn
+polyton	2006-12-11	Polytonic Greek	el
+rozaj	2005-10-16	Resian / Resianic / Rezijan	sl
+scotland	2007-08-31	Scottish Standard English	en
+scouse	2006-09-18	Scouse	en
+solba	2007-07-05	The Stolvizza dialect of Resian / The Solbica dialect of Resian	sl-rozaj
+tarask	2007-04-27	Belarusian in Taraskievica orthography	be
+uccor	2008-10-14	Unified Cornish orthography of Revived Cornish	kw
+ucrcor	2008-10-14	Unified Cornish Revised orthography of Revived Cornish	kw
+valencia	2007-03-06	Valencian	ca
+wadegile	2008-10-03	Wade-Giles romanization	zh-Latn

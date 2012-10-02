@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="datmodtemp" num="2.4.8" abbr="dtmt" file="FW\DatModTemp.xml" ready="V2">
+<title tag="datmodtemp">Data-Modify Templates Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Template option refers only to specifying default field content and default structure. Specifying which fields actually appear and in what order are functions of the Views tab under Tools-Options.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/DATAMENU.HTML#Data-ModifyTemplates" type="doc">Data-Modify Templates</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/Template/Template.html" type="doc">Modify Template Option</link>
+</p>
+<p name="todo">This test script requires editing to fit the specifications listed above. This is just a template to start out with.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Data-Modify Templates"</p>
+</context>
+
+<case id="dtmtAct" num="0" order="any">
+<title tag="dtmtAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.1" link="Bug">Invoke Data-Modify Templates. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DATAMENU/DATAMENU.HTML#Data-ModifyTemplates" type="doc">Definition of Data-Modify Templates.</link>
+<r>Expected result.</r>
+<p name="bug">Data-Modify Templates not working</p>
+</step>
+</case>
+
+<case id="dtmtDiac" num="1" order="any">
+<title tag="dtmtDiac">Exercise dialog controls</title>
+<context>
+<p>When the Data-Modify Templates is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Data-Modify Templates" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="dtmt??" num="2" order="any">
+<title tag="dtmtSe">Side effects</title>
+<context>
+<p>When the Data-Modify Templates is displayed:</p>
+</context>
+
+<step name="2.1">Exercise the Data-Modify Templates on selected paragraphs with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly.</li>
+<li>The settings persist after leaving and re-entering the application.</li>
+</ul>
+</r>
+<p name="bug">Data-Modify Templates control sequence causes problem</p>
+<p name="bug">Data-Modify Templates &lt;attribute&gt; does not persist</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Apr-19-02" author="JanetW">Deleted dummy steps.</update>
+
+</test>

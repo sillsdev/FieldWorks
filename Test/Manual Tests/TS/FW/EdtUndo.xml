@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtundo" num="2.2.1" abbr="edun" file="FW\EdtUndo.xml">
+<title tag="edtundo">Edit-Undo Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Undoes the most recent action. The menu item adjusts to reflect the nature of the action that is to be undone, e.g., "Undo Typing", "Undo Paste", or "Undo Replace All". It is possible to undo changes all the way back to the most recent commitment of a transaction. If an action cannot be undone (and there are very few of these), then the dialog to the right is displayed to give appropriate warning. You can elect to go ahead with the action, or to cancel and back out of the action. When an undoable action is performed, it clears out the undo stack on the menu. The Undo menu item is disabled if there is nothing to undo.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Undo" type="doc">Edit-Undo</link>
+</p>
+</introduction>
+<context>
+<p>When performing Undo, check to see if Undo needs to be selected more than once to perform an Undo operation. Also, check for any unusual cursor. Check if Undo will undo changes to a record that is no longer visible. The first words of the bug report title should be a noun phrase containing the words "Edit-Undo"</p>
+</context>
+
+<case id="edunAct" num="1" order="any">
+<title tag="edunAct">Action</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="1.1" link="Bug">Click Edit or &lt;Alt&gt;&lt;E&gt; to bring up the Edit menu.
+   <r>
+<ul>
+<li>If there was no previous interface action that can be undone, this button is disabled</li>
+<li>Otherwise, it is available</li>
+</ul>
+</r>
+<p name="bug">Edit-Undo menu item disabled after undoable action</p>
+<p name="bug">Edit-Undo menu item enabled before any action</p>
+</step>
+<step name="1.2" link="Bug">Use <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection and Operation Tests</link>, the shortcut &lt;Ctrl&gt;&lt;Z&gt; and the shortcut &lt;Alt&gt;&lt;U&gt; to test this menu item's basic functionality.
+   <r>
+<ul>
+<li>The state of this menu item (enabled/disabled) is matched by the icon on the Standard Toolbar</li>
+<li>The last previous action is undone when this menu item is clicked.</li>
+<li>If there are no more actions to undo, the menu item and toolbar icon are disabled</li>
+<li>Report any failures as suggested using "Edit-Undo" as the name of this menu item</li>
+</ul>
+</r>
+<p name="bug">Edit-Undo disabled, but not on the toolbar</p>
+<p name="bug">Edit-Undo enabled, but not on the toolbar</p>
+<p name="bug">Edit-Undo fails to undo action</p>
+<p name="bug">Edit-Undo not disabled after last undo</p>
+</step>
+<step name="1.3" link="Bug">Open a new window. Select the same record in each window. Make different changes to the same field of the same record in each of the windows. Next try a variety of combinations of Undo and Redo in each window and observe the result.
+   <r>
+<ul>
+<li>Undo works independently in each window; changes in one are not undoable from the other</li>
+<li>The views change when changes are made in the other window</li>
+</ul>
+</r>
+<p name="bug">Edit-Undo accumulates actions from all open windows sharing the data</p>
+<p name="bug">Edit-Undo in one window adds the undone action to the redo list</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Oct-02-01" author="MikeL">Put guts in from a Word test</update>
+
+</test>

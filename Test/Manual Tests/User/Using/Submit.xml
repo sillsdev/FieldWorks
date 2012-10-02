@@ -1,0 +1,30 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Submit.xml">
+ <title tag="useSub">How to submit a bug</title>
+ <index>
+  <li>report: submit</li>
+  <li>submit a bug report</li>
+  <li>bug submission</li>
+ </index>
+ <introduction>
+  <p>In order to add bugs to our bug tracking system, they need to be submitted to the <link uri="..\Milestone\LSTD.xml" type="module">Language Software Test Department</link>. Upon receipt, each one is examined to determine if it is a duplicate of a detected bug, more information on a detected bug, or if it is a new bug.</p>
+ </introduction>
+ <benefits>
+  <p>We thank you for submitting bugs in a timely fashion; try for 2 or 3 days after the beginning of testing. Your findings help focus attention on the most bug ridden areas of the project. In the long run, this celerity saves developers a lot of time, especially if testing indicates that an area of code must be rewritten.</p>
+ </benefits>
+ <prerequisites>
+  <p>Before you can submit a bug report, you will need to:</p>
+  <ul>
+   <li>Have a working e-mail connection or</li>
+   <li>Connect to the <link uri="..\Starting\Connect.xml" type="module">SIL Intranet</link>.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps to follow when submitting a bug report:</p>
+  <step>Launch the document or text file you stored your bug report in.</step>
+  <step link="E-mail now!" uri="mailto:Michael_Lastufka@sil.org">Launch your e-mail program (connect to the phone line if necessary) and create a new message. </step>
+  <step link="Use website!" uri="..\nolink.xml">Or use the response form on our website. </step>
+  <step>Copy your bug report text into the message body of your e-mail program or the website form.<p>If you are not using the website form, it is best to copy the report as ASCII or UTF-8 text so that it can be free of mark-up or other codes your e-mail program may create to mimic text formatted by Word or other editors that format text. An easy way to do this is to first copy to a plain text editor like Notepad. Copy from there (Edit-Select All, &lt;Ctrl>&lt;c>) to your e-mail.</p></step>
+  <step>Send the report from your e-mail program or by clicking "Submit" on the website form.<p>Sending errors usually show up via e-mail within a day, so keep an eye out for them and try to fix any problems and resend if you get one.</p></step>
+ </steps>
+</task>

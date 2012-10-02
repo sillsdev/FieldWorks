@@ -1,0 +1,1194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="splitContainerVertical.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="splitContainerVertical.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <metadata name="panelGlossComponents.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="panelGlossComponents.ColumnCount" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <metadata name="tableLayoutPanel1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <metadata name="panel1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="comboGlossListItem.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="comboGlossListItem.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="comboGlossListItem.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="comboGlossListItem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>77, 0</value>
+  </data>
+  <data name="comboGlossListItem.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="comboGlossListItem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>256, 21</value>
+  </data>
+  <data name="comboGlossListItem.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;comboGlossListItem.Name" xml:space="preserve">
+	<value>comboGlossListItem</value>
+  </data>
+  <data name="&gt;&gt;comboGlossListItem.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.0.6.15949, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;comboGlossListItem.Parent" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;comboGlossListItem.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="labelGlossListItem.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="labelGlossListItem.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="labelGlossListItem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="labelGlossListItem.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>3, 3, 3, 3</value>
+  </data>
+  <data name="labelGlossListItem.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 3, 0, 0</value>
+  </data>
+  <data name="labelGlossListItem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>79, 24</value>
+  </data>
+  <data name="labelGlossListItem.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="labelGlossListItem.Text" xml:space="preserve">
+	<value>Gloss List Item</value>
+  </data>
+  <data name="&gt;&gt;labelGlossListItem.Name" xml:space="preserve">
+	<value>labelGlossListItem</value>
+  </data>
+  <data name="&gt;&gt;labelGlossListItem.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelGlossListItem.Parent" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;labelGlossListItem.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="panel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>333, 24</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="checkBoxShowUsed.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="checkBoxShowUsed.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="checkBoxShowUsed.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="checkBoxShowUsed.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 227</value>
+  </data>
+  <data name="checkBoxShowUsed.Size" type="System.Drawing.Size, System.Drawing">
+	<value>327, 18</value>
+  </data>
+  <data name="checkBoxShowUsed.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="checkBoxShowUsed.Text" xml:space="preserve">
+	<value>Show only the features and values I have used before.</value>
+  </data>
+  <data name="&gt;&gt;checkBoxShowUsed.Name" xml:space="preserve">
+	<value>checkBoxShowUsed</value>
+  </data>
+  <data name="&gt;&gt;checkBoxShowUsed.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxShowUsed.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;checkBoxShowUsed.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="treeViewGlossListItem.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="treeViewGlossListItem.ImageIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="treeViewGlossListItem.Indent" type="System.Int32, mscorlib">
+	<value>19</value>
+  </data>
+  <data name="treeViewGlossListItem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 27</value>
+  </data>
+  <data name="treeViewGlossListItem.SelectedImageIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="treeViewGlossListItem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>327, 194</value>
+  </data>
+  <data name="treeViewGlossListItem.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;treeViewGlossListItem.Name" xml:space="preserve">
+	<value>treeViewGlossListItem</value>
+  </data>
+  <data name="&gt;&gt;treeViewGlossListItem.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.LexText.Controls.MGA.GlossListTreeView, MGA, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;treeViewGlossListItem.Parent" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;treeViewGlossListItem.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 16</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>333, 248</value>
+  </data>
+  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
+	<value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
+	<value>groupBoxGlossComponents</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="panel1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="checkBoxShowUsed" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="treeViewGlossListItem" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Absolute,24,Percent,100,Absolute,24" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="groupBoxGlossComponents.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="groupBoxGlossComponents.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="groupBoxGlossComponents.Size" type="System.Drawing.Size, System.Drawing">
+	<value>339, 267</value>
+  </data>
+  <data name="groupBoxGlossComponents.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="groupBoxGlossComponents.Text" xml:space="preserve">
+	<value>List of possible gloss components</value>
+  </data>
+  <data name="&gt;&gt;groupBoxGlossComponents.Name" xml:space="preserve">
+	<value>groupBoxGlossComponents</value>
+  </data>
+  <data name="&gt;&gt;groupBoxGlossComponents.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxGlossComponents.Parent" xml:space="preserve">
+	<value>panelGlossComponents</value>
+  </data>
+  <data name="&gt;&gt;groupBoxGlossComponents.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="buttonInfo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="buttonInfo.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonInfo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 276</value>
+  </data>
+  <data name="buttonInfo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>80, 20</value>
+  </data>
+  <data name="buttonInfo.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="buttonInfo.Text" xml:space="preserve">
+	<value>Set at Runtime via string variables</value>
+  </data>
+  <data name="&gt;&gt;buttonInfo.Name" xml:space="preserve">
+	<value>buttonInfo</value>
+  </data>
+  <data name="&gt;&gt;buttonInfo.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonInfo.Parent" xml:space="preserve">
+	<value>panelGlossComponents</value>
+  </data>
+  <data name="&gt;&gt;buttonInfo.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panelGlossComponents.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="panelGlossComponents.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="panelGlossComponents.RowCount" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="panelGlossComponents.Size" type="System.Drawing.Size, System.Drawing">
+	<value>345, 299</value>
+  </data>
+  <data name="panelGlossComponents.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;panelGlossComponents.Name" xml:space="preserve">
+	<value>panelGlossComponents</value>
+  </data>
+  <data name="&gt;&gt;panelGlossComponents.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelGlossComponents.Parent" xml:space="preserve">
+	<value>splitContainerVertical.Panel1</value>
+  </data>
+  <data name="&gt;&gt;panelGlossComponents.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="panelGlossComponents.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="groupBoxGlossComponents" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="buttonInfo" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,26" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="panelInsertRemove.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="buttonInsert.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="buttonInsert.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonInsert.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 14</value>
+  </data>
+  <data name="buttonInsert.Size" type="System.Drawing.Size, System.Drawing">
+	<value>70, 22</value>
+  </data>
+  <data name="buttonInsert.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="buttonInsert.Text" xml:space="preserve">
+	<value>&amp;Insert &gt;</value>
+  </data>
+  <data name="&gt;&gt;buttonInsert.Name" xml:space="preserve">
+	<value>buttonInsert</value>
+  </data>
+  <data name="&gt;&gt;buttonInsert.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonInsert.Parent" xml:space="preserve">
+	<value>panelInsertRemove</value>
+  </data>
+  <data name="&gt;&gt;buttonInsert.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="buttonRemove.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="buttonRemove.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonRemove.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 41</value>
+  </data>
+  <data name="buttonRemove.Size" type="System.Drawing.Size, System.Drawing">
+	<value>70, 22</value>
+  </data>
+  <data name="buttonRemove.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="buttonRemove.Text" xml:space="preserve">
+	<value>&lt; &amp;Remove</value>
+  </data>
+  <data name="&gt;&gt;buttonRemove.Name" xml:space="preserve">
+	<value>buttonRemove</value>
+  </data>
+  <data name="&gt;&gt;buttonRemove.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRemove.Parent" xml:space="preserve">
+	<value>panelInsertRemove</value>
+  </data>
+  <data name="&gt;&gt;buttonRemove.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panelInsertRemove.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Right</value>
+  </data>
+  <data name="panelInsertRemove.Location" type="System.Drawing.Point, System.Drawing">
+	<value>345, 0</value>
+  </data>
+  <data name="panelInsertRemove.Size" type="System.Drawing.Size, System.Drawing">
+	<value>78, 299</value>
+  </data>
+  <data name="panelInsertRemove.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;panelInsertRemove.Name" xml:space="preserve">
+	<value>panelInsertRemove</value>
+  </data>
+  <data name="&gt;&gt;panelInsertRemove.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelInsertRemove.Parent" xml:space="preserve">
+	<value>splitContainerVertical.Panel1</value>
+  </data>
+  <data name="&gt;&gt;panelInsertRemove.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel1.Name" xml:space="preserve">
+	<value>splitContainerVertical.Panel1</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel1.Parent" xml:space="preserve">
+	<value>splitContainerVertical</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="panelSelectedGloss.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="panelSelectedGloss.ColumnCount" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <metadata name="tableLayoutPanelSelectedGloss.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="tableLayoutPanelSelectedGloss.ColumnCount" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="glossListBoxGloss.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="glossListBoxGloss.IntegralHeight" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="glossListBoxGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="glossListBoxGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>137, 235</value>
+  </data>
+  <data name="glossListBoxGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;glossListBoxGloss.Name" xml:space="preserve">
+	<value>glossListBoxGloss</value>
+  </data>
+  <data name="&gt;&gt;glossListBoxGloss.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.LexText.Controls.MGA.GlossListBox, MGA, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;glossListBoxGloss.Parent" xml:space="preserve">
+	<value>tableLayoutPanelSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;glossListBoxGloss.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="panel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="buttonMoveUp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="buttonMoveUp.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="buttonMoveUp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonMoveUp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="buttonMoveUp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>74, 22</value>
+  </data>
+  <data name="buttonMoveUp.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="buttonMoveUp.Text" xml:space="preserve">
+	<value>Move &amp;Up</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveUp.Name" xml:space="preserve">
+	<value>buttonMoveUp</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveUp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveUp.Parent" xml:space="preserve">
+	<value>panel</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveUp.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="buttonMoveDown.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="buttonMoveDown.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="buttonMoveDown.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonMoveDown.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 29</value>
+  </data>
+  <data name="buttonMoveDown.Size" type="System.Drawing.Size, System.Drawing">
+	<value>74, 22</value>
+  </data>
+  <data name="buttonMoveDown.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="buttonMoveDown.Text" xml:space="preserve">
+	<value>Move &amp;Down</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveDown.Name" xml:space="preserve">
+	<value>buttonMoveDown</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveDown.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveDown.Parent" xml:space="preserve">
+	<value>panel</value>
+  </data>
+  <data name="&gt;&gt;buttonMoveDown.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="buttonModify.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="buttonModify.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="buttonModify.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonModify.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 55</value>
+  </data>
+  <data name="buttonModify.Size" type="System.Drawing.Size, System.Drawing">
+	<value>74, 22</value>
+  </data>
+  <data name="buttonModify.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="buttonModify.Text" xml:space="preserve">
+	<value>&amp;Modify...</value>
+  </data>
+  <data name="&gt;&gt;buttonModify.Name" xml:space="preserve">
+	<value>buttonModify</value>
+  </data>
+  <data name="&gt;&gt;buttonModify.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonModify.Parent" xml:space="preserve">
+	<value>panel</value>
+  </data>
+  <data name="&gt;&gt;buttonModify.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="panel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="panel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>143, 0</value>
+  </data>
+  <data name="panel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="panel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>80, 241</value>
+  </data>
+  <data name="panel.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;panel.Name" xml:space="preserve">
+	<value>panel</value>
+  </data>
+  <data name="&gt;&gt;panel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel.Parent" xml:space="preserve">
+	<value>tableLayoutPanelSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;panel.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tableLayoutPanelSelectedGloss.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="tableLayoutPanelSelectedGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 16</value>
+  </data>
+  <data name="tableLayoutPanelSelectedGloss.RowCount" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="tableLayoutPanelSelectedGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>223, 241</value>
+  </data>
+  <data name="tableLayoutPanelSelectedGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelSelectedGloss.Name" xml:space="preserve">
+	<value>tableLayoutPanelSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelSelectedGloss.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelSelectedGloss.Parent" xml:space="preserve">
+	<value>groupBoxSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelSelectedGloss.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tableLayoutPanelSelectedGloss.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="glossListBoxGloss" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="panel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,80" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="groupBoxSelectedGloss.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="groupBoxSelectedGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 3</value>
+  </data>
+  <data name="groupBoxSelectedGloss.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>4, 3, 3, 6</value>
+  </data>
+  <data name="groupBoxSelectedGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>230, 263</value>
+  </data>
+  <data name="groupBoxSelectedGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="groupBoxSelectedGloss.Text" xml:space="preserve">
+	<value>Selected gloss components</value>
+  </data>
+  <data name="&gt;&gt;groupBoxSelectedGloss.Name" xml:space="preserve">
+	<value>groupBoxSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;groupBoxSelectedGloss.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxSelectedGloss.Parent" xml:space="preserve">
+	<value>panelSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;groupBoxSelectedGloss.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="panel2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="buttonHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>166, 4</value>
+  </data>
+  <data name="buttonHelp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="buttonHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>60, 22</value>
+  </data>
+  <data name="buttonHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="buttonHelp.Text" xml:space="preserve">
+	<value>Hel&amp;p</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Name" xml:space="preserve">
+	<value>buttonHelp</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Parent" xml:space="preserve">
+	<value>panel2</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="buttonAcceptGloss.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="buttonAcceptGloss.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonAcceptGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 4</value>
+  </data>
+  <data name="buttonAcceptGloss.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="buttonAcceptGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>85, 22</value>
+  </data>
+  <data name="buttonAcceptGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="buttonAcceptGloss.Text" xml:space="preserve">
+	<value>&amp;Accept Gloss</value>
+  </data>
+  <data name="&gt;&gt;buttonAcceptGloss.Name" xml:space="preserve">
+	<value>buttonAcceptGloss</value>
+  </data>
+  <data name="&gt;&gt;buttonAcceptGloss.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonAcceptGloss.Parent" xml:space="preserve">
+	<value>panel2</value>
+  </data>
+  <data name="&gt;&gt;buttonAcceptGloss.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="buttonCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>85, 4</value>
+  </data>
+  <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>80, 22</value>
+  </data>
+  <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="buttonCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.Name" xml:space="preserve">
+	<value>buttonCancel</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
+	<value>panel2</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="panel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="panel2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 269</value>
+  </data>
+  <data name="panel2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="panel2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>236, 26</value>
+  </data>
+  <data name="panel2.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;panel2.Name" xml:space="preserve">
+	<value>panel2</value>
+  </data>
+  <data name="&gt;&gt;panel2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel2.Parent" xml:space="preserve">
+	<value>panelSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;panel2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panelSelectedGloss.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="panelSelectedGloss.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="panelSelectedGloss.RowCount" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="panelSelectedGloss.Size" type="System.Drawing.Size, System.Drawing">
+	<value>236, 295</value>
+  </data>
+  <data name="panelSelectedGloss.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;panelSelectedGloss.Name" xml:space="preserve">
+	<value>panelSelectedGloss</value>
+  </data>
+  <data name="&gt;&gt;panelSelectedGloss.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelSelectedGloss.Parent" xml:space="preserve">
+	<value>splitContainerVertical.Panel2</value>
+  </data>
+  <data name="&gt;&gt;panelSelectedGloss.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="panelSelectedGloss.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="groupBoxSelectedGloss" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="panel2" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,26" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="splitContainerVertical.Panel2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 2, 4</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel2.Name" xml:space="preserve">
+	<value>splitContainerVertical.Panel2</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel2.Parent" xml:space="preserve">
+	<value>splitContainerVertical</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Panel2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="splitContainerVertical.Size" type="System.Drawing.Size, System.Drawing">
+	<value>665, 299</value>
+  </data>
+  <data name="splitContainerVertical.SplitterDistance" type="System.Int32, mscorlib">
+	<value>423</value>
+  </data>
+  <data name="splitContainerVertical.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Name" xml:space="preserve">
+	<value>splitContainerVertical</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Type" xml:space="preserve">
+	<value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.Parent" xml:space="preserve">
+	<value>splitContainerHorizontal.Panel1</value>
+  </data>
+  <data name="&gt;&gt;splitContainerVertical.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="panelTop.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="tableLayoutPanel2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="labelConstructedGlossForPrompt.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="labelConstructedGlossForPrompt.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="labelConstructedGlossForPrompt.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 2</value>
+  </data>
+  <data name="labelConstructedGlossForPrompt.Size" type="System.Drawing.Size, System.Drawing">
+	<value>109, 13</value>
+  </data>
+  <data name="labelConstructedGlossForPrompt.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="labelConstructedGlossForPrompt.Text" xml:space="preserve">
+	<value>Constructed gloss for:</value>
+  </data>
+  <data name="&gt;&gt;labelConstructedGlossForPrompt.Name" xml:space="preserve">
+	<value>labelConstructedGlossForPrompt</value>
+  </data>
+  <data name="&gt;&gt;labelConstructedGlossForPrompt.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelConstructedGlossForPrompt.Parent" xml:space="preserve">
+	<value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;labelConstructedGlossForPrompt.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="labelAllomorph.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="labelAllomorph.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 12pt, style=Bold</value>
+  </data>
+  <data name="labelAllomorph.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="labelAllomorph.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 15</value>
+  </data>
+  <data name="labelAllomorph.Size" type="System.Drawing.Size, System.Drawing">
+	<value>140, 31</value>
+  </data>
+  <data name="labelAllomorph.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="labelAllomorph.Text" xml:space="preserve">
+	<value>Allomorph set at runtime</value>
+  </data>
+  <data name="labelAllomorph.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;labelAllomorph.Name" xml:space="preserve">
+	<value>labelAllomorph</value>
+  </data>
+  <data name="&gt;&gt;labelAllomorph.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelAllomorph.Parent" xml:space="preserve">
+	<value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;labelAllomorph.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tableLayoutPanel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="tableLayoutPanel2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>2, 2, 2, 2</value>
+  </data>
+  <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>167, 48</value>
+  </data>
+  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
+	<value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
+	<value>panelTop</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="labelConstructedGlossForPrompt" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="labelAllomorph" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="textBoxResult.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="textBoxResult.Location" type="System.Drawing.Point, System.Drawing">
+	<value>173, 16</value>
+  </data>
+  <data name="textBoxResult.Size" type="System.Drawing.Size, System.Drawing">
+	<value>480, 20</value>
+  </data>
+  <data name="textBoxResult.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;textBoxResult.Name" xml:space="preserve">
+	<value>textBoxResult</value>
+  </data>
+  <data name="&gt;&gt;textBoxResult.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxResult.Parent" xml:space="preserve">
+	<value>panelTop</value>
+  </data>
+  <data name="&gt;&gt;textBoxResult.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panelTop.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Top</value>
+  </data>
+  <data name="panelTop.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="panelTop.Size" type="System.Drawing.Size, System.Drawing">
+	<value>665, 48</value>
+  </data>
+  <data name="panelTop.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;panelTop.Name" xml:space="preserve">
+	<value>panelTop</value>
+  </data>
+  <data name="&gt;&gt;panelTop.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelTop.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelTop.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="webBrowserInfo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="webBrowserInfo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="webBrowserInfo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>665, 150</value>
+  </data>
+  <data name="webBrowserInfo.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;webBrowserInfo.Name" xml:space="preserve">
+	<value>webBrowserInfo</value>
+  </data>
+  <data name="&gt;&gt;webBrowserInfo.Type" xml:space="preserve">
+	<value>System.Windows.Forms.WebBrowser, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;webBrowserInfo.Parent" xml:space="preserve">
+	<value>splitContainerHorizontal.Panel2</value>
+  </data>
+  <data name="&gt;&gt;webBrowserInfo.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="splitContainerHorizontal.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="splitContainerHorizontal.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 48</value>
+  </data>
+  <data name="splitContainerHorizontal.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+	<value>Horizontal</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel1.Name" xml:space="preserve">
+	<value>splitContainerHorizontal.Panel1</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel1.Parent" xml:space="preserve">
+	<value>splitContainerHorizontal</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel2.Name" xml:space="preserve">
+	<value>splitContainerHorizontal.Panel2</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel2.Parent" xml:space="preserve">
+	<value>splitContainerHorizontal</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Panel2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="splitContainerHorizontal.Size" type="System.Drawing.Size, System.Drawing">
+	<value>665, 453</value>
+  </data>
+  <data name="splitContainerHorizontal.SplitterDistance" type="System.Int32, mscorlib">
+	<value>299</value>
+  </data>
+  <data name="splitContainerHorizontal.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Name" xml:space="preserve">
+	<value>splitContainerHorizontal</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Type" xml:space="preserve">
+	<value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;splitContainerHorizontal.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>665, 501</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+	<value>450, 390</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Morphosyntactic Gloss Assistant:</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>MGADialog</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

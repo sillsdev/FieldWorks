@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Tests Find Example Sentance dialog -->
+<!-- Add an example and delete it -->
+
+<accil on-fail="assert">
+   <goal>Exercises Lexicon Edit Find Example Sentance dialog</goal>
+
+   <bug id="FWR-1513" desc="Crash adding an example sentence"/>
+   <bug id="FWR-1485" desc="Crash returning to Find Example Sentence dialog"/>
+   <bug id="FWR-310" desc="Crash clicking Find Example Sentence"/>
+   <bug id="FWR-484" desc="Crash selecting Find Example Sentence twice"/>
+   <bug id="FWR-310" desc="Crash clicking Find Example Sentence"/>
+   <bug id="LT-9652" desc="Find Example Sentence Checked but Add disabled"/>
+   <bug id="LT-9524" desc="Multiling string widget crashes"/>
+
+	<var id="projectName" set="Sena 3"/>
+	<sound frequency = "500" duration = "500"/>
+
+ <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' title="$projectName$FlexSig" run="ok" close="no" on-fail="assert">
+
+	   <var id="fe-base" set="$NL2;9:ConcOccurrenceList/9:ConcOccurrenceList/$NL;"/>
+	   <var id="exOcc" set="$fe-base;9:HeaderListView/33:HeaderListView/$NL;25:Occurrence"/>
+	   <var id="exRec" set="$fe-base;20:RootSite/24:Table"/>
+
+<!-- Go to Lexicon Edit -->
+  <click wait="5000" select="menubar/view/lexicon/lexicon-edit"/>
+
+  <model select="lexicon-edit[@role='view']">
+
+<!-- Find "na" -->
+	<click select="//toolbar/insert/find-lexical-entry"/>
+	<on-dialog select="//find-entry[@role='dialog']">
+	   <click select="find/data"/>
+	   <insert>na</insert>
+	   <!--click select="entries/scroll/down"/-->
+	   <click select="entries/col/entry" row="*" col="1" path="/value:na2"/>
+	   <click select="go-to"/>
+	</on-dialog>
+
+<!-- Right-click on Sense 1and select Find example sentance... -->
+	<click side="right" select="entry/slice/sense" ind="1"/>
+	<insert wait="300">{DOWN 2}~</insert>
+
+	<on-dialog title="Find Example Sentence" name="FindExampleSentenceDlg">
+<!-- Add the 2nd sentance as an example -->
+	   <click path="$exOcc"/>
+	   <click path="$exOcc"/> <!-- M'munda 2.1 Mwenemo muna miti mizinji. comes to the top -->
+	   <click dx="5" dy="5" path="$exRec;/$Col;/40:Picture"/>
+	   <click path="$add"/>
+	</on-dialog>
+
+<!-- Check that it is M'munda 2.1 and that it is where Example is supposed to be. -->
+	<glimpse id="ex1Ref" select="entry/slice/reference" path="/value:M'munda 2.1" ind="*"/>
+	<glimpse id="ex1Text" select="entry/slice/example" path="/value:Mwenemo muna miti mizinji." ind="*exampInd"/>
+	<!-- $exampInd is set by the previous select -->
+	<glimpse id="ex1Trans" select="entry/slice/translation/data/text" ind="*" row="*" path="/value:There he has many trees."/>
+
+<!-- Delete the translation -->
+	<click side="right"  select="entry/slice/translation/label"/>
+	<insert wait="300">{DOWN}~</insert>
+	<insert wait="500">d</insert>
+	<glimpse id="ex1TransDel" select="entry/slice/translation-nl/data/empty" prop="value"/> <!-- passes if not found or null-->
+
+<!-- Delete the example -->
+	<click side="right" select="entry/slice/example-label" ind="$exampInd"/>
+	<insert wait="300">{DOWN 2}~</insert>
+	<insert wait="500">d</insert>
+	<glimpse id="ex1TextDel" select="entry/slice/example" on-pass="assert" on-fail="skip"/> <!-- only finds the first one-->
+
+
+<!-- Find "maningi" -->
+	<click select="//toolbar/insert/find-lexical-entry"/>
+	<on-dialog select="//find-entry[@role='dialog']">
+	   <click select="find/data"/>
+	   <insert>maningi</insert>
+	   <click select="entries/col/entry" path="/value:maningi" row="*" col="1"/>
+	   <click select="go-to"/>
+	</on-dialog>
+
+<!-- Right-click on Sense 1and select Find example sentance... -->
+	<click side="right" select="entry/slice/sense" ind="1"/>
+	<insert wait="300">{DOWN 2}~</insert>
+
+	<on-dialog title="Find Example Sentence" name="FindExampleSentenceDlg">
+<!-- Add the 1st sentance as an example -->
+	   <click dx="5" dy="5" path="$exRec;/$Col;/40:Picture"/>
+	   <click path="9:Add/43:Add"/>
+	</on-dialog>
+
+<!-- Check that it is M'munda 6.1 and that it is where Example is supposed to be. -->
+	<glimpse id="ex2Ref" select="entry/slice/reference" path="/value:M'munda 6.1" ind="2"/>
+	<glimpse id="ex2Trans" select="entry/slice/translation/data/text" path="/value:In November he planted a lot of rice. " ind="*transInd1" row="*"/>
+	<!-- $transInd1 is set by the previous select -->
+	<glimpse id="ex2Text" select="entry/slice/example" path="/value:rexp#Mwezi wa khumi na ubodzi" ind="*exampInd"/> <!-- sets $ind used implicitely in next @select -->
+	<!-- $exampInd is set by the previous select -->
+
+<!-- Add another translation -->
+	<click side="right" select="entry/slice/example-label" ind="$exampInd"/>
+	<insert wait="300">{DOWN}~</insert><!-- insert translation -->
+	<insert wait="300">Hi there</insert>
+
+<!-- Delete first translation added -->
+	<var id="ind" set="$transInd1" add="1"/><!-- $ind is used by the next select -->
+	<click side="right" select="entry/slice/translation/label"/>
+	<insert wait="300">{DOWN}~</insert>
+	<insert wait="500">d</insert>
+	<glimpse id="ex2Del2" select="entry/slice/translation/data/text" row="1" prop="value"/>
+
+<!-- Delete last translation added -->
+	<click side="right" select="entry/slice/translation/label" ind="$transInd1"/>
+	<insert wait="300">{DOWN}~</insert>
+	<insert wait="500">d</insert>
+	<glimpse id="ex2TransDel" select="entry/slice/translation/data/text" prop="value"/>
+
+<!-- Delete the added example -->
+	<click side="right" select="entry/slice/example-label" ind="$exampInd"/>
+	<insert wait="300">{DOWN 2}~</insert>
+	<insert wait="500">d</insert>
+	<glimpse id="ex2TextDel" select="entry/slice/example" prop="value" />
+
+  </model>
+ </on-application>
+
+</accil>

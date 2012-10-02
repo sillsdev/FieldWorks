@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template requireClassTemplatesForEverything="true" doUseBaseClassTemplatesIfNeeded="true" writingSystemAttributeStyle="LIFT" messageId="kstidExportingLists" autoloadPolicy="ReadOnly">
+	<class name="LangProject">
+		<comment>See http://code.google.com/p/lift-standard for more information on the format used here.</comment><newLine/>
+		<lift-ranges><newLine/>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="etymology" simpleProperty=""/><newLine/>
+				<range-element id="borrowed"><newLine/>
+					<label><newLine/><form lang="en"><newLine/><element name="text">borrowed</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">The word is borrowed from another language</element></form></description>
+				</range-element>
+				<range-element id="proto"><newLine/>
+					<label><newLine/><form lang="en"><newLine/><element name="text">proto</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">The proto form of the word in another language</element></form></description>
+				</range-element>
+			</element>
+<!-- WeSay doesn't yet handle these in the main LIFT file ^^^ in the most recent build (1451, July 28, 2008) -->
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="grammatical-info" simpleProperty=""/><newLine/>
+				<comment>These are all the parts of speech in the FLEx db, used or unused.  These are used as the basic grammatical-info values.</comment><newLine/>
+				<objVector objProperty="AllPartsOfSpeech" classtag="RangeElement"/>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="lexical-relation" simpleProperty=""/><newLine/>
+				<range-element id="ref">
+					<label><newLine/><form lang="en"><newLine/><element name="text">ref</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">General cross reference.</element></form></description>
+				</range-element>
+				<range-element id="main">
+					<label><newLine/><form lang="en"><newLine/><element name="text">main</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Reference to a main entry from a minor entry.</element></form></description>
+				</range-element>
+				<range-element id="isa">
+					<label><newLine/><form lang="en"><newLine/><element name="text">isa</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">The gen-spec relation where the special relates to the general.</element></form></description>
+				</range-element>
+				<range-element id="kindof">
+					<label><newLine/><form lang="en"><newLine/><element name="text">kindof</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">The kind-of relation in which the Sense is a kind of another sense.</element></form></description>
+				</range-element>
+				<range-element id="actor">
+					<label><newLine/><form lang="en"><newLine/><element name="text">actor</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">The actor of this verb</element></form></description>
+				</range-element>
+				<range-element id="undergoer">
+					<label><newLine/><form lang="en"><newLine/><element name="text">undergoer</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">The undergoer of this verb</element></form></description>
+				</range-element>
+				<range-element id="component">
+					<label><newLine/><form lang="en"><newLine/><element name="text">component</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">This word is grammatically built from these components.</element></form></description>
+				</range-element>
+				<comment>The following range elements were added by FieldWorks Language Explorer.</comment><newLine/>
+				<group objProperty="LexDbOA" preload="PreloadForLexiconExport">
+					<objAtomic objProperty="ReferencesOA"/>
+				</group>
+				<range-element id="subentry">
+					<label><newLine/><form lang="en"><newLine/><element name="text">subentry</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Reference to a subentry from a main entry.  This is a backreference in FLEX.</element></form></description>
+				</range-element>
+				<range-element id="minorentry">
+					<label><newLine/><form lang="en"><newLine/><element name="text">minorentry</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Reference to a minor entry from a main entry.  This is a backreference in FLEX.</element></form></description>
+				</range-element>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="note-type" simpleProperty=""/><newLine/>
+				<comment>The following elements are defined by the LIFT standard.</comment><newLine/>
+				<range-element id="anthropology">
+					<label><newLine/><form lang="en"><newLine/><element name="text">anthropology</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives anthropological information.</element></form></description>
+				</range-element>
+				<range-element id="biblography">
+					<label><newLine/><form lang="en"><newLine/><element name="text">biblography</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Biblographic information.</element></form></description>
+				</range-element>
+				<range-element id="comment">
+					<label><newLine/><form lang="en"><newLine/><element name="text">comment</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">This note is an arbitrary comment not for publication</element></form></description>
+				</range-element>
+				<range-element id="discourse">
+					<label><newLine/><form lang="en"><newLine/><element name="text">discourse</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives discourse information about a sense.</element></form></description>
+				</range-element>
+				<range-element id="encyclopedic">
+					<label><newLine/><form lang="en"><newLine/><element name="text">encyclopedic</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">This note gives encyclopedic information.</element></form></description>
+				</range-element>
+				<range-element id="general">
+					<label><newLine/><form lang="en"><newLine/><element name="text">general</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">General notes that do not fall in another clear category</element></form></description>
+				</range-element>
+				<range-element id="grammar">
+					<label><newLine/><form lang="en"><newLine/><element name="text">grammar</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives grammatical information about a word.</element></form></description>
+				</range-element>
+				<range-element id="phonology">
+					<label><newLine/><form lang="en"><newLine/><element name="text">phonology</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives phonological information about a word.</element></form></description>
+				</range-element>
+				<range-element id="questions">
+					<label><newLine/><form lang="en"><newLine/><element name="text">questions</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Contains questions yet to be answered</element></form></description>
+				</range-element>
+				<range-element id="restrictions">
+					<label><newLine/><form lang="en"><newLine/><element name="text">restrictions</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives information on the restriction of usage of a word.</element></form></description>
+				</range-element>
+				<range-element id="scientific-name">
+					<label><newLine/><form lang="en"><newLine/><element name="text">scientific name</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives the scientific name of a sense</element></form></description>
+				</range-element>
+				<range-element id="sociolinguistics">
+					<label><newLine/><form lang="en"><newLine/><element name="text">sociolinguistics</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives sociolinguistic information about a sense.</element></form></description>
+				</range-element>
+				<range-element id="source">
+					<label><newLine/><form lang="en"><newLine/><element name="text">source</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Contains information on sources</element></form></description>
+				</range-element>
+				<range-element id="usage">
+					<label><newLine/><form lang="en"><newLine/><element name="text">usage</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives information on usage</element></form></description>
+				</range-element>
+				<comment>The following elements are added here for use by FLEX.</comment><newLine/>
+				<range-element id="literal-meaning">
+					<label><newLine/><form lang="en"><newLine/><element name="text">literal-meaning</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives the literal meaning of a word.</element></form></description>
+				</range-element>
+				<range-element id="semantics">
+					<label><newLine/><form lang="en"><newLine/><element name="text">semantics</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives semantic information about a sense.</element></form></description>
+				</range-element>
+				<range-element id="summary-definition">
+					<label><newLine/><form lang="en"><newLine/><element name="text">summary-definition</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">Gives a summary definition of a word.</element></form></description>
+				</range-element>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="paradigm" simpleProperty=""/><newLine/>
+				<range-element id="1d">
+					<label><newLine/><form lang="en"><newLine/><element name="text">1d</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">1st dual</element></form></description>
+				</range-element>
+				<range-element id="1e">
+					<label><newLine/><form lang="en"><newLine/><element name="text">1e</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">1st exclusive</element></form></description>
+				</range-element>
+				<range-element id="1i">
+					<label><newLine/><form lang="en"><newLine/><element name="text">1i</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">1st inclusive</element></form></description>
+				</range-element>
+				<range-element id="1p">
+					<label><newLine/><form lang="en"><newLine/><element name="text">1p</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">1st person plural</element></form></description>
+				</range-element>
+				<range-element id="1s">
+					<label><newLine/><form lang="en"><newLine/><element name="text">1s</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">1st person singular</element></form></description>
+				</range-element>
+				<range-element id="2d">
+					<label><newLine/><form lang="en"><newLine/><element name="text">2d</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">2nd dual</element></form></description>
+				</range-element>
+				<range-element id="2p">
+					<label><newLine/><form lang="en"><newLine/><element name="text">2p</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">2nd plural</element></form></description>
+				</range-element>
+				<range-element id="2s">
+					<label><newLine/><form lang="en"><newLine/><element name="text">2s</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">2nd singular</element></form></description>
+				</range-element>
+				<range-element id="3d">
+					<label><newLine/><form lang="en"><newLine/><element name="text">3d</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">3rd dual</element></form></description>
+				</range-element>
+				<range-element id="3p">
+					<label><newLine/><form lang="en"><newLine/><element name="text">3p</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">3rd plural</element></form></description>
+				</range-element>
+				<range-element id="3s">
+					<label><newLine/><form lang="en"><newLine/><element name="text">3s</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">3rd singular</element></form></description>
+				</range-element>
+				<range-element id="non">
+					<label><newLine/><form lang="en"><newLine/><element name="text">non</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">-dual non-human or inanimate dual</element></form></description>
+				</range-element>
+				<range-element id="non">
+					<label><newLine/><form lang="en"><newLine/><element name="text">non</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">-plural non-human or inanimate plural</element></form></description>
+				</range-element>
+				<range-element id="non">
+					<label><newLine/><form lang="en"><newLine/><element name="text">non</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">-sing non-human or inanimate singulare</element></form></description>
+				</range-element>
+				<range-element id="plural">
+					<label><newLine/><form lang="en"><newLine/><element name="text">plural</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">plural form</element></form></description>
+				</range-element>
+				<range-element id="redup">
+					<label><newLine/><form lang="en"><newLine/><element name="text">redup</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">reduplication form</element></form></description>
+				</range-element>
+				<range-element id="sing">
+					<label><newLine/><form lang="en"><newLine/><element name="text">sing</element></form></label>
+					<description><newLine/><form lang="en"><newLine/><element name="text">singular</element></form></description>
+				</range-element>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="reversal-type" simpleProperty=""/><newLine/>
+				<group objProperty="LexDbOA" preload="PreloadForLexiconExport">
+					<objVector objProperty="ReversalIndexesOC"/>
+				</group>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="semantic-domain-ddp4" simpleProperty=""/><newLine/>
+				<objAtomic objProperty="SemanticDomainListOA"/>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="status" simpleProperty=""/><newLine/>
+				<objAtomic objProperty="StatusOA"/>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="users" simpleProperty=""/><newLine/>
+				<objAtomic objProperty="PeopleOA"/>
+			</element>
+			<comment>The following ranges are produced by FieldWorks Language Explorer, and are not part of the LIFT standard.</comment><newLine/>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="location" simpleProperty=""/><newLine/>
+				<objAtomic objProperty="LocationsOA"/>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="anthro-code" simpleProperty=""/><newLine/>
+				<objAtomic objProperty="AnthroListOA"/>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="translation-type" simpleProperty=""/><newLine/>
+				<objAtomic objProperty="TranslationTagsOA" classTag="WithGuid"/>
+			</element>
+			<!-- The following three ranges are needed for feature related properties of parts of speech in FLEx. -->
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="exception-feature" simpleProperty=""/><newLine/>
+				<group objProperty="MorphologicalDataOA" preload="PreloadForLexiconExport">
+					<objAtomic objProperty="ProdRestrictOA"/>
+				</group>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="inflection-feature" simpleProperty=""/><newLine/>
+				<group objProperty="MsFeatureSystemOA" preload="PreloadForLexiconExport">
+					<objVector objProperty="FeaturesOC"/>
+				</group>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="inflection-feature-type" simpleProperty=""/><newLine/>
+				<group objProperty="MsFeatureSystemOA" preload="PreloadForLexiconExport">
+					<objVector objProperty="TypesOC"/>
+				</group>
+			</element>
+			<comment>The parts of speech are duplicated in another range because derivational affixes require a "From" PartOfSpeech as well as a "To" PartOfSpeech.</comment><newLine/>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="FromPartOfSpeech" simpleProperty=""/><newLine/>
+				<objVector objProperty="AllPartsOfSpeech" classtag="RangeElement"/>
+			</element>
+			<element name="range" progressIncrement="true">
+				<attribute name="id" value="MorphType" simpleProperty=""/><newLine/>
+				<group objProperty="LexDbOA" preload="PreloadForLexiconExport">
+					<objAtomic objProperty="MorphTypesOA"/>
+				</group>
+			</element>
+			<objAtomic objProperty="MsFeatureSystemOA" classtag="FeatureValueRanges"/>
+
+			<!-- generate the ranges for Slots for parts of speech that have them defined. -->
+			<objVector objProperty="AllPartsOfSpeech" classtag="AffixSlotRange"/>
+			<!-- generate the ranges for inflection classes for parts of speech that have them defined. -->
+			<objVector objProperty="AllPartsOfSpeech" classtag="InflectionClassRange"/>
+			<!-- generate the ranges for StemNames for parts of speech that have them defined. -->
+			<objVector objProperty="AllPartsOfSpeech" classtag="StemNameRange"/>
+		</lift-ranges>
+	</class>
+
+	<class name="CmPossibilityList">
+		<objVector objProperty="PossibilitiesOS"/>
+	</class>
+
+	<class name="CmPossibilityList-WithGuid">
+		<objVector objProperty="PossibilitiesOS" classTag="WithGuid"/>
+	</class>
+
+	<class name="PartOfSpeech-AffixSlotRange">
+		<ifnot lengthequals="0" class="PartOfSpeech" field="AffixSlots">
+			<element name="range" progressIncrement="true">
+				<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular" after="-slot"/>
+				<attribute name="guid" simpleProperty="Guid"/><newLine/>
+				<objVector objProperty="AffixSlotsOC" classtag="RangeElement"/>
+			</element>
+		</ifnot>
+	</class>
+
+	<class name="PartOfSpeech-InflectionClassRange">
+		<ifnot lengthequals="0" class="PartOfSpeech" field="InflectionClasses">
+			<element name="range" progressIncrement="true">
+				<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular" after="-infl-class"/>
+				<attribute name="guid" simpleProperty="Guid"/><newLine/>
+				<objVector objProperty="InflectionClassesOC" classtag="RangeElement"/>
+			</element>
+		</ifnot>
+	</class>
+
+	<class name="PartOfSpeech-StemNameRange">
+		<ifnot lengthequals="0" class="PartOfSpeech" field="StemNames">
+			<element name="range" progressIncrement="true">
+				<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular" after="-stem-name"/>
+				<attribute name="guid" simpleProperty="Guid"/><newLine/>
+				<objVector objProperty="StemNamesOC" classtag="RangeElement"/>
+			</element>
+		</ifnot>
+	</class>
+
+	<class name="PartOfSpeech-RangeElement">
+		<range-element>
+			<attribute name="id" ws="BestAnalysisOrVernacular" simpleProperty="Name"/>
+			<attribute name="guid" simpleProperty="Guid"/>
+			<attributeIndirect name="parent" target="OwningPossibility" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<objVector objProperty="InflectableFeatsRC" classtag="InflectableFeat"/>
+		</range-element>
+	</class>
+
+	<class name="MoInflAffixSlot-RangeElement">
+		<range-element>
+			<attribute name="id" ws="BestAnalysisOrVernacular" simpleProperty="Name"/>
+			<attribute name="guid" simpleProperty="Guid"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<!--booleanElement name="Optional" simpleProperty="Optional" optional="true" writeAsTrait="true"/-->
+		</range-element>
+	</class>
+
+	<class name="MoInflClass-RangeElement">
+		<range-element>
+			<attribute name="id" ws="BestAnalysisOrVernacular" simpleProperty="Name"/>
+			<attribute name="guid" simpleProperty="Guid"/>
+			<attributeIndirect name="parent" target="OwningInflectionClass" simpleProperty="Guid"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+		</range-element>
+	</class>
+
+	<class name="MoMorphType">
+		<range-element>
+			<attribute name="id" simpleProperty="Name"  ws="BestAnalysisOrVernacular"/>
+			<attribute name="guid" simpleProperty="Guid"/>
+			<attributeIndirect name="parent" target="OwningPossibility" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<trait name="leadingSymbol">
+				<attribute name="value" simpleProperty="Prefix"/>
+			</trait>
+			<trait name="trailingSymbol">
+				<attribute name="value" simpleProperty="Postfix"/>
+			</trait>
+		</range-element>
+	</class>
+
+	<class name="CmSemanticDomain">
+		<range-element>
+			<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+			<if intequals="7004" field="OwningFlid">
+				<attributeIndirect name="parent" target="Owner" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+			</if>
+			<attribute name="guid" simpleProperty="Guid"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+		</range-element>
+		<objVector objProperty="SubPossibilitiesOS"/>
+	</class>
+
+	<class name="CmAnthroItem">
+		<range-element>
+			<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+			<if intequals="7004" field="OwningFlid">
+				<attributeIndirect name="parent" target="Owner" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+			</if>
+			<!-- attribute name="guid" simpleProperty="Guid"/--><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+		</range-element>
+		<objVector objProperty="SubPossibilitiesOS"/>
+	</class>
+
+	<class name="CmPossibility">
+		<range-element>
+			<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+			<attribute name="guid" simpleProperty="Guid"/><!-- SHOULD WE TAKE THIS OUT?? -->
+			<attributeIndirect name="parent" target="OwningPossibility" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><!-- SHOULD WE TAKE THIS OUT?? --><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+		</range-element>
+	</class>
+
+	<class name="CmPossibility-WithGuid">
+		<range-element>
+			<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+			<attribute name="guid" simpleProperty="Guid"/>
+			<attributeIndirect name="parent" target="OwningPossibility" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+		</range-element>
+	</class>
+
+	<class name="CmPerson">
+		<if intequals="1" field="IsResearcher">
+			<range-element>
+				<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><newLine/>
+				<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+				<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+				<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			</range-element>
+		</if>
+	</class>
+
+	<class name="CmLocation">
+		<range-element>
+			<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+			<attribute name="guid" simpleProperty="Guid"/><!-- SHOULD WE TAKE THIS OUT?? -->
+			<attributeIndirect name="parent" target="OwningPossibility" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><!-- SHOULD WE TAKE THIS OUT?? --><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+		</range-element>
+	</class>
+
+	<class name="LexRefType">
+		<range-element>
+			<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="reverse-label" name="form" internalElementName="text" simpleProperty="ReverseName" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="reverse-abbrev" name="form" internalElementName="text" simpleProperty="ReverseAbbreviation" ws="every"/>
+		</range-element>
+	</class>
+
+	<class name="ReversalIndex">
+		<range-element>
+			<attribute name="id" simpleProperty="WritingSystem"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+		</range-element>
+	</class>
+
+
+	<class name="MoStemName-RangeElement">
+		<range-element>
+			<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular"/><newLine/>
+			<attribute name="guid" simpleProperty="Guid"/><!-- SHOULD WE TAKE THIS OUT?? -->
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<objVector objProperty="RegionsOC" classtag="Trait"/>
+		</range-element>
+	</class>
+
+	<class name="FsFeatStruc-Trait">
+		<trait name="feature-set">
+			<attribute name="value" simpleProperty="LiftName"/>
+		</trait>
+	</class>
+
+	<class name="FsFeatDefn-InflectableFeat">
+		<trait name="inflectable-feat">
+			<attribute name="value" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="FsFeatDefn-Feature">
+		<trait name="feature">
+			<attribute name="value" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="FsClosedFeature">
+		<range-element>
+			<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+			<attribute name="guid" simpleProperty="Guid"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="gloss-abbreviation" name="form" internalElementName="text" simpleProperty="GlossAbbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="right-gloss-sep" name="form" internalElementName="text" simpleProperty="RightGlossSep" ws="every"/>
+			<trait name="catalog-source-id">
+				<attribute name="value" simpleProperty="CatalogSourceId"/>
+			</trait>
+			<trait name="display-to-right">
+				<attribute name="value" simpleProperty="DisplayToRightOfValues"/>
+			</trait>
+			<trait name="show-in-gloss">
+				<attribute name="value" simpleProperty="ShowInGloss"/>
+			</trait>
+			<objVector objProperty="ValuesOC" classtag="Trait"/>
+			<trait name="feature-definition-type" value="closed"/>
+		</range-element>
+	</class>
+
+	<class name="FsComplexFeature">
+		<range-element>
+			<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+			<attribute name="guid" simpleProperty="Guid"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="gloss-abbreviation" name="form" internalElementName="text" simpleProperty="GlossAbbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="right-gloss-sep" name="form" internalElementName="text" simpleProperty="RightGlossSep" ws="every"/>
+			<trait name="catalog-source-id">
+				<attribute name="value" simpleProperty="CatalogSourceId"/>
+			</trait>
+			<trait name="display-to-right">
+				<attribute name="value" simpleProperty="DisplayToRightOfValues"/>
+			</trait>
+			<trait name="show-in-gloss">
+				<attribute name="value" simpleProperty="ShowInGloss"/>
+			</trait>
+			<objAtomic objProperty="TypeRA" classtag="Type"/>
+			<trait name="feature-definition-type" value="complex"/>
+		</range-element>
+	</class>
+
+	<class name="FsOpenFeature">
+		<range-element>
+			<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+			<attribute name="guid" simpleProperty="Guid"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="gloss-abbreviation" name="form" internalElementName="text" simpleProperty="GlossAbbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="right-gloss-sep" name="form" internalElementName="text" simpleProperty="RightGlossSep" ws="every"/>
+			<trait name="catalog-source-id">
+				<attribute name="value" simpleProperty="CatalogSourceId"/>
+			</trait>
+			<trait name="display-to-right">
+				<attribute name="value" simpleProperty="DisplayToRightOfValues"/>
+			</trait>
+			<trait name="show-in-gloss">
+				<attribute name="value" simpleProperty="ShowInGloss"/>
+			</trait>
+			<trait name="ws-selector">
+				<attribute name="value" simpleProperty="WsSelector"/>
+			</trait>
+			<trait name="writing-system">
+				<attribute name="value" simpleProperty="WritingSystem"/>
+			</trait>
+			<trait name="feature-definition-type" value="open"/>
+		</range-element>
+	</class>
+
+	<class name="FsFeatureSystem-FeatureValueRanges">
+		<objVector objProperty="FeaturesOC" classtag="ValueRangeList"/>
+	</class>
+
+	<class name="FsFeatDefn-ValueRangeList"/>
+	<class name="FsClosedFeature-ValueRangeList">
+		<ifnot lengthequals="0" class="FsClosedFeature" field="Values">
+			<element name="range" progressIncrement="true">
+				<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular" after="-feature-value"/>
+				<attribute name="guid" simpleProperty="Guid"/><newLine/>
+				<objVector objProperty="ValuesOC" classtag="RangeElement"/>
+			</element>
+		</ifnot>
+	</class>
+
+	<class name="FsSymFeatVal-Trait">
+		<trait>
+			<attributeIndirect name="name" target="Owner" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular" after="-feature-value"/>
+			<attribute name="value" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="FsSymFeatVal-RangeElement">
+		<range-element>
+			<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="gloss-abbrev" name="form" internalElementName="text" simpleProperty="GlossAbbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="right-gloss-sep" name="form" internalElementName="text" simpleProperty="RightGlossSep" ws="every"/>
+			<trait name="catalog-source-id">
+				<attribute name="value" simpleProperty="CatalogSourceId"/>
+			</trait>
+			<trait name="show-in-gloss">
+				<attribute name="value" simpleProperty="ShowInGloss"/>
+			</trait>
+		</range-element>
+	</class>
+
+	<class name="FsFeatStrucType">
+		<range-element>
+			<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/><newLine/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Name" ws="every"/>
+			<multilingualStringElement wrappingElementName="abbrev" name="form" internalElementName="text" simpleProperty="Abbreviation" ws="every"/>
+			<multilingualStringElement wrappingElementName="description" name="form" internalElementName="text" simpleProperty="Description" ws="every"/>
+			<trait name="catalog-source-id">
+				<attribute name="value" simpleProperty="CatalogSourceId"/>
+			</trait>
+			<objVector objProperty="FeaturesRS" classtag="Feature"/>
+		</range-element>
+	</class>
+
+	<class name="FsFeatStrucType-Type">
+		<trait name="type">
+			<attribute name="value" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+</template>

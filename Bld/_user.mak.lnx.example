@@ -1,0 +1,7 @@
+REMOTE_WIN32_DEV_HOST := gonebyebye
+REMOTE_WIN32_DEV_PORT := 22
+# Where to find include files on the remote Windows machine. Remember to quote any space
+# in the path name!
+MIDL_INCLUDE_DIR := "C:\\MicrosoftPlatformSDKforWindowsServer2003R2\\Include"
+
+ICU_INSTALL_DIR := $(BUILD_ROOT)/Lib/src/icu/install$(ARCH)

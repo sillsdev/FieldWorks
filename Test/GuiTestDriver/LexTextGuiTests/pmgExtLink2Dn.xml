@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+   <goal>Exercises External Link to a file</goal>
+
+   <bug id="FWR-2220" desc="Deleted External Link not really gone"/>
+   <bug id="FWR-2075" desc="Alt keys do not drop menus"/>
+   <bug id="FWR-623" desc="External Link doesn&apos;t work like it used too"/>
+
+<!-- Creates an External Link to a file (here, launch TE), insert and select text for the link, and excerise and then delete the link/text.-->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' run="ok" on-fail="assert">
+
+<!-- Go to Lexixon / Lexicon Edit-->
+	<click select="menubar/view/lexicon/lexicon-edit"/>
+
+<!-- Navigate to the "gu" record-->
+	<click select="toolbar/insert/find-lexical-entry"/>
+	<on-dialog select="find-entry[@role='dialog']">
+	  <insert wait="1000">gu</insert>
+	  <click select="entries/col/entry" path="/value:-gu" row="*" col="1"/>
+	  <click select="go-to"/>
+	</on-dialog>
+
+<model select="lexicon-edit[@role='view']">
+
+<!--Click the Note field, and insert and then select "Link text"-->
+	<click id="noNote" select="entry/slice/string-field/text" fld="Note" ind="*" row="1"/>
+
+	<insert wait="1000" >^{END}+{HOME}</insert><!-- select all existing text -->
+	<insert wait="1000">Link text</insert>
+	<insert wait="300">{TAB}</insert><!-- change focus to set text -->
+	<click id="setNote" select="entry/slice/string-field/text"/> <!-- go back to the field -->
+	<glimpse id="desc" select="entry/slice/string-field/text" prop="value" on-fail="skip"/>
+	<insert wait="1000" >^{END}+{HOME}</insert><!-- select the link text -->
+
+<!-- Navigate to file and make "Link text" into an external link (TE.exe)-->
+	<insert wait="1000" >%i</insert><!-- insert menu -->
+	<insert wait="1000" >x</insert> <!-- external link -->
+
+	<var id="AppPath" set="C:\WINDOWS\system32\"/>
+	<var id="notepad" set="notepad.exe"/>
+
+	<insert wait="1000" >"$AppPath;$notepad;"</insert>
+	<insert wait="1000" >%o</insert><!-- Click  Open on the file dialog -->
+
+	<on-dialog title="Move or Copy File?" name="MoveOrCopyFilesDlg">
+		<click path="9:Leave File/43:Leave File"/>
+	</on-dialog>
+
+<!-- Click the new link and see if TE opens-->
+	<click dx="20" select="entry/slice/string-field/text"/>
+
+<!-- attach to Notepad to shut it down -->
+<!--on-application title="Untitled - Notepad" run="no" close="no">
+	<click path="43:Close"/>
+</on-application-->
+
+	<on-dialog title="Untitled - Notepad">
+	  <click path="43:Close"/>
+	</on-dialog>
+
+<!-- back in FLEX remove the link -->
+	<click id="link" dx="50" select="entry/slice/string-field/label" path="$fld"/>
+	<insert wait="1000" >^{END}+{HOME}</insert> <!-- select the link text -->
+	<insert wait="1000" >{BACKSPACE}</insert>
+
+	<click id="closedWrongApp" select="//toolbar/standard/next"/>
+	<click id="prev" select="//toolbar/standard/previous"/>
+	<glimpse id="stillThere" select="entry/slice/string-field/text" prop="value" expect="$desc.value" on-pass="assert"/>
+
+	<click select="entry/slice/string-field/text"/>
+	<insert wait="1000">$desc.value</insert>
+
+
+<!-- Click where the link was - it should not launch -->
+	<click select="entry/slice/string-field/text"/>
+
+</model>
+
+<!-- make sure Notepad  is not running -->
+<!--on-application gui="NP" title="Untitled - Notepad" run="no" on-pass="assert">
+	<insert wait="1000" >%f</insert>
+	<insert wait="300" >x</insert></on-application-->
+
+	<on-dialog title="Untitled - Notepad" on-pass="assert">
+	  <click path="43:Close"/>
+	</on-dialog>
+
+ </on-application>
+</accil>

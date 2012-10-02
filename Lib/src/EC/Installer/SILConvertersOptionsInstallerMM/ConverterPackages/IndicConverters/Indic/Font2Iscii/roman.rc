@@ -1,0 +1,5 @@
+DV1-TTSurekh
+DV1-TTYogesh
+roman.map
+DELIMITER=" "
+ALLOWED_PUNCTUATION_MARKS = ! ' ` ( ) / : ;

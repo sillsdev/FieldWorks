@@ -1,0 +1,537 @@
+\rcrd MAT 0
+\id MAT Malay: Alkitab Berita Baik 1996
+\rem I1-Matthew Intro-This is a note added on the next line after the “backslash” “mt” Matius
+\rem I2-Matthew Intro2-This note is added after the first introductory paragraph in Matthew that begins with, “backslash” “bk” Kitab Matius, and before the next "backslash" "ip". This note was put on its own line with the "backslash" "rem" at the beginning.
+\rem I3-Mattew Intro3-This note is added at the end of the introductory material in Matthew after the last line that begins with "backslash" "io1". It was placed on it's own line with the "backslash" "rem" at the beginning.
+\rcrd MAT 1
+\c 1
+\rem S1-Mt 1:1-This note is placed after the first verse in chapter one of Matthew.
+\vref MAT.1:17
+\v 17
+\rem S2-Mt 1:17-This note is placed at the end of Matthew chapter 1 and verse 17. It is placed on its own line at the end of the verse and before the section head that precedes verse 18.
+\rcrd MAT 2
+\c 2
+\rcrd MAT 3
+\c 3
+\rcrd MAT 4
+\c 4
+\rcrd MAT 5
+\c 5
+\rcrd MAT 6
+\c 6
+\rcrd MAT 7
+\c 7
+\rcrd MAT 8
+\c 8
+\rcrd MAT 9
+\c 9
+\rcrd MAT 10
+\c 10
+\rcrd MAT 11
+\c 11
+\rcrd MAT 12
+\c 12
+\rcrd MAT 13
+\c 13
+\rcrd MAT 14
+\c 14
+\rcrd MAT 15
+\c 15
+\rcrd MAT 16
+\c 16
+\rcrd MAT 17
+\c 17
+\rcrd MAT 18
+\c 18
+\rcrd MAT 19
+\c 19
+\rcrd MAT 20
+\c 20
+\rcrd MAT 21
+\c 21
+\rcrd MAT 22
+\c 22
+\rcrd MAT 23
+\c 23
+\rcrd MAT 24
+\c 24
+\rcrd MAT 25
+\c 25
+\rcrd MAT 26
+\c 26
+\rcrd MAT 27
+\c 27
+\rcrd MAT 28
+\c 28
+\rcrd MRK 0
+\id MRK Malay: Alkitab Berita Baik 1996
+\rcrd MRK 1
+\c 1
+\rcrd MRK 2
+\c 2
+\rcrd MRK 3
+\c 3
+\rcrd MRK 4
+\c 4
+\rcrd MRK 5
+\c 5
+\rcrd MRK 6
+\c 6
+\rcrd MRK 7
+\c 7
+\rcrd MRK 8
+\c 8
+\rcrd MRK 10
+\c 10
+\rcrd MRK 11
+\c 11
+\rcrd MRK 12
+\c 12
+\rcrd MRK 13
+\c 13
+\rcrd MRK 14
+\c 14
+\rcrd MRK 15
+\c 15
+\rcrd MRK 16
+\c 16
+\rcrd LUK 0
+\id LUK Malay: Alkitab Berita Baik 1996
+\rcrd LUK 1
+\c 1
+\rcrd LUK 2
+\c 2
+\rcrd LUK 3
+\c 3
+\rcrd LUK 4
+\c 4
+\rcrd LUK 5
+\c 5
+\rcrd LUK 6
+\c 6
+\rcrd LUK 7
+\c 7
+\rcrd LUK 8
+\c 8
+\rcrd LUK 9
+\c 9
+\rcrd LUK 10
+\c 10
+\rcrd LUK 11
+\c 11
+\rcrd LUK 12
+\c 12
+\rcrd LUK 13
+\c 13
+\rcrd LUK 14
+\c 14
+\rcrd LUK 15
+\c 15
+\rcrd LUK 16
+\c 16
+\rcrd LUK 17
+\c 17
+\rcrd LUK 18
+\c 18
+\rcrd LUK 19
+\c 19
+\rcrd LUK 20
+\c 20
+\rcrd LUK 21
+\c 21
+\rcrd LUK 22
+\c 22
+\rcrd LUK 23
+\c 23
+\rcrd LUK 24
+\c 24
+\rcrd JHN 0
+\id JHN Malay: Alkitab Berita Baik 1996
+\rcrd JHN 1
+\c 1
+\rcrd JHN 2
+\c 2
+\rcrd JHN 3
+\c 3
+\rcrd JHN 4
+\c 4
+\rcrd JHN 5
+\c 5
+\rcrd JHN 6
+\c 6
+\rcrd JHN 7
+\c 7
+\rcrd JHN 8
+\c 8
+\rcrd JHN 9
+\c 9
+\rcrd JHN 10
+\c 10
+\rcrd JHN 11
+\c 11
+\rcrd JHN 12
+\c 12
+\rcrd JHN 13
+\c 13
+\rcrd JHN 14
+\c 14
+\rcrd JHN 15
+\c 15
+\rcrd JHN 17
+\c 17
+\rcrd JHN 18
+\c 18
+\rcrd JHN 20
+\c 20
+\rcrd JHN 21
+\c 21
+\rcrd ACT 0
+\id ACT Malay: Alkitab Berita Baik 1996
+\rcrd ACT 1
+\c 1
+\rcrd ACT 2
+\c 2
+\rcrd ACT 3
+\c 3
+\rcrd ACT 4
+\c 4
+\rcrd ACT 5
+\c 5
+\rcrd ACT 6
+\c 6
+\rcrd ACT 7
+\c 7
+\rcrd ACT 9
+\c 9
+\rcrd ACT 10
+\c 10
+\rcrd ACT 11
+\c 11
+\rcrd ACT 12
+\c 12
+\rcrd ACT 13
+\c 13
+\rcrd ACT 14
+\c 14
+\rcrd ACT 15
+\c 15
+\rcrd ACT 16
+\c 16
+\rcrd ACT 17
+\c 17
+\rcrd ACT 18
+\c 18
+\rcrd ACT 19
+\c 19
+\rcrd ACT 20
+\c 20
+\rcrd ACT 21
+\c 21
+\rcrd ACT 24
+\c 24
+\rcrd ACT 25
+\c 25
+\rcrd ACT 26
+\c 26
+\rcrd ACT 27
+\c 27
+\rcrd ACT 28
+\c 28
+\rcrd ROM 0
+\id ROM Malay: Alkitab Berita Baik 1996
+\rcrd ROM 1
+\c 1
+\rcrd ROM 2
+\c 2
+\rcrd ROM 4
+\c 4
+\rcrd ROM 5
+\c 5
+\rcrd ROM 6
+\c 6
+\rcrd ROM 7
+\c 7
+\rcrd ROM 8
+\c 8
+\rcrd ROM 9
+\c 9
+\rcrd ROM 11
+\c 11
+\rcrd ROM 12
+\c 12
+\rcrd ROM 13
+\c 13
+\rcrd ROM 14
+\c 14
+\rcrd ROM 15
+\c 15
+\rcrd ROM 16
+\c 16
+\rcrd 1CO 0
+\id 1CO Malay: Alkitab Berita Baik 1996
+\rcrd 1CO 1
+\c 1
+\rcrd 1CO 2
+\c 2
+\rcrd 1CO 3
+\c 3
+\rcrd 1CO 4
+\c 4
+\rcrd 1CO 5
+\c 5
+\rcrd 1CO 6
+\c 6
+\rcrd 1CO 7
+\c 7
+\rcrd 1CO 8
+\c 8
+\rcrd 1CO 9
+\c 9
+\rcrd 1CO 10
+\c 10
+\rcrd 1CO 12
+\c 12
+\rcrd 1CO 13
+\c 13
+\rcrd 1CO 14
+\c 14
+\rcrd 1CO 15
+\c 15
+\rcrd 1CO 16
+\c 16
+\rcrd 2CO 0
+\id 2CO Malay: Alkitab Berita Baik 1996
+\rcrd 2CO 1
+\c 1
+\rcrd 2CO 3
+\c 3
+\rcrd 2CO 4
+\c 4
+\rcrd 2CO 8
+\c 8
+\rcrd 2CO 9
+\c 9
+\rcrd 2CO 10
+\c 10
+\rcrd 2CO 11
+\c 11
+\rcrd 2CO 12
+\c 12
+\rcrd 2CO 13
+\c 13
+\rcrd GAL 0
+\id GAL Malay: Alkitab Berita Baik 1996
+\rcrd GAL 1
+\c 1
+\rcrd GAL 2
+\c 2
+\rcrd GAL 3
+\c 3
+\rcrd GAL 5
+\c 5
+\rcrd GAL 6
+\c 6
+\rcrd EPH 0
+\id EPH Malay: Alkitab Berita Baik 1996
+\rcrd EPH 1
+\c 1
+\rcrd EPH 2
+\c 2
+\rcrd EPH 3
+\c 3
+\rcrd EPH 4
+\c 4
+\rcrd EPH 5
+\c 5
+\rcrd EPH 6
+\c 6
+\rcrd PHP 0
+\id PHP Malay: Alkitab Berita Baik 1996
+\rcrd PHP 1
+\c 1
+\rcrd PHP 2
+\c 2
+\rcrd PHP 3
+\c 3
+\rcrd PHP 4
+\c 4
+\rcrd COL 0
+\id COL Malay: Alkitab Berita Baik 1996
+\rcrd COL 1
+\c 1
+\rcrd 1TH 0
+\id 1TH Malay: Alkitab Berita Baik 1996
+\rcrd 1TH 1
+\c 1
+\rcrd 1TH 2
+\c 2
+\rcrd 1TH 3
+\c 3
+\vref 1TH.3:5
+\v 5
+\rem S3-1Th 3:5-This is a note placed at 1 Thessalonians chapter 3 and verse five. It is after the last word of verse five, "sia-sia", but is on its own line beginning with the "backslash" "rem".
+\rcrd 1TH 4
+\c 4
+\rcrd 1TH 5
+\c 5
+\rem S4-1Th 5:1-This is a note placed after 1 Thessalonians 5:1. It is on a line following the verse and begins with the "backslash" "rem".
+\rcrd 2TH 0
+\id 2TH Malay: Alkitab Berita Baik 1996
+\rcrd 2TH 1
+\c 1
+\rcrd 2TH 2
+\c 2
+\rcrd 2TH 3
+\c 3
+\rcrd 1TI 0
+\id 1TI Malay: Alkitab Berita Baik 1996
+\rcrd 1TI 1
+\c 1
+\rcrd 1TI 2
+\c 2
+\rcrd 1TI 3
+\c 3
+\rcrd 1TI 4
+\c 4
+\rcrd 1TI 5
+\c 5
+\rcrd 2TI 0
+\id 2TI Malay: Alkitab Berita Baik 1996
+\rcrd 2TI 1
+\c 1
+\rcrd 2TI 2
+\c 2
+\rcrd 2TI 3
+\c 3
+\rcrd TIT 0
+\id TIT Malay: Alkitab Berita Baik 1996
+\rcrd TIT 1
+\c 1
+\rcrd TIT 2
+\c 2
+\rcrd TIT 3
+\c 3
+\rcrd PHM 0
+\id PHM Malay: Alkitab Berita Baik 1996
+\rcrd PHM 1
+\c 1
+\rcrd HEB 0
+\id HEB Malay: Alkitab Berita Baik 1996
+\rcrd HEB 1
+\c 1
+\rcrd HEB 2
+\c 2
+\rcrd HEB 3
+\c 3
+\rcrd HEB 7
+\c 7
+\rcrd HEB 8
+\c 8
+\rcrd HEB 9
+\c 9
+\rcrd HEB 11
+\c 11
+\rcrd HEB 12
+\c 12
+\rcrd HEB 13
+\c 13
+\rcrd JAS 0
+\id JAS Malay: Alkitab Berita Baik 1996
+\rcrd JAS 1
+\c 1
+\rcrd JAS 2
+\c 2
+\rcrd JAS 3
+\c 3
+\rcrd 1PE 0
+\id 1PE Malay: Alkitab Berita Baik 1996
+\rcrd 1PE 1
+\c 1
+\rcrd 1PE 2
+\c 2
+\rcrd 1PE 3
+\c 3
+\rcrd 1PE 4
+\c 4
+\rcrd 1PE 5
+\c 5
+\rcrd 2PE 0
+\id 2PE Malay: Alkitab Berita Baik 1996
+\rcrd 2PE 1
+\c 1
+\rcrd 2PE 2
+\c 2
+\rcrd 2PE 3
+\c 3
+\rcrd 1JN 0
+\id 1JN Malay: Alkitab Berita Baik 1996
+\rcrd 1JN 1
+\c 1
+\rcrd 1JN 2
+\c 2
+\rcrd 1JN 3
+\c 3
+\rcrd 1JN 4
+\c 4
+\rcrd 1JN 5
+\c 5
+\rcrd 2JN 0
+\id 2JN Malay: Alkitab Berita Baik 1996
+\rcrd 2JN 1
+\c 1
+\rcrd 3JN 0
+\id 3JN Malay: Alkitab Berita Baik 1996
+\rcrd 3JN 1
+\c 1
+\rcrd JUD 0
+\id JUD Malay: Alkitab Berita Baik 1996
+\rcrd JUD 1
+\c 1
+\rcrd REV 0
+\id REV Malay: Alkitab Berita Baik 1996
+\rcrd REV 1
+\c 1
+\rcrd REV 2
+\c 2
+\rcrd REV 3
+\c 3
+\rcrd REV 4
+\c 4
+\rcrd REV 5
+\c 5
+\rcrd REV 6
+\c 6
+\rcrd REV 7
+\c 7
+\rcrd REV 8
+\c 8
+\rcrd REV 10
+\c 10
+\rcrd REV 11
+\c 11
+\rcrd REV 12
+\c 12
+\rcrd REV 13
+\c 13
+\rcrd REV 14
+\c 14
+\rcrd REV 15
+\c 15
+\rcrd REV 16
+\c 16
+\rcrd REV 17
+\c 17
+\rcrd REV 18
+\c 18
+\rcrd REV 20
+\c 20
+\rcrd REV 21
+\c 21
+\rcrd REV 22
+\c 22
+\vref REV.22:15
+\v 15
+\rem S5-Rev 22:15-This note is placed after the word "Kota" and the period that follows it at the end of verse 15 in chapter 22 of Revelation, but on its own line beginning with the "backslash" "rem".
+\vref REV.22:19
+\v 19
+\rem S6-Rev 22:19-This note is placed after the footnote at the end of Rev 22:19. Hopefully, it does not cause a problem because of the proximity to the footnote.

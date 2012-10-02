@@ -1,0 +1,48 @@
+﻿<LayoutInventory>
+  <layout class="MoForm" type="jtview" name="publishStemForm" version="9">
+	<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishStemMorphType" sep=" " />
+	<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+	<part ref="FormEnvPub" label="Environments" after=" " visibility="never" sep=", " />
+	<generate class="MoForm" fieldType="mlstring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+		<configureMlString field="$fieldName" />
+	  </part>
+	</generate>
+	<generate class="MoForm" fieldType="simplestring" restrictions="customOnly">
+	  <part ref="$child" label="$label" before="" after=" " visibility="never">
+		<string field="$fieldName" />
+	  </part>
+	</generate>
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishStemLexemeForm" version="9">
+	<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishStemMinorForm" version="9">
+	<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishStemMinorMorphType" sep=" " />
+	<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishStemMinorLexemeForm" version="9">
+	<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishRootForm" version="9">
+	<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootMorphType" sep=" " />
+	<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishRootSubForm" version="9">
+	<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootSubMorphType" sep=" " />
+	<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishRootSubLexemeForm" version="9">
+	<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishRootLexemeForm" version="9">
+	<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishRootMinorForm" version="9">
+	<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootMinorMorphType" sep=" " />
+	<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+  <layout class="MoForm" type="jtview" name="publishRootMinorLexemeForm" version="9">
+	<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" sep=" " />
+  </layout>
+</LayoutInventory>

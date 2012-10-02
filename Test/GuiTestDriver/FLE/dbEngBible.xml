@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+   <goal>TBD</goal>
+
+   <bug id="1812" desc="Crash sorting English Webster Bible db"/>
+
+   <!-- In the English Websters and Bible database:
+		 Lex Edit Lexeme sort
+		 Gloss sort
+		 Grammatical info sort
+		 Words Analysis/conc 1st (num in corp >30)
+		 Switch to WL Conc
+		 Concordance (jesus) baseline
+		 Concordance (jesus) word line
+	-->
+
+	<var id="projectName" set="EnglishWebstersBible"/>
+	 <!--var id="ProjType" set="XML"/-->
+	<var id="ProjExt" set="fwdata"/>
+	<!--var id="ProjType" set="DB4OCS"/>
+	<var id="ProjExt" set="db4o"/-->
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+	<on-application run = "ok" args='-app FLEx -db "C:\GuiTestDriver\Projects\$projectName;\$projectName;.$ProjExt;"' close = "no" on-fail = "assert">
+	   <!-- verify that the view is Lexicon Edit -->
+	   <glimpse id="openYet" select="sidebar/area/list" path="Lexicon Edit" ind="1" prop="selected"/>
+
+	   <var id="firstRec" select="toolbar/standard/first"/>
+
+	   <!-- Lex Edit Lexeme sort -->
+	   <model select="lexicon-edit[@role='view']/entries/col/header">
+
+		  <monitor-time expect="999999999" desc="Websters db Lex Edit, Sort Lexeme Form">
+			 <click path="$guiPath;Lexeme Form"/>
+			 <click path="$firstRec"/>
+		  </monitor-time>
+
+	   <!-- Gloss sort -->
+		  <monitor-time expect="999999999" desc="Websters db Lex Edit, Sort Glosses">
+			 <click path="$guiPath;Glosses"/>
+			 <click wait="30000" path="$firstRec"/>
+		  </monitor-time>
+
+	   <!-- Grammatical info sort -->
+		  <monitor-time expect="999999999" desc="Websters db Lex Edit, Sort Grammatical Info. (Full)">
+			 <click path="$guiPath;Grammatical Info. (Full)"/>
+			 <click path="$firstRec"/>
+		  </monitor-time>
+
+	<sound frequency="400" duration="500"/>
+
+		  <!--click wait="20000" path="$guiPath;Headword"/-->
+		  <click path="$guiPath;Headword"/>
+	   </model>
+
+	   <do-once until="999999999">
+		  <click id="waitOnMenu1" select="menubar/view" />
+	   </do-once>
+	   <insert pause="200">g~</insert>
+	   <insert>{ESC}</insert><!-- resets dot net bar after a partial menu click -->
+	   <click path="$firstRec"/>
+
+	   <!-- Words Analysis/conc 1st (num in corp >30) -->
+		  <monitor-time expect="999999999" desc="Websters db, Lex Edit to Words Analysis">
+			<click select="menubar/view/texts-words/word-analyses"/>
+			<click until="1000000" select="word-analysis[@role='view']/wordforms/title"/>
+		  </monitor-time>
+
+		  <monitor-time expect="999999999" desc="Websters db, Words Analysis to Concordance">
+			<click select="menubar/view/texts-words/concordance"/>
+			<click until="1000000" select="concordance/criteria/label" />
+		  </monitor-time>
+
+	   <!-- Switch to WL Conc -->
+		  <monitor-time expect="999999999" desc="Websters db, Concordance to Word List Concordance">
+			<click select="menubar/view/texts-words/word-list-concordance"/>
+			<click until="100000" select="word-list-concordance/wordforms/title"/>
+		  </monitor-time>
+
+	   <!-- Concordance (jesus) baseline -->
+	   <click select="menubar/view/texts-words/concordance"/>
+	   <monitor-time expect="999999999" desc="Websters db Concordance, find Jesus in baseline">
+		   <click select="concordance/criteria/for-the-text/value"/>
+		   <insert wait="300">^{a}</insert>
+		   <insert wait="300">jesus</insert>
+		   <click select="concordance/criteria/search"/>
+		   <do-once until="5000" on-fail="skip" >
+			 <on-dialog until="500" title="Notice" name="TBD" on-fail="skip">
+				 <click path="18:Notice/$ok"/>
+			 </on-dialog>
+		   </do-once>
+		   <click select="concordance/criteria/label"/>
+		</monitor-time>
+
+	   <!-- Concordance (jesus) word line -->
+	   <monitor-time expect="999999999" desc="Websters db Concordance, find Jesus in word line">
+		   <click select="concordance/criteria/search-in/value"/>
+		   <insert wait="300">w</insert>
+		   <insert wait="300">~</insert>
+		   <click select="concordance/criteria/for-the-text/value"/>
+		   <insert wait="300">^{a}</insert>
+		   <insert wait="300">jesus</insert>
+		   <click select="concordance/criteria/search"/>
+		   <do-once until="5000" on-fail="skip" >
+			 <on-dialog until="500" title="Notice" name="TBD" on-fail="skip">
+				 <click path="18:Notice/$ok"/>
+			 </on-dialog>
+		   </do-once>
+		   <click select="concordance/criteria/label"/>
+		</monitor-time>
+
+	</on-application>
+
+</accil>

@@ -1,0 +1,629 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Entry" xml:space="preserve">
+	<value>Entry</value>
+  </data>
+  <data name="Sense" xml:space="preserve">
+	<value>Sense</value>
+  </data>
+  <data name="FirstAnalysisWs" xml:space="preserve">
+	<value>First Analysis Writing System</value>
+  </data>
+  <data name="FirstVernacularWs" xml:space="preserve">
+	<value>First Vernacular Writing System</value>
+  </data>
+  <data name="AllAnalysisWs" xml:space="preserve">
+	<value>All Analysis Writing Systems</value>
+  </data>
+  <data name="AllVernacularWs" xml:space="preserve">
+	<value>All Vernacular Writing Systems</value>
+  </data>
+  <data name="AllAnalysisVernacularWs" xml:space="preserve">
+	<value>All Analysis then all Vernacular Writing Systems</value>
+  </data>
+  <data name="AllVernacularAnalysisWs" xml:space="preserve">
+	<value>All Vernacular then all Analysis Writing Systems</value>
+  </data>
+  <data name="DeletingFieldCannotBeUndone0Items" xml:space="preserve">
+	<value>Warning: deleting a field cannot be undone.
+Note: {0} items in your database have data in this field!
+Are you SURE you want to delete the field {1}?</value>
+	<comment>{0} is a count, {1} is a user name</comment>
+  </data>
+  <data name="DeletingFieldCannotBeUndone" xml:space="preserve">
+	<value>Warning: deleting a field cannot be undone.
+Are you SURE you want to delete the field {0}?</value>
+	<comment>{0} is a user name</comment>
+  </data>
+  <data name="ReallyDeleteField" xml:space="preserve">
+	<value>Really delete field and contents?</value>
+  </data>
+  <data name="AlreadyFieldWithThisLabel" xml:space="preserve">
+	<value>There are duplicate {0} fields named "{1}". Please choose a different name.</value>
+  </data>
+  <data name="LabelAlreadyExists" xml:space="preserve">
+	<value>Duplicate Custom Field Names</value>
+  </data>
+  <data name="ItemLayout" xml:space="preserve">
+	<value>Item layout</value>
+  </data>
+  <data name="DidNotSelectValidWsForDb" xml:space="preserve">
+	<value>You did not select a writing system that is valid for this database. Unless you have previously entered data in this database in this writing system, this field will never be shown.</value>
+  </data>
+  <data name="InvalidWritingSystem" xml:space="preserve">
+	<value>Invalid writing system</value>
+  </data>
+  <data name="ChooseSoundOrMovieFile" xml:space="preserve">
+	<value>Choose Sound or Movie File</value>
+  </data>
+  <data name="ExportTo0" xml:space="preserve">
+	<value>Export to {0}</value>
+  </data>
+  <data name="Exporting0" xml:space="preserve">
+	<value>Exporting {0}</value>
+  </data>
+  <data name="Exporting_" xml:space="preserve">
+	<value>Exporting...</value>
+  </data>
+  <data name="ErrorExporting_ProbablyBug" xml:space="preserve">
+	<value>An error occurred while exporting your data. This could be the result of an error in an FXT file, an output file that is locked, or a bug in the FieldWorks code.</value>
+  </data>
+  <data name="ProcessingIntoFinalForm" xml:space="preserve">
+	<value>Processing exported data into final form</value>
+  </data>
+  <data name="NoDescriptionForItem" xml:space="preserve">
+	<value>There is no description available for this item.</value>
+  </data>
+  <data name="ThankYouForCheckingOutFlex" xml:space="preserve">
+	<value>Thank you for checking out this version of FieldWorks Language Explorer.</value>
+  </data>
+  <data name="HaveLaunchedFLEXTenTimes" xml:space="preserve">
+	<value>You have launched FLEX 10 times.</value>
+  </data>
+  <data name="HaveLaunchedFLEXFortyTimes" xml:space="preserve">
+	<value>You have launched FLEX 40 times.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+	<value>Undo</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+	<value>Redo</value>
+  </data>
+  <data name="UnableToFollowLink0" xml:space="preserve">
+	<value>The application was not able to follow that link. ({0})</value>
+	<comment>{0} is an error message</comment>
+  </data>
+  <data name="UnableToFollowLink" xml:space="preserve">
+	<value>The application was not able to follow that link. This can happen if you have deleted the object that was pointed to by the link.</value>
+  </data>
+  <data name="FailedJump" xml:space="preserve">
+	<value>Failed Jump</value>
+  </data>
+  <data name="Promote" xml:space="preserve">
+	<value>Promote</value>
+  </data>
+  <data name="UndoMoveItem" xml:space="preserve">
+	<value>Undo Move Item</value>
+  </data>
+  <data name="RedoMoveItem" xml:space="preserve">
+	<value>Redo Move Item</value>
+  </data>
+  <data name="LinkTargetNotAvailableDueToFilter" xml:space="preserve">
+	<value>The link target is not currently available, probably because a filter excludes it. Do you want to turn off the filter?</value>
+  </data>
+  <data name="TargetNotFound" xml:space="preserve">
+	<value>Target not found</value>
+  </data>
+  <data name="DeletingTheObject" xml:space="preserve">
+	<value>Deleting the object</value>
+  </data>
+  <data name="UpdatingTheDisplay" xml:space="preserve">
+	<value>Updating the display</value>
+  </data>
+  <data name="ADeletedObject" xml:space="preserve">
+	<value>A deleted object</value>
+  </data>
+  <data name="SelectedObjectHasBeenDeleted" xml:space="preserve">
+	<value>The selected object has been deleted (possibly by another user on a networked computer). Refreshing.</value>
+  </data>
+  <data name="DeletedObjectDetected" xml:space="preserve">
+	<value>Deleted object detected</value>
+  </data>
+  <data name="Filtered" xml:space="preserve">
+	<value>Filtered</value>
+  </data>
+  <data name="ksUndoInsert" xml:space="preserve">
+	<value>Undo Insert {0}</value>
+  </data>
+  <data name="ksRedoInsert" xml:space="preserve">
+	<value>Redo Insert {0}</value>
+  </data>
+  <data name="UndoDelete0" xml:space="preserve">
+	<value>Undo Delete {0}</value>
+  </data>
+  <data name="RedoDelete0" xml:space="preserve">
+	<value>Redo Delete {0}</value>
+  </data>
+  <data name="LowerCaseEntry" xml:space="preserve">
+	<value>entry</value>
+  </data>
+  <data name="SaveChangesToCurrentPart" xml:space="preserve">
+	<value>Save changes to the current part?</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+	<value>Save changes?</value>
+  </data>
+  <data name="NotVisibleLabel" xml:space="preserve">
+	<value>no</value>
+  </data>
+  <data name="VisibleLabel" xml:space="preserve">
+	<value>yes</value>
+  </data>
+  <data name="ksBestAnalOrVern" xml:space="preserve">
+	<value>best analysis or vernacular</value>
+  </data>
+  <data name="EmptyFieldName" xml:space="preserve">
+	<value>Empty Field Name</value>
+  </data>
+  <data name="FieldNameShouldNotBeEmpty" xml:space="preserve">
+	<value>Field Names should not be empty. Please choose a different name.</value>
+  </data>
+  <data name="ProblemStarting0" xml:space="preserve">
+	<value>Problem Starting {0}</value>
+  </data>
+  <data name="ksAnalysis" xml:space="preserve">
+	<value>analysis</value>
+  </data>
+  <data name="ksVernacular" xml:space="preserve">
+	<value>vernacular</value>
+  </data>
+  <data name="ksAllAnalysis" xml:space="preserve">
+	<value>all analysis</value>
+  </data>
+  <data name="ksAllVernacular" xml:space="preserve">
+	<value>all vernacular</value>
+  </data>
+  <data name="ksBestAnalysis" xml:space="preserve">
+	<value>best analysis</value>
+  </data>
+  <data name="ksBestVernacular" xml:space="preserve">
+	<value>best vernacular</value>
+  </data>
+  <data name="ksBestVernOrAnal" xml:space="preserve">
+	<value>best vernacular or analysis</value>
+  </data>
+  <data name="ksPronunciation" xml:space="preserve">
+	<value>pronunciation</value>
+  </data>
+  <data name="ksAnalOrVern" xml:space="preserve">
+	<value>analysis or vernacular</value>
+  </data>
+  <data name="ksVernOrAnal" xml:space="preserve">
+	<value>vernacular or analysis</value>
+  </data>
+  <data name="ksUserInterface" xml:space="preserve">
+	<value>user interface</value>
+  </data>
+  <data name="ksReversal" xml:space="preserve">
+	<value>reversal</value>
+  </data>
+  <data name="DeletingFieldCannotBeUndone0Views" xml:space="preserve">
+	<value>Warning: deleting a field cannot be undone.
+Note: {0} views have been configured to display this field!
+Are you SURE you want to delete the field {1}?.</value>
+  </data>
+  <data name="DeletingFieldCannotBeUndone0Items1Views" xml:space="preserve">
+	<value>Warning: deleting a field cannot be undone.
+Note: {0} items in your database have data in this field,
+and {1} views have been configured to display this field!
+Are you SURE you want to delete the field {2}?.</value>
+  </data>
+  <data name="FirstSelectItemToDelete" xml:space="preserve">
+	<value>You must first select a Custom field to delete from the list.</value>
+  </data>
+  <data name="SelectCustomField" xml:space="preserve">
+	<value>Select Custom Field</value>
+  </data>
+  <data name="ksHierarchyLabel" xml:space="preserve">
+	<value>{0}: {1}</value>
+  </data>
+  <data name="ksCanBeConfiguredInMoreDetail" xml:space="preserve">
+	<value>{0} can be configured in more detail.</value>
+  </data>
+  <data name="ksUsesTheSameConfigurationAs" xml:space="preserve">
+	<value>{0} otherwise uses the same configuration as {1}.</value>
+  </data>
+  <data name="ksBefore" xml:space="preserve">
+	<value>Before:</value>
+  </data>
+  <data name="ksNumberingBefore" xml:space="preserve">
+	<value>Numbering Before:</value>
+  </data>
+  <data name="ksCharacterStyle" xml:space="preserve">
+	<value>Character Style for Content:</value>
+  </data>
+  <data name="ksNumberingCharacterStyle" xml:space="preserve">
+	<value>Numbering Character Style:</value>
+  </data>
+  <data name="ksNone" xml:space="preserve">
+	<value>(none)</value>
+  </data>
+  <data name="ksDefaultAnalysis" xml:space="preserve">
+	<value>Default Analysis</value>
+  </data>
+  <data name="ksDefaultVernacular" xml:space="preserve">
+	<value>Default Vernacular</value>
+  </data>
+  <data name="ksDefaultPronunciation" xml:space="preserve">
+	<value>Default Pronunciation</value>
+  </data>
+  <data name="ksUnspecified" xml:space="preserve">
+	<value>(unspecified)</value>
+  </data>
+  <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
+	<value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
+  </data>
+  <data name="ksErrorCaption" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <data name="ksTemplateTooDeep" xml:space="preserve">
+	<value>A discourse chart template can only have three levels (template, column group, and column).</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+	<value>Move Down</value>
+	<comment>context menu item</comment>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+	<value>Move Up</value>
+	<comment>context menu item</comment>
+  </data>
+  <data name="kstidExportingLists" xml:space="preserve">
+	<value>Writing possibility list contents</value>
+  </data>
+  <data name="ksFwDummyWndMessage" xml:space="preserve">
+	<value>The program may quit after the restore has finished.  If it does, you can then restart the program on the (restored) project.</value>
+  </data>
+  <data name="ksFwDummyWndTitleRestoring" xml:space="preserve">
+	<value>Restoring...</value>
+  </data>
+  <data name="ksLiftExportBugReport" xml:space="preserve">
+	<value>Language Explorer's LIFT export has a bug that will prevent interchange with WeSay.  Please report this to the developers, sending both the exported LIFT file and (if possible) a backup of the current project.</value>
+  </data>
+  <data name="Allomorph" xml:space="preserve">
+	<value>Allomorph</value>
+	<comment>Label for possible class to add custom fields to</comment>
+  </data>
+  <data name="ExampleSentence" xml:space="preserve">
+	<value>Example</value>
+	<comment>Label for possible class to add custom fields to</comment>
+  </data>
+  <data name="ksCurrentReversal" xml:space="preserve">
+	<value>Current Reversal Index</value>
+  </data>
+  <data name="ksValidatingOutputFile" xml:space="preserve">
+	<value>Validating output file {0}</value>
+  </data>
+  <data name="ksHierarchyLabel2" xml:space="preserve">
+	<value>{0}:
+  {1}</value>
+  </data>
+  <data name="ksYes" xml:space="preserve">
+	<value>Yes</value>
+  </data>
+  <data name="ksNo" xml:space="preserve">
+	<value>No</value>
+  </data>
+  <data name="ksChooseLIFTFolderTitle" xml:space="preserve">
+	<value>Choose where to save the LIFT files</value>
+  </data>
+  <data name="ksChooseLIFTExportFolder" xml:space="preserve">
+	<value>Choose the location and name of the LIFT export folder FLEx will use.  You can make a new folder, or choose one which already contains LIFT data (e.g. a WeSay project folder)</value>
+  </data>
+  <data name="ksLIFTAlreadyExists" xml:space="preserve">
+	<value>This will overwrite the lexicon in that project.  Click “Cancel” if you have not already imported that LIFT file into FLEx.</value>
+  </data>
+  <data name="ksLIFTFolderNotEmpty" xml:space="preserve">
+	<value>The selected folder is not empty, but does not contain a lexicon.  Do you want to continue?</value>
+  </data>
+  <data name="ksCantDemoteTagList" xml:space="preserve">
+	<value>You cannot demote a list of Text Markup Tags into another list.</value>
+  </data>
+  <data name="ksCantPromoteTag" xml:space="preserve">
+	<value>You cannot promote a tag to be its own list. Add a new list instead and move tags to it.</value>
+  </data>
+  <data name="ksTagListTooDeep" xml:space="preserve">
+	<value>A Text Markup Tag List can only have two levels (list type and tags).</value>
+  </data>
+  <data name="ksProhibitedMovement" xml:space="preserve">
+	<value>Prohibited Movement</value>
+	<comment>Used for Warning dialogs on prohibited list item movements.</comment>
+  </data>
+  <data name="SortedBy" xml:space="preserve">
+	<value>Sorted by {0}</value>
+  </data>
+  <data name="ksRedoInsertPicture" xml:space="preserve">
+	<value>Redo Insert Picture</value>
+  </data>
+  <data name="ksUndoInsertPicture" xml:space="preserve">
+	<value>Undo Insert Picture</value>
+  </data>
+  <data name="ksDictionaryView" xml:space="preserve">
+	<value>Choose dictionary view to configure:</value>
+  </data>
+  <data name="ksReversalIndexView" xml:space="preserve">
+	<value>Choose the reversal index to configure:</value>
+  </data>
+  <data name="ksNone1" xml:space="preserve">
+	<value>None</value>
+  </data>
+  <data name="kMultiparagraphText" xml:space="preserve">
+	<value>Multiparagraph Text</value>
+  </data>
+  <data name="ksDate" xml:space="preserve">
+	<value>Date</value>
+  </data>
+  <data name="ksListRefAtomic" xml:space="preserve">
+	<value>List Reference (single item)</value>
+  </data>
+  <data name="ksListRefCollection" xml:space="preserve">
+	<value>List Reference (multiple items)</value>
+  </data>
+  <data name="ksNewCustomField" xml:space="preserve">
+	<value>New Custom Field</value>
+  </data>
+  <data name="ksNumber" xml:space="preserve">
+	<value>Number</value>
+  </data>
+  <data name="ksRecord" xml:space="preserve">
+	<value>Record</value>
+  </data>
+  <data name="ksSingleLineText" xml:space="preserve">
+	<value>Single-line Text</value>
+  </data>
+  <data name="ksParagraphStyleForBefore" xml:space="preserve">
+	<value>Paragraph Style for Before header:</value>
+  </data>
+  <data name="ksCharacterStyleForBefore" xml:space="preserve">
+	<value>Character Style for Before string:</value>
+  </data>
+  <data name="ksParagraphStyle" xml:space="preserve">
+	<value>Paragraph Style for Content:</value>
+  </data>
+  <data name="ksUndoShowSubentryForComponent" xml:space="preserve">
+	<value>Undo Show Subentry for this Component</value>
+  </data>
+  <data name="ksRedoShowSubentryForComponent" xml:space="preserve">
+	<value>Redo Show Subentry for this Component</value>
+  </data>
+  <data name="ksConfigureList" xml:space="preserve">
+	<value>Configure List</value>
+	<comment>used for ConfigureListDlg title</comment>
+  </data>
+  <data name="ksNewCustomList" xml:space="preserve">
+	<value>New List</value>
+	<comment>used for CustomListDlg title</comment>
+  </data>
+  <data name="ksAbbreviation" xml:space="preserve">
+	<value>Abbreviation</value>
+	<comment>Used in CustomListDlg - Display items by combobox</comment>
+  </data>
+  <data name="ksAbbrevName" xml:space="preserve">
+	<value>Abbreviation - Name</value>
+	<comment>Used in CustomListDlg - Display items by combobox</comment>
+  </data>
+  <data name="ksName" xml:space="preserve">
+	<value>Name</value>
+	<comment>Used in CustomListDlg - Display items by combobox</comment>
+  </data>
+  <data name="ksRedoCreateList" xml:space="preserve">
+	<value>Redo Create Custom List</value>
+  </data>
+  <data name="ksUndoCreateList" xml:space="preserve">
+	<value>Undo Create Custom List</value>
+  </data>
+  <data name="ksRedoConfigureList" xml:space="preserve">
+	<value>Redo List Property Changes</value>
+  </data>
+  <data name="ksUndoConfigureList" xml:space="preserve">
+	<value>Undo List Property Changes</value>
+  </data>
+  <data name="ksNameReqd" xml:space="preserve">
+	<value>"Name of List" is a required field.</value>
+  </data>
+  <data name="ksChooseAnotherListName" xml:space="preserve">
+	<value>That name is already in use by another list.</value>
+	<comment>used by AddListDlg</comment>
+  </data>
+  <data name="ksDuplicateName" xml:space="preserve">
+	<value>Duplicate List Name</value>
+	<comment>used by AddListDlg</comment>
+  </data>
+  <data name="ksCannotWordform" xml:space="preserve">
+	<value>Sorry, FieldWorks cannot delete this wordform because it occurs in your texts.</value>
+  </data>
+  <data name="ksCannotDeleteItem" xml:space="preserve">
+	<value>Sorry, FieldWorks cannot delete this item.</value>
+  </data>
+  <data name="ksUndoInsertMedia" xml:space="preserve">
+	<value>Undo Insert Media</value>
+  </data>
+  <data name="ksRedoInsertMedia" xml:space="preserve">
+	<value>Redo Insert Media</value>
+  </data>
+  <data name="ksUndoDeleteMediaLink" xml:space="preserve">
+	<value>Undo Delete Media Link</value>
+  </data>
+  <data name="ksRedoDeleteMediaLink" xml:space="preserve">
+	<value>Redo Delete Media Link</value>
+  </data>
+  <data name="ksParsing" xml:space="preserve">
+	<value>Processing</value>
+	<comment>Label used in progress bar</comment>
+  </data>
+  <data name="ksSorting" xml:space="preserve">
+	<value>Sorting</value>
+	<comment>Label used in progress bar</comment>
+  </data>
+  <data name="ksNoListName" xml:space="preserve">
+	<value>No List Name</value>
+	<comment>used by AddListDlg</comment>
+  </data>
+  <data name="ksProvideValidListName" xml:space="preserve">
+	<value>Please provide a valid list name.</value>
+	<comment>used by AddListDlg</comment>
+  </data>
+  <data name="ksReferencedPossibility" xml:space="preserve">
+	<value>At least one item in this list is referenced elsewhere in the project.
+An example would be {0}.
+Are you sure you want to delete this list?</value>
+	<comment>used by DeleteCustomList</comment>
+  </data>
+  <data name="ksWarning" xml:space="preserve">
+	<value>Warning</value>
+	<comment>used by DeleteCustomList</comment>
+  </data>
+  <data name="ksDeleteListMenuItem" xml:space="preserve">
+	<value>Delete Custom List</value>
+	<comment>Used in List area context menu</comment>
+  </data>
+  <data name="ksRedoDeleteCustomList" xml:space="preserve">
+	<value>Redo Delete Custom List</value>
+  </data>
+  <data name="ksUndoDeleteCustomList" xml:space="preserve">
+	<value>Undo Delete Custom List</value>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToRemoteClientsCaption" xml:space="preserve">
+	<value>Custom Fields cannot be added.</value>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToRemoteClientsText" xml:space="preserve">
+	<value>Custom Fields cannot be added when there is more than one connected client.</value>
+  </data>
+  <data name="ksChooseAnthroCatStartingList" xml:space="preserve">
+	<value>In Language Explorer, you will use a list of anthropology categories to catalog your entries.  Choose a starting list of anthropology categories for this project.</value>
+  </data>
+  <data name="ksCustomFieldMatchesNonCustomField" xml:space="preserve">
+	<value>There is already a field named {1} in each {0}, please choose a different name for your Custom field.</value>
+	<comment>used by AddCustomFieldDlg. Variables are a field name and one of: Entry, Sense, Example, Allomorph</comment>
+  </data>
+  <data name="ksUnableToStartGnomeCharMap" xml:space="preserve">
+	<value>Unable to start program "{0}". Please install the Gnome Character Map to use this feature.</value>
+	<comment>Used if user choose Insert Special character in Linux and the Gnome Character Map software is not installed. Variable is the command to launch Gnome Character Map.</comment>
+  </data>
+</root>

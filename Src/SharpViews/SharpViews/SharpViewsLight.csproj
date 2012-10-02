@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{0675FC22-29E5-475F-9E16-C0743D568001}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks.SharpViews</RootNamespace>
+	<AssemblyName>SharpViewsLight</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701,1591,1573</NoWarn>
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<DocumentationFile>..\..\..\Output\Debug\SharpViewsLight.xml</DocumentationFile>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml.Linq">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data.DataSetExtensions">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AssembledStyles.cs" />
+	<Compile Include="BlockBox.cs" />
+	<Compile Include="Box.cs" />
+	<Compile Include="Builders\Display.cs" />
+	<Compile Include="Builders\Div.cs" />
+	<Compile Include="Builders\Flow.cs" />
+	<Compile Include="Builders\ItemBuilder.cs" />
+	<Compile Include="Builders\LazyDisplay.cs" />
+	<Compile Include="Builders\Paragraph.cs" />
+	<Compile Include="Builders\Units.cs" />
+	<Compile Include="Builders\ViewBuilder.cs" />
+	<Compile Include="DivBox.cs" />
+	<Compile Include="FieldWorksReplacements\ArrayPtr.cs" />
+	<Compile Include="FieldWorksReplacements\ColorUtil.cs" />
+	<Compile Include="FieldWorksReplacements\DefaultWritingSystemFactory.cs" />
+	<Compile Include="FieldWorksReplacements\FwKernel.cs" />
+	<Compile Include="FieldWorksReplacements\IFWDisposable.cs" />
+	<Compile Include="FieldWorksReplacements\IPicture.cs" />
+	<Compile Include="FieldWorksReplacements\MarshalEx.cs" />
+	<Compile Include="FieldWorksReplacements\Surrogates.cs" />
+	<Compile Include="FieldWorksReplacements\Tuple.cs" />
+	<Compile Include="FieldWorksReplacements\Views.cs" />
+	<Compile Include="FieldWorksReplacements\Win32Wrappers.cs" />
+	<Compile Include="GraphicsHolder.cs" />
+	<Compile Include="GroupBox.cs" />
+	<Compile Include="Hookups\GroupHookup.cs" />
+	<Compile Include="Hookups\Hookup.cs" />
+	<Compile Include="Hookups\HookupInterfaces.cs" />
+	<Compile Include="Hookups\IndependentSequenceHookup.cs" />
+	<Compile Include="Hookups\IParagraphOperations.cs" />
+	<Compile Include="Hookups\ItemHookup.cs" />
+	<Compile Include="Hookups\LazyHookup.cs" />
+	<Compile Include="Hookups\MultiplePropChangedReceiver.cs" />
+	<Compile Include="Hookups\SequenceHookup.cs" />
+	<Compile Include="IRendererFactory.cs" />
+	<Compile Include="ISharpViewSite.cs" />
+	<Compile Include="LayoutCallbacks.cs" />
+	<Compile Include="LayoutInfo.cs" />
+	<Compile Include="LayoutTransform.cs" />
+	<Compile Include="LazyBox.cs" />
+	<Compile Include="LeafBox.cs" />
+	<Compile Include="Hookups\MlsHookup.cs" />
+	<Compile Include="PaintTransform.cs" />
+	<Compile Include="Paragraphs\ParaBox.cs" />
+	<Compile Include="Paragraphs\ParaBuilder.cs" />
+	<Compile Include="Paragraphs\ParaComponents.cs" />
+	<Compile Include="Paragraphs\ParaItem.cs" />
+	<Compile Include="Paragraphs\ParaLine.cs" />
+	<Compile Include="Paragraphs\StringBox.cs" />
+	<Compile Include="PileBox.cs" />
+	<Compile Include="RendererFactory.cs" />
+	<Compile Include="RootBox.cs" />
+	<Compile Include="RunBox.cs" />
+	<Compile Include="Selections\InsertionPoint.cs" />
+	<Compile Include="Hookups\ParagraphOperations.cs" />
+	<Compile Include="Selections\RangeSelection.cs" />
+	<Compile Include="Selections\Selection.cs" />
+	<Compile Include="Builders\SelectionBuilder.cs" />
+	<Compile Include="Selections\TextSelection.cs" />
+	<Compile Include="SharpView.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="SharpView.Designer.cs">
+	  <DependentUpon>SharpView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="Hookups\StringParaHookup.cs" />
+	<Compile Include="TextSource.cs" />
+	<Compile Include="Triple.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Hookups\TssHookup.cs" />
+	<Compile Include="Utilities\MonitoredList.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="SILConvertersInstallerDetails"
+				  targetNamespace="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd"
+				  elementFormDefault="qualified"
+				  xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd"
+				  xmlns:mstns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd"
+				  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				  xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+				   attributeFormDefault="qualified" version="2">
+
+	<xs:element name="SILConvertersInstallerDetails" msdata:IsDataSet="true" msdata:EnforceConstraints="false">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="MapsTables" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="MapTable" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:choice>
+											<xs:element name="autoInstall" minOccurs="0" maxOccurs="1">
+												<xs:complexType>
+													<xs:attribute name="mappingName" form="unqualified" type="xs:string" use="required" />
+													<xs:attribute name="converterSpec" form="unqualified" type="xs:string" use="required" />
+													<xs:attribute name="IsConverterSpecAFile" form="unqualified" type="xs:boolean" default="false" />
+													<xs:attribute name="conversionType" form="unqualified" type="conversionTypes" use="required" />
+													<xs:attribute name="implementType" form="unqualified" type="mstns:implementTypes" use="required" />
+													<xs:attribute name="leftEncoding" form="unqualified" type="xs:string" default="" />
+													<xs:attribute name="rightEncoding" form="unqualified" type="xs:string" default="" />
+													<xs:attribute name="processType" form="unqualified" type="mstns:processTypes" default="DontKnow" />
+													<xs:attribute name="sampleData" form="unqualified" type="xs:string" default="Test Data" />
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="scriptInstall" minOccurs="0" maxOccurs="1">
+												<xs:complexType>
+													<xs:attribute name="filename" form="unqualified" type="xs:string" use="required" />
+													<xs:attribute name="mappingName" form="unqualified" type="xs:string" use="required" />
+													<xs:attribute name="implementType" form="unqualified" type="mstns:implementTypes" use="required" />
+													<xs:attribute name="conversionType" form="unqualified" type="conversionTypes" />
+													<xs:attribute name="converterSpec" form="unqualified" type="xs:string" />
+													<xs:attribute name="IsConverterSpecAFile" form="unqualified" type="xs:boolean" default="false" />
+													<xs:attribute name="sampleData" form="unqualified" type="xs:string" default="Test Data" />
+												</xs:complexType>
+											</xs:element>
+										</xs:choice>
+										<xs:element name="FilesToInstall" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="FileToInstall" minOccurs="1" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence />
+															<xs:attribute name="filename" form="unqualified" type="xs:string" use="required" />
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="description" form="unqualified" type="xs:string" use="optional" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:key name="MapNamePlusConverterSpecKey" msdata:PrimaryKey="true">
+			<xs:selector xpath=".//mstns:autoInstall" />
+			<xs:field xpath="@mappingName" />
+			<xs:field xpath="@converterSpec" />
+		</xs:key>
+		<xs:key name="ScriptNameKey" msdata:PrimaryKey="true">
+			<xs:selector xpath=".//mstns:scriptInstall" />
+			<xs:field xpath="@filename" />
+		</xs:key>
+	</xs:element>
+	<xs:simpleType name="conversionTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LegacyToFromUnicode" />
+			<xs:enumeration value="LegacyToFromLegacy" />
+			<xs:enumeration value="LegacyToUnicode" />
+			<xs:enumeration value="LegacyToLegacy" />
+			<xs:enumeration value="UnicodeToFromUnicode" />
+			<xs:enumeration value="UnicodeToFromLegacy" />
+			<xs:enumeration value="UnicodeToUnicode" />
+			<xs:enumeration value="UnicodeToLegacy" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="processTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DontKnow" />
+			<xs:enumeration value="UnicodeEncodingConversion" />
+			<xs:enumeration value="Transliteration" />
+			<xs:enumeration value="ICUTransliteration" />
+			<xs:enumeration value="ICUConverter" />
+			<xs:enumeration value="CodePageConversion" />
+			<xs:enumeration value="NonUnicodeEncodingConversion" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="implementTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SIL.cc" />
+			<xs:enumeration value="SIL.map" />
+			<xs:enumeration value="SIL.tec" />
+			<xs:enumeration value="SIL.tecForm" />
+			<xs:enumeration value="ICU.conv" />
+			<xs:enumeration value="ICU.trans" />
+			<xs:enumeration value="ICU.regex" />
+			<xs:enumeration value="cp" />
+			<xs:enumeration value="SIL.comp" />
+			<xs:enumeration value="SIL.PyScript" />
+			<xs:enumeration value="SIL.PerlExpression" />
+			<xs:enumeration value="SIL.fallback" />
+			<xs:enumeration value="SIL.AdaptItKB" />
+			<xs:enumeration value="SIL.Font2Iscii" />
+			<xs:enumeration value="SIL.ITrans" />
+			<xs:enumeration value="SIL.UTrans" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

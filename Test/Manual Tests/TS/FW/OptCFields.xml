@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="tlsoptcf" num="2.7.9.5" abbr="tlocf" file="FW\OptCFields.xml">
+<title tag="tlsoptcf">Tools-Options-Custom Fields Tab Tests</title>
+<index>
+<li>test</li>
+</index>
+
+<introduction>
+<p>The user adds, selects, deletes and modifies various custom fields and their specifications.</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheCustomFieldsTab" type="doc">Tools-Options-Custom Fields Tab</link>
+</p>
+</introduction>
+
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Options-Custom Fields Tab"</p>
+</context>
+
+<case id="tlocfAct" num="0" order="any">
+<title tag="tlocfAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Tools-Options-Custom Fields Tab. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheCustomFieldsTab" type="doc">Tools-Options-Custom Fields Tab specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab dialog fails to open</p>
+<p name="bug">Tools-Options-Custom Fields Tab dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The first custom field in list is highlighted.</li>
+<li>The field's data is displayed in the Settings fields.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields TabTools-Options-Custom Fields Tab first custom field in list is highlighted failed</p>
+<p name="bug">Tools-Options-Custom Fields TabTools-Options-Custom Fields Tab its data populates the Settings fields failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The custom field is added to selected types of application objects.</li>
+<li>Report any failures as suggested using "Tools-Options-Custom Fields Tab" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab dialog remains after OK</p>
+<p name="bug">Tools-Options-Custom Fields Tab custom field is added to selected types of application objects failed</p>
+</step>
+</case>
+
+<case id="tlocfdef" num="2" order="any">
+<title tag="tlocfdef">Define In Combo Box</title>
+<context>
+<p>When the Custom Fields tab  is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;e&gt; to test the Define in combo box.
+ <r>
+<ul>
+  <li>The shortcut "e" is underlined.</li>
+  <li>There is a drop-down list widget to the side of the textbox.</li>
+  <li>The default is "All Entry Types".</li>
+  <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Define in".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab Define in shortcut is not &lt;e&gt;</p>
+<p name="bug">Tools-Options-Custom Fields Tab Define in missing drop-down</p>
+<p name="bug">Tools-Options-Custom Fields Tab Define in default is not "All Entry Types"</p>
+</step>
+
+<step name="2.2" link="Bug">Click the drop-down widget.
+ <r>
+<ul>
+  <li>The list appears.</li>
+  <li>The list contains major types of objects in application. In DataNotebook v1, the following are included:
+   <ul>
+	<li>Event Entry</li>
+	<li>Analysis Entry</li>
+   </ul>
+</li>
+  <li>The list contains <i>All Entry Types</i>.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields TabDefine in drop-down not showing</p>
+<p name="bug">Tools-Options-Custom Fields TabDefine in drop list missing &lt;major types of objects in application&gt;</p>
+<p name="bug">Tools-Options-Custom Fields TabDefine in drop list missing &lt;All Entry Types&gt;</p>
+</step>
+
+<step name="2.3" link="Bug">Select an item.
+ <r>Object name replaces text in text box.</r>
+<p name="bug">Tools-Options-Custom Fields Tab Select failed</p>
+</step>
+
+<step name="2.4" link="Bug">Select Any Entry Type:
+ <r>Selecting an entry type of:
+  <ul>
+   <li>Any Entry Type - Custom fields common to all entry types are displayed.</li>
+   <li>Other type - Custom fields belonging to the type are displayed</li>
+  </ul>
+ The first custom field in any view is highlighted
+ </r>
+<p name="bug">Tools-Options-Custom Fields Tab Custom Fields Define in failed</p>
+</step>
+</case>
+
+<case id="tlocfcfld" num="3" order="any">
+<title tag="tlocfcfld">Custom Fields List Box</title>
+<context>
+<p>When the Custom Fields tab  is displayed</p>
+</context>
+
+<step name="3.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;C&gt; to test the Custom Fields list box.
+ <r>
+<ul>
+  <li>The shortcut "C" is underlined.</li>
+  <li>There is a list below the text box.</li>
+  <li>The default contents of the list are the custom fields belonging to the type displayed in the Define in combo box.</li>
+  <li>The default selection is the first custom field on the list.</li>
+  <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Custom Fields".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab Custom Fields shortcut is not &lt;C&gt;</p>
+<p name="bug">Tools-Options-Custom Fields Tab Custom Fields has list problems</p>
+<p name="bug">Tools-Options-Custom Fields Tab Custom Fields default is not "&lt;custom fields belonging to the 'Define in' object&gt;"</p>
+</step>
+
+<step name="3.2" link="Bug">Check the list entries.
+ <r>
+<ul>
+  <li>The cursor highlights each item.</li>
+  <li>On highlighting each item, the corresponding details are displayed in the Settings frame.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields TabCustom Fields list items not highlighted</p>
+<p name="bug">Tools-Options-Custom Fields TabCustom Fields drop list missing &lt;custom fields belonging to the 'Define in' object&gt;</p>
+</step>
+</case>
+
+<case id="tlocfadd" num="4" order="any">
+<title tag="tlocfadd">Add Button</title>
+<context>
+<p>When the Custom Fields tab  is displayed</p>
+</context>
+
+<step name="4.1" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;A&gt; to test the Add button.
+ <r>
+<ul>
+  <li>The shortcut "A" is underlined.</li>
+  <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Add".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab Add shortcut is not &lt;A&gt;</p>
+</step>
+
+<step name="4.2" link="Bug">Click the Add button.
+ <r>Creates a new custom field:
+  <ul>
+   <li>Names it 'New Field(i)'. (i is an index starting at 1; the first one has no (i))</li>
+   <li>New field opened in an in-place edit box</li>
+   <li>Makes sure name is unique before accepting new name (names must be unique across all the different types specified in the Define in combo box)</li>
+  </ul>
+ </r>
+<p name="bug">Tools-Options-Custom Fields Tab Add failed</p>
+</step>
+</case>
+
+
+<case id="tlocfdel" num="5" order="any">
+<title tag="tlocfdel">Delete Button</title>
+<context>
+<p>When the Custom Fields tab is displayed</p>
+</context>
+
+<step name="5.1" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;D&gt; to test the Delete button.
+ <r>
+<ul>
+  <li>The shortcut "D" is underlined.</li>
+  <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Delete".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab Delete shortcut is not &lt;D&gt;</p>
+</step>
+
+<step name="5.2" link="Bug">Select a custom field that has just been created and click the Delete button.
+ <r>The field is deleted without confirmation.</r>
+<p name="bug">Tools-Options-Custom Fields Tab Click When just created failed</p>
+</step>
+
+<step name="5.3" link="Bug">Select a custom field that is already existing and click the Delete button.
+ <r>Brings up dialog:
+  <ul>
+   <li>If data exists in field, an information dialog is displayed with the text, <i>"This custom field currently contains data. First delete any data that is in this field. Then try to delete the field again."</i>
+</li>
+   <li>The field is not deleted. </li>
+   <li>If no data exists in field, a confirmation dialog is displayed with the text <i>"This deletion is permanent and cannot be reversed with Undo. Are you sure you want to delete this field?"</i>
+</li>
+   <li>Selecting Yes will delete the field.</li>
+   <li>Selecting No will not delete the field.</li>
+  </ul>
+ </r>
+<p name="bug">Tools-Options-Custom Fields Tab Delete failed</p>
+</step>
+</case>
+
+<case id="tlocfset" num="6" order="any">
+<title tag="tlocfset">Settings Pallet</title>
+<context>
+<p>When the Custom Fields tab  is displayed</p>
+</context>
+
+<step name="6.1">Use the <link uri="../StdCtrls/TextBox.xml">Text Box Tests</link> and the shortcut &lt;Alt&gt;&lt;r&gt; to test the Description text box.<r>
+<ul>
+</ul>
+</r>
+ <r>Report any failures using the first words, "Tools-Options-Custom Fields Tab Delete".</r>
+</step>
+
+<step name="6.2" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the Field Type combo box.
+ <r>In v1, the following items are available:
+  <ul>
+   <li>Single-Line Text</li>
+   <li>Multiparagraph text (not sortable)</li>
+   <li>List Reference</li>
+   <li>Date</li>
+   <li>Integer</li>
+   <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Field Type".</li>
+  </ul>
+ The default selection is Single-line Text.</r>
+<p name="bug">Tools-Options-Custom Fields Tab Field Type combo failed</p>
+</step>
+
+<step name="6.3" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;R&gt; to test the References this List combo box.
+ <r>
+<ul>
+  <li>This combo box and the ... button next to it are gray and inactive until the List Reference is selected in the Field Type combo.</li>
+  <li>The items in the box are the Topics Lists currently existing in the project.</li>
+  <li>The ... button launches the Topics List dialog.</li>
+  <li>The selected item in either the combo box or the Topics List dialog is displayed in the References this List combo box.</li>
+  <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab References this List".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab References this List combo failed</p>
+</step>
+
+<step name="6.4" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;N&gt; to test the Number of List Items combo box.
+ <r>
+<ul>
+  <li>This combo box is gray and inactive until the List Reference is selected in the Field Type combo.</li>
+  <li>The items in the box are:
+   <ul>
+	<li>One Item</li>
+	<li>Any Number of Items</li>
+   </ul>
+</li>
+  <li>The default for list Reference Fields is Any Number of Items. (Later versions may have other fields with different default selection)</li>
+  <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Number of List Items".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab Number of List Items combo failed</p>
+</step>
+
+<step name="6.5" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;W&gt; to test the Default Writing System combo box.
+ <r>
+<ul>
+  <li>This combo box is gray and inactive until Single-line text or a structured text field is selected in the Field Type combo.</li>
+  <li>For structured text, the available selections are:
+   <ul>
+	<li>First Analysis Writing System</li>
+	<li>First Vernacular Writing System</li>
+   </ul>
+</li>
+  <li>For Single-line Text, the available selections are:
+   <ul>
+	<li>First Analysis Writing System</li>
+	<li>Multiple Analysis Writing System</li>
+	<li>First Vernacular Writing System</li>
+	<li>Multiple Vernacular Writing System</li>
+   </ul>
+</li>
+  <li>The default for both cases is First Analysis Writing System</li>
+  <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Default Writing System".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Custom Fields Tab Default Writing System combo failed</p>
+</step>
+</case>
+
+
+<case id="tlocfeff" num="7" order="any">
+<title tag="tlocfeff">Effects of Custom Field Creation</title>
+<context>
+<p>When the Custom Fields tab is displayed</p>
+</context>
+
+<step name="7.1" link="Bug">Create a custom field. Then go to the General tab.
+ <r>The custom field appears in the General tab and is specified with it's data Not required.</r>
+<p name="bug">Tools-Options-Custom Fields Tab data requirement of Custom Field incorrect</p>
+</step>
+
+<step name="7.2" link="Bug">Create a custom field. Then go to the Views tab.
+ <r>The new field appears in all the views and relevant templates with the following visibility settings:
+  <ul>
+   <li>Data Entry views - Always</li>
+   <li>Document views - If data present</li>
+   <li>All other types of views - Hidden</li>
+   <li>Report any failures using the first words, "Tools-Options-Custom Fields Tab Define in".</li>
+  </ul>
+ </r>
+<p name="bug">Tools-Options-Custom Fields Tab visibility of Custom Field incorrect</p>
+</step>
+
+<step name="7.3" link="Bug">Create a custom field, close the dialog, and reopen it. Select the custom field.
+ <r>Except for the Description field, the custom field's settings are all gray and cannot be changed.</r>
+<p name="bug">Tools-Options-Custom Fields Tab custom field's settings modifiable after creation</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="Jun-14-02" author="JoelC">Updated.</update>
+
+</test>

@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="m_precisionComboBox.Items" xml:space="preserve">
+	<value>Before</value>
+  </data>
+  <data name="m_precisionComboBox.Items1" xml:space="preserve">
+	<value>On</value>
+  </data>
+  <data name="m_precisionComboBox.Items2" xml:space="preserve">
+	<value>About</value>
+  </data>
+  <data name="m_precisionComboBox.Items3" xml:space="preserve">
+	<value>After</value>
+  </data>
+  <data name="m_precisionComboBox.Items4" xml:space="preserve">
+	<value>No Date</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_precisionComboBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 12</value>
+  </data>
+  <data name="m_precisionComboBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>63, 21</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_precisionComboBox.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_precisionComboBox.Name" xml:space="preserve">
+	<value>m_precisionComboBox</value>
+  </data>
+  <data name="&gt;&gt;m_precisionComboBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_precisionComboBox.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_precisionComboBox.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_monthComboBox.Items" xml:space="preserve">
+	<value>Jan</value>
+  </data>
+  <data name="m_monthComboBox.Items1" xml:space="preserve">
+	<value>Feb</value>
+  </data>
+  <data name="m_monthComboBox.Items2" xml:space="preserve">
+	<value>Mar</value>
+  </data>
+  <data name="m_monthComboBox.Items3" xml:space="preserve">
+	<value>Apr</value>
+  </data>
+  <data name="m_monthComboBox.Items4" xml:space="preserve">
+	<value>May</value>
+  </data>
+  <data name="m_monthComboBox.Items5" xml:space="preserve">
+	<value>Jun</value>
+  </data>
+  <data name="m_monthComboBox.Items6" xml:space="preserve">
+	<value>Jul</value>
+  </data>
+  <data name="m_monthComboBox.Items7" xml:space="preserve">
+	<value>Aug</value>
+  </data>
+  <data name="m_monthComboBox.Items8" xml:space="preserve">
+	<value>Sep</value>
+  </data>
+  <data name="m_monthComboBox.Items9" xml:space="preserve">
+	<value>Oct</value>
+  </data>
+  <data name="m_monthComboBox.Items10" xml:space="preserve">
+	<value>Nov</value>
+  </data>
+  <data name="m_monthComboBox.Items11" xml:space="preserve">
+	<value>Dec</value>
+  </data>
+  <data name="m_monthComboBox.Items12" xml:space="preserve">
+	<value>Unknown</value>
+  </data>
+  <data name="m_monthComboBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>81, 12</value>
+  </data>
+  <data name="m_monthComboBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>52, 21</value>
+  </data>
+  <data name="m_monthComboBox.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_monthComboBox.Name" xml:space="preserve">
+	<value>m_monthComboBox</value>
+  </data>
+  <data name="&gt;&gt;m_monthComboBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_monthComboBox.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_monthComboBox.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_dayComboBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>139, 12</value>
+  </data>
+  <data name="m_dayComboBox.MaxDropDownItems" type="System.Int32, mscorlib">
+	<value>32</value>
+  </data>
+  <data name="m_dayComboBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>52, 21</value>
+  </data>
+  <data name="m_dayComboBox.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_dayComboBox.Name" xml:space="preserve">
+	<value>m_dayComboBox</value>
+  </data>
+  <data name="&gt;&gt;m_dayComboBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_dayComboBox.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_dayComboBox.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_okButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>81, 229</value>
+  </data>
+  <data name="m_okButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_okButton.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="m_okButton.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;m_okButton.Name" xml:space="preserve">
+	<value>m_okButton</value>
+  </data>
+  <data name="&gt;&gt;m_okButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_okButton.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_okButton.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_cancelButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>162, 229</value>
+  </data>
+  <data name="m_cancelButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_cancelButton.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="m_cancelButton.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;m_cancelButton.Name" xml:space="preserve">
+	<value>m_cancelButton</value>
+  </data>
+  <data name="&gt;&gt;m_cancelButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cancelButton.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cancelButton.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_helpButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>244, 229</value>
+  </data>
+  <data name="m_helpButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_helpButton.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="m_helpButton.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.Name" xml:space="preserve">
+	<value>m_helpButton</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_yearUpDown.Location" type="System.Drawing.Point, System.Drawing">
+	<value>197, 13</value>
+  </data>
+  <data name="m_yearUpDown.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 20</value>
+  </data>
+  <data name="m_yearUpDown.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_yearUpDown.Name" xml:space="preserve">
+	<value>m_yearUpDown</value>
+  </data>
+  <data name="&gt;&gt;m_yearUpDown.Type" xml:space="preserve">
+	<value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_yearUpDown.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_yearUpDown.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_calendar.Location" type="System.Drawing.Point, System.Drawing">
+	<value>48, 45</value>
+  </data>
+  <data name="m_calendar.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_calendar.Name" xml:space="preserve">
+	<value>m_calendar</value>
+  </data>
+  <data name="&gt;&gt;m_calendar.Type" xml:space="preserve">
+	<value>System.Windows.Forms.MonthCalendar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_calendar.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_calendar.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_eraComboBox.Items" xml:space="preserve">
+	<value>AD</value>
+  </data>
+  <data name="m_eraComboBox.Items1" xml:space="preserve">
+	<value>BC</value>
+  </data>
+  <data name="m_eraComboBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>279, 12</value>
+  </data>
+  <data name="m_eraComboBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>43, 21</value>
+  </data>
+  <data name="m_eraComboBox.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_eraComboBox.Name" xml:space="preserve">
+	<value>m_eraComboBox</value>
+  </data>
+  <data name="&gt;&gt;m_eraComboBox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_eraComboBox.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_eraComboBox.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>58, 73</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>112, 13</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+	<value>No Calendar Available</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>m_emptyCalendar</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_emptyCalendar.Location" type="System.Drawing.Point, System.Drawing">
+	<value>48, 45</value>
+  </data>
+  <data name="m_emptyCalendar.Size" type="System.Drawing.Size, System.Drawing">
+	<value>224, 162</value>
+  </data>
+  <data name="m_emptyCalendar.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="&gt;&gt;m_emptyCalendar.Name" xml:space="preserve">
+	<value>m_emptyCalendar</value>
+  </data>
+  <data name="&gt;&gt;m_emptyCalendar.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_emptyCalendar.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_emptyCalendar.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <metadata name="m_helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AccessibleName" xml:space="preserve">
+	<value>GenDateChooserDlg</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>333, 264</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Choose Generic Date</value>
+  </data>
+  <data name="&gt;&gt;m_helpProvider.Name" xml:space="preserve">
+	<value>m_helpProvider</value>
+  </data>
+  <data name="&gt;&gt;m_helpProvider.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>GenDateChooserDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

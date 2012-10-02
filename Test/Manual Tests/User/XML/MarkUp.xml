@@ -1,0 +1,34 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="XML\MarkUp.xml">
+ <title tag="xmlMrk">What is markup?</title>
+ <index>
+  <li>markup</li>
+  <li>encoding</li>
+  <li>tags</li>
+  <li>attributes</li>
+  <li>descriptive markup</li>
+ </index>
+ <definition>
+  <p>In the context of XML and its predecessors <link uri="http://www.w3.org/MarkUp/" type="doc">HTML (Hypertext Markup Language)</link> and <link uri="http://www-tei.uic.edu/orgs/tei/sgml/teip3sg/SG.htm" type="doc">SGML (Standard General Markup Language)</link>, "markup" is a specific set of conventions that categorize the parts of a document. All three of the markup languages above have a similar set of conventions.</p>
+<p>Here are some of the common conventions of these markup languages:</p>
+  <ul>
+   <li>All are rendered in plain text, though they may express any rendering, such as non-Roman script or mathematical notation (as in MathML).</li>
+   <li>Each uses tags. There are begin tags, &lt;tag-name>, paired with end tags of the same name, &lt;/tag-name> surounding some piece of text that is its content. The content text is said to be "tagged" and is identified by the tag via programs that read the markup. There are also empty tags, &lt;tag-name/>, that contain no text but provide insertion points for external media like pictures or processing instructions.</li>
+   <li>Tags have attributes. &lt;p align="center">paragraph content&lt;/p> is a tagged paragraph that should be centered when rendered. However, if the program reading it is building an index of all words in paragraphs, then it may ignore the attribute entirely. In this sense, the content of the marked up document is independent of its use.</li>
+   <li>Tags and attributes are defined in a <b>Document Type Definition (DTD)</b>. That means all documents of a particular type use the same sets of tags and their attributes for markup. HTML has a DTD that defines what its tags and their attributes are. XML and SGML allow you to create your own DTD or <i>document type</i> for whatever your processing needs are. XML actually goes a step further and does not require a DTD, but only that the tags and attributes used have beginning tags paired with ending tags or are empty tags and that they nest (not over-lap). This is called a <i>well-formed</i> XML document.</li>
+  </ul>
+ </definition>
+ <benefits>
+  <p>Here are some benefits of markup languages:</p>
+  <ul>
+   <li>It's all simple text. Strictly speaking, only a text editor is needed to get started. However, you can increase your productivity using special editors, some of which are free or low cost.</li>
+   <li>It's structured so it can easily be processed with specialized tools and general ones like PERL, JavaScript or Visual Basic script, giving the data a measure of platform independence. More and more tools of this kind are being incorporated into web browsers making all or parts of your data available on the web in the way you want it portrayed.</li>
+   <li>Special rendering encodings and even snippets of web-script or computer code can be embedded in it for special processing by programs equiped to handle the target media or device. This "graceful degradation" of presentation allows your data to come through as fully as possible on less capable devices or outdated systems.</li>
+<li>Markup languages (SGML in particular) have been around since the early 80's. There are many examples and resources on the web and in industry to draw on.</li>
+<li>It is an "open/free" technology. No one company dictates its direction or future.</li>
+  </ul>
+ </benefits>
+ <seeAlso>
+  <li><link uri="XML.xml" type="module">What is XML?</link></li>
+ </seeAlso>
+</concept>

@@ -1,0 +1,48 @@
+;Test prules that affect more than one segment.
+;First load the nat classes (msg 6541):
+(load_nat_class message <nat_class name high_v     features (cons - voc + high +)>)
+(load_nat_class message <nat_class name back_rnd   features (back + round +)>)
+(load_nat_class message <nat_class name back_rnd_v features (cons - voc + back + round +)>)
+(load_nat_class message <nat_class name t    features (cons + poa alveolar del_rel - asp - vd - strident -)>)
+(morpher_set message (*quit_on_error* false))
+;Try a prule that affects two segments at a time (msg 6505):
+; ii -> uu / u __
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class high_v><simp_cntxt class high_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class back_rnd><simp_cntxt class back_rnd>)
+						  left_environ <ptemp pseq (<simp_cntxt class back_rnd_v>)>
+					>
+				   )
+  >
+)
+;Trace it
+(trace_morpher_rule message (true true rule1))
+;Now we morph a word (1x ambiguous):
+(morph_and_lookup_word pretty_print buuubuuu)
+;Now we add another rule: t --> 0 / u__u.  The purpose is to ensure we
+; correctly treat the target of rule1 when there's an "optional" segment
+; in between
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class t>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class back_rnd_v>)>
+						  right_environ <ptemp pseq (<simp_cntxt class back_rnd_v>)>
+					>
+				   )
+  >
+)
+(morph_and_lookup_word pretty_print buuubuuu)
+
+(morpher_set message (*quit_on_error* true))
+
+(remove_morpher_rule message rule1)
+(remove_morpher_rule message rule2)
+;...and the natural classes:
+(remove_nat_class message high_v)
+(remove_nat_class message back_rnd)
+(remove_nat_class message back_rnd_v)
+(remove_nat_class message t)

@@ -1,0 +1,21 @@
+HKCR
+{
+	SilEncConverters31.IcuECConverter.40 = s 'Icu Encoding Converter Class'
+	{
+		CLSID = s '{3998D0AF-887F-4724-A7A1-ACCBBD69652B}'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {3998D0AF-887F-4724-A7A1-ACCBBD69652B} = s 'Icu Encoding Converter Class'
+		{
+			ProgID = s 'SilEncConverters31.IcuECConverter.40'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			TypeLib = s '{6E560CF3-4FCB-4f1f-B686-273F5999F855}'
+		}
+	}
+}

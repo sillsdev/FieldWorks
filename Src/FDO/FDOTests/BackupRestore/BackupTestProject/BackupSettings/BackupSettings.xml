@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<BackupProjectSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Comment>TestBackup all files</Comment>
+  <ConfigurationSettings>true</ConfigurationSettings>
+<DateOfBackup>2010-5-7</DateOfBackup>
+  <DestinationFolder>C:\Users\maclean.DALLAS\Documents\My FieldWorks\Backups\</DestinationFolder>
+  <HourOfBackup>11</HourOfBackup>
+<MediaFiles>true</MediaFiles>
+  <MinuteOfBackup>33</MinuteOfBackup>
+<ProjectName>BackupRestoreTestProject</ProjectName>
+  <SupportingFiles>true</SupportingFiles>
+</BackupProjectSettings>

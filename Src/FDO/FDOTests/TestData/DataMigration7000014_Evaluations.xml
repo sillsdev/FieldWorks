@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000013">
+	<!-- Version 7000013 data to test.-->
+  <rt class="LangProject" guid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<CmObject />
+	<LangProject>
+	  <DiscourseData>
+		<objsur guid="c1ec5c4c-e382-11de-8a39-0800200c9a66" t="o" />
+	  </DiscourseData>
+	</LangProject>
+  </rt>	<rt class="CmAgent" guid="c1ec8357-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+	<CmAgent>
+			<Evaluations>
+				<objsur t="o" guid="c84614e6-168b-4304-a025-0d6ae6573085" />
+				<objsur t="o" guid="c84614e6-168b-4304-a025-0d6ae6573088" />
+			</Evaluations>
+		</CmAgent>
+	</rt>
+  <rt class="CmAgent" guid="c1ec8357-e382-11de-8a39-0800200c9a67" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<CmObject />
+	<CmAgent>
+	  <Evaluations>
+		<objsur t="o" guid="8151a002-a32e-476f-9c32-f95ee48fc71c" />
+	  </Evaluations>
+	</CmAgent>
+  </rt>
+  <rt class="CmAgent" guid="c1ec8357-e382-11de-8a39-0800200c9a68" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<CmObject />
+	<CmAgent>
+	  <Evaluations>
+		<objsur t="o" guid="c84614e6-168b-4304-a025-0d6ae657308a" />
+	  </Evaluations>
+	</CmAgent>
+  </rt>
+  <!-- An agent with no evaluations. -->
+  <rt class="CmAgent" guid="c1ec8357-e382-11de-8a39-0800200c9a6c" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<CmObject />
+	<CmAgent>
+	</CmAgent>
+  </rt>
+  <rt class="WfiWordform" guid="c84614e6-168b-4304-a025-0d6ae657308b">
+	<CmObject />
+	<Analyses>
+	  <objsur t="o" guid="c84614e6-168b-4304-a025-0d6ae6573086" />
+	  <objsur t="o" guid="c84614e6-168b-4304-a025-0d6ae6573087" />
+	</Analyses>
+  </rt>
+  <rt class="WfiAnalysis" guid="c84614e6-168b-4304-a025-0d6ae6573086" ownerguid="c84614e6-168b-4304-a025-0d6ae657308b">
+	<CmObject />
+	<WfiAnalysis>
+	</WfiAnalysis>
+  </rt>
+  <rt class="WfiAnalysis" guid="c84614e6-168b-4304-a025-0d6ae6573087" ownerguid="c84614e6-168b-4304-a025-0d6ae657308b">
+	<CmObject />
+	<WfiAnalysis>
+	</WfiAnalysis>
+  </rt>
+
+  <rt class="CmAgentEvaluation" guid="c84614e6-168b-4304-a025-0d6ae6573085" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a66">
+		<!-- Positive evaluation of first WfiAnalysis by first agent.-->
+		<CmObject />
+	<CmAgentEvaluation>
+			<Accepted val="True" />
+	  <Target>
+		<objsur t="r" guid="c84614e6-168b-4304-a025-0d6ae6573086" />
+	  </Target>
+	</CmAgentEvaluation>
+	</rt>
+	<rt class="CmAgentEvaluation" guid="8151a002-a32e-476f-9c32-f95ee48fc71c" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a67">
+		<!-- Negative evaluation of first WfiAnalysis by second agent.-->
+		<CmObject />
+	<CmAgentEvaluation>
+	  <Accepted val="False" />
+	  <Target>
+		<objsur t="r" guid="c84614e6-168b-4304-a025-0d6ae6573086" />
+	  </Target>
+	</CmAgentEvaluation>
+  </rt>
+  <rt class="CmAgentEvaluation" guid="c84614e6-168b-4304-a025-0d6ae6573088" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a66">
+	<!-- Positive evaluation of second WfiAnalysis by first agent.-->
+	<CmObject />
+	<CmAgentEvaluation>
+	  <Accepted val="True" />
+	  <Target>
+		<objsur t="r" guid="c84614e6-168b-4304-a025-0d6ae6573087" />
+	  </Target>
+	</CmAgentEvaluation>
+  </rt>
+  <rt class="CmAgentEvaluation" guid="c84614e6-168b-4304-a025-0d6ae657308a" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a68">
+	<!-- Positive evaluation of first WfiAnalysis by third agent.-->
+	<CmObject />
+	<CmAgentEvaluation>
+	  <Accepted val="True" />
+	  <Target>
+		<objsur t="r" guid="c84614e6-168b-4304-a025-0d6ae6573086" />
+	  </Target>
+	</CmAgentEvaluation>
+  </rt>
+</languageproject>

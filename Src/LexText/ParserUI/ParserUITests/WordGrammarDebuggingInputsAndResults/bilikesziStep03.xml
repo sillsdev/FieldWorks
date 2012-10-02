@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>bilikeszi</form>
+  <seq step="Try to build a Word analysis node on a Full analysis node.">
+	<word syncat="167" syncatAbbr="trans">
+	  <failure>The category 'trans' requires inflection, but there was no inflection.</failure>
+	  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+		<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>*bili (to.see): himbilira</shortName>
+			<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </full>
+	</word>
+	<morph wordType="suffix">
+	  <shortName>-kes (???): kes</shortName>
+	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+	<morph wordType="102">
+	  <shortName>-zi (1SgPoss): la</shortName>
+	  <inflClasses>
+		<inflClass hvo="100" abbr="II" />
+	  </inflClasses>
+	  <inflMsa slot="102" slotAbbr="Possessor" />
+	</morph>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a Full analysis node with sequences of affixes not labeled as either derivational or inflectional (the sequence may also include derivational affixes).">
+	<partial inflected="-" syncat="167" syncatAbbr="trans">
+	  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+		<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>*bili (to.see): himbilira</shortName>
+			<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </full>
+	  <morph wordType="suffix">
+		<shortName>-kes (???): kes</shortName>
+		<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	  </morph>
+	</partial>
+	<morph wordType="102">
+	  <shortName>-zi (1SgPoss): la</shortName>
+	  <inflClasses>
+		<inflClass hvo="100" abbr="II" />
+	  </inflClasses>
+	  <inflMsa slot="102" slotAbbr="Possessor" />
+	</morph>
+  </seq>
+</word>

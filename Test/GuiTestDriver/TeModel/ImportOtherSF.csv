@@ -1,0 +1,51 @@
+Test Case,Modified TC,Scripture,Back Trans,Trans Notes,What to Import,Intro,Types of Data,Scr Intro,Scr,BT Intro,BT,Notes Intro,Notes,MRF Scr,MRF BT,MRF Notes,Test Plan,Version,Date,Run Test,JIRA Issue,Comment
+1,,MUPS1,(none),(none),Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+2,,MUPS2,(none),(none),Entire Scripture Project,No,"F01 - Scripture, BT, Annotations",N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+3,,MUPS1,(none),(none),Entire Scripture Project,No,F02 - Scripture,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+4,,MUPS2,(none),(none),Entire Scripture Project,Yes,F02 - Scripture,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+5,,MUPS3,(none),(none),Entire Scripture Project,Yes,F03 - BT,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+6,,MUPS4,(none),(none),Entire Scripture Project,No,F03 - BT,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+7,,MUPS3,(none),(none),Entire Scripture Project,No,F04 - Annotations,N,N,,N,N,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+8,,MUPS4,(none),(none),Entire Scripture Project,Yes,F04 - Annotations,N,N,,N,Y,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+9,,MUPS2,(none),MUPN1,Entire Scripture Project,Yes,F05 - Scripture & BT,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+10,,MUPS2,(none),MUPN2,Entire Scripture Project,No,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+11,,MUPS2,(none),MUPN1,Entire Scripture Project,No,F06 - Scripture & Annotations,N,Y,,N,N,Y,MupScrNoIntro.sfm,(none),MupNotesP1.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+12,,MUPS2,(none),MUPN2,Entire Scripture Project,Yes,F06 - Scripture & Annotations,Y,Y,,N,Y,Y,MupScrIntro.sfm,(none),MupNotesP2.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+13,,MUPS1,(none),(none),Entire Scripture Project,Yes,F07 - BT & Annotations,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+14,,MUPS2,(none),(none),Entire Scripture Project,No,F07 - BT & Annotations,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+15,,MUPS3,(none),(none),Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",N,Y,,N,N,Y,MupScrNoIntro.sfm,(none),MupNotesJ1.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+16,,MUPS4,(none),(none),Entire Scripture Project,No,"F01 - Scripture, BT, Annotations",N,Y,,N,Y,Y,MupScrNoIntro.sfm,(none),MupNotesJ2.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+17,,MUPS3,(none),(none),Entire Scripture Project,No,F02 - Scripture,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+18,,MUPS4,(none),(none),Entire Scripture Project,Yes,F02 - Scripture,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+19,,MUPS1,(none),(none),Entire Scripture Project,No,F03 - BT,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+20,,MUPS2,(none),(none),Entire Scripture Project,Yes,F03 - BT,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+21,,MUPS2,(none),MUPN1,Entire Scripture Project,Yes,F04 - Annotations,N,N,,N,N,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+22,,MUPS2,(none),MUPN2,Entire Scripture Project,No,F04 - Annotations,N,N,,N,Y,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+23,,MUPS1,(none),(none),Entire Scripture Project,Yes,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+24,,MUPS2,(none),(none),Entire Scripture Project,No,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+25,,MUPS1,(none),(none),Entire Scripture Project,No,F06 - Scripture & Annotations,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+26,,MUPS2,(none),(none),Entire Scripture Project,Yes,F06 - Scripture & Annotations,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+27,,MUPS2,(none),MUPN1,Entire Scripture Project,No,F07 - BT & Annotations,N,N,,N,N,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+28,,MUPS2,(none),MUPN2,Entire Scripture Project,Yes,F07 - BT & Annotations,N,N,,N,Y,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+29,,MUPS2,(none),MUPN1,Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",Y,Y,,N,N,Y,MupScrIntro.sfm,(none),MupNotesP1.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+30,,MUPS2,(none),MUPN2,Entire Scripture Project,No,"F01 - Scripture, BT, Annotations",N,Y,,N,Y,Y,MupScrNoIntro.sfm,(none),MupNotesP2.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+31,,MUPS2,(none),MUPN1,Entire Scripture Project,No,F02 - Scripture,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+32,,MUPS2,(none),MUPN2,Entire Scripture Project,Yes,F02 - Scripture,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+33,,MUPS2,(none),MUPN1,Entire Scripture Project,Yes,F03 - BT,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+34,,MUPS2,(none),MUPN2,Entire Scripture Project,No,F03 - BT,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+35,,MUPS1,(none),(none),Entire Scripture Project,Yes,F04 - Annotations,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+36,,MUPS2,(none),(none),Entire Scripture Project,No,F04 - Annotations,N,N,,N,N,N,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+37,,MUPS3,(none),(none),Entire Scripture Project,Yes,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+38,,MUPS4,(none),(none),Entire Scripture Project,No,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,N,TE-7627,
+39,,MUPS3,(none),(none),Entire Scripture Project,No,F06 - Scripture & Annotations,N,Y,,N,N,Y,MupScrNoIntro.sfm,(none),MupNotesJ1.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+40,,MUPS4,(none),(none),Entire Scripture Project,Yes,F06 - Scripture & Annotations,Y,Y,,N,Y,Y,MupScrIntro.sfm,(none),MupNotesJ2.sfm,ImportOtherSF,1,Nov 21 2008,YES,,
+41,,MUPS3,(none),(none),Entire Scripture Project,Yes,F07 - BT & Annotations,N,N,,N,N,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+42,,MUPS4,(none),(none),Entire Scripture Project,No,F07 - BT & Annotations,N,N,,N,Y,Y,(none),(none),(none),ImportOtherSF,1,Nov 21 2008,YES,,
+43,2,MUPS2,(none),(none),Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",N,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 2
+44,10,MUPS2,(none),MUPN2,Entire Scripture Project,Yes,F05 - Scripture & BT,N,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 10
+45,11,MUPS2,(none),MUPN1,Entire Scripture Project,Yes,F06 - Scripture & Annotations,N,Y,,N,N,Y,MupScrIntro.sfm,(none),MupNotesP1.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 11
+46,16,MUPS4,(none),(none),Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",N,Y,,N,Y,Y,MupScrIntro.sfm,(none),MupNotesJ2.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 16
+47,24,MUPS2,(none),(none),Entire Scripture Project,Yes,F05 - Scripture & BT,N,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 24
+48,30,MUPS2,(none),MUPN2,Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",N,Y,,N,Y,Y,MupScrIntro.sfm,(none),MupNotesP2.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 30
+49,31,MUPS2,(none),MUPN1,Entire Scripture Project,Yes,F02 - Scripture,N,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 31
+50,38,MUPS4,(none),(none),Entire Scripture Project,Yes,F05 - Scripture & BT,N,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,YES,TE-7627,Fixed test case 38

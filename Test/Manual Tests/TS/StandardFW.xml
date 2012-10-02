@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Feature.xsl"?>
+
+<features name="Standard FieldWorks Behaviour" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Features.html" file="StandardFW.xml">
+
+<f sl="1" obj="act" name="File-New Language Project" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File - New Language Project" test="FW/FileNewProject.xml"/>
+<f sl="1" obj="wiz" name="New Language Project" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl\Dialogs\NewLangProjWiz\NewLangProjWizard.html" test="FW/FileNewProject.xml"/>
+<f sl="2" obj="act" name="File-Open" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File - Open Language Project" test="FW/FileOpenProject.xml"/>
+<f sl="2" obj="dia" name="Open Project" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/OpenProject/OpenProjectDlg.html" test="FW/FileOpenProject.xml"/>
+<f sl="2" obj="dia" name="expanded Open Project" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/OpenProject/OpenProjectDlg.html#FileOpenTopicsList" test=""/>
+<f sl="2" obj="act" name="File-Save" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Save" test="FW/FileSave.xml"/>
+<f sl="1" obj="act" name="File-Page Setup" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-PageSetup" test="FW/PgSetup.xml"/>
+<f sl="1" obj="dia" name="Page Setup" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/PageSetup/PageSetup.html" test="FW/PgSetup.xml"/>
+<f sl="2" obj="act" name="File-Print Preview" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-PrintPreview" test="FW/FilePrtPrev.xml"/>
+<f sl="2" obj="pal" name="Print Preview Mode" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/PrintPreview/PrintPreview.html" test="FW/FilePrtPrev.xml"/>
+<f sl="1" obj="act" name="File-Print" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Print" test=""/>
+<f sl="1" obj="dia" name="Print" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Print/Print.html" test="StdCtrls/PrintDlg.xml"/>
+<f sl="2" obj="cas" name="File-Import" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File - Import" test="FW/FileImport.xml"/>
+<f sl="2" obj="wiz" name="Standard Format" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/StdFormatImportWizard/StdFormatImport.html" test="FW/FileImportStandard.xml"/>
+<f sl="2" obj="act" name="File-Export" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File - Export" test="FW/FileExport.xml"/>
+<f sl="2" obj="dia" name="Export" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/ImportExport/Export.html" test="FW/FileExport.xml"/>
+<f sl="2" obj="cas" name="File-Properties" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#FileProperties" test=""/>
+<f sl="2" obj="dia" name="(Application) Properties" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html" test="FW/FileProps.xml"/>
+<f sl="1" obj="dia" name="Language Project Properties" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Properties/Properties.html#LangProjProperties" test="FW/FilePropsProj.xml"/>
+<f sl="1" obj="tab" name="Language Project Properties-Writing System" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Properties/LangProjProperties.html" test="FW/WritSysProp.xml"/>
+<f sl="1" obj="wiz" name="New Language Definition" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangDefnWiz/NewLangDefnWizard.html" test="FW/FileNewLang.xml"/>
+<f sl="2" obj="act" name="File-Backup/Restore" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#FileBackupRestore" test="FW/BackupRestoreDlg.xml"/>
+<f sl="2" obj="dia" name="Backup/Restore" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/BackupRestoreDlg.html" test="FW/BackupRestore.xml"/>
+<f sl="2" obj="dia" name="Remind" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Reminder/BackupReminderDlg.html" test="FW/BackupReminderDlg.xml"/>
+<f sl="2" obj="dia" name="Schedule" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Schedule/BackupScheduleDlg.html" test="FW/BackupScheduleDlg.xml"/>
+<f sl="2" obj="dia" name="Already Exits" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/AlreadyExists/AlreadyExistsDlgs.html" test="FW/BackupRestore.xml"/>
+<f sl="2" obj="dia" name="Password" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Password/RestorePasswordDlg.html" test="FW/BackupPasswordDlg.xml"/>
+<f sl="2" obj="act" name="File-Exit" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Exit" test="FW/FileExit.xml"/>
+
+<f sl="2" obj="act" name="Edit-Undo" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Undo" test="FW/EdtUndo.xml"/>
+<f sl="2" obj="act" name="Edit-Redo" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Redo" test="FW/EdtRedo.xml"/>
+<f sl="2" obj="act" name="Edit-Cut" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Cut" test="FW/Edtccp.xml"/>
+<f sl="2" obj="act" name="Edit-Copy" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Copy" test="FW/Edtccp.xml"/>
+<f sl="2" obj="act" name="Edit-Paste" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Paste" test="FW/Edtccp.xml"/>
+<f sl="2" obj="act" name="Edit-Paste Link" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-PasteLink" test=""/>
+<f sl="2" obj="rcl" name="Links and Cross-references" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/CrossRef/Cross-ref.html" test="FW/InsExtLink.xml"/>
+<f sl="2" obj="act" name="Edit-Paste Special" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Paste Special" test=""/>
+<f sl="2" obj="dia" name="Paste Special" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Paste/PasteSpecial.html" test=""/>
+<f sl="2" obj="act" name="Edit-Select All" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Select All" test="FW/EdtSelectAll.xml"/>
+<f sl="2" obj="act" name="Edit-Find" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Find" test="FW/EdtFind.xml"/>
+<f sl="2" obj="tab" name="Find Tab" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/FindandReplace/FindnReplace.html#Find Tab" test="FW/EdtFind.xml"/>
+<f sl="2" obj="cmb" name="Quick Find" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#Quick Find" test="FW/TbData.xml"/>
+<f sl="2" obj="act" name="Edit-Next Match" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-NextMatch" test="FW/EdtNxtMat.xml"/>
+<f sl="2" obj="act" name="Edit-Previous Match" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-PreviousMatch" test="FW/EdtPrvMat.xml"/>
+<f sl="2" obj="act" name="Edit-Replace" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Replace" test="FW/EdtReplace.xml"/>
+<f sl="2" obj="tab" name="Replace Tab" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/FindandReplace/FindnReplace.html#Replace Tab" test="FW/EdtReplace.xml"/>
+<f sl="2" obj="act" name="Edit-Delete" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Delete" test="FW/EdtDel.xml"/>
+<f sl="1" obj="dia" name="Delete Effects" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Delete/DeleteEffects.html" test="FW/EdtDelEffDiag.xml"/>
+<f sl="1" obj="app" name="Incoming References Explorer" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Incoming/IncomingReferencesExplorer.html" test=""/>
+
+<f sl="2" obj="cas" name="View-Views" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-Views" test="FW/VwViews.xml"/>
+<f sl="2" obj="cas" name="View-Filters" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-Filters" test="FW/VwFilter.xml"/>
+<f sl="2" obj="cas" name="View-Sort Methods" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-Sort Methods" test="FW/VwSortM.xml"/>
+<f sl="2" obj="cas" name="View-Overlays" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-Overlays" test="FW/VwOverlay.xml"/>
+<f sl="2" obj="cas" name="View-Toolbars" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-Toolbar" test="FW/VwToolbar.xml"/>
+<f sl="1" obj="chb" name="View-Side Bar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-SideBar" test="FW/VwSideBar.xml"/>
+<f sl="1" obj="chb" name="View-Status Bar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-StatusBar" test="FW/VwStatusbar.xml"/>
+<f sl="1" obj="chb" name="View-Full Window" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#Full Window" test="FW/VwSideBar.xml"/>
+<f sl="2" obj="chb" name="View-Send Synchronization Context" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#Send Context" test=""/>
+<f sl="2" obj="chb" name="View-Receive Synchronization Context" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#Receive Context" test=""/>
+<f sl="2" obj="act" name="View-Configure Synchronization" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#Configure Synchronization" test=""/>
+<f sl="2" obj="dia" name="Synchronization Configuration" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Components/Focus/FocusManagerComponent.html#2.2 The FSC Application" test=""/>
+
+<f sl="1" obj="act" name="Data-First" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-First" test="FW/DataNav.xml"/>
+<f sl="1" obj="act" name="Data-Previous" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-Previous" test="FW/DataNav.xml"/>
+<f sl="1" obj="act" name="Data-Next" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-Next" test="FW/DataNav.xml"/>
+<f sl="1" obj="act" name="Data-Last" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-Last" test="FW/DataNav.xml"/>
+<f sl="2" obj="cas" name="Data-History" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-History" test="FW/DataHistory.xml"/>
+<f sl="2" obj="cas" name="Data-Favorites" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-Favorites" test=""/>
+<f sl="2" obj="act" name="Data-Organize Favorites" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-OrganizeFavorites" test="FW/DatOrgFav.xml"/>
+<f sl="2" obj="dia" name="Organize Favorites" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-OrganizeFavorites" test="FW/DatOrgFav.xml"/>
+<f sl="2" obj="cas" name="Data-Modify Templates" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-ModifyTemplates" test="FW/DatModTemp.xml"/>
+<f sl="2" obj="app" name="Template Editor" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/Template/Template.html#TheViewstab" test=""/>
+
+<f sl="2" obj="act" name="Insert-Event" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-ApplicationItems" test="DN/InsertEvent.xml"/>
+<f sl="2" obj="act" name="Insert-Analysis" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-ApplicationItems" test="DN/InsertAnalysis.xml"/>
+<f sl="2" obj="act" name="Insert-Subentry" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-ApplicationItems" test="DN/InsertSubentry.xml"/>
+<f sl="2" obj="act" name="Insert-Subanalysis" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-ApplicationItems" test=""/>
+<f sl="2" obj="???" name="Insert-Link" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Link" test="FW/InsExtLink.xml"/>
+<f sl="1" obj="act" name="Insert-Comment" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Comment" test="FW/InsComment.xml"/>
+<f sl="1" obj="rcl" name="Comments" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Comments/comments.htm" test="FW/InsComment.xml"/>
+<f sl="1" obj="act" name="Insert-Table" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Table" test="FW/InsTable.xml"/>
+<f sl="1" obj="dia" name="Insert Table" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Table" test="FW/InsTable.xml"/>
+<f sl="1" obj="act" name="Insert-Sound" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Sound" test="FW/InsSound.xml"/>
+<f sl="1" obj="dia" name="Sound" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/Sound/InsertSound.html" test="FW/InsSound.xml"/>
+<f sl="1" obj="act" name="Insert-Video" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Video" test="FW/InsVideo.xml"/>
+<f sl="1" obj="dia" name="Insert Video" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/Video/InsertVideo.html" test="FW/InsVideo.xml"/>
+<f sl="1" obj="act" name="Insert-Picture" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Picture" test="FW/InsPicture.xml"/>
+<f sl="1" obj="dia" name="Insert Picture" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/Picture/InsertPicture.html" test="FW/InsPicture.xml"/>
+<f sl="1" obj="act" name="Insert-Object" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#Insert-Object" test="FW/InsObject.xml"/>
+<f sl="1" obj="dia" name="Object" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/Object/InsertObject.html" test="FW/InsObject.xml"/>
+
+<f sl="2" obj="act" name="Format-Font" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Font" test="FW/FmtFont.xml"/>
+<f sl="2" obj="dia" name="Font" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Font/FormatFont.html" test="FW/FmtFont.xml"/>
+<f sl="2" obj="dia" name="Remove Formatting" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Font/FormatFont.html" test="FW/FmtFont.xml"/>
+<f sl="2" obj="act" name="Format-Writing System" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Writing System" test="FW/FmtWS.xml"/>
+<f sl="2" obj="dia" name="Writing System" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/WritingSystem/FormatWritingSystem.html" test="FW/FmtWS.xml"/>
+<f sl="2" obj="act" name="Format-Paragraph" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Paragraph" test="FW/FmtPara.xml"/>
+<f sl="2" obj="dia" name="Paragraph" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Paragraph/FormatParagraph.html" test="FW/FmtPara.xml"/>
+<f sl="2" obj="act" name="Format-Bullets and Numbering" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-List" test="FW/FmtBnN.xml"/>
+<f sl="2" obj="dia" name="Bullets and Numbering" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/List/FormatList.html" test="FW/FmtBnN.xml"/>
+<f sl="2" obj="act" name="Format-Border" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Border" test="FW/FmtBrdr.xml"/>
+<f sl="2" obj="dia" name="Border (paragraph)" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Border/FormatBorder.html" test="FW/FmtBrdr.xml"/>
+<f sl="2" obj="dia" name="Border (table)" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Border/FormatBorder.html#Table Version" test=""/>
+<f sl="2" obj="act" name="Format-Table" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Table" test=""/>
+<f sl="2" obj="dia" name="Table" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Table/FormatTable.html" test=""/>
+<f sl="2" obj="act" name="Format-Style" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Styles" test=""/>
+<f sl="2" obj="dia" name="Style" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html" test="FW/FmtStyle.xml"/>
+<f sl="2" obj="tab" name="Font" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html#Font Tab" test="FW/FmtFont.xml"/>
+<f sl="2" obj="tab" name="Paragraph" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html#Paragraph Tab" test="FW/FmtPara.xml"/>
+<f sl="2" obj="tab" name="Bullets and Numbering" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html#Bullets and Numbering Tab" test="FW/FmtBnN.xml"/>
+<f sl="2" obj="tab" name="Border" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html#Border Tab" test="FW/FmtBrdr.xml"/>
+<f sl="2" obj="n/a" name="Keyboard and Toolbar Behavior
+with Styles" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Style/Style.html#Keyboard Behavior with Styles" test=""/>
+
+<f sl="2" obj="cmb" name="Formatting-Style" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Style" test=""/>
+<f sl="2" obj="cmb" name="Formatting-Writing System" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Writing System" test=""/>
+<f sl="2" obj="cmb" name="Formatting-Font" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Font" test=""/>
+<f sl="2" obj="cmb" name="Formatting-Font Size" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Font Size" test=""/>
+<f sl="2" obj="tog" name="Formatting-Bold" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Bold" test=""/>
+<f sl="2" obj="tog" name="Formatting-Italic" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Italic" test=""/>
+<f sl="2" obj="tog" name="Formatting-Left Paragraph" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Left" test=""/>
+<f sl="2" obj="tog" name="Formatting-Center Paragraph" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Center" test=""/>
+<f sl="2" obj="tog" name="Formatting-Right Paragraph" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Right" test=""/>
+<f sl="2" obj="tog" name="Formatting-Numbered List" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Numbered List" test=""/>
+<f sl="2" obj="tog" name="Formatting-Bulleted List" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Bulleted List" test=""/>
+<f sl="2" obj="tog" name="Formatting-Indent" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Indent" test=""/>
+<f sl="2" obj="tog" name="Formatting-Unindent" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Unindent" test=""/>
+<f sl="2" obj="tod" name="Formatting-Borders" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Borders" test=""/>
+<f sl="2" obj="tod" name="Formatting-Background Color" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Background Color" test=""/>
+<f sl="2" obj="tod" name="Formatting-Font Color" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Font Color" test=""/>
+
+<f sl="1" obj="act" name="Tools-(Application Tools)" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Insert-ApplicationItems" test=""/>
+<f sl="1" obj="act" name="Tools-Spelling" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Spelling" test="FW/TlsSpell.xml"/>
+<f sl="1" obj="dia" name="Spelling" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Spell/Spell.html" test="FW/TlsSpell.xml"/>
+<f sl="2" obj="cas" name="Tools-Reports" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Reports" test="FW/TlsReport.xml"/>
+<f sl="1" obj="act" name="Tools-Topics Lists" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Lists" test="FW/TlsList.xml"/>
+<f sl="1" obj="dia" name="Topics Lists" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Lists/Lists.html" test="FW/TlsList.xml"/>
+<f sl="1" obj="dia" name="Topics List Properties" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Lists/Lists.html#ListProperties" test=""/>
+<f sl="1" obj="dia" name=" Advanced List Properties" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Lists/Lists.html" test=""/>
+<f sl="1" obj="act" name="Tools-FieldWorks Explorer" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-FieldWorks Explorer" test="FW/TlsExplore.xml"/>
+<f sl="2" obj="cas" name="Tools-Show Selection Using" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Show Selection Using" test="FW/TlsShoSelUse.xml"/>
+<f sl="2" obj="act" name="Tools-Options" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Options" test=""/>
+<f sl="2" obj="dia" name="Options" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html" test=""/>
+<f sl="2" obj="tab" name="Views" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheViewstab" test=""/>
+<f sl="2" obj="tab" name="Browse View" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html#TheBrowseTab" test=""/>
+<f sl="2" obj="tab" name="Data Entry View" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#DataEntryViews" test="DN/OptVwDE.xml"/>
+<f sl="2" obj="tab" name="Document View" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#DocumentViews" test="DN/OptVwDoc.xml"/>
+<f sl="2" obj="tab" name="Filters" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/Filters.html" test="FW/OptFilters.xml"/>
+<f sl="2" obj="tab" name="Sort Methods" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/Sort/Sort.html" test="FW/OptSortMeth.xml"/>
+<f sl="2" obj="tab" name="Overlays" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm#SettingUpOverlays" test="FW/OptOverlays.xml"/>
+<f sl="2" obj="tab" name="Custom Fields" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheCustomFieldsTab" test="FW/OptCFields.xml"/>
+<f sl="2" obj="act" name="Tools-Customize" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/ToolMenu.html#Tools-Customize" test=""/>
+<f sl="2" obj="dia" name="Customize" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Customize/Customize.html" test="FW/TlsCustomize.xml"/>
+
+<f sl="1" obj="act" name="Window-New Window" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-NewWindow" test="FW/Window.xml"/>
+<f sl="1" obj="act" name="Window-Cascade Windows" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-Cascade" test="FW/Window.xml"/>
+<f sl="1" obj="act" name="Window-Tile Windows" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-Tile" test="FW/Window.xml"/>
+<f sl="1" obj="act" name="Window-Tile Side-By-Side" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-TileSide-By-Side" test="FW/Window.xml"/>
+<f sl="1" obj="tog" name="Window-Split Window / Remove Split" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-SplitWindow" test="FW/Window.xml"/>
+<f sl="1" obj="std" name="Split Window / Remove Split" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-SplitWindow" test="FW/Window.xml"/>
+<f sl="1" obj="cas" name="Window-(List of Windows)" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-ListOfWindows" test=""/>
+<f sl="1" obj="dia" name="Activate" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-ListOfWindows" test=""/>
+
+<f sl="2" obj="mnu" name="Help" src="" test="FW/FwHelp.xml"/>
+<f sl="1" obj="cas" name="Help-FieldWorks" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html" test="FW/HlpApp.xml"/>
+<f sl="1" obj="app" name="Help-FieldWorks Contents" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Contents" test="FW/HlpApp.xml"/>
+<f sl="1" obj="app" name="Help-FieldWorks Index" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Index" test="FW/HlpApp.xml"/>
+<f sl="1" obj="app" name="Help-FieldWorks Find" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Find" test="FW/HlpApp.xml"/>
+<f sl="1" obj="app" name="Help-(Application)" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Help-Application" test="FW/HlpApp.xml"/>
+<f sl="1" obj="n/a" name="General Help System" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/HelpSystem/HelpSystem.html" test=""/>
+<f sl="1" obj="app" name="Help-How Do I" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Help-How Do I" test="FW/HlpHow.xml"/>
+<f sl="3" obj="app" name="Help-What's This?" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Help-What's This?" test=""/>
+<f sl="3" obj="app" name="Balloon Help" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/HelpSystem/BalloonHelp.html" test=""/>
+<f sl="1" obj="app" name="Help-Tutorials" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Help-Tutorials" test="FW/HlpTutor.xml"/>
+<f sl="1" obj="pal" name="Help-About (Application)" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Help-About" test="FW/HlpAbout.xml"/>
+
+<f sl="2" obj="act" name="Migrate Data" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DatabaseVersioning/DatabaseVersioning.html" test="FW/FileOpenProject.xml"/>
+
+<f sl="2" obj="bar" name="Sort Methods" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Sort/Sort.html" test="FW/SortUsage.xml"/>
+<f sl="2" obj="bar" name="Overlays" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" test="FW/OverlaysUsage.xml"/>
+
+<f sl="3" obj="app" name="Installer" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Installation/Installation.html" test="FW/Install.xml"/>
+<f sl="3" obj="n/a" name="Good Performance" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Performance/Performance.html" test=""/>
+<f sl="3" obj="n/a" name="User Interface Standard" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/UserInterfaceStandard.html" test=""/>
+<f sl="3" obj="n/a" name="Starting Up and No Entry Conditions" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/EmptyPane/EmptyPane.htm" test="FW/StartUp.xml"/>
+<f sl="2" obj="bar" name="Side and Information Bar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/SideBar/SideBar.html" test="FW/BarSide.xml"/>
+<f sl="3" obj="act" name="Balloon Help" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/HelpSystem/BalloonHelp.html" test=""/>
+<f sl="3" obj="app" name="Html Help Behavior" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Features.html" test=""/>
+<f sl="3" obj="tog" name="Split-Window Control(dup?)" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/WindowMenu/WindowMenu.html#Window-SplitWindow" test="FW/Window.xml"/>
+<f sl="2" obj="bar" name="Toolbars" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html" test="StdCtrls/ToolBar.xml"/>
+<f sl="2" obj="bar" name="Standard Toolbar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#StandardToolbar" test="FW/TbStandard.xml"/>
+<f sl="2" obj="bar" name="Formatting Toolbar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#FormattingToolbar" test="FW/TbFormat.xml"/>
+<f sl="2" obj="bar" name="Data Toolbar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#DataToolbar" test="FW/TbData.xml"/>
+<f sl="2" obj="bar" name="Insert Toolbar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#InsertToolbar" test="FW/TbInsert.xml"/>
+<f sl="2" obj="bar" name="Tools Toolbar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#ToolsToolbar" test="FW/TbTools.xml"/>
+<f sl="2" obj="bar" name="Window Toolbar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#WindowToolbar" test="FW/TbWindow.xml"/>
+<f sl="2" obj="bar" name="View Toolbar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#ViewToolbar" test=""/>
+<f sl="2" obj="bar" name="Status Bar" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/StatusBar/StatusBar.html" test="FW/BarStatus.xml"/>
+<f sl="3" obj="act" name="Shortcut Keys" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ShortcutKeys/ShortCutKeys.html" test=""/>
+<f sl="3" obj="n/a" name="Structured Text" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Features.html" test=""/>
+<f sl="2" obj="n/a" name="Overlays and In-line Tagging to individual words and phrases" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" test="FW/OverlaysUsage.xml"/>
+<f sl="2" obj="rcl" name="Comments and Reminders" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Comments/comments.htm" test=""/>
+<f sl="1" obj="dia" name="Choosing from and minor editing of a Choices List" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesList/ChoicesList.html" test="FW/ChcList.xml"/>
+<f sl="1" obj="app" name="Full Editing of a Choices List" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesListEditor/ChoicesListEditor.html" test=""/>
+<f sl="1" obj="dia" name="Language, Encoding, Writing" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Features/LanguageDefns/LanguageDefnFeature.html" test=""/>
+<f sl="1" obj="wiz" name="Language, Encoding, Writing" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Features/LanguageDefns/LanguageDefnFeature.html" test=""/>
+<f sl="2" obj="???" name="System framework" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Features.html" test=""/>
+<f sl="2" obj="pan" name="Data Entry Framework" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DataEntry/DataEntryViews.html" test="FW/DataEntryView.xml"/>
+<f sl="2" obj="pan" name="View Subsystem Framework" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Features.html" test=""/>
+<f sl="2" obj="pan" name="Browse View Subsystem Framework" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html" test=""/>
+
+<f sl="2" obj="std" name="UI Widgets" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Features.html" test=""/>
+<f sl="3" obj="std" name="Check Box" src="" test="StdCtrls/CheckBox.xml"/>
+<f sl="3" obj="std" name="Radio Button" src="" test="StdCtrls/RadioBtn.xml"/>
+<f sl="3" obj="std" name="Button" src="" test="StdCtrls/Button.xml"/>
+<f sl="3" obj="std" name="Toolbar Button" src="" test="StdCtrls/TlbButton.xml"/>
+<f sl="3" obj="std" name="Toggle" src="" test="StdCtrls/Toggle.xml"/>
+<f sl="3" obj="std" name="Menu Button" src="" test="StdCtrls/MenuBtn.xml"/>
+<f sl="3" obj="std" name="Text Box" src="" test="StdCtrls/TextBox.xml"/>
+<f sl="3" obj="std" name="List Box / Combo Box" src="" test="StdCtrls/ListBox.xml"/>
+<f sl="3" obj="std" name="Scroll Bar" src="" test="StdCtrls/ScrollBar.xml"/>
+<f sl="3" obj="std" name="Spin Control" src="" test="StdCtrls/SpinCtrl.xml"/>
+<f sl="3" obj="std" name="Color Pallet" src="" test="StdCtrls/ColorPal.xml"/>
+<f sl="3" obj="std" name="Message Box" src="" test="StdCtrls/MsgBox.xml"/>
+<f sl="3" obj="std" name="Basic Dialog" src="" test="StdCtrls/Dialog.xml"/>
+<f sl="3" obj="std" name="Basic Window" src="" test="StdCtrls/Window.xml"/>
+<f sl="3" obj="std" name="Tree Control" src="" test="StdCtrls/Tree.xml"/>
+<f sl="3" obj="std" name="Cursor" src="" test="StdCtrls/Cursor.xml"/>
+<f sl="3" obj="std" name="Taskbar" src="" test="StdCtrls/TaskbarBtn.xml"/>
+<f sl="3" obj="std" name="Splash Screen" src="" test="StdCtrls/Splash.xml"/>
+
+<f sl="1" obj="dia" name="Date Picker" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DatePicker/DatePicker.html" test="StdCtrls/DatePicker.xml"/>
+<f sl="2" obj="act" name="XML Import" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/ImportExport/Import.html" test="FW/FileImport.xml"/>
+<f sl="2" obj="act" name="XML Export" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/ImportExport/Export.html" test="FW/FileExport.xml"/>
+<f sl="2" obj="act" name="Text-level Clipboard ops" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Design/Overview/ClipboardBehavior.html" test="FW/Edtccp.xml"/>
+<f sl="3" obj="???" name="Databases and Language Projects" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Databases/Databases.html" test=""/>
+<f sl="3" obj="???" name="Empty Window Behavior" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/EmptyPane/EmptyPane.htm" test=""/>
+<f sl="2" obj="dia" name="app Multi-user issues" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Networking/Networking.html" test=""/>
+<f sl="3" obj="???" name="Database Version" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Features.html" test=""/>
+<f sl="3" obj="ges" name="Drag and Drop" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/CrossRef/Cross-ref.html" test="FW/DragDrop.xml"/>
+<f sl="3" obj="act" name="Focus / Synchronization Component" src="http://lsdev.sil.org/intranet/FwSpecs/FW/Components/Focus/FocusManagerComponent.html" test="FW\Sync.xml"/>
+<f sl="2" obj="fld" name="Version History" src="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/VersionHistory/VersionHistory.html" test=""/>
+
+<key name="Support Level">
+ <k sym="1" short="Provided">Provided Features: little or no customization needed by app</k>
+ <k sym="2" short="Supported">Supported Features: partially implemented in Generic Application, but may require some customization or extension in the individual application</k>
+ <k sym="3" short="Specified">Specified Features: not implemented in Generic Application, but specified as standard behavior so that all individual applications will appear and behave in a standard fashion</k>
+</key>
+
+<key name="Objects">
+ <k sym="app">application</k>
+ <k sym="wiz">wizard</k>
+ <k sym="pal">pallet</k>
+ <k sym="dia">dialog</k>
+ <k sym="mnu">menu</k>
+ <k sym="mnb">menu button</k>
+ <k sym="act">action</k>
+ <k sym="ges">gesture</k>
+ <k sym="cas">cascade</k>
+ <k sym="chb" short="check box">check box with imediate action</k>
+ <k sym="cmb" short="combo box">combo box with imediate action</k>
+ <k sym="tog" short="toggle">toggle with imediate action</k>
+ <k sym="tod" short="toggle drop">toggle with a drop-down list</k>
+ <k sym="bar">bar</k>
+ <k sym="rcl" short="r-click">right-click</k>
+ <k sym="pan">pane</k>
+ <k sym="std" short="widget">standard UI widgets</k>
+ <k sym="tab" short="tab">a tab in a dialog</k>
+ <k sym="fld" short="field">a field in the data</k>
+ <k sym="n/a" short="n/a">Not applicable</k>
+ <k sym="???" short="???">No information at this time</k>
+</key>
+
+</features>

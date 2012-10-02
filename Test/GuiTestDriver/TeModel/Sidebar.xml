@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<sidebar name="Sidebar" path="$NL4;9:Scripture" content="menubar/view/$name;/*" root="yes">
+ <scripture role="sidebutton" name="Scripture" path-ref="../@content"/>
+ <back-translation role="sidebutton" name="Back Translation" path-ref="../@content"/>
+ <checking role="sidebutton" name="Checking" path-ref="../@content"/>
+ <publications role="sidebutton" name="Publications" path-ref="../@content"/>
+</sidebar>

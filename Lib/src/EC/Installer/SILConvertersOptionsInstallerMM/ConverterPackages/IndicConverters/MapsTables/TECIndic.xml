@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="SAG TECkit table converter between KrutiDev010 and Unicode">
+			<autoInstall mappingName="KrutiDev010&lt;&gt;UNICODE" converterSpec="MapsTables\KrutiDev010.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="KrutiDev010" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion"  sampleData="fdrkc"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\KrutiDev010.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\KrutiDev010.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit table converter between KrutiDev011 and Unicode">
+			<autoInstall mappingName="KrutiDev011&lt;&gt;UNICODE" converterSpec="MapsTables\KrutiDev011.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="KrutiDev011" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion"  sampleData="fdrkc"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\KrutiDev011.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\KrutiDev011.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit table converter between KrutiDev290 and Unicode">
+			<autoInstall mappingName="KrutiDev290&lt;&gt;UNICODE" converterSpec="MapsTables\KrutiDev290.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="KrutiDev290" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion"  sampleData="fdrkc"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\KrutiDev290.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\KrutiDev290.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between Kantipur Devanagari font and Unicode">
+			<autoInstall mappingName="Kantipur Devanagari&lt;&gt;Unicode" converterSpec="MapsTables\Kantipur.tec" IsConverterSpecAFile="true" implementType="SIL.tec" conversionType="LegacyToFromUnicode" sampleData="/lstfa/ means 'book' in Hindi"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\Kantipur.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\Kantipur.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit converter between Preeti Devanagari font and Unicode">
+			<autoInstall mappingName="Preeti Devanagari&lt;&gt;Unicode" converterSpec="MapsTables\Preeti.tec" IsConverterSpecAFile="true" implementType="SIL.tec" conversionType="LegacyToFromUnicode" sampleData="/lstfa/ means 'book' in Hindi"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\Preeti.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\Preeti.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="TECkit converter between Tibetan Modern A font and Unicode">
+			<autoInstall mappingName="Tibetan Modern A&lt;&gt;Unicode" converterSpec="MapsTables\TIBA2UNI.tec" IsConverterSpecAFile="true" implementType="SIL.tec" conversionType="LegacyToFromUnicode" ></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\TIBA2UNI.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\TibA2Uni.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="Transliteration between Unicode Devanagari and Unicode IPA (phonetic) representation">
+			<autoInstall mappingName="UniDevanagri&lt;&gt;UniIPA (phonetic)" converterSpec="MapsTables\UDev2UIpa.tec" IsConverterSpecAFile="true" implementType="SIL.tec" conversionType="UnicodeToFromUnicode" leftEncoding="Unicode Devanagari" rightEncoding="Unicode IPA" processType="Transliteration" sampleData="किताब becomes kɪtɑb"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\UDev2UIpa.map"></FileToInstall>
+				<FileToInstall filename="MapsTables\UDev2UIpa.tec"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit table converter between Shusha and Unicode">
+			<autoInstall mappingName="Shusha&lt;&gt;UNICODE" converterSpec="MapsTables\Shusha.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Shusha" rightEncoding="Unicode Devanagari" processType="UnicodeEncodingConversion"  sampleData="iktaba"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\Shusha.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\Shusha.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="SAG TECkit table converter between GujaratiLS font and Unicode">
+			<autoInstall mappingName="GujaratiLS&lt;&gt;UNICODE" converterSpec="MapsTables\GujaratiLS.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="GujaratiLS" rightEncoding="Unicode Gujarati" processType="UnicodeEncodingConversion"  sampleData="7ct2b"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\GujaratiLS.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\GujaratiLS.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

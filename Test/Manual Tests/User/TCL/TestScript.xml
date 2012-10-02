@@ -1,0 +1,25 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="TCL\TestScript.xml">
+ <title tag="tclScript">What is a test script?</title>
+ <index>
+  <li>test case library</li>
+  <li>script library</li>
+  <li>library</li>
+ </index>
+ <definition>
+  <p>Each user interface object or feature has its own test script in the Test Case Library. A test script brings together short tests for each aspect or use of the feature.</p>
+ </definition>
+ <partsAndFunctions>
+  <p>Here are the parts of a Test Script:</p>
+  <table>
+   <tr><td>Heading</td><td>Explains what feature the test script is designed to test, what deviations there may be from the posted specification and any other consideration that may affect testing the feature.</td></tr>
+   <tr><td><link uri="TestCase.xml" type="module">Test Cases</link></td><td>Documents the steps needed to test a single aspect of a user interface object or feature.</td></tr>
+   <tr><td><link uri="CaseStep.xml" type="module">Test Case Steps</link></td><td>A simple task that has a specified outcome.</td></tr>
+   <tr><td><link uri="..\Bugs\Pattern.xml" type="module">Bug Patterns</link></td><td>When testing finds a bug, these patterns show how the bug is to be reported.</td></tr>
+  </table>
+ </partsAndFunctions>
+ <seeAlso>
+  <li><link uri="..\Using\maintask.xml" type="module">How to use a test script</link></li>
+  <li><link uri="..\Writing\maintask.xml" type="module">How to write a test script</link></li>
+ </seeAlso>
+</concept>

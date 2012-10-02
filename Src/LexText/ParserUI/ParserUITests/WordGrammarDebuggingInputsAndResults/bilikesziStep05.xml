@@ -1,0 +1,1208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>bilikeszi</form>
+  <seq step="Try to build an Orthographic Word node on a Word, including any clitics.">
+	<orthographicWord>
+	  <word syncat="167" syncatAbbr="trans">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+	  </word>
+	</orthographicWord>
+	<morph wordType="102">
+	  <shortName>-zi (1SgPoss): la</shortName>
+	  <inflClasses>
+		<inflClass hvo="100" abbr="II" />
+	  </inflClasses>
+	  <inflMsa slot="102" slotAbbr="Possessor" />
+	</morph>
+	<failure>Only enclitics can be after a Word analysis node.</failure>
+  </seq>
+  <seq step="Try to build a Word analysis node on a Partial analysis node.">
+	<word syncat="81" syncatAbbr="n">
+	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	</word>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
+	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
+	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
+	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
+	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
+	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
+	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
+	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to build a Word analysis node on a Partial analysis node.">
+	<word syncat="82" syncatAbbr="comm">
+	  <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	</word>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
+	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
+	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
+	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
+	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
+	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
+	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
+	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to build a Word analysis node on a Partial analysis node.">
+	<word syncat="85" syncatAbbr="conc">
+	  <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	</word>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
+	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
+	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
+	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
+	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
+	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
+	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
+	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to build a Word analysis node on a Partial analysis node.">
+	<word syncat="88" syncatAbbr="nom">
+	  <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	</word>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
+	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
+	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
+	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
+	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
+	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
+	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
+	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to build a Word analysis node on a Partial analysis node.">
+	<word syncat="91" syncatAbbr="poss">
+	  <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	</word>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
+	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
+	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
+	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
+	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
+	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
+	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
+	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to build a Word analysis node on a Partial analysis node.">
+	<word syncat="94" syncatAbbr="prop">
+	  <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	</word>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
+	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
+	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
+	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
+	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
+	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
+	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" /></morph></partial><morph wordType="102"><shortName>-zi (1SgPoss): la</shortName><inflClasses><inflClass hvo="100" abbr="II" /></inflClasses><inflMsa slot="102" slotAbbr="Possessor" /></morph></partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
+	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial></partial>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
+	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+	  <failure>Partial inflectional template has already been inflected.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+		<partial inflected="-" syncat="167" syncatAbbr="trans">
+		  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+			<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+			  <morph wordType="root">
+				<shortName>*bili (to.see): himbilira</shortName>
+				<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+			  </morph>
+			</stem>
+		  </full>
+		  <morph wordType="suffix">
+			<shortName>-kes (???): kes</shortName>
+			<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+		  </morph>
+		</partial>
+		<morph wordType="102">
+		  <shortName>-zi (1SgPoss): la</shortName>
+		  <inflClasses>
+			<inflClass hvo="100" abbr="II" />
+		  </inflClasses>
+		  <inflMsa slot="102" slotAbbr="Possessor" />
+		</morph>
+	  </partial>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</partial>
+  </seq>
+</word>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000012">
+<!-- Common data for both kinds of tests (basic and pathological). -->
+<rt class="LangProject" guid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<CmObject />
+	<LangProject>
+		<DiscourseData>
+			<objsur guid="c1ec5c4c-e382-11de-8a39-0800200c9a66" t="o" />
+		</DiscourseData>
+	</LangProject>
+</rt>
+<rt class="DsDiscourseData" guid="c1ec5c4c-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+	<CmObject>
+	</CmObject>
+	<DsDiscourseData>
+		<Charts>
+			<objsur t="o" guid="c1ec5c4d-e382-11de-8a39-0800200c9a66" />
+		</Charts>
+	</DsDiscourseData>
+</rt>
+<rt class="DsConstChart" guid="c1ec5c4d-e382-11de-8a39-0800200c9a66" ownerguid="c1ec5c4c-e382-11de-8a39-0800200c9a66" >
+	<CmObject>
+	</CmObject>
+	<DsConstChart>
+		<Rows>
+			<objsur t="o" guid="c1ec8357-e382-11de-8a39-0800200c9a66" />
+		</Rows>
+	</DsConstChart>
+</rt>
+<rt class="CmPossibility" guid="c1ec835f-e382-11de-8a39-0800200c9a66">
+	<!-- Use for Column-->
+	<CmObject>
+	</CmObject>
+	<CmPossibility>
+	</CmPossibility>
+</rt>
+<rt class="CmPossibility" guid="c1ec8360-e382-11de-8a39-0800200c9a66">
+	<!-- Use for Tag-->
+	<CmObject>
+	</CmObject>
+	<CmPossibility>
+	</CmPossibility>
+</rt>
+</languageproject>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- LT-2693 -->
+<accil on-fail="assert">
+ <!-- 1. Start Flex on Kalaba -->
+  <on-application run="ok" db="Kalaba" close="no" on-fail="assert">
+
+ <!-- 2. Switch to Grammar/Category Browse -->
+	<click wait ="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Categories Browse"/>
+
+ <!-- 3. Sort by Infl Classes -->
+	<click path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:POSList/window:POSList/window:NAMELESS/window:HeaderListView/list:HeaderListView/window:NAMELESS/list:NAMELESS/colhead:Infl Classes"/>
+
+ <!-- 4. Switch to Categories -->
+	<click wait ="2000" path="window:MenuBar/menu:View /menu:Grammar/menu:Category Edit"/>
+
+  </on-application>
+</accil>

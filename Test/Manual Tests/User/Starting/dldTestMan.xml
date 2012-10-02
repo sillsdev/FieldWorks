@@ -1,0 +1,26 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Starting\dldTestMan.xml">
+ <title tag="sttDldTm">How to download the FieldWorks Test Manual</title>
+ <index>
+  <li>FW Test Manual: download</li>
+  <li>download this manual</li>
+ </index>
+ <prerequisites>
+  <p>Before you can dowload or upgrade this manual, you will need to:</p>
+  <ul>
+   <li>Connect to the <link uri="..\Starting\Connect.xml" type="module">SIL Intranet</link>.</li>
+   <li>Realize, the download will take a couple of minutes using a 56K modem with no competing traffic.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps to download an appliction from the SIL Intranet:</p>
+  <step>Locate or create a directory to recieve the test manual.
+   <p>The download is a "chm" file, so provide a permanent location such as the folder you use to store your test reports.</p></step>
+  <step link="Connect now!" uri="http://intranet.sil.org/softwaredev/test/index.html" type="doc">Start your browser and enter this universal resource locator (url), http://intranet.sil.org/softwaredev/test/index.html in its address box then press the &lt;Enter> key or click</step>
+  <step>Click the "Test Manual Download" link from the home page.</step>
+  <step> A dialog asks whether to run from the website or copy to your disk. Click "copy to disk".</step>
+  <step>Another dialog askes you to choose a folder on your system to put the file in. Choose the folder you selected in step 1.</step>
+  <step>Click "Finish".</step>
+  <step>Double click the "chm" file to launch the test manual.</step>
+ </steps>
+</task>

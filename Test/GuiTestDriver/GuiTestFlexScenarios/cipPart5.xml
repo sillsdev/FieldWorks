@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Conceptual Intro to Parsing test -->
+<!-- Section 2.1.2.6  Part 15 to 18 Inflection classes -->
+<!-- Adds a category Verb Zapotec, a template and 2 subcategories -->
+<!-- Adds te, qke'nia', te, tiqpla'qch, u, cho to lexicon -->
+<!-- Adds interlinear text to Inflection Examples and fully parses it -->
+
+<accil on-fail="assert">
+
+ <var id="projectName" set="CIPTest"/>
+
+<!-- (note we're going to use a 'q' instead of ':' so we don't have modify the word formation characters file) -->
+
+<on-application args="-db $projectName" title="$projectName$FlexSig" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncGrammar.xml"/>
+		 <include from="IncLexicon.xml"/>
+		 <include from="IncTexts.xml"/>
+		 <include from="IncWords.xml"/>
+
+  <var id="refField" set="$multiEdFIELD;10:RecordEditView.DataTree/9:defaultatomicreference[*]/$sp;"/>
+  <var id="refField2" set="$multiEdFIELD;10:RecordEditView.DataTree/9:defaultvectorreference[*]/$sp;"/>
+
+<!--skip-->
+
+<!-- 15.	Go to Grammar / Category Edit -->
+  <click path="$menuGRAMMAR;menu:Category Edit"/>
+<!-- a.	Add a new Category -->
+  <click path="$insGrmCat"/>
+<!-- b.	Click on the link to create a custom category. -->
+  <on-dialog title="Add from Catalog">
+	<var id="custCat" set="The category I need is not in the catalog. Create a custom category"/>
+	<click path="9:$custCat;/41:$custCat;/30:$custCat"/>
+  </on-dialog>
+<!-- c.	Name: Verb Zapotec -->
+  <click path="$gmCeName"/>
+  <insert wait="2000">Verb Zapotec</insert>
+<!-- d.	Abbreviation: VZap -->
+  <click path="$gmCeAbbr"/>
+  <insert>VZap</insert>
+
+<!-- e.	Create affix template: -->
+  <click side="right" path="$gmCeAfxTmpl"/>
+  <insert>{DOWN}~</insert><!-- Create affix template -->
+<!-- i.	Name: Zapotec Verb -->
+  <click path="$gmCeField;Template Name"/>
+  <insert wait="1000">Zapotec Verb</insert>
+
+<!-- ii.	Insert an obligatory slot before the Stem and rename it to  "Aspect" -->
+  <click side="right" path="$grmCeHeader;/$Text;/value:rexp#STEM"/>
+  <insert>~</insert><!-- insert slot before Stem -->
+  <on-dialog title="Choose Slot">
+	 <click path="$addObSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+  <click dx="50" path="$grmCeHeader;/$Text;"/>
+  <insert>{HOME}+{END}</insert><!-- select the old name -->
+  <insert>Aspect</insert>
+  <var id="Aspect" set="$grmCeHeader;/$Text;/value:rexp#Aspect"/>
+
+<!-- 1.	Add inflectional morpheme to Aspect -->
+  <click side="right" path="$Aspect"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Aspect -->
+<!-- 2.	Create new inflectional affix -->
+
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- 3.	Lexeme form: u- -->
+	<insert>u</insert>
+<!-- 4.	Gloss: Fut -->
+	<click path="$neGloss"/>
+	<insert>Fut</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- f.	Insert Inflection Class -->
+<click side="right" path="$gmCeSection;Inflection Class Info"/>
+  <insert>{DOWN}~</insert><!-- Insert Inflection Class -->
+<!-- i.	Name: Zapotec class 1 -->
+  <insert>Zapotec class 1</insert>
+<!-- ii.	Abbreviation: zc1 -->
+  <insert>{TAB}</insert>
+  <insert>zc1</insert>
+
+<!-- g.	Insert Inflection Class -->
+<click side="right" path="$gmCeSection;Inflection Class Info"/>
+  <insert>{DOWN}~</insert><!-- Insert Inflection Class -->
+<!-- i.	Name: Zapotec class 2 -->
+  <insert>Zapotec class 2</insert>
+<!-- ii.	Abbreviation: zc2 -->
+  <insert>{TAB}</insert>
+  <insert>zc2</insert>
+
+<!-- h.	Create a subcategory on Verb Zapotec -->
+  <click side="right" path="$gmCeSection;Subcategories"/>
+  <insert>{DOWN}~</insert><!-- Insert subcategory -->
+<!-- i.	Click on the link to create a custom category. -->
+  <on-dialog title="Add from Catalog">
+	<var id="custCat" set="The category I need is not in the catalog. Create a custom category"/>
+	<click path="9:$custCat;/41:$custCat;/30:$custCat"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+<!-- ii.	Name: Intransitive Verb Zapotec -->
+  <click path="$gmCeName"/>
+  <insert wait="2000">Intransitive Verb Zapotec</insert>
+<!-- iii.	Abbreviation to VIZap -->
+  <insert>{TAB}</insert>
+  <insert>VIZap</insert>
+
+<!-- i.	Create a subcategory on Verb Zapotec -->
+  <click path="$RecTree;/36:Verb Zapotec"/>
+  <click side="right" path="$gmCeSection;Subcategories"/>
+  <insert>{DOWN}~</insert><!-- Insert subcategory -->
+<!-- i.	Click on the link to create a custom category. -->
+  <on-dialog title="Add from Catalog">
+	<click path="9:$custCat;/41:$custCat;/30:$custCat"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+<!-- ii.	Name: Transitive Verb Zapotec -->
+  <click path="$gmCeName"/>
+  <insert wait="2000">Transitive Verb Zapotec</insert>
+<!-- iii.	Abbreviation to VTZap -->
+  <insert>{TAB}</insert>
+  <insert>VTZap</insert>
+
+<!-- 16.	Go to Lexicon / Lexicon Edit -->
+  <click path="$vwLexEdit"/>
+<!-- a.	Create a new entry: te / stem / pass / category of Transitive Verb Zapotec -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert>te</insert>
+	<click path="$neGloss"/>
+	<insert>pass</insert>
+	<insert wait="500">%{Y}</insert><!-- category -->
+	<insert wait="500">vvv{RIGHT}t~</insert><!-- Transitive Verb Zapotec -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- i.	Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+<!-- ii.	Near the bottom, click on Inflection Class and open up the chooser -->
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Class"/>
+  <click path="$refField;2/9:Inflection Class/9:.../$NL;43:NAMELESS"/>
+
+<!-- iii.	Select Zapotec class 1 -->
+  <on-dialog title="Choose Inflection Class">
+	 <click wait="1000" path="$NL;36:Zapotec class 1"/>
+	 <click wait="1000" path="$ok"/>
+  </on-dialog>
+
+<!-- iv.	Set the Field Visibility of the Inflection Class field to "Always visible" -->
+<click side="right" path="$refField;1/9:Inflection Class"/>
+  <insert>{DOWN}{RIGHT}{DOWN}~</insert><!-- Always visible -->
+<!-- v.	Uncheck Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+
+<!-- b.	Create a new entry: qke'nia' / stem / limp / category of Intransitive Verb Zapotec -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert>qke'nia'</insert>
+	<click path="$neGloss"/>
+	<insert>limp</insert>
+	<insert wait="200">%{Y}</insert><!-- category -->
+	<insert wait="200">vvv{RIGHT}i~</insert><!-- Intransitive Verb Zapotec -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+<!-- i.	Set its inflection class to Zapotec class 1 -->
+  <click path="$multiEdHidden"/>
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Class"/>
+  <click path="$refField;2/9:Inflection Class/9:.../$NL;43:NAMELESS"/>
+  <on-dialog title="Choose Inflection Class">
+	 <click path="$NL;36:Zapotec class 1"/>
+	 <click wait="1000" path="$ok"/>
+  </on-dialog>
+  <click path="$multiEdHidden"/>
+
+<!-- c.	Create a new entry: te / stem / pass / category of Intransitive Verb Zapotec -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert>te</insert>
+	<click path="$neGloss"/>
+	<insert>pass</insert>
+	<insert wait="200">%{Y}</insert><!-- category -->
+	<insert wait="200">vvv{RIGHT}i~</insert><!-- Intransitive Verb Zapotec -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+<!-- i.	Set its inflection class to Zapotec class 2 -->
+  <click path="$multiEdHidden"/>
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Class"/>
+  <click path="$refField;2/9:Inflection Class/9:.../$NL;43:NAMELESS"/>
+  <on-dialog title="Choose Inflection Class">
+	 <click path="$NL;36:Zapotec class 2"/>
+	 <click wait="1000" path="$ok"/>
+  </on-dialog>
+  <click path="$multiEdHidden"/>
+
+<!-- d.	Create a new entry: tiqpla'qch / stem / encourage / category of Transitive Verb Zapotec -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert>tiqpla'qch</insert>
+	<click path="$neGloss"/>
+	<insert>encourage</insert>
+	<insert wait="500">%{Y}</insert><!-- category -->
+	<insert wait="200">vvv{RIGHT}t~</insert><!-- Transitive Verb Zapotec -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+<!-- i.	Set its inflection class to Zapotec class 2 -->
+  <click path="$multiEdHidden"/>
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click dx="50" path="$refField;1/9:Inflection Class"/>
+  <click path="$refField;2/9:Inflection Class/9:.../$NL;43:NAMELESS"/>
+  <on-dialog title="Choose Inflection Class">
+	 <click path="$NL;36:Zapotec class 2"/>
+	 <click wait="1000" path="$ok"/>
+  </on-dialog>
+  <click path="$multiEdHidden"/>
+
+<!--/skip-->
+
+<!-- e.	Find the u- entry -->
+  <click path="$lxFindLex"/>
+  <on-dialog title="Find Lexical Entry">
+	<insert>u-</insert>
+	<click path="$goto"/>
+  </on-dialog>
+<!-- i.	Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+<!-- ii.	Under Lexeme Form, click on Inflection Classes and open up the chooser -->
+  <click path="$lxFldLexemeForm"/>
+  <click dx="50" path="$refField2;1/9:Inflection Classes"/>
+
+  <click path="$refField2;2/9:Inflection Classes/9:.../$NL;43:NAMELESS"/>
+<!-- 1.	Select Zapotec class 1. -->
+  <on-dialog title="Choose Inflection Classes">
+	 <click path="$NL;44:Zapotec class 1"/>
+	 <insert> </insert>
+	 <click wait="1000" path="$ok"/>
+  </on-dialog>
+
+  <click side="right" path="$refField2;1/9:Inflection Classes"/>
+  <insert>{DOWN}{RIGHT}{DOWN}~</insert><!-- Always visible -->
+
+<!-- iii.	Insert Allomorph of q -->
+  <click path="$lxFldLexemeForm"/>
+  <click path="$multiEdFIELD;43:Page down"/>
+
+  <click side="right" path="$multiSection;Alternate Forms"/>
+  <insert>{DOWN}~</insert><!-- Insert Allomorph -->
+  <insert wait="500">q</insert>
+<!-- 1.	Set its Inflection Classes field to Zapotec class 2 -->
+  <!--click dx="50" path="$refField2;1/9:Inflection Classes"/>
+  <click path="$refField2;2/9:Inflection Classes/9:.../$NL;43:NAMELESS"/-->
+  <insert>{TAB 7} </insert><!-- 7 tabs get to the Inflection Classes button -->
+  <on-dialog title="Choose Inflection Classes">
+	 <click path="$NL;44:Zapotec class 2"/>
+	 <insert> </insert>
+	 <click wait="1000" path="$ok"/>
+  </on-dialog><!-- 2.	Set Visibility for Inflection Classes to "Always visible" -->
+  <!--click side="right" path="$refField2;1/9:Inflection Classes"/>
+  <insert wait="1000">{DOWN}{RIGHT}{DOWN}~</insert--><!-- Always visible -->
+<!-- iv.	Uncheck Show Hidden fields -->
+  <click path="$multiEdHidden"/>
+
+<!-- f.	Create a new entry: =cho / enclitic / 1PlIncl / <Not Sure> -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert>=cho</insert>
+	<click path="$neGloss"/>
+	<insert>1PlIncl</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 17.	Go to Texts / Edit -->
+  <click path="$menuTEXTS;menu:Interlinear Texts"/>
+<!-- a.	In the "Inflection Examples" text, click on Baseline tab -->
+  <click path="$txtBaseline"/>
+<!-- b.	Type the following line at the end -->
+  <click path="$txtBLInput"/>
+  <insert>^{END}</insert>
+  <insert>~</insert>
+<!-- i.	utecho uqke'nia'cho qtecho qtiqpla'qchcho -->
+  <insert>utecho uqke'nia'cho qtecho qtiqpla'qchcho</insert>
+<!-- c.	Click on the Interlinearize tab -->
+  <click path="$txtInterlinear"/>
+<!-- d.	Do menu Parser / Reparse all words -->
+  <click path="$menuPARSER;menu:Reparse all words"/>
+
+<!--/skip-->
+
+<!-- 18.	Go to Words / Analyses -->
+  <click path="$menuTEXTS;menu:Word Analyses"/>
+	<click path="$refresh"/>
+	<click path="$menuPARSER;menu:Start Parser"/>
+	<insert wait="10000">{ESC}</insert><!-- esc does nothing, so it's just waiting -->
+
+<!-- a.	All words should have a 1 in both the Number in Corpus and Predicted Analyses. -->
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:qtecho"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:qtiqpla'qchcho"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:qtecho"/>
+<do-once until="999999">
+  <glimpse id="1" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+</do-once>
+<do-once until="999999">
+  <glimpse id="2" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+</do-once>
+
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:uqke'nia'cho"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:qtiqpla'qchcho"/>
+<glimpse id="3" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="4" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:utecho"/>
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:uqke'nia'cho"/>
+<glimpse id="5" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="6" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:utecho"/>
+<glimpse id="7" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="8" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+
+ </on-application>
+
+</accil>

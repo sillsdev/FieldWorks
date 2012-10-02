@@ -1,0 +1,121 @@
+;A file of truncation rules.
+(load_nat_class message <nat_class name null features ()>)
+(load_nat_class message <nat_class name fricative features (cons + cont +)>)
+(load_nat_class message <nat_class name velar_stop features (cons + poa velar)>)
+
+;Load a truncation rule which deletes a single seg on the right (msg 6505):
+(load_morpher_rule message
+  <mrule  nm truncate
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl 3SG
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									  (<seg rep g ctable table3>)
+									 )
+						 >
+					  out <m_rhs p_out (1)>
+					>
+				  )
+	>
+)
+;Trace the rule (msg 6535):
+(trace_morpher_rule message (true true truncate))
+;Also trace lex lookup:
+(trace_lexical_lookup message true)
+;Test:
+(morph_and_lookup_word pretty_print sa)
+
+;Revise to delete the left-most seg:
+(load_morpher_rule message
+  <mrule  nm truncate
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl 3SG
+		  subrules (<msub
+					  in <m_lhs pseq ((<seg rep s ctable table3>)
+									  (<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									 )
+						 >
+					  out <m_rhs p_out (2)>
+					>
+				  )
+	>
+)
+;Test:
+(morph_and_lookup_word pretty_print ag)
+
+;Revise to delete a natural class:
+(load_morpher_rule message
+  <mrule  nm truncate
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl 3SG
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class fricative>)
+									  (<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									 )
+						 >
+					  out <m_rhs p_out (2)>
+					>
+				  )
+	>
+)
+;Test:
+(morph_and_lookup_word pretty_print ag)
+
+;Revise to delete a natural class on the right:
+(load_morpher_rule message
+  <mrule  nm truncate
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl 3SG
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									  (<simp_cntxt class velar_stop>)
+									 )
+						 >
+					  out <m_rhs p_out (1)>
+					>
+				  )
+	>
+)
+;Test:
+(morph_and_lookup_word pretty_print sa)
+
+;Revise to delete an optional sequence (we also attach a prefix,
+; so as to make unapplication unambiguous):
+(load_morpher_rule message
+  <mrule  nm truncate
+		  str morphophonemic
+		  r_pos (V)
+		  gl 3SG
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max  1 seq (<seg rep s ctable table3>)>)
+									  (<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									 )
+						 >
+					  out <m_rhs p_out ((g table3) 2)>
+					>
+				  )
+	>
+)
+;In first test, rule should (un-)truncate an initial s:
+(morph_and_lookup_word pretty_print gas)
+;In the second test, rule should unapply vacuously:
+(morph_and_lookup_word pretty_print gbubibi)
+
+;Remove the rule (msg 6506):
+(remove_morpher_rule message truncate)
+;And the natural classes (msg 6542):
+(remove_nat_class message null)
+(remove_nat_class message fricative)
+(remove_nat_class message velar_stop)

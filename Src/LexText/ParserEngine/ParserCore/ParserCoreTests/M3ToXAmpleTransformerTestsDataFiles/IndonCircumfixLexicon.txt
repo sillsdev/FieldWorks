@@ -1,0 +1,443 @@
+
+\lx 2715
+\g close
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a utup {16019} / men _  | / men _
+		 / pen _  | / pen _
+
+\a tutup {2714}
+
+\lx 16311
+\g ACTV
+\c W/W
+\o 0
+\wc prefix
+\a me {2718} / _ [3573]  | / _ [APPX2]
+		 / _ [3572]  | / _ [LIQ]
+		 / _ [3566]  | / _ [N]
+
+\a men {2719} / _ [3565]  | / _ [V]
+		 / _ [3571]  | / _ [DALV]
+
+
+ ~/ _ [3573]  | ~/ _ [APPX2]
+
+
+ ~/ _ [3572]  | ~/ _ [LIQ]
+
+
+ ~/ _ [3566]  | ~/ _ [N]
+
+\a meng {2720} / _ [3565]  | / _ [V]
+		 / _ h  | / _ h
+		 / _ [3574]  | / _ [VEL]
+
+
+ ~/ _ [3573]  | ~/ _ [APPX2]
+
+
+ ~/ _ [3572]  | ~/ _ [LIQ]
+
+
+ ~/ _ [3566]  | ~/ _ [N]
+
+
+ ~/ _ [3571]  | ~/ _ [DALV]
+
+\a mem {2721} / _ [3565]  | / _ [V]
+		 / _ [3569]  | / _ [LAB]
+
+
+ ~/ _ [3573]  | ~/ _ [APPX2]
+
+
+ ~/ _ [3572]  | ~/ _ [LIQ]
+
+
+ ~/ _ [3566]  | ~/ _ [N]
+
+
+ ~/ _ [3571]  | ~/ _ [DALV]
+
+
+ ~/ _ h  | ~/ _ h
+
+
+ ~/ _ [3574]  | ~/ _ [VEL]
+
+\a menj {2722} / _ [3565]  | / _ [V]
+		 / _ [3575]  | / _ [PALV]
+
+
+ ~/ _ [3573]  | ~/ _ [APPX2]
+
+
+ ~/ _ [3572]  | ~/ _ [LIQ]
+
+
+ ~/ _ [3566]  | ~/ _ [N]
+
+
+ ~/ _ [3571]  | ~/ _ [DALV]
+
+
+ ~/ _ h  | ~/ _ h
+
+
+ ~/ _ [3574]  | ~/ _ [VEL]
+
+
+ ~/ _ [3569]  | ~/ _ [LAB]
+
+\eType prefix
+
+\lx 2729
+\g NR
+\c W/W
+\o -1
+\wc derivPfx
+\a pen {2726} / _ [3571]  | / _ [DALV]
+
+\eType prefix
+\fd FromPOS12
+\fd ToPOS6
+
+\lx 2733
+\g comb
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a sisir {2732}
+
+\lx 2737
+\g flow
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a alir {2736}
+
+\lx 2741
+\g squeeze
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a himpit {2740}
+
+\lx 2742
+\g squeeze
+\c W
+\wc root
+\mp RootPOS12
+\fd RootPOS12
+\a himpit {2740}
+
+\lx 2746
+\g type
+\c W
+\wc root
+\mp RootPOS12
+\fd RootPOS12
+\a etik {16057} / meng _  | / meng _
+		 / peng _  | / peng _
+
+\a ketik {2745}
+
+\lx 2750
+\g treat
+\c W
+\wc root
+\mp RootPOS12
+\fd RootPOS12
+\a traktir {2749}
+
+\lx 2754
+\g sing
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a nyanyi {2753}
+
+\lx 2755
+\g sing
+\c W
+\wc root
+\mp RootPOS12
+\fd RootPOS12
+\a nyanyi {2753}
+
+\lx 2759
+\g possess
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a milik {2758}
+
+\lx 2763
+\g we.EXCL
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a kami {2762}
+
+\lx 2764
+\g we.EXCL
+\c W
+\wc root
+\mp RootPOS9
+\fd RootPOS9
+\a kami {2762}
+
+\lx 2768
+\g they
+\c W
+\wc root
+\mp RootPOS9
+\fd RootPOS9
+\a mereka {2767}
+
+\lx 2772
+\g NR2
+\c W/W
+\o 1
+\wc derivSfx
+\a an {2771}
+\eType suffix
+\fd ToPOS6
+
+\lx 2776
+\g help
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a bantu {2775}
+
+\lx 2782
+\g 1SG
+\c W
+\wc root
+\mp RootPOS9
+\fd RootPOS9
+\a aku {2779}
+
+\lx 2782
+\g 1SG
+\c W/W
+\wc proclitic
+\eType prefix
+\o -32000
+\a ku {2780} / # _  | / # _
+
+
+\lx 2782
+\g 1SG
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a ku {2781} / _ #  | / _ #
+
+
+\lx 2786
+\g 2SG
+\c W/W
+\wc proclitic
+\eType prefix
+\o -32000
+\a kau {2785}
+
+\lx 2790
+\g ball
+\c W
+\wc root
+\mp RootPOS6
+\fd RootPOS6
+\a bola {2789}
+
+\lx 2794
+\g NR3
+\c W/W
+\o -NaN -NaN
+\wc 16114
+\a [3570^1]e  {2793} / _ [3570^1]  | / _ [C^1]
+
+\eType prefix
+
+\lx 2798
+\g husband
+\c W
+\wc root
+\mp RootPOS6
+\fd RootPOS6
+\a laki {2797}
+
+\lx 2803
+\g NR4
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a REDUP {2801}
+
+\lx 2807
+\g PASSV
+\c W/W
+\o -1
+\wc derivPfx
+\a di {2806}
+\eType prefix
+\fd FromPOS12
+\fd ToPOS12
+
+\lx 2811
+\g good
+\c W
+\wc root
+\mp RootPOS0
+\fd RootPOS0
+\a baik {2810}
+
+\lx 16099
+\g NMLZR
+\c W/W
+\o -1
+\wc derivCircumPfx
+\a pem {16101} / _ [3565]  | / _ [V]
+		 / _ [3569]  | / _ [LAB]
+
+\a pen {16100} / _ [3565]  | / _ [V]
+		 / _ [3571]  | / _ [DALV]
+
+
+ ~/ _ [3569]  | ~/ _ [LAB]
+
+\a penj {16103} / _ [3565]  | / _ [V]
+		 / _ [3575]  | / _ [PALV]
+
+
+ ~/ _ [3569]  | ~/ _ [LAB]
+
+
+ ~/ _ [3571]  | ~/ _ [DALV]
+
+\a peng {16102} / _ [3565]  | / _ [V]
+		 / _ [3574]  | / _ [VEL]
+
+
+ ~/ _ [3569]  | ~/ _ [LAB]
+
+
+ ~/ _ [3571]  | ~/ _ [DALV]
+
+
+ ~/ _ [3575]  | ~/ _ [PALV]
+
+\eType prefix
+\fd FromPOS12
+\fd ToPOS6
+\mcc 16099 +/ _ ... 16099 +/ 16099 ... _
+
+
+\lx 16099
+\g NMLZR
+\c W/W
+\o 1
+\wc derivCircumSfx
+\a an {16104}
+\eType suffix
+\fd FromPOS12
+\fd ToPOS6
+\mcc 16099 +/ _ ... 16099 +/ 16099 ... _
+
+
+\lx 16109
+\g AF
+\c W/W
+\o -NaN -NaN
+\wc 16114
+\a mo {16110}
+\eType prefix
+\mcc 16109 +/ _ ... 16109 +/ 16109 ... _
+
+
+\lx 16109
+\g AF
+\c W/W
+\o NaN NaN
+\wc 16115
+\a on {16112}
+\eType suffix
+\mcc 16109 +/ _ ... 16109 +/ 16109 ... _
+
+
+\lx 16119
+\g DESI
+\c W/W
+\o 0
+\wc circumPfx
+\a me {16120}
+\eType prefix
+\mcc 16119 +/ _ ... 16119 +/ 16119 ... _
+
+
+\lx 16119
+\g DESI
+\c W/W
+\o 0
+\wc circumSfx
+\a op {16122}
+\eType suffix
+\mcc 16119 +/ _ ... 16119 +/ 16119 ... _
+
+
+\lx 16125
+\g PF
+\c W/W
+\o -NaN -NaN
+\wc 16114
+\a po {16126}
+\eType prefix
+
+\lx 16129
+\g OF
+\c W/W
+\o -NaN -NaN
+\wc 16114
+\a ta {16130}
+\eType prefix
+
+\lx 16400
+\g OF
+\c W/W
+\o -NaN -NaN
+\wc 16115
+\a ta {16130}
+\eType prefix
+
+\lx 16142
+\g FAKE
+\c W/W
+\o 0
+\wc prefix
+\a ko {16143}
+\eType prefix
+
+\lx 16235
+\g FakeForTestingCircumfix word grammar debugging
+\c W/W
+\o 1
+\wc derivSfx
+\a o {16154}
+\a 0 {16155}
+\eType suffix
+\fd FromPOS9
+\fd ToPOS3

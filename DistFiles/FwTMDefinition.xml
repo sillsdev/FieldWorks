@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- ============================================================================================
+IMPORTANT NOTICE: command id's must all be unique within the application. That doesn't just mean
+unique within a particular XML definition file. It means unique among all the command XML
+definition files used in a single application.
+
+Item "type" Values:
+	0 = Regular Button
+	1 = Button with popup arrow that pops-up subitems on a toolbar
+	2 = Button with popup arrow that pops-up subitems on a menu
+	3 = Button with popup arrow that pops-up a custom (application-defined) control.
+	4 = ComboBox
+	5 = Container for application-defined control (e.g. goto scripture passage control)
+
+Item "displaytype" Values (applies to item types 0 - 3):
+	0 = Image only (default)
+	1 = Text only
+	2 = Image and text
+
+	Item names with a "tbb" prefix are toolbar buttons.
+	Item name with a "mnu" prefix are menu items.
+
+	Attributes beginning with dnb are DotNetBar specific.
+
+	customizeitem - By default, only menu items are shown in the list of command items in the
+	toolbar customization dialog. However, there may be some toolbar items that aren't on the
+	menu but should be in the customization list. When applied to a toolbar item, this
+	attribute tells the adapter to put the toolbar item in the customization list even though
+	it isn't a menu item.
+
+	replacecustomizeitem - By default, only menu items are shown in the list of command items in the
+	toolbar customization dialog. However, sometimes the toolbar representation of a menu item
+	varies a little from the menu item. For example, when the undo and redo items appear on a
+	menu, they act like normal buttons. However, when they appear on a toolbar, the include a
+	drop-down arrow allowing the user to drop-down a list of actions to undo/redo. Therefore,
+	the toolbar implementation of the undo/redo command differs somewhat from the menu
+	implementation. In cases like these, it is desirable to only allow the drop-down version
+	of the buttons to be placed on toolbars. Applying this attribute to an item tells the
+	adapter to use the item to replace another one that has already been added to the
+	collection of customization items. This attribute should only be applied to toolbar items
+	and it's expected that the item being replaced is already in the customization collection.
+
+	windowlist - This attribute should only be applied to one menu item. It tells the
+	adapter the item is the first item in the list of an application's open windows. The item
+	with this attribute set to true handle's it's update handler differently from other items.
+	When the update handler is called, an argument of type WindowListInfo is passed. The
+	update handler should fill-in the list property with the list of windows that should
+	be displayed in the menu.
+
+	morewindowsitem - This attribute flags an item as the "More Windows..." item. The
+	adapter will automatically make this item visible or hidden as necessary. When there are
+	more than 10 items in the window list, the adapter will make this item visible. Otherwise
+	it will be hidden.
+
+	allowcustomizing - This attribute for toolbars determines whether or not the last item
+	on the toolbar will be the little button that allows the user to customize the items
+	that are visible on the toolbar.
+
+	settingFilesPrefix - This attribute for toolbars tells the adapter what prefix to use
+	when saving or restoring a toolbar's settings from a settings file. A settings file
+	saves all the information about a toolbar when the form it belongs to is closed. That
+	is how user customization information is saved. The file format for a toolbar's
+	settings format is: prefix.toolbarname.xml where toolbarname is replaced with the
+	toolbar's name (i.e. the name attribute of toolbar definition sections below).
+
+	onmodalform - In the event the toolbar adapter allows toolbar's to be undocked, this
+	attribute for toolbars tells the adapter the toolbars will be placed on a modal form.
+	Therefore, the adapter will not allow toolbar's to be undocked. The reason being,
+	after toolbars are undocked, they cannot be docked again since the modal form doesn't
+	allow other windows (which undocked toolbars are) in the application to gain focus.
+
+	split - This attribute determines whether or not types 1 - 3 should be split buttons.
+	In the .Net Framework ToolStrip world, this distinction is the found between
+	ToolStripDropDownButton and ToolStripSplitButton.
+============================================================================================ -->
+<TMDef>
+	<resources>
+		<!-- localizedstrings are for strings for toolbars, toolbar and menu items, tooltips,
+			and categories -->
+		<localizedstrings assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.FwTMStrings"/>
+
+		<!-- systemstringids are for strings displayed in the customize menu,
+			and dialog box (assuming one is available) for menu and toolbar user customization -->
+		<systemstringids assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.ToolBarSystemStrings"/>
+
+		<imageList assemblyPath="FwResources.dll"
+			class="SIL.FieldWorks.Resources.ResourceHelper"
+			field="menuToolBarImages"
+			labels="CmdOpen, CmdSave, CmdPrint, CmdCut, CmdCopy, CmdPaste, CmdUndo, CmdRedo,
+			8, CmdAbout, CmdFontBold, CmdFontItalic, CmdDecreaseIndent, CmdIncreaseIndent,
+			CmdAlignLeft, CmdCenter, CmdAlignRight, CmdBulletList, CmdNumberedList,
+			CmdForegroundColor,	CmdBackgroundColor, CmdBorders, CmdBordersBottom, CmdBordersTop,
+			CmdBordersLeft,	CmdBordersRight, CmdBordersNone, 27, CmdRemoveCharStyle,
+			CmdResetParaStyle, 30, CmdPageSetup, CmdDelete, 33, CmdFind, CmdFindNext,
+			CmdFindPrev, CmdReplace, 38, CmdCascade, CmdTileSideBySide, CmdTile, 42, CmdStyles,
+			CmdNewWindow, 45, CmdConfig, CmdAppHelp, CmdTraining, CmdPrintLayout,
+			CmdBrowse, CmdDataEntry, CmdFullWindow, CmdAddToDict, CmdNew, CmdBackup,
+			CmdRestore">
+		</imageList>
+	</resources>
+
+	<commands>
+		<command id="CmdFile" text="kstidFileItemName"/>
+		<command id="CmdEdit" text="kstidEditItemName"/>
+		<command id="CmdView" text="kstidViewItemName"/>
+		<command id="CmdFormat" text="kstidFormatItemName"/>
+		<command id="CmdTools" text="kstidToolsItemName"/>
+		<command id="CmdWindow" text="kstidWindowItemName"/>
+		<command id="CmdHelp" text="kstidHelpItemName"/>
+		<command id="CmdNew" text="kstidNewItemName" tooltip="kstidNewToolTip"
+			message="FileNew" category="kstidFileCategory">
+		</command>
+		<command id="CmdOpen" text="kstidOpenItemName" tooltip="kstidOpenToolTip"
+			message="FileOpen" category="kstidFileCategory" shortcutkey="CtrlO">
+		</command>
+		<command id="CmdClose" text="kstidCloseItemName" tooltip="kstidCloseToolTip"
+			message="FileClose" category="kstidFileCategory">
+		</command>
+		<command id="CmdSave" text="kstidSaveItemName" tooltip="kstidSaveToolTip"
+			message="FileSave" category="kstidFileCategory" shortcutkey="CtrlS">
+		</command>
+		<command id="CmdProjManagement" text="kstidProjManagementItemName"/>
+		<command id="CmdProjProperties" text="kstidProjPropertiesItemName"
+			tooltip="kstidProjPropertiesToolTip" message="FileProjectProperties" category="kstidFileCategory">
+		</command>
+		<command id="CmdBackup" text="kstidBackupItemName"
+			tooltip="kstidBackupToolTip" message="BackupProject" category="kstidFileCategory">
+		</command>
+		<command id="CmdRestore" text="kstidRestoreItemName"
+			tooltip="kstidRestoreToolTip" message="RestoreProject" category="kstidFileCategory">
+		</command>
+		<command id="CmdDeleteProj" text="kstidDeleteProjItemName"
+			tooltip="kstidDeleteProjToolTip" message="FileDelete" category="kstidFileCategory">
+		</command>
+		<command id="CmdCreateShortcut" text="kstidCreateShortcutItemName"
+			tooltip="kstidCreateShortcutToolTip" message="CreateShortcut" category="kstidFileCategory">
+		</command>
+		<command id="CmdSharingLocation" text="kstidSharingLocationItemName"
+			tooltip="kstidSharingLocationToolTip" message="FileProjectSharingLocation" category="kstidFileCategory">
+		</command>
+		<command id="CmdPageSetup" text="kstidPageSetupItemName"
+			tooltip="kstidPageSetupToolTip" message="PageSetup" category="kstidFileCategory">
+		</command>
+		<command id="CmdPrint" text="kstidPrintItemName" tooltip="kstidPrintToolTip"
+			message="FilePrint" category="kstidFileCategory" shortcutkey="CtrlP">
+		</command>
+		<command id="CmdCut" text="kstidCutItemName" tooltip="kstidCutToolTip"
+			message="EditCut" category="kstidEditCategory" shortcutkey="CtrlX">
+		</command>
+		<command id="CmdCopy" text="kstidCopyItemName" tooltip="kstidCopyToolTip"
+			message="EditCopy" category="kstidEditCategory" shortcutkey="CtrlC">
+		</command>
+		<command id="CmdPaste" text="kstidPasteItemName" tooltip="kstidPasteToolTip"
+			message="EditPaste" category="kstidEditCategory" shortcutkey="CtrlV" >
+		</command>
+		<command id="CmdUndo" text="kstidUndoItemName" tooltip="kstidUndoToolTip"
+			message="EditUndo" category="kstidEditCategory" shortcutkey="CtrlZ">
+		</command>
+		<command id="CmdRedo" text="kstidRedoItemName" tooltip="kstidRedoToolTip"
+			message="EditRedo" category="kstidEditCategory" shortcutkey="CtrlY">
+		</command>
+		<command id="CmdSelectAll" text="kstidSelectAllItemName" tooltip="kstidSelectAllToolTip"
+			message="EditSelectAll" category="kstidEditCategory" shortcutkey="CtrlA">
+		</command>
+		<command id="CmdFind" text="kstidFindItemName" tooltip="kstidFindToolTip"
+			message="EditFind" category="kstidEditCategory" shortcutkey="CtrlF">
+		</command>
+		<command id="CmdFindNext" text="kstidFindNextItemName" tooltip="kstidFindNextToolTip"
+			message="EditFindNext" category="kstidEditCategory" shortcutkey="CtrlG">
+		</command>
+		<!--command id="CmdFindPrev" text="kstidFindPrevItemName" tooltip="kstidFindPrevToolTip"
+			message="EditFindPrev" category="kstidEditCategory" shortcutkey="CtrlD">
+		</command-->
+		<command id="CmdReplace" text="kstidReplaceItemName" tooltip="kstidReplaceToolTip"
+			message="EditReplace" category="kstidEditCategory" shortcutkey="CtrlH">
+		</command>
+		<command id="CmdDelete" text="kstidDeleteItemName" tooltip="kstidDeleteToolTip"
+			message="EditDelete" category="kstidEditCategory">
+		</command>
+		<command id="CmdStatusBar" text="kstidStatusBarItemName" tooltip="kstidStatusBarToolTip"
+			message="StatusBar" category="kstidViewCategory">
+		</command>
+		<command id="CmdSideBar" text="kstidSideBarItemName" tooltip="kstidSideBarToolTip"
+			message="SideBar" category="kstidViewCategory">
+		</command>
+		<command id="CmdToolBars" text="kstidToolBarsItemName" message="ToggleToolBarVisiblilty"/>
+		<command id="CmdCustomizeToolBars" text="kstidCustomizeToolBarsItemName"
+			message="CustomizeToolBars">
+		</command>
+		<command id="CmdZoom" text="kstidZoomItemName" tooltip="kstidZoomToolTip"
+			message="ViewZoom" category="kstidViewCategory" dnboverridedrawing="false">
+		</command>
+		<command id="CmdFullWindow" text="kstidFullWindowItemName" tooltip="kstidFullWindowToolTip"
+			message="ViewFullWindow" category="kstidViewCategory" shortcutkey="CtrlW">
+		</command>
+		<command id="CmdParaStylesCombo" text="kstidParaStyleItemName"
+			tooltip="kstidParaStyleToolTip" message="StyleComboBox" category="kstidFormatCategory">
+		</command>
+		<command id="CmdCharStylesCombo" text="kstidCharStyleItemName"
+			tooltip="kstidCharStyleToolTip" message="StyleComboBox" category="kstidFormatCategory">
+		</command>
+		<command id="CmdWritingSystemCombo" text="kstidWritingSystemItemName"
+			tooltip="kstidWSTooltip" message="WritingSystem" category="kstidFormatCategory">
+		</command>
+		<command id="CmdStyles" text="kstidStyleItemName" tooltip="kstidStyleToolTip"
+			message="FormatStyle" category="kstidFormatCategory">
+		</command>
+		<command id="CmdApplyStyle" text="kstidApplyStyleItemName" tooltip="kstidApplyStyleToolTip"
+			message="FormatApplyStyle" category="kstidFormatCategory">
+		</command>
+		<command id="CmdRemoveCharStyle" text="kstidRemoveCharStyleItemName"
+			tooltip="kstidRemoveCharStyleToolTip" message="RemoveCharacterStyle"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdResetParaStyle" text="kstidResetParaStyleItemName"
+			tooltip="kstidResetParaStyleToolTip" message="ResetParagraphStyle"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdFontBold" text="kstidBoldItemName" tooltip="kstidBoldToolTip"
+			message="FormatFontBold" category="kstidFormatCategory" shortcutkey="CtrlB">
+		</command>
+		<command id="CmdFontItalic" text="kstidItalicItemName" tooltip="kstidItalicToolTip"
+			message="FormatFontItalic" category="kstidFormatCategory" shortcutkey="CtrlI">
+		</command>
+		<command id="CmdAlignLeft" text="kstidLeftAlignItemName" tooltip="kstidLeftAlignToolTip"
+			message="FormatAlignLeft" category="kstidFormatCategory">
+		</command>
+		<command id="CmdCenter" text="kstidCenterItemName" tooltip="kstidCenterToolTip"
+			message="FormatCenter" category="kstidFormatCategory">
+		</command>
+		<command id="CmdAlignRight" text="kstidRightAlignItemName"
+			tooltip="kstidRightAlignToolTip" message="FormatAlignRight"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdNumberedList" text="kstidNumberedListItemItemName"
+			tooltip="kstidNumberedListItemToolTip" message="FormatNumberedList"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdBulletList" text="kstidBulletedListItemItemName"
+			tooltip="kstidBulletedListItemToolTip" message="FormatBulletList"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdDecreaseIndent" text="kstidDecreaseIndentItemName"
+			tooltip="kstidDecreaseIndentToolTip" message="FormatDecreaseIndent"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdIncreaseIndent" text="kstidIncreaseIndentItemName"
+			tooltip="kstidIncreaseIndentToolTip" message="FormatIncreaseIndent"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdBorders" text="kstidBordersItemName"
+			tooltip="kstidBordersToolTip" message="FormatBorders" category="kstidFormatCategory">
+		</command>
+		<command id="CmdBordersSurround" text="kstidBordersSurroundItemName"
+			tooltip="kstidBordersSurroundToolTip" message="FormatBordersSurround"
+			category="kstidFormatCategory" image="CmdBorders">
+		</command>
+		<command id="CmdBordersTop" text="kstidBordersTopItemName"
+			tooltip="kstidBordersTopToolTip" message="FormatBordersTop"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdBordersBottom" text="kstidBordersBottomItemName"
+			tooltip="kstidBordersBottomToolTip" message="FormatBordersBottom"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdBordersLeft" text="kstidBordersLeftItemName"
+			tooltip="kstidBordersLeftToolTip" message="FormatBordersLeft"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdBordersRight" text="kstidBordersRightItemName"
+			tooltip="kstidBordersRightToolTip" message="FormatBordersRight"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdBordersNone" text="kstidBordersNoneItemName"
+			tooltip="kstidBordersNoneToolTip" message="FormatBordersNone"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdBackgroundColor" text="kstidBackgroundColorItemName"
+			tooltip="kstidBackgroundColorToolTip" message="FormatBackgroundColor"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdForegroundColor" text="kstidFontColorItemName"
+			tooltip="kstidFontColorToolTip" message="FormatForegroundColor"
+			category="kstidFormatCategory">
+		</command>
+		<command id="CmdUserProperties" text="kstidUserPropertiesItemName"
+			tooltip="kstidUserPropertiesToolTip" message="ToolsUserProperties"
+			category="kstidToolsCategory">
+		</command>
+		<command id="CmdNewWindow" text="kstidNewWindowItemName"
+			tooltip="kstidNewWindowToolTip" message="NewWindow" category="kstidWindowCategory">
+		</command>
+		<command id="CmdCascade" text="kstidCascadeItemName"
+			tooltip="kstidCascadeToolTip" message="WindowCascade" category="kstidWindowCategory">
+		</command>
+		<command id="CmdTile" text="kstidTileItemName"
+			tooltip="kstidTileToolTip" message="WindowTileStacked" category="kstidWindowCategory">
+		</command>
+		<command id="CmdTileSideBySide" text="kstidTileSideBySideItemName"
+			tooltip="kstidTileSideBySideToolTip" message="WindowTileSideBySide"
+			category="kstidWindowCategory">
+		</command>
+		<command id="CmdTraining" text="kstidTrainingItemName" />
+		<command id="CmdTutorial" text="kstidTutorialItemName"
+			tooltip="kstidTutorialToolTip" message="HelpTutorial" category="kstidHelpCategory">
+		</command>
+		<command id="CmdWindowList" text="kstidWindowListItemFormatter" message="WindowActivate"/>
+		<command id="CmdMoreWindows" message="MoreWindows" text="kstidMoreWindowsItemName"/>
+		<command id="CmdAddToDict" text="kstidAddToDict" category="kstidToolsCategory"
+			message="AddToDictionary" tooltip="kstidAddToDictToolTip"/>
+		<command id="CmdChangeMultiOccurrences" text="kstidChangeMultiOccurrences" category="kstidToolsCategory"
+			message="ChangeMultipleOccurrences" tooltip="kstidChangeMultiOccurrencesToolTip"/>
+		<command id="CmdSpellingSuggestionChosen" message="SpellingSuggestionChosen"/>
+	</commands>
+
+	<!-- **************** -->
+	<!-- MENU DEFINITIONS -->
+	<!-- **************** -->
+	<menus>
+		<!-- *************** -->
+		<!--    FILE MENU    -->
+		<!-- *************** -->
+		<item name="mnuFile" commandid="CmdFile">
+			<item name="mnuNew" commandid="CmdNew"/>
+			<item name="mnuOpen" commandid="CmdOpen"/>
+			<item name="mnuSave" commandid="CmdSave"/>
+			<item name="mnuProjManagement" commandid="CmdProjManagement">
+				<item name="mnuProjProperties" commandid="CmdProjProperties"/>
+				<item name="mnuBackup" commandid="CmdBackup"/>
+				<item name="mnuRestore" commandid="CmdRestore"/>
+				<item name="mnuDeleteProj" commandid="CmdDeleteProj" customizeitem="false"/>
+				<item name="mnuCreateShortcut" commandid="CmdCreateShortcut" begingroup="true"/>
+				<item name="mnuSharingLocation" commandid="CmdSharingLocation" begingroup="true"/>
+			</item>
+			<item name="mnuPageSetup" commandid="CmdPageSetup" begingroup="true"/>
+			<item name="mnuPrint" commandid="CmdPrint"/>
+	  <item name="mnuClose" commandid="CmdClose"/>
+	</item>
+
+		<!-- *************** -->
+		<!--    EDIT MENU    -->
+		<!-- *************** -->
+		<item name="mnuEdit" commandid="CmdEdit" >
+			<item name="mnuUndo" commandid="CmdUndo"/>
+			<item name="mnuRedo" commandid="CmdRedo"/>
+			<item name="mnuCut" commandid="CmdCut" begingroup="true"/>
+			<item name="mnuCopy" commandid="CmdCopy"/>
+			<item name="mnuPaste" commandid="CmdPaste"/>
+			<item name="mnuSelectAll" commandid="CmdSelectAll"/>
+			<item name="mnuFind" commandid="CmdFind" begingroup="true"/>
+			<item name="mnuFindNext" commandid="CmdFindNext"/>
+			<item name="mnuFindPrev" commandid="CmdFindPrev" visible="false"/>
+			<item name="mnuReplace" commandid="CmdReplace"/>
+			<item name="mnuDelete" commandid="CmdDelete" begingroup="true"/>
+		</item>
+
+		<!-- *************** -->
+		<!--    VIEW MENU    -->
+		<!-- *************** -->
+		<item name="mnuView" commandid="CmdView">
+			<item name="mnuToolBars" commandid="CmdToolBars" begingroup="true" toolbarlist="true" />
+			<item name="mnuSideBar" commandid="CmdSideBar"/>
+			<item name="mnuStatusBar" commandid="CmdStatusBar"/>
+			<item name="mnuFullWindow" commandid="CmdFullWindow"/>
+		</item>
+
+		<!-- *************** -->
+		<!--   FORMAT MENU   -->
+		<!-- *************** -->
+		<item name="mnuFormat" commandid="CmdFormat">
+			<item name="mnuStyle" commandid="CmdStyles"/>
+			<item name="mnuApplyStyle" commandid="CmdApplyStyle"/>
+			<item name="mnuRemoveCharStyle" commandid="CmdRemoveCharStyle" begingroup="true"/>
+			<item name="mnuResetParaStyle" commandid="CmdResetParaStyle"/>
+		</item>
+
+		<!-- *************** -->
+		<!--   TOOLS MENU    -->
+		<!-- *************** -->
+		<item name="mnuTools" commandid="CmdTools">
+			<item name="mnuUserProperties" commandid="CmdUserProperties" begingroup="true" visible="false"/>
+		</item>
+
+		<!-- *************** -->
+		<!--  WINDOW MENU    -->
+		<!-- *************** -->
+		<item name="mnuWindow" commandid="CmdWindow">
+			<item name="mnuNewWindow" commandid="CmdNewWindow"/>
+			<item name="mnuCascade" commandid="CmdCascade" begingroup="true"/>
+			<item name="mnuTile" commandid="CmdTile"/>
+			<item name="mnuTileSideBySide" commandid="CmdTileSideBySide"/>
+			<item name="mnuWindowList" commandid="CmdWindowList" begingroup="true" windowlist="true"/>
+			<item name="mnuMoreWindows" commandid="CmdMoreWindows" morewindowsitem="true"/>
+		</item>
+
+		<!-- *************** -->
+		<!--    HELP MENU    -->
+		<!-- *************** -->
+		<item name="mnuHelp" commandid="CmdHelp">
+			<item name="mnuTraining" commandid="CmdTraining"/>
+			<item name="mnuTutorial" commandid="CmdTutorial" visible="false"/>
+		</item>
+	</menus>
+
+	<!-- ******************* -->
+	<!-- TOOLBAR DEFINITIONS -->
+	<!-- ******************* -->
+	<toolbars>
+		<toolbar name="tbStandard" text="kstidStandardToolBarText" row="0" position="0" allowcustomizing="true">
+			<item name="tbbOpen" commandid="CmdOpen" type="0"/>
+			<item name="tbbSave" commandid="CmdSave" type="0"/>
+			<item name="tbbPrint" commandid="CmdPrint" type="0"/>
+			<item name="tbbCut" commandid="CmdCut" type="0" begingroup="true"/>
+			<item name="tbbCopy" commandid="CmdCopy" type="0"/>
+			<item name="tbbPaste" commandid="CmdPaste" type="0"/>
+			<item name="tbbUndo" commandid="CmdUndo" type="3" begingroup="true" split="true" replacecustomizeitem="CmdUndo"/>
+			<item name="tbbRedo" commandid="CmdRedo" type="3" split="true" replacecustomizeitem="CmdRedo"/>
+			<item name="tbbZoom" commandid="CmdZoom" type="4" begingroup="true" width="100"/>
+		</toolbar>
+		<toolbar name="tbFormat" text="kstidFormatToolBarText" row="1" position="0" allowcustomizing="true">
+			<item name="tbbParaStylesCombo" commandid="CmdParaStylesCombo" type="4" width="170" dnboverridedrawing="true" customizeitem="true"/>
+			<item name="tbbCharStylesCombo" commandid="CmdCharStylesCombo" type="4" width="170" dnboverridedrawing="true" customizeitem="true"/>
+			<item name="tbbWSCombo" commandid="CmdWritingSystemCombo" type="4" begingroup="true" width="150" dnboverridedrawing="false" customizeitem="true"/>
+			<item name="tbbRemoveCharStyle" commandid="CmdRemoveCharStyle" type="0" begingroup="true"/>
+			<item name="tbbResetParaStyle" commandid="CmdResetParaStyle" type="0"/>
+		</toolbar>
+		<!-- toolbar name="tbDirectFormatting" text="kstidDirectFormattingToolBarText" row="2" position="0" visible="false" allowcustomizing="true">
+			<item name="tbbFontBold" commandid="CmdFontBold" type="0"/>
+			<item name="tbbFontItalic" commandid="CmdFontItalic" type="0"/>
+			<item name="tbbAlignLeft" commandid="CmdAlignLeft" type="0"/>
+			<item name="tbbCenter" commandid="CmdCenter" type="0"/>
+			<item name="tbbAlignRight" commandid="CmdAlignRight" type="0"/>
+			<item name="tbbNumberedList" commandid="CmdNumberedList" type="0" begingroup="true"/>
+			<item name="tbbBulletList" commandid="CmdBulletList" type="0"/>
+			<item name="tbbDecreaseIndent" commandid="CmdDecreaseIndent" type="0"/>
+			<item name="tbbIncreaseIndent" commandid="CmdIncreaseIndent" type="0"/>
+			<item name="tbbBorders" commandid="CmdBorders" type="1" begingroup="true">
+				<item name="tbbBordersSurround" commandid="CmdBordersSurround" type="0"/>
+				<item name="tbbBordersTop" commandid="CmdBordersTop" type="0"/>
+				<item name="tbbBordersBottom" commandid="CmdBordersBottom" type="0"/>
+				<item name="tbbBordersLeft" commandid="CmdBordersLeft" type="0"/>
+				<item name="tbbBordersRight" commandid="CmdBordersRight" type="0"/>
+				<item name="tbbBordersNone" commandid="CmdBordersNone" type="0"/>
+			</item>
+			<item name="tbbBackgroundColor" commandid="CmdBackgroundColor" type="3"/>
+			<item name="tbbForegroundColor" commandid="CmdForegroundColor" type="3"/>
+		</toolbar -->
+	</toolbars>
+</TMDef>

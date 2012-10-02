@@ -1,0 +1,92 @@
+
+\ca W Prt Linker
+\cr W W
+
+
+\maxnull 1
+\maxprops 255
+\maxp 5
+\maxi 1
+\maxs 5
+\maxr 1
+\maxn 0
+\mp Proclitic Enclitic
+\mp RootPOS0 RootPOS242 RootPOS244 RootPOS245 RootPOS246 RootPOS18428 RootPOS17784 RootPOS17809 RootPOS18318 ToInflClass18431 ToInflClass18432 ToInflClass19018 ToInflClass19019 ToInflClass18433 ToInflClass19007 ToInflClass19008 ToInflClass19012 ToInflClass19013 ToInflClass19014 ToInflClass19015 ToInflClass18434 ToInflClass19005 ToInflClass19009 ToInflClass19010 ToInflClass19011 ToInflClass19006 ToInflClass18435 ToInflClass19047 ToInflClass19214 ToInflClass19060 ToInflClass19061 ToInflClass19062 ToInflClass19063 ToInflClass19374
+\ap Bound  MSEnvPOS242 MSEnvPOS244 MSEnvPOS245 MSEnvPOS246 MSEnvPOS18428 MSEnvPOS17784 MSEnvPOS17809 MSEnvPOS18318 InflClass18431 ICA18431 InflClass18432 ICA18432 InflClass19018 ICA19018 InflClass19019 ICA19019 InflClass18433 ICA18433 InflClass19007 ICA19007 InflClass19008 ICA19008 InflClass19012 ICA19012 InflClass19013 ICA19013 InflClass19014 ICA19014 InflClass19015 ICA19015 InflClass18434 ICA18434 InflClass19005 ICA19005 InflClass19009 ICA19009 InflClass19010 ICA19010 InflClass19011 ICA19011 InflClass19006 ICA19006 InflClass18435 ICA18435 InflClass19047 ICA19047 InflClass19214 ICA19214 InflClass19060 ICA19060 InflClass19061 ICA19061 InflClass19062 ICA19062 InflClass19063 ICA19063 InflClass19374 ICA19374 ICA19012ICA19015ICA19063 ICA18435ICA19047 ICA18434ICA18435ICA19047 ICA18435ICA19061 ICA18434ICA18435 ICA19011ICA19018ICA19047 ICA18431ICA18433 ICA18433ICA19009ICA19010ICA19061ICA19063 ICA18433ICA19060 ICA18434ICA19047 ICA19005ICA19047 ICA18431ICA19008ICA19014ICA19060 ICA19006ICA19012ICA19047ICA19374 ICA18432ICA18433ICA19060 ICA19006ICA19047 ICA18434ICA19018ICA19047 ICA19013ICA19060 ICA19015ICA19061ICA19062ICA19063 ICA19015ICA19060 ICA19011ICA19061ICA19062 ICA18432ICA18433 ICA18433ICA19009ICA19010ICA19061ICA19063ICA19214 ICA19061ICA19062
+\scl 440 | C
+
+ p b t d c g f s x m n l r v h
+\scl 441 | V
+
+ i j e a o u
+\pt SEC_ST
+\pt OrderPfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+
+\pt Category (left tocategory is current fromcategory)
+\it SEC_ST
+\it OrderIfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\it Category
+\nt InterfixType_ST
+	 NOT (    (left    type is interfixprefix)
+		  AND (current type is interfixsuffix)
+		 )
+\rt SEC_ST
+\co only proclitics can occur left of a particle
+\rt RootCategory_ST
+  IF (current tocategory is Prt)
+THEN (left property is Proclitic)
+
+\st SEC_ST
+\st OrderSfx_ST
+(    (left orderclassmin < current orderclassmin)
+AND (left orderclassmax < current orderclassmax) )
+OR ((current orderclass = 1) AND (left orderclass = 1))
+OR ((current orderclass = 32000) AND (left orderclass = 32000))
+OR ((current orderclassmin = 1) AND (current orderclassmax = 31999))
+OR ((left orderclassmin = 1) AND (left orderclassmax = 31999))
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\st SuffixCategory_ST
+   (left tocategory is current fromcategory)
+OR
+   | only enclitics can go on particles
+   (  IF (left tocategory is Prt)
+	THEN (current property is Enclitic)
+   )
+\ft OrderFinal_FT
+IF   (    (current orderclass = 0)
+	  AND (FOR_SOME_LEFT  (LEFT  orderclass ~= 0))
+	  AND (FOR_SOME_RIGHT (RIGHT orderclass ~= 0))
+	 )
+THEN (   (LEFT orderclass <= RIGHT orderclass)
+	  OR (    (LEFT  orderclass = -1)
+		  AND (RIGHT orderclass ~= -32000)
+		  )
+	  OR (    (RIGHT orderclass = 1)
+		  AND (LEFT  orderclass ~= 32000)
+		  )
+	 )
+\ft BoundStemOrRoot_FT
+IF   (current property is Bound)
+THEN (NOT (    (current type is initial)
+		   AND (current type is final))
+	 )
+\ft MCC_FT
+
+\patr TreeStyle none
+\patr ShowGlosses Off
+\patr ShowFeatures On

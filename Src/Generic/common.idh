@@ -1,0 +1,103 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: Common.idh
+Responsibility: Shon Katzenberger
+Last reviewed:
+
+	Summary: Contains common IDL declarations. To declare an interface use the DeclareInterface
+	macro. This provides automatic generation of smart pointer types as long as DECLARE_COM_PTR
+	is defined in an included header file.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+#define _STRINGIZE(foo) #foo
+
+#define DeclareInterface(cls, base, iid) \
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") \
+		cpp_quote(_STRINGIZE(I##cls)) \
+		cpp_quote(",") \
+		cpp_quote(#iid) \
+		cpp_quote(");") \
+	[ uuid(#iid), object, pointer_default(unique) ] interface I##cls : I##base
+
+
+#define DeclareDualInterface(cls, iid) \
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") \
+		cpp_quote(_STRINGIZE(DI##cls)) \
+		cpp_quote(",") \
+		cpp_quote(#iid) \
+		cpp_quote(");") \
+	[ uuid(#iid), dual, oleautomation, pointer_default(unique) ] interface DI##cls : IDispatch
+
+// This is the same except that we don't put the initial D in the interface name.
+// It is useful for interfaces already widely known by the old name before we
+// decide to make them dual.
+#define DeclareDualInterface2(cls, iid) \
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") \
+		cpp_quote(_STRINGIZE(I##cls)) \
+		cpp_quote(",") \
+		cpp_quote(#iid) \
+		cpp_quote(");") \
+	[ uuid(#iid), dual, oleautomation, pointer_default(unique) ] interface I##cls : IDispatch
+
+
+
+
+#define DeclareLibrary(name, ver, desc, libid) \
+	cpp_quote("ATTACH_GUID_TO_CLASS(class,") \
+		cpp_quote(#libid) \
+		cpp_quote(",") \
+		cpp_quote(#name) \
+		cpp_quote(");") \
+	[ uuid(libid), version(ver), helpstring(desc) ] library name
+
+
+#define DeclareCoClass(name, clsid) \
+	cpp_quote("ATTACH_GUID_TO_CLASS(class,") \
+		cpp_quote(#clsid) \
+		cpp_quote(",") \
+		cpp_quote(#name) \
+		cpp_quote(");") \
+	[ uuid(clsid) ] coclass name
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")

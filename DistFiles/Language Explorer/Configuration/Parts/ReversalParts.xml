@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand crafted parts for Reversal index related classes and layouts. -->
+<PartInventory>
+	<bin class="ReversalIndexEntry">
+		<part id="ReversalIndexEntry-Detail-ChangeHandler" type="detail">
+			<RecordChangeHandler assemblyPath="LexEdDll.dll" listName="RecordClerk-reversalEntries"
+				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryChangeHandler"/>
+		</part>
+		<part id="ReversalIndexEntry-Detail-ReversalForm" type="Detail">
+			<slice attr="ReversalForm" field="ReversalForm" label="Form" editor="CustomWithParams"
+				assemblyPath="LexEdDll.dll"
+				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryFormSlice"
+				menu="mnuDataTree-Help"/>
+		</part>
+		<part id="ReversalIndexEntry-Jt-ReversalForm" type="JtView">
+			<string field="ReversalForm" ws="reversal"/>
+		</part>
+		<part id="ReversalIndexEntry-Detail-PartOfSpeech" type="Detail">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<part id="ReversalIndexEntry-Detail-CurrentSenses" type="detail">
+			<slice label="Senses" field="ReferringSenses"  editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.RevEntrySensesCollectionReferenceSlice">
+				<deParams displayProperty="FullReferenceName" ws="vernacular"/>
+			</slice>
+		</part>
+		<part id="ReversalIndexEntry-Jt-PartOfSpeech" type="JtView">
+			<obj field="PartOfSpeech" layout="shortname"/>
+		</part>
+		<part id="ReversalIndexEntry-Detail-ReversalSubentries" type="Detail">
+			<seq field="Subentries"/>
+		</part>
+		<part id="ReversalIndexEntry-Jt-Subentries" type="JtView">
+			<seq field="Subentries"/>
+		</part>
+
+		<part id="ReversalIndexEntry-Jt-ReversalConfig" type="jtview">
+			<obj class="ReversalIndexEntry" field="Self" layout="publishReversalIndexEntry" targetclass="ReversalIndexEntry"/>
+		</part>
+		<part id="ReversalIndexEntry-Jt-FormPub" type="jtview">
+			<configureMlString field="ReversalForm"/>
+		</part>
+		<part id="ReversalIndexEntry-Jt-PartOfSpeechConfig" type="jtview">
+			<obj field="PartOfSpeech" layout="publishForReversal" targetclass="PartOfSpeech"/>
+		</part>
+		<part id="ReversalIndexEntry-Jt-SensesConfig" type="jtview">
+			<seq field="ReferringSenses" layout="publishForReversal" targetclass="LexSense" inheritSeps="true"/>
+		</part>
+		<part id="ReversalIndexEntry-Jt-SubentriesConfig" type="jtview">
+			<innerpile>
+				<seq field="Subentries" layout="publishReversalIndexEntry" targetclass="ReversalIndexEntry"/>
+			</innerpile>
+		</part>
+	</bin>
+
+	<bin class="PartOfSpeech">
+		<part id="CmPossibility-Jt-RevIdxEntryPOSItalicAbbr" type="jtview">
+			<span>
+				<properties>
+					<italic value="on"/>
+				</properties>
+				<string field="Abbreviation" ws="reversal"/>
+			</span>
+		</part>
+	</bin>
+
+	<bin class="PartOfSpeech">
+		<part id="PartOfSpeech-Jt-SubPOS" type="jtview">
+			<seq field="SubPossibilities" layout="Name"/>
+		</part>
+		<part id="PartOfSpeech-Detail-SubPossibilitiesReversal" type="Detail">
+			<seq field="SubPossibilities" layout="ReversalSubcategory"/>
+		</part>
+		<part id="CmPossibility-Jt-RevIdxEntryPOSItalicAbbr" type="jtview">
+			<span>
+				<properties>
+					<italic value="on"/>
+				</properties>
+				<string field="Abbreviation" ws="reversal"/>
+				<lit>.</lit>
+			</span>
+		</part>
+		<part id="PartOfSpeech-Detail-ReversalSubentries" type="Detail">
+			<seq field="SubPossibilities"/>
+		</part>
+		<part id="CmPossibility-Detail-NameRevPOS" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all reversal" forceIncludeEnglish="true" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="CmPossibility-Detail-AbbreviationRevPOS" type="Detail">
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all reversal" forceIncludeEnglish="true" menu="mnuDataTree-Help"/>
+		</part>
+	</bin>
+
+	<bin class="LexSense">
+		<part id="LexSense-Jt-RIELexEntryConfig" type="jtview">
+			<obj field="OwningEntry" layout="publishRIELexEntry" class="LexSense" targetclass="LexEntry"/>
+		</part>
+		<part id="LexSense-Jt-RIEHeadword" type="jtview">
+			<configureMlString field="MLOwnerOutlineName" ws="$ws=vernacular"/>
+		</part>
+	</bin>
+</PartInventory>

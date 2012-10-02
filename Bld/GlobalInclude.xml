@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- Global include file for NAnt builds. Parts of this file are included in various places
+	 when the Visual Studio project files are converted. -->
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<pre-init>
+		<property name="FWMAJOR" value="7"/>
+		<property name="FWMINOR" value="0"/>
+		<property name="FWREVISION" value="6"/>
+		<property name="TEVERSION" value="7"/>
+		<property name="TEMILESTONE" value="0"/>
+		<property name="TEREVISION" value="6"/>
+		<property name="LTMAJOR" value="7"/>
+		<property name="LTMINOR" value="0"/>
+		<property name="LTREVISION" value="6"/>
+		<property name="DNMAJOR" value="2"/>
+		<property name="DNMINOR" value="15"/>
+		<property name="DNREVISION" value="1"/>
+		<property name="WPMAJOR" value="2"/>
+		<property name="WPMINOR" value="15"/>
+		<property name="WPREVISION" value="1"/>
+		<property name="TLEMAJOR" value="2"/>
+		<property name="TLEMINOR" value="15"/>
+		<property name="TLEREVISION" value="1"/>
+	</pre-init>
+</include>

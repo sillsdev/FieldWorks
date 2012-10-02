@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+   <goal>TBD</goal>
+
+   <bug id="TBD" desc="TBD"/>
+
+   <!-- Restore the English Websters and Bible database, then time openning it to Lexicon Edit -->
+
+	<var id="projectName" set="EnglishWebstersBible"/>
+	 <!--var id="ProjType" set="XML"/-->
+	<var id="ProjExt" set="fwdata"/>
+	<!--var id="ProjType" set="DB4OCS"/>
+	<var id="ProjExt" set="db4o"/-->
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<!--var id="projectName" set="&quot;Sena 3&quot;"/-->
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+   <on-application path="C:\GuiTestDriver\Projects\EnglishWebstersBible" exe="RenewEngWeb.bat" run="yes" close="yes" on-fail="assert">
+   </on-application>
+
+   <on-application wait="120000" path="C:\GuiTestDriver\Scripts" exe="SettingsRestore.bat" run="yes" close="yes" on-fail="assert">
+   </on-application>
+
+   <on-application wait="30000" args='-app FLEx -db "C:\GuiTestDriver\Projects\$projectName;\$projectName;.$ProjExt;"' run="yes" close="no" on-fail="assert">
+	  <glimpse id="noWindow" select="sidebar/area/list" path="Lexicon Edit" ind="1" prop="selected"/>
+   </on-application>
+
+</accil>

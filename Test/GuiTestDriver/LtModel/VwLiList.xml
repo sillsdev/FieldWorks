@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<list role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/">
+
+  <tree role="pane" path="9:CSC.SplitContainer.One/9:XCore.RecordBar/$nl;[$row;]/36:">
+	<ex ins="var" id="foodRec" select="list/tree" add="5.2 - Food" />
+  </tree>
+
+  <!-- add other types of record lists here -->
+
+  <item role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer/">
+	 <title path="9:XCore.PaneBar/9:"/> <!-- Semantic Domain, etc.. -->
+
+	 <var id="REC" set="9:listsEdit/9:RecordEditView.DataTree/"/>
+	 <var id="LABEL" set="9:SplitContainer/9:Panel1/"/>
+	 <var id="DATA" set="9:SplitContainer/9:Panel2/"/>
+
+	 <multi path="$REC;9:multistring[$ind;]/"> <!-- [*] finds the index; get the label then use $ind to get the data again -->
+	   <label path="$LABEL;9:"/> <!-- add field name via @path -->
+	   <lang path="$DATA;20:$fld;/24:Table/28:Row[$row;]/29:Cell/$Text"/>
+	   <text path="$DATA;20:$fld;/24:Table/28:Row[$row;]/29:Cell[2]/$Text"/>
+	 </multi>
+
+	 <text path="$REC;9:sttext[$ind;]/">
+	   <label path="$LABEL;9:"/> <!-- add field name via @path -->
+	   <data path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	 </text>
+
+	 <string path="$REC;9:string[$ind;]/">
+	   <label path="$LABEL;9:"/> <!-- add field name via @path -->
+	   <data path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	 </string>
+
+	 <ref path="$REC;9:defaultatomicreference[$ind;]/">
+	   <label path="$LABEL;9:"/> <!-- add field name via @path -->
+	   <empty path="$DATA;9:$fld;/20:Root"/>
+	   <data path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	   <text path="$DATA;9:$fld;/20:Root/$Text"/>
+	   <chooser path="$DATA;9:$fld;/9:.../$NL;43:NAMELESS"/>
+	 </ref>
+
+	 <vec-ref path="$REC;9:defaultvectorreference[$ind;]/">
+	   <label path="$LABEL;9:"/> <!-- add field name via @path -->
+	   <empty path="$DATA;9:$fld;/20:Root"/>
+	   <data path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	   <text path="$DATA;9:$fld;/20:Root/$Text/42:string[$col;]"/>
+	   <chooser path="$DATA;9:$fld;/9:.../$NL;43:NAMELESS"/>
+	 </vec-ref>
+
+	 <header path="$REC;$nl;[$ind;]/$LABEL;9:"/> <!-- add field name via @path -->
+
+	 <jtview path="$REC;9:jtview[$ind;]/">
+	   <label path="$LABEL;9:"/> <!-- add field name via @path -->
+	   <data path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	 </jtview>
+
+  </item>
+
+</list>

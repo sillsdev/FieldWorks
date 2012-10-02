@@ -1,0 +1,429 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PleaseCloseAnyEditorsLookingAt0" xml:space="preserve">
+	<value>Please close any editors that are looking at the output file &lt;{0}&gt; as it currently can't be opened for write permission.</value>
+	<comment>message for message box</comment>
+  </data>
+  <data name="UnableToOpenOutputFile" xml:space="preserve">
+	<value>Unable to open Output file...</value>
+	<comment>caption for message box</comment>
+  </data>
+  <data name="FieldDescWithSFMOf0IsBeingIGNORED" xml:space="preserve">
+	<value>Warning: FieldDescription with SFM of '{0}' is being IGNORED.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="UnknownLangValue0InFieldDescs" xml:space="preserve">
+	<value>Error in Mapping File: Unknown 'lang' value '{0}' in the 'fieldDescriptions' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="MissingMeaningElementInField0InFieldDescs" xml:space="preserve">
+	<value>Error in Mapping File: Missing 'meaning' element in field '{0}' in the 'fieldDescriptions' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="FieldDefinedWithNoSfmAttributeInTheFieldDescs" xml:space="preserve">
+	<value>Error in Mapping File: field defined with no 'sfm' attribute in the 'fieldDescriptions' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="FieldDescWithSFMOf0HasNoLangAttribute" xml:space="preserve">
+	<value>Error in Mapping File: FieldDescription with SFM of '{0}' is invalid because it has no 'lang' attribute.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="FieldDescWithSFMOf0HasNoTypeAttribute" xml:space="preserve">
+	<value>Warning in Mapping File: FieldDescription with SFM of '{0}' has no 'type' attribute.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="UnknownAttribute0InTheHierarchySection" xml:space="preserve">
+	<value>Warning in Mapping File: Unknown attribute '{0}' in the 'hierarchy' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="NameNotDefinedInAHierarchyLevel" xml:space="preserve">
+	<value>Error in Mapping File: 'name' not defined in a hierarchy level.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="HierarchyLevel0PartOfAttributeNotDefined" xml:space="preserve">
+	<value>Error in Mapping File: hierarchy level '{0}' is invalid because its 'partOf' attribute is not defined.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="HierarchyLevel0LacksBeginWithAtLeast1SFM" xml:space="preserve">
+	<value>Error in Mapping File: hierarchy level '{0}' is invalid because it must have a 'BeginFields' attribute containing at least 1 SFM.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="UnknownLangValue0InTheInFieldMarkers" xml:space="preserve">
+	<value>Error in Mapping File: Unknown 'lang' value '{0}' in the 'inFieldMarkers' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="UnknownAttribute0InTheInFieldMarkers" xml:space="preserve">
+	<value>Warning in Mapping File: Unknown attribute '{0}' in the 'inFieldMarkers' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="BeginNotDefinedInAnInFieldMarker" xml:space="preserve">
+	<value>Error in Mapping File: 'begin' not defined in an InFieldMarker.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InFieldMarker0HasNoEndAttribute" xml:space="preserve">
+	<value>Error in Mapping File: InFieldMarker '{0}' is invalid because no 'end' attribute was defined.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InFieldMarker0HasNoElementNameAttribute" xml:space="preserve">
+	<value>Error in Mapping File: InFieldMarker '{0}' is invalid because no 'ElementName' attribute was defined.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="UnknownAttribute0InTheLanguages" xml:space="preserve">
+	<value>Warning in Mapping File: Unknown attribute '{0}' in the 'languages' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="IdNotDefinedInALanguage" xml:space="preserve">
+	<value>Error in Mapping File: 'id' not defined in a language.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="Language0LacksXmlLangAttribute" xml:space="preserve">
+	<value>Error in Mapping File: language '{0}' is invalid because its 'xml:lang' attribute is not defined.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="LanguagesEntry_0_lang_1_2_map_3_4" xml:space="preserve">
+	<value>Informational: languages entry id='{0}' xml:lang was '{1}', now '{2}' map was '{3}', now '{4}'</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="LanguagesEntry_0_lang_1_2_map_3" xml:space="preserve">
+	<value>Informational: languages entry id='{0}' xml:lang was '{1}', now '{2}' map was '{3}', now it's treated as already in UTF8.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="LanguagesEntry_0_lang_1_2" xml:space="preserve">
+	<value>Informational: languages entry id='{0}' xml:lang was '{1}', now '{2}' </value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="LanguagesEntry_0_map_1_2" xml:space="preserve">
+	<value>Informational: languages entry id='{0}' map was '{1}', now '{2}'</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="LanguagesEntry_0_map_1" xml:space="preserve">
+	<value>Informational: languages entry id='{0}' map was '{1}', now it's treated as already in UTF8.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InvalidMappingFile0_1" xml:space="preserve">
+	<value>Error: invalid mapping file '{0}' : {1}</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="UnhandledException0" xml:space="preserve">
+	<value>Unhandled Exception: {0}</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="DuplicateSettingsFoundForFwSilOrg" xml:space="preserve">
+	<value>Error in Mapping File: Duplicate 'settings' found for 'fw.sil.org'.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="DuplicateId0InLanguages" xml:space="preserve">
+	<value>Error in Mapping File: Duplicate id '{0}' in 'languages' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="LanguageWithEmptyMissingIdInLanguages" xml:space="preserve">
+	<value>Error in Mapping File: Language with empty/missing id in 'languages' section.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="NoValidLanguagesDefined" xml:space="preserve">
+	<value>Error in Mapping File: no valid languages defined.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="UnknownEncodingConvertersMap0InLanguage1" xml:space="preserve">
+	<value>Warning in Mapping File: unknown Encoding Converters map '{0}' in Language '{1}'.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="HierarchyEntry0MultiplyDefined" xml:space="preserve">
+	<value>Error in Mapping File: Hierarchy Entry '{0}' is defined more than once. Only the first definition will be used.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="NoValidHierarchyEntriesDefined" xml:space="preserve">
+	<value>Error in Mapping File: no valid hierarchy entries defined.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="DuplicateHierarchy0IsAlreadyChildOf1" xml:space="preserve">
+	<value>Warning: Duplicate Hierarchy child found, {0} is already a child of {1}.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="NoRootImpliedInTheHierarchy" xml:space="preserve">
+	<value>Error in Mapping File: There is no root implied in the Hierarchy definitions</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="ksQuotedItem" xml:space="preserve">
+	<value> '{0}'</value>
+	<comment>this is used to build a list (for a log file message) by appending 1 or more items together.</comment>
+  </data>
+  <data name="ThereAre0RootsImpliedInTheHierarchy1" xml:space="preserve">
+	<value>Error in Mapping File: There are {0} roots implied in the Hierarchy definitions:{1}</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="HierarchyEntry0HasDuplicateBeginField1_2" xml:space="preserve">
+	<value>Error in Mapping File: Hierarchy entry '{0}' contains BeginField '{1}' which is duplicated in Hierarchy Entry '{2}'.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="HierarchyEntry0HasField1WhichIsInBeginFields" xml:space="preserve">
+	<value>Error in Mapping File: Hierarchy entry '{0}' contains AdditionalField '{1}' which appears in BeginFields.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="HierarchyEntry0HasUnexpectedMultiField1" xml:space="preserve">
+	<value>Error in Mapping File: Hierarchy entry '{0}' contains MultiField '{1}' which does not appear in BeginFields or AdditionalFields.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="HierarchyEntry0RefersToInvalidSFM1" xml:space="preserve">
+	<value>Error in Mapping File: Hierarchy entry '{0}' refers to SFM '{1}' which is undefined (or invalid) in FieldDescriptions.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InFieldMarker0MultiplyDefined" xml:space="preserve">
+	<value>Error in Mapping File: InFieldMarker '{0}' is defined more than once.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InFieldMarker0RefersToInvalidLanguage1" xml:space="preserve">
+	<value>Error in Mapping File: InFieldMarker '{0}' refers to undefined (or invalid) language '{1}'.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InFieldMarker0DuplicatesUsingElement1" xml:space="preserve">
+	<value>Error in Mapping File: InFieldMarker '{0}' duplicates the use of XML element '{1}'.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="FieldDescriptionsHaveMoreThanOneInstanceOf0" xml:space="preserve">
+	<value>Error in Mapping File: FieldDescriptions contains more than one instance of SFM '{0}'.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="NoValidFieldDescriptionsDefined" xml:space="preserve">
+	<value>Error in Mapping File: no valid Field Descriptions defined.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="FieldDescription0RefersToInvalidLanguage1" xml:space="preserve">
+	<value>Error in Mapping File: FieldDescription '{0}' refers to undefined (or invalid) language '{1}'.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="FieldDescription0UnusedInHierarchy" xml:space="preserve">
+	<value>Error in Mapping File: FieldDescription '{0}' is not used in any hierarchy items.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="EncodingConverter0Failed1" xml:space="preserve">
+	<value>Encoding Converter '{0}' failed: '{1}'</value>
+	<comment>message for log file; {0} is the name of the converter, {1} is an error message</comment>
+  </data>
+  <data name="Line0_SFM1ContainsIllegalUTF8Code2" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' contains an illegal UTF-8 code (0x{2}) in its data. Invalid codepoints will be dropped from the imported text.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="Line0_SFM1ContainsIllegalUTF8Count2IndexData3" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' contains {2} invalid bytes in its data: {3}. Invalid codepoints will be dropped from the imported text.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="Line0_SFM1ContainsIllegalUTF8Count2Max3IndexData4" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' contains {2} invalid bytes in its data, the first {3} are: {4}. Invalid codepoints will be dropped from the imported text.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="Index:Byte - " xml:space="preserve">
+	<value>field index:byte - </value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InvalidCodepointsHaveBeenLogged" xml:space="preserve">
+	<value>{0} invalid codepoints have been logged. Additional invalid codepoints will not be logged, but will be dropped from the imported text..</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InFieldMarker0IsMultiplyDefined" xml:space="preserve">
+	<value>Error: InFieldMarker '{0}' is defined in more than one InFieldMarker entry.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="DateChangedFrom1To2" xml:space="preserve">
+	<value>Warning: {0} date changed from: [{1}] to [{2}]</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="X1HasAnUnrecognizedDateForm2" xml:space="preserve">
+	<value>Error on line {0}: {1} has an unrecognized date form '{2}' - ignoring data.</value>
+  </data>
+  <data name="X1CharactersFoundBeforeMarker" xml:space="preserve">
+	<value>Error in SFM file at line {0}: {1} characters found before marker.</value>
+  </data>
+  <data name="Data1FoundBeforeMarker" xml:space="preserve">
+	<value>Error in SFM file at line {0}: Data &lt;{1}&gt; found before marker.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="X1CharactersSomeInvalidFoundBeforeMarker" xml:space="preserve">
+	<value>Error in SFM file at line {0}: {1} characters (some invalid) found before marker.</value>
+  </data>
+  <data name="SFM1IsUndefinedOrInvalid" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' is undefined (or invalid) in Mapping File FieldDescriptions.</value>
+  </data>
+  <data name="Line0SFM1Count2InvalidBytes" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' contains {2} invalid byte(s) as part of the marker itself.</value>
+  </data>
+  <data name="SFM1IsNotUsedInAnyHierarchyItems" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' is not used in any hierarchy items.</value>
+  </data>
+  <data name="CurrentSFM1CannotBeUsed" xml:space="preserve">
+	<value>Error in SFM file at line {0}: current SFM '{1}' cannot be used.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="NoOpen0ItemToContainThisMarker" xml:space="preserve">
+	<value> (There is no open {0} item to contain this marker.)</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="CurrentSFM1CannotBeUsedCurrently" xml:space="preserve">
+	<value>Error in SFM file at line {0}: current SFM '{1}' cannot be used in current situation.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="CurrentSFM1JumpsTooManyLevels" xml:space="preserve">
+	<value>***Error in SFM file at line {0}: current SFM '{1}' jumps too many levels in the hierarchy.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="InputProcessingHasBeenPostponedForHeadWord" xml:space="preserve">
+	<value>The input file processing has been postponed until a new head word is started.</value>
+	<comment>message for log file</comment>
+  </data>
+  <data name="Skipped0LinesOfInputDueToError" xml:space="preserve">
+	<value>Skipped {0} lines of the input file due to previous ***Error.</value>
+  </data>
+  <data name="SFM1ContainsInvalidCharValue2H" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' contains character value 0x{2}, which is invalid and has been removed.</value>
+  </data>
+  <data name="SFM1AlreadyExistsIn2MarkerIsIgnored" xml:space="preserve">
+	<value>Error in SFM file at line {0}: SFM '{1}' already exists in this '{2}' - this marker is being ignored.</value>
+  </data>
+  <data name="BadMorphMarkers012" xml:space="preserve">
+	<value>Error in SFM file at line {0} with element '{1}': {2} **** Correct input data or change Leading and/or Trailing Tokens in Morpheme Types list.</value>
+  </data>
+  <data name="FileConvertedFrom0To1" xml:space="preserve">
+	<value>A preprocessing step was taken: the file was converted from {0} to {1}.</value>
+  </data>
+  <data name="CannotConvertFileFrom0To1" xml:space="preserve">
+	<value>Unable to convert the file from {0} to {1}.</value>
+  </data>
+  <data name="Exception0" xml:space="preserve">
+	<value>Exception: {0}</value>
+  </data>
+  <data name="CannotProcessUtf32Files" xml:space="preserve">
+	<value>Unable to process files encoded in utf-32 formats.  Please convert to utf-16 or utf-8.</value>
+  </data>
+  <data name="XIgnored" xml:space="preserve">
+	<value>{0} (Ignored)</value>
+  </data>
+  <data name="AlreadyInUnicode" xml:space="preserve">
+	<value>&lt;Already in Unicode&gt;</value>
+  </data>
+  <data name="Ignore" xml:space="preserve">
+	<value>ignore</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+	<value>Unknown</value>
+  </data>
+  <data name="NoFieldNodeInTheCustomField" xml:space="preserve">
+	<value>The field element is missing from the Custom Field element. This is an error.</value>
+  </data>
+</root>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000006">
+	<rt class="StTxtPara" guid="155B8419-0A9B-44A4-A960-F78983C84768" ownerguid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara>
+			<StyleName val="Ariel" />
+			<StyleRules>Sans-Serif</StyleRules>
+		</StPara>
+		<StTxtPara/>
+	</rt>
+	<rt class="ScrTxtPara" guid="155B8419-0A9B-44A4-A960-F78983C84768" ownerguid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara>
+			<StyleName val="Ariel" />
+			<StyleRules>Sans-Serif</StyleRules>
+		</StPara>
+		<StTxtPara/>
+		<ScrTxtPara/>
+	</rt>
+	<rt class="StPara" guid="155B8419-0A9B-44A4-A960-F78983C84768" ownerguid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" owningflid="14001" owningord="1">
+		<StPara>
+			<StyleName val="Ariel" />
+			<StyleRules>Sans-Serif</StyleRules>
+		</StPara>
+	</rt>
+	<rt class="ScrFootnote" guid="987D1D46-F1B1-4E08-9DA3-CD6D12B26707" ownerguid="512D7219-D70F-41D0-93B4-5D795910880E" owningflid="3002010" owningord="1">
+		<CmObject></CmObject>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="8E2BAE91-AF99-4A82-BDA0-D16CA49F56FB" />
+			</Paragraphs>
+		</StText>
+		<StFootnote>
+			<DisplayFootnoteMarker val="true" />
+			<DisplayFootnoteReference val="true" />
+			<FootnoteMarker>
+				<Str>
+					<Run ws="seh" namedStyle="Note Marker">a</Run>
+				</Str>
+			</FootnoteMarker>
+		</StFootnote>
+		<ScrFootnote/>
+	</rt>
+	<rt class="StFootnote" guid="987D1D46-F1B1-4E08-9DA3-CD6D12B26707" ownerguid="512D7219-D70F-41D0-93B4-5D795910880E" owningflid="3002010" owningord="2">
+		<CmObject></CmObject>
+		<StFootnote>
+			<FootnoteMarker>
+				<Str>
+					<Run ws="seh" namedStyle="Note Marker">a</Run>
+				</Str>
+			</FootnoteMarker>
+			<DisplayFootnoteMarker val="true" />
+			<DisplayFootnoteReference val="true" />
+		</StFootnote>
+	</rt>
+	<rt class="ScrImportSet" guid="1400D6FB-B023-421A-BF90-D5BA1A9584F3" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4" owningflid="3001007" owningord="1">
+		<CmObject />
+		<ScrImportSet >
+			<ImportType>2</ImportType>
+			<ImportSettings>11111</ImportSettings>
+		</ScrImportSet>
+	</rt>
+</languageproject>

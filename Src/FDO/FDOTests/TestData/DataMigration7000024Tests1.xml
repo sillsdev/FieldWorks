@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000022">
+	<rt guid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388" class="LangProject">
+		<DateCreated val="2007-11-19 11:17:52.107" />
+		<DateModified val="2010-9-1 11:4:28.147" />
+		<Description>
+			<AStr ws="en">
+				<Run ws="en">***</Run>
+			</AStr>
+		</Description>
+		<AnalysisWss>
+			<Uni>en pt en-fonipa</Uni>
+		</AnalysisWss>
+		<CurVernWss>
+			<Uni>en en-fonipa fr</Uni>
+		</CurVernWss>
+		<CurAnalysisWss>
+			<Uni>en en-fonipa</Uni>
+		</CurAnalysisWss>
+		<CurPronunWss>
+			<Uni>en</Uni>
+		</CurPronunWss>
+		<VernWss>
+			<Uni>en fr en-fonipa</Uni>
+		</VernWss>
+		<ExtLinkRootDir>
+			<Uni>C:\Fwd\distfiles</Uni>
+		</ExtLinkRootDir>
+		<ResearchNotebook>
+			<objsur guid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310" t="o" />
+		</ResearchNotebook>
+		<AnalysisStatus>
+			<objsur guid="0084b4d9-6c1e-4d63-9c66-ff22764ef171" t="o" />
+		</AnalysisStatus>
+	</rt>
+	<rt guid="0084b4d9-6c1e-4d63-9c66-ff22764ef171" class="CmPossibilityList" ownerguid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388">
+		<Name>
+			<AUni ws="en">Status</AUni>
+			<AUni ws="es">Estado</AUni>
+			<AUni ws="fr">Statut</AUni>
+			<AUni ws="pt">Status</AUni>
+		</Name>
+		<DateCreated val="2007-11-19 11:17:52.983" />
+		<DateModified val="2010-8-31 14:31:36.774" />
+		<Depth val="1" />
+		<PreventChoiceAboveLevel val="0" />
+		<IsSorted val="False" />
+		<IsClosed val="False" />
+		<PreventDuplicates val="False" />
+		<PreventNodeChoices val="False" />
+		<Abbreviation>
+			<AUni ws="en">Stat</AUni>
+		</Abbreviation>
+		<UseExtendedFields val="False" />
+		<DisplayOption val="0" />
+		<ItemClsid val="7" />
+		<IsVernacular val="False" />
+		<WsSelector val="-3" />
+		<ListVersion val="00000000-0000-0000-0000-000000000000" />
+	</rt>
+	<rt guid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310" class="RnResearchNbk" ownerguid="b5a90c21-d8b2-4d4a-94f6-1b1fbeac3388">
+		<Name>
+			<AUni ws="en">Data Notebook</AUni>
+		</Name>
+		<DateCreated val="2007-11-19 11:17:52.750" />
+		<DateModified val="2010-9-1 14:6:16.803" />
+		<Records>
+			<objsur guid="611739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="612739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="613739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="614739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="615739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="616739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+			<objsur guid="617739fe-8fe2-4d16-8570-b9d46c339e6e" t="o" />
+		</Records>
+	</rt>
+	<rt guid="611739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+	<rt guid="612739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+	<rt guid="613739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+	<rt guid="614739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+	<rt guid="615739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+		<rt guid="616739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+		<rt guid="617739fe-8fe2-4d16-8570-b9d46c339e6e" class="RnGenericRec" ownerguid="4e3802af-98cd-48c4-b6ff-3cb0a5fd1310">
+		<Title>
+			<Str>
+				<Run ws="en">a</Run>
+			</Str>
+		</Title>
+		<DateCreated val="2010-9-1 14:6:1.506" />
+		<DateModified val="2010-9-3 10:50:54.855" />
+		<DateOfEvent val="0" />
+	</rt>
+</languageproject>

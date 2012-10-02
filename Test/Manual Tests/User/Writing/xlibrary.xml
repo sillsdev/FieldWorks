@@ -1,0 +1,59 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\xlibrary.xml">
+ <title tag="wrtbs">Setting up a test script library in XML</title>
+ <index>
+  <li>XML: test script library</li>
+ </index>
+
+ <prerequisites>
+  <p>Before starting an XML test script library, you should:</p>
+  <ul>
+   <li>Know how to write a test script.</li>
+   <li>Set up the <link uri="tools.xml" type="module">XML authoring tools</link>.</li>
+   <li>Review the structure of a <link uri="..\TCL\TestCaseLib.xml" type="module">test case library</link>.</li>
+   <li>Review our <link uri="..\XML\overview.xml" type="module">general description of XML</link>.</li>
+  </ul>
+ </prerequisites>
+
+ <guidelines>
+  <p>Here are some guidelines for creating a test script library in XML:</p>
+
+  <ul>
+
+   <li>
+	<p>A test script library is defined by two files: a <i>folder-name</i>.xml file and a .htm file. These files are necessary for validating that the test scripts we write will fit into our model as defined in the DTD and XSL files. Templates for these files have already been created. They are path\Library.xml and path\Sample.htm. Only minor modifications need to be made to these two files when you create test scripts.</p>
+
+   <p><b><i>folder-name</i>.xml File:</b> Test scripts reside in XML (.xml) files. In <i>folder-name</i>.xml your library file, you will put an &lt;insert-test> tag for each XML file that is part of your test script library. (Details follow.)</p>
+
+   <p>Your <b>.htm file</b> will make reference to your <i>folder-name</i>.xml file. Launching your .htm file in your browser will validate the structure in your <i>folder-name</i>.xml file and all the XML files (test scripts) it references, against the XSL file for our model.</p>
+   </li>
+
+   <li>Make a copy of Library.xml and give it the same name as the library folder name. This is the top-level XML file that contains an element for each test script in the library.
+
+   <li>Open the <i>folder-name</i>.xml file you made and edit the following tags with your own information:</li>
+
+	<ul>
+
+	 <li>titlePage - this is a "dummy" section that is required for validating the library by itself. Normally you will not need to modify this tag. The test department will modify this tag when setting up a test case library.  (When your new library is validated with the other libraries created by the test department, the "real" titlePage is used. There are a number of other tags contained within the structure of this tag; title, index, authors, copywrite, abstract and shortcuts. These tags need to be in this file because we utilized an existing DTD (ModularBook.dtd) for our purpose.)</li>
+
+	 <li><b>&lt;insert-test></b> - Below the titlePage tag, create an &lt;insert-test> element for each test script file. Put them in the order you want them to appear in the library.</li>
+
+	 <li>As you develop test scripts for the library, you will add &lt;insert-test> elements in the <i>folder-name</i>.xml file.</li>
+	</ul>
+   </li>
+
+   <li>Copy the Sample.htm file and give it the same name as the <i>folder-name</i>.xml file (the extensions are different).</li>
+
+   <li>Open the *.htm file and make the following changes
+
+	<ul>
+	 <li>Change 'xml.load("sample.xml")' to 'xml.load("<i>folder-name</i>.xml")' where <i>folder-name</i> is your library folder name.</li>
+
+	 <li>If necessary, change the path in 'xsl.load("../XSL/HelpFile.xsl")'. You will only need to do this if you put HelpFile.xsl in a different location from that recommended.</li>
+	</ul>
+   </li>
+
+   <li>Test the validity of your base <i>folder-name</i>.xml file by double clicking the *.htm file in your directory. It should display all the modules you defined as &lt;insert-test> elements on one page separated by lines. If it does not, you need to <link uri="trouble.xml" type="module">trouble shoot</link>.</li>
+  </ul>
+ </guidelines>
+</task>

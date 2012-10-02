@@ -1,0 +1,21 @@
+; $Id: finnish.dic 1.8 1997/10/22 11:09:16 Mike_Maxwell Exp $
+; Finnish dictionary for HC, based on FINNISH.REC from PC-KIMMO
+
+
+
+<lex id 6  sh papun  gl bean       pos N str morphophonemic>
+<lex id 7  sh sotan  gl war        pos N str morphophonemic>
+<lex id 8  sh sikan  gl pig        pos N str morphophonemic>
+<lex id 9  sh lappun gl note       pos N str morphophonemic>
+<lex id 10 sh katton gl roof       pos N str morphophonemic>
+<lex id 11 sh tikkan gl woodpecker pos N str morphophonemic>
+<lex id 12 sh kumpun gl hill       pos N str morphophonemic>
+<lex id 13 sh rantan gl shore      pos N str morphophonemic>
+<lex id 14 sh va¤kin gl prisoner   pos N str morphophonemic>
+<lex id 15 sh pukun  gl dress      pos N str morphophonemic>
+<lex id 16 sh jalkan gl foot       pos N str morphophonemic>
+<lex id 17 sh kurken gl crane      pos N str morphophonemic>
+<lex id 18 sh sylken gl spit       pos N str morphophonemic>
+<lex id 19 sh iltan  gl evening    pos N str morphophonemic>
+<lex id 20 sh partan gl beard      pos N str morphophonemic>
+<lex id 21 sh lehten gl leaf       pos N str morphophonemic>

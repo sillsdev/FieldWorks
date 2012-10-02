@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<new-fieldworks-project role="dialog" title="New FieldWorks Project" root="yes">
+
+  <text role="label" name="This dialog helps you create a new FieldWorks project, into which you can then enter data using FieldWorks applications." path="9:$name;/41:$name;"/>
+
+  <var id="nameProj" set="Name the Project"/>
+  <name-the-project role="label" name="$nameProj" >
+	<label name="$nameProj" path="9:$nameProj;/41:$nameProj;"/>
+	<var id="projName" set="Enter the name for this project.  For example, use the name of a language or culture."/>
+	<label name="$projName" path="9:$projName;/41:$projName;"/>
+	<text path="9:$projName;[2]/42:$projName;"/>
+  </name-the-project>
+
+  <var id="specWs" set="Specify Writing Systems"/>
+  <specify-writing-systems role="label" name="$specWs">
+	<label name="$specWs" path="9:$specWs;/41:$specWs;"/>
+	<label name="In FieldWorks, you need to set up a writing system in order to enter data in a particular language." path="9:$name;/41:$name;"/>
+  </specify-writing-systems>
+
+  <var id="vernWs" set="Vernacular language writing system"/>
+  <vernacular-ws role="label" name="$vernWs">
+	<label name="$vernWs" path="9:$vernWs;/41:$vernWs;"/>
+	<var id="vernText" set="These are the languages used for translations, texts, lexical headwords, example sentences, people, location names, etc. Select,"/>
+	<label name="$vernText; or define, a default vernacular language writing system." path="9:$vernText;/41:$vernText" />
+	<text path="9:$vernText;[2]/42:$vernText;"/>
+	<drop path="9:$vernText;[2]/43:Open"/>
+	<define-new name="Define New..." path="9:$name;/43:$name"/>
+  </vernacular-ws>
+
+  <var id="analWs" set="Analysis language writing system"/>
+  <analysis-ws role="label" name="$vernWs">
+	<label name="$analWs" path="9:$analWs;/41:$analWs;"/>
+	<var id="analText" set="Analysis languages are the languages for notes, back translations, glosses, definitions, analyses, etc. Select, or define, a def"/>
+	<label name="$analText;ault analysis language writing system." path="9:$analText;/41:$analText" />
+	<text path="9:$analText;[2]/42:$analText;"/>
+	<drop path="9:$analText;[2]/43:Open"/>
+	<define-new name="Define New..." path="9:$name;[2]/43:$name"/>
+  </analysis-ws>
+
+  <label name="Tip:" path="9:$name;/41:$name"/>
+  <label name="You may add additional writing systems and edit existing ones in the Project Properties dialog box." path="9:$name;/41:$name"/>
+
+  <open name="Open" path="9:$name;/43:$name;"/>
+  <cancel name="Cancel" path="9:$name;/43:$name;"/>
+  <help name="Help" path="9:$name;/43:$name;">
+	<dialog title="FieldWorks Translation Editor Help" topic="Create a new FieldWorks project" topic-path="$topic"/>
+  </help>
+
+</new-fieldworks-project>

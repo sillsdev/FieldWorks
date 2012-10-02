@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="f105472b-a3b1-407b-bfe6-08ca5a275356" kpf_version="4" name="TE AutoTests.kpf">
+<preference-set idref="f105472b-a3b1-407b-bfe6-08ca5a275356">
+  <boolean id="import_live">1</boolean>
+</preference-set>
+<preference-set idref="f105472b-a3b1-407b-bfe6-08ca5a275356/AutoTests.py">
+  <string id="spellcheckLangID">en-US</string>
+</preference-set>
+</project>

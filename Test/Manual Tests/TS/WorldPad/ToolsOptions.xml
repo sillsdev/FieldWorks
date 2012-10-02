@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlsopt" num="4.1" abbr="top" file="WorldPad\ToolsOptions.xml">
+ <title tag="tlsopt">Tools-Options Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>The Options dialog configures the arrow key behavior and Graphite logs.</p>
+  </introduction>
+  <context>
+<p>Bugs enabled by these "switches" should be reported as belonging to other components.</p>
+  </context>
+
+ <case id="topInsp" num="1" order="any">
+  <title tag="topInsp">Dialog Inspection</title>
+  <context>
+<p>When the application is running</p>
+</context>
+
+  <step name="1.1" link="Bug">Click Help-WorldPad. Navigate to the "Dialog:Options" page. Use this page while testing <link uri="..\StdCtrls\Dialog.xml">Basic Dialog</link> functionality.
+   <r>
+	<ul>
+	 <li>One of the arrow key options is dotted.</li>
+	 <li>Report any failures using "Tools-Options" as the name of the dialog</li>
+	</ul>
+   </r>
+   <p name="bug">Tools-Options arrow key option not dotted</p>
+  </step>
+ </case>
+
+ <case id="topMake" num="2" order="any">
+  <title tag="topArr">Arrow key Behavior</title>
+  <context>
+<p>When the Tools-Options dialog is displayed</p>
+</context>
+
+  <step name="2.1">Use the <link uri="..\StdCtrls\RadioBtn.xml">Radio Button Tests</link> with the "arrow key behavior" radio buttons and the shortcuts &lt;V&gt; and &lt;L&gt;.
+   <r>Report any errors using "Tools-Options Arrow" in the title.</r>
+  </step>
+  <step name="2.2" link="Bug">Dot "Visual" and OK.
+   <r>The cursor moves through the text according to the direction of the arrow on the key, regardless of the writing system.
+	<ul>
+	 <li>The "flow" of text is determined in paragraph style settitngs or by direct formatting.</li>
+	</ul>
+   </r>
+   <p name="bug">Visual cursor moves against arrow key</p>
+   <p name="bug">Visual cursor not affected by format settings</p>
+  </step>
+  <step name="2.3" link="Bug">Dot "logical" and OK.
+   <r>The cursor moves through the text according to the underlying flow of text.
+	<ul>
+	 <li>At the boundary of opposite direction text, the cursor jumps and switches direction.</li>
+	 <li>The cursor may trace a closed loop through some text.</li>
+	 <li>The Home key sends the cursor to the first character in a line, but it may not be at a margin.</li>
+	 <li>The End key sends the cursor to the last character in a line, but it may not be at a margin.</li>
+	 <li>The Home and End key can send the cursor to the same location.</li>
+	 <li>Overlapping characters can make "what's next" ambiguous.</li>
+	 <li>The "end of the line" may be at the beginning or end of another line.</li>
+	 <li>The "flow" of text is affected by paragraph style settitngs and by direct formatting.</li>
+	</ul>
+   </r>
+   <p name="note">For more info, see the WorldPad help file page "Implications of the Normal style regarding text flow direction".</p>
+   <p name="bug">Logical cursor moves against arrow keyes in left to right text</p>
+   <p name="bug">Logical cursor moves in same direction as arrow keyes in right to left text</p>
+   <p name="bug">Logical cursor not affected by format settings</p>
+  </step>
+ </case>
+
+ <case id="topLog" num="3" order="any">
+  <title tag="topEdit">Output Graphite debug logs</title>
+  <context>
+<p>When the Tools-Options dialog is displayed</p>
+</context>
+
+  <step name="3.1">Use the <link uri="..\StdCtrls\CheckBox.xml">Check Box Tests</link> with Output Graphite debug logs.
+   <r>Report any errors using "Tools-Options debug logs" in the title.</r>
+  </step>
+  <step name="3.2" link="Bug">When using a graphite font, check Output Graphite debug logs.
+   <r>
+	<ul>
+	 <li>See that a file called gr_xductn.log is written to the ..\Program Files\FieldWorks\WorldPad folder.</li>
+	 <li>When openned in a text editor, it is readable.</li>
+	</ul>
+   </r>
+   <p name="bug">Tools-Options debug log not written</p>
+   <p name="bug">Tools-Options debug log appears corrupted</p>
+  </step>
+  <step name="3.3" link="Bug">When using a graphite font, uncheck Output Graphite debug logs.
+   <r>
+	<ul>
+	 <li>See that the file called gr_xductn.log in ..\Program Files\FieldWorks\WorldPad folder does not have its modified time updated.</li>
+	 <li>When openned in a text editor, the content is not changed.</li>
+	</ul>
+   </r>
+   <p name="bug">Tools-Options debug log over-written</p>
+  </step>
+ </case>
+
+ <update date="Sep-18-02" author="MikeL">Test created.</update>
+
+</test>

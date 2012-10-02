@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+	<!-- set case specific variables -->
+	<var id="Scripture" select="tests/test[@case='$TestCase;']/@Scripture"/>
+	<var id="BackTranslation" select="tests/test[@case='$TestCase;']/@back-trans"/>
+	<var id="TranslationNotes" select="tests/test[@case='$TestCase;']/@notes"/>
+
+	<var id="MalsIntro" set="FALSE"/>
+	<var id="Interleaved" set="FALSE"/>
+	<if>
+		<condition of="$Scripture" is="MLYS1"/>
+		<then>
+			<var id="LpFullName" set="Malay-SC-NoIntro-NT (MLYS1)"/>
+			<var id="MalsIntro" set="TRUE"/> <!--DON'T KNOW IF THIS LINE SHOULD BE HERE!!!-->
+		</then>
+	</if>
+	<if>
+		<condition of="$Scripture" is="MLYS2"/>
+		<then>
+			<var id="LpFullName" set="Malay-SC-Intro-NT (MLYS2)"/>
+			<var id="MalsIntro" set="TRUE"/>
+		</then>
+	</if>
+	<if>
+		<condition of="$Scripture" is="MLYS3"/>
+		<then>
+			<var id="LpFullName" set="Malay-SC-NoIntro-Interleaved-NT (MLYS3)"/>
+			<var id="MalsIntro" set="TRUE"/>
+			<var id="Interleaved" set="TRUE"/>
+		</then>
+	</if>
+	<if>
+		<condition of="$Scripture" is="MLYS4"/>
+		<then>
+			<var id="LpFullName" set="Malay-SC-Intro-Interleaved-NT (MLYS4)"/>
+			<var id="MalsIntro" set="TRUE"/>
+			<var id="Interleaved" set="TRUE"/>
+		</then>
+	</if>
+
+	<var id="btNone" set="FALSE"/>
+	<if>
+		<condition of="$BackTranslation" is="(none)"/>
+		<then>
+			<var id="btFullName" set="(none)"/>
+			<var id="btNone" set="TRUE"/>
+		</then>
+	</if>
+	<if>
+		<condition of="$BackTranslation" is="MLYB1"/>
+		<then>
+			<var id="btFullName" set="Malay-BT-NoIntro-NT (MLYB1)"/>
+		</then>
+	</if>
+	<if>
+		<condition of="$BackTranslation" is="MLYB2"/>
+		<then>
+			<var id="btFullName" set="Malay-BT-Intro-NT (MLYB2)"/>
+		</then>
+	</if>
+
+	<var id="tnNone" set="FALSE"/>
+	<if>
+		<condition of="$TranslationNotes" is="(none)"/>
+		<then>
+			<var id="tnFullName" set="(none)"/>
+			<var id="tnNone" set="TRUE"/>
+		</then>
+	</if>
+	<if>
+		<condition of="$TranslationNotes" is="MLYN1"/>
+		<then>
+			<var id="tnFullName" set="Malay-NotesOnly-NoIntro-NT (MLYN1)"/>
+		</then>
+	</if>
+	<if>
+		<condition of="$TranslationNotes" is="MLYN2"/>
+		<then>
+			<var id="tnFullName" set="Malay-Notes-Intro (MLYN2)"/>
+		</then>
+	</if>
+</include>

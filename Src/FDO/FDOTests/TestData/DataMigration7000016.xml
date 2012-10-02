@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000015">
+  <rt guid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC" class="LangProject">
+	<ResearchNotebook>
+	  <objsur guid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC" t="o" />
+	</ResearchNotebook>
+  </rt>
+  <rt guid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC" class="RnResearchNbk" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name><AUni ws="en">Data Notebook</AUni></Name>
+	<RecTypes>
+	  <objsur guid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC" t="o" />
+	</RecTypes>
+  </rt>
+  <rt class="CmPossibilityList" guid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+	<Name><AUni ws="en">Entry Types</AUni></Name>
+	<Abbreviation>
+	  <AUni ws="en">Type</AUni>
+	</Abbreviation>
+	<Depth val="127" />
+	<ItemClsid val="7" />
+	<WsSelector val="-3" />
+	<Possibilities>
+	  <objsur t="o" guid="B7B37B86-EA5E-11DE-80E9-0013722F8DEC" />
+	  <objsur t="o" guid="B7BF673E-EA5E-11DE-9C4D-0013722F8DEC" />
+	  <objsur t="o" guid="B7E0C7F8-EA5E-11DE-82CC-0013722F8DEC" />
+	  <objsur t="o" guid="B7EA5156-EA5E-11DE-9F9C-0013722F8DEC" />
+	  <objsur t="o" guid="82290763-1633-4998-8317-0EC3F5027FBD" />
+	</Possibilities>
+  </rt>
+  <rt class="CmPossibility" guid="B7B37B86-EA5E-11DE-80E9-0013722F8DEC" ownerguid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Con</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">In a conversation, all participants are free to direct and change the course of the activity; a dialogue is egalitarian. Most of your interaction with people is in the form of conversations. Conversations carry few expectations except an assumption of mutual cooperation. Conversations are a good place to start in order to build friendships and establish trust with people.</Run>
+	  </AStr>
+	</Description>
+	<Name>
+	  <AUni ws="en">Conversation</AUni>
+	</Name>
+  </rt>
+  <rt class="CmPossibility" guid="B7BF673E-EA5E-11DE-9C4D-0013722F8DEC" ownerguid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Intv</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">Interviews involve an intentional request for information on a predetermined topic. The interviewer asks questions and the interviewee(s) provides answers. For this reason an interview is different from a conversation. It is more one-sided. Interviews range from "unstructured" to "structured." The more focus and structure in an interview, the more structured it becomes.</Run>
+	  </AStr>
+	</Description>
+	<Name>
+	  <AUni ws="en">Interview</AUni>
+	</Name>
+	<SubPossibilities>
+	  <objsur t="o" guid="B7C8F092-EA5E-11DE-8D7D-0013722F8DEC" />
+	  <objsur t="o" guid="B7D4DC4A-EA5E-11DE-867C-0013722F8DEC" />
+	</SubPossibilities>
+  </rt>
+  <rt class="CmPossibility" guid="B7C8F092-EA5E-11DE-8D7D-0013722F8DEC" ownerguid="B7BF673E-EA5E-11DE-9C4D-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Str</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">A structured interview is used to obtain comparative data and is therefore intended to be given to more than one person. Consistency is important. The interviewer should ask questions the same way each time and the interviewee should be cued as to the appropriate way to respond (yes/no, multiple choice, short sentence answer, etc.).</Run>
+	  </AStr>
+	</Description>
+	<Name>
+	  <AUni ws="en">Structured</AUni>
+	</Name>
+  </rt>
+  <rt class="CmPossibility" guid="B7D4DC4A-EA5E-11DE-867C-0013722F8DEC" ownerguid="B7BF673E-EA5E-11DE-9C4D-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Uns</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">Unstructured interviews will likely be the most common type of interview you use. In unstructured interviews, you are usually not concerned with comparing responses and may only give the interview to one person. The goal is to get basic information. The topic is usually approached in a general way, without restricting the how of the respondent answers. Questions are generally open-ended.</Run>
+	  </AStr>
+	</Description>
+	<Name>
+	  <AUni ws="en">Unstructured</AUni>
+	</Name>
+  </rt>
+  <rt class="CmPossibility" guid="B7E0C7F8-EA5E-11DE-82CC-0013722F8DEC" ownerguid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Lit</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">Literature summaries are not limited to books. You may run across newspaper and magazine articles that have important information. Other sources of information are unpublished manuscripts like MA theses and PhD dissertations, brochures, field notes from other researchers, and letters. Still, don't forget the books. You can make use of this information by appending it directly into the Data Notebook.</Run>
+	  </AStr>
+	</Description>
+	<Name>
+	  <AUni ws="en">Literature Summary</AUni>
+	</Name>
+  </rt>
+  <rt class="CmPossibility" guid="B7EA5156-EA5E-11DE-9F9C-0013722F8DEC" ownerguid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Obs</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">This will be one of your richest sources of information. It entails activities and conversations that you witness, but do not control. You may participate actively or passively in the activity you observe. The point is to be curious and approach the activity with questions. Important skills to develop that will make your observations more useful are memory and awareness.</Run>
+	  </AStr>
+	</Description>
+	<Name>
+	  <AUni ws="en">Observation</AUni>
+	</Name>
+	<SubPossibilities>
+	  <objsur t="o" guid="B7F63D0E-EA5E-11DE-9F02-0013722F8DEC" />
+	</SubPossibilities>
+  </rt>
+  <rt class="CmPossibility" guid="B7F63D0E-EA5E-11DE-9F02-0013722F8DEC" ownerguid="B7EA5156-EA5E-11DE-9F9C-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Per</AUni>
+	</Abbreviation>
+	<Description>
+	  <AStr ws="en">
+		<Run ws="en">A "performance" is a type of observation, but one where the performer(s) expects the performance to be evaluated based on culturally appropriate criteria. One example of a "performance" is a play. Gossip is less obvious but also falls into the performance category.</Run>
+	  </AStr>
+	</Description>
+	<Name>
+	  <AUni ws="en">Performance</AUni>
+	</Name>
+  </rt>
+  <rt class="CmPossibility" guid="82290763-1633-4998-8317-0EC3F5027FBD" ownerguid="D9D55B12-EA5E-11DE-95EF-0013722F8DEC">
+	<Abbreviation>
+	  <AUni ws="en">Ana</AUni>
+	</Abbreviation>
+	<BackColor val="16711680" />
+	<DateCreated val="2009-12-16 14:39:19.723" />
+	<DateModified val="2009-12-16 14:39:19.723" />
+	<Description>
+	  <AStr ws="en">Reflection on events and other types of data, such as literature summaries or interviews. An analysis does not add data; it interprets and organizes data. An analysis entry may synthesize emerging themes. It may draw connections between observations. It is a place to speculate and hypothesize, or document moments of discovery and awareness. Analytic notes can be turned into articles. Or, they may just be steps on the stairway toward greater understanding.</AStr>
+	</Description>
+	<ForeColor val="16777215" />
+	<Name>
+	  <AUni ws="en">Analysis</AUni>
+	</Name>
+	<UnderColor val="255" />
+	<UnderStyle val="1" />
+  </rt>
+</languageproject>

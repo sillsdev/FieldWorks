@@ -1,0 +1,40 @@
+﻿// Defines of the basic types of the database model
+// The values defined here are included in CellarBaseConstants.h and CellarPropertyType.cs
+Nil=0
+Min=1 /* not used except to indicate smallest value allowed */
+Boolean=1
+Integer=2
+Numeric=3
+Float=4
+Time=5
+Guid=6
+Image=7
+GenDate=8
+Binary=9
+
+String=13
+MultiString=14
+
+// Warning! Do NOT use kcptUnicode for language data (either vernacular or analysis).
+// It is NOT parallel to kcptMultiUnicode; that has a WS specified for each alternative,
+// but kcptUnicode has NO WS information. Support for kcptUnicode being used as strings is
+// spotty but should not be counted on. Use kcptString for short language strings and
+// kcptBigString for long ones. There is NO good way to represent a monolingual string
+// that is forced to have only one writing system along its length; if we need that, let's
+// add it, but please don't abuse kcptUnicode. (JohnT)
+
+Unicode=15
+MultiUnicode=16
+BigString=17
+MultiBigString=18
+BigUnicode=19
+MultiBigUnicode=20  /* not currently implemented in Flex */
+
+MinObj=23
+OwningAtom=23
+ReferenceAtom=24
+OwningCollection=25
+ReferenceCollection=26
+OwningSequence=27
+ReferenceSequence=28
+Lim=29 /* not used except to indicate largest value allowed. */

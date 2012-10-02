@@ -1,0 +1,266 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{73EA2AF9-ED94-46C1-8E74-7813B327C270}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>GuiTestDriver</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>GuiTestDriver</RootNamespace>
+	<RunPostBuildEvent>Always</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkSubset>
+	</TargetFrameworkSubset>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Accessibility">
+	  <Name>Accessibility</Name>
+	</Reference>
+	<Reference Include="AccessibilityHelper, Version=1.0.3615.29558, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Release\AccessibilityHelper.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces, Version=6.1.0.29026, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Release\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO, Version=6.1.0.29136, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Release\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework, Version=6.1.0.29221, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Release\Framework.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls, Version=6.1.0.29132, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="mscorlib">
+	  <Name>mscorlib</Name>
+	</Reference>
+	<Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Release\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="xmldiffpatch, Version=1.0.8.28, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Program Files\XmlDiffPatch\Bin\xmldiffpatch.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AccessibilityHelper.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ActionBase.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="AppHandle.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ApplicationContext.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Attribute.cs" />
+	<Compile Include="Beep.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CheckBase.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Click.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Condition.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Context.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Desktop.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DialogContext.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DoOnceContext.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileComp.cs" />
+	<Compile Include="Functions.cs" />
+	<Compile Include="Garbage.cs" />
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Glimpse.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="GlimpseExtra.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="GuiPath.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="HoverOver.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="If.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Include.cs" />
+	<Compile Include="Insert.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="InsPrototype.cs" />
+	<Compile Include="Instruction.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Instructionator.cs" />
+	<Compile Include="IPathVisitor.cs" />
+	<Compile Include="Logger.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MatchStrings.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Message.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Model.cs" />
+	<Compile Include="PathManager.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Registry.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="RunTest.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SelectText.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Skip.cs" />
+	<Compile Include="Sound.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="StartUpContext.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TestState.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TimeContext.cs" />
+	<Compile Include="TrackingVisitor.cs" />
+	<Compile Include="Utilities.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Var.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlFiler.cs" />
+	<Compile Include="XmlPath.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlStringDiff.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<None Include="app.config" />
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Content Include="GtdConfig.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

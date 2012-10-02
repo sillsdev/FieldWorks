@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filepropproj" num="2.1.7.2" abbr="fpp" file="FW\FilePropsProj.xml">
+<title tag="filepropproj">File - Project Properties Test</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Project Properties Dialog shows the properties for the current language project. Under the <i>General</i> tab are  included the name, dates created and modified, etc. The Name can be modified through this dialog; the other items are informational. Under the <i>Writing Systems</i> tab, the user can configure the display of applications within the language project. The user can decide which languages are part of a project, which ones to display right now, and the order in which to display them. Under the <i>External Links</i> tab, the user can set up a reference folder to be used with external links the project may be using.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FILEMENU/FILEMENU.HTML#File - Properties" type="doc">File - Properties</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FILEMENU/Properties/Properties.html" type="doc">Properties Dialog </link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "File - Project Properties"</p>
+<p name="todo">Add tests to make sure the OK and Cancel button
+preserve / don't preserve the effects of the Add, Add - New, Delete,
+and Modify buttons on the WS tab; and also changes on the other tabs.
+Unless you think this is adequately covered by "Exercise Dialog
+Controls."</p>
+<p name="todo">Also make sure when you check/uncheck and/or add/delete
+writing systems and press OK, the appropriate change takes place
+in multilingual fields: the set of blue WS abbreviations on the left
+changes accordingly.
+</p>
+</context>
+
+<case id="fppAct" num="1" order="any">
+<title tag="fppAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke File - Project Properties (from the File menu). <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FILEMENU/FILEMENU.HTML#File - Properties" type="doc">Definition of File - Properties.</link>
+<r>The Project Properties dialog box is displayed.</r>
+<p name="bug">File - Properties not working</p>
+</step>
+</case>
+
+<case id="fppDiac" num="2" order="any">
+<title tag="fppDiac">Exercise dialog controls</title>
+<context>
+<p>When the File - Project Properties dialog is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FILEMENU/Properties/Properties.html" type="doc">File - Properties specification</link> to visually inspect the dialog layout (for the <i>General</i> tab, the <i>Writing Systems</i> tab, and the <i>External Links</i> tab).
+   <r>Up to approximate size and position should be the same - especially any text and icons.</r>
+<p name="bug">File - Project Properties layout incorrect</p>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "File - Project Properties" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="fppGen" num="3" order="any">
+<title tag="fpdnGen">Inspect General Tab</title>
+<context>
+<p>When the File - Project Properties dialog is displayed with the General tab selected</p>
+</context>
+
+<step name="3.1"> Use Cases 1-3 of the <link uri="FileProps.xml" type="module">General Properties Dialog Test</link> to inspect the General Tab of the Project Properties Dialog.
+	<r>Report any failures as suggested using "File - Project Properties" as the name of the dialog.</r>
+</step>
+</case>
+
+
+<case id="fppWStcb" num="4" order="any">
+<title tag="fppWStcb">Writing Systems Tab - Check boxes</title>
+<context>
+<p>When the <i>Writing Systems</i> tab in the Project Properties dialog is displayed</p>
+</context>
+
+<step name="4.1">
+Use <link uri="../StdCtrls/checkbox.xml" type="module">Check Box Tests</link> to test the check boxes.
+   <r>Report any failures as suggested using "File - Project Properties" as the name of the dialog.</r>
+<p name="Note">The check boxes are always enabled.</p>
+</step>
+
+<step name="4.2" link="Bug">Uncheck all the boxes under <i>Vernacular Writing Systems</i> and click OK.
+   <r>The message "There must be at least one actively selected vernacular
+ encoding" is displayed and focus is placed back in the list box.
+</r>
+<p name="bug">File - Project Properties: Check boxes don't function correctly.</p>
+</step>
+
+<step name="4.3" link="Bug">Uncheck all the boxes under <i>Analysis Writing systems</i> and click OK.
+   <r>The message "There must be at least one actively selected analysis encoding" is displayed and focus is placed back in the list box.
+</r>
+<p name="bug">File - Project Properties: Check boxes don't fucntion correctly.</p>
+</step>
+</case>
+
+<case id="fppWStoc" num="5" order="any">
+<title tag="fppWStoc">Writing Systems Tab - Other Controls</title>
+<context>
+<p>When the <i>Writing Systems</i> tab in the Project Properties dialog is displayed: </p>
+<p name="Note">Do the following steps for both list boxes (Vernacular Writing Systems and Analysis Writing Systems. </p>
+</context>
+
+<step name="5.1" link="Bug">Click on the Add button.
+   <r>A cascading menu is displayed that lists all the available writing systems that have been defined and followed by a separator, the item <i>New...</i>
+</r>
+<p name="bug">File - Project Properties: Add button does not work.</p>
+</step>
+
+<step name="5.2" link="Bug">In the Add button menu, click on one of the writing systems.
+   <r>The selected writing system is placed in the list box.</r>
+<p name="bug">File - Project Properties: Add button does not work.</p>
+</step>
+
+<step name="5.3" link="Bug">In the Add button menu, click on <i>New...</i>
+   <r>The <i>Create a New Language Definition Wizard</i> is launched. (See <link uri="FileNewLang.xml">File - New Language Definition Wizard Tests</link> to test this Wizard.)</r>
+<p name="bug">File - Project Properties: Add button does not work.</p>
+</step>
+
+<step name="5.4" link="Bug">Click on the Modify... button.
+   <r>The <i>Language Definition Properties</i> dialog is displayed (see <link uri="WritSysProp.xml">Language Definition Properties Tests</link> to test this dialog.)</r>
+<p name="bug">File - Project Properties: Modify button does not work.</p>
+</step>
+
+<step name="5.5" link="Bug">Select a writing system and click on the Delete... button. <p name="Note">The Delete button is enabled only when there are two are more writing systems in the corresponding checklist box.</p>
+   <r>
+<ul>
+<li>A Yes/No warning message is displayed: <i>Removing this writing system requires a scan through all of the data in this language project. This will not only delete the writing system from this dialog, it will also delete actual data. This may take a few minutes. Are you sure you wish to delete this writing system?</i>
+</li>
+<li>If Yes is clicked another Delete/No warning message is displayed: <i>You are about to delete all 'Indonesian' data from this language project. This action cannot be undone. Are you absolutely sure?</i> If Delete is clicked, a progress indicator appears and all data related to that writing system is deleted.</li>
+<li>The writing system is deleted from the list box.</li>
+</ul>
+</r>
+<p name="bug">File - Project Properties: Delete button does not work.</p>
+</step>
+
+<step name="5.6" link="Bug">Use the up and down buttons to reorder the writing systems in the list box. <p name="Note">These buttons are enabled only when there are more than one writing system listed.</p>
+   <r>It should be possible to move writing systems up or down.</r>
+<p name="bug">File - Project Properties: Up and Down buttons do not work.</p>
+</step>
+
+</case>
+
+<case id="fppExt" num="6" order="any">
+<title tag="fppExt">External Links Tab - Set Default Folder</title>
+<context>
+<p>When the <i>External Links</i> tab in the Project Properties dialog is displayed</p>
+</context>
+
+<step name="6.1" link="Bug">Use the "Browse" button to change the default folder for external links.
+<r>
+<ul>
+<li>A box opens up to navigate to the desired directory for the default folder.</li>
+<li>Select a folder and press OK.</li>
+<li>Verify the default folder has been changed in the text box.</li>
+<li>Press OK on the External Link Tab to apply the changes. The new folder should now open up whenever creating an external link in the application.</li>
+</ul>
+</r>
+<p name="bug">File - Project Properties: Error in changing default folder using "Browse" button.</p>
+</step>
+<step name="6.2" link="Bug">Edit the absolute path in the text box to change the default folder.
+<r>Verify the default folder has been changed by first pressing "OK" to apply the change. Then create an external link in the application to see if the folder opened up is the new path.</r>
+<p name="bug">File - Project Properties: Error in changing default folder using edit box.</p>
+</step>
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-29-01" author="ShalomA">Test created.</update>
+<update date="Feb-07-02" author="LarsH">Minor update.</update>
+<update date="May-22-02" author="RussD">Filename changed from FileProperties.xml to FilePropProj.xml. Added tests for general and external links tabs.</update>
+<update date="Jun-28-02" author="LarsH">Added 2 todos.</update>
+</test>

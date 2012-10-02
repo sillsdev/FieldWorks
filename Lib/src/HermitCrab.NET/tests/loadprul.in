@@ -1,0 +1,349 @@
+;Test loading of PRULEs
+;Try to rm a rule which hasn't been loaded yet, msg 6005:
+(remove_morpher_rule message foobar)
+;
+;Now load some nat classes (msg 6541):
+(load_nat_class message <nat_class name alv_cons features (cons + poa alveolar)>)
+(load_nat_class message <nat_class name velar features (poa velar)>)
+(load_nat_class message <nat_class name aspirated features (asp +)>)
+(load_nat_class message <nat_class name non_cons features (cons -)>)
+(load_nat_class message <nat_class name cons features (cons +)>)
+(load_nat_class message <nat_class name unasp_noncons features (cons - asp -)>)
+;Finally we're ready to load some prules.
+;First load a rule with an undefined nat class (error msg 6042):
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class nonesuch>)
+		  subrules (<psub out_pseq (<simp_cntxt class aspirated>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+		>
+	   )
+  >
+)
+;And a rule with a nonexistent stratum (m6021):
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic no_stratum)
+		  in_pseq (<simp_cntxt class alv_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class aspirated>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+		>
+	   )
+  >
+)
+;And load a rule with an undefined feature name in a variable feature
+; (error msg 6040):
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+	var_fs (a nonesuch)
+		  in_pseq (<simp_cntxt class alv_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class aspirated>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+		>
+	   )
+  >
+)
+;And load a rule with an undefined variable in a simple context:
+; (error msg 6047):
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+	var_fs (a high)
+		  in_pseq (<simp_cntxt class alv_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class aspirated>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons alpha_vars (b +)>)>
+		>
+	   )
+  >
+)
+;And load a rule whose LHS is 2 segs and whose RHS is 3 segs
+; (error msg 6038):
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class alv_cons><seg rep t ctable table1>)
+		  subrules (<psub out_pseq (<simp_cntxt class aspirated><simp_cntxt class aspirated><simp_cntxt class aspirated>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+		>
+	   )
+  >
+)
+;Now load some OK rules (msg 6505):
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  mult_applic simultaneous
+		  in_pseq (<simp_cntxt class alv_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class aspirated>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+		>
+	   )
+  >
+)
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (morphophonemic allophonic)
+	var_fs (a high b low)
+		  mult_applic simultaneous
+		  in_pseq (<simp_cntxt class alv_cons>)
+	subrules (<psub r_pos (N) r_rf (latinate) x_rf (germ)
+					out_pseq (<simp_cntxt class aspirated alpha_vars (b - a +)>)
+					left_environ <ptemp init true pseq (<simp_cntxt class non_cons alpha_vars (a + b +)>)>
+					right_environ <ptemp fin true pseq (<simp_cntxt class unasp_noncons>)>
+		>
+	   )
+  >
+)
+;Verify rule structures as xlated:
+; (rule1 should have one stratum, rule2 two strata)
+(show_morpher_rule pretty_print rule1)
+(show_morpher_rule pretty_print rule2)
+;And verify the lists of prules in the strata:
+(show_stratum_prules pretty_print allophonic)
+(show_stratum_prules pretty_print morphophonemic)
+;Make sure the various lists of mrules are all MT:
+(morpher_show pretty_print *mrules*)
+(show_stratum_mrules pretty_print allophonic)
+(show_stratum_mrules pretty_print morphophonemic)
+
+;Re-order the rules.  First show current order:
+(morpher_show pretty_print *prules*)
+;...and in the allophonic stratum (both rules):
+(show_stratum_prules pretty_print allophonic)
+;...and in the morphophonemic stratum (just one rule):
+(show_stratum_prules pretty_print morphophonemic)
+;Then make the change:
+(morpher_set (*prules* (rule2 rule1)))
+;Now verify the change in the global var *prules*:
+(morpher_show pretty_print *prules*)
+;...and in the allophonic stratum (both rules):
+(show_stratum_prules pretty_print allophonic)
+;...and in the morphophonemic stratum (just one rule):
+(show_stratum_prules pretty_print morphophonemic)
+;And make sure the various lists of mrules are still MT:
+(morpher_show pretty_print *mrules*)
+(show_stratum_mrules pretty_print allophonic)
+(show_stratum_mrules pretty_print morphophonemic)
+;Try setting *prules* with a nonexistent rule (err msg 6007):
+(morpher_set (*prules* (rule2 nonesuch rule1)))
+;Verify that *prules* is unchanged:
+(morpher_show pretty_print *prules*)
+;Try setting *prules*, but omit one of the rules (err msg 6043):
+(morpher_set (*prules* (rule1)))
+;Verify that *prules* is unchanged:
+(morpher_show pretty_print *prules*)
+
+;Check prule_SELF_OPAQUE field in rule1; should be 'f':
+.recorded($*rule rule1*$, R, _),
+ arg(8, R, [Subrule | _]),
+ ifthenelse(arg(4, Subrule, f),
+	  writeln($********* prule_SELF_OPAQUE CORRECT for rule1 **********$),
+	  writeln($********* prule_SELF_OPAQUE ERROR for rule1 **********$)
+	 ).
+;Check prule_SELF_OPAQUE field in rule2; should be 't' (since RHS changes [-asp] to [+asp], while
+; environ requires [-asp]:
+.recorded($*rule rule2*$, R, _),
+ arg(8, R, [Subrule | _]),
+ ifthenelse(arg(4, Subrule, t),
+	  writeln($********* prule_SELF_OPAQUE CORRECT for rule2 **********$),
+	  writeln($********* prule_SELF_OPAQUE ERROR for rule2 **********$)
+	 ).
+;Check prule_INT_MULT_APPLIC field in rule2; should be 'lr_iterative', since
+; fnames in lenv and RHS are disjoint:
+.recorded($*rule rule2*$, R, _),
+ arg(8, R, [Subrule | _]),
+ ifthenelse(arg(3, Subrule, lr_iterative),
+	  writeln($********* prule_INT_MULT_APPLIC CORRECT for rule2 **********$),
+	  writeln($********* prule_INT_MULT_APPLIC ERROR for rule2 **********$)
+	 ).
+;Check target pseq in rule1; should contain all FVs of both LHS and RHS:
+.recorded($*rule rule1*$, R, _),
+ arg(8, R, [Subrule | _]),
+ arg(10, Subrule, Target0),
+ xlate_pseq(Target, rule1, right, [], _, _, Target0),
+ Target0 = [T_seg0 | _],
+ arg(2, T_seg0, FB),
+ recorded(variable, variable('*pfeatures*', Pfeatures), _),
+ fb_to_fvs(FB, Pfeatures, FVs),
+ writeln(FVs).
+;Now replace rule2 with a different rule of the same name, msg 6504:
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (morphophonemic allophonic)
+		  in_pseq (<simp_cntxt class alv_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class unasp_noncons>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+						  right_environ <ptemp pseq (<simp_cntxt class unasp_noncons>)>
+		>
+	   )
+  >
+)
+;Now check target; it should not contain the feature [+cons], because the RHS assigns [-cons]:
+.recorded($*rule rule2*$, R, _),
+ arg(8, R, [Subrule | _]),
+ arg(10, Subrule, Target0),
+ xlate_pseq(Target, rule2, right, [], _, _, Target0),
+ Target0 = [T_seg0 | _],
+ arg(2, T_seg0, FB),
+ recorded(variable, variable('*pfeatures*', Pfeatures), _),
+ fb_to_fvs(FB, Pfeatures, FVs),
+ writeln(FVs).
+;Again replace rule2 with a different rule of the same name, msg 6504:
+; (note use of segment, rather than nat class, in environs)
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (morphophonemic allophonic)
+		  mult_applic simultaneous
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class velar>)
+						  left_environ <ptemp pseq (<seg rep k ctable table3>)>
+						  right_environ <ptemp pseq (<seg rep k ctable table3>)>
+		>
+	   )
+  >
+)
+;
+;Verify the change:
+(show_morpher_rule pretty_print rule2)
+;Check prule_SELF_OPAQUE field for new rule2; should be 'f':
+.recorded($*rule rule2*$, R, _),
+ arg(8, R, [Subrule | _]),
+ ifthenelse(arg(4, Subrule, f),
+	  writeln($********* prule_SELF_OPAQUE CORRECT for rule2 **********$),
+	  writeln($********* prule_SELF_OPAQUE ERROR for rule2 **********$)
+	 ).
+;Check prule_INT_MULT_APPLIC field in rule; should be 'simultaneous', since
+; lenv and RHS are not disjoint:
+.recorded($*rule rule2*$, R, _),
+ arg(8, R, [Subrule | _]),
+ ifthenelse(arg(3, Subrule, simultaneous),
+	  writeln($********* prule_INT_MULT_APPLIC CORRECT for rule2 **********$),
+	  writeln($********* prule_INT_MULT_APPLIC ERROR for rule2 **********$)
+	 ).
+;Now try to load rule2 with a bm that isn't in the designated char table (msg m6037):
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class velar> <bdry rep # ctable table1>)
+						  right_environ <ptemp pseq (<seg rep k ctable table3>)>
+		>
+	   )
+  >
+)
+;Now test what happens when we delete a natural class that is used by a rule.
+;Rm the class (msg 6542):
+(remove_nat_class message alv_cons)
+;Show the rule (error msg 6042):
+(show_morpher_rule pretty_print rule1)
+;Just to be sure, look at the internal form of the rule; there should be four
+; 0s, 2 in the LHS pseq and 2 in the target:
+.recorded($*rule rule1*$, R, _),
+ arg(5, R, LHS_pseq),
+ writeln(LHS_pseq),
+ arg(8, R, [Subrule | _]),
+ arg(10, Subrule, Target_pseq),
+ writeln(Target_pseq).
+;Also test what happens when we try to parse while the rule is invalid
+; (error msg 6042):
+(morph_and_lookup_word pretty_print pHitH)
+;Now put the nat class back in:
+(load_nat_class message <nat_class name alv_cons features (cons + poa alveolar)>)
+;And see if the LHS and target got fixed again.  Show rule (msg 6509):
+(show_morpher_rule pretty_print rule1)
+;Just to be sure, look at the internal form of the rule; there should be no
+; instances of 0.  (To avoid outputting ptrs which will be
+; different time we run this, so 'diff' wouldn't work, we explicitly check
+; whether the FBs are 0.)
+.recorded($*rule rule1*$, R, _),
+ arg(5, R, [LHS_seg]),
+ arg(8, R, [Subrule | _]),
+ arg(10, Subrule, [Target_seg]),
+ ifthenelse(
+			(arg(2, LHS_seg,0)    ; arg(3, LHS_seg, 0) ;
+			 arg(2, Target_seg, 0) ; arg(3, Target_seg, 0)
+			),
+			writeln($********* revision to LHS ERROR **********$),
+			writeln($********* revision to LHS CORRECT **********$)
+		   ).
+;Now do the same exercise with a nat class used in the RHS:
+;Rm the class (msg 6542):
+(remove_nat_class message aspirated)
+;Show the rule (error msg 6042):
+(show_morpher_rule pretty_print rule1)
+;Just to be sure, look at the internal form of the rule; there should be four
+; 0s, 2 in the RHS pseq and 2 in the target:
+.recorded($*rule rule1*$, R, _),
+ arg(8, R, [Subrule | _]),
+ arg(8, Subrule, RHS_pseq),
+ writeln(RHS_pseq),
+ arg(10, Subrule, Target_pseq),
+ writeln(Target_pseq).
+;Now put the nat class back in:
+(load_nat_class message <nat_class name aspirated features (asp +)>)
+;And see if the RHS and target got fixed again.  Show rule (msg 6509):
+(show_morpher_rule pretty_print rule1)
+;Just to be sure, look at the internal form of the rule; there should be no
+; instances of 0.
+.recorded($*rule rule1*$, R, _),
+ arg(8, R, [Subrule | _]),
+ arg(8, Subrule, [RHS_seg]),
+ arg(10, Subrule, [Target_seg]),
+ ifthenelse(
+			(arg(2, RHS_seg, 0)    ; arg(3, RHS_seg, 0) ;
+			 arg(2, Target_seg, 0) ; arg(3, Target_seg, 0)
+			),
+			writeln($********* revision to RHS ERROR **********$),
+			writeln($********* revision to RHS CORRECT **********$)
+		   ).
+;Now remove both rules entirely (msg 6506):
+(remove_morpher_rule message rule1)
+(remove_morpher_rule message rule2)
+;Verify the change (rule lists should all be MT):
+(morpher_show pretty_print *prules*)
+(show_stratum_prules pretty_print allophonic)
+(show_stratum_prules pretty_print morphophonemic)
+
+;Now reload the rules, so we can test reset_morpher_rulebase:
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  mult_applic simultaneous
+		  in_pseq (<simp_cntxt class alv_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class aspirated>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+		>
+	   )
+  >
+)
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (morphophonemic allophonic)
+		  mult_applic simultaneous
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class velar>)
+						  right_environ <ptemp pseq (<seg rep k ctable table3>)>
+						  left_environ <ptemp pseq (<seg rep k ctable table3>)>
+		>
+	   )
+  >
+)
+;Expect msg 6531:
+(reset_morpher_rulebase message *dummy*)
+;Again verify the change (rule lists should all be MT):
+(morpher_show pretty_print *prules*)
+(show_stratum_prules pretty_print allophonic)
+(show_stratum_prules pretty_print morphophonemic)
+
+;Now try to show one of the rules; should get msg 6005 because it's been deleted:
+(show_morpher_rule pretty_print rule1)
+
+;Clean up by rm'ing the nat classes (msg 6542):
+(remove_nat_class message alv_cons)
+(remove_nat_class message velar)
+(remove_nat_class message aspirated)
+(remove_nat_class message non_cons)
+(remove_nat_class message cons)
+(remove_nat_class message unasp_noncons)

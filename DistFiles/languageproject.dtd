@@ -1,0 +1,2487 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- DTD created 5/25/2010 3:26:15 PM for FieldWorks model version 7000018 -->
+
+<!ELEMENT languageproject (AdditionalFields?, (rt)+)>
+<!ATTLIST languageproject
+  version CDATA #FIXED '7000018'>
+
+<!ELEMENT AdditionalFields (CustomField)*>
+
+<!ELEMENT CustomField EMPTY>
+<!ATTLIST CustomField
+  name CDATA #REQUIRED
+  class CDATA #REQUIRED
+  type CDATA #REQUIRED
+  destclass CDATA #IMPLIED
+  wsSelector CDATA #IMPLIED
+  listRoot CDATA #IMPLIED
+  helpString CDATA #IMPLIED>
+
+<!ELEMENT rt (DateCreated
+	|DateModified
+	|Description
+	|Name
+	|SubFolders
+	|Files
+	|Content
+	|Type
+	|Publications
+	|HeaderFooterSets
+	|BeginOffset
+	|FreeTranslation
+	|LiteralTranslation
+	|Notes
+	|Analyses
+	|Abbreviation
+	|SubPossibilities
+	|SortSpec
+	|Restrictions
+	|Confidence
+	|Status
+	|Discussion
+	|Researchers
+	|HelpId
+	|ForeColor
+	|BackColor
+	|UnderColor
+	|UnderStyle
+	|Hidden
+	|IsProtected
+	|Depth
+	|PreventChoiceAboveLevel
+	|IsSorted
+	|IsClosed
+	|PreventDuplicates
+	|PreventNodeChoices
+	|Possibilities
+	|HelpFile
+	|UseExtendedFields
+	|DisplayOption
+	|ItemClsid
+	|IsVernacular
+	|WritingSystem
+	|WsSelector
+	|ListVersion
+	|ClassId
+	|FieldId
+	|FieldInfo
+	|App
+	|Rows
+	|ColumnInfo
+	|ShowPrompt
+	|PromptText
+	|Cells
+	|Contents
+	|Alias
+	|Gender
+	|DateOfBirth
+	|PlaceOfBirth
+	|IsResearcher
+	|PlacesOfResidence
+	|Education
+	|DateOfDeath
+	|Positions
+	|Paragraphs
+	|RightToLeft
+	|Tags
+	|StyleRules
+	|Label
+	|ParseIsCurrent
+	|TextObjects
+	|AnalyzedTextObjects
+	|Segments
+	|Translations
+	|BasedOn
+	|Next
+	|Rules
+	|IsPublishedTextStyle
+	|IsBuiltIn
+	|IsModified
+	|UserLevel
+	|Context
+	|Structure
+	|Function
+	|Usage
+	|Records
+	|Details
+	|System
+	|SubType
+	|Clsid
+	|Level
+	|Fields
+	|HelpString
+	|Flid
+	|Visibility
+	|Required
+	|Style
+	|SubfieldOf
+	|IsCustomField
+	|PossList
+	|PossItems
+	|BeginSegment
+	|EndSegment
+	|BeginAnalysisIndex
+	|EndAnalysisIndex
+	|Tag
+	|StateInformation
+	|Human
+	|Version
+	|Approves
+	|Disapproves
+	|Locale
+	|Abbr
+	|DefaultMonospace
+	|DefaultSansSerif
+	|DefaultSerif
+	|FontVariation
+	|KeyboardType
+	|Collations
+	|ICULocale
+	|KeymanKeyboard
+	|LegacyMapping
+	|SansFontVariation
+	|LastModified
+	|DefaultBodyFont
+	|BodyFontFeatures
+	|ValidChars
+	|SpellCheckDictionary
+	|MatchedPairs
+	|PunctuationPatterns
+	|CapitalizationInfo
+	|QuotationMarks
+	|Comment
+	|Translation
+	|WinLCID
+	|WinCollation
+	|IcuResourceName
+	|IcuResourceText
+	|ICURules
+	|PrimaryField
+	|PrimaryCollType
+	|PrimaryReverse
+	|SecondaryField
+	|SecondaryCollType
+	|SecondaryReverse
+	|TertiaryField
+	|TertiaryCollType
+	|TertiaryReverse
+	|IncludeSubentries
+	|PrimaryWs
+	|SecondaryWs
+	|TertiaryWs
+	|PrimaryCollation
+	|SecondaryCollation
+	|TertiaryCollation
+	|CompDetails
+	|AnnotationType
+	|Source
+	|InstanceOf
+	|Text
+	|Features
+	|AllowsComment
+	|AllowsFeatureStructure
+	|AllowsInstanceOf
+	|InstanceOfSignature
+	|UserCanCreate
+	|CanCreateOrphan
+	|PromptUser
+	|CopyCutPastable
+	|ZeroWidth
+	|Multi
+	|Severity
+	|MaxDupOccur
+	|AppliesTo
+	|EndOffset
+	|BeginObject
+	|EndObject
+	|OtherObjects
+	|BeginRef
+	|EndRef
+	|FootnoteMarker
+	|Sid
+	|HasMaintenance
+	|UserConfigAcct
+	|ApplicationId
+	|FeatureId
+	|ActivatedLevel
+	|PageHeight
+	|PageWidth
+	|IsLandscape
+	|GutterMargin
+	|GutterLoc
+	|Divisions
+	|FootnoteSepWidth
+	|PaperHeight
+	|PaperWidth
+	|BindingEdge
+	|SheetLayout
+	|SheetsPerSig
+	|BaseFontSize
+	|BaseLineSpacing
+	|DifferentFirstHF
+	|DifferentEvenHF
+	|StartAt
+	|PageLayout
+	|HFSet
+	|NumColumns
+	|MarginTop
+	|MarginBottom
+	|MarginInside
+	|MarginOutside
+	|PosHeader
+	|PosFooter
+	|DefaultHeader
+	|DefaultFooter
+	|FirstHeader
+	|FirstFooter
+	|EvenHeader
+	|EvenFooter
+	|InsideAlignedText
+	|CenteredText
+	|OutsideAlignedText
+	|OriginalPath
+	|InternalPath
+	|Copyright
+	|PictureFile
+	|Caption
+	|LayoutPos
+	|ScaleFactor
+	|LocationRangeType
+	|LocationMin
+	|LocationMax
+	|Types
+	|Values
+	|Value
+	|Default
+	|GlossAbbreviation
+	|RightGlossSep
+	|ShowInGloss
+	|DisplayToRightOfValues
+	|CatalogSourceId
+	|RefNumber
+	|ValueState
+	|Feature
+	|FeatureDisjunctions
+	|FeatureSpecs
+	|LouwNidaCodes
+	|OcmCodes
+	|OcmRefs
+	|RelatedDomains
+	|Questions
+	|Question
+	|ExampleWords
+	|ExampleSentences
+	|CreatedBy
+	|ModifiedBy
+	|MediaFile
+	|ScriptureBooks
+	|Styles
+	|RefSepr
+	|ChapterVerseSepr
+	|VerseSepr
+	|Bridge
+	|ImportSettings
+	|ArchivedDrafts
+	|FootnoteMarkerSymbol
+	|DisplayFootnoteReference
+	|RestartFootnoteSequence
+	|RestartFootnoteBoundary
+	|UseScriptDigits
+	|ScriptDigitZero
+	|ConvertCVDigitsOnExport
+	|Versification
+	|VersePunct
+	|ChapterLabel
+	|PsalmLabel
+	|BookAnnotations
+	|NoteCategories
+	|FootnoteMarkerType
+	|DisplayCrossRefReference
+	|CrossRefMarkerSymbol
+	|CrossRefMarkerType
+	|CrossRefsCombinedWithFootnotes
+	|DisplaySymbolInFootnote
+	|DisplaySymbolInCrossRef
+	|Resources
+	|Sections
+	|BookId
+	|Title
+	|Abbrev
+	|IdText
+	|Footnotes
+	|Diffs
+	|UseChapterNumHeading
+	|CanonicalNum
+	|Books
+	|BookName
+	|BookAbbrev
+	|BookNameAlt
+	|Heading
+	|VerseRefStart
+	|VerseRefEnd
+	|VerseRefMin
+	|VerseRefMax
+	|ImportType
+	|ImportProjToken
+	|ScriptureSources
+	|BackTransSources
+	|NoteSources
+	|ScriptureMappings
+	|NoteMappings
+	|Protected
+	|RefStart
+	|RefEnd
+	|DiffType
+	|RevMin
+	|RevLim
+	|RevParagraph
+	|NoteType
+	|ParatextID
+	|FileFormat
+	|BeginMarker
+	|EndMarker
+	|Excluded
+	|Target
+	|Domain
+	|ChkHistRecs
+	|ResolutionStatus
+	|Categories
+	|Quote
+	|Recommendation
+	|Resolution
+	|Responses
+	|DateResolved
+	|CheckId
+	|RunDate
+	|Result
+	|Reminders
+	|RecTypes
+	|CrossReferences
+	|VersionHistory
+	|AnthroCodes
+	|PhraseTags
+	|SubRecords
+	|ExternalMaterials
+	|FurtherQuestions
+	|SeeAlso
+	|DateOfEvent
+	|CounterEvidence
+	|SupersededBy
+	|SupportingEvidence
+	|Conclusions
+	|Hypothesis
+	|ResearchPlan
+	|Locations
+	|Sources
+	|TimeOfEvent
+	|Participants
+	|PersonalNotes
+	|Date
+	|Role
+	|MsFeatures
+	|PartOfSpeech
+	|InflectionClass
+	|Stratum
+	|ProdRestrict
+	|FromPartsOfSpeech
+	|HomographNumber
+	|CitationForm
+	|MorphoSyntaxAnalyses
+	|Senses
+	|Bibliography
+	|Etymology
+	|SummaryDefinition
+	|LiteralMeaning
+	|MainEntriesOrSenses
+	|DoNotUseForParsing
+	|ExcludeAsHeadword
+	|LexemeForm
+	|AlternateForms
+	|Pronunciations
+	|ImportResidue
+	|LiftResidue
+	|EntryRefs
+	|ClauseType
+	|EndParagraph
+	|EndSentence
+	|StartDependentClauseGroup
+	|EndDependentClauseGroup
+	|Example
+	|Reference
+	|Entries
+	|Appendixes
+	|SenseTypes
+	|UsageTypes
+	|DomainTypes
+	|MorphTypes
+	|LexicalFormIndex
+	|AllomorphIndex
+	|Introduction
+	|IsHeadwordCitationForm
+	|IsBodyInSeparateSubentry
+	|ReversalIndexes
+	|References
+	|VariantEntryTypes
+	|ComplexEntryTypes
+	|Column
+	|MergesAfter
+	|MergesBefore
+	|WordGroup
+	|Preposed
+	|DependentClauses
+	|Form
+	|Location
+	|MediaFiles
+	|CVPattern
+	|Tone
+	|MorphoSyntaxAnalysis
+	|Definition
+	|Examples
+	|Gloss
+	|ReversalEntries
+	|ScientificName
+	|SenseType
+	|ThesaurusItems
+	|AnthroNote
+	|DiscourseNote
+	|EncyclopedicInfo
+	|GeneralNote
+	|GrammarNote
+	|PhonologyNote
+	|SemanticsNote
+	|SocioLinguisticsNote
+	|SemanticDomains
+	|Pictures
+	|Adjacency
+	|MsEnvFeatures
+	|PhoneEnv
+	|MsEnvPartOfSpeech
+	|Position
+	|InflectionClasses
+	|Input
+	|Output
+	|ToProdRestrict
+	|FromMsFeatures
+	|ToMsFeatures
+	|FromPartOfSpeech
+	|ToPartOfSpeech
+	|FromInflectionClass
+	|ToInflectionClass
+	|AffixCategory
+	|FromStemName
+	|FromProdRestrict
+	|InflFeats
+	|HeadLast
+	|OverridingMsa
+	|ToMsa
+	|MorphType
+	|IsAbstract
+	|Optional
+	|Slots
+	|Region
+	|PrefixSlots
+	|SuffixSlots
+	|Final
+	|Subclasses
+	|RulesOfReferral
+	|StemNames
+	|ReferenceForms
+	|Strata
+	|CompoundRules
+	|AdhocCoProhibitions
+	|AnalyzingAgents
+	|TestSets
+	|GlossSystem
+	|ParserParameters
+	|Components
+	|GlossString
+	|GlossBundle
+	|Postfix
+	|Prefix
+	|SecondaryOrder
+	|StemName
+	|Regions
+	|DefaultAffix
+	|DefaultStem
+	|Phonemes
+	|InherFeatVal
+	|EmptyParadigmCells
+	|AffixTemplates
+	|AffixSlots
+	|BearableFeatures
+	|InflectableFeats
+	|DefaultFeatures
+	|DefaultInflectionClass
+	|PartsOfSpeech
+	|Subentries
+	|ReversalForm
+	|SoundFilePath
+	|Genres
+	|IsTranslated
+	|Category
+	|Stems
+	|Derivation
+	|Meanings
+	|MorphBundles
+	|CompoundRuleApps
+	|InflTemplateApps
+	|Evaluations
+	|SpellingStatus
+	|Checksum
+	|ThesaurusCentral
+	|AnthroCentral
+	|Wordforms
+	|Modification
+	|OutputForm
+	|LeftForm
+	|RightForm
+	|Linker
+	|AffixForm
+	|AffixMsa
+	|OutputMsa
+	|Slot
+	|Template
+	|SlotApps
+	|Rule
+	|VacuousApp
+	|DerivAffApp
+	|TemplateApp
+	|PRuleApps
+	|Minimum
+	|Maximum
+	|Member
+	|Members
+	|FeatureStructure
+	|PlusConstr
+	|MinusConstr
+	|BoundaryMarkers
+	|Codes
+	|BasicIPASymbol
+	|LeftContext
+	|RightContext
+	|AMPLEStringSegment
+	|StringRepresentation
+	|Representation
+	|PhonemeSets
+	|Environments
+	|NaturalClasses
+	|Contexts
+	|FeatConstraints
+	|PhonRuleFeats
+	|PhonRules
+	|StemForm
+	|StemMsa
+	|InflectionalFeats
+	|StratumApps
+	|Allomorphs
+	|FirstAllomorph
+	|RestOfAllos
+	|Morphemes
+	|FirstMorpheme
+	|RestOfMorphs
+	|Cases
+	|LeftMsa
+	|RightMsa
+	|Glosses
+	|AfterSeparator
+	|ComplexNameSeparator
+	|ComplexNameFirst
+	|FeatStructFrag
+	|GlossItems
+	|EticID
+	|Morph
+	|Msa
+	|Sense
+	|Ref
+	|KeyWord
+	|Rendering
+	|ReverseAbbr
+	|ReverseAbbreviation
+	|MappingType
+	|ReverseName
+	|Targets
+	|Explanation
+	|ConstChartTempl
+	|Charts
+	|ChartMarkers
+	|Occurrences
+	|Renderings
+	|TermId
+	|SurfaceForm
+	|Meaning
+	|PrimaryLexemes
+	|ComponentLexemes
+	|HideMinorEntry
+	|Summary
+	|RefType
+	|Direction
+	|InitialStratum
+	|FinalStratum
+	|StrucDesc
+	|RightHandSides
+	|StrucChange
+	|InputPOSes
+	|ExclRuleFeats
+	|ReqRuleFeats
+	|Item
+	|EthnologueCode
+	|WorldRegion
+	|MainCountry
+	|FieldWorkLocation
+	|Texts
+	|TranslationTags
+	|Thesaurus
+	|WordformLookupLists
+	|AnthroList
+	|LexDb
+	|ResearchNotebook
+	|AnalysisWss
+	|CurVernWss
+	|CurAnalysisWss
+	|CurPronunWss
+	|MsFeatureSystem
+	|MorphologicalData
+	|Filters
+	|ConfidenceLevels
+	|Roles
+	|AnalysisStatus
+	|People
+	|TimeOfDay
+	|AffixCategories
+	|PhonologicalData
+	|Overlays
+	|TranslatedScripture
+	|VernWss
+	|ExtLinkRootDir
+	|SortSpecs
+	|Annotations
+	|UserAccounts
+	|ActivatedFeatures
+	|AnnotationDefs
+	|SemanticDomainList
+	|CheckLists
+	|Media
+	|GenreList
+	|DiscourseData
+	|TextMarkupTags
+	|PhFeatureSystem
+	|Custom)*>
+<!ATTLIST rt
+  class NMTOKEN #REQUIRED
+  guid CDATA #REQUIRED
+  ownerguid CDATA #IMPLIED>
+
+<!ELEMENT DateCreated EMPTY>
+<!ATTLIST DateCreated
+  val CDATA #REQUIRED>
+
+<!ELEMENT DateModified EMPTY>
+<!ATTLIST DateModified
+  val CDATA #REQUIRED>
+
+<!ELEMENT Description (AStr* | Str? | AUni* | Uni? | objsur?)>
+
+<!ELEMENT Name (AUni* | Uni?)>
+
+<!ELEMENT SubFolders (objsur)*>
+
+<!ELEMENT Files (objsur)*>
+
+<!ELEMENT Content (AStr* | objsur*)>
+
+<!ELEMENT Type (objsur? | EMPTY)>
+<!ATTLIST Type
+  val CDATA #IMPLIED
+>
+
+<!ELEMENT Publications (objsur)*>
+
+<!ELEMENT HeaderFooterSets (objsur)*>
+
+<!ELEMENT BeginOffset EMPTY>
+<!ATTLIST BeginOffset
+  val CDATA #REQUIRED>
+
+<!ELEMENT FreeTranslation (AStr)*>
+
+<!ELEMENT LiteralTranslation (AStr)*>
+
+<!ELEMENT Notes (objsur* | Str?)>
+
+<!ELEMENT Analyses (objsur)*>
+
+<!ELEMENT Abbreviation (AUni)*>
+
+<!ELEMENT SubPossibilities (objsur)*>
+
+<!ELEMENT SortSpec EMPTY>
+<!ATTLIST SortSpec
+  val CDATA #REQUIRED>
+
+<!ELEMENT Restrictions (objsur* | AUni*)>
+
+<!ELEMENT Confidence (objsur)?>
+
+<!ELEMENT Status (objsur? | AUni* | EMPTY)>
+<!ATTLIST Status
+  val CDATA #IMPLIED
+>
+
+<!ELEMENT Discussion (objsur)?>
+
+<!ELEMENT Researchers (objsur)*>
+
+<!ELEMENT HelpId (Uni)?>
+
+<!ELEMENT ForeColor EMPTY>
+<!ATTLIST ForeColor
+  val CDATA #REQUIRED>
+
+<!ELEMENT BackColor EMPTY>
+<!ATTLIST BackColor
+  val CDATA #REQUIRED>
+
+<!ELEMENT UnderColor EMPTY>
+<!ATTLIST UnderColor
+  val CDATA #REQUIRED>
+
+<!ELEMENT UnderStyle EMPTY>
+<!ATTLIST UnderStyle
+  val CDATA #REQUIRED>
+
+<!ELEMENT Hidden EMPTY>
+<!ATTLIST Hidden
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsProtected EMPTY>
+<!ATTLIST IsProtected
+  val CDATA #REQUIRED>
+
+<!ELEMENT Depth EMPTY>
+<!ATTLIST Depth
+  val CDATA #REQUIRED>
+
+<!ELEMENT PreventChoiceAboveLevel EMPTY>
+<!ATTLIST PreventChoiceAboveLevel
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsSorted EMPTY>
+<!ATTLIST IsSorted
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsClosed EMPTY>
+<!ATTLIST IsClosed
+  val CDATA #REQUIRED>
+
+<!ELEMENT PreventDuplicates EMPTY>
+<!ATTLIST PreventDuplicates
+  val CDATA #REQUIRED>
+
+<!ELEMENT PreventNodeChoices EMPTY>
+<!ATTLIST PreventNodeChoices
+  val CDATA #REQUIRED>
+
+<!ELEMENT Possibilities (objsur)*>
+
+<!ELEMENT HelpFile (Uni)?>
+
+<!ELEMENT UseExtendedFields EMPTY>
+<!ATTLIST UseExtendedFields
+  val CDATA #REQUIRED>
+
+<!ELEMENT DisplayOption EMPTY>
+<!ATTLIST DisplayOption
+  val CDATA #REQUIRED>
+
+<!ELEMENT ItemClsid EMPTY>
+<!ATTLIST ItemClsid
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsVernacular EMPTY>
+<!ATTLIST IsVernacular
+  val CDATA #REQUIRED>
+
+<!ELEMENT WritingSystem (objsur)?>
+
+<!ELEMENT WsSelector EMPTY>
+<!ATTLIST WsSelector
+  val CDATA #REQUIRED>
+
+<!ELEMENT ListVersion EMPTY>
+<!ATTLIST ListVersion
+  val CDATA #REQUIRED>
+
+<!ELEMENT ClassId EMPTY>
+<!ATTLIST ClassId
+  val CDATA #REQUIRED>
+
+<!ELEMENT FieldId EMPTY>
+<!ATTLIST FieldId
+  val CDATA #REQUIRED>
+
+<!ELEMENT FieldInfo (Uni)?>
+
+<!ELEMENT App EMPTY>
+<!ATTLIST App
+  val CDATA #REQUIRED>
+
+<!ELEMENT Rows (objsur)*>
+
+<!ELEMENT ColumnInfo (Uni)?>
+
+<!ELEMENT ShowPrompt EMPTY>
+<!ATTLIST ShowPrompt
+  val CDATA #REQUIRED>
+
+<!ELEMENT PromptText (Uni)?>
+
+<!ELEMENT Cells (objsur)*>
+
+<!ELEMENT Contents (Str? | objsur*)>
+
+<!ELEMENT Alias (AUni)*>
+
+<!ELEMENT Gender EMPTY>
+<!ATTLIST Gender
+  val CDATA #REQUIRED>
+
+<!ELEMENT DateOfBirth EMPTY>
+<!ATTLIST DateOfBirth
+  val CDATA #REQUIRED>
+
+<!ELEMENT PlaceOfBirth (objsur)?>
+
+<!ELEMENT IsResearcher EMPTY>
+<!ATTLIST IsResearcher
+  val CDATA #REQUIRED>
+
+<!ELEMENT PlacesOfResidence (objsur)*>
+
+<!ELEMENT Education (objsur)?>
+
+<!ELEMENT DateOfDeath EMPTY>
+<!ATTLIST DateOfDeath
+  val CDATA #REQUIRED>
+
+<!ELEMENT Positions (objsur)*>
+
+<!ELEMENT Paragraphs (objsur)*>
+
+<!ELEMENT RightToLeft EMPTY>
+<!ATTLIST RightToLeft
+  val CDATA #REQUIRED>
+
+<!ELEMENT Tags (objsur)*>
+
+<!ELEMENT StyleRules (Prop)?>
+
+<!ELEMENT Label (Str? | AUni* | AStr*)>
+
+<!ELEMENT ParseIsCurrent EMPTY>
+<!ATTLIST ParseIsCurrent
+  val CDATA #REQUIRED>
+
+<!ELEMENT TextObjects (objsur)*>
+
+<!ELEMENT AnalyzedTextObjects (objsur)*>
+
+<!ELEMENT Segments (objsur)*>
+
+<!ELEMENT Translations (objsur)*>
+
+<!ELEMENT BasedOn (objsur)?>
+
+<!ELEMENT Next (objsur)?>
+
+<!ELEMENT Rules (Prop)?>
+
+<!ELEMENT IsPublishedTextStyle EMPTY>
+<!ATTLIST IsPublishedTextStyle
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsBuiltIn EMPTY>
+<!ATTLIST IsBuiltIn
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsModified EMPTY>
+<!ATTLIST IsModified
+  val CDATA #REQUIRED>
+
+<!ELEMENT UserLevel EMPTY>
+<!ATTLIST UserLevel
+  val CDATA #REQUIRED>
+
+<!ELEMENT Context EMPTY>
+<!ATTLIST Context
+  val CDATA #REQUIRED>
+
+<!ELEMENT Structure EMPTY>
+<!ATTLIST Structure
+  val CDATA #REQUIRED>
+
+<!ELEMENT Function EMPTY>
+<!ATTLIST Function
+  val CDATA #REQUIRED>
+
+<!ELEMENT Usage (AUni)*>
+
+<!ELEMENT Records (objsur)*>
+
+<!ELEMENT Details (Binary)?>
+
+<!ELEMENT System EMPTY>
+<!ATTLIST System
+  val CDATA #REQUIRED>
+
+<!ELEMENT SubType EMPTY>
+<!ATTLIST SubType
+  val CDATA #REQUIRED>
+
+<!ELEMENT Clsid EMPTY>
+<!ATTLIST Clsid
+  val CDATA #REQUIRED>
+
+<!ELEMENT Level EMPTY>
+<!ATTLIST Level
+  val CDATA #REQUIRED>
+
+<!ELEMENT Fields (objsur)*>
+
+<!ELEMENT HelpString (AUni)*>
+
+<!ELEMENT Flid EMPTY>
+<!ATTLIST Flid
+  val CDATA #REQUIRED>
+
+<!ELEMENT Visibility EMPTY>
+<!ATTLIST Visibility
+  val CDATA #REQUIRED>
+
+<!ELEMENT Required EMPTY>
+<!ATTLIST Required
+  val CDATA #REQUIRED>
+
+<!ELEMENT Style (Uni? | objsur?)>
+
+<!ELEMENT SubfieldOf (objsur)?>
+
+<!ELEMENT IsCustomField EMPTY>
+<!ATTLIST IsCustomField
+  val CDATA #REQUIRED>
+
+<!ELEMENT PossList (objsur)?>
+
+<!ELEMENT PossItems (objsur)*>
+
+<!ELEMENT BeginSegment (objsur)?>
+
+<!ELEMENT EndSegment (objsur)?>
+
+<!ELEMENT BeginAnalysisIndex EMPTY>
+<!ATTLIST BeginAnalysisIndex
+  val CDATA #REQUIRED>
+
+<!ELEMENT EndAnalysisIndex EMPTY>
+<!ATTLIST EndAnalysisIndex
+  val CDATA #REQUIRED>
+
+<!ELEMENT Tag (objsur)?>
+
+<!ELEMENT StateInformation (Uni)?>
+
+<!ELEMENT Human EMPTY>
+<!ATTLIST Human
+  val CDATA #REQUIRED>
+
+<!ELEMENT Version (Uni? | EMPTY)>
+<!ATTLIST Version
+  val CDATA #IMPLIED
+>
+
+<!ELEMENT Approves (objsur)?>
+
+<!ELEMENT Disapproves (objsur)?>
+
+<!ELEMENT Locale EMPTY>
+<!ATTLIST Locale
+  val CDATA #REQUIRED>
+
+<!ELEMENT Abbr (AUni)*>
+
+<!ELEMENT DefaultMonospace (Uni)?>
+
+<!ELEMENT DefaultSansSerif (Uni)?>
+
+<!ELEMENT DefaultSerif (Uni)?>
+
+<!ELEMENT FontVariation (Uni)?>
+
+<!ELEMENT KeyboardType (Uni)?>
+
+<!ELEMENT Collations (objsur)*>
+
+<!ELEMENT ICULocale (Uni)?>
+
+<!ELEMENT KeymanKeyboard (Uni)?>
+
+<!ELEMENT LegacyMapping (Uni)?>
+
+<!ELEMENT SansFontVariation (Uni)?>
+
+<!ELEMENT LastModified EMPTY>
+<!ATTLIST LastModified
+  val CDATA #REQUIRED>
+
+<!ELEMENT DefaultBodyFont (Uni)?>
+
+<!ELEMENT BodyFontFeatures (Uni)?>
+
+<!ELEMENT ValidChars (Uni)?>
+
+<!ELEMENT SpellCheckDictionary (Uni)?>
+
+<!ELEMENT MatchedPairs (Uni)?>
+
+<!ELEMENT PunctuationPatterns (Uni)?>
+
+<!ELEMENT CapitalizationInfo (Uni)?>
+
+<!ELEMENT QuotationMarks (Uni)?>
+
+<!ELEMENT Comment (AStr)*>
+
+<!ELEMENT Translation (AStr)*>
+
+<!ELEMENT WinLCID EMPTY>
+<!ATTLIST WinLCID
+  val CDATA #REQUIRED>
+
+<!ELEMENT WinCollation (Uni)?>
+
+<!ELEMENT IcuResourceName (Uni)?>
+
+<!ELEMENT IcuResourceText (Uni)?>
+
+<!ELEMENT ICURules (Uni)?>
+
+<!ELEMENT PrimaryField (Uni)?>
+
+<!ELEMENT PrimaryCollType EMPTY>
+<!ATTLIST PrimaryCollType
+  val CDATA #REQUIRED>
+
+<!ELEMENT PrimaryReverse EMPTY>
+<!ATTLIST PrimaryReverse
+  val CDATA #REQUIRED>
+
+<!ELEMENT SecondaryField (Uni)?>
+
+<!ELEMENT SecondaryCollType EMPTY>
+<!ATTLIST SecondaryCollType
+  val CDATA #REQUIRED>
+
+<!ELEMENT SecondaryReverse EMPTY>
+<!ATTLIST SecondaryReverse
+  val CDATA #REQUIRED>
+
+<!ELEMENT TertiaryField (Uni)?>
+
+<!ELEMENT TertiaryCollType EMPTY>
+<!ATTLIST TertiaryCollType
+  val CDATA #REQUIRED>
+
+<!ELEMENT TertiaryReverse EMPTY>
+<!ATTLIST TertiaryReverse
+  val CDATA #REQUIRED>
+
+<!ELEMENT IncludeSubentries EMPTY>
+<!ATTLIST IncludeSubentries
+  val CDATA #REQUIRED>
+
+<!ELEMENT PrimaryWs (objsur)?>
+
+<!ELEMENT SecondaryWs (objsur)?>
+
+<!ELEMENT TertiaryWs (objsur)?>
+
+<!ELEMENT PrimaryCollation (objsur)?>
+
+<!ELEMENT SecondaryCollation (objsur)?>
+
+<!ELEMENT TertiaryCollation (objsur)?>
+
+<!ELEMENT CompDetails (Uni)?>
+
+<!ELEMENT AnnotationType (objsur)?>
+
+<!ELEMENT Source (objsur? | Str? | AStr* | Uni?)>
+
+<!ELEMENT InstanceOf (objsur)?>
+
+<!ELEMENT Text (objsur)?>
+
+<!ELEMENT Features (objsur)*>
+
+<!ELEMENT AllowsComment EMPTY>
+<!ATTLIST AllowsComment
+  val CDATA #REQUIRED>
+
+<!ELEMENT AllowsFeatureStructure EMPTY>
+<!ATTLIST AllowsFeatureStructure
+  val CDATA #REQUIRED>
+
+<!ELEMENT AllowsInstanceOf EMPTY>
+<!ATTLIST AllowsInstanceOf
+  val CDATA #REQUIRED>
+
+<!ELEMENT InstanceOfSignature EMPTY>
+<!ATTLIST InstanceOfSignature
+  val CDATA #REQUIRED>
+
+<!ELEMENT UserCanCreate EMPTY>
+<!ATTLIST UserCanCreate
+  val CDATA #REQUIRED>
+
+<!ELEMENT CanCreateOrphan EMPTY>
+<!ATTLIST CanCreateOrphan
+  val CDATA #REQUIRED>
+
+<!ELEMENT PromptUser EMPTY>
+<!ATTLIST PromptUser
+  val CDATA #REQUIRED>
+
+<!ELEMENT CopyCutPastable EMPTY>
+<!ATTLIST CopyCutPastable
+  val CDATA #REQUIRED>
+
+<!ELEMENT ZeroWidth EMPTY>
+<!ATTLIST ZeroWidth
+  val CDATA #REQUIRED>
+
+<!ELEMENT Multi EMPTY>
+<!ATTLIST Multi
+  val CDATA #REQUIRED>
+
+<!ELEMENT Severity EMPTY>
+<!ATTLIST Severity
+  val CDATA #REQUIRED>
+
+<!ELEMENT MaxDupOccur EMPTY>
+<!ATTLIST MaxDupOccur
+  val CDATA #REQUIRED>
+
+<!ELEMENT AppliesTo (objsur)*>
+
+<!ELEMENT EndOffset EMPTY>
+<!ATTLIST EndOffset
+  val CDATA #REQUIRED>
+
+<!ELEMENT BeginObject (objsur)?>
+
+<!ELEMENT EndObject (objsur)?>
+
+<!ELEMENT OtherObjects (objsur)*>
+
+<!ELEMENT BeginRef EMPTY>
+<!ATTLIST BeginRef
+  val CDATA #REQUIRED>
+
+<!ELEMENT EndRef EMPTY>
+<!ATTLIST EndRef
+  val CDATA #REQUIRED>
+
+<!ELEMENT FootnoteMarker (Str)?>
+
+<!ELEMENT Sid (Binary)?>
+
+<!ELEMENT HasMaintenance EMPTY>
+<!ATTLIST HasMaintenance
+  val CDATA #REQUIRED>
+
+<!ELEMENT UserConfigAcct (objsur)*>
+
+<!ELEMENT ApplicationId EMPTY>
+<!ATTLIST ApplicationId
+  val CDATA #REQUIRED>
+
+<!ELEMENT FeatureId EMPTY>
+<!ATTLIST FeatureId
+  val CDATA #REQUIRED>
+
+<!ELEMENT ActivatedLevel EMPTY>
+<!ATTLIST ActivatedLevel
+  val CDATA #REQUIRED>
+
+<!ELEMENT PageHeight EMPTY>
+<!ATTLIST PageHeight
+  val CDATA #REQUIRED>
+
+<!ELEMENT PageWidth EMPTY>
+<!ATTLIST PageWidth
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsLandscape EMPTY>
+<!ATTLIST IsLandscape
+  val CDATA #REQUIRED>
+
+<!ELEMENT GutterMargin EMPTY>
+<!ATTLIST GutterMargin
+  val CDATA #REQUIRED>
+
+<!ELEMENT GutterLoc EMPTY>
+<!ATTLIST GutterLoc
+  val CDATA #REQUIRED>
+
+<!ELEMENT Divisions (objsur)*>
+
+<!ELEMENT FootnoteSepWidth EMPTY>
+<!ATTLIST FootnoteSepWidth
+  val CDATA #REQUIRED>
+
+<!ELEMENT PaperHeight EMPTY>
+<!ATTLIST PaperHeight
+  val CDATA #REQUIRED>
+
+<!ELEMENT PaperWidth EMPTY>
+<!ATTLIST PaperWidth
+  val CDATA #REQUIRED>
+
+<!ELEMENT BindingEdge EMPTY>
+<!ATTLIST BindingEdge
+  val CDATA #REQUIRED>
+
+<!ELEMENT SheetLayout EMPTY>
+<!ATTLIST SheetLayout
+  val CDATA #REQUIRED>
+
+<!ELEMENT SheetsPerSig EMPTY>
+<!ATTLIST SheetsPerSig
+  val CDATA #REQUIRED>
+
+<!ELEMENT BaseFontSize EMPTY>
+<!ATTLIST BaseFontSize
+  val CDATA #REQUIRED>
+
+<!ELEMENT BaseLineSpacing EMPTY>
+<!ATTLIST BaseLineSpacing
+  val CDATA #REQUIRED>
+
+<!ELEMENT DifferentFirstHF EMPTY>
+<!ATTLIST DifferentFirstHF
+  val CDATA #REQUIRED>
+
+<!ELEMENT DifferentEvenHF EMPTY>
+<!ATTLIST DifferentEvenHF
+  val CDATA #REQUIRED>
+
+<!ELEMENT StartAt EMPTY>
+<!ATTLIST StartAt
+  val CDATA #REQUIRED>
+
+<!ELEMENT PageLayout (objsur)?>
+
+<!ELEMENT HFSet (objsur)?>
+
+<!ELEMENT NumColumns EMPTY>
+<!ATTLIST NumColumns
+  val CDATA #REQUIRED>
+
+<!ELEMENT MarginTop EMPTY>
+<!ATTLIST MarginTop
+  val CDATA #REQUIRED>
+
+<!ELEMENT MarginBottom EMPTY>
+<!ATTLIST MarginBottom
+  val CDATA #REQUIRED>
+
+<!ELEMENT MarginInside EMPTY>
+<!ATTLIST MarginInside
+  val CDATA #REQUIRED>
+
+<!ELEMENT MarginOutside EMPTY>
+<!ATTLIST MarginOutside
+  val CDATA #REQUIRED>
+
+<!ELEMENT PosHeader EMPTY>
+<!ATTLIST PosHeader
+  val CDATA #REQUIRED>
+
+<!ELEMENT PosFooter EMPTY>
+<!ATTLIST PosFooter
+  val CDATA #REQUIRED>
+
+<!ELEMENT DefaultHeader (objsur)?>
+
+<!ELEMENT DefaultFooter (objsur)?>
+
+<!ELEMENT FirstHeader (objsur)?>
+
+<!ELEMENT FirstFooter (objsur)?>
+
+<!ELEMENT EvenHeader (objsur)?>
+
+<!ELEMENT EvenFooter (objsur)?>
+
+<!ELEMENT InsideAlignedText (Str)?>
+
+<!ELEMENT CenteredText (Str)?>
+
+<!ELEMENT OutsideAlignedText (Str)?>
+
+<!ELEMENT OriginalPath (Uni)?>
+
+<!ELEMENT InternalPath (Uni)?>
+
+<!ELEMENT Copyright (AStr)*>
+
+<!ELEMENT PictureFile (objsur)?>
+
+<!ELEMENT Caption (AStr)*>
+
+<!ELEMENT LayoutPos EMPTY>
+<!ATTLIST LayoutPos
+  val CDATA #REQUIRED>
+
+<!ELEMENT ScaleFactor EMPTY>
+<!ATTLIST ScaleFactor
+  val CDATA #REQUIRED>
+
+<!ELEMENT LocationRangeType EMPTY>
+<!ATTLIST LocationRangeType
+  val CDATA #REQUIRED>
+
+<!ELEMENT LocationMin EMPTY>
+<!ATTLIST LocationMin
+  val CDATA #REQUIRED>
+
+<!ELEMENT LocationMax EMPTY>
+<!ATTLIST LocationMax
+  val CDATA #REQUIRED>
+
+<!ELEMENT Types (objsur)*>
+
+<!ELEMENT Values (objsur)*>
+
+<!ELEMENT Value (objsur* | AUni*)>
+
+<!ELEMENT Default (objsur)?>
+
+<!ELEMENT GlossAbbreviation (AUni)*>
+
+<!ELEMENT RightGlossSep (AUni)*>
+
+<!ELEMENT ShowInGloss EMPTY>
+<!ATTLIST ShowInGloss
+  val CDATA #REQUIRED>
+
+<!ELEMENT DisplayToRightOfValues EMPTY>
+<!ATTLIST DisplayToRightOfValues
+  val CDATA #REQUIRED>
+
+<!ELEMENT CatalogSourceId (Uni)?>
+
+<!ELEMENT RefNumber EMPTY>
+<!ATTLIST RefNumber
+  val CDATA #REQUIRED>
+
+<!ELEMENT ValueState EMPTY>
+<!ATTLIST ValueState
+  val CDATA #REQUIRED>
+
+<!ELEMENT Feature (objsur)?>
+
+<!ELEMENT FeatureDisjunctions (objsur)*>
+
+<!ELEMENT FeatureSpecs (objsur)*>
+
+<!ELEMENT LouwNidaCodes (Uni)?>
+
+<!ELEMENT OcmCodes (Uni)?>
+
+<!ELEMENT OcmRefs (objsur)*>
+
+<!ELEMENT RelatedDomains (objsur)*>
+
+<!ELEMENT Questions (objsur)*>
+
+<!ELEMENT Question (AUni)*>
+
+<!ELEMENT ExampleWords (AUni)*>
+
+<!ELEMENT ExampleSentences (AStr)*>
+
+<!ELEMENT CreatedBy (objsur)?>
+
+<!ELEMENT ModifiedBy (objsur)?>
+
+<!ELEMENT MediaFile (objsur)?>
+
+<!ELEMENT ScriptureBooks (objsur)*>
+
+<!ELEMENT Styles (objsur)*>
+
+<!ELEMENT RefSepr (Uni)?>
+
+<!ELEMENT ChapterVerseSepr (Uni)?>
+
+<!ELEMENT VerseSepr (Uni)?>
+
+<!ELEMENT Bridge (Uni)?>
+
+<!ELEMENT ImportSettings (objsur)*>
+
+<!ELEMENT ArchivedDrafts (objsur)*>
+
+<!ELEMENT FootnoteMarkerSymbol (Uni)?>
+
+<!ELEMENT DisplayFootnoteReference EMPTY>
+<!ATTLIST DisplayFootnoteReference
+  val CDATA #REQUIRED>
+
+<!ELEMENT RestartFootnoteSequence EMPTY>
+<!ATTLIST RestartFootnoteSequence
+  val CDATA #REQUIRED>
+
+<!ELEMENT RestartFootnoteBoundary EMPTY>
+<!ATTLIST RestartFootnoteBoundary
+  val CDATA #REQUIRED>
+
+<!ELEMENT UseScriptDigits EMPTY>
+<!ATTLIST UseScriptDigits
+  val CDATA #REQUIRED>
+
+<!ELEMENT ScriptDigitZero EMPTY>
+<!ATTLIST ScriptDigitZero
+  val CDATA #REQUIRED>
+
+<!ELEMENT ConvertCVDigitsOnExport EMPTY>
+<!ATTLIST ConvertCVDigitsOnExport
+  val CDATA #REQUIRED>
+
+<!ELEMENT Versification EMPTY>
+<!ATTLIST Versification
+  val CDATA #REQUIRED>
+
+<!ELEMENT VersePunct (Uni)?>
+
+<!ELEMENT ChapterLabel (Str)?>
+
+<!ELEMENT PsalmLabel (Str)?>
+
+<!ELEMENT BookAnnotations (objsur)*>
+
+<!ELEMENT NoteCategories (objsur)?>
+
+<!ELEMENT FootnoteMarkerType EMPTY>
+<!ATTLIST FootnoteMarkerType
+  val CDATA #REQUIRED>
+
+<!ELEMENT DisplayCrossRefReference EMPTY>
+<!ATTLIST DisplayCrossRefReference
+  val CDATA #REQUIRED>
+
+<!ELEMENT CrossRefMarkerSymbol (Uni)?>
+
+<!ELEMENT CrossRefMarkerType EMPTY>
+<!ATTLIST CrossRefMarkerType
+  val CDATA #REQUIRED>
+
+<!ELEMENT CrossRefsCombinedWithFootnotes EMPTY>
+<!ATTLIST CrossRefsCombinedWithFootnotes
+  val CDATA #REQUIRED>
+
+<!ELEMENT DisplaySymbolInFootnote EMPTY>
+<!ATTLIST DisplaySymbolInFootnote
+  val CDATA #REQUIRED>
+
+<!ELEMENT DisplaySymbolInCrossRef EMPTY>
+<!ATTLIST DisplaySymbolInCrossRef
+  val CDATA #REQUIRED>
+
+<!ELEMENT Resources (objsur)*>
+
+<!ELEMENT Sections (objsur)*>
+
+<!ELEMENT BookId (objsur)?>
+
+<!ELEMENT Title (objsur? | Str?)>
+
+<!ELEMENT Abbrev (AUni)*>
+
+<!ELEMENT IdText (Uni)?>
+
+<!ELEMENT Footnotes (objsur)*>
+
+<!ELEMENT Diffs (objsur)*>
+
+<!ELEMENT UseChapterNumHeading EMPTY>
+<!ATTLIST UseChapterNumHeading
+  val CDATA #REQUIRED>
+
+<!ELEMENT CanonicalNum EMPTY>
+<!ATTLIST CanonicalNum
+  val CDATA #REQUIRED>
+
+<!ELEMENT Books (objsur)*>
+
+<!ELEMENT BookName (AUni)*>
+
+<!ELEMENT BookAbbrev (AUni)*>
+
+<!ELEMENT BookNameAlt (AUni)*>
+
+<!ELEMENT Heading (objsur)?>
+
+<!ELEMENT VerseRefStart EMPTY>
+<!ATTLIST VerseRefStart
+  val CDATA #REQUIRED>
+
+<!ELEMENT VerseRefEnd EMPTY>
+<!ATTLIST VerseRefEnd
+  val CDATA #REQUIRED>
+
+<!ELEMENT VerseRefMin EMPTY>
+<!ATTLIST VerseRefMin
+  val CDATA #REQUIRED>
+
+<!ELEMENT VerseRefMax EMPTY>
+<!ATTLIST VerseRefMax
+  val CDATA #REQUIRED>
+
+<!ELEMENT ImportType EMPTY>
+<!ATTLIST ImportType
+  val CDATA #REQUIRED>
+
+<!ELEMENT ImportProjToken (Uni)?>
+
+<!ELEMENT ScriptureSources (objsur)*>
+
+<!ELEMENT BackTransSources (objsur)*>
+
+<!ELEMENT NoteSources (objsur)*>
+
+<!ELEMENT ScriptureMappings (objsur)*>
+
+<!ELEMENT NoteMappings (objsur)*>
+
+<!ELEMENT Protected EMPTY>
+<!ATTLIST Protected
+  val CDATA #REQUIRED>
+
+<!ELEMENT RefStart EMPTY>
+<!ATTLIST RefStart
+  val CDATA #REQUIRED>
+
+<!ELEMENT RefEnd EMPTY>
+<!ATTLIST RefEnd
+  val CDATA #REQUIRED>
+
+<!ELEMENT DiffType EMPTY>
+<!ATTLIST DiffType
+  val CDATA #REQUIRED>
+
+<!ELEMENT RevMin EMPTY>
+<!ATTLIST RevMin
+  val CDATA #REQUIRED>
+
+<!ELEMENT RevLim EMPTY>
+<!ATTLIST RevLim
+  val CDATA #REQUIRED>
+
+<!ELEMENT RevParagraph (objsur)?>
+
+<!ELEMENT NoteType (objsur)?>
+
+<!ELEMENT ParatextID (Uni)?>
+
+<!ELEMENT FileFormat EMPTY>
+<!ATTLIST FileFormat
+  val CDATA #REQUIRED>
+
+<!ELEMENT BeginMarker (Uni)?>
+
+<!ELEMENT EndMarker (Uni)?>
+
+<!ELEMENT Excluded EMPTY>
+<!ATTLIST Excluded
+  val CDATA #REQUIRED>
+
+<!ELEMENT Target (EMPTY | objsur?)>
+<!ATTLIST Target
+  val CDATA #IMPLIED
+>
+
+<!ELEMENT Domain EMPTY>
+<!ATTLIST Domain
+  val CDATA #REQUIRED>
+
+<!ELEMENT ChkHistRecs (objsur)*>
+
+<!ELEMENT ResolutionStatus EMPTY>
+<!ATTLIST ResolutionStatus
+  val CDATA #REQUIRED>
+
+<!ELEMENT Categories (objsur)*>
+
+<!ELEMENT Quote (objsur)?>
+
+<!ELEMENT Recommendation (objsur)?>
+
+<!ELEMENT Resolution (objsur)?>
+
+<!ELEMENT Responses (objsur)*>
+
+<!ELEMENT DateResolved EMPTY>
+<!ATTLIST DateResolved
+  val CDATA #REQUIRED>
+
+<!ELEMENT CheckId EMPTY>
+<!ATTLIST CheckId
+  val CDATA #REQUIRED>
+
+<!ELEMENT RunDate EMPTY>
+<!ATTLIST RunDate
+  val CDATA #REQUIRED>
+
+<!ELEMENT Result EMPTY>
+<!ATTLIST Result
+  val CDATA #REQUIRED>
+
+<!ELEMENT Reminders (objsur)*>
+
+<!ELEMENT RecTypes (objsur)?>
+
+<!ELEMENT CrossReferences (objsur)*>
+
+<!ELEMENT VersionHistory (objsur)?>
+
+<!ELEMENT AnthroCodes (objsur)*>
+
+<!ELEMENT PhraseTags (objsur)*>
+
+<!ELEMENT SubRecords (objsur)*>
+
+<!ELEMENT ExternalMaterials (objsur)?>
+
+<!ELEMENT FurtherQuestions (objsur)?>
+
+<!ELEMENT SeeAlso (objsur* | AUni*)>
+
+<!ELEMENT DateOfEvent EMPTY>
+<!ATTLIST DateOfEvent
+  val CDATA #REQUIRED>
+
+<!ELEMENT CounterEvidence (objsur)*>
+
+<!ELEMENT SupersededBy (objsur)*>
+
+<!ELEMENT SupportingEvidence (objsur)*>
+
+<!ELEMENT Conclusions (objsur)?>
+
+<!ELEMENT Hypothesis (objsur)?>
+
+<!ELEMENT ResearchPlan (objsur)?>
+
+<!ELEMENT Locations (objsur)*>
+
+<!ELEMENT Sources (objsur)*>
+
+<!ELEMENT TimeOfEvent (objsur)*>
+
+<!ELEMENT Participants (objsur)*>
+
+<!ELEMENT PersonalNotes (objsur)?>
+
+<!ELEMENT Date EMPTY>
+<!ATTLIST Date
+  val CDATA #REQUIRED>
+
+<!ELEMENT Role (objsur)?>
+
+<!ELEMENT MsFeatures (objsur)?>
+
+<!ELEMENT PartOfSpeech (objsur)?>
+
+<!ELEMENT InflectionClass (objsur)?>
+
+<!ELEMENT Stratum (objsur)?>
+
+<!ELEMENT ProdRestrict (objsur)*>
+
+<!ELEMENT FromPartsOfSpeech (objsur)*>
+
+<!ELEMENT HomographNumber EMPTY>
+<!ATTLIST HomographNumber
+  val CDATA #REQUIRED>
+
+<!ELEMENT CitationForm (AUni)*>
+
+<!ELEMENT MorphoSyntaxAnalyses (objsur)*>
+
+<!ELEMENT Senses (objsur)*>
+
+<!ELEMENT Bibliography (AStr)*>
+
+<!ELEMENT Etymology (objsur)?>
+
+<!ELEMENT SummaryDefinition (AStr)*>
+
+<!ELEMENT LiteralMeaning (AStr)*>
+
+<!ELEMENT MainEntriesOrSenses (objsur)*>
+
+<!ELEMENT DoNotUseForParsing EMPTY>
+<!ATTLIST DoNotUseForParsing
+  val CDATA #REQUIRED>
+
+<!ELEMENT ExcludeAsHeadword EMPTY>
+<!ATTLIST ExcludeAsHeadword
+  val CDATA #REQUIRED>
+
+<!ELEMENT LexemeForm (objsur)?>
+
+<!ELEMENT AlternateForms (objsur)*>
+
+<!ELEMENT Pronunciations (objsur)*>
+
+<!ELEMENT ImportResidue (Str)?>
+
+<!ELEMENT LiftResidue (Uni)?>
+
+<!ELEMENT EntryRefs (objsur)*>
+
+<!ELEMENT ClauseType EMPTY>
+<!ATTLIST ClauseType
+  val CDATA #REQUIRED>
+
+<!ELEMENT EndParagraph EMPTY>
+<!ATTLIST EndParagraph
+  val CDATA #REQUIRED>
+
+<!ELEMENT EndSentence EMPTY>
+<!ATTLIST EndSentence
+  val CDATA #REQUIRED>
+
+<!ELEMENT StartDependentClauseGroup EMPTY>
+<!ATTLIST StartDependentClauseGroup
+  val CDATA #REQUIRED>
+
+<!ELEMENT EndDependentClauseGroup EMPTY>
+<!ATTLIST EndDependentClauseGroup
+  val CDATA #REQUIRED>
+
+<!ELEMENT Example (AStr)*>
+
+<!ELEMENT Reference (Str)?>
+
+<!ELEMENT Entries (objsur)*>
+
+<!ELEMENT Appendixes (objsur)*>
+
+<!ELEMENT SenseTypes (objsur)?>
+
+<!ELEMENT UsageTypes (objsur)*>
+
+<!ELEMENT DomainTypes (objsur)*>
+
+<!ELEMENT MorphTypes (objsur)?>
+
+<!ELEMENT LexicalFormIndex (objsur)*>
+
+<!ELEMENT AllomorphIndex (objsur)*>
+
+<!ELEMENT Introduction (objsur)?>
+
+<!ELEMENT IsHeadwordCitationForm EMPTY>
+<!ATTLIST IsHeadwordCitationForm
+  val CDATA #REQUIRED>
+
+<!ELEMENT IsBodyInSeparateSubentry EMPTY>
+<!ATTLIST IsBodyInSeparateSubentry
+  val CDATA #REQUIRED>
+
+<!ELEMENT ReversalIndexes (objsur)*>
+
+<!ELEMENT References (objsur)?>
+
+<!ELEMENT VariantEntryTypes (objsur)*>
+
+<!ELEMENT ComplexEntryTypes (objsur)*>
+
+<!ELEMENT Column (objsur)?>
+
+<!ELEMENT MergesAfter EMPTY>
+<!ATTLIST MergesAfter
+  val CDATA #REQUIRED>
+
+<!ELEMENT MergesBefore EMPTY>
+<!ATTLIST MergesBefore
+  val CDATA #REQUIRED>
+
+<!ELEMENT WordGroup (objsur)?>
+
+<!ELEMENT Preposed EMPTY>
+<!ATTLIST Preposed
+  val CDATA #REQUIRED>
+
+<!ELEMENT DependentClauses (objsur)*>
+
+<!ELEMENT Form (Str? | AUni* | AStr*)>
+
+<!ELEMENT Location (objsur? | EMPTY)>
+<!ATTLIST Location
+  val CDATA #IMPLIED
+>
+
+<!ELEMENT MediaFiles (objsur)*>
+
+<!ELEMENT CVPattern (Str)?>
+
+<!ELEMENT Tone (Str)?>
+
+<!ELEMENT MorphoSyntaxAnalysis (objsur)?>
+
+<!ELEMENT Definition (AStr)*>
+
+<!ELEMENT Examples (objsur)*>
+
+<!ELEMENT Gloss (AUni)*>
+
+<!ELEMENT ReversalEntries (objsur)*>
+
+<!ELEMENT ScientificName (Str)?>
+
+<!ELEMENT SenseType (objsur)?>
+
+<!ELEMENT ThesaurusItems (objsur)*>
+
+<!ELEMENT AnthroNote (AStr)*>
+
+<!ELEMENT DiscourseNote (AStr)*>
+
+<!ELEMENT EncyclopedicInfo (AStr)*>
+
+<!ELEMENT GeneralNote (AStr)*>
+
+<!ELEMENT GrammarNote (AStr)*>
+
+<!ELEMENT PhonologyNote (AStr)*>
+
+<!ELEMENT SemanticsNote (AStr)*>
+
+<!ELEMENT SocioLinguisticsNote (AStr)*>
+
+<!ELEMENT SemanticDomains (objsur)*>
+
+<!ELEMENT Pictures (objsur)*>
+
+<!ELEMENT Adjacency EMPTY>
+<!ATTLIST Adjacency
+  val CDATA #REQUIRED>
+
+<!ELEMENT MsEnvFeatures (objsur)?>
+
+<!ELEMENT PhoneEnv (objsur)*>
+
+<!ELEMENT MsEnvPartOfSpeech (objsur)?>
+
+<!ELEMENT Position (objsur)*>
+
+<!ELEMENT InflectionClasses (objsur)*>
+
+<!ELEMENT Input (objsur)*>
+
+<!ELEMENT Output (objsur)*>
+
+<!ELEMENT ToProdRestrict (objsur)*>
+
+<!ELEMENT FromMsFeatures (objsur)?>
+
+<!ELEMENT ToMsFeatures (objsur)?>
+
+<!ELEMENT FromPartOfSpeech (objsur)?>
+
+<!ELEMENT ToPartOfSpeech (objsur)?>
+
+<!ELEMENT FromInflectionClass (objsur)?>
+
+<!ELEMENT ToInflectionClass (objsur)?>
+
+<!ELEMENT AffixCategory (objsur)?>
+
+<!ELEMENT FromStemName (objsur)?>
+
+<!ELEMENT FromProdRestrict (objsur)*>
+
+<!ELEMENT InflFeats (objsur)?>
+
+<!ELEMENT HeadLast EMPTY>
+<!ATTLIST HeadLast
+  val CDATA #REQUIRED>
+
+<!ELEMENT OverridingMsa (objsur)?>
+
+<!ELEMENT ToMsa (objsur)?>
+
+<!ELEMENT MorphType (objsur)?>
+
+<!ELEMENT IsAbstract EMPTY>
+<!ATTLIST IsAbstract
+  val CDATA #REQUIRED>
+
+<!ELEMENT Optional EMPTY>
+<!ATTLIST Optional
+  val CDATA #REQUIRED>
+
+<!ELEMENT Slots (objsur)*>
+
+<!ELEMENT Region (objsur)?>
+
+<!ELEMENT PrefixSlots (objsur)*>
+
+<!ELEMENT SuffixSlots (objsur)*>
+
+<!ELEMENT Final EMPTY>
+<!ATTLIST Final
+  val CDATA #REQUIRED>
+
+<!ELEMENT Subclasses (objsur)*>
+
+<!ELEMENT RulesOfReferral (objsur)*>
+
+<!ELEMENT StemNames (objsur)*>
+
+<!ELEMENT ReferenceForms (objsur)*>
+
+<!ELEMENT Strata (objsur)*>
+
+<!ELEMENT CompoundRules (objsur)*>
+
+<!ELEMENT AdhocCoProhibitions (objsur)*>
+
+<!ELEMENT AnalyzingAgents (objsur)*>
+
+<!ELEMENT TestSets (objsur)*>
+
+<!ELEMENT GlossSystem (objsur)?>
+
+<!ELEMENT ParserParameters (Uni)?>
+
+<!ELEMENT Components (objsur)*>
+
+<!ELEMENT GlossString (Uni)?>
+
+<!ELEMENT GlossBundle (objsur)*>
+
+<!ELEMENT Postfix (Uni)?>
+
+<!ELEMENT Prefix (Uni)?>
+
+<!ELEMENT SecondaryOrder EMPTY>
+<!ATTLIST SecondaryOrder
+  val CDATA #REQUIRED>
+
+<!ELEMENT StemName (objsur)?>
+
+<!ELEMENT Regions (objsur)*>
+
+<!ELEMENT DefaultAffix (objsur)?>
+
+<!ELEMENT DefaultStem (objsur)?>
+
+<!ELEMENT Phonemes (objsur)*>
+
+<!ELEMENT InherFeatVal (objsur)?>
+
+<!ELEMENT EmptyParadigmCells (objsur)*>
+
+<!ELEMENT AffixTemplates (objsur)*>
+
+<!ELEMENT AffixSlots (objsur)*>
+
+<!ELEMENT BearableFeatures (objsur)*>
+
+<!ELEMENT InflectableFeats (objsur)*>
+
+<!ELEMENT DefaultFeatures (objsur)?>
+
+<!ELEMENT DefaultInflectionClass (objsur)?>
+
+<!ELEMENT PartsOfSpeech (objsur)?>
+
+<!ELEMENT Subentries (objsur)*>
+
+<!ELEMENT ReversalForm (AUni)*>
+
+<!ELEMENT SoundFilePath (Uni)?>
+
+<!ELEMENT Genres (objsur)*>
+
+<!ELEMENT IsTranslated EMPTY>
+<!ATTLIST IsTranslated
+  val CDATA #REQUIRED>
+
+<!ELEMENT Category (objsur)?>
+
+<!ELEMENT Stems (objsur)*>
+
+<!ELEMENT Derivation (objsur)?>
+
+<!ELEMENT Meanings (objsur)*>
+
+<!ELEMENT MorphBundles (objsur)*>
+
+<!ELEMENT CompoundRuleApps (objsur)*>
+
+<!ELEMENT InflTemplateApps (objsur)*>
+
+<!ELEMENT Evaluations (objsur)*>
+
+<!ELEMENT SpellingStatus EMPTY>
+<!ATTLIST SpellingStatus
+  val CDATA #REQUIRED>
+
+<!ELEMENT Checksum EMPTY>
+<!ATTLIST Checksum
+  val CDATA #REQUIRED>
+
+<!ELEMENT ThesaurusCentral EMPTY>
+<!ATTLIST ThesaurusCentral
+  val CDATA #REQUIRED>
+
+<!ELEMENT AnthroCentral EMPTY>
+<!ATTLIST AnthroCentral
+  val CDATA #REQUIRED>
+
+<!ELEMENT Wordforms (objsur)*>
+
+<!ELEMENT Modification (objsur)?>
+
+<!ELEMENT OutputForm (AUni)*>
+
+<!ELEMENT LeftForm (objsur)?>
+
+<!ELEMENT RightForm (objsur)?>
+
+<!ELEMENT Linker (objsur)?>
+
+<!ELEMENT AffixForm (objsur)?>
+
+<!ELEMENT AffixMsa (objsur)?>
+
+<!ELEMENT OutputMsa (objsur)?>
+
+<!ELEMENT Slot (objsur)?>
+
+<!ELEMENT Template (objsur)?>
+
+<!ELEMENT SlotApps (objsur)*>
+
+<!ELEMENT Rule (objsur)?>
+
+<!ELEMENT VacuousApp EMPTY>
+<!ATTLIST VacuousApp
+  val CDATA #REQUIRED>
+
+<!ELEMENT DerivAffApp (objsur)*>
+
+<!ELEMENT TemplateApp (objsur)?>
+
+<!ELEMENT PRuleApps (objsur)*>
+
+<!ELEMENT Minimum EMPTY>
+<!ATTLIST Minimum
+  val CDATA #REQUIRED>
+
+<!ELEMENT Maximum EMPTY>
+<!ATTLIST Maximum
+  val CDATA #REQUIRED>
+
+<!ELEMENT Member (objsur)?>
+
+<!ELEMENT Members (objsur)*>
+
+<!ELEMENT FeatureStructure (objsur)?>
+
+<!ELEMENT PlusConstr (objsur)*>
+
+<!ELEMENT MinusConstr (objsur)*>
+
+<!ELEMENT BoundaryMarkers (objsur)*>
+
+<!ELEMENT Codes (objsur)*>
+
+<!ELEMENT BasicIPASymbol (Str)?>
+
+<!ELEMENT LeftContext (objsur)?>
+
+<!ELEMENT RightContext (objsur)?>
+
+<!ELEMENT AMPLEStringSegment (Uni)?>
+
+<!ELEMENT StringRepresentation (Str)?>
+
+<!ELEMENT Representation (AUni)*>
+
+<!ELEMENT PhonemeSets (objsur)*>
+
+<!ELEMENT Environments (objsur)*>
+
+<!ELEMENT NaturalClasses (objsur)*>
+
+<!ELEMENT Contexts (objsur)*>
+
+<!ELEMENT FeatConstraints (objsur)*>
+
+<!ELEMENT PhonRuleFeats (objsur)?>
+
+<!ELEMENT PhonRules (objsur)*>
+
+<!ELEMENT StemForm (objsur)?>
+
+<!ELEMENT StemMsa (objsur)?>
+
+<!ELEMENT InflectionalFeats (objsur)?>
+
+<!ELEMENT StratumApps (objsur)*>
+
+<!ELEMENT Allomorphs (objsur)*>
+
+<!ELEMENT FirstAllomorph (objsur)?>
+
+<!ELEMENT RestOfAllos (objsur)*>
+
+<!ELEMENT Morphemes (objsur)*>
+
+<!ELEMENT FirstMorpheme (objsur)?>
+
+<!ELEMENT RestOfMorphs (objsur)*>
+
+<!ELEMENT Cases (objsur)*>
+
+<!ELEMENT LeftMsa (objsur)?>
+
+<!ELEMENT RightMsa (objsur)?>
+
+<!ELEMENT Glosses (objsur)*>
+
+<!ELEMENT AfterSeparator (Uni)?>
+
+<!ELEMENT ComplexNameSeparator (Uni)?>
+
+<!ELEMENT ComplexNameFirst EMPTY>
+<!ATTLIST ComplexNameFirst
+  val CDATA #REQUIRED>
+
+<!ELEMENT FeatStructFrag (objsur)?>
+
+<!ELEMENT GlossItems (objsur)*>
+
+<!ELEMENT EticID (Uni)?>
+
+<!ELEMENT Morph (objsur)?>
+
+<!ELEMENT Msa (objsur)?>
+
+<!ELEMENT Sense (objsur)?>
+
+<!ELEMENT Ref EMPTY>
+<!ATTLIST Ref
+  val CDATA #REQUIRED>
+
+<!ELEMENT KeyWord (Str)?>
+
+<!ELEMENT Rendering (objsur)?>
+
+<!ELEMENT ReverseAbbr (AUni)*>
+
+<!ELEMENT ReverseAbbreviation (AUni)*>
+
+<!ELEMENT MappingType EMPTY>
+<!ATTLIST MappingType
+  val CDATA #REQUIRED>
+
+<!ELEMENT ReverseName (AUni)*>
+
+<!ELEMENT Targets (objsur)*>
+
+<!ELEMENT Explanation (AUni)*>
+
+<!ELEMENT ConstChartTempl (objsur)?>
+
+<!ELEMENT Charts (objsur)*>
+
+<!ELEMENT ChartMarkers (objsur)?>
+
+<!ELEMENT Occurrences (objsur)*>
+
+<!ELEMENT Renderings (objsur)*>
+
+<!ELEMENT TermId EMPTY>
+<!ATTLIST TermId
+  val CDATA #REQUIRED>
+
+<!ELEMENT SurfaceForm (objsur)?>
+
+<!ELEMENT Meaning (objsur)?>
+
+<!ELEMENT PrimaryLexemes (objsur)*>
+
+<!ELEMENT ComponentLexemes (objsur)*>
+
+<!ELEMENT HideMinorEntry EMPTY>
+<!ATTLIST HideMinorEntry
+  val CDATA #REQUIRED>
+
+<!ELEMENT Summary (AStr)*>
+
+<!ELEMENT RefType EMPTY>
+<!ATTLIST RefType
+  val CDATA #REQUIRED>
+
+<!ELEMENT Direction EMPTY>
+<!ATTLIST Direction
+  val CDATA #REQUIRED>
+
+<!ELEMENT InitialStratum (objsur)?>
+
+<!ELEMENT FinalStratum (objsur)?>
+
+<!ELEMENT StrucDesc (objsur)*>
+
+<!ELEMENT RightHandSides (objsur)*>
+
+<!ELEMENT StrucChange (Str? | objsur*)>
+
+<!ELEMENT InputPOSes (objsur)*>
+
+<!ELEMENT ExclRuleFeats (objsur)*>
+
+<!ELEMENT ReqRuleFeats (objsur)*>
+
+<!ELEMENT Item (objsur)?>
+
+<!ELEMENT EthnologueCode (Uni)?>
+
+<!ELEMENT WorldRegion (AUni)*>
+
+<!ELEMENT MainCountry (AUni)*>
+
+<!ELEMENT FieldWorkLocation (AUni)*>
+
+<!ELEMENT Texts (objsur)*>
+
+<!ELEMENT TranslationTags (objsur)?>
+
+<!ELEMENT Thesaurus (objsur)?>
+
+<!ELEMENT WordformLookupLists (objsur)*>
+
+<!ELEMENT AnthroList (objsur)?>
+
+<!ELEMENT LexDb (objsur)?>
+
+<!ELEMENT ResearchNotebook (objsur)?>
+
+<!ELEMENT AnalysisWss (objsur)*>
+
+<!ELEMENT CurVernWss (objsur)*>
+
+<!ELEMENT CurAnalysisWss (objsur)*>
+
+<!ELEMENT CurPronunWss (objsur)*>
+
+<!ELEMENT MsFeatureSystem (objsur)?>
+
+<!ELEMENT MorphologicalData (objsur)?>
+
+<!ELEMENT Filters (objsur)*>
+
+<!ELEMENT ConfidenceLevels (objsur)?>
+
+<!ELEMENT Roles (objsur)?>
+
+<!ELEMENT AnalysisStatus (objsur)?>
+
+<!ELEMENT People (objsur)?>
+
+<!ELEMENT TimeOfDay (objsur)?>
+
+<!ELEMENT AffixCategories (objsur)?>
+
+<!ELEMENT PhonologicalData (objsur)?>
+
+<!ELEMENT Overlays (objsur)*>
+
+<!ELEMENT TranslatedScripture (objsur)?>
+
+<!ELEMENT VernWss (objsur)*>
+
+<!ELEMENT ExtLinkRootDir (Uni)?>
+
+<!ELEMENT SortSpecs (objsur)*>
+
+<!ELEMENT Annotations (objsur)*>
+
+<!ELEMENT UserAccounts (objsur)*>
+
+<!ELEMENT ActivatedFeatures (objsur)*>
+
+<!ELEMENT AnnotationDefs (objsur)?>
+
+<!ELEMENT SemanticDomainList (objsur)?>
+
+<!ELEMENT CheckLists (objsur)*>
+
+<!ELEMENT Media (objsur)*>
+
+<!ELEMENT GenreList (objsur)?>
+
+<!ELEMENT DiscourseData (objsur)?>
+
+<!ELEMENT TextMarkupTags (objsur)?>
+
+<!ELEMENT PhFeatureSystem (objsur)?>
+
+<!ELEMENT Uni (#PCDATA)>
+
+<!ELEMENT AUni (#PCDATA)>
+<!ATTLIST AUni
+	ws CDATA #REQUIRED>
+
+<!ELEMENT Str (Run)*>
+
+<!ELEMENT AStr (Run)*>
+<!ATTLIST AStr
+	ws CDATA #REQUIRED>
+
+<!ELEMENT objsur EMPTY>
+<!ATTLIST objsur
+  guid CDATA #REQUIRED
+  t (o | r) #REQUIRED>
+
+<!ELEMENT Binary (#PCDATA)>
+
+<!ELEMENT Run (#PCDATA)>
+<!ATTLIST Run
+	ws CDATA #REQUIRED
+	backcolor CDATA #IMPLIED
+	bold (off | on | invert) #IMPLIED
+	bulNumTxtAft CDATA #IMPLIED
+	bulNumTxtBef CDATA #IMPLIED
+	charStyle CDATA #IMPLIED
+	contextString CDATA #IMPLIED
+	externalLink CDATA #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontVariations CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (off | on | invert) #IMPLIED
+	link CDATA #IMPLIED
+	moveableObj CDATA #IMPLIED
+	namedStyle CDATA #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit (mpt | rel) #IMPLIED
+	ownlink CDATA #IMPLIED
+	paraStyle CDATA #IMPLIED
+	spellcheck (normal | doNotCheck | forceCheck) #IMPLIED
+	superscript (off | super | sub) #IMPLIED
+	tabList CDATA #IMPLIED
+	tags CDATA #IMPLIED
+	type (chars | picture) #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (none | dotted | dashed | strikethrough | single | double | squiggle) #IMPLIED
+	wsBase CDATA #IMPLIED
+	wsStyle CDATA #IMPLIED
+>
+
+<!ELEMENT Prop (BulNumFontInfo | WsStyles9999)*>
+<!ATTLIST Prop
+	align (leading | left | center | right | trailing | justify) #IMPLIED
+	backcolor CDATA #IMPLIED
+	bold (off | on | invert) #IMPLIED
+	borderBottom CDATA #IMPLIED
+	borderColor CDATA #IMPLIED
+	borderLeading CDATA #IMPLIED
+	borderTop CDATA #IMPLIED
+	borderTrailing CDATA #IMPLIED
+	bulNumScheme CDATA #IMPLIED
+	bulNumStartAt CDATA #IMPLIED
+	bulNumTxtAft CDATA #IMPLIED
+	bulNumTxtBef CDATA #IMPLIED
+	charStyle CDATA #IMPLIED
+	firstIndent CDATA #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (off | on | invert) #IMPLIED
+	keepTogether CDATA #IMPLIED
+	keepWithNext CDATA #IMPLIED
+	leadingIndent CDATA #IMPLIED
+	lineHeight CDATA #IMPLIED
+	lineHeightType (exact | atLeast) #IMPLIED
+	lineHeightUnit (mpt | rel) #IMPLIED
+	MarginTop CDATA #IMPLIED
+	namedStyle CDATA #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit (mpt | rel) #IMPLIED
+	padBottom CDATA #IMPLIED
+	padLeading CDATA #IMPLIED
+	padTop CDATA #IMPLIED
+	padTrailing CDATA #IMPLIED
+	paracolor CDATA #IMPLIED
+	rightToLeft CDATA #IMPLIED
+	spaceAfter CDATA #IMPLIED
+	spaceBefore CDATA #IMPLIED
+	spellcheck (normal | doNotCheck | forceCheck) #IMPLIED
+	superscript (off | super | sub) #IMPLIED
+	tabDef CDATA #IMPLIED
+	trailingIndent CDATA #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (none | dotted | dashed | strikethrough | single | double | squiggle) #IMPLIED
+	widowOrphan CDATA #IMPLIED
+	ws CDATA #IMPLIED
+	wsBase CDATA #IMPLIED
+>
+
+<!ELEMENT BulNumFontInfo EMPTY>
+<!ATTLIST BulNumFontInfo
+	backcolor CDATA #IMPLIED
+	bold (off | on | invert) #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (off | on | invert) #IMPLIED
+	offset CDATA #IMPLIED
+	superscript (off | super | sub) #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (none | dotted | dashed | strikethrough | single | double | squiggle) #IMPLIED
+>
+
+<!ELEMENT WsStyles9999 (WsProp)*>
+
+<!ELEMENT WsProp EMPTY>
+<!ATTLIST WsProp
+	ws CDATA #REQUIRED
+	backcolor CDATA #IMPLIED
+	bold (off | on | invert) #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontVariations CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (off | on | invert) #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit (mpt | rel) #IMPLIED
+	superscript (off | super | sub) #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (none | dotted | dashed | strikethrough | single | double | squiggle) #IMPLIED
+>
+
+<!ELEMENT Custom ((objsur)* | (Uni)* | (AUni)* | (Str)* | (AStr)* | (Binary)* | EMPTY)>
+<!ATTLIST Custom
+  name CDATA #REQUIRED
+  val CDATA #IMPLIED>

@@ -1,0 +1,954 @@
+// --------------------------------------------------------------------------------------------
+// Copyright (C) 2002-2010 SIL International. All rights reserved.
+//
+// Distributable under the terms of either the Common Public License or the
+// GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//
+// File: LexEntryUi.cs
+// Responsibility: ?
+// Last reviewed: Steve Miller (FindEntryForWordform only)
+// --------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Utils;
+using SIL.FieldWorks.LexText.Controls;
+using XCore;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.CoreImpl;
+
+namespace SIL.FieldWorks.FdoUi
+{
+	/// <summary>
+	/// User-interface behavior for LexEntries.
+	/// </summary>
+	public class LexEntryUi : CmObjectUi
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Make one. The argument should really be a LexEntry.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// ------------------------------------------------------------------------------------
+		public LexEntryUi(ICmObject obj)
+			: base(obj)
+		{
+			Debug.Assert(obj is ILexEntry);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Create default valued entry.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal LexEntryUi()
+		{
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		///
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override IVwViewConstructor VernVc
+		{
+			get
+			{
+				CheckDisposed();
+				return new LexEntryVc(m_cache);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Given an object id, a (string-valued) property ID, and a range of characters,
+		/// return the LexEntry that is the best guess as to a useful LE to show to
+		/// provide information about that wordform.
+		///
+		/// Note: the interface takes this form because eventually we may want to query to
+		/// see whether the text has been analyzed and we have a known morpheme breakdown
+		/// for this wordform. Otherwise, at present we could just pass the text.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="hvoSrc"></param>
+		/// <param name="tagSrc"></param>
+		/// <param name="ichMin"></param>
+		/// <param name="ichLim"></param>
+		/// <returns>LexEntry or null.</returns>
+		/// ------------------------------------------------------------------------------------
+		public static LexEntryUi FindEntryForWordform(FdoCache cache, int hvoSrc, int tagSrc,
+			int ichMin, int ichLim)
+		{
+			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
+			if (tssContext == null)
+				return null;
+			ITsString tssWf = tssContext.GetSubstring(ichMin, ichLim);
+			return FindEntryForWordform(cache, tssWf);
+		}
+
+		/// <summary>
+		/// Find the list of LexEntry objects which conceivably match the given wordform.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <returns></returns>
+		public static List<ILexEntry> FindEntriesForWordform(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa)
+		{
+			if (tssWf == null)
+				return new List<ILexEntry>();
+
+			string wf = tssWf.Text;
+			if (string.IsNullOrEmpty(wf))
+				return new List<ILexEntry>();
+
+			int wsVern = StringUtils.GetWsAtOffset(tssWf, 0);
+			//// Adjust the wf string to escape any single quotes that may be present,
+			//// else the SQL query will cause a crash (TE-7033):
+			//string wfSqlSafe = wf.Replace("'", "''");
+			//// Check for Wordform, Lexeme Form, Alternate Form, and Citation Form.
+			//string sql = String.Format("SELECT le.Id, le.HomographNumber" +
+			//	" FROM WfiWordform_Form wwf" +
+			//	" JOIN WfiWordform_Analyses wwa ON wwa.Src=wwf.Obj" +
+			//	" JOIN WfiAnalysis_MorphBundles wamb ON wamb.Src=wwa.Dst" +
+			//	" JOIN WfiMorphBundle wmb ON wmb.Id=wamb.Dst" +
+			//	" JOIN MoStemMsa msm ON msm.Id=wmb.Msa" +
+			//	" JOIN CmObject co ON co.Id=msm.Id" +
+			//	" JOIN LexEntry le ON le.Id=co.Owner$" +
+			//	" WHERE wwf.Ws={0} AND wwf.Txt=N'{1}'" +
+			//	" UNION" +
+			//	" SELECT le.Id, le.HomographNumber" +
+			//	" FROM MoForm_Form mff" +
+			//	" JOIN CmObject co ON co.Id=mff.Obj" +
+			//	" JOIN LexEntry le ON le.Id=co.Owner$" +
+			//	" WHERE mff.Ws={0} AND mff.Txt=N'{1}'" +
+			//	" UNION" +
+			//	" SELECT le.Id, le.HomographNumber" +
+			//	" FROM LexEntry le" +
+			//	" JOIN LexEntry_CitationForm lcf ON lcf.Obj=le.Id AND lcf.Ws={0} AND lcf.Txt=N'{1}'" +
+			//	" ORDER BY le.HomographNumber", wsVern, wfSqlSafe);
+			//return DbOps.ReadIntsFromCommand(cache, sql, null);
+
+			var entries = new Set<ILexEntry>();
+
+			// Get the entries from the matching wordform.
+			// Get matching wordform.
+			var matchingWordforms = cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances()
+				.Where(wrdfrm => wrdfrm.Form.get_String(wsVern).Text == wf);
+			if (matchingWordforms.Count() > 1)
+			{
+				MessageBox.Show(Form.ActiveForm,
+					string.Format(FdoUiStrings.ksDuplicateWordformsMsg, wf),
+					FdoUiStrings.ksDuplicateWordformsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+			if (matchingWordforms.Count() > 0)
+			{
+				if (wfa != null && matchingWordforms.First().AnalysesOC.Contains(wfa))
+				{
+					entries.AddRange(wfa.MorphBundlesOS
+							.Where(mb => mb.MsaRA != null)
+							.Select(mb => mb.MsaRA.Owner as ILexEntry));
+				}
+				else
+				{
+					foreach (var analysis in matchingWordforms.First().AnalysesOC)
+					{
+						entries.AddRange(analysis.MorphBundlesOS
+							.Where(mb => mb.MsaRA != null)
+							.Select(mb => mb.MsaRA.Owner as ILexEntry));
+					}
+				}
+			}
+			// Get the entries from the matching MoForms.
+			entries.AddRange(
+				cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
+				.Cast<IMoForm>()
+				.Where(mf => mf.Form.get_String(wsVern) != null && mf.Form.get_String(wsVern).Text == wf)
+				.Select(mf => mf.Owner as ILexEntry));
+
+			// Get the entries from the citation form
+			entries.AddRange(
+				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+				.Cast<ILexEntry>()
+				.Where(entry => entry.CitationForm.get_String(wsVern) != null && entry.CitationForm.get_String(wsVern).Text == wf));
+
+			// Put the enrties in a List and sort it by the HomographNumber.
+			var retval = new List<ILexEntry>(entries.ToArray());
+			retval.Sort(CompareEntriesByHomographNumber);
+			return retval;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Find wordform given a cache and the string.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="tssWf"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		public static LexEntryUi FindEntryForWordform(FdoCache cache, ITsString tssWf)
+		{
+			if (tssWf == null || tssWf.Length == 0)
+				return null;
+
+			string wf = tssWf.Text;
+			int wsVern = StringUtils.GetWsAtOffset(tssWf, 0);
+			ILexEntry matchingEntry = null;
+
+			// Check for Lexeme form.
+			matchingEntry = (
+				from e in cache.LanguageProject.LexDbOA.Entries
+				where e.LexemeFormOA != null && e.LexemeFormOA.Form.get_String(wsVern).Text == wf
+				orderby e.HomographNumber
+				select e
+				).FirstOrDefault();
+
+			// Check for Citation form.
+			if (matchingEntry == null)
+				matchingEntry = (
+					from e in cache.LanguageProject.LexDbOA.Entries
+					where e.CitationForm.get_String(wsVern).Text == wf
+					orderby e.HomographNumber
+					select e
+					).FirstOrDefault();
+
+			// Check for Alternate forms.
+			if (matchingEntry == null)
+				matchingEntry =(
+					from e in cache.LanguageProject.LexDbOA.Entries
+					where (
+						from af in e.AlternateFormsOS
+						where af.Form.get_String(wsVern).Text == wf
+						select af
+						).FirstOrDefault() != null
+					orderby e.HomographNumber
+					select e
+					).FirstOrDefault();
+
+			// Look for the most commonly used analysis of the wordform.
+			if (matchingEntry == null)
+			{
+				IWfiWordform wordform;
+				if (cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tssWf, out wordform))
+				{
+					var guesser = new AnalysisGuessServices(cache);
+					var guess = guesser.GetBestGuess(wordform);
+					var analysis = guess as IWfiAnalysis;
+					if (guess is IWfiGloss)
+						analysis = guess.Owner as IWfiAnalysis;
+					if (analysis != null)
+					{
+						matchingEntry =
+							(from mb in analysis.MorphBundlesOS
+							 where mb.MorphRA is IMoStemAllomorph
+							 select mb.MorphRA.Owner).FirstOrDefault() as ILexEntry;
+					}
+				}
+			}
+
+			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Create the mediator if it doesn't already exist.  Ensure that the string table in
+		/// the mediator is loaded from the Flex string table.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="fRestoreStringTable">output flag that we should restore the original string table</param>
+		/// <param name="stOrig">output is the original string table</param>
+		/// ------------------------------------------------------------------------------------
+		protected static Mediator EnsureValidMediator(Mediator mediator,
+			out bool fRestoreStringTable, out StringTable stOrig)
+		{
+			if (mediator == null)
+			{
+				mediator = new Mediator();
+				fRestoreStringTable = false;
+				stOrig = null;
+			}
+			else
+			{
+				try
+				{
+					stOrig = mediator.StringTbl;
+					// Check whether this is the Flex string table: look for a lexicon type
+					// string and compare the value with what is produced when it's not found.
+					string s = stOrig.GetString("MoCompoundRule-Plural", "AlternativeTitles");
+					fRestoreStringTable = (s == "*MoCompoundRule-Plural*");
+				}
+				catch
+				{
+					stOrig = null;
+					fRestoreStringTable = true;
+				}
+			}
+			if (fRestoreStringTable || stOrig == null)
+			{
+				string dir = Path.Combine(DirectoryFinder.FlexFolder, "Configuration");
+				mediator.StringTbl = new StringTable(dir);
+			}
+			return mediator;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="hvoSrc"></param>
+		/// <param name="tagSrc"></param>
+		/// <param name="wsSrc"></param>
+		/// <param name="ichMin"></param>
+		/// <param name="ichLim"></param>
+		/// <param name="owner"></param>
+		/// <param name="mediator"></param>
+		/// <param name="helpProvider"></param>
+		/// <param name="helpFileKey">string key to get the help file name</param>
+		/// ------------------------------------------------------------------------------------
+		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
+			int ichMin, int ichLim, IWin32Window owner, Mediator mediator,
+			IHelpTopicProvider helpProvider, string helpFileKey)
+		{
+			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
+			if (tssContext == null)
+				return;
+
+			string text = tssContext.Text;
+			// If the string is empty, it might be because it's multilingual.  Try that alternative.
+			// (See TE-6374.)
+			if (text == null && wsSrc != 0)
+			{
+				tssContext = cache.DomainDataByFlid.get_MultiStringAlt(hvoSrc, tagSrc, wsSrc);
+				if (tssContext != null)
+					text = tssContext.Text;
+			}
+			ITsString tssWf = null;
+			if (text != null)
+				tssWf = tssContext.GetSubstring(ichMin, ichLim);
+			if (tssWf == null || tssWf.Length == 0)
+				return;
+			// We want to limit the lookup to the current word's current analysis, if one exists.
+			// See FWR-956.
+			IWfiAnalysis wfa = null;
+			if (tagSrc == StTxtParaTags.kflidContents)
+			{
+				IAnalysis anal = null;
+				IStTxtPara para = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvoSrc);
+				foreach (ISegment seg in para.SegmentsOS)
+				{
+					for (int i = 0; i < seg.AnalysesRS.Count; ++i)
+					{
+						int ich = seg.GetAnalysisBeginOffset(i);
+						if (ich == ichMin)
+						{
+							anal = seg.AnalysesRS[i];
+							break;
+						}
+					}
+					if (anal != null)
+						break;
+				}
+				if (anal != null)
+				{
+					if (anal is IWfiAnalysis)
+						wfa = anal as IWfiAnalysis;
+					else if (anal is IWfiGloss)
+						wfa = (anal as IWfiGloss).OwnerOfClass<IWfiAnalysis>();
+				}
+			}
+			DisplayEntries(cache, owner, mediator, helpProvider, helpFileKey, tssWf, wfa);
+		}
+
+		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
+			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
+		{
+			ITsString tssWf = tssWfIn;
+			LexEntryUi leui = null;
+			Mediator mediator = null;
+			try
+			{
+				leui = FindEntryForWordform(cache, tssWf);
+
+				// if we do not find a match for the word then try converting it to lowercase and see if there
+				// is an entry in the lexicon for the Wordform in lowercase. This is needed for occurences of
+				// words which are capitalized at the beginning of sentences.  LT-7444 RickM
+				if (leui == null)
+				{
+					//We need to be careful when converting to lowercase therefore use Icu.ToLower()
+					//get the WS of the tsString
+					int wsWf = StringUtils.GetWsAtOffset(tssWf, 0);
+					//use that to get the locale for the WS, which is used for
+					string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
+					string sLower = Icu.ToLower(tssWf.Text, wsLocale);
+					ITsTextProps ttp = tssWf.get_PropertiesAt(0);
+					tssWf = cache.TsStrFactory.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+					leui = FindEntryForWordform(cache, tssWf);
+				}
+
+				// Ensure that we have a valid mediator with the proper string table.
+				bool fRestore;
+				StringTable stOrig;
+				mediator = EnsureValidMediator(mediatorIn, out fRestore, out stOrig);
+				FdoCache cache2 = (FdoCache)mediator.PropertyTable.GetValue("cache");
+				if (cache2 != cache)
+					mediator.PropertyTable.SetProperty("cache", cache);
+				EnsureWindowConfiguration(mediator);
+				IVwStylesheet styleSheet = GetStyleSheet(cache, mediator);
+				if (leui == null)
+				{
+					ILexEntry entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+					if (entry == null)
+					{
+						// Restore the original string table in the mediator if needed.
+						if (fRestore)
+							mediator.StringTbl = stOrig;
+						return;
+					}
+					leui = new LexEntryUi(entry);
+				}
+				if (mediator != null)
+					leui.Mediator = mediator;
+				leui.ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
+				// Restore the original string table in the mediator if needed.
+				if (fRestore)
+					mediator.StringTbl = stOrig;
+			}
+			finally
+			{
+				if (leui != null)
+					leui.Dispose();
+				if (mediator != mediatorIn)
+					mediator.Dispose();
+			}
+		}
+
+		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
+			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
+		{
+			ITsString tssWf = tssWfIn;
+			var entries = FindEntriesForWordform(cache, tssWf, wfa);
+
+			// if we do not find a match for the word then try converting it to lowercase and see if there
+			// is an entry in the lexicon for the Wordform in lowercase. This is needed for occurences of
+			// words which are capitalized at the beginning of sentences.  LT-7444 RickM
+			if (entries == null || entries.Count == 0)
+			{
+				//We need to be careful when converting to lowercase therefore use Icu.ToLower()
+				//get the WS of the tsString
+				int wsWf = StringUtils.GetWsAtOffset(tssWf, 0);
+				//use that to get the locale for the WS, which is used for
+				string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
+				string sLower = Icu.ToLower(tssWf.Text, wsLocale);
+				ITsTextProps ttp = tssWf.get_PropertiesAt(0);
+				ITsStrFactory tsf = TsStrFactoryClass.Create();
+				tssWf = tsf.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+				entries = FindEntriesForWordform(cache, tssWf, wfa);
+			}
+
+			StringTable stOrig;
+			Mediator mediator;
+			IVwStylesheet styleSheet;
+			bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
+			if (entries == null || entries.Count == 0)
+			{
+				ILexEntry entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+				if (entry == null)
+				{
+					// Restore the original string table in the mediator if needed.
+					if (fRestore)
+						mediator.StringTbl = stOrig;
+					return;
+				}
+				entries = new List<ILexEntry>(1);
+				entries.Add(entry);
+			}
+			using (SummaryDialogForm form =
+				new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf, helpProvider, helpFileKey, styleSheet, cache, mediator))
+			{
+				form.ShowDialog(owner);
+				if (form.ShouldLink)
+					form.LinkToLexicon();
+			}
+			// Restore the original string table in the mediator if needed.
+			if (fRestore)
+				mediator.StringTbl = stOrig;
+		}
+
+		private static bool EnsureFlexTypeSetup(FdoCache cache, Mediator mediatorIn, out StringTable stOrig, out Mediator mediator, out IVwStylesheet styleSheet)
+		{
+			// Ensure that we have a valid mediator with the proper string table.
+			bool fRestore = false;
+			stOrig = null;
+			mediator = EnsureValidMediator(mediatorIn, out fRestore, out stOrig);
+			FdoCache cache2 = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			if (cache2 != cache)
+				mediator.PropertyTable.SetProperty("cache", cache);
+			EnsureWindowConfiguration(mediator);
+			styleSheet = GetStyleSheet(cache, mediator);
+			return fRestore;
+		}
+
+		/// <summary>
+		/// Determine a stylesheet from a mediator, or create a new one. Currently this is done
+		/// by looking for the main window and seeing whether it has a StyleSheet property that
+		/// returns one. (We use reflection because the relevant classes are in DLLs we can't
+		/// reference.)
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <returns></returns>
+		private static IVwStylesheet StyleSheetFromMediator(Mediator mediator)
+		{
+			if (mediator == null)
+				return null;
+			Form mainWindow = mediator.PropertyTable.GetValue("window") as Form;
+			if (mainWindow == null)
+				return null;
+			System.Reflection.PropertyInfo pi = mainWindow.GetType().GetProperty("StyleSheet");
+			if (pi == null)
+				return null;
+			return pi.GetValue(mainWindow, null) as IVwStylesheet;
+		}
+
+		private static IVwStylesheet GetStyleSheet(FdoCache cache, Mediator mediator)
+		{
+			IVwStylesheet vss = StyleSheetFromMediator(mediator);
+			if (vss != null)
+				return vss;
+			// Get a style sheet for the Language Explorer, and store it in the
+			// (new) mediator.
+			FwStyleSheet styleSheet = new FwStyleSheet();
+			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+			mediator.PropertyTable.SetProperty("FwStyleSheet", styleSheet);
+			mediator.PropertyTable.SetPropertyPersistence("FwStyleSheet", false);
+			return styleSheet;
+		}
+
+		private static void EnsureWindowConfiguration(Mediator mediator)
+		{
+			XmlNode xnWindow = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
+			if (xnWindow == null)
+			{
+				string configFile = DirectoryFinder.GetFWCodeFile("Language Explorer/Configuration/Main.xml");
+				// This can be called from TE...in that case, we don't complain about missing include
+				// files (true argument) but just trust that we put enough in the installer to make it work.
+				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
+				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
+				mediator.PropertyTable.SetProperty("WindowConfiguration", windowConfigurationNode);
+				mediator.PropertyTable.SetPropertyPersistence("WindowConfiguration", false);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
+		/// be found, show the related words dialog with the words related to the selected one.
+		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="sel">The sel.</param>
+		/// <param name="owner">The owner.</param>
+		/// <param name="mediatorIn"></param>
+		/// <param name="helpProvider"></param>
+		/// <param name="helpFileKey"></param>
+		/// ------------------------------------------------------------------------------------
+		public static void DisplayRelatedEntries(FdoCache cache, IVwSelection sel, IWin32Window owner,
+			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey)
+		{
+			if (sel == null)
+				return;
+			IVwSelection sel2 = sel.EndPoint(false);
+			if (sel2 == null)
+				return;
+			IVwSelection sel3 = sel2.GrowToWord();
+			if (sel3 == null)
+				return;
+			ITsString tss;
+			int ichMin, ichLim, hvo, tag, ws;
+			bool fAssocPrev;
+			sel3.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
+			sel3.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+			if (tss.Text == null)
+				return;
+			ITsString tssWf = tss.GetSubstring(ichMin, ichLim);
+			using (LexEntryUi leui = FindEntryForWordform(cache, tssWf))
+			{
+				// This doesn't work as well (unless we do a commit) because it may not see current typing.
+				//LexEntryUi leui = LexEntryUi.FindEntryForWordform(cache, hvo, tag, ichMin, ichLim);
+				if (leui == null)
+				{
+					if (tssWf != null && tssWf.Length > 0)
+						RelatedWords.ShowNotInDictMessage(owner);
+					return;
+				}
+				int hvoEntry = leui.Object.Hvo;
+				int[] domains;
+				int[] lexrels;
+				IVwCacheDa cdaTemp;
+				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
+					return;
+				StringTable stOrig;
+				Mediator mediator;
+				IVwStylesheet styleSheet;
+				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
+				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediatorIn))
+				{
+					rw.ShowDialog(owner);
+				}
+				if (fRestore)
+					mediator.StringTbl = stOrig;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the flex config file.
+		/// </summary>
+		/// <value>The flex config file.</value>
+		/// ------------------------------------------------------------------------------------
+		public static string FlexConfigFile
+		{
+			get { return DirectoryFinder.GetFWCodeFile(@"Language Explorer/Configuration/Main.xml"); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Launch the Find Entry dialog, and if one is created or selected return it.
+		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="mediator">The mediator.</param>
+		/// <param name="tssForm">The TSS form.</param>
+		/// <param name="owner">The owner.</param>
+		/// <returns>The HVO of the selected or created entry</returns>
+		/// ------------------------------------------------------------------------------------
+		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator,
+			ITsString tssForm, IWin32Window owner)
+		{
+			// Ensure that we have a valid mediator with the proper string table.
+			bool fRestore = false;
+			StringTable stOrig = null;
+			mediator = EnsureValidMediator(mediator, out fRestore, out stOrig);
+			using (var dlg = new EntryGoDlg())
+			{
+				var wp = new WindowParams
+				{
+					m_btnText = FdoUiStrings.ksShow,
+					m_title = FdoUiStrings.ksFindInDictionary,
+					m_label = FdoUiStrings.ksFind_
+				};
+				dlg.Owner = owner as Form;
+				dlg.SetDlgInfo(cache, wp, mediator, tssForm);
+				dlg.SetHelpTopic("khtpFindInDictionary");
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					var entry = dlg.SelectedObject as ILexEntry;
+					Debug.Assert(entry != null);
+					// Restore the original string table in the mediator if needed.
+					if (fRestore)
+						mediator.StringTbl = stOrig;
+					return entry;
+				}
+			}
+			// Restore the original string table in the mediator if needed.
+			if (fRestore)
+				mediator.StringTbl = stOrig;
+			return null;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="owner"></param>
+		/// <param name="tssWf"></param>
+		/// <param name="helpProvider"></param>
+		/// <param name="helpFileKey">string key to get the help file name</param>
+		/// ------------------------------------------------------------------------------------
+		public void ShowSummaryDialog(IWin32Window owner, ITsString tssWf,
+			IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
+		{
+			CheckDisposed();
+
+			using (SummaryDialogForm form =
+					   new SummaryDialogForm(this, tssWf, helpProvider, helpFileKey, styleSheet))
+			{
+				form.ShowDialog(owner);
+				if (form.ShouldLink)
+					form.LinkToLexicon();
+			}
+		}
+
+		protected override bool ShouldDisplayMenuForClass(int specifiedClsid,
+			UIItemDisplayProperties display)
+		{
+			return LexEntryTags.kClassId == specifiedClsid || base.ShouldDisplayMenuForClass(specifiedClsid, display);
+		}
+
+
+		private static int CompareEntriesByHomographNumber(ILexEntry x, ILexEntry y)
+		{
+			return x == null
+					? (y == null ? 0 /* Both are null, so are equal */ : -1 /* x not being null is grater than y which is null */)
+					: (y == null
+						? 1 /* y being null is greater than x which is not null */
+						: (x.HomographNumber == y.HomographNumber
+							? 0 /* Neither are null, and homograph numbers are the same, so they are equal */
+							: (x.HomographNumber > y.HomographNumber
+								? 1 /* x is greater than x */
+								: -1 /* x is less than y */)));
+		}
+	}
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Override to support kfragHeadword with a properly live display of the headword.
+	/// Also, the default of displaying the vernacular writing system can be overridden.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class LexEntryVc : CmVernObjectVc
+	{
+		const int kfragFormForm = 9543; // arbitrary.
+		/// <summary>
+		/// use with WfiMorphBundle to display the headword with variant info appended.
+		/// </summary>
+		public const int kfragEntryAndVariant = 9544;
+		/// <summary>
+		/// use with EntryRef to display the variant type info
+		/// </summary>
+		public const int kfragVariantTypes = 9545;
+
+		int m_ws;
+		int m_wsActual = 0;
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="cache"></param>
+		/// ------------------------------------------------------------------------------------
+		public LexEntryVc(FdoCache cache)
+			: base(cache)
+		{
+			m_ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+		}
+
+		public int WritingSystemCode
+		{
+			get { return m_ws; }
+			set { m_ws = value; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Display a view of the LexEntry (or fragment thereof).
+		/// </summary>
+		/// <param name="vwenv"></param>
+		/// <param name="hvo"></param>
+		/// <param name="frag"></param>
+		/// ------------------------------------------------------------------------------------
+		public override void Display(IVwEnv vwenv, int hvo, int frag)
+		{
+			switch (frag)
+			{
+				case (int)VcFrags.kfragHeadWord:
+					// This case should stay in sync with
+					// LexEntry.LexemeFormMorphTypeAndHomographStatic
+					vwenv.OpenParagraph();
+					AddHeadwordWithHomograph(vwenv, hvo);
+					vwenv.CloseParagraph();
+					break;
+				case kfragEntryAndVariant:
+					var wfb = m_cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().GetObject(hvo);
+					//int hvoMf = wfb.MorphRA.Hvo;
+					//int hvoLexEntry = m_cache.GetOwnerOfObject(hvoMf);
+					// if morphbundle morph (entry) is in a variant relationship to the morph bundle sense
+					// display its entry headword and variant type information (LT-4053)
+					ILexEntryRef ler;
+					var variant = wfb.MorphRA.Owner as ILexEntry;
+					if (variant.IsVariantOfSenseOrOwnerEntry(wfb.SenseRA, out ler))
+					{
+						// build Headword from sense's entry
+						vwenv.OpenParagraph();
+						vwenv.OpenInnerPile();
+						vwenv.AddObj(wfb.SenseRA.EntryID, this, (int)VcFrags.kfragHeadWord);
+						vwenv.CloseInnerPile();
+						vwenv.OpenInnerPile();
+						// now add variant type info
+						vwenv.AddObj(ler.Hvo, this, kfragVariantTypes);
+						vwenv.CloseInnerPile();
+						vwenv.CloseParagraph();
+						break;
+					}
+
+					// build Headword even though we aren't in a variant relationship.
+					vwenv.AddObj(variant.Hvo, this, (int)VcFrags.kfragHeadWord);
+					break;
+				case kfragVariantTypes:
+					ler = m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().GetObject(hvo);
+					bool fNeedInitialPlus = true;
+					vwenv.OpenParagraph();
+					foreach (var let in ler.VariantEntryTypesRS)
+					{
+						// just concatenate them together separated by comma.
+						ITsString tssVariantTypeRevAbbr = let.ReverseAbbr.BestAnalysisAlternative;
+						if (tssVariantTypeRevAbbr != null && tssVariantTypeRevAbbr.Length > 0)
+						{
+							if (fNeedInitialPlus)
+								vwenv.AddString(StringUtils.MakeTss("+", m_cache.DefaultUserWs));
+							else
+								vwenv.AddString(StringUtils.MakeTss(",", m_cache.DefaultUserWs));
+							vwenv.AddString(tssVariantTypeRevAbbr);
+							fNeedInitialPlus = false;
+						}
+					}
+					vwenv.CloseParagraph();
+					break;
+				case kfragFormForm: // form of MoForm
+					vwenv.AddStringAltMember(MoFormTags.kflidForm, m_wsActual, this);
+					break;
+				default:
+					base.Display(vwenv, hvo, frag);
+					break;
+			}
+		}
+
+		private void AddHeadwordWithHomograph(IVwEnv vwenv, int hvo)
+		{
+					ISilDataAccess sda = vwenv.DataAccess;
+					int hvoLf = sda.get_ObjectProp(hvo,
+						LexEntryTags.kflidLexemeForm);
+					int hvoType = 0;
+					if (hvoLf != 0)
+					{
+						hvoType = sda.get_ObjectProp(hvoLf,
+							MoFormTags.kflidMorphType);
+					}
+
+					// If we have a type of morpheme, show the appropriate prefix that indicates it.
+					// We want vernacular so it will match the point size of any aligned vernacular text.
+					// (The danger is that the vernacular font doesn't have these characters...not sure what
+					// we can do about that, but most do, and it looks awful in analysis if that is a
+					// much different size from vernacular.)
+					string sPrefix = null;
+					if (hvoType != 0)
+					{
+						sPrefix = sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPrefix);
+					}
+
+					// LexEntry.ShortName1; basically tries for form of the lexeme form, then the citation form.
+					bool fGotLabel = false;
+					int wsActual = 0;
+					if (hvoLf != 0)
+					{
+						// if we have a lexeme form and its label is non-empty, use it.
+						if (TryMultiStringAlt(sda, hvoLf, MoFormTags.kflidForm, out wsActual))
+						{
+							m_wsActual = wsActual;
+							fGotLabel = true;
+							if (sPrefix != null)
+								vwenv.AddString(StringUtils.MakeTss(sPrefix, wsActual));
+							vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, kfragFormForm);
+						}
+					}
+					if (!fGotLabel)
+					{
+						// If we didn't get a useful form from the lexeme form try the citation form.
+						if (TryMultiStringAlt(sda, hvo, LexEntryTags.kflidCitationForm, out wsActual))
+						{
+							m_wsActual = wsActual;
+							if (sPrefix != null)
+								vwenv.AddString(StringUtils.MakeTss(sPrefix, wsActual));
+							vwenv.AddStringAltMember(LexEntryTags.kflidCitationForm, wsActual, this);
+							fGotLabel = true;
+						}
+					}
+					int defUserWs = m_cache.WritingSystemFactory.UserWs;
+					if (!fGotLabel)
+					{
+						// If that fails just show two questions marks.
+						if (sPrefix != null)
+							vwenv.AddString(StringUtils.MakeTss(sPrefix, wsActual));
+						vwenv.AddString(m_cache.TsStrFactory.MakeString(FdoUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
+					}
+
+					// If we have a lexeme form type show the appropriate postfix.
+					if (hvoType != 0)
+					{
+						vwenv.AddString(StringUtils.MakeTss(
+							sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
+					}
+
+					// Show homograph number if non-zero.
+					int nHomograph = sda.get_IntProp(hvo,
+						LexEntryTags.kflidHomographNumber);
+					vwenv.NoteDependency(new[] { hvo }, new[] { LexEntryTags.kflidHomographNumber }, 1);
+					if (nHomograph > 0)
+					{
+						// Use a string builder to embed the properties in with the TsString.
+						// this allows our TsStringCollectorEnv to properly encode the superscript.
+						// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
+						// since AppendTss treats the given Tss as atomic.
+						ITsIncStrBldr tsBldr = TsIncStrBldrClass.Create();
+						tsBldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript,
+							(int)FwTextPropVar.ktpvEnum,
+							(int)FwSuperscriptVal.kssvSub);
+						tsBldr.SetIntPropValues((int)FwTextPropType.ktptBold,
+							(int)FwTextPropVar.ktpvEnum,
+							(int)FwTextToggleVal.kttvForceOn);
+						tsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+							(int)FwTextPropVar.ktpvDefault, defUserWs);
+						tsBldr.Append(nHomograph.ToString());
+						vwenv.AddString(tsBldr.GetString());
+					}
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="hvoEntryToDisplay"></param>
+		/// <param name="wsVern"></param>
+		/// <param name="ler"></param>
+		/// <returns></returns>
+		static public ITsString GetLexEntryTss(FdoCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
+		{
+			LexEntryVc vcEntry = new LexEntryVc(cache);
+			vcEntry.WritingSystemCode = wsVern;
+			TsStringCollectorEnv collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, hvoEntryToDisplay);
+			collector.RequestAppendSpaceForFirstWordInNewParagraph = false;
+			vcEntry.Display(collector, hvoEntryToDisplay, (int)VcFrags.kfragHeadWord);
+			if (ler != null)
+				vcEntry.Display(collector, ler.Hvo, LexEntryVc.kfragVariantTypes);
+			return collector.Result;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="morphBundle"></param>
+		/// <param name="wsVern"></param>
+		/// <returns></returns>
+		static public ITsString GetLexEntryTss(IWfiMorphBundle morphBundle, int wsVern)
+		{
+			FdoCache cache = morphBundle.Cache;
+			LexEntryVc vcEntry = new LexEntryVc(cache);
+			vcEntry.WritingSystemCode = wsVern;
+			TsStringCollectorEnv collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, morphBundle.Hvo);
+			collector.RequestAppendSpaceForFirstWordInNewParagraph = false;
+			vcEntry.Display(collector, morphBundle.Hvo, (int)LexEntryVc.kfragEntryAndVariant);
+			return collector.Result;
+		}
+
+		private bool TryMultiStringAlt(ISilDataAccess sda, int hvo, int flid, out int wsActual)
+		{
+			ITsString tss = WritingSystemServices.GetMagicStringAlt(m_cache, m_ws, hvo, flid, true, out wsActual);
+			return (tss != null);
+		}
+	}
+}

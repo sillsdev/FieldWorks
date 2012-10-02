@@ -1,0 +1,32 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\maintask.xml">
+ <title tag="use">How to use a test script</title>
+ <index>
+  <li>test script: use</li>
+  <li>using test scripts</li>
+ </index>
+ <introduction>
+  <p>Test scripts are structured to allow an exhaustive yet individual approach to manual testing without requiring complete knowledge of the application in most cases.</p>
+ </introduction>
+ <prerequisites>
+  <p>Before you begin, make sure you have:</p>
+  <ul>
+   <li>Aquainted yourself with the structure of test scripts. <link uri="..\TCL\TestCaseLib.xml" type="module">Details</link></li>
+   <li>Installed the software you want to test. <link uri="..\Starting\InstallApp.xml" type="module">Details</link></li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps to follow when using a test script:</p>
+  <step>Launch a second copy of this Manual.</step>
+  <step>Locate the test script you will use and open it.</step>
+  <step>If it is not part of the test, launch the application you will test.</step>
+  <step>Select a test case in the script - order does not matter unless indicated in the openning paragraphs of the test script.</step>
+  <step>Check the order in which the test case steps must be executed from the test case title line.</step>
+  <step>If the steps may be done in any order, choose a sequence of steps that provides reasonable <i>coverage</i>.<p>You may have to follow some links to lower level test scripts to get an over-all understanding of the test case. Some test steps may be combined or form a natural progression of user actions; a <i>scenario</i>.</p></step>
+  <step>Execute the test case steps in the order you determined.</step>
+  <step link="Reporting" uri="Report.xml">Report bugs to the <link uri="..\Milestone\LSTD.xml" type="module">Language Software Test Department</link>.</step>
+  <step>After a failure, continue to proceed through the test case as you determined if possible.</step>
+  <step>Repeat these steps beginning from step 4 above until all test cases are exercised.</step>
+  <step link="Submit" uri="Submit.xml">When you have finished testing, submit all bugs.</step>
+ </steps>
+</task>

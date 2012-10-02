@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE modularbook SYSTEM "..\..\XSL\ModularBook.dtd" [
+	<!--   Modular Book files. -->
+	<!ENTITY xml SYSTEM "..\XML\overview.xml">
+	<!ENTITY xmlXml SYSTEM "..\XML\XML.xml">
+	<!ENTITY xmlXsl SYSTEM "..\XML\XSL.xml">
+	<!ENTITY xmlMrk SYSTEM "..\XML\MarkUp.xml">
+	<!ENTITY xmlBat SYSTEM "..\XML\Batch.xml">
+	<!ENTITY xmlEd SYSTEM "..\XML\Editor.xml">
+]>
+
+<modularbook file="XML\all.xml">
+
+<titlePage file="XML\all.xml#tp">
+ <title tag="tp">All modular book XML in this folder</title>
+ <index>
+  <li>all title page</li>
+ </index>
+ <authors>
+  <div>Michael Lastufka (creator, drudge)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="overview.xml" type="module">No link</link>
+ <shortcuts>
+  <link uri="overview.xml" type="module">Test case library XML</link>
+ </shortcuts>
+</titlePage>
+
+<!-- modules defined in files -->
+
+&xml;
+&xmlXml;
+&xmlXsl;
+&xmlMrk;
+&xmlBat;
+&xmlEd;
+
+</modularbook>

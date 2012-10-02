@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nonstandard layouts for Data Notebook. -->
+<LayoutInventory>
+	<!-- Analysis -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="82290763-1633-4998-8317-0EC3F5027FBD">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="ifdata"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="ifdata"/>
+		<part ref="Locations" visibility="ifdata"/>
+		<part ref="Description" visibility="ifdata"/>
+		<part ref="Hypothesis" visibility="always"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="always"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="always"/>
+		<part ref="SupportingEvidence" visibility="always"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Event -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="00951e6f-2523-4ac9-a649-ad42c659cf83">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Conversation -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="B7B37B86-EA5E-11DE-80E9-0013722F8DEC">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Interview -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="B7BF673E-EA5E-11DE-9C4D-0013722F8DEC">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Structured -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="B7C8F092-EA5E-11DE-8D7D-0013722F8DEC">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Unstructured -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="B7D4DC4A-EA5E-11DE-867C-0013722F8DEC">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Literature Summary -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="B7E0C7F8-EA5E-11DE-82CC-0013722F8DEC">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="ifdata"/>
+		<part ref="Locations" visibility="ifdata"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Observation -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="B7EA5156-EA5E-11DE-9F9C-0013722F8DEC">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="ifdata"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Performance -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="B7F63D0E-EA5E-11DE-9F02-0013722F8DEC">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="ifdata"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Methodology -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="bcb1cf88-582d-463a-b96f-0023f6ac2395">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="ifdata"/>
+		<part ref="Locations" visibility="ifdata"/>
+		<part ref="Description" visibility="ifdata"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="always"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- Weather -->
+	<layout class="RnGenericRec" type="detail" name="Normal" choiceGuid="06974d9a-ff86-4e1c-a3e5-7ce8c961dcb9">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="ifdata"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="ifdata"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<!-- new user defined -->
+	<layout class="RnGenericRec" type="detail" name="Normal">
+		<part ref="Title" visibility="always"/>
+		<part ref="Type" visibility="always"/>
+		<part ref="Restrictions" visibility="ifdata"/>
+		<part ref="DateOfEvent" visibility="always"/>
+		<part ref="TimeOfEvent" visibility="ifdata"/>
+		<part ref="Researchers" visibility="always"/>
+		<part ref="Sources" visibility="always"/>
+		<part ref="Confidence" visibility="ifdata"/>
+		<part ref="Participants" visibility="always"/>
+		<part ref="Locations" visibility="always"/>
+		<part ref="Description" visibility="always"/>
+		<part ref="Hypothesis" visibility="ifdata"/>
+		<part ref="Status" visibility="ifdata"/>
+		<part ref="Discussion" visibility="ifdata"/>
+		<part ref="AnthroCodes" visibility="always"/>
+		<part ref="Conclusions" visibility="ifdata"/>
+		<part ref="SupportingEvidence" visibility="ifdata"/>
+		<part ref="CounterEvidence" visibility="ifdata"/>
+		<part ref="SupersededBy" visibility="ifdata"/>
+		<part ref="SeeAlso" visibility="always"/>
+		<part ref="ExternalMaterials" visibility="always"/>
+		<part ref="FurtherQuestions" visibility="always"/>
+		<part ref="ResearchPlan" visibility="ifdata"/>
+		<part ref="PersonalNotes" visibility="ifdata"/>
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
+		<part label="Date Created" ref="DateCreated" visibility="never"/>
+		<part label="Date Modified" ref="DateModified" visibility="never"/>
+		<part ref="SubRecordSection" label="Subrecords"/>
+	</layout>
+
+	<layout class="RnGenericRec" type="detail" name="SubRecordSection">
+		<part ref="SubRecordsSection" expansion="expanded" label="Subrecords" menu="mnuDataTree-SubRecords" hotlinks="mnuDataTree-SubRecords-Hotlinks">
+			<indent>
+				<part ref="SubRecords"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="RnGenericRec" type="detail" name="SubRecord">
+		<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="doNotExpand" menu="mnuDataTree-SubRecordSummary" hotlinks="mnuDataTree-Subrecord-Hotlinks">
+			<indent>
+				<sublayout name="Normal" layoutChoiceField="Type"/>
+			</indent>
+		</part>
+	</layout>
+
+	<!-- ADDED FOR DOCUMENT VIEW -->
+
+	<layout class="RnGenericRec" type="jtview" name="publishRecord">
+		<part ref="TitlePub" label="Title" visibility="always" flowType="para" style="Heading 1" />
+		<part ref="AnthroCodesConfig" label="Anthropology Categories" flowType="para" style="Normal" before="Anthropology Categories: " beforeStyle="Strong" sep=", " after="." visibility="ifdata" />
+		<part ref="DescriptionConfig" hideConfig="true"/>
+		<part ref="HypothesisConfig" hideConfig="true"/>
+		<part ref="DiscussionConfig" hideConfig="true"/>
+		<part ref="ConclusionsConfig" hideConfig="true"/>
+		<part ref="FurtherQuestionsConfig" hideConfig="true"/>
+		<part ref="ResearchPlanConfig" hideConfig="true"/>
+		<part ref="PersonalNotesConfig" hideConfig="true"/>
+		<part ref="ClassificationsConfig" label="Classifications" flowType="para" style="Normal"/>
+		<part ref="ExternalMaterialsConfig" hideConfig="true"/>
+		<part ref="SupportingEvidenceConfig" label="Supporting Evidence" flowType="para" style="Normal" before="Supporting Evidence: " beforeStyle="Strong" sep=", " visibility="ifdata"/>
+		<part ref="CounterEvidenceConfig" label="Counter Evidence" flowType="para" style="Normal" before="Counter Evidence: " beforeStyle="Strong" sep=", " visibility="ifdata"/>
+		<part ref="SupersededByConfig" label="Superseded By" flowType="para" style="Normal" before="Superseded By: " beforeStyle="Strong" sep=", " visibility="ifdata"/>
+		<part ref="SeeAlsoConfig" label="See Also" flowType="para" style="Normal" before="See Also: " beforeStyle="Strong" sep=", " visibility="ifdata"/>
+		<part ref="HistoryConfig" label="Created/Modified" flowType="para" style="Normal" visibility="never"/>
+		<generate class="RnGenericRec" fieldType="atom" restrictions="customOnly" destClass="StText">
+			<part ref="CustomStTextForRecord_$fieldName" hideConfig="true" param="publishCustomStText"/>
+		</generate>
+		<part ref="SubrecordsConfig" label="Subrecords" flowType="div" before="Subrecords" beforeStyle="Heading 2" visibility="ifdata" css="subentries" recurseConfig="false" number="%O"/>
+	</layout>
+
+	<layout class="RnGenericRec" type="jtview" name="publishRnSupportingEvidence">
+		<part ref="TitlePub" label="Title" visibility="always" after=" - " ws="analysis" />
+		<part ref="SupportingTypeConfig" label="Record Type" after=" - " visibility="ifdata" />
+		<part ref="DateOfEventPub" label="Date of Event" visibility="ifdata" />
+	</layout>
+
+	<layout class="RnGenericRec" type="jtview" name="publishRnCounterEvidence">
+		<part ref="TitlePub" label="Title" visibility="always" after=" - " ws="analysis" />
+		<part ref="CounterTypeConfig" label="Record Type" after=" - " visibility="ifdata" />
+		<part ref="DateOfEventPub" label="Date of Event" visibility="ifdata" />
+	</layout>
+
+	<layout class="RnGenericRec" type="jtview" name="publishRnSupersededBy">
+		<part ref="TitlePub" label="Title" visibility="always" after=" - " ws="analysis" />
+		<part ref="SupersededTypeConfig" label="Record Type" after=" - " visibility="ifdata" />
+		<part ref="DateOfEventPub" label="Date of Event" visibility="ifdata" />
+	</layout>
+
+	<layout class="RnGenericRec" type="jtview" name="publishRnSeeAlso">
+		<part ref="TitlePub" label="Title" visibility="always" after=" - " ws="analysis" />
+		<part ref="SeeAlsoTypeConfig" label="Record Type" after=" - " visibility="ifdata" />
+		<part ref="DateOfEventPub" label="Date of Event" visibility="ifdata" />
+	</layout>
+
+	<layout class="RnGenericRec" type="jtview" name="publishClassifications">
+		<part ref="TypeConfig" label="Record Type" before="Record Type: " beforeStyle="Strong" after="  " visibility="ifdata" />
+		<part ref="DateOfEventPub" label="Date of Event" before="Date of Event: " beforeStyle="Strong" after="  " visibility="ifdata" />
+		<part ref="TimeOfEventConfig" label="Time of Event" before="Time of Event: " beforeStyle="Strong" after="  " visibility="ifdata" />
+		<part ref="SourcesConfig" label="Sources" before="Source: " beforeStyle="Strong" sep=", " after="  " visibility="ifdata"/>
+		<part ref="ParticipantsConfig" label="Participants" before="Participants: " beforeStyle="Strong" sep="; " after="  " visibility="ifdata"/>
+		<part ref="LocationsConfig" label="Locations" before="Location: " beforeStyle="Strong" sep=", " after="  " visibility="ifdata"/>
+		<part ref="StatusConfig" label="Status" before="Status: " beforeStyle="Strong" after="  " visibility="ifdata"/>
+		<part ref="ConfidenceConfig" label="Confidence" before="Confidence: " beforeStyle="Strong" after="  " visibility="ifdata"/>
+		<part ref="ResearchersConfig" label="Researchers" before="Researcher: " beforeStyle="Strong" sep=", " after="  " visibility="ifdata" />
+		<part ref="RestrictionsConfig" label="Restrictions" before="Restrictions: " beforeStyle="Strong" sep=", " after="  " visibility="ifdata" />
+		<generate class="RnGenericRec" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" after=" " visibility="ifdata" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" after=" " visibility="ifdata">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" after=" " visibility="ifdata">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="$label: " beforeStyle="Strong" after=" " visibility="ifdata">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="RnGenericRec" fieldType="atom" restrictions="customOnly" destClass="CmPossibility">
+			<part ref="CustomPossAtomForRecord_$fieldName" label="$label" before="$label: " beforeStyle="Strong" after="  " visibility="ifdata" param="publishCustomPossItem"/>
+		</generate>
+		<generate class="RnGenericRec" fieldType="vector" restrictions="customOnly">
+			<part ref="CustomPossVectorForRecord_$fieldName" label="$label" before="$label: " beforeStyle="Strong" sep=", " after="  " visibility="ifdata" param="publishCustomVectorItem"/>
+		</generate>
+	</layout>
+
+	<layout class="RnGenericRec" type="jtview" name="publishHistory">
+		<part ref="DateCreatedPub" label="Date Created" before="Date Created: " beforeStyle="Strong" after="  " visibility="never"/>
+		<part ref="DateModifiedPub" label="Date Modified" before="Date Modified: " beforeStyle="Strong" after="  " visibility="never" />
+	</layout>
+
+  <layout class="StText" type="jtview" name="publishCustom">
+	<part ref="CustomConfig" label="Custom" visibility="ifdata" flowType="div" before=""/>
+  </layout>
+  <layout class="StText" type="jtview" name="publishCustomStText">
+	<part ref="CustomConfig" label="Custom" visibility="ifdata" flowType="div" before="Custom:" beforeStyle="Heading 2"/>
+  </layout>
+
+	<layout class="StText" type="jtview" name="publishRnDescription">
+		<part ref="RnDescriptionConfig" label="Description" visibility="ifdata" flowType="div" before="Description:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnDescription">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="StText" type="jtview" name="publishRnHypothesis">
+		<part ref="RnHypothesisConfig" label="Hypothesis" visibility="ifdata" flowType="div" before="Hypothesis:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnHypothesis">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="StText" type="jtview" name="publishRnDiscussion">
+		<part ref="RnDiscussionConfig" label="Discussion" visibility="ifdata" flowType="div" before="Discussion:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnDiscussion">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="StText" type="jtview" name="publishRnConclusions">
+		<part ref="RnConclusionsConfig" label="Conclusions" visibility="ifdata" flowType="div" before="Conclusions:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnConclusions">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="StText" type="jtview" name="publishRnFurtherQuestions">
+		<part ref="RnFurtherQuestionsConfig" label="Further Questions" visibility="ifdata" flowType="div" before="Further Questions:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnFurtherQuestions">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="StText" type="jtview" name="publishRnResearchPlan">
+		<part ref="RnResearchPlanConfig" label="ResearchPlan" visibility="ifdata" flowType="div" before="Research Plan:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnResearchPlan">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="StText" type="jtview" name="publishRnPersonalNotes">
+		<part ref="RnPersonalNotesConfig" label="Personal Notes" visibility="ifdata" flowType="div" before="Personal Notes:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnPersonalNotes">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="StText" type="jtview" name="publishRnExternalMaterials">
+		<part ref="RnExternalMaterialsConfig" label="External Materials" visibility="ifdata" flowType="div" before="External Materials:" beforeStyle="Heading 2"/>
+	</layout>
+
+	<layout class="StTxtPara" type="jtview" name="publishRnExternalMaterials">
+		<part ref="ContentsPub" flowType="para" style="Normal" hideConfig="true"/>
+	</layout>
+
+	<layout class="CmAnthroItem" type="jtview" name="publishRnAnthroCode">
+		<part ref="AbbreviationPub" label="Abbreviation" after=" - " ws="analysis" wsType="analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishCustomPossItem">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishCustomVectorItem">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnType">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnSupportingType">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnCounterType">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnSupersededType">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnSeeAlsoType">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnRestriction">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnTimeOfEvent">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnStatus">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnConfidence">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmLocation" type="jtview" name="publishRnLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="best vernoranal" wsType="vernacular analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="best vernoranal" wsType="vernacular analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPerson" type="jtview" name="publishRnResearcher">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="best analorvern" wsType="analysis vernacular" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="best analorvern" wsType="analysis vernacular" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPerson" type="jtview" name="publishRnSource">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="best vernoranal" wsType="vernacular analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="best vernoranal" wsType="vernacular analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="RnRoledPartic" type="jtview" name="publishRnParticipant">
+		<part ref="RoleConfig" label="Role" after=" - " visibility="ifdata"/>
+		<part ref="ParticipantConfig" label="Participant" sep=", " visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPossibility" type="jtview" name="publishRnRole">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="analysis" wsType="analysis" visibility="ifdata"/>
+	</layout>
+
+	<layout class="CmPerson" type="jtview" name="publishRnParticipant">
+		<part ref="AbbreviationPub" label="Abbreviation" ws="best vernoranal" wsType="vernacular analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" ws="best vernoranal" wsType="vernacular analysis" visibility="ifdata"/>
+	</layout>
+
+</LayoutInventory>

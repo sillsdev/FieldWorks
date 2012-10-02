@@ -1,0 +1,112 @@
+<project>
+	<assemblies>
+		<assembly location="..\Output\Debug\COMInterfaces\COMInterfaces.dll" documentation="Common\COMInterfaces\obj/COMInterfaces.xml" />
+		<assembly location="..\Output\Debug\SideBar\SideBar.dll" documentation="Common\Controls\SideBar\obj\SideBar.xml" />
+		<assembly location="..\Output\Debug\FwCoreDlgs\FwCoreDlgs.dll" documentation="FwCoreDlgs\obj/FwCoreDlgs.xml" />
+		<assembly location="..\Output\Debug\Utils\Utils.dll" documentation="Common\Utils\obj\Utils.xml" />
+		<assembly location="..\Output\Debug\FDO\FDO.dll" documentation="FDO\obj\FDO.xml" />
+		<assembly location="..\Output\Debug\Framework\Framework.dll" documentation="Common\Framework\obj\Framework.xml" />
+		<assembly location="..\Output\Debug\Design\Controls.Design.dll" documentation="Common\Controls\Design\obj\Controls.Design.xml" />
+		<assembly location="..\Output\Debug\FwControls\FwControls.dll" documentation="Common\Controls\FwControls\obj/FwControls.xml" />
+		<assembly location="..\Output\Test\FwNetTest.dll" documentation="..\Test\FwNetTest\obj\FWNetTest.xml" />
+		<assembly location="..\Output\Debug\TE\TE.dll" documentation="TE\obj\TE.xml" />
+		<assembly location="..\Output\Debug\TEExe\TE.exe" documentation="TE\TEExe\obj\TEExe.xml" />
+	</assemblies>
+	<namespaces>
+		<namespace name="SIL">The base namespace for all assemblies developed by SIL. There should be no sole SIL namespace.</namespace>
+		<namespace name="SIL.FieldWorks.Common.COMInterfaces">Contains re-defined COM interfaces and utility classes usefull for COM.</namespace>
+		<namespace name="SIL.FieldWorks.Common.Controls">Contains controls that can be used from different applications.</namespace>
+		<namespace name="SIL.FieldWorks.Common.Controls.Design">Contains design-time helper classes that are only needed during design-time. You don't have to ship these assemblies.</namespace>
+		<namespace name="SIL.FieldWorks.Common.Drawing">Contains helper classes for drawing borders etc.</namespace>
+		<namespace name="SIL.FieldWorks.Common.Framework">Contains classes that build the FW framework.</namespace>
+		<namespace name="SIL.FieldWorks.Common.Utils">Contaiins helper classes.</namespace>
+		<namespace name="SIL.FieldWorks.FDO">Contains the FieldWorks data object layer.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.Cellar">Contains Cellar classes.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.Cellar.Generated">Contains generated Cellar classes.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.FeatSys.Generated">Contains generated FeatSys classes.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.LangProj">Contains classes that deal with language projects.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.LangProj.Generated">Contains generated language project classes.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.Ling">Contains classes that deal with linguistic data.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.Ling.Generated">Contains generated linguistic classes.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.Notebk.Generated">Contains generated classes for DataNotebook.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.Scripture">Contains classes that deal with biblical scriptures.</namespace>
+		<namespace name="SIL.FieldWorks.FDO.Scripture.Generated">Contains generated scripture classes.</namespace>
+		<namespace name="SIL.FieldWorks.FwCoreDlgs">Contains core dialogs that can be used in .NET and in C++.</namespace>
+		<namespace name="SIL.FieldWorks.TE">Contains the Translation Editor.</namespace>
+	</namespaces>
+	<documenters>
+		<documenter name="JavaDoc">
+			<property name="Title" value="SIL FieldWorks .NET" />
+			<property name="OutputDirectory" value="..\Output\docs\Release\JavaDoc\" />
+			<property name="ShowMissingSummaries" value="False" />
+			<property name="ShowMissingRemarks" value="False" />
+			<property name="ShowMissingParams" value="False" />
+			<property name="ShowMissingReturns" value="False" />
+			<property name="ShowMissingValues" value="False" />
+			<property name="DocumentInternals" value="False" />
+			<property name="DocumentProtected" value="True" />
+			<property name="DocumentPrivates" value="False" />
+			<property name="DocumentEmptyNamespaces" value="False" />
+			<property name="IncludeAssemblyVersion" value="True" />
+			<property name="CopyrightText" value="Copyright  2002-2003, SIL International" />
+			<property name="CopyrightHref" value="http://www.sil.org" />
+			<property name="SkipNamespacesWithoutSummaries" value="False" />
+			<property name="AutoPropertyBackerSummaries" value="False" />
+			<property name="AutoDocumentConstructors" value="True" />
+			<property name="DocumentAttributes" value="False" />
+			<property name="DocumentedAttributes" value="" />
+			<property name="GetExternalSummaries" value="True" />
+		</documenter>
+		<documenter name="MSDN">
+			<property name="OutputDirectory" value="..\Output\docs\Release\FieldWorks\" />
+			<property name="HtmlHelpName" value="FieldWorks" />
+			<property name="IncludeFavorites" value="False" />
+			<property name="Title" value="SIL FieldWorks .NET" />
+			<property name="SplitTOCs" value="False" />
+			<property name="DefaulTOC" value="" />
+			<property name="IncludeHierarchy" value="False" />
+			<property name="ShowVisualBasic" value="False" />
+			<property name="OmitObjectTags" value="False" />
+			<property name="SortTOCByNamespace" value="True" />
+			<property name="ShowMissingSummaries" value="False" />
+			<property name="ShowMissingRemarks" value="False" />
+			<property name="ShowMissingParams" value="False" />
+			<property name="ShowMissingReturns" value="False" />
+			<property name="ShowMissingValues" value="False" />
+			<property name="DocumentInternals" value="False" />
+			<property name="DocumentProtected" value="True" />
+			<property name="DocumentPrivates" value="False" />
+			<property name="DocumentEmptyNamespaces" value="False" />
+			<property name="IncludeAssemblyVersion" value="True" />
+			<property name="CopyrightText" value="Copyright  2002-2003, SIL International" />
+			<property name="CopyrightHref" value="http://www.sil.org" />
+			<property name="SkipNamespacesWithoutSummaries" value="False" />
+			<property name="AutoPropertyBackerSummaries" value="False" />
+			<property name="AutoDocumentConstructors" value="True" />
+			<property name="DocumentAttributes" value="False" />
+			<property name="DocumentedAttributes" value="" />
+			<property name="GetExternalSummaries" value="True" />
+		</documenter>
+		<documenter name="XML">
+			<property name="OutputFile" value="..\Output\docs\Release\XML\FieldWorks.xml" />
+			<property name="ShowMissingSummaries" value="False" />
+			<property name="ShowMissingRemarks" value="False" />
+			<property name="ShowMissingParams" value="False" />
+			<property name="ShowMissingReturns" value="False" />
+			<property name="ShowMissingValues" value="False" />
+			<property name="DocumentInternals" value="False" />
+			<property name="DocumentProtected" value="True" />
+			<property name="DocumentPrivates" value="False" />
+			<property name="DocumentEmptyNamespaces" value="False" />
+			<property name="IncludeAssemblyVersion" value="True" />
+			<property name="CopyrightText" value="Copyright  2002-2003, SIL International" />
+			<property name="CopyrightHref" value="http://www.sil.org" />
+			<property name="SkipNamespacesWithoutSummaries" value="False" />
+			<property name="AutoPropertyBackerSummaries" value="False" />
+			<property name="AutoDocumentConstructors" value="True" />
+			<property name="DocumentAttributes" value="False" />
+			<property name="DocumentedAttributes" value="" />
+			<property name="GetExternalSummaries" value="True" />
+		</documenter>
+	</documenters>
+</project>

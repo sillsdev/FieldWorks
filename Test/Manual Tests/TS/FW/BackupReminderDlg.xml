@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="bkuprem" num="2.1.12c" abbr="brm" file="FW\BackupReminderDlg.xml">
+
+ <title tag="bkupremdlg">Backup Reminder Dialog Tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>This dialog enables the user to set up reminders for doing backups. The user can have the program post a reminder after a certain number of days have elapsed since the most recent backup. The dialog is invoked from the Backup Tab of the Backup/Restore dialog.</p>
+   <p>Specifications: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Reminder/BackupReminderDlg.html">
+<i>Fieldworks Explorer Backup Reminder</i> Dialog</link>
+</p>
+  </introduction>
+
+
+<!--================Case 0: Invoking the Backup Reminder Dialog================-->
+
+ <case id="brmInvoke" num="0" order="any">
+  <title tag="brmInvoke">Invoking the Backup Reminder Dialog</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore dialog is active</p>
+</context>
+
+  <step name="0.1" link="Bug">
+   Click the <i>Reminders...</i> button.
+<r>
+<ul>
+	<li>The Backup Reminder dialog appears.</li>
+	<li>Its appearance agrees with the spec (<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Reminder/BackupReminderDlg.html">Backup Reminder Dialog</link>).</li>
+</ul>
+</r>
+   <p name="bug">Backup Reminder Dialog does not appear</p>
+   <p name="bug">Backup Reminder Dialog appearance wrong</p>
+  </step>
+ </case>
+
+<!--================Case 1: Exercise dialog controls================-->
+
+ <case id="brmDia" num="1" order="any">
+  <title tag="brmDia">Exercise dialog controls</title>
+  <context>
+<p>When the Backup Reminders Dialog is displayed</p>
+</context>
+  <step name="1.1">
+<link uri="../StdCtrls/Dialog.xml">
+   Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Backup Reminders" as the name of the dialog.</r>
+  </step>
+
+  <step name="1.2" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;L&gt; to test the <i>Let me know if I haven't backed up for more than __ days</i> spin control.
+   <r>
+<ul>
+	<li>The default is 7 days.</li>
+	<li>The minimum is 1, max is 14.</li>
+	<li>The control increments/decrements by 1 day.</li>
+</ul>
+	Report any failures as suggested using "Number of days" as the name of the control.</r>
+<p name="bug">Default is wrong.</p>
+<p name="bug">Min and/or max is wrong.</p>
+<p name="bug">Increment is wrong.</p>
+  </step>
+
+  <step name="1.3" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">
+   Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;t&gt; to test the <i>Turn off the backup reminders</i> checkbox.
+   <r>Default is unchecked.
+	Report any failures as suggested using "Turn off the backup reminders" as the name of the control.</r>
+<p name="bug">Backup: Default is wrong.</p>
+  </step>
+ </case>
+
+<!--================Case 2: Testing the Backup Reminder Nag Dialog================-->
+
+ <case id="brmNag" num="2" order="any">
+  <title tag="brmNag">Testing the Backup Reminder Nag Dialog</title>
+  <context>
+<p>When the Backup Reminders dialog is active</p>
+</context>
+
+  <step name="2.1" link="Bug">
+	Set the <i>Let me know if I haven't backed up for more than __ days</i> spin control to <b>1</b> day. Click OK.
+	Exit FW.
+	Change the date on your computer to tomorrow's date.
+	Reopen FW.
+<r>
+<ul>
+	<li>The Backup Reminder Nag dialog appears.</li>
+	<li>Its appearance agrees with the spec (<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Reminder/BackupReminderDlg.html#ReminderNagDialog">Backup Reminder Nag Dialog</link>), telling you that you haven't backed up in <b>1</b> day.</li>
+</ul>
+</r>
+   <p name="bug">Backup Reminder Nag Dialog does not appear</p>
+   <p name="bug">Backup Reminder Nag Dialog appearance wrong</p>
+  </step>
+
+  <step name="2.2" link="Bug">
+	Set the <i>Let me know if I haven't backed up for more than __ days</i> spin control to some number of days (N) greater than <b>1</b>. Click OK.
+	Exit FW.
+	Change the date on your computer to today's date plus N days (i.e., the day that backup should be triggered).
+	Reopen FW.
+<r>
+<ul>
+	<li>The Backup Reminder Nag dialog appears.</li>
+	<li>Its appearance agrees with the spec (<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Reminder/BackupReminderDlg.html#ReminderNagDialog">Backup Reminder Nag Dialog</link>), telling you that you haven't backed up in <b>1</b> day.</li>
+</ul>
+</r>
+   <p name="bug">Backup Reminder Nag Dialog does not appear</p>
+   <p name="bug">Backup Reminder Nag Dialog appearance wrong</p>
+  </step>
+
+  <step name="2.3" link="Bug">
+	Set the <i>Let me know if I haven't backed up for more than __ days</i> spin control to some number of days (N) greater than <b>1</b>. Click OK.
+	Exit FW.
+	Change the date on your computer to today's date plus N-1 days (i.e., the day before backup should be triggered).
+	Reopen FW.
+<r>
+	The Backup Reminder Nag dialog does not appear.
+</r>
+   <p name="bug">Backup Reminder Nag Dialog appears</p>
+  </step>
+ </case>
+
+<!--================Case 3: Testing the Backup Reminder Mechanism================-->
+
+ <case id="brmMech" num="3" order="any">
+  <title tag="brmMech">Testing the Backup Reminder Mechanism</title>
+  <context>
+<p>When FW thinks it is due for a backup</p>
+</context>
+
+  <step name="3.1" link="Bug">
+	Exit and reopen FW. (The Backup Reminder Nag dialog appears.) On the Backup Reminder Nag dialog, click No.
+<r>
+	The Backup Reminder Nag dialog closes without doing anything.
+</r>
+   <p name="bug">Backup Reminder Nag dialog does not close</p>
+  </step>
+
+  <step name="3.2" link="Bug">
+	Exit and reopen FW. (The Backup Reminder Nag dialog appears.) On the Backup Reminder Nag dialog, click Configure.
+<r>
+	The Backup Reminder Nag dialog closes, and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/BackupRestoreDlg.html#BackupTab">Backup and Restore dialog</link> appears.
+</r>
+   <p name="bug">Backup Reminder Nag dialog does not close</p>
+   <p name="bug">Backup and Restore dialog does not appear</p>
+  </step>
+
+  <step name="3.3" link="Bug">
+	Exit and reopen FW. (The Backup Reminder Nag dialog appears.) On the Backup Reminder Nag dialog, click Help.
+<r>
+	Help opens to a helpful page.
+</r>
+   <p name="bug">Help does not open to a helpful page</p>
+  </step>
+
+  <step name="3.4" link="Bug">
+	Exit and reopen FW. (The Backup Reminder Nag dialog appears.) On the Backup Reminder Nag dialog, click Yes.
+<r>
+	The Backup Reminder Nag dialog closes, and backup commences according to the settings in the Backup and Restore dialog.
+</r>
+   <p name="bug">Backup Reminder Nag Dialog does not close</p>
+   <p name="bug">Backup does not commence</p>
+   <p name="bug">Backup executes improperly</p>
+   <p name="Reminder">Don't forget to change the date on your computer back to today's date.</p>
+  </step>
+ </case>
+
+<!--================xml comment================-->
+ <update date="Dec-12-01" author="JanetW">Test created.</update>
+ <update date="Dec-17-01" author="JanetW">Finished basic controls exercises.</update>
+ <update date="Feb-12-01" author="JanetW">Finished script.</update>
+
+</test>

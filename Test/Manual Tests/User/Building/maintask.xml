@@ -1,0 +1,26 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Building\maintask.xml">
+ <title tag="bld">How to build this manual</title>
+ <index>
+  <li>manual: building</li>
+  <li>making this manual</li>
+ </index>
+ <introduction>
+  <p>This manual is a compiled HTML Help file. You will generate all the "topic" files (modules) as HTML files, except the title page and Welcome file. Help project files, including a table of contents and index are also generated. You will compile them using the Microsoft Help Workshop.</p>
+ </introduction>
+ <prerequisites>
+  <p>Before you begin, make sure you have:</p>
+  <ul>
+   <li>Permission from the <link uri="..\Milestone\LSTD.xml">Language Software Test Department</link></li>
+   <li>The complete and latest XML source from the <link uri="..\Source\DocControl.xml">document control system</link>.</li>
+   <li>A suitable <link uri="..\Writing\tools.xml">XML/XSL processing environment</link>.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps for building this manual:</p>
+  <step link="Details" uri="Dir.xml">Set up your directory structures.</step>
+  <step link="Details" uri="Generate.xml">Use batch files to generate all HTML content from XML source.</step>
+  <step link="Details" uri="Compile.xml">Use Microsoft HTML Help Workshop to compile.</step>
+  <step link="Details" uri="CheckIn.xml">Check the compiled HTML Help file into the document control system.</step>
+ </steps>
+</task>

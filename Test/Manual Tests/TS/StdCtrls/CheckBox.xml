@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="checkbox" num="0.1" abbr="ckbx" file="StdCtrls\CheckBox.xml">
+ <title tag="checkbox">Check Box Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A check box is a simple two state control. It may simply set up an internal interface or program state or it may have immediate side-effects. In dialogs, the side-effect of a check box is typically delayed until the dialog is closed.</p>
+  </introduction>
+  <context>
+<p>Each check box may be tested alone. Testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report. The first words of the bug report title should be a noun phrase containing the words "check box".</p>
+<p>When side-effects are delayed, the "triggering" control must be used before the check box action can be witnessed.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, it is described in the help system of many interface development products.</p>
+  </warning>
+ <case id="ckbInsp" num="1" order="any">
+  <title tag="ckbInsp">Check Box Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the check box is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A label may be placed near this control, usually to its right. An underscored letter indicates an &lt;Alt&gt;&lt;alpha&gt; shortcut.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the check box.
+   <r>The check box, its label and check mark symbol must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Check box has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the check box, label and check mark symbol relative to other visible controls.
+   <r>The check box, label and check mark symbol should be close to the position indicated in the specification.</r>
+   <p name="bug">Check box has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">If on a toolbar, hover the cursor over the check box.
+   <r>A help bubble displays a short help message.</r>
+   <p name="bug">Tool bar check box doesn't have hover help</p>
+  </step>
+
+ </case>
+
+ <case id="ckbOp" num="2" order="any">
+  <title tag="ckbOp">Check Box Operation</title>
+  <context>
+<p>When the check box is enabled</p>
+</context>
+
+   <p name="Principle">The state of the check box is changed by left clicking with a pointer device (usually a mouse) and often toggled by a "short-cut" key sequence. Immediate or delayed side-effects may include changes in a preview window on the control frame or changes in another view.</p>
+
+  <step name="2.1" link="Bug">When the check mark is NOT displayed, left click over the label or in the check box.
+   <r>The check mark is displayed and side-effects match the "on" description in the specification.</r>
+   <p name="bug">Clicked check box not marked</p>
+   <p name="bug">Clicked check box "on" side-effect incorrect</p>
+   <p name="bug">Clicked check box not marked but works</p>
+  </step>
+  <step name="2.2" link="Bug">When the check mark is displayed, left click over the label or in the check box.
+   <r>The check mark is NOT displayed and side-effects match the "off" description in the specification.</r>
+   <p name="bug">Clicked check box marked</p>
+   <p name="bug">Clicked check box "off" side-effect incorrect</p>
+   <p name="bug">Clicked check box marked but works</p>
+  </step>
+  <step name="2.3" link="Bug">When the check mark is NOT displayed, press the short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>The check mark is displayed and side-effects match the "on" description in the specification.</r>
+   <p name="bug">Shorted check box not marked</p>
+   <p name="bug">Shorted check box "on" side-effect incorrect</p>
+   <p name="bug">Shorted check box not marked but works</p>
+  </step>
+  <step name="2.4" link="Bug">When the check mark is displayed, press the short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>The check mark is NOT displayed and side-effects match the "off" description in the specification.</r>
+   <p name="bug">Shorted check box marked</p>
+   <p name="bug">Shorted check box "off" side-effect incorrec.</p>
+   <p name="bug">Shorted check box marked but works</p>
+  </step>
+  <step name="2.5" link="Bug">Exercise the triggering control to activate the delayed side-effects of the check box.
+   <r>
+<ul>
+	<li>The side-effects match the "on" description in the specification if the check box was checked.</li>
+	<li>They match the "off" action otherwise.</li>
+   </ul>
+</r>
+   <p name="bug">Check box action incorrect</p>
+  </step>
+  <step name="2.6" link="Bug">When operating the check box, do side-effects obscure or disable other functionality in the control frame or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Check box operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Dec-12-00" author="MikeL">Test created.</update>
+
+</test>

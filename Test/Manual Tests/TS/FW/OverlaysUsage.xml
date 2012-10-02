@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="ovlu" num="7.1" abbr="ovlu" file="FW\OverlaysUsage.xml">
+ <title tag="ovlu">Overlays Usage Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>Overlays provides a user with the ability to mark up their data with pre-defined and user-defined tags that refer to various Topics List items (a.k.a., Topical Outline labels). These tests will exercise the basic application of overlays to the data.</p>
+   <p name="Specification">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" type="doc">Tools-Options-Overlays</link>.</p>
+   <p name="todo">Check that the results of Raid #340 are adequately tested here.</p>
+  </introduction>
+  <context>
+   <p>Many sequences of application of overlays are possible. Testing does not require exhaustive combinations of these sequences, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Overlays Usage".</p>
+  </context>
+
+ <case id="ovluAct" num="0" order="any">
+  <title tag="ovluAct">Activation</title>
+  <context>
+<p>When the application is running and having created at least one overlay with several tags</p>
+</context>
+
+  <step name="0.1" link="Bug">Go to the Overlays section of the
+Side Bar and click on one of the overlay buttons to turn it on.
+
+   <r>A modeless Overlay Palette/Chooser opens and floats over the FieldWorks application.</r>
+   <p name="bug">Overlay Palette/Chooser does not appear.</p>
+   <p name="bug">Overlay Palette/Chooser is not modeless or does not float over the application.</p>
+   <p name="Note">The overlays can also be turned on via the View-Overlays menu.</p>
+  </step>
+  <step name="0.2" link="Bug">View the image at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm#NewOverlayTagDialog">Tools-Options-Overlays</link> under the heading "How to Actually Tag Text: Using the Overlay."
+   <r>The layout and controls should be about the same as that in the image.</r>
+   <p name="bug">Overlay Palette/Chooser layout incorrect</p>
+  </step>
+  <step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+	<ul>
+	 <li>On closing, the dialog disappears, causing all tags in the text to disappear (except those that are contained in overlay that is still on).</li>
+	 <li>The corresponding overlay item in the Side Bar and the View-Overlays menu is no longer depressed.</li>
+	 <li>If no overlays are on, the text collapses (e.g. from triple-spacing to single-spacing).</li>
+	</ul>
+   </r>
+   <p name="bug">Overlay Palette/Chooser dialog remains after close</p>
+   <p name="bug">Overlay Palette/Chooser: Overlay still highlighted in View bar and/or View Overlay menu.</p>
+   <p name="bug">Overlay Palette/Chooser: text doesn't collapse when last overlay closed.</p>
+  </step>
+  <step name="0.4" link="Bug">Make another window active, e.g. click on another FW application.
+   <r>
+	The overlay dialog(s) is hidden when the FW application it belongs to is inactive.
+   </r>
+   <p name="bug">Overlay Palette/Chooser dialog still visible when another application is active.</p>
+   <p name="bug">Overlay Palette/Chooser dialog not visible when app it belongs to is active.</p>
+  </step>
+  <step name="0.4.1" link="Bug">Reactivate the first window, using Alt+Tab.
+   <r>
+	The overlay dialog(s) becomes visible when the FW application it belongs to is active.
+	Focus returns to the overlay dialog if that is where it was before.
+   </r>
+   <p name="bug">Overlay Palette/Chooser dialog still visible when another application is active.</p>
+   <p name="bug">Overlay Palette/Chooser dialog not visible when app it belongs to is active.</p>
+  </step>
+  <step name="0.5" link="Bug">Close the overlay dialog and reopen the same one.
+   <r>
+	<ul>
+	 <li>The overlay dialog is reopened at the same screen location and size.</li>
+	 <li>The tags that were shown before closing the dialog are shown again after reopening it.</li>
+	</ul>
+   </r>
+   <p name="bug">Overlay Palette/Chooser dialog position not remembered on reopening.</p>
+   <p name="bug">Overlay Palette/Chooser dialog size not remembered on reopening.</p>
+  </step>
+
+ <step name="0.6" link="Bug">Create a New Window of the current window that contains active overlays.
+ <r>
+<ul>
+<li>The new window should have its own copies of the active overlays</li>
+	<li>The overlays for the previous window should be hidden when in the new window</li>
+</ul>
+ </r>
+  <p name="bug">Overlay Palette/Chooser copy of active overlay not created for new window</p>
+  <p name="bug">Overlay Palette/Chooser not hidden for old window when new window created</p>
+ </step>
+ </case>
+
+ <case id="ovluDiagtabs" num="1" order="any">
+  <title tag="ovluDiagTabs">Overlays Chooser Dialog</title>
+  <context>
+<p>When the Overlay Chooser is displayed</p>
+</context>
+
+  <step name="1.1" link="Bug">Execute the <link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the <b>Hide Excluded Tags</b> button.
+   <r>Default: Button is not pressed.  Side effects: Hidden tags (grayed check boxes or grayed buttons) are hidden only <i>when button is pressed</i>.  </r>
+   <p name="bug">Overlay Palette/Chooser Hide Excluded Tags button does not work properly.</p>
+  </step>
+
+  <step name="1.2.0" link="Bug">In the Options cascading menu (shortcut &lt;Alt&gt;&lt;O&gt;), switch between "Show Names &lt;N&gt;/ Abbreviations &lt;A&gt;/ Abbreviations and Names &lt;W&gt;".
+   <r>Display of tags and buttons changes according to options selected:
+	<ul>
+	 <li>On the Tag List and the Palette tabs, items are accordingly shown by abbreviation, name or abbreviation and name.</li>
+	 <li>On the Palette Tab, an abbreviation is one button wide, a name two buttons wide, and an abbreviation and name three buttons wide.</li>
+	 <li>On the Palette Tab, hovering the mouse over a button pops up a balloon with the complete abbreviation and full tag name.</li>
+	</ul>
+   </r>
+   <p name="bug">Overlay Palette/Chooser Options button options not reflected in display.</p>
+  </step>
+
+  <step name="1.2.1" link="Bug">
+  Toggle Options - Show Recent Tags &lt;R&gt;.
+  <r>
+<ul>
+<li>This feature should be greyed out when the active tab is Tag List</li>
+	 <li>When feature is enabled, a check should be placed next to the item in the menu</li>
+	 <li>The item has no effect on lists with six or fewer items</li>
+	 <li>The six most recently used tags are placed at the top of the Palette when enabled</li>
+  </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser Show Recent Tags feature enabled for Tag List</p>
+  <p name="bug">Overlay Palette/Chooser Show Recent Tags enabled for list of 6 or less items</p>
+  <p name="bug">Overlay Palette/Chooser Show Recent Tags not displaying recent tags at top of list</p>
+  </step>
+
+  <step name="1.2.2" link="Bug">Select one of the items in the list, then test each of the Exclude Item from this Overlay &lt;E&gt; / Exclude Item and all Subitems &lt;S&gt; / Include item and all Subitems &lt;I&gt; from the Options dropdown menu button.  (Try this from both the Tag List and the Palette tab panes.)
+   <r>
+<ul>
+	<li>The selected item becomes gray if excluded, and ungray if included.</li>
+	<li>All subitems are also grayed / ungrayed if the command says "and all subitems".</li>
+	<li>The Exclude Item from this Overlay is a toggle and should have a check next to it when the selected item is excluded</li>
+   </ul>
+</r>
+   <p name="bug">Overlay Palette/Chooser Options button does not launch modal Tools-Options-Overlays dialog with the current overlay selected.</p>
+  </step>
+
+  <step name="1.2.3" link="Bug">Toggle Options - Hide Excluded Items in Overlay (shortcut key &lt;D&gt;).
+   <r>
+<ul>
+	<li>This menu item stays in sync with the "Hide Excluded Items" button (the one with the green lines). When the menu item is checked, the button is pressed.</li>
+	<li>Excluded items are hidden (on both Tag List and Palette tab panes) if this menu item is checked.</li>
+   </ul>
+</r>
+   <p name="bug">Overlay Palette/Chooser: Options - Hide Excluded items button does not work properly.</p>
+  </step>
+
+  <step name="1.2.4" link="Bug">Select Options - Configure Overlay (shortcut key &lt;C&gt;).
+   <r>
+<ul>
+	<li>Brings up the Tools-Options-Overlays dialog.</li>
+	<li>The overlay <i>and tag</i> that were selected in the Overlay dialog are also selected in the Options dialog.</li>
+	<li>The Options dialog is modal.</li>
+   </ul>
+</r>
+   <p name="bug">Overlay Palette/Chooser: Options - Configure does not launch modal Tools-Options-Overlays dialog with the current overlay selected.</p>
+  </step>
+  <step name="1.2.5" link="Bug">Test the Help button (shortcut &lt;H&gt; or simply &lt;F1&gt;) under the Options menu
+  <r>
+<ul>
+<li>The Help button was moved to the Options menu rather than left on the dialog to save space</li>
+	 <li>Pressing the button should bring up the contextual Help for the dialog</li>
+</ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser: Options Help does not display contextual help</p>
+  </step>
+
+  <step name="1.2.6" link="Bug">Test the Right Click menu using the tests above for the Options menu
+  <r>The right click menu should behave in the same way as the Options menu</r>
+  <p name="bug">Overlay Palette/Chooser: Right Click Menu command X not working</p>
+  </step>
+
+  <step name="1.3" link="Bug">
+  Exercise the two tab controls Tag List and Palette. Visually compare the two tabs to <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" type="doc">the specs</link>.
+  <r>
+<ul>
+<li>Tag List should be displayed by default</li>
+	  <li>Clicking Palette changes the list box to the Palette form of the list box</li>
+	  <li>Clicking Tag List changes the list box back to the List form</li>
+	 </ul>
+  </r>
+  <p name="bug">Overlay Palette/Chooser: tab controls not working properly</p>
+  <p name="bug">Overlay Palette/Chooser: Tag List tab is visually incorrect</p>
+  <p name="bug">Overlay Palette/Chooser: Palette tab is visually incorrect</p>
+  </step>
+
+  <step name="1.4" link="Bug">
+  Exercise the Tag edit box to search for a tag in the list (Shortcut &lt;Alt&gt;&lt;T&gt;). Type in some text to search for a tag
+  <r>
+<ul>
+<li>As text is being typed the list tries to find the closest matching tag</li>
+		 <li>Pressing &lt;Enter&gt; will tag the selected text with the currently selected tag</li>
+   </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser: Tag edit box not working properly</p>
+  </step>
+
+  <step name="1.5" link="Bug">Change the attributes of a tag via the Tools-Options-Overlays dialog.
+   <r>
+<ul>
+	<li>The buttons in the Palette Tab shows the changes made.</li>
+	<li>The tags in the text in the main view area, if visible, also reflect the changes.</li>
+   </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser buttons do not update to show changes in tag attributes.</p>
+  </step>
+
+  <step name="1.6" link="Bug">Execute the <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the <b>Information Pane</b> (&gt;&gt; or &lt;&lt;) button.
+   <r>Side effects: Show and hides the information pane. The label on the button alternates between &gt;&gt; and &lt;&lt;.</r>
+  <p name="bug">Overlay Palette/Chooser Information Pane button does not show/hide information pane.</p>
+  </step>
+
+  <step name="1.6.1" link="Bug">When the Information Pane is displayed, click the descriptive help Back button.
+   <r>
+<ul>
+<li>Pages back to the previous information viewed in the descriptive help pane.</li>
+<li>The back button is grayed out until two selections have been made in the List pane.</li>
+</ul>
+</r>
+<p name="bug">Overlay Palette/Chooser More help Back doesn't work</p>
+<p name="bug">Overlay Palette/Chooser More help Back not disabled initially</p>
+<p name="bug">Overlay Palette/Chooser More help Back remains disabled after selections</p>
+<p name="bug">Overlay Palette/Chooser More help Back not disabled after backing out</p>
+<p name="bug">Overlay Palette/Chooser More help Back wrong previous information displayed</p>
+</step>
+<step name="1.6.2" link="Bug">When the Information Pane is displayed, click the descriptive help forward button.
+   <r>
+<ul>
+<li>Pages forward only when the back button has been used.</li>
+<li>The forward button is grayed out until the Back button has been clicked.</li>
+</ul>
+</r>
+<p name="bug">Overlay Palette/Chooser More help Forward doesn't work</p>
+<p name="bug">Overlay Palette/Chooser More help Forward not disabled initially</p>
+<p name="bug">Overlay Palette/Chooser More help Forward remains disabled after going back</p>
+<p name="bug">Overlay Palette/Chooser More help Forward not disabled after new selection</p>
+<p name="bug">Overlay Palette/Chooser More help Forward wrong information displayed</p>
+</step>
+<step name="1.6.3" link="Bug">When the Information Pane is displayed, click the descriptive help print button.
+   <r>Pops up a standard print dialog which lets you print out the current topic.</r>
+<p name="bug">Overlay Palette/Chooser More help print does not launch print dialog</p>
+<p name="bug">Overlay Palette/Chooser More help print produces wrong content</p>
+</step>
+
+<step name="1.7" link="Bug">
+In text that contains overlays make various selections and navigate through the text. Observe the behavior in the Overlay dialog.
+<r>
+<ul>
+<li>When the user selects text that contains a partially selected tag, that tag's check box and button are OFF (unchecked/ bumped out) because it is not a mixed tag selection. If the user check this tag's check box and pressed the Tag Text button (or presses this tag's button in the palette), this causes FW to extend the partially selected tag to include the new material.</li>
+<li>If the selected text is INSIDE a larger tag selection, that tag's check box in checked and its button is ON. If the user unchecks the check box and presses the Tag Text button (or unpresses the Palette button), this splits the tag into two parts in the text, establishing an new ending and beginning boundaries.</li>
+</ul>
+</r>
+<p name="bug">Overlay Palette/Chooser navigation through text/selections do not show active tags correctly in chooser</p>
+</step>
+
+ </case>
+
+ <case id="ovluApTL" num="2" order="any">
+  <title tag="ovluApTL">Tagging using the Tag List tab</title>
+  <context>
+<p>When the Tag List tab of the Overlay Chooser dialog is displayed</p>
+</context>
+
+  <step name="2.1" link="Bug">
+  Select some text to tag. Then click on the check box of the tag you wish to apply (&lt;Spacebar&gt; checks/unchecks a selected item).
+  <r>
+<ul>
+<li>The check box for the tag should become checked</li>
+		 <li>Checking immediately applies the tag to the selected text</li>
+		 <li>The tagged text visually agrees with the visual settings for the tag and the global overlay settings</li>
+  </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser: Tag List tab not updating newly tagged selection correctly</p>
+  </step>
+
+  <step name="2.2" link="Bug">
+  Select some text that is already tagged. Turn off the tag for the selected text by unchecking the check box.
+  <r>
+<ul>
+<li>Initially any tags on the selected text have check boxes checked for those tags in the list</li>
+		 <li>Unchecking a check box removes the tag information from the selection</li>
+		 <li>The changes should happen immediately and the text should visually have no evidence of the removed tag</li>
+  </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser: Tag List tab not updating turned off tag correctly</p>
+  </step>
+
+ </case>
+
+ <case id="ovluApPa" num="3" order="any">
+  <title tag="ovluApPa">Tagging using the Palette tab</title>
+  <context>
+<p>When the Palette tab of the Overlay Chooser dialog is displayed</p>
+</context>
+
+  <step name="3.1" link="Bug">
+  Select some text to tag. Then click on the button of the tag you wish to apply (&lt;Enter&gt; when the button is selected also works).
+  <r>
+<ul>
+<li>The button is pressed in and turns white for the tag</li>
+		 <li>The tag is immediately applied to the selected text</li>
+		 <li>The tagged text visually agrees with the visual settings for the tag and the global overlay settings</li>
+  </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser: Palette tab not updating newly tagged selection correctly</p>
+  </step>
+
+  <step name="3.2" link="Bug">
+  Select some text that is already tagged. Turn off the tag for the selected text by clicking the tag's button.
+  <r>
+<ul>
+<li>Initially any tags on the selected text have buttons pressed in and turned white in the list</li>
+		<li>Pressing the depressed button removes the tag information from the selection</li>
+		<li>The changes should happen immediately and the text should visually have no evidence of the removed tag</li>
+		<li>The button should revert to its normal "up" state and turn back to the normal grey color</li>
+  </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser: Palette tab not updating turned off tag correctly</p>
+  </step>
+
+  <step name="3.3" link="Bug">
+  Hover the mouse over one of the buttons in the Palette tab.
+  <r>A small box pops up displaying the complete abbreviation and full tag name</r>
+  <p name="bug">Overlay Palette/Chooser no info box on palette button hover over</p>
+  </step>
+
+  <step name="3.4" link="Bug">
+  Inspect the appearance of the buttons present in the Overlay Palette.
+  <r>
+<ul>
+<li>The surface of the buttons show each tag's attributes.</li>
+   <li>Tag attributes are normally set through the Tools-Options-Overlay dialog box.</li>
+   <li>Pressed buttons indicate the selected text is completely marked with that tag.</li>
+   <li>Grayed out buttons indicates a list item's tag that has been excluded from the Overlay.</li>
+   <li>A black box around one of the buttons shows which tag was last inserted.</li>
+  </ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser palette buttons appearance incorrect</p>
+  </step>
+
+  <step name="3.5" link="Bug">
+   Press &lt;F4&gt; (Repeat Last Action) to insert the last tag on a new selection.
+  <r>
+<ul>
+<li>A black box is around the last used tag in the Palette</li>
+  <li>The text selected is tagged with the last tag used</li>
+</ul>
+</r>
+  <p name="bug">Overlay Palette/Chooser repeat last action to tag text not working</p>
+  <p name="note">This feature has been postponed, see Raid #707</p>
+  </step>
+
+  <step name="3.6" link="Bug">
+   Resize the Overlay dialog window. Note the behavior.
+   <r>
+<ul>
+<li>The palette buttons on the palette tab rewrap as needed to fill in the available space</li>
+		  <li>Vertically they can be partially cut off, but horizontally, they should wrap only when there is room for the next column of buttons.</li>
+	<li>If Show Recent Tags is turned on but there is enough room to display all tags, then the Recent Tags should not be displayed</li>
+</ul>
+</r>
+   <p name="bug">Overlay Palette/Chooser resizing overlay dialog has unexpected behavior</p>
+  </step>
+
+ </case>
+
+
+
+ <case id="ovluTagB" num="4" order="any">
+  <title tag="ovluTagB">Tag Display Behavior</title>
+  <context>
+<p>When the Overlay Palette/Chooser is displayed</p>
+</context>
+
+  <step name="4.1" link="Bug">Apply tags to text with different Advanced Global Overlay Settings applied. (Use Options - Configure Overlay... - Advanced, or Tools - Options - Overlays - Advanced.)
+   <r>Compare to expected results in the specs at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm#AdvancedSettings" type="doc">Tools-Options-Overlays</link>
+</r>
+   <p name="bug">Overlay Usage tag display not behaving as dictated in specs. Deviations:</p>
+  </step>
+  <step name="4.2" link="Bug">Apply tags to text such that there are overlaps.
+   <r>The tags attributes will affect the display as follows:<ul>
+	<li>Tag properties are indeterminate if not overtly specified. If one tag specifies a background color and another the text color, when they overlap, the text will have the background and text colors specified by the respective tags.</li>
+	<li>Two or more overlapped tags that specify text colors yield DARK GRAY.</li>
+	<li>Two or more overlapped tags that specify background colors yield LIGHT GRAY.</li>
+	<li>Two or mote overlapped tags that specify conflicting underline colors yield DARK GRAY.</li>
+	<li>Two or more overlapped tags that specify conflicting types of underlines yield DOUBLE UNDERLINED.</li>
+   </ul>
+</r>
+   <p name="bug">Overlay Usage: overlapping tag attributes not behaving as dictated in specs. Deviations:</p>
+  </step>
+
+  <step name="4.3" link="Bug">Apply several tags to a text selection. Note the behavior. Compare the behavior to what is defined in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm#TagBehavior" type="doc">the specs</link>.
+	<r>The behavior should be exactly what is defined in the specs.</r>
+  <p name="bug">Overlay Palette/Chooser tagged text does not behave as defined</p>
+  </step>
+
+  <step name="4.4" link="Bug">
+  When several tags are applied to a section of text, note the appearance. Compare to what is described in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm#TagBehavior" type="doc">the specs</link>.
+  <r>The appearance of the tags should be exactly as described in the specs.</r>
+  <p name="bug">Overlay Palette/Chooser tagged text does not appear as defined</p>
+  </step>
+
+ </case>
+
+ <update date="May-28-02" author="JoelC">Test created.</update>
+ <update date="Jun-05-02" author="LarsH">Added and modified some things.</update>
+ <update date="Jul-18-02" author="RussD">Updated to cover specs.</update>
+
+</test>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DomainModel.xsd">
+
+	<CellarModule id="Cellar" num="0" ver="1" verBack="1">
+		<class num="0" id="CmObject" abstract="true" abbr="obj" >
+			<props>
+				<!-- storesNonModelData="true" -->
+				<rel num="801" id="Self" card="atomic" sig="CmObject" readonly="true" serializable="false"/>
+			</props>
+		</class>
+		<class num="16" id="StTxtPara" abstract="false" abbr="tpar" base="StPara" depth="1" >
+			<props>
+				<owning num="801" id="Segments" card="seq" sig="VirtSegment" serializable="true" readonly="false"/>
+				<basic num="802" id="ErrorInPara" sig="Integer" serializable="false" readonly="false"/>
+			</props>
+		</class>
+	</CellarModule>
+
+	<CellarModule id="FeatSys" num="2" ver="1" verBack="1"/>
+
+	<CellarModule id="Scripture" num="3" ver="1" verBack="1">
+	</CellarModule>
+
+	<CellarModule id="Notebk" num="4" ver="1" verBack="1">
+	</CellarModule>
+
+	<CellarModule id="Ling" num="5" ver="1" verBack="1">
+		<class num="63" id="WordformInventory" abstract="false" abbr="wfi" base="CmMajorObject" >
+			<!-- No props, but WordformInventory does want to (de)persist some stuff in XML -->
+			<props/>
+		</class>
+		<class num="62" id="WfiWordform" abstract="false" abbr="wfm" base="CmObject" depth="0" >
+			<props>
+				<basic num="801" id="ParserCount" sig="Integer" readonly="true" serializable="false"/>
+				<basic num="802" id="UserCount" sig="Integer" readonly="true" serializable="false"/>
+				<basic num="803" id="FullConcordanceCount" sig="Integer" readonly="true" serializable="false"/>
+				<rel num="804" id="RefsFrom_Twfic_Wordform" card="col" sig="Twfic" readonly="false" serializable="true"/>
+			</props>
+		</class>
+		<class num="801" id="VirtSegment" abstract="false" abbr="vseg" base="CmObject" depth="0">
+			<props>
+				<basic num="801" id="Contents" sig="String" big="true" readonly="false" serializable="true"/>
+				<owning num="802" id="Txfics" card="seq" sig="Txfic" readonly="false" serializable="true"/>
+			</props>
+		</class>
+		<class num="802" id="Txfic" abstract="true" abbr="txf" base="CmObject" depth="0">
+			<props>
+				<basic num="801" id="Contents" sig="Unicode" readonly="true" serializable="true"/>
+				<basic num="802" id="BeginOffset" sig="Integer" readonly="true" serializable="true"/>
+				<basic num="803" id="EndOffset" sig="Integer" readonly="true" serializable="false"/>
+				<basic num="804" id="Reference" sig="MultiUnicode" readonly="false" serializable="false"/>
+			</props>
+		</class>
+
+	</CellarModule>
+
+	<CellarModule id="LangProj" num="6" ver="1" verBack="1">
+		<class num="1" id="LangProject" abstract="false" abbr="lgpr" base="CmProject" depth="1" >
+			<props>
+				<rel num="801" id="InstalledWritingSystems" card="col" sig="LgWritingSystem" serializable="true" readonly="false"/>
+				<rel num="802" id="UserViews" card="col" sig="UserView" serializable="true" readonly="false"/>
+				<rel num="803" id="InterlinearTexts" card="col" sig="StText" serializable="false" readonly="false"/>
+				<owning num="804" id="ScriptureReferenceSystem" card="atomic" sig="ScrRefSystem" serializable="true" readonly="true"/>
+			</props>
+		</class>
+	</CellarModule>
+<!--
+<nonmodel>
+		Add non-model properties to model defined classes.
+		Also add entire new classes.
+		This file will follow the pattern established in the mode files
+		that are created from the UML file, but add .
+
+		<Class name="LexEntry" storesNonModelData="true" />
+		<Class name="LexSense" storesNonModelData="true" />
+		<Class name="MoMorphSynAnalysis" storesNonModelData="true" />
+
+	<!== Not yet in DB-less system
+	<Class id="CmFile">
+		<property name="InternalPath"/>
+	</Class>
+	<Class id="CmProject">
+		<property name="DateModified"/>
+	</Class>
+	<Class id="StFootnote">
+		<property name="DisplayFootnoteMarker"/>
+		<property name="DisplayFootnoteReference"/>
+	</Class>
+	<Class id="LexDb">
+		<property name="Entries"/>
+	</Class>
+	<Class id="LexSense">
+		<property name="MorphoSyntaxAnalysis"/>
+	</Class>
+	<Class id="MoDerivAffMsa">
+		<property name="ToPartOfSpeech"/>
+		<property name="FromPartOfSpeech"/>
+	</Class>
+	<Class id="MoDerivStepMsa">
+		<property name="PartOfSpeech"/>
+	</Class>
+	<Class id="MoMorphAdhocProhib">
+		<property name="FirstMorpheme"/>
+	</Class>
+	<Class id="MoStemMsa">
+		<property name="PartOfSpeech"/>
+	</Class>
+	<Class id="ScrImportSet">
+		<property name="ImportSettings"/>
+	</Class>
+	<Class id="Scripture">
+		<property name="RefSepr"/>
+		<property name="ChapterVerseSepr"/>
+		<property name="VerseSepr"/>
+		<property name="Bridge"/>
+		<property name="CrossRefMarkerSymbol"/>
+		<property name="CrossRefMarkerType"/>
+		<property name="DisplayCrossRefReference"/>
+		<property name="Versification"/>
+	</Class>
+	<Class id="ScrBook">
+		<property name="CanonicalNum"/>
+	</Class>
+	<Class id="ScrSection">
+		<property name="VerseRefMin"/>
+		<property name="VerseRefMax"/>
+		<property name="VerseRefStart"/>
+		<property name="VerseRefEnd"/>
+	</Class>
+  <Class id="WfiMorphBundle">
+	<property name="Msa"/>
+  </Class>
+==>
+	<!== TODO (FWM-138): When we remove StyleName from the database model, we also need to remove this. ==>
+	<!==
+  <Class id="StPara">
+	<property name="StyleName"/>
+  </Class>
+  ==>
+</nonmodel>
+-->
+</EntireModel>

@@ -1,0 +1,1212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="m_btnOk.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
+	<value>64, 255</value>
+  </data>
+  <data name="m_btnOk.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnOk.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_btnOk.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.Name" xml:space="preserve">
+	<value>m_btnOk</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="m_btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>152, 255</value>
+  </data>
+  <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
+	<value>m_btnCancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_txtMorphs.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_txtMorphs.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 100pt</value>
+  </data>
+  <data name="m_txtMorphs.Location" type="System.Drawing.Point, System.Drawing">
+	<value>58, 111</value>
+  </data>
+  <data name="m_txtMorphs.Size" type="System.Drawing.Size, System.Drawing">
+	<value>240, 24</value>
+  </data>
+  <data name="m_txtMorphs.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_txtMorphs.Name" xml:space="preserve">
+	<value>m_txtMorphs</value>
+  </data>
+  <data name="&gt;&gt;m_txtMorphs.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_txtMorphs.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_txtMorphs.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_lblWord.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="m_lblWord.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblWord.Location" type="System.Drawing.Point, System.Drawing">
+	<value>12, 111</value>
+  </data>
+  <data name="m_lblWord.Size" type="System.Drawing.Size, System.Drawing">
+	<value>40, 24</value>
+  </data>
+  <data name="m_lblWord.TabIndex" type="System.Int32, mscorlib">
+	<value>24</value>
+  </data>
+  <data name="m_lblWord.Text" xml:space="preserve">
+	<value>Word:</value>
+  </data>
+  <data name="m_lblWord.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;m_lblWord.Name" xml:space="preserve">
+	<value>m_lblWord</value>
+  </data>
+  <data name="&gt;&gt;m_lblWord.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblWord.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblWord.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_groupBox2BreakCharacters.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.Name" xml:space="preserve">
+	<value>m_lblBreakSuprafixtLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakSimulfixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.Name" xml:space="preserve">
+	<value>m_lblBreakBoundStemLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.Name" xml:space="preserve">
+	<value>m_lblBreakEncliticLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.Name" xml:space="preserve">
+	<value>m_lblBreakProcliticLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakInfixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.Name" xml:space="preserve">
+	<value>m_lblBreakSuprafixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.Name" xml:space="preserve">
+	<value>m_lblBreakSimulfixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.Name" xml:space="preserve">
+	<value>m_lblBreakEncliticExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.Name" xml:space="preserve">
+	<value>m_lblBreakProcliticExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.Name" xml:space="preserve">
+	<value>m_lblBreakBoundStemExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.Name" xml:space="preserve">
+	<value>m_lblBreakInfixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.Name" xml:space="preserve">
+	<value>m_lblBreakSuffixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.Name" xml:space="preserve">
+	<value>m_lblBreakPrefixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.ZOrder" xml:space="preserve">
+	<value>13</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.Name" xml:space="preserve">
+	<value>m_lblBreakStemExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.ZOrder" xml:space="preserve">
+	<value>14</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.Name" xml:space="preserve">
+	<value>m_lblBreakStemLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.ZOrder" xml:space="preserve">
+	<value>15</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakSuffixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.ZOrder" xml:space="preserve">
+	<value>16</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakPrefixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.ZOrder" xml:space="preserve">
+	<value>17</value>
+  </data>
+  <data name="m_groupBox2BreakCharacters.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="m_groupBox2BreakCharacters.Location" type="System.Drawing.Point, System.Drawing">
+	<value>15, 144</value>
+  </data>
+  <data name="m_groupBox2BreakCharacters.Size" type="System.Drawing.Size, System.Drawing">
+	<value>305, 105</value>
+  </data>
+  <data name="m_groupBox2BreakCharacters.TabIndex" type="System.Int32, mscorlib">
+	<value>25</value>
+  </data>
+  <data name="m_groupBox2BreakCharacters.Text" xml:space="preserve">
+	<value>Break Characters</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox2BreakCharacters.Name" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox2BreakCharacters.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox2BreakCharacters.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox2BreakCharacters.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_lblBreakSuprafixtLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakSuprafixtLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>216, 79</value>
+  </data>
+  <data name="m_lblBreakSuprafixtLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakSuprafixtLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>37</value>
+  </data>
+  <data name="m_lblBreakSuprafixtLabel.Text" xml:space="preserve">
+	<value>suprafix</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.Name" xml:space="preserve">
+	<value>m_lblBreakSuprafixtLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixtLabel.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_lblBreakSimulfixLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakSimulfixLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>216, 63</value>
+  </data>
+  <data name="m_lblBreakSimulfixLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakSimulfixLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>33</value>
+  </data>
+  <data name="m_lblBreakSimulfixLabel.Text" xml:space="preserve">
+	<value>simulfix</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakSimulfixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixLabel.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_lblBreakBoundStemLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakBoundStemLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>216, 15</value>
+  </data>
+  <data name="m_lblBreakBoundStemLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>84, 16</value>
+  </data>
+  <data name="m_lblBreakBoundStemLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>36</value>
+  </data>
+  <data name="m_lblBreakBoundStemLabel.Text" xml:space="preserve">
+	<value>bound stem</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.Name" xml:space="preserve">
+	<value>m_lblBreakBoundStemLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemLabel.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_lblBreakEncliticLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakEncliticLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>216, 47</value>
+  </data>
+  <data name="m_lblBreakEncliticLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakEncliticLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>34</value>
+  </data>
+  <data name="m_lblBreakEncliticLabel.Text" xml:space="preserve">
+	<value>enclitic</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.Name" xml:space="preserve">
+	<value>m_lblBreakEncliticLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticLabel.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_lblBreakProcliticLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakProcliticLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>216, 31</value>
+  </data>
+  <data name="m_lblBreakProcliticLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakProcliticLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>35</value>
+  </data>
+  <data name="m_lblBreakProcliticLabel.Text" xml:space="preserve">
+	<value>proclitic</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.Name" xml:space="preserve">
+	<value>m_lblBreakProcliticLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticLabel.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_lblBreakInfixLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakInfixLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 63</value>
+  </data>
+  <data name="m_lblBreakInfixLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>64, 16</value>
+  </data>
+  <data name="m_lblBreakInfixLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>28</value>
+  </data>
+  <data name="m_lblBreakInfixLabel.Text" xml:space="preserve">
+	<value>infix</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakInfixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixLabel.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_lblBreakSuprafixExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakSuprafixExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakSuprafixExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>144, 80</value>
+  </data>
+  <data name="m_lblBreakSuprafixExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakSuprafixExample.TabIndex" type="System.Int32, mscorlib">
+	<value>32</value>
+  </data>
+  <data name="m_lblBreakSuprafixExample.Text" xml:space="preserve">
+	<value>[ ~a~ ]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.Name" xml:space="preserve">
+	<value>m_lblBreakSuprafixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuprafixExample.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_lblBreakSimulfixExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakSimulfixExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakSimulfixExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>144, 64</value>
+  </data>
+  <data name="m_lblBreakSimulfixExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakSimulfixExample.TabIndex" type="System.Int32, mscorlib">
+	<value>31</value>
+  </data>
+  <data name="m_lblBreakSimulfixExample.Text" xml:space="preserve">
+	<value>[ =a= ]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.Name" xml:space="preserve">
+	<value>m_lblBreakSimulfixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSimulfixExample.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_lblBreakEncliticExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakEncliticExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakEncliticExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>144, 48</value>
+  </data>
+  <data name="m_lblBreakEncliticExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakEncliticExample.TabIndex" type="System.Int32, mscorlib">
+	<value>30</value>
+  </data>
+  <data name="m_lblBreakEncliticExample.Text" xml:space="preserve">
+	<value>[ =a]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.Name" xml:space="preserve">
+	<value>m_lblBreakEncliticExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakEncliticExample.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_lblBreakProcliticExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakProcliticExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakProcliticExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>144, 32</value>
+  </data>
+  <data name="m_lblBreakProcliticExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakProcliticExample.TabIndex" type="System.Int32, mscorlib">
+	<value>29</value>
+  </data>
+  <data name="m_lblBreakProcliticExample.Text" xml:space="preserve">
+	<value>[a= ]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.Name" xml:space="preserve">
+	<value>m_lblBreakProcliticExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakProcliticExample.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="m_lblBreakBoundStemExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakBoundStemExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakBoundStemExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>144, 16</value>
+  </data>
+  <data name="m_lblBreakBoundStemExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakBoundStemExample.TabIndex" type="System.Int32, mscorlib">
+	<value>28</value>
+  </data>
+  <data name="m_lblBreakBoundStemExample.Text" xml:space="preserve">
+	<value>[*aa ]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.Name" xml:space="preserve">
+	<value>m_lblBreakBoundStemExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakBoundStemExample.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="m_lblBreakInfixExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakInfixExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakInfixExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 64</value>
+  </data>
+  <data name="m_lblBreakInfixExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakInfixExample.TabIndex" type="System.Int32, mscorlib">
+	<value>27</value>
+  </data>
+  <data name="m_lblBreakInfixExample.Text" xml:space="preserve">
+	<value>[ -a- ]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.Name" xml:space="preserve">
+	<value>m_lblBreakInfixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakInfixExample.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="m_lblBreakSuffixExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakSuffixExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakSuffixExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 48</value>
+  </data>
+  <data name="m_lblBreakSuffixExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakSuffixExample.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="m_lblBreakSuffixExample.Text" xml:space="preserve">
+	<value>[ -a]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.Name" xml:space="preserve">
+	<value>m_lblBreakSuffixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixExample.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <data name="m_lblBreakPrefixExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakPrefixExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakPrefixExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="m_lblBreakPrefixExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakPrefixExample.TabIndex" type="System.Int32, mscorlib">
+	<value>25</value>
+  </data>
+  <data name="m_lblBreakPrefixExample.Text" xml:space="preserve">
+	<value>[a- ]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.Name" xml:space="preserve">
+	<value>m_lblBreakPrefixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixExample.ZOrder" xml:space="preserve">
+	<value>13</value>
+  </data>
+  <data name="m_lblBreakStemExample.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 9pt</value>
+  </data>
+  <data name="m_lblBreakStemExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakStemExample.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 16</value>
+  </data>
+  <data name="m_lblBreakStemExample.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 16</value>
+  </data>
+  <data name="m_lblBreakStemExample.TabIndex" type="System.Int32, mscorlib">
+	<value>24</value>
+  </data>
+  <data name="m_lblBreakStemExample.Text" xml:space="preserve">
+	<value>[aa ]</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.Name" xml:space="preserve">
+	<value>m_lblBreakStemExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemExample.ZOrder" xml:space="preserve">
+	<value>14</value>
+  </data>
+  <data name="m_lblBreakStemLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakStemLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 16</value>
+  </data>
+  <data name="m_lblBreakStemLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>64, 16</value>
+  </data>
+  <data name="m_lblBreakStemLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>31</value>
+  </data>
+  <data name="m_lblBreakStemLabel.Text" xml:space="preserve">
+	<value>stem</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.Name" xml:space="preserve">
+	<value>m_lblBreakStemLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakStemLabel.ZOrder" xml:space="preserve">
+	<value>15</value>
+  </data>
+  <data name="m_lblBreakSuffixLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakSuffixLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 48</value>
+  </data>
+  <data name="m_lblBreakSuffixLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>64, 16</value>
+  </data>
+  <data name="m_lblBreakSuffixLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>29</value>
+  </data>
+  <data name="m_lblBreakSuffixLabel.Text" xml:space="preserve">
+	<value>suffix</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakSuffixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakSuffixLabel.ZOrder" xml:space="preserve">
+	<value>16</value>
+  </data>
+  <data name="m_lblBreakPrefixLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblBreakPrefixLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 32</value>
+  </data>
+  <data name="m_lblBreakPrefixLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>64, 16</value>
+  </data>
+  <data name="m_lblBreakPrefixLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>30</value>
+  </data>
+  <data name="m_lblBreakPrefixLabel.Text" xml:space="preserve">
+	<value>prefix</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.Name" xml:space="preserve">
+	<value>m_lblBreakPrefixLabel</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.Parent" xml:space="preserve">
+	<value>m_groupBox2BreakCharacters</value>
+  </data>
+  <data name="&gt;&gt;m_lblBreakPrefixLabel.ZOrder" xml:space="preserve">
+	<value>17</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.Name" xml:space="preserve">
+	<value>m_lblHelp2Example1</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.Parent" xml:space="preserve">
+	<value>m_groupBox1Examples</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.Name" xml:space="preserve">
+	<value>m_lblHelp2Example2</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.Parent" xml:space="preserve">
+	<value>m_groupBox1Examples</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_groupBox1Examples.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="m_groupBox1Examples.Location" type="System.Drawing.Point, System.Drawing">
+	<value>15, 48</value>
+  </data>
+  <data name="m_groupBox1Examples.Size" type="System.Drawing.Size, System.Drawing">
+	<value>305, 55</value>
+  </data>
+  <data name="m_groupBox1Examples.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="m_groupBox1Examples.Text" xml:space="preserve">
+	<value>Examples</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox1Examples.Name" xml:space="preserve">
+	<value>m_groupBox1Examples</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox1Examples.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox1Examples.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox1Examples.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_lblHelp2Example1.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 8pt</value>
+  </data>
+  <data name="m_lblHelp2Example1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblHelp2Example1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>64, 17</value>
+  </data>
+  <data name="m_lblHelp2Example1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>179, 16</value>
+  </data>
+  <data name="m_lblHelp2Example1.TabIndex" type="System.Int32, mscorlib">
+	<value>27</value>
+  </data>
+  <data name="m_lblHelp2Example1.Text" xml:space="preserve">
+	<value>blackbird → black bird</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.Name" xml:space="preserve">
+	<value>m_lblHelp2Example1</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.Parent" xml:space="preserve">
+	<value>m_groupBox1Examples</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_lblHelp2Example2.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Courier New, 8pt</value>
+  </data>
+  <data name="m_lblHelp2Example2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblHelp2Example2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>83, 30</value>
+  </data>
+  <data name="m_lblHelp2Example2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>197, 16</value>
+  </data>
+  <data name="m_lblHelp2Example2.TabIndex" type="System.Int32, mscorlib">
+	<value>28</value>
+  </data>
+  <data name="m_lblHelp2Example2.Text" xml:space="preserve">
+	<value>wanted → want -ed</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.Name" xml:space="preserve">
+	<value>m_lblHelp2Example2</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.Parent" xml:space="preserve">
+	<value>m_groupBox1Examples</value>
+  </data>
+  <data name="&gt;&gt;m_lblHelp2Example2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>15, 9</value>
+  </data>
+  <data name="m_label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>288, 38</value>
+  </data>
+  <data name="m_label1.TabIndex" type="System.Int32, mscorlib">
+	<value>28</value>
+  </data>
+  <data name="m_label1.Text" xml:space="preserve">
+	<value>Type a space to separate morphemes and a break character to indicate the morpheme type.</value>
+  </data>
+  <data name="&gt;&gt;m_label1.Name" xml:space="preserve">
+	<value>m_label1</value>
+  </data>
+  <data name="&gt;&gt;m_label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_label1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_label1.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_buttonHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_buttonHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>240, 254</value>
+  </data>
+  <data name="m_buttonHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_buttonHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>29</value>
+  </data>
+  <data name="m_buttonHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_buttonHelp.Name" xml:space="preserve">
+	<value>m_buttonHelp</value>
+  </data>
+  <data name="&gt;&gt;m_buttonHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_buttonHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_buttonHelp.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_morphBreakHelper.Location" type="System.Drawing.Point, System.Drawing">
+	<value>304, 111</value>
+  </data>
+  <data name="m_morphBreakHelper.Size" type="System.Drawing.Size, System.Drawing">
+	<value>16, 24</value>
+  </data>
+  <data name="m_morphBreakHelper.TabIndex" type="System.Int32, mscorlib">
+	<value>30</value>
+  </data>
+  <data name="m_morphBreakHelper.Text" xml:space="preserve">
+	<value>&gt;</value>
+  </data>
+  <data name="&gt;&gt;m_morphBreakHelper.Name" xml:space="preserve">
+	<value>m_morphBreakHelper</value>
+  </data>
+  <data name="&gt;&gt;m_morphBreakHelper.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_morphBreakHelper.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_morphBreakHelper.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>6, 14</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>334, 286</value>
+  </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 9pt</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Insert Morpheme Breaks</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>EditMorphBreaksDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

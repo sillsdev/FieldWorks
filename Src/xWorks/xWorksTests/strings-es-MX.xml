@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- 	this is a dummy form of a localization file for testing -->
+<strings>
+  <group id="Misc">
+	<string id="No Records" txt="Información no encontrado" English="No Records" />
+  </group>
+</strings>

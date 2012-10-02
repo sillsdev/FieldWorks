@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reusableControls>
+	<control id="WordformPaneBarControl">
+		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+		<parameters id="wordList">
+			<control id="WordformBrowseControl">
+				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+				<parameters id="wordList" clerk="concordanceWords" convertDummiesSelected="true" filterBar="true" editable="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="WfiWordform-Plural">
+					<columns>
+						<include path="$this" query="reusableControls/control[@id='wordListColumns']/columns/column"/>
+					</columns>
+				</parameters>
+			</control>
+		</parameters>
+	</control>
+	<control id="wordListColumns">
+		<columns>
+			<column label="Form" width="30%" cansortbylength="true" ws="$ws=best vernacular" field="Form">
+				<span>
+					<properties>
+						<bold value="off"/>
+					</properties>
+					<string field="Form" ws="best vernacular"/>
+				</span>
+			</column>
+			<column label="Word Glosses" width="30%">
+				<seq class="WfiWordform" field="HumanApprovedAnalyses" layout="empty" sep=", " checkForEmptyItems="true">
+					<seq class="WfiAnalysis" field="Meanings" layout="empty" sep=" / ">
+						<string class="WfiGloss" field="Form" ws="$ws=analysis"/>
+					</seq>
+				</seq>
+			</column>
+			<column label="Number in Corpus" width="75000" sortType="integer" blankPossible="false">
+				<int field="OccurrenceCount"/>
+			</column>
+			<column label="Genres" visibility="menu" chooserFilter="complexListMultiple" field="WfiWordform.TextGenres" list="GenreList" width="115000">
+				<span>
+					<properties>
+						<editable value="false"/>
+					</properties>
+					<seq field="TextGenres" layout="Name" sep=", "/>
+				</span>
+			</column>
+			<column label="User Analyses" visibility="menu" sortType="integer" blankPossible="false">
+				<int field="UserCount"/>
+			</column>
+			<column label="Predicted Analyses" visibility="menu" sortType="integer" blankPossible="false">
+				<int field="ParserCount"/>
+			</column>
+			<column label="Conflicting Opinions" visibility="menu" sortType="integer" blankPossible="false">
+				<int field="ConflictCount"/>
+			</column>
+			<column label="Incomplete Analyses" visibility="menu" blankPossible="false" sortType="YesNo">
+				<choice>
+					<where field="IsComplete" boolequals="true">
+						<span>
+							<properties>
+								<forecolor value="Black"/>
+							</properties>
+							<lit>No</lit>
+						</span>
+					</where>
+					<otherwise>
+						<span>
+							<properties>
+								<forecolor value="Red"/>
+							</properties>
+							<lit>Yes</lit>
+						</span>
+					</otherwise>
+				</choice>
+			</column>
+			<column label="Category" visibility="menu">
+				<seq field="AttestedPos" layout="empty" sep=", ">
+					<string field="Name" ws="$ws=best analorvern"/>
+				</seq>
+			</column>
+			<column label="Spelling Status" visibility="menu" blankPossible="false" sortType="stringList" bulkEdit="integer" field="WfiWordform.SpellingStatus" defaultBulkEditChoice="1">
+				<stringList class="WfiWordform" field="SpellingStatus" group="Linguistics/WFI/SpellingStatus" ids="UndecidedSpellingStatus, CorrectSpellingStatus, IncorrectSpellingStatus" />
+			</column>
+		</columns>
+	</control>
+	<control id="concordanceColumns">
+		<columns>
+			<column label="Ref" width="60000">
+				<span>
+					<properties>
+						<editable value="false"/>
+					</properties>
+					<string class="FakeOccurrence" field="Reference"/>
+				</span>
+			</column>
+			<column label="Occurrence" width="415000" multipara="true">
+				<concpara min="FakeOccurrence.BeginOffset" lim="FakeOccurrence.EndOffset" align="144000">
+					<properties>
+						<editable value="false"/>
+					</properties>
+					<obj class="FakeOccurrence" field="TextObject" layout="empty">
+						<choice>
+						<where is="StTxtPara">
+							<string class="StTxtPara" field="Contents"/>
+						</where>
+						<where is="CmPicture">
+							<string class="CmPicture" field="Caption" ws="vernacular"/>
+						</where>
+						</choice>
+					</obj>
+				</concpara>
+			</column>
+			<column label="Title" visibility="menu" width="144000">
+				<string class="FakeOccurrence" field="TextTitle" ws="$ws=best vernoranal"/>
+			</column>
+			<column label="Genres" visibility="menu" chooserFilter="complexListMultiple" field="CmBaseAnnotation.TextGenres" list="GenreList" width="115000">
+				<span>
+					<properties>
+						<editable value="false"/>
+					</properties>
+					<seq class="FakeOccurrence" field="TextGenres" layout="Name" sep=", "/>
+				</span>
+			</column>
+			<column label="Is Translation" visibility="menu" width="72000" blankPossible="false" sortType="YesNo">
+				<if class="FakeOccurrence" field="TextIsTranslation" boolequals="false">
+					<lit>no</lit>
+				</if>
+				<if class="FakeOccurrence" field="TextIsTranslation" boolequals="true">
+					<lit>yes</lit>
+				</if>
+			</column>
+			<column label="Source" visibility="menu" width="115000">
+				<string class="FakeOccurrence" field="TextSource" ws="$ws=best vernoranal"/>
+			</column>
+			<column label="Comment" visibility="menu" width="144000">
+				<string class="FakeOccurrence" field="TextComment" ws="$ws=best analorvern"/>
+			</column>
+		</columns>
+	</control>
+</reusableControls>

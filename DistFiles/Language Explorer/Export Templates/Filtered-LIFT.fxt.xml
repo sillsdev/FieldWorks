@@ -1,0 +1,741 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template requireClassTemplatesForEverything="true" doUseBaseClassTemplatesIfNeeded="true" writingSystemAttributeStyle="LIFT" stringFormatOutputStyle="LIFT" autoloadPolicy="ReadOnly"
+		  auxiliaryFxt="lift-ranges.fxt.xml" auxiliaryExtension="lift-ranges">
+	<FxtDocumentDescription dataLabel="Filtered Lexicon" formatLabel="LIFT 0.13 XML" defaultExtension="lift" filter="LIFT files (*.lift)|*.lift|XML files (*.xml)|*.xml|All files (*.*)|*.*">
+Export the lexicon in the Lexicon Interchange FormaT (LIFT) version 0.13.  See http://code.google.com/p/lift-standard for more information about LIFT. The export uses the filtered record list and dumps all fields for each record.
+
+Do NOT use this export if you are using LiftBridge!</FxtDocumentDescription>
+
+	<class name="LangProject">
+		<comment>See http://code.google.com/p/lift-standard for more information on the format used here.</comment><newLine/>
+		<lift version="0.13">
+			<attribute name="producer" value="SIL.FLEx ${version}" simpleProperty=""/><newLine/>
+			<header><newLine/>
+				<if variableisfalse="SkipRanges">
+				<ranges><newLine/>
+					<range id="dialect">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="etymology">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+<!-- WeSay doesn't yet handle these in the main LIFT file ^^^ in the most recent build (1451, July 28, 2008) -->
+					<range id="grammatical-info">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="lexical-relation">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="note-type">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="paradigm">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="reversal-type">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="semantic-domain-ddp4">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="status">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="users">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="locations">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<comment>The following ranges are produced by FieldWorks Language Explorer, and are not part of the LIFT standard.</comment><newLine/>
+					<range id="anthro-code">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="translation-type">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<comment>The parts of speech are duplicated in another range because derivational affixes require a "From" PartOfSpeech as well as a "To" PartOfSpeech.</comment><newLine/>
+					<range id="from-part-of-speech">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="morph-type">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="exception-feature">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="inflection-feature">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<range id="inflection-feature-type">
+						<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+					</range>
+					<objAtomic objProperty="MsFeatureSystemOA" classtag="FeatureValueRanges"/>
+					<!-- generate the ranges for Slots for parts of speech that have them defined. -->
+					<objVector objProperty="AllPartsOfSpeech" classtag="AffixSlotRanges"/>
+					<!-- generate the ranges for inflection classes for parts of speech that have them defined. -->
+					<objVector objProperty="AllPartsOfSpeech" classtag="InflectionClassRanges"/>
+					<!-- generate the ranges for stem names for parts of speech that have them defined. -->
+					<objVector objProperty="AllPartsOfSpeech" classtag="StemNameRanges"/>
+				</ranges>
+				</if>
+				<fields><newLine/>
+					<field tag="cv-pattern"><newLine/>
+						<form lang="en"><newLine/><element name="text">This records the syllable pattern for a LexPronunciation in FieldWorks.</element></form>
+						<!--trait name="FLEX" value="LexPronunciation.CVPattern"/-->
+					</field>
+					<field tag="tone"><newLine/>
+						<form lang="en"><newLine/><element name="text">This records the tone information for a LexPronunciation in FieldWorks.</element></form>
+						<!--trait name="FLEX" value="LexPronunciation.Tone"/-->
+					</field>
+					<field tag="comment"><newLine/>
+						<form lang="en"><newLine/><element name="text">This records a comment (note) in a LexEtymology in FieldWorks.</element></form>
+						<!--trait name="FLEX" value="LexEtymology.Comment"/-->
+					</field>
+					<field tag="import-residue"><newLine/>
+						<form lang="en"><newLine/><element name="text">This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</element></form>
+						<!--trait name="FLEX" value="LexEntry.ImportResidue"/-->
+						<!--trait name="FLEX" value="LexSense.ImportResidue"/-->
+					</field>
+					<field tag="literal-meaning"><newLine/>
+						<form lang="en"><newLine/><element name="text">This field is used to store a literal meaning of the entry.  Typically, this field is necessary only for a compound or an idiom where the meaning of the whole is different from the sum of its parts.</element></form>
+						<!--trait name="FLEX" value="LexEntry.LiteralMeaning"/-->
+					</field>
+					<field tag="summary-definition"><newLine/>
+						<form lang="en"><newLine/><element name="text">A summary definition (located at the entry level in the Entry pane) is a general definition summarizing all the senses of a primary entry. It has no theoretical value; its use is solely pragmatic.</element></form>
+						<!--trait name="FLEX" value="LexEntry.SummaryDefinition"/-->
+					</field>
+					<field tag="scientific-name"><newLine/>
+						<form lang="en"><newLine/><element name="text">This field stores the scientific name pertinent to the current sense.</element></form>
+						<!--trait name="FLEX" value="LexSense.ScientificName"/-->
+					</field>
+					<generateCustom class="LexEntry">
+						<field tag="${label}"><newLine/>
+							<form lang="en"><newLine/><element name="text">${description}</element></form>
+							<form lang="x-spec"><newLine/><element name="text">${definition}</element></form>
+						</field>
+					</generateCustom>
+					<generateCustom class="LexSense">
+						<field tag="${label}"><newLine/>
+							<form lang="en"><newLine/><element name="text">${description}</element></form>
+							<form lang="x-spec"><newLine/><element name="text">${definition}</element></form>
+						</field>
+					</generateCustom>
+					<generateCustom class="MoForm">
+						<field tag="${label}"><newLine/>
+							<form lang="en"><newLine/><element name="text">${description}</element></form>
+							<form lang="x-spec"><newLine/><element name="text">${definition}</element></form>
+						</field>
+					</generateCustom>
+					<generateCustom class="LexExampleSentence">
+						<field tag="${label}"><newLine/>
+							<form lang="en"><newLine/><element name="text">${description}</element></form>
+							<form lang="x-spec"><newLine/><element name="text">${definition}</element></form>
+						</field>
+					</generateCustom>
+				</fields>
+			</header>
+			<group objProperty="LexDbOA">
+				<objVector objProperty="Entries" tryvirtual="true" class="LexEntry"/>
+			</group>
+		</lift>
+	</class>
+
+	<class name="LexEntry">
+		<element name="entry" progressIncrement="true">
+			<attribute name="id" simpleProperty="LIFTid"/>
+			<dateAttribute name="dateCreated" property="UtcDateCreated" format="yyyy-MM-ddTHH:mm:ssK"/>
+			<dateAttribute name="dateModified" property="UtcDateModified" format="yyyy-MM-ddTHH:mm:ssK"/>
+			<attribute name="guid" simpleProperty="Guid"/>
+			<attribute name="order" simpleProperty="HomographNumber" optional="true"/><newLine/>
+			<lexical-unit><newLine/>
+				<objAtomic objProperty="LexemeFormOA" classtag="LexemeForm"/>
+			</lexical-unit>
+			<objAtomic objProperty="LexemeFormOA" classtag="MorphType"/>
+			<multilingualStringElement wrappingElementName="citation" name="form" internalElementName="text" simpleProperty="CitationForm" method="CitationFormWithAffixTypeForWs" ws="every"/>
+
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="bibliography" name="form" internalElementName="text" simpleProperty="Bibliography" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" name="form" internalElementName="text" simpleProperty="Comment" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="literal-meaning" name="form" internalElementName="text" simpleProperty="LiteralMeaning" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="restrictions" name="form" internalElementName="text" simpleProperty="Restrictions" ws="every"/>
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="summary-definition" name="form" internalElementName="text" simpleProperty="SummaryDefinition" ws="every"/>
+			<stringElement writeAsField="true" wrappingElementName="import-residue" name="form" internalElementName="text" simpleProperty="NonLIFTImportResidue"/>
+			<objVector objProperty="AlternateFormsOS"/>
+			<objAtomic objProperty="EtymologyOA"/><!-- written as field -->
+			<objVector objProperty="EntryRefsOS"/>
+			<objVector objProperty="LexEntryReferences"/><!-- virtualflid="-1"
+																assembly="FDO.dll" class="SIL.FieldWorks.FDO.Ling.LexEntry" method="LoadAllMinimalLexReferences"/-->
+			<booleanElement name="DoNotUseForParsing" simpleProperty="DoNotUseForParsing" optional="true" writeAsTrait="true"/>
+			<booleanElement name="ExcludeAsHeadword" simpleProperty="ExcludeAsHeadword" optional="true" writeAsTrait="true"/>
+
+			<objVector objProperty="PronunciationsOS"/>
+			<generateCustom class="LexEntry" fieldType="mlstring">
+				<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+			</generateCustom>
+			<generateCustom class="LexEntry" fieldType="simplestring">
+				<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+			</generateCustom>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+			<objVector objProperty="SensesOS"/>
+		</element>
+	</class>
+
+	<class name="LexSense">
+		<element name="sense">
+			<attribute name="id" simpleProperty="LIFTid"/>
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="order" simpleProperty="IndexNumber" optional="true"/><newLine/>
+			<objAtomic objProperty="MorphoSyntaxAnalysisRA"/>
+			<multilingualStringElement name="gloss" internalElementName="text" simpleProperty="Gloss" ws="every"/>
+			<multilingualStringElement wrappingElementName="definition" name="form" internalElementName="text" simpleProperty="Definition" ws="every"/>
+			<objVector objProperty="ExamplesOS"/>
+			<objVector objProperty="SemanticDomainsRC"/>
+
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="anthropology" name="form" internalElementName="text" simpleProperty="AnthroNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="bibliography" name="form" internalElementName="text" simpleProperty="Bibliography" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="discourse" name="form" internalElementName="text" simpleProperty="DiscourseNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="encyclopedic" name="form" internalElementName="text" simpleProperty="EncyclopedicInfo" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" name="form" internalElementName="text" simpleProperty="GeneralNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="grammar" name="form" internalElementName="text" simpleProperty="GrammarNote" ws="every"/>
+			<stringElement writeAsField="true" wrappingElementName="import-residue" name="form" internalElementName="text" simpleProperty="NonLIFTImportResidue"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="phonology" name="form" internalElementName="text" simpleProperty="PhonologyNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="restrictions" name="form" internalElementName="text" simpleProperty="Restrictions" ws="every"/>
+			<stringElement wrappingElementName="field" attrName="type" attrValue="scientific-name" name="form" internalElementName="text" simpleProperty="ScientificName"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="semantics" name="form" internalElementName="text" simpleProperty="SemanticsNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="sociolinguistics" name="form" internalElementName="text" simpleProperty="SocioLinguisticsNote" ws="every"/>
+			<stringElement wrappingElementName="note" attrName="type" attrValue="source" name="form" internalElementName="text" simpleProperty="Source"/>
+			<objVector objProperty="AnthroCodesRC"/>
+			<!-- Appendixes    Reference collection    LexAppendix -->
+			<objVector objProperty="DomainTypesRC" classtag="DomainType"/><!-- written as trait -->
+			<objVector objProperty="ReversalEntriesRC"/>
+			<objAtomic objProperty="SenseTypeRA" classtag="SenseType"/><!-- written as trait -->
+			<objAtomic objProperty="StatusRA" classtag="Status"/><!-- written as trait -->
+			<objVector objProperty="UsageTypesRC" classtag="UsageType"/><!-- written as trait -->
+			<objVector objProperty="PicturesOS"/>
+			<objVector objProperty="LexSenseReferences"/><!-- virtualflid="-1"
+																assembly="FDO.dll" class="SIL.FieldWorks.FDO.Ling.LexEntry" method="LoadAllMinimalLexReferences"/-->
+			<generateCustom class="LexSense" fieldType="mlstring">
+				<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+			</generateCustom>
+			<generateCustom class="LexSense" fieldType="simplestring">
+				<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+			</generateCustom>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+			<objVector objProperty="SensesOS" classtag="Subsense"/>
+		</element>
+	</class>
+
+	<class name="LexSense-Subsense">
+		<element name="subsense">
+			<attribute name="id" simpleProperty="LIFTid"/>
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="order" simpleProperty="IndexNumber" optional="true"/><newLine/>
+			<objAtomic objProperty="MorphoSyntaxAnalysisRA"/>
+			<multilingualStringElement name="gloss" internalElementName="text" simpleProperty="Gloss" ws="every"/>
+			<multilingualStringElement wrappingElementName="definition" name="form" internalElementName="text" simpleProperty="Definition" ws="every"/>
+			<objVector objProperty="ExamplesOS"/>
+			<objVector objProperty="SemanticDomainsRC"/>
+
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="anthropology" name="form" internalElementName="text" simpleProperty="AnthroNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="bibliography" name="form" internalElementName="text" simpleProperty="Bibliography" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="discourse" name="form" internalElementName="text" simpleProperty="DiscourseNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="encyclopedic" name="form" internalElementName="text" simpleProperty="EncyclopedicInfo" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" name="form" internalElementName="text" simpleProperty="GeneralNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="grammar" name="form" internalElementName="text" simpleProperty="GrammarNote" ws="every"/>
+			<stringElement writeAsField="true" wrappingElementName="import-residue" name="form" internalElementName="text" simpleProperty="NonLIFTImportResidue"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="phonology" name="form" internalElementName="text" simpleProperty="PhonologyNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="restrictions" name="form" internalElementName="text" simpleProperty="Restrictions" ws="every"/>
+			<stringElement wrappingElementName="field" attrName="type" attrValue="scientific-name" name="form" internalElementName="text" simpleProperty="ScientificName"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="semantics" name="form" internalElementName="text" simpleProperty="SemanticsNote" ws="every"/>
+			<multilingualStringElement wrappingElementName="note" attrName="type" attrValue="sociolinguistics" name="form" internalElementName="text" simpleProperty="SocioLinguisticsNote" ws="every"/>
+			<stringElement wrappingElementName="note" attrName="type" attrValue="source" name="form" internalElementName="text" simpleProperty="Source"/>
+			<objVector objProperty="AnthroCodesRC"/>
+			<!-- Appendixes    Reference collection    LexAppendix -->
+			<objVector objProperty="DomainTypesRC" classtag="DomainType"/><!-- written as trait -->
+			<objVector objProperty="ReversalEntriesRC"/>
+			<objAtomic objProperty="SenseTypeRA" classtag="SenseType"/><!-- written as trait -->
+			<objAtomic objProperty="StatusRA" classtag="Status"/><!-- written as trait -->
+			<objVector objProperty="UsageTypesRC" classtag="UsageType"/><!-- written as trait -->
+			<objVector objProperty="PicturesOS"/>
+			<objVector objProperty="LexSenseReferences"/><!-- virtualflid="-1"
+																assembly="FDO.dll" class="SIL.FieldWorks.FDO.Ling.LexEntry" method="LoadAllMinimalLexReferences"/-->
+			<generateCustom class="LexSense" fieldType="mlstring">
+				<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+			</generateCustom>
+			<generateCustom class="LexSense" fieldType="simplestring">
+				<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+			</generateCustom>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+			<objVector objProperty="SensesOS" classtag="Subsense"/>
+		</element>
+	</class>
+
+	<class name="CmPossibility-DomainType">
+		<!-- tagged class -->
+		<trait name="domain-type">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="CmPossibility-SenseType">
+		<!-- tagged class -->
+		<trait name="sense-type">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="CmPossibility-Status">
+		<!-- tagged class -->
+		<trait name="status">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="CmPossibility-UsageType">
+		<!-- tagged class -->
+		<trait name="usage-type">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="CmPossibility-ExceptionFeature">
+		<!-- tagged class -->
+		<trait name="exception-feature">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="CmPossibility-FromExceptionFeature">
+		<!-- tagged class -->
+		<trait name="from-exception-feature">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="CmLocation">
+		<trait name="location">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="LexEntryRef">
+		<refVector field="ComponentLexemes" ordered="true" writeAsRelation="true" itemLabel="_component-lexeme" itemProperty="LIFTid" internalTraits="true"
+				   fieldMemberOf="PrimaryLexemes" fieldMemberOfTrait="is-primary">
+			<!-- These nested elements are still with respect to the outer LexEntryRef, not to the LexEntry or LexSense of the vector element. -->
+			<objVector objProperty="ComplexEntryTypesRS" classtag="ComplexForm"/>
+			<objVector objProperty="VariantEntryTypesRS" classtag="Variant"/>
+			<if lengthequals="0" class="LexEntryRef" field="ComplexEntryTypes"><if lengthequals="0" class="LexEntryRef" field="VariantEntryTypes">
+				<if intequals="0" field="RefType">
+					<trait name="variant-type" value=""/>
+				</if>
+				<if intequals="1" field="RefType">
+					<trait name="complex-form-type" value=""/>
+				</if>
+			</if></if>
+			<numberElement name="hide-minor-entry" simpleProperty="HideMinorEntry" ifnotequal="0" writeAsTrait="true"/>
+			<multilingualStringElement writeAsField="true" wrappingElementName="summary" name="form" internalElementName="text" simpleProperty="Summary" ws="every"/>
+		</refVector>
+		<if lengthequals="0" class="LexEntryRef" field="ComponentLexemes">
+			<relation type="_component-lexeme" ref=""><newLine/>
+				<objVector objProperty="ComplexEntryTypesRS" classtag="ComplexForm"/>
+				<objVector objProperty="VariantEntryTypesRS" classtag="Variant"/>
+				<numberElement name="hide-minor-entry" simpleProperty="HideMinorEntry" ifnotequal="0" writeAsTrait="true"/>
+				<multilingualStringElement writeAsField="true" wrappingElementName="summary" name="form" internalElementName="text" simpleProperty="Summary" ws="every"/>
+			</relation>
+		</if>
+	</class>
+
+	<class name="LexEntryType-ComplexForm">
+		<trait name="complex-form-type">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+	<class name="LexEntryType-Variant">
+		<trait name="variant-type">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="LexEtymology">
+		<element name="etymology">
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="type" simpleProperty="LiftType"/>
+			<attribute name="source" simpleProperty="LiftSource"/><newLine/>
+			<!-- fails schema, but loads okay with LiftIO parser -->
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="Form" ws="every"/>
+			<!--multilingualStringElement writeAsField="true" wrappingElementName="multiform" name="form" internalElementName="text" simpleProperty="Form" ws="every"/-->
+			<multilingualStringElement name="gloss" internalElementName="text" simpleProperty="Gloss" ws="every"/>
+			<multilingualStringElement writeAsField="true" wrappingElementName="comment" name="form" internalElementName="text" simpleProperty="Comment" ws="every"/>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</element>
+	</class>
+
+	<class name="LexExampleSentence">
+		<element name="example">
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="source" simpleProperty="Reference" ws="BestAnalysisOrVernacular" optional="true"/><newLine/>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="Example" ws="every"/>
+			<objVector objProperty="TranslationsOC"/>
+			<ifnot stringequals="" field="Reference">
+				<stringElement wrappingElementName="note" attrName="type" attrValue="reference" name="form" internalElementName="text" simpleProperty="Reference"/>
+			</ifnot>
+			<generateCustom class="LexExampleSentence" fieldType="mlstring">
+				<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+			</generateCustom>
+			<generateCustom class="LexExampleSentence" fieldType="simplestring">
+				<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+			</generateCustom>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</element>
+	</class>
+
+	<class name="MoForm-LexemeForm">
+		<multilingualStringElement name="form" internalElementName="text" simpleProperty="Form" method="GetFormWithMarkers" ws="all vernacular"/>
+	</class>
+	<class name="MoForm-MorphType">
+		<ifnotnull field="MorphType">
+			<trait name="morph-type">
+				<attributeIndirect name="value" target="MorphTypeRA" simpleProperty="Name" ws="BestAnalysis"/>
+			</trait>
+		</ifnotnull>
+	</class>
+	<!-- note that MorphType must be the last element exported, due to import considerations. -->
+	<class name="MoForm">
+		<multilingualStringElement name="form" internalElementName="text" simpleProperty="Form" method="GetFormWithMarkers" ws="all vernacular"/>
+		<ifnotnull field="MorphType">
+			<trait name="morph-type">
+				<attributeIndirect name="value" target="MorphTypeRA" simpleProperty="Name" ws="BestAnalysis"/>
+			</trait>
+		</ifnotnull>
+		<generateCustom class="MoForm" fieldType="mlstring">
+			<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+		</generateCustom>
+		<generateCustom class="MoForm" fieldType="simplestring">
+			<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+		</generateCustom>
+	</class>
+	<class name="MoAffixAllomorph">
+		<element name="variant">
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="ref" simpleProperty="LiftRefAttribute" optional="true"/><newLine/>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="Form" method="GetFormWithMarkers" ws="every"/>
+			<objVector objProperty="PhoneEnvRC"/>
+			<ifnotnull field="MorphType">
+				<trait name="morph-type">
+					<attributeIndirect name="value" target="MorphTypeRA" simpleProperty="Name" ws="BestAnalysis"/>
+				</trait>
+			</ifnotnull>
+			<generateCustom class="MoForm" fieldType="mlstring">
+				<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+			</generateCustom>
+			<generateCustom class="MoForm" fieldType="simplestring">
+				<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+			</generateCustom>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</element>
+	</class>
+	<class name="MoAffixProcess">
+		<element name="variant">
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="ref" simpleProperty="LiftRefAttribute" optional="true"/>
+			<newLine/>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="Form" method="GetFormWithMarkers" ws="every"/>
+			<ifnotnull field="MorphType">
+				<trait name="morph-type">
+					<attributeIndirect name="value" target="MorphTypeRA" simpleProperty="Name" ws="BestAnalysis"/>
+				</trait>
+			</ifnotnull>
+			<generateCustom class="MoForm" fieldType="mlstring">
+				<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+			</generateCustom>
+			<generateCustom class="MoForm" fieldType="simplestring">
+				<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+			</generateCustom>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</element>
+	</class>
+	<class name="MoStemAllomorph">
+		<element name="variant">
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="ref" simpleProperty="LiftRefAttribute" optional="true"/><newLine/>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="Form" method="GetFormWithMarkers" ws="every"/>
+			<objVector objProperty="PhoneEnvRC"/>
+			<ifnotnull field="MorphType">
+				<trait name="morph-type">
+					<attributeIndirect name="value" target="MorphTypeRA" simpleProperty="Name" ws="BestAnalysis"/>
+				</trait>
+			</ifnotnull>
+			<generateCustom class="MoForm" fieldType="mlstring">
+				<multilingualStringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}" ws="every"/>
+			</generateCustom>
+			<generateCustom class="MoForm" fieldType="simplestring">
+				<stringElement wrappingElementName="field" attrName="type" attrValue="${label}" name="form" internalElementName="text" simpleProperty="${fieldName}"/>
+			</generateCustom>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</element>
+	</class>
+
+	<class name="PhEnvironment">
+		<trait name="environment">
+			<attribute name="value" simpleProperty="StringRepresentation"/>
+		</trait>
+	</class>
+
+	<class name="LexPronunciation">
+		<element name="pronunciation">
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/><newLine/>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="Form" ws="every"/>
+			<objVector objProperty="MediaFilesOS"/>
+			<stringElement writeAsField="true" wrappingElementName="cv-pattern" name="form" internalElementName="text" simpleProperty="CVPattern"/>
+			<stringElement writeAsField="true" wrappingElementName="tone" name="form" internalElementName="text" simpleProperty="Tone"/>
+			<objAtomic objProperty="LocationRA"/>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</element>
+	</class>
+
+	<class name="CmMedia">
+		<media>
+			<ifnull field="MediaFile">
+				<attribute name="href" value="" simpleProperty=""/>
+			</ifnull>
+			<attributeIndirect name="href" target="MediaFileRA" simpleProperty="InternalBasename"/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Label" ws="every"/>
+		</media>
+	</class>
+
+	<class name="CmTranslation">
+		<translation>
+			<attributeIndirect name="type" target="TypeRA" simpleProperty="Name" ws="BestAnalysis"/>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="Translation" ws="every"/>
+		</translation>
+	</class>
+
+	<class name="MoStemMsa">
+		<if intequals="0" field="IsEmpty">
+			<grammatical-info>
+				<attribute name="value" simpleProperty="PosFieldName"/><newLine/>
+				<objAtomic objProperty="InflectionClassRA"/>
+				<objVector objProperty="FromPartsOfSpeechRC" classtag="Trait-From"/>
+				<objAtomic objProperty="MsFeaturesOA" classtag="InflectionFeature"/>
+				<objVector objProperty="ProdRestrictRC" classtag="ExceptionFeature"/>
+				<string simpleProperty="LiftResidueContent" isXml="true"/>
+			</grammatical-info>
+		</if>
+	</class>
+
+	<class name="MoDerivStepMsa">
+		<grammatical-info>
+			<attribute name="value" simpleProperty="PosFieldName"/><newLine/>
+			<trait name="type" value="derivStepAffix"></trait>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</grammatical-info>
+	</class>
+
+	<class name="FsFeatStruc-InflectionFeature">
+		<if intequals="0" field="IsEmpty">
+			<trait name="inflection-feature">
+				<attribute name="value" simpleProperty="LiftName"/>
+			</trait>
+		</if>
+	</class>
+
+	<class name="FsFeatStruc-FromInflectionFeature">
+		<if intequals="0" field="IsEmpty">
+			<trait name="from-inflection-feature">
+				<attribute name="value" simpleProperty="LiftName"/>
+			</trait>
+		</if>
+	</class>
+
+		<class name="MoStemName-FromStemName">
+				<trait name="from-stem-name">
+						<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+				</trait>
+		</class>
+
+	<class name="MoUnclassifiedAffixMsa">
+		<if intequals="0" field="IsEmpty">
+			<grammatical-info>
+				<attribute name="value" simpleProperty="PosFieldName"/><newLine/>
+				<trait name="type" value="affix"></trait>
+				<string simpleProperty="LiftResidueContent" isXml="true"/>
+			</grammatical-info>
+		</if>
+	</class>
+
+	<class name="MoInflAffMsa">
+		<grammatical-info>
+			<attribute name="value" simpleProperty="PosFieldName"/><newLine/>
+			<trait name="type" value="inflAffix"></trait>
+			<objVector objProperty="SlotsRC"/>
+			<objAtomic objProperty="InflFeatsOA" classtag="InflectionFeature"/>
+			<objVector objProperty="FromProdRestrictRC" classtag="ExceptionFeature"/>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</grammatical-info>
+	</class>
+
+	<class name="MoDerivAffMsa">
+		<grammatical-info>
+			<attribute name="value" simpleProperty="PosFieldName"/><newLine/>
+			<trait name="type" value="derivAffix"></trait>
+			<ifnotnull field="FromPartOfSpeech">
+				<trait name="from-part-of-speech">
+					<attributeIndirect name="value" target="FromPartOfSpeechRA" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+				</trait>
+			</ifnotnull>
+			<objAtomic objProperty="FromInflectionClassRA" classtag="FromInflectionClass"/>
+			<objVector objProperty="FromProdRestrictRC" classtag="FromExceptionFeature"/>
+			<objAtomic objProperty="FromMsFeaturesOA" classtag="FromInflectionFeature"/>
+			<objAtomic objProperty="FromStemNameRA" classtag="FromStemName"/>
+			<objAtomic objProperty="ToInflectionClassRA"/>
+			<objVector objProperty="ToProdRestrictRC" classtag="ExceptionFeature"/>
+			<objAtomic objProperty="ToMsFeaturesOA" classtag="InflectionFeature"/>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</grammatical-info>
+	</class>
+
+	<class name="MoInflClass">
+		<trait>
+			<attribute name="name" value="${owner}-infl-class" simpleProperty=""/>
+			<attribute name="value" ws="BestAnalysisOrVernacular" simpleProperty="Name" />
+		</trait>
+	</class>
+
+	<class name="MoInflClass-FromInflectionClass">
+		<trait>
+			<attribute name="name" value="from-${owner}-infl-class" simpleProperty=""/>
+			<attribute name="value" ws="BestAnalysisOrVernacular" simpleProperty="Name" />
+		</trait>
+	</class>
+
+	<class name="MoInflAffixSlot">
+		<trait>
+			<attribute name="name" value="${owner}-slot" simpleProperty=""/>
+			<attribute name="value" ws="BestAnalysisOrVernacular" simpleProperty="Name" />
+		</trait>
+	</class>
+
+	<class name="LexReference">
+		<objVector objProperty="TargetsRS" ordered="true" virtualclass="SingleLexReference"/>
+	</class>
+
+	<class name="SingleLexReference">
+		<!-- virtual class, not conceptual model class -->
+		<element name="relation">
+			<attribute name="dateCreated" simpleProperty="LiftDateCreated" optional="true"/>
+			<attribute name="dateModified" simpleProperty="LiftDateModified" optional="true"/>
+			<attribute name="type" simpleProperty="TypeName" ws="BestAnalysisOrVernacular"/>
+			<attribute name="ref" simpleProperty="RefLIFTid"/>
+			<attribute name="order" simpleProperty="RefOrder" ws="analysis" optional="true"/><newLine/>
+			<string simpleProperty="LiftResidueContent" isXml="true"/>
+		</element>
+	</class>
+
+	<class name="CmSemanticDomain">
+		<trait name="semantic-domain-ddp4">
+			<attribute name="value" simpleProperty="LiftAbbrAndName" ws="BestAnalysisOrVernacular"/>
+		</trait>
+		<!--trait name="SemanticDomainDdp4"><!- - for WeSay 0.4 compatibility - ->
+			<attribute name="value" simpleProperty="LiftAbbrAndName" ws="BestAnalysisOrVernacular"/>
+		</trait-->
+	</class>
+
+	<class name="CmAnthroItem">
+		<trait name="anthro-code">
+			<attribute name="value" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="CmPicture">
+		<illustration>
+			<ifnull field="PictureFile">
+				<attribute name="href" value="" simpleProperty=""/>
+			</ifnull>
+			<attributeIndirect name="href" target="PictureFileRA" simpleProperty="InternalBasename"/>
+			<multilingualStringElement wrappingElementName="label" name="form" internalElementName="text" simpleProperty="Caption" ws="every"/>
+		</illustration>
+	</class>
+
+	<class name="PartOfSpeech-Trait-From">
+		<trait name="from-part-of-speech">
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</trait>
+	</class>
+
+	<class name="PartOfSpeech">
+		<grammatical-info>
+			<attribute name="value" simpleProperty="Name" ws="BestAnalysisOrVernacular"/>
+		</grammatical-info>
+	</class>
+
+	<class name="ReversalIndexEntry">
+		<reversal>
+			<attributeIndirect name="type" target="ReversalIndex" simpleProperty="WritingSystem"/>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="ReversalForm" ws="every"/>
+			<objAtomic objProperty="PartOfSpeechRA"/>
+			<objAtomic objProperty="OwningEntry" classtag="Parent"/>
+		</reversal>
+	</class>
+
+	<class name="ReversalIndexEntry-Parent">
+		<main>
+			<multilingualStringElement name="form" internalElementName="text" simpleProperty="ReversalForm" ws="every"/>
+			<objAtomic objProperty="PartOfSpeechRA"/>
+			<objAtomic objProperty="OwningEntry" classtag="Parent"/>
+		</main>
+	</class>
+
+	<!-- for ranges -->
+
+	<class name="PartOfSpeech-AffixSlotRanges">
+		<ifnot lengthequals="0" class="PartOfSpeech" field="AffixSlots">
+			<range>
+				<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular" after="-slot"/>
+				<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+				<!--attribute name="guid" simpleProperty="Guid"/-->
+			</range>
+		</ifnot>
+	</class>
+
+	<class name="PartOfSpeech-InflectionClassRanges">
+		<ifnot lengthequals="0" class="PartOfSpeech" field="InflectionClasses">
+			<range>
+				<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular" after="-infl-class"/>
+				<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+				<!--attribute name="guid" simpleProperty="Guid"/-->
+			</range>
+		</ifnot>
+	</class>
+
+	<class name="PartOfSpeech-StemNameRanges">
+		<ifnot lengthequals="0" class="PartOfSpeech" field="StemNames">
+			<range>
+				<attribute name="id" simpleProperty="Name" ws="BestAnalysisOrVernacular" after="-stem-name"/>
+				<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+				<!--attribute name="guid" simpleProperty="Guid"/-->
+			</range>
+		</ifnot>
+	</class>
+
+	<class name="FsFeatureSystem-FeatureValueRanges">
+		<objVector objProperty="FeaturesOC" classtag="ValueRangeList"/>
+	</class>
+	<class name="FsFeatDefn-ValueRangeList"/>
+	<class name="FsClosedFeature-ValueRangeList">
+		<ifnot lengthequals="0" class="FsClosedFeature" field="Values">
+			<range>
+				<attribute name="id" simpleProperty="Abbreviation" ws="BestAnalysisOrVernacular" after="-feature-value"/>
+				<attribute name="href" value="${auxiliary-file}" simpleProperty=""/>
+			</range>
+		</ifnot>
+	</class>
+
+</template>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Andy Black's demo sections F -->
+
+  <on-application args="-db Kalaba" title="Kalaba - FieldWorks Harvest" run="ok" on-fail="assert">
+
+<!-- F.	Inflection -->
+
+<!-- 1.	Show the Orizaba Nahuatl possessed nominals PowerPoint slide. -->
+<!-- 2.	Say, "Suppose you're back in your SIL training and you're sitting in a
+		Grammar I class.  The teacher shows you this data.  What are the affixes here?" -->
+<!-- Answer: no- 1SgPoss, mo- 2SgPoss, i- 3SgPoss, to- 1PlPoss, amo- 2PlPoss, in- 3PlPoss,
+				van - PlPoss, and kal is house. -->
+<!-- 3.	Ask, "Is this derivational or inflectional morphology?"
+		(Inflectional ￯﾿ﾢ￯ﾾﾀ￯ﾾﾓ after all, that's the next section in the Grammar Sketch￯﾿ﾢ￯ﾾﾀ￯ﾾﾦ)
+		Describe the notion of an inflectional template and show the next PowerPoint
+		slide with that inflectional template for the data. -->
+<!-- 4.	Discuss the obligatory/optional nature of the prefix vs. the suffix slots. -->
+<!-- 5.	Let's create such a template for this data. -->
+<!-- 6.	Create the affix template: -->
+<!-- a.	Go to Grammar / Category Edit. -->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Category Edit" />
+
+<!-- b.	Navigate to possessive noun (find it in the Record List, under noun) -->
+  <var id="recList" set="window:xWindow.mainPanel/window:xWindow.leftPanel/window:XCore.RecordBar/outline:NAMELESS"/>
+  <click path="$recList"/>
+  <click path="$recList"/>
+  <insert wait="1000">{END}</insert>
+  <click wait="2000" path="$recList;/olitem:possessive noun"/>
+
+<!-- c.	Right click on Affix Templates -->
+  <var id="field" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:advancedEdit/window:RecordEditView.DataTree/"/>
+  <click path="$field;window:summary"/>
+  <!--click dx="-20"right="side" path="$field;window:summary/window:NAMELESS/window:NAMELESS"/-->
+  <click path="$field;window:summary[1]/window:NAMELESS[2]"/>
+
+<!-- d.	Select Insert Affix Template -->
+  <insert wait="500">{DOWN}~</insert>
+
+<!-- e.	In the Name field, type "Possessive noun" -->
+  <click wait="1000" path="$field;window:multistring[4]/view:Name/para:0/line:0"/>
+  <insert wait="100">{HOME}</insert>
+  <insert wait="100">possessive noun</insert>
+
+<!-- f.	In the Description filed, type, "A possessive noun has an obligatory person of possessor prefix slot and an optional plural possessive suffix slot." -->
+  <click path="$field;window:multistring[5]/view:Description/para:0/line:0"/>
+  <insert wait="100">A possessive noun has an obligatory person of possessor prefix slot and an optional plural possessive suffix slot.~</insert>
+
+<!-- 7.	Create the Person of Possessor slot: -->
+
+<!-- a.	Right click on Stem. -->
+  <click side="right" path="$field;window:custom/view:Table/group:Div"/>
+
+<!-- b.	Select Insert slot before STEM -->
+  <insert wait="100">{DOWN}~</insert>
+
+<!-- c.	Select "Create new obligatory slot" and click OK (or double click on "Create new obligatory slot"). -->
+  <on-dialog title="Choose Slot">
+   <click path="window:Add an obligatory slot to noun[2]" />
+   <!-- click path="button:OK" / -->
+  </on-dialog>
+
+<!-- d.	Select "Type slot name here-" and then type "Person of Possessor" -->
+  <var id="ppTable" set="$field;window:custom/view:Table/group:Div/table:Table/"/>
+  <click path="$ppTable;row:Row/cell:Cell"/>
+  <!--doesn't work anymore click path="window:ParentOfMenuBar/menubar:MenuBar/menu:Edit/menu:Select All"/-->
+  <insert wait="100">{END}</insert>
+  <insert wait="100">+{HOME}</insert><!-- select all -->
+  <insert wait="100">{DELETE}</insert>
+  <insert wait="100">Person of Possessor</insert>
+
+<!-- 8.	Add affixes to Person of Possessor slot: -->
+<!-- a.	Right click on the slot name or just underneath it -->
+  <click wait="1000" side="right" path="$ppTable;row:Row/cell:Cell"/>
+
+<!-- b.	Select "Add inflectional morpheme to Person of Possessor" -->
+  <insert>{DOWN 5}~</insert>
+
+<!-- c.	This brings up a chooser.  Select "Create new inflectional affix" and click OK (or double click on "Create new inflectional affix"). -->
+  <!-- the dialog title depends on the slot name so I skipped the on-dialog context -->
+  <insert wait="2000">{TAB}{ENTER}</insert>
+
+<!-- d.	Brings up New Entry dialog.  Note that it already has the type and grammatical properties defaulted to what we want. -->
+  <on-dialog title="New Entry">
+
+<!-- e.	Press left arrow and then type "no" in the Form field (if you don't do it this way, it wreaks havoc with the defaults ￯﾿ﾢ￯ﾾﾀ￯ﾾﾓ JIRA issues LT-694 and LT-471 note this problem). -->
+   <insert>no</insert>
+
+<!-- f.	Type "my" in the gloss field -->
+   <insert>{TAB 2}my</insert>
+
+<!-- g.	Click on the Create button. -->
+	<click path="button:Create"/>
+  </on-dialog>
+
+<!-- h.	Note how the newly created affix shows up in the slot. -->
+<!-- i.	Right click now on the newly created affix and note the context menu options. -->
+  <click side="right" path="$ppTable;row:Row[2]/cell:Cell"/>
+
+<!-- j.	Select  "Add  inflectional morpheme to Person of Possessor" -->
+  <insert wait="1000">{DOWN}~</insert>
+
+<!-- k.	Select "Create new inflectional affix" and click OK (or double click on "Create new inflectional affix"). -->
+  <!-- the dialog title depends on the slot name so I skipped the on-dialog context -->
+  <insert wait="1000">{TAB}{ENTER}</insert>
+
+<!-- l.	Type in the info for mo- ￯﾿ﾢ￯ﾾﾀ￯ﾾﾘyour (sg.)' and click on the Create button. -->
+  <on-dialog title="New Entry">
+   <insert>{LEFT}mo</insert>
+   <insert>{TAB 2}your (sg.)</insert>
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- m.	Repeat steps i-l for the other four prefixes. -->
+   <!-- i- 3SgPoss, to- 1PlPoss, amo- 2PlPoss, in- 3PlPoss -->
+  <click side="right" path="$ppTable;row:Row[2]/cell:Cell"/>
+  <insert wait="1000">{DOWN}~</insert>
+  <insert wait="1000">{TAB}{ENTER}</insert>
+  <on-dialog title="New Entry">
+   <insert>{LEFT}i</insert>
+   <insert>{TAB 2}his/her</insert>
+   <click path="button:Create"/>
+  </on-dialog>
+
+  <click side="right" path="$ppTable;row:Row[2]/cell:Cell"/>
+  <insert wait="1000">{DOWN}~</insert>
+  <insert wait="1000">{TAB}{ENTER}</insert>
+  <on-dialog title="New Entry">
+   <insert>{LEFT}to</insert>
+   <insert>{TAB 2}our</insert>
+   <click path="button:Create"/>
+  </on-dialog>
+
+  <click side="right" path="$ppTable;row:Row[2]/cell:Cell"/>
+  <insert wait="1000">{DOWN}~</insert>
+  <insert wait="1000">{TAB}{ENTER}</insert>
+  <on-dialog title="New Entry">
+   <insert>{LEFT}amo</insert>
+   <insert>{TAB 2}your (pl.)</insert>
+   <click path="button:Create"/>
+  </on-dialog>
+
+  <click side="right" path="$ppTable;row:Row[2]/cell:Cell"/>
+  <insert wait="1000">{DOWN}~</insert>
+  <insert wait="1000">{TAB}{ENTER}</insert>
+  <on-dialog title="New Entry">
+   <insert>{LEFT}in</insert>
+   <insert>{TAB 2}their's</insert>
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- 9.	Create the Possessive Plural slot -->
+<!-- a.	Right-click on STEM (or underneath it) -->
+  <click wait="2000" side="right" path="$ppTable;row:Row/cell:Cell[2]"/>
+
+<!-- b.	Select "Insert slot after STEM" -->
+  <insert wait="1000">{DOWN 2}~</insert>
+
+<!-- c.	Choose "Create new optional slot". -->
+  <insert wait="1000">{Tab}~</insert>
+
+<!-- d.	Select "￯﾿ﾢ￯ﾾﾀ￯ﾾﾓ(Type slot name here)" and type "Possessive Plural" -->
+  <click path="$ppTable;row:Row/cell:Cell[3]"/>
+  <!--click path="window:ParentOfMenuBar/menubar:MenuBar/menu:Edit/menu:Select All"/-->
+  <insert wait="100">{END}</insert>
+  <insert wait="100">+{HOME}</insert>
+  <insert wait="100">Possessive Plural</insert>
+
+<!-- 10.	Add affixes to Possessive Plural slot (and show MGA) -->
+<!-- a.	Right click in the new slot and select "Add new inflectional morpheme to Person of Possessor" -->
+  <click wait="100" side="right" path="$ppTable;row:Row[2]/cell:Cell[3]"/>
+  <insert wait="1000">{DOWN 5}~</insert>
+
+<!-- b.	Choose "Create new optional slot". -->
+  <insert wait="1000">{TAB}{ENTER}</insert>
+
+<!-- c.	Press right arrow and then type "van" in the Form field (if you don't do it this way, it wreaks havoc with the defaults ￯﾿ﾢ￯ﾾﾀ￯ﾾﾓ JIRA issues LT-694 and LT-471 note this problem). -->
+  <on-dialog title="New Entry">
+   <insert>{RIGHT}van</insert>
+
+<!-- d.	Note the Assistant button by Gloss.  Click on it. -->
+   <click path="button:Assistant"/>
+
+<!-- e.	This brings up the Morphosyntactic Glossing Assistant. -->
+   <on-dialog title="Morphosyntactic Gloss Assistant: Kalaba">
+
+<!-- 1.	Explain the ideas behind this help tool -->
+<!-- 2.	Click on "noun-related" -->
+	<insert wait="1000">{TAB}{HOME}{DOWN 3}</insert>
+
+<!-- 3.	Open up "noun-related" (click on the plus in the box). -->
+	<insert>{RIGHT}</insert>
+
+<!-- 4.	Click on "noun agreement".  Note the help (is missing), but if this is all you know about this morpheme, then you can still use it. -->
+	<insert>{DOWN}</insert>
+
+<!-- 5.	Open up "noun agreement" and click on number. -->
+	<insert>{RIGHT}</insert>
+
+<!-- 6.	Open up "number" and click on "plural" -->
+	<insert>{DOWN 2}{RIGHT}{DOWN 2} </insert>
+
+<!-- 7.	Click on the Insert button. -->
+	<click path="button:Insert >"/>
+
+<!-- 8.	Click on the Accept Gloss button -->
+	<click path="button:Accept Gloss"/>
+   </on-dialog>
+
+<!-- f.	Note the gloss from MGA now shows up in the gloss field. -->
+<!-- g.	Click on the Create button. -->
+   <click path="button:Create"/>
+  </on-dialog>
+
+<!-- 11.	In the Record List, click on noun.  Note that the two slots we've added now show up here. -->
+  <click path="window:xWindow.mainPanel/window:xWindow.leftPanel/outline:NAMELESS/olitem:noun"/>
+  <insert wait="100">{RIGHT}</insert>
+
+<!-- 12.	Go to Grammar Sketch and regenerate. -->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Grammar Sketch" />
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/button:btnGenerate" />
+
+<!-- 13.	Go the Inflection section and find our newly added template. -->
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/button:btnGenerate" />
+  <insert wait="1000">{PGDN 13}</insert>
+  <insert>{DOWN 3}</insert>
+
+ </on-application>
+</accil>

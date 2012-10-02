@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AmpleTrace>
+  <wordTrace>
+<!-- yalolola -->
+	<form>yalolola</form>
+	<trace>
+	  <parseNode>
+		<morph type="pfx" alloid="6284" category="W/W"/>
+		<failure test="SEC_ST:  _ni_ himbilira   / _ ni"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="pfx" alloid="6284" category="W/W"/>
+		<failure test="SEC_ST:  _ni_ himbilira   / _ ni"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="root" alloid="6143" category="W"/>
+		<continuation>
+		  <parseNode>
+			<morph type="sfx" alloid="6138" category="W/W"/>
+			<continuation>
+			  <parseNode>
+				<morph type="sfx" alloid="6342" category="W/W"/>
+				<continuation>
+				  <parseNode>
+					<endOfWord/>
+					<failure test="PC-PATR word parse"/>
+				  </parseNode>
+				</continuation>
+			  </parseNode>
+			  <parseNode>
+				<endOfWord/>
+				<failure test="PC-PATR word parse"/>
+			  </parseNode>
+			</continuation>
+		  </parseNode>
+		  <parseNode>
+			<endOfWord/>
+			<failure test="MCC_FT: _6331_ 6139 6344 :: 6331   +/ ~_ 6139"/>
+		  </parseNode>
+		  <parseNode>
+			<endOfWord/>
+			<failure test="MCC_FT:  6139 _6331_:: 6331   +/ 6139 ~_"/>
+		  </parseNode>
+		  <parseNode>
+			<morph type="sfx" alloid="6138" category="W/W"/>
+			<continuation>
+			  <parseNode>
+				<morph type="sfx" alloid="6342" category="W/W"/>
+				<continuation>
+				  <parseNode>
+					<endOfWord/>
+					<failure test="PC-PATR word parse"/>
+				  </parseNode>
+				</continuation>
+			  </parseNode>
+			  <parseNode>
+				<endOfWord/>
+				<failure test="PC-PATR word parse"/>
+			  </parseNode>
+			</continuation>
+		  </parseNode>
+		  <parseNode>
+			<morph type="sfx" alloid="6342" category="W/W"/>
+			<failure test="SEC_ST: dok __ ra   / _ [7405]"/>
+		  </parseNode>
+		  <parseNode>
+			<morph type="sfx" alloid="6342" category="W/W"/>
+			<failure test="SEC_ST: dok __ ra   / _ [7405][7405]"/>
+		  </parseNode>
+		  <parseNode>
+			<morph type="ifx" alloid="6342" category="W/W"/>
+			<failure test="InfixEnvironment: dok __ ra   / _ [7405]"/>
+		  </parseNode>
+		  <parseNode>
+			<morph type="ifx" alloid="6342" category="W/W"/>
+			<failure test="InfixEnvironment: dok __ ra   / _ [7405][7405]"/>
+		  </parseNode>
+		</continuation>
+	  </parseNode>
+	  <parseNode>
+		<morph type="sfx" alloid="6342" category="W/W"/>
+		<failure test="SEC_ST: migel __ ximura   / [7405] _"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="sfx" alloid="6342" category="W/W"/>
+		<failure test="SEC_ST: migel __ ximura   / [7405][7405] _"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="sfx" alloid="6342" category="W/W"/>
+		<failure test="SEC_ST: migel __ ximura   / [7405] _ [7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="sfx" alloid="6342" category="W/W"/>
+		<failure test="SEC_ST: migel __ ximura   / [7405][7405] _ [7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="sfx" alloid="6342" category="W/W"/>
+		<failure test="SEC_ST: migel __ ximura   / [7405] _ [7405][7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="sfx" alloid="6342" category="W/W"/>
+		<failure test="SEC_ST: migel __ ximura   / [7405][7405] _ [7405][7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="ifx" alloid="6342" category="W/W"/>
+		<failure test="InfixEnvironment: migel __ ximura   / [7405] _"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="ifx" alloid="6342" category="W/W"/>
+		<failure test="InfixEnvironment: migel __ ximura   / [7405][7405] _"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="ifx" alloid="6342" category="W/W"/>
+		<failure test="InfixEnvironment: migel __ ximura   / [7405] _ [7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="ifx" alloid="6342" category="W/W"/>
+		<failure test="InfixEnvironment: migel __ ximura   / [7405][7405] _ [7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="ifx" alloid="6342" category="W/W"/>
+		<failure test="InfixEnvironment: migel __ ximura   / [7405] _ [7405][7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<morph type="ifx" alloid="6342" category="W/W"/>
+		<failure test="InfixEnvironment: migel __ ximura   / [7405][7405] _ [7405][7405]"/>
+	  </parseNode>
+	  <parseNode>
+		<endOfWord/>
+		<failure test="ANCC_FT: _6213_ 6298 6279 6138 6342 :: 6213   -/ _ ... 6279"/>
+	  </parseNode>
+	  <parseNode>
+		<endOfWord/>
+		<failure test="ANCC_FT: _6213_ 6298 6279 6138 6342 :: 6213   -/ 6279 ... _ "/>
+	  </parseNode>
+	</trace>
+  </wordTrace>
+</AmpleTrace>

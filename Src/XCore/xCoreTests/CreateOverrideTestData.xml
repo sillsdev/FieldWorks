@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pieces>
+  <layout class="LexEntry" type="Detail" name="Test1">
+	<part ref="CitationForm" label="Test2"/>
+	<part ref="Senses">
+		<part ref="Synonyms" param="TestingParam"/>
+		<indent>
+			<part ref="Antonymns"/>
+		</indent>
+	</part>
+
+  </layout>
+  <part ref="Gloss"/>
+  <part id="blah"/>
+  <layout name="nonsense"/>
+  <part ref="Synonyms"/>
+</Pieces>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AnalyzingAgentResults xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\ww\code\SampleData\XMLFieldWorksParse.xsd">
+	<AnalyzingAgent name="M3" human="false" version="Normal">
+		<StateInformation/>
+	</AnalyzingAgent>
+	<WordSet>
+		<WordForm DbRef="1637" Form="bears">
+			<WfiAnalysis>
+				<Morphs>
+					<Morph>
+						<MoForm DbRef="1234" Label="bear"/>
+						<MSI DbRef="1235" Label="noun"/>
+					</Morph>
+					<Morph>
+						<MoForm DbRef="1236" Label="-s"/>
+						<MSI DbRef="1237" Label="PL"/>
+					</Morph>
+				</Morphs>
+			</WfiAnalysis>
+			<WfiAnalysis>
+				<Morphs>
+					<Morph>
+						<MoForm DbRef="1234" Label="bear"/>
+						<MSI DbRef="1238" Label="verb"/>
+					</Morph>
+					<Morph>
+						<MoForm DbRef="1500" Label="-s"/>
+						<MSI DbRef="1501" Label="3.sg.agr"/>
+					</Morph>
+				</Morphs>
+			</WfiAnalysis>
+		</WordForm>
+		<WordForm DbRef="1700" Form="eat">
+			<WfiAnalysis>
+				<Morphs>
+					<Morph>
+						<MoForm DbRef="6000" Label="eat"/>
+						<MSI DbRef="1239" Label="v.t."/>
+					</Morph>
+				</Morphs>
+			</WfiAnalysis>
+		</WordForm>
+	</WordSet>
+</AnalyzingAgentResults>

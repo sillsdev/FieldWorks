@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for launching instruction.
+-->
+
+<accil on-fail="assert">
+ <on-application id="app1" run="yes" />
+ <on-application id="app2" run="ok" close="yes" />
+ <on-application id="app3" run="ok"  />
+ <on-application id="app3b" run="ok" path="C:\WINDOWS\NOTEPAD.EXE" />
+ <on-application id="app4" run="no" >
+  <glimpse path="menu:Edit" prop="children" on-pass="assert">
+   <data get="path"/> should have at least one child.
+  </glimpse>
+ </on-application>
+ <on-application id="app5" run="no" close="yes" source="app3b">
+  <glimpse path="menu:File" prop="children" on-pass="assert">
+   <data get="path"/> should have at least one child.
+  </glimpse>
+ </on-application>
+ <!-- cases in which it should fail -->
+ <!--on-application id="app6" run="no" /-->
+ <on-application id="app7" run="no" on-pass="assert"/>
+ <!--on-application id="app8" run="yes"/-->
+ <!--on-application id="app9" run="ok" -->
+</accil>
