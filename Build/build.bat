@@ -3,6 +3,12 @@ echo off
 REM cause Environment variable changes to be lost after this process dies:
 if not "%OS%"=="" setlocal
 
+REM Add Bin and DistFiles to the PATH:
+pushd %~dp0
+cd ..
+set PATH=%cd%\DistFiles;%cd%\Bin;%PATH%
+popd
+
 Set RegQry=HKLM\Hardware\Description\System\CentralProcessor\0
 
 REG.exe Query %RegQry% > checkOS.txt

@@ -19,15 +19,18 @@
 		<EncConverterDllOutputs Include="..\Output\$(config-capital)\SilEncConverters40.dll"/>
 	</ItemGroup>
 
-	<Target Name="EncConvertersDlls" Condition="'$(OS)'=='Windows_NT'"
+	<Target Name="CheckAdminPrivilege" Condition="'$(OS)'=='Windows_NT'">
+		<CheckAdminPrivilege>
+			<Output TaskParameter="UserIsAdmin" PropertyName="UserIsAdmin"/>
+		</CheckAdminPrivilege>
+	</Target>
+
+	<Target Name="EncConvertersDlls" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CheckAdminPrivilege"
 			Inputs="@(EncConverterDllInputs)" Outputs="@(EncConverterDllOutputs)">
 		<Copy SourceFiles="@(EncConverterSources)"
 			  DestinationFolder="$(dir-outputBase)\%(RecursiveDir)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CheckAdminPrivilege>
-			<Output TaskParameter="UserIsAdmin" PropertyName="UserIsAdmin"/>
-		</CheckAdminPrivilege>
 		<Exec Command="regasm.exe /codebase /silent $(dir-outputBase)\SilEncConverters40.dll" IgnoreExitCode="true"
 			  Condition="'$(action)'!='clean'" />
 		<Exec Command="regasm.exe /unregister /silent $(dir-outputBase)\SilEncConverters40.dll" IgnoreExitCode="true"
