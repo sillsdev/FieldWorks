@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="menubtn" num="0.6" abbr="mnu" file="StdCtrls\MenuBtn.xml">
+ <title tag="menubtn">Menu Button Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A menu button is a simple control which displays a menu list. Menu lists may change depending on text selections in open views. Clicking a menu item may bring up another menu list or perform an action like a button or toggle a state like a checkbox.</p>
+  </introduction>
+  <context>
+<p>Each menu button may require the selection of text in a view, and selection of each of the items in its list to thoroughly test its action. Testing does not require exhaustive combinations of such settings since most are independent. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If a step fails, the bug should be reported for that button or menu item. The first words of a bug report title for this button should be a noun phrase containing the name of the button or menu item.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, each button and menu item is described in a specification.</p>
+  </warning>
+ <case id="mnuInsp" num="1" order="any">
+  <title tag="mnuInsp">Menu Button Inspection</title>
+  <context>
+<p>When the application GUI containing the menu button is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this menu control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A menu button has a name or picture on it and is usually a 3-D rectangle. It may be "grayed out" (disabled) depending on the state of the application or text selected in a view.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the menu button.
+   <r>The menu button and its name must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Menu button has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the menu button and its name relative to other visible controls.
+   <r>The menu button and its name should be close to the position indicated in the specification.</r>
+   <p name="bug">Menu button has incorrect location</p>
+  </step>
+
+ </case>
+ <case id="mnuOp" num="2" order="any">
+  <title tag="mnuOp">Menu Button Operation</title>
+  <context>
+<p>When the menu button is enabled</p>
+</context>
+
+   <p name="Principle">The menu button is depressed by left clicking with a pointer device (usually a mouse) and often by a "short-cut" key sequence. Actions may include changes in a preview window on the control frame, launching another display component or changes in another view.</p>
+
+  <step name="2.1" link="Bug">Hover the pointer over the menu button.
+   <r>The menu button pops out while the pointer is over it.</r>
+   <p name="bug">Menu button does not pop for hover</p>
+  </step>
+  <step name="2.2" link="Bug">Left click the menu button.
+   <r>The menu button depresses while its list is displayed.</r>
+   <p name="bug">Menu button does not depress</p>
+   <p name="bug">Menu button list does not display</p>
+  </step>
+  <step name="2.3" link="Bug">Press the short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>The menu button depresses while its list is displayed.</r>
+   <p name="bug">Shorted menu button does not depress</p>
+   <p name="bug">Shorted menu button list does not display</p>
+  </step>
+  <step name="2.4" link="Bug">Click the arrow-question mark help icon, then click the menu button.
+   <r>The menu button depresses while its list and the arrow-question mark help pointer are displayed.</r>
+   <p name="bug">Menu button malady with arrow-question mark help</p>
+  </step>
+  <step name="2.5" link="Bug">When operating the menu button, do side-effects obscure or disable other functionality in the GUI or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Menu button operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <case id="mnuItemInsp" num="3" order="any">
+  <title tag="mnuItemInsp">Menu Item Inspection</title>
+  <context>
+<p>When the application GUI containing the menu item is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this menu item is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A menu item has a name or picture on it and is usually a 3-D rectangle. It may be "grayed out" (disabled) depending on the state of the application or text selected in a view. It may also be a check box, though when unchecked, the box is replaced by a space.</p>
+
+  <step name="3.1" link="Bug">Click the menu button and menu items necessary to inspect the appearance of each menu item.
+   <r>Each menu item and its name must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Menu item has incorrect appearance</p>
+  </step>
+  <step name="3.2" link="Bug">Inspect the location of each menu item and its name relative to other visible controls.
+   <r>Each menu item and its name should be close to the position indicated in the specification.</r>
+   <p name="bug">Menu item has incorrect location</p>
+  </step>
+
+ </case>
+ <case id="mnuItemOp" num="4" order="any">
+  <title tag="mnuItemOp">Menu Item Operation</title>
+  <context>
+<p>When the menu item is enabled</p>
+</context>
+
+   <p name="Principle">The menu item is activated by left clicking with a pointer device (usually a mouse) and often by a "short-cut" key sequence. Actions may include changes in a view, launching another menu list or a visible change in a check box state.</p>
+
+  <step name="4.1" link="Bug">Hover the pointer over the menu items in the list.
+   <r>Each item (even disabled ones) are highlighted as the pointer moves over it.</r>
+   <p name="bug">Menu item does not highlight on hover</p>
+  </step>
+  <step name="4.2" link="Bug">Left click the menu.
+   <r>
+	<ul>
+	 <li>When the item has a triangle to the right, it highlights and displays its menu list.</li>
+	 <li>When the item has "..." to the right, its dialog is displayed and the menu list closes.</li>
+	 <li>When the item has a check box, it is checked if it was not and not checked if it was.</li>
+	 <li>When there is nothing to the right, its action is performed - see the applicable specification.</li>
+	</ul>
+   </r>
+   <p name="Notes">When an action is being performed or a dialog is being brought up, the display under the menu list(s) may not completely redraw until the action is complete.</p>
+   <p name="bug">Menu Item does not work</p>
+  </step>
+  <step name="4.3" link="Bug">Press the menu item short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>
+	<ul>
+	 <li>When the item has a triangle to the right, it highlights and displays its menu list.</li>
+	 <li>When the item has "..." to the right, its dialog is displayed and the menu list closes.</li>
+	 <li>When the item has a check box, it is checked if it was not and not checked if it was.</li>
+	 <li>When there is nothing to the right, its action is performed - see the applicable specification.</li>
+	</ul>
+   </r>
+   <p name="bug">Shorted menu Item does not work</p>
+  </step>
+  <step name="4.4" link="Bug">For each menu item with a triangle to the right, click the arrow-question mark help icon, then click the menu button and menu item.
+   <r>The menu button highlights while its list and the arrow-question mark help pointer are displayed.</r>
+   <p name="bug">Menu item-menu button malady with arrow-question mark help</p>
+  </step>
+  <step name="4.5" link="Bug">For each menu item without a triangle to the right, click the arrow-question mark help icon, then click the menu button and menu item.
+   <r>The menu list is closed and a bubble help description of the menu item is displayed.</r>
+   <p name="bug">Menu item bubble help not displayed</p>
+  </step>
+  <step name="4.6" link="Bug">When operating the menu item, do side-effects obscure or disable other functionality in the GUI or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Menu item operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Jan-4-01" author="MikeL">Test created.</update>
+
+</test>

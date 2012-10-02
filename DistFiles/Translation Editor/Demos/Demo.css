@@ -1,0 +1,261 @@
+/* Demo.css 2008-10-31 */
+/* Style sheet for software demonstrations. */
+/* A demonstration shows the procedure to perform a task. */
+
+/* TYPOGRAPHY =============================================================== */
+
+/* Demos use only one font. It is in the user's default size. */
+body
+{
+font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+/* Navigation area hyperlink to the next slide or the index page. */
+div.Navigation a
+{
+text-decoration: none;
+font-weight: bold;
+}
+
+/*
+Character styles for div.Text, div.Callout, and div.TextBox.
+Use em and strong elements instead of span.Emphasis and span.Strong classes.
+*/
+span.Keyboard,
+span.UserInterface
+{
+font-weight: bold;
+}
+
+/* LAYOUT =================================================================== */
+/*
+A Web browser displays each slide as a Web page. A demo slide consists of:
+* Navigation area at the upper right. Produced by the conversion process.
+* Text area at the upper edge. Optional, but rarely omitted.
+* Image area consists of zero or more images, but usually there is one.
+
+All text is in ordinary p elements without paragraph classes.
+In particular, li elements always contain at least one p element.
+*/
+/* Remove default browser box formatting for all elements. */
+/* See pages 13 and 29 of CSS Mastery: Advanced Web Standards Solutions. */
+*
+{
+padding: 0;
+border: 0;
+margin: 0;
+}
+
+/* Navigation area ---------------------------------------------------------- */
+
+div.Navigation
+{
+float: right;
+margin-left: 0.5em; /* Separation from the first line in the text area. */
+padding-left: 5px; /* Radius of the rounded corner in the background image. */
+/* Full transparency in 8-bit PNG files even works in Internet Explorer 6 and earlier. */
+background-image: url(Navigation.png);
+background-repeat: no-repeat;
+background-position: bottom left;
+}
+
+div.Navigation p
+{
+padding-top: 0.5em;
+}
+
+/*
+Assume that a space separates the slide number from the hyperlink.
+The padding gives the impression of a button when the color changes
+in the hover and active states.
+*/
+div.Navigation a
+{
+padding-left: 0.25em;
+padding-right: 0.25em;
+}
+
+/*
+When a slide contains an image map, the hyperlink is hidden
+but still occupies space to align the slide number consistently.
+*/
+a.Hidden
+{
+visibility: hidden;
+}
+
+/* Text area ---------------------------------------------------------------- */
+/*
+If there is no text, do one of the following:
+Recommended: Include the div with a p element containing a nonbreaking space
+to display an empty text area one line high.
+Option: Omit the div to let the image bleed to the upper edge of the slide,
+but the navigation area overlaps the image at the upper right.
+*/
+div.Text
+{
+padding-left: 0.5em;
+padding-bottom: 0.5em;
+padding-right: 0.5em;
+}
+
+div.Text p
+{
+padding-top: 0.5em;
+}
+
+/* Lists are for the text area only, not for callouts or text boxes. */
+
+ol /* List Number */
+{
+margin-left: 1.5em;
+}
+
+ul /* List Bullet */
+{
+margin-left: 1em;
+}
+
+/*
+In audio demos, the text area appears empty.
+The paragraph contains only an object followed by a non-breaking space,
+However, the navigation and image areas are the same as visual demos.
+*/
+object.Audio
+{
+width: 0;
+height: 0;
+}
+
+/* Image area --------------------------------------------------------------- */
+/*
+Usually one per slide containing one main image. If necessary, you can:
+Include multiple images per div (adjacent horizontally).
+Include multiple divs per slide (adjacent vertically).
+*/
+/*
+Relative position of div.Image makes the position of callouts and text boxes
+relative to the image, not the body element. There is a style attribute:
+* containing the sum of the widths of images if there is a callout from the west.
+* containing the maximum height of images if there is a callout from the northeast.
+  The height is required for Internet Explorer 6 and earlier.
+*/
+div.Image
+{
+position: relative;
+}
+
+/*
+A procedural callout has a pointer at the corner adjacent to an image map area.
+The div has two classes: Callout followed by a space and one of four directions.
+The most common is <div class="Callout FromSoutheast">
+*/
+div.Callout
+{
+position: absolute; /* An instance must have a style attribute that specifies a corner. */
+/* Full transparency in 8-bit PNG files even works in Internet Explorer 6 and earlier. */
+background-image: url(Callout.png);
+background-repeat: no-repeat;
+}
+/*
+For information about an image in multiple background positions
+instead of multiple background images, see pages 78-79 in CSS Mastery.
+The padding is the width and height of the pointers in Callout.png.
+*/
+
+div.Callout.FromNorthwest /* Has attribute style="right:XXXpx;bottom:YYYpx;" */
+{
+padding-right: 7px;
+padding-bottom: 7px;
+background-position: bottom right;
+}
+
+div.Callout.FromSouthwest /* Has attribute style="right:XXXpx;top:YYYpx;" */
+{
+padding-top: 7px;
+padding-right: 7px;
+background-position: top right;
+}
+
+div.Callout.FromNortheast /* Has attribute style="left:XXXpx;bottom:YYYpx;" */
+{
+padding-left: 7px;
+padding-bottom: 7px;
+background-position: bottom left;
+}
+
+div.Callout.FromSoutheast /* Has attribute style="left:XXXpx;top:YYYpx;" */
+{
+padding-top: 7px;
+padding-left: 7px;
+background-position: top left;
+}
+
+/* An informational text box aligns with a particular part of the image. */
+div.TextBox /* Has attribute style="left:XXXpx;top:YYYpx;" */
+{
+position: absolute;
+}
+
+/* Callouts and text boxes have the same paragraph layout inside the div. */
+div.Callout p,
+div.TextBox p
+{
+padding-top: 0.25em;
+padding-left: 0.5em;
+padding-bottom: 0.25em;
+padding-right: 0.5em;
+}
+
+/* COLOR ==================================================================== */
+/*
+Demos use only five colors, including black and white.
+#000000 black is for information.
+#FFFFFF white relates to moving to the next slide or back to the index page
+
+#7FFFD4 aquamarine itself is not used rgb(127,255,212) hsv(160,50%,100%) hsl(160,100%,75%)
+#99FFDD desaturated-aquamarine rgb(153,255,221) hsv(160,40%,100%) hsl(160,100%,80%)
+#66CDAA mediumaquamarine rgb(102,205,170) hsv(160,50%,80%) hsl(160,50%,60%)
+#4C997F dark-value-of-aquamarine rgb(76,153,127) hsv(160,50%,60%) hsl(160,33%,45%)
+*/
+
+/* The navigation hyperlink and procedural callouts have the same color. */
+div.Navigation a,
+div.Callout p
+{
+color: #FFFFFF; /* white */
+}
+
+div.Navigation span.Number
+{
+color: #99FFDD; /* desaturated-aquamarine */
+}
+
+/* The navigation area and procedural callouts have the same background color. */
+/* Must specify the background color for the p element, not the div element. */
+div.Navigation p,
+div.Callout p
+{
+background-color: #66CDAA; /* mediumaquamarine matches Navigation.png and Callout.png */
+/* For information about specifying equivalent colors for background images, */
+/* see pages 129-136 of Bulletproof Web Design, First Edition. */
+}
+
+div.Navigation a:hover
+{
+background-color: #4C997F; /* dark-value-of-aquamarine */
+}
+
+div.Navigation a:active
+{
+color: #66CDAA; /* mediumaquamarine */
+background-color: #4C997F; /* dark-value-of-aquamarine */
+}
+
+/* The text area and informational text boxes have the same colors. */
+div.Text,
+div.TextBox
+{
+color: #000000; /* black */
+background-color: #99FFDD; /* desaturated-aquamarine */
+}

@@ -1,0 +1,9 @@
+LIBRARY DbAccess
+
+EXPORTS
+	ExtInitMSDE			PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE
+	DllCanUnloadNow     PRIVATE
+	DllInstall			PRIVATE

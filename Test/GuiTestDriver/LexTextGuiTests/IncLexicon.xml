@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+  <!--
+		  Often used variables for the Lexicon tools
+   -->
+
+   <var id="menuLEXICON" set="$menuVIEW;menu:Lexicon/"/>
+
+   <var id="insEntry" set="$INSERT;43:Entry..."/>
+   <var id="lxFindLex" set="$INSERT;43:Find lexical entry..."/>
+
+  <!-- Lexicon Edit -->  <var id="lxEditRecFilter" set="$EditRecFRAME;9:FilterBar/9:FwComboBox"/>
+  <!-- Drop widget: $EditRecFilter;[1]/$NL;43:NAMELESS -->  <!-- Text box: $EditRecFilter;[1]/20:RootSite/$Text -->
+  <var id="lxEditRec" set="$EditRecFRAME;20:RootSite/24:Table"/>
+  <!-- $EditRec;[1]/$Col;[1]/$Text -->
+  <var id="lxEditPane" set="$lxBase;[2]/$nl;[2]/$NL;$nl"/>
+
+  <!-- The edit pane fields -->
+	<var id="lxFldLexemeForm" set="$multiEdFIELD;9:multistring[*]/9:SplitContainer/9:Panel2/20:Lexeme Form"/>
+	<var id="lxFldMorphType" set="$multiEdFIELD;9:morphtypeatomicreference[*]/9:SplitContainer/9:Panel2/9:Morph Type/20:Root"/>
+	<var id="lxAnthroCat" set="$multiEdFIELD;9:defaultvectorreference[*]/9:SplitContainer/9:Panel2/9:Anthropology Categories"/>
+	<var id="lxSciName" set="$multiEdFIELD;9:string[*]/9:SplitContainer/9:Panel2/20:Scientific Name"/>
+	<var id="lxGmFuncBtn" set="$multiEdFIELD;9:msareferencecombobox[*]/9:SplitContainer/9:Panel2/Grammatical Info./$NL;43:NAMELESS"/>
+	<var id="lxFldEnvirons" set="$multiEdFIELD;9:phoneenvreference[*]/9:SplitContainer/9:Panel2/9:Environments/20:Root"/>
+
+  <!-- Browse View -->  <var id="LxBrColChange" set="$singlePANE;9:EntriesList/9:EntriesList/$nl;[3]/43:NAMELESS"/>  <var id="lxBRO" set="$singlePANE;9:EntriesList/9:EntriesList/$NL"/>
+  <var id="lxBrowseRec" set="$lxBRO;20:RootSite/24:Table"/>
+  <var id="lxBroHeadWord" set="$lxBRO;$HEADER;25:HeadWord"/>
+
+  <!-- Dictionary View -->  <var id="dictRec" set="$singlePANE;9:Dict/20:Root/20:Div"/>
+
+  <!-- Categorized Entry -->  <var id="lxCePANE" set="$AreaROOT;9:XCore.PaneBarContainer/9:CollapsingSplitContainer/"/>
+  <var id="lxCeSEMDOM" set="$lxCePANE;9:CSC.SplitContainer.One/9:SemanticDomainList/9:RecordEditView.DataTree/"/>
+  <!-- Semantic Domain upper pane vernacular field  $lxCeSEMDOM;9:string/9:SplitContainer/9:Panel2/20:Vernacular -->
+  <var id="lxCeWord" set="$lxCePANE;9:CSC.SplitContainer.Two/9:wordList/9:wordList/9:NAMELESS/20:RootSite/24:Table"/>
+<!-- Enter a word and def: $lxCeWord;[2]/$Col;[1] and $lxCeWord;[2]/$Col;[2] -->
+
+  <!-- Classified Dictionary -->  <var id="lxClasShowUnused" set="$AreaROOT;9:XCore.PaneBarContainer/9:XCore.PaneBar/9:Classified Senses/9:Show Unused Items/$NL;44:NAMELESS"/>
+  <var id="lxClasSect" set="$singlePANE;9:ClassDict/20:Root/20:Div"/>
+
+  <!-- Bulk Edit Entries -->  <var id="BEE" set="$singlePANE;9:EntryBulkEdit/9:EntryBulkEdit/"/>
+  <var id="beeApply" set="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+  <var id="beeHEADER" set="$BEE;9:NAMELESS/$HEADER"/>
+  <var id="beeFilter" set="$BEE;9:NAMELESS[1]/9:FilterBar/9:FwComboBox"/>
+  <var id="beeRec" set="$BEE;9:NAMELESS[1]/20:RootSite/table:Table"/>
+  <var id="beeChecks" set="$BEE;9:NAMELESS[3]/43:NAMELESS"/>
+  <var id="beeConfigCol" set="$BEE;9:NAMELESS[4]/43:NAMELESS"/>
+
+  <!-- BEE Bulk Replace -->  <var id="ReplTarg" set="Change each occurrence of a pattern to the replacement text"/>
+  <var id="beeReplPANEL" set="$BEE;9:BulkEditBar/9:$ReplTarg;[2]/"/>
+  <var id="beeREPLACE" set="$beeReplPANEL;60:$ReplTarg;/9:Bulk Replace/"/>
+  <var id="beeReplTarget" set="$beeREPLACE;9:Target Field:[2]/41:Target Field:/43:Open"/>
+  <var id="beeReplSetup" set="$beeREPLACE;9:Setup.../43:Setup..."/>
+
+
+  <!-- Bulk Edit Senses -->  <var id="BES" set="$singlePANE;9:SenseBulkEdit/9:SenseBulkEdit/"/>
+  <var id="besApply" set="$BES;9:BulkEditBar/9:Apply/43:Apply"/>
+  <var id="besPreview" set="$BES;9:BulkEditBar/9:Preview/43:Preview"/>
+  <var id="besFilter" set="$BES;9:NAMELESS[1]/9:FilterBar/9:FwComboBox"/>
+  <var id="besRec" set="$BES;9:NAMELESS/20:RootSite/table:Table"/>
+  <var id="bsHeadword" set="$BES;$HeadWord"/>
+  <var id="besConfigCol" set="$BES;9:NAMELESS[4]/43:NAMELESS"/>
+
+  <!-- BES List Choice -->  <var id="besSelTarg" set="Select the target field and the list choice to change it to"/>
+  <var id="besPANEL" set="$BES;9:BulkEditBar/9:$besSelTarg;[2]/"/>
+  <var id="besListCHOICE" set="$besPANEL;60:$besSelTarg;/9:List Choice/"/>
+  <var id="besTarget" set="$besListCHOICE;9:Target Field:[2]/combobox:Target Field:"/>
+  <!-- the target field path changes depending on the value of the target -->
+
+  <!-- BES Click Copy -->  <var id="besClickTarg" set="Click on any word to copy it to the target field"/>
+  <var id="besCCifTarg" set="If target is not empty..."/>
+  <var id="besCCstrRo" set="String, reordered at word clicked"/>
+  <var id="besClickPANEL" set="$BES;9:BulkEditBar/9:$besClickTarg;[2]/"/>
+  <var id="besClickCOPY" set="$besClickPANEL;60:$besClickTarg;/9:Click Copy/"/>
+  <var id="besClickTarget" set="$besClickCOPY;9:Target Field:[2]/41:Target Field:"/>
+  <var id="besClickStr" set="String, reordered at word clicked"/>
+  <var id="bseClickCopyStr" set="$besClickCOPY;9:Copy/20:Copy/9:$besClickStr;/45:$besClickStr"/>
+  <var id="besCCtargNE" set="$BES;9:BulkEditBar/9:$besClickTarg;[2]/60:$besClickTarg;/9:Click Copy/9:$besCCifTarg;/20:$besCCifTarg;/"/>
+
+  <!-- BES Bulk Replace -->  <var id="besReplPANEL" set="$BES;9:BulkEditBar/9:$ReplTarg;[2]/"/>
+  <var id="besREPLACE" set="$besReplPANEL;60:$ReplTarg;/9:Bulk Replace/"/>
+  <var id="besReplTarget" set="$besREPLACE;9:Target Field:[2]/41:Target Field:/43:Open"/>
+  <var id="besReplSetup" set="$besREPLACE;9:Setup.../43:Setup..."/>
+
+  <!-- BES Delete-->  <var id="besDelTarg" set="Delete the contents of the specified column for all selected rows"/>
+  <var id="besDelTarget" set="$BES;9:BulkEditBar/9:$besDelTarg;[2]/60:$besDelTarg;/9:Delete/43:Open"/>
+
+  <!-- Reversal indexes -->  <var id="RI" set="$APP;9:ReversalIndexItemsAndDetailMultiPane/"/>
+  <var id="riRec" set="$RI;9:Reversal/20:Root/20:Div"/>
+  <var id="riFIELDS" set="$RI;9:RecordEditView/9:RecordEditView.DataTree/"/>
+  <var id="riForm" set="$riFIELDS;9:customwithparams/20:Form/$Text"/>
+  <var id="riSenses" set="$riFIELDS;9:custom/9:Senses/20:Root/$Text"/>
+
+  <!-- Find Lexical Entry Dialog
+		  invoke via $lxFindLex in IncStartUp.xml -->  <var id="fleColChange" set="9:MatchingEntries/9:XCoreUserControl/$nl;[3]/43:NAMELESS"/>
+  <var id="fleListItem" set="9:MatchingEntries/9:XCoreUserControl/$NL;20:RootSite/24:Table"/>
+  <!--  $fleListItem;[2]/$Col;[3]  -->
+  <var id="goto" set="9:Go To/43:Go To"/>
+
+  <!-- Bulk Replace Dialog-->  <var id="frdMore" set="9:NAMELESS/60:NAMELESS[*]/9:Replace/9:NAMELESS"/>
+  <var id="frdFormat" set="$frdMore;[2]/9:Format/43:Format"/>
+  <var id="frdRegExp" set="$frdMore;[2]/9:Use regular expressions/44:Use regular expressions"/>
+
+  <!-- Filter for items containing Dialog use SimpleMatchDlg for title-->
+  <var id="fltMatchRegExp" set="9:Match for regular expression/45:Match for regular expression"/>
+  <var id="fltAnyWhere" set="9:Anywhere/45:Anywhere"/>
+
+  <!-- New Entry dialog -->
+  <var id="mType" set="9:Morpheme Type:[2]/41:Morpheme Type:"/>
+  <var id="neGloss" set="9:Gloss:[2]/20:RootSite/$Text"/>
+  <var id="neCategory" set="$NL;9:Category Info./20:Category Info./20:RootSite/$Text"/>
+
+  <var id="create" set="9:Create/43:Create"/>
+
+
+</include>

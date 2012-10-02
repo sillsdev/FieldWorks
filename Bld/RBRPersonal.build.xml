@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<!-- Included projects for WordWorks -->
+<!-- This file is included in FieldWorks.build.xml -->
+<project name="RandyRPersonal" default="rbrSpecial" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- ********************************************************************************** -->
+	<!-- ,FwModelBrowser,FwObjectBrowser -->
+	<target name="rbrSpecial" description="Makes stuff Randy uses most."
+		depends="skipLelaDBs,buildtest,remakelt,RBRExtensions">
+		<call target="safecopyZPI"/>
+	</target>
+	<!-- -->
+	<target name="RBRExtensions" description="Build Randy Regnier's extension project."
+		depends="COMInterfaces,FDO,BasicUtils,xCoreInterfaces,xCore,xWorks,XMLUtils,Framework,FwControls,
+		RootSite,SimpleRootSite,FwUtils,XMLViews">
+		<call target="RBRExtensions-nodep"/>
+	</target>
+	<target name="RBRExtensions-nodep" description="Build Randy Regnier's  extension project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\Extensions\RBRExtensions"/>
+		<call target="vsconvert-convert"/>
+		<property name="dir.RBRAPDst" value="${fwroot}\DistFiles\Language Explorer\Configuration\Available Plugins\Concorder"/>
+		<call target="copyRBRExtensionsConfigFilesBase"/>
+	</target>
+	<!-- -->
+	<target name="rbrInstaller" description="Makes Randy's installer."
+		depends="copy-sampleDatabases,localize,Installers">
+		<call target="copyRBRInstallers" cascade="false"/>
+	</target>
+	<!-- -->
+	<target name="copyRBRInstallers" description="Copy Randy Regnier's installers.">
+		<echo message="Start copying installers..."/>
+		<echo message="******************************************************************"/>
+		<mkdir dir="C:\FWInstallers"/>
+		<copy todir="C:\FWInstallers">
+			<fileset basedir="${fwroot}\Installer\">
+				<include name="SetupFw.msi" />
+				<include name="TE_M.cab" />
+				<include name="Flex_M.cab" />
+				<include name="MD5SUM.md5" />
+				<include name="SetupEC.msi" />
+				<include name="MD5SUM_EC.md5" />
+			</fileset>
+		</copy>
+		<echo message="******************************************************************"/>
+		<echo message="Finished copying installers."/>
+	</target>
+	<!-- -->
+	<target name="copyRBRExtensionsConfigFilesBase" description="Copy Randy Regnier's  extension config files." >
+		<mkdir dir="${dir.RBRAPDst}"/>
+		<copy todir="${dir.RBRAPDst}">
+			<fileset basedir="${dir.outputBase}">
+				<include name="RBRExtensions.dll"/>
+			</fileset>
+		</copy>
+	</target>
+	<!-- -->
+	<target name="safecopyZPI" description="Safely copy ZPI.">
+		<property name="databaseName" value="ZPI"/>
+		<call target="safecopyDB"/>
+	</target>
+	<!-- -->
+	<target name="restore_ZPI" description="Restore ZPI, after test have been run.">
+		<property name="databaseName" value="ZPI"/>
+		<call target="restoreDB"/>
+	</target>
+	<!-- -->
+</project>

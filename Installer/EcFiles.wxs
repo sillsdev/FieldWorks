@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="EcFilesFragment">
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="WindowsFolder" SourceName="Windows">
+				<Directory Id="ProfilesFolder" SourceName="Profiles">
+					<Directory Id="StartMenuFolder" SourceName="StartM~1" LongSource="Start Menu">
+						<Directory Id="ProgramMenuFolder" SourceName="Programs">
+							<Directory Id="SIL_Converters" Name="SILCON~2" LongName="SIL Converters">
+								<Component Id="RemoveFile" Guid="038514E8-3137-41BD-B061-37BAB096A158" KeyPath="yes">
+									<RemoveFile Id="RemoveFile1" Directory="SIL_Converters" LongName="Launch SILConverters Installer.lnk" Name="LAUNCH~1.lnk" On="install" />
+									<RemoveFile Id="RemoveFile2" Directory="SIL_Converters" LongName="Uninstall SILConverters.lnk" Name="UNINST~1.lnk" On="install" />
+								</Component>
+							</Directory>
+						</Directory>
+					</Directory>
+				</Directory>
+				<Directory Id="SystemFolder" SourceName="System32" />
+			</Directory>
+			<Directory Id="ProgramFilesFolder" SourceName="Progra~1" LongSource="Program Files">
+				<Directory Id="CommonFilesFolder" SourceName="COMMON~1" LongSource="Common Files">
+					<Directory Id="SIL2" Name="SIL" />
+					<!-- Place holder for merge modules -->
+				</Directory>
+				<Directory Id="SIL" Name="SIL">
+					<Directory Id="INSTALLDIR" Name="SILCON~1" LongName="SILConverters" />
+					<!-- Place holder for merge modules -->
+				</Directory>
+			</Directory>
+		<Directory Id="CommonAppDataFolder" SourceName="AppData">
+		  <Directory Id="AllUserAppDataSIL" Name="SIL">
+			<Directory Id="AllUserAppDataSILConverters31" Name="SILCon~1" LongName="SILConverters31" />
+		  </Directory >
+		</Directory>
+	  </Directory>
+	</Fragment>
+</Wix>

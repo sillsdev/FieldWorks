@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xml" type="configured" datatype="ExportedDictionary" xslt="Configured.xsl;ConfiguredIndex.xsl">
+	<FxtDocumentDescription dataLabel="Configured Dictionary Simple XML" formatLabel="Index Cards XML" defaultExtension="xml" filter="xml files (*.xml)|*.xml|All files (*.*)|*.*">
+Export to a Simple XML form following the configuration of the dictionary view, and any current filters and sorts.  The resulting XML file can be viewed in Internet Explorer.  (This works only in the dictionary view.)
+	</FxtDocumentDescription>
+</template>

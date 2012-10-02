@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="serverca" default="serverca.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	pubca.build - Builds the WiX public custom actions.
+	2005.12.09 fregro Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- serverca build files -->
+  <include buildfile="${dir.src.ca.pubca}\pcaexec\pcaexec.build" />
+  <include buildfile="${dir.src.ca.pubca}\pcasched\pcasched.build" />
+  <include buildfile="${dir.src.ca.pubca}\pcawixlib\pcawixlib.build" />
+  <include buildfile="${dir.src.ca.pubca}\pcaext\pcaext.build" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="pubca.build" description="Peforms a full rebuild (clean then build)" depends="pcaexec.build, pcasched.build, pcawixlib.build, pcaext.build" />
+
+  <!-- Clean -->
+  <target name="pubca.clean" description="Cleans the build" depends="pcaexec.clean, pcasched.clean, pcawixlib.clean, pcaext.clean" />
+
+  <!-- Inc -->
+  <target name="pubca.inc" description="Performs an incremental build" depends="pcaexec, pcasched, pcawixlib, pcaext" />
+
+  <target name="pcaexec" depends="pcaexec.inc" />
+  <target name="pcasched" depends="pcasched.inc" />
+  <target name="pcawixlib" depends="pcawixlib.inc" />
+  <target name="pcaext" depends="pcaext.inc" />
+
+</project>

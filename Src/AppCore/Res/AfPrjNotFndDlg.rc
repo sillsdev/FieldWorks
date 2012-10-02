@@ -1,0 +1,107 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "AfPrjNotFndDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "AfAppRes.h"
+#include "..\AfDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridAfPrjNotFndDlg DIALOGEX 0, 0, 220, 170
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+	WS_SYSMENU
+CAPTION "Project Not Found"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	ICON            "",kridPrjNotFndIcon,5,5,21,20
+	LTEXT           "",kridPrjNotFndHeader,35,2,170,36
+	LTEXT           "",IDC_STATIC,5,45,210,1,SS_SUNKEN
+	LTEXT           "This can occur if you've misspelled the name of the project, or the project is on another computer that is not available at this time.",
+					IDC_STATIC,5,48,210,20
+	LTEXT           "",IDC_STATIC,5,70,210,1,SS_SUNKEN
+	LTEXT           "Please select one of the following options:",IDC_STATIC,
+					5,80,210,18
+	LTEXT           "Open a project",IDC_STATIC,15,100,134,9
+	PUSHBUTTON      "&Open",kctidPrjNotFndOpen,145,97,70,16,WS_GROUP
+	LTEXT           "Create a new project",IDC_STATIC,15,118,134,9
+	PUSHBUTTON      "&New",kctidPrjNotFndNew,145,115,70,16,WS_GROUP
+	LTEXT           "Restore a project",IDC_STATIC,15,136,134,9
+	PUSHBUTTON      "&Restore",kctidPrjNotFndRestore,145,133,70,16,WS_GROUP
+	LTEXT           "Leave the application",IDC_STATIC,15,154,134,9
+	PUSHBUTTON      "E&xit",kctidPrjNotFndExit,145,151,70,16,WS_GROUP
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"AfPrjNotFndDlgRes.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""AfAppRes.h""\r\n"
+	"#include ""..\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	kstidPrjNotFndHeaderFmt "The %<0>s project could not be found."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

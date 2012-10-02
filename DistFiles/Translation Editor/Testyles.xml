@@ -1,0 +1,918 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Styles SYSTEM "../Styles.dtd">
+<!-- IMPORTANT NOTE TO MAINTAINERS
+	*********************************************************************************************
+	ANY change to this Stylesheet must be accompanied by the generation of a new version using
+	guidgen. Be sure to validate any changes against ../Styles.dtd.
+	*********************************************************************************************
+-->
+<Styles date="2007-10-24" DTDver="AFE66B5C-2C4A-4872-B78B-45065E6EC750" label="Scripture">
+	<markup version="6F5D9FD7-4A41-4e3a-B587-E48A8E9DEBDA">
+		<tag id="Abbreviation" userlevel="3" context="general" type="character">
+			<usage iculocale="en">Abbreviation identifies an abbreviation (usually in a note or introduction).</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font smallCaps="true"/>
+		</tag>
+		<tag id="Alluded_Text" userlevel="1" context="general" type="character">
+			<usage iculocale="en">Alluded Text identifies text that is an allusion to a passage, usually from the Old Testament.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Alternate_Reading" userlevel="2" context="note" type="character">
+			<sfm paraStyleContext="Note_General_Paragraph">\fq</sfm>
+			<sfm paraStyleContext="Note_Cross-Reference_Paragraph">\xq</sfm>
+			<usage iculocale="en">Alternate Reading identifies an alternate translation for a passage in a note.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Attribution" userlevel="2" structure="body" context="text" type="paragraph">
+			<usage iculocale="en">Attribution identifies the speaker (usually the Lord) when it is in the original text.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Line1" next="Line1" alignment="right" indentLeft="0 pt" hanging="0 pt"/>
+		</tag>
+		<tag id="Book_ID" userlevel="0" context="book" type="paragraph">
+			<sfm>\id</sfm>
+			<font/>
+			<paragraph basedOn="Normal" next="Book_ID"/>
+		</tag>
+		<tag id="Book_Title_In_Text" userlevel="3" context="general" type="character" use="title">
+			<sfm>\bk</sfm>
+			<usage iculocale="en">Book Title In Text identifies a book title in the text or in the introduction.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Canonical_Reference" userlevel="3" context="internalMappable" type="character">
+			<usage iculocale="en">Canonical Reference identifies a book-chapter-verse reference.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font spellcheck="false"/>
+		</tag>
+		<tag id="Caption" userlevel="1" context="internal" type="paragraph" use="proseSentenceInitial">
+			<sfm>\figcap</sfm>
+			<usage iculocale="en">Caption identifies the caption of a picture (for example, an illustration or map).</usage>
+			<help category="Peripheral_Materials"/>
+			<font italic="true" size="9 pt"/>
+			<paragraph basedOn="Normal" next="Caption" alignment="center"/>
+		</tag>
+		<tag id="Chapter_Head" userlevel="0" structure="heading" context="text" type="paragraph" use="title">
+			<sfm>\cl</sfm>
+			<usage iculocale="en">Chapter Head identifies a heading that contains the chapter number and the word for Chapter or Psalm.</usage>
+			<help category="Chapters_and_Verses"/>
+			<font italic="false"/>
+			<paragraph basedOn="Section_Head" next="Paragraph" alignment="center"/>
+		</tag>
+		<tag id="Chapter_Number" userlevel="0" structure="body" use="chapter" context="text" type="character">
+			<sfm>\c</sfm>
+			<usage iculocale="en">Chapter Number identifies the start of a chapter.</usage>
+			<help category="Chapters_and_Verses"/>
+			<font dropCap="2 lines" spellcheck="false"/>
+		</tag>
+		<tag id="Chapter_Number_Alternate" userlevel="4" context="text" type="character">
+			<sfm>\ca</sfm>
+			<usage iculocale="en">Chapter Number Alternate identifies the start of a chapter using an alternate numbering system (for example, Hebrew).</usage>
+			<help category="Chapters_and_Verses"/>
+			<font dropCap="2 lines" spellcheck="false"/>
+		</tag>
+		<tag id="Citation_Line1" userlevel="0" structure="body" use="lineSentenceInitial" context="text" type="paragraph">
+			<usage iculocale="en">Citation Line1 identifies a first-level line that is quoted, usually from the Old Testament.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Line1" next="Citation_Line2" indentLeft="12 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="Citation_Line2" userlevel="0" structure="body" use="line" context="text" type="paragraph">
+			<usage iculocale="en">Citation Line2 identifies a second-level line that is quoted, usually from the Old Testament.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Citation_Line1" next="Citation_Line1" indentLeft="24 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="Citation_Paragraph" userlevel="1" structure="body" context="text" type="paragraph" use="proseSentenceInitial">
+			<usage iculocale="en">Citation Paragraph identifies a paragraph of prose that is quoted, usually from the Old Testament.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Citation_Paragraph" indentLeft="12 pt" indentRight="12 pt" firstLine="0 pt" spaceBefore="12 pt" spaceAfter="12 pt"/>
+		</tag>
+		<tag id="Closing" userlevel="1" structure="body" context="text" type="paragraph">
+			<sfm>\cls</sfm>
+			<usage iculocale="en">Closing identifies a paragraph that names the author of a communication.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Paragraph" alignment="right" firstLine="0 pt" spaceBefore="12 pt"/>
+		</tag>
+		<tag id="Congregational_Response" userlevel="2" structure="body" use="lineSentenceInitial" context="text" type="paragraph">
+			<sfm>\lit</sfm>
+			<usage iculocale="en">Congregational Response identifies the part that the congregation speaks in a liturgical work.</usage>
+			<help category="Poetry_Elements"/>
+			<font bold="true"/>
+			<paragraph basedOn="Paragraph" next="Paragraph" spaceBefore="12 pt" spaceAfter="12 pt"/>
+		</tag>
+		<tag id="Cross-Reference" userlevel="3" structure="body" context="text" type="paragraph">
+			<sfm>\pr</sfm>
+			<usage iculocale="en">Cross-Reference identifies canonical (book-chapter-verse) cross-references for a passage.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font italic="true" size="9 pt"/>
+			<paragraph basedOn="Paragraph" next="Paragraph" alignment="right" firstLine="0 pt"/>
+		</tag>
+		<tag id="DefaultFootnoteCharacters" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm paraStyleContext="Note_General_Paragraph">\ft</sfm>
+			<sfm paraStyleContext="Note_Cross-Reference_Paragraph">\xt</sfm>
+			<font/>
+		</tag>
+		<tag id="Doxology" userlevel="3" structure="body" use="lineSentenceInitial" context="text" type="paragraph">
+			<sfm>\qc</sfm>
+			<usage iculocale="en">Doxology identifies a line that glorifies God.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Line1" next="Line1" alignment="center" indentLeft="0 pt" hanging="0 pt" spaceBefore="12 pt" spaceAfter="12 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Closing" userlevel="1" structure="body" context="text" type="paragraph">
+			<sfm>\pmc</sfm>
+			<usage iculocale="en">Embedded Text Closing identifies a paragraph that names the author of a communication that is embedded in the main text.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Embedded_Text_Paragraph" next="Paragraph" firstLine="0 pt" spaceBefore="12 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Line1" userlevel="2" structure="body" use="lineSentenceInitial" context="text" type="paragraph">
+			<sfm>\qm</sfm>
+			<usage iculocale="en">Embedded Text Line1 identifies a first-level line that is embedded in the main text.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Embedded_Text_Paragraph" next="Embedded_Text_Line2" alignment="left" hanging="36 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Line2" userlevel="2" structure="body" use="line" context="text" type="paragraph">
+			<sfm>\qm2</sfm>
+			<usage iculocale="en">Embedded Text Line2 identifies a second-level line that is embedded in the main text.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Embedded_Text_Line1" next="Embedded_Text_Line1" indentLeft="24 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Line3" userlevel="2" structure="body" use="line" context="text" type="paragraph">
+			<sfm>\qm3</sfm>
+			<usage iculocale="en">Embedded Text Line3 identifies a third-level line that is embedded in the main text.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Embedded_Text_Line1" next="Embedded_Text_Line1" indentLeft="36 pt" hanging="12 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Opening" userlevel="1" structure="body" context="text" type="paragraph" use="special">
+			<sfm>\pmo</sfm>
+			<usage iculocale="en">Embedded Text Opening identifies the formal beginning of a letter that is embedded in the main text.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Embedded_Text_Paragraph" next="Embedded_Text_Paragraph" firstLine="0 pt" spaceAfter="12 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Paragraph" userlevel="1" structure="body" use="proseSentenceInitial" context="text" type="paragraph">
+			<sfm>\pm</sfm>
+			<usage iculocale="en">Embedded Text Paragraph identifies a paragraph of prose that is embedded in the main text.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Paragraph" indentLeft="12 pt" indentRight="12 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Paragraph_Continuation" userlevel="2" structure="body" use="prose" context="text" type="paragraph">
+			<sfm>\mi</sfm>
+			<usage iculocale="en">Embedded Text Paragraph Continuation identifies the continuation of a paragraph of prose that is embedded in the main text.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Embedded_Text_Paragraph" next="Embedded_Text_Paragraph" firstLine="0 pt"/>
+		</tag>
+		<tag id="Embedded_Text_Refrain" userlevel="3" structure="body" context="text" type="paragraph" use="proseSentenceInitial">
+			<sfm>\pmr</sfm>
+			<usage iculocale="en">Embedded Text Refrain identifies repeated text that is embedded in the main text.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Embedded_Text_Paragraph" next="Embedded_Text_Paragraph" alignment="right" firstLine="0 pt"/>
+		</tag>
+		<tag id="Emphasis" userlevel="3" context="general" type="character">
+			<sfm>\em</sfm>
+			<usage iculocale="en">Emphasis identifies words or phrases that are stressed or emphasized for linguistic or rhetorical effect.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Figure_Description" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm>\figdesc</sfm>
+			<font/>
+		</tag>
+		<tag id="Figure_Filename" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm>\figcat</sfm>
+			<font/>
+		</tag>
+		<tag id="Figure_Layout_Position" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm>\figlaypos</sfm>
+			<font/>
+		</tag>
+		<tag id="Figure_Location" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm>\figrefrng</sfm>
+			<font/>
+		</tag>
+		<tag id="Figure_Copyright" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm>\figcopy</sfm>
+			<font/>
+		</tag>
+		<tag id="Figure_Scale" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm>\figscale</sfm>
+			<font/>
+		</tag>
+		<tag id="Figure_USFM_Parameters" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm>\fig</sfm>
+			<font/>
+		</tag>
+		<tag id="Foreign" userlevel="3" context="general" type="character">
+			<sfm>\tl</sfm>
+			<usage iculocale="en">Foreign identifies text in a different language that has no other identifying feature.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Gloss" userlevel="3" context="general" type="character">
+			<usage iculocale="en">Gloss identifies a simple definition of a word or phrase in the text.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font/>
+		</tag>
+		<tag id="Glossary_Definition" userlevel="3" context="back" type="paragraph">
+			<usage iculocale="en">Glossary Definition identifies a definition in the Glossary.</usage>
+			<help category="Peripheral_Materials"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Glossary_Definition" indentLeft="12 pt" hanging="12 pt"/>
+		</tag>
+		<tag id="Glossary_Entry_Main" userlevel="3" context="back" type="paragraph">
+			<usage iculocale="en">Glossary Entry Main identifies a main entry in the Glossary.</usage>
+			<help category="Peripheral_Materials"/>
+			<font bold="true"/>
+			<paragraph basedOn="Paragraph" next="Glossary_Definition" hanging="12 pt"/>
+		</tag>
+		<tag id="Glossary_Entry_Secondary" userlevel="3" context="back" type="paragraph">
+			<usage iculocale="en">Glossary Entry Secondary identifies a subentry in the Glossary.</usage>
+			<help category="Peripheral_Materials"/>
+			<font bold="false" italic="true"/>
+			<paragraph basedOn="Glossary_Entry_Main" next="Glossary_Definition" indentLeft="12 pt"/>
+		</tag>
+		<tag id="Hand" userlevel="3" context="general" type="character" use="proseSentenceInitial">
+			<sfm>\sig</sfm>
+			<usage iculocale="en">Hand identifies text that is written by a person different from the scribe writing the letter.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Header" userlevel="3" context="internal" type="paragraph" use="title">
+			<usage iculocale="en">Header identifies the generated text at the top of each page, but you never apply it to a paragraph in the translated Scripture.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font size="9 pt"/>
+			<paragraph basedOn="Normal" next="Header"/>
+		</tag>
+		<tag id="Hebrew_Title" userlevel="1" structure="heading" context="text" type="paragraph" use="title">
+			<sfm>\d</sfm>
+			<usage iculocale="en">Hebrew Title identifies a title that is in the original Hebrew text.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font size="8 pt"/>
+			<paragraph basedOn="Line1" next="Line1" alignment="center" indentLeft="0 pt" hanging="0 pt"
+					   keepWithNext="true" keepTogether="true"/>
+		</tag>
+		<tag id="Hyperlink" userlevel="3" context="internal" type="character">
+			<usage iculocale="en">Hyperlink identifies links to other material via URLs</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font color="blue" underline="single" underlineColor="blue"/>
+		</tag>
+		<tag id="Inscription" userlevel="3" context="general" type="character" use="special">
+			<sfm>\sc</sfm>
+			<usage iculocale="en">Inscription identifies the text of an inscription.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font smallCaps="true"/>
+		</tag>
+		<tag id="Inscription_Paragraph" userlevel="3" structure="body" use="proseSentenceInitial" context="text" type="paragraph">
+			<sfm>\pc</sfm>
+			<usage iculocale="en">Inscription Paragraph identifies a paragraph of an inscription.</usage>
+			<help category="Paragraph_Elements"/>
+			<font smallCaps="true"/>
+			<paragraph basedOn="Paragraph" next="Paragraph" alignment="center" firstLine="0 pt"/>
+		</tag>
+		<tag id="Interlude" userlevel="2" structure="body" context="text" type="paragraph" use="special">
+			<sfm>\qs</sfm>
+			<usage iculocale="en">Interlude identifies a line that suggests a pause to reflect.</usage>
+			<help category="Poetry_Elements"/>
+			<font italic="true"/>
+			<paragraph basedOn="Line1" next="Line1" alignment="right" indentLeft="0 pt" hanging="0 pt"/>
+		</tag>
+		<tag id="Intro_Citation_Line1" userlevel="1" structure="body" use="lineSentenceInitial" context="intro" type="paragraph">
+			<sfm>\iq1</sfm>
+			<usage iculocale="en">Intro Citation Line1 identifies a first-level line that is quoted in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Intro_Paragraph" next="Intro_Citation_Line2" alignment="left" indentLeft="12 pt" indentRight="12 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="Intro_Citation_Line2" userlevel="1" structure="body" use="line" context="intro" type="paragraph">
+			<sfm>\iq2</sfm>
+			<usage iculocale="en">Intro Citation Line2 identifies a second-level line that is quoted in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Intro_Citation_Line1" next="Intro_Citation_Line1" indentLeft="24 pt" hanging="12 pt"/>
+		</tag>
+		<tag id="Intro_Citation_Paragraph" userlevel="1" structure="body" context="intro" type="paragraph">
+			<sfm>\imq</sfm>
+			<usage iculocale="en">Intro Citation Paragraph identifies a paragraph of prose that is quoted in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Intro_Paragraph" next="Intro_Citation_Paragraph" indentLeft="12 pt" indentRight="12 pt" firstLine="0 pt"/>
+		</tag>
+		<tag id="Intro_Cross-Reference" userlevel="3" structure="body" context="intro" type="paragraph">
+			<sfm>\ipr</sfm>
+			<usage iculocale="en">Intro Cross-Reference identifies the canonical (book-chapter-verse) reference for a quoted passage in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Intro_Paragraph" next="Intro_Paragraph" alignment="right" indentRight="12 pt" firstLine="0 pt"/>
+		</tag>
+		<tag id="Intro_List_Item1" userlevel="3" structure="body" use="list" context="intro" type="paragraph">
+			<sfm>\io1</sfm>
+			<usage iculocale="en">Intro List Item1 identifies a first-level item in a list in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Intro_Paragraph" next="Intro_List_Item1" hanging="36 pt"/>
+		</tag>
+		<tag id="Intro_List_Item2" userlevel="4" structure="body" use="list" context="intro" type="paragraph">
+			<sfm>\io2</sfm>
+			<usage iculocale="en">Intro List Item2 identifies a second-level item in a list in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Intro_List_Item1" next="Intro_List_Item1" indentLeft="12 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="Intro_List_Item3" userlevel="4" structure="body" use="list" context="intro" type="paragraph">
+			<sfm>\io3</sfm>
+			<usage iculocale="en">Intro List Item3 identifies a third-level item in a list in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Intro_List_Item1" next="Intro_List_Item1" indentLeft="24 pt" hanging="12 pt"/>
+		</tag>
+		<tag id="Intro_Paragraph" userlevel="2" structure="body" use="proseSentenceInitial" context="intro" type="paragraph">
+			<sfm>\ip</sfm>
+			<usage iculocale="en">Intro Paragraph identifies a paragraph of prose in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font size="9 pt"/>
+			<paragraph basedOn="Paragraph" next="Intro_Paragraph" lineSpacing="11 pt" lineSpacingType="exact"/>
+		</tag>
+		<tag id="Intro_Section_Head" userlevel="1" structure="heading" context="intro" type="paragraph" use="title">
+			<sfm>\is</sfm>
+			<usage iculocale="en">Intro Section Head identifies the start of a normal section in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font size="8 pt"/>
+			<paragraph basedOn="Section_Head" next="Intro_Paragraph" alignment="left" lineSpacing="11 pt" lineSpacingType="exact"/>
+		</tag>
+		<tag id="Intro_Title_Main" userlevel="1" context="introtitle" type="paragraph" use="title">
+			<sfm>\imt</sfm>
+			<usage iculocale="en">Intro Title Main identifies a main title in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font/>
+			<paragraph basedOn="Title_Main" next="Paragraph"/>
+		</tag>
+		<tag id="Intro_Title_Secondary" userlevel="3" context="introtitle" type="character" use="title">
+			<sfm>\imt2</sfm>
+			<usage iculocale="en">Intro Title Secondary identifies a part of the title that is of second-level importance in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font size="14 pt"/>
+		</tag>
+		<tag id="Intro_Title_Tertiary" userlevel="3" context="introtitle" type="character" use="title">
+			<sfm>\imt3</sfm>
+			<usage iculocale="en">Intro Title Tertiary identifies a part of the title that is of third-level importance in the introduction.</usage>
+			<help category="Introduction_Elements"/>
+			<font size="12 pt"/>
+		</tag>
+		<tag id="Key_Word" userlevel="3" context="general" type="character">
+			<sfm>\k</sfm>
+			<usage iculocale="en">Key Word identifies a word or phrase that is important for translation consistency.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font/>
+		</tag>
+		<tag id="Label" userlevel="3" context="general" type="character">
+			<usage iculocale="en">Label identifies text that is a type of heading.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Line1" userlevel="0" structure="body" use="lineSentenceInitial" context="text" type="paragraph">
+			<sfm>\q1</sfm>
+			<usage iculocale="en">Line1 identifies a first-level line.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Line2" alignment="left" indentLeft="0 pt" hanging="36 pt"/>
+		</tag>
+		<tag id="Line2" userlevel="0" structure="body" use="line" context="text" type="paragraph">
+			<sfm>\q2</sfm>
+			<usage iculocale="en">Line2 identifies a second-level line.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Line1" next="Line1" indentLeft="12 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="Line3" userlevel="2" structure="body" use="line" context="text" type="paragraph">
+			<sfm>\q3</sfm>
+			<usage iculocale="en">Line3 identifies a third-level line.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Line1" next="Line1" indentLeft="24 pt" hanging="12 pt"/>
+		</tag>
+		<tag id="List_Item1" userlevel="3" structure="body" use="list" context="text" type="paragraph">
+			<sfm>\li1</sfm>
+			<usage iculocale="en">List Item1 identifies a first-level item in a list.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="List_Item1" indentLeft="12 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="List_Item1_Additional" userlevel="5" structure="body" use="list" context="text" type="paragraph">
+			<sfm>\pi1</sfm>
+			<usage iculocale="en">List Item1 Additional identifies an additional paragraph of prose in a first-level item in a list.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="List_Item1" next="List_Item1_Additional" indentLeft="36 pt" firstLine="12 pt"/>
+		</tag>
+		<tag id="List_Item2" userlevel="4" structure="body" use="list" context="text" type="paragraph">
+			<sfm>\li2</sfm>
+			<usage iculocale="en">List Item2 identifies a second-level item in a list.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="List_Item1" next="List_Item2" indentLeft="24 pt"/>
+		</tag>
+		<tag id="List_Item2_Additional" userlevel="5" structure="body" use="list" context="text" type="paragraph">
+			<sfm>\pi2</sfm>
+			<usage iculocale="en">List Item2 Additional identifies an additional paragraph of prose in a second-level item in a list.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="List_Item2" next="List_Item2_Additional" indentLeft="48 pt" firstLine="12 pt"/>
+		</tag>
+		<tag id="List_Item3" userlevel="4" structure="body" use="list" context="text" type="paragraph">
+			<sfm>\li3</sfm>
+			<usage iculocale="en">List Item3 identifies a third-level item in a list.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="List_Item1" next="List_Item1" indentLeft="36 pt"/>
+		</tag>
+		<tag id="Mentioned" userlevel="3" context="general" type="character" use="proseSentenceInitial">
+			<usage iculocale="en">Mentioned identifies words, phrases, or letters that are mentioned, not used.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font/>
+		</tag>
+		<tag id="Name_Of_God" userlevel="3" context="general" type="character" use="properNoun">
+			<sfm>\nd</sfm>
+			<usage iculocale="en">Name Of God identifies the name of God when the original Hebrew text is YHWH.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font smallCaps="true"/>
+		</tag>
+		<tag id="Normal" userlevel="0" context="internal" type="paragraph" use="proseSentenceInitial">
+			<usage iculocale="en">Normal is a parent style that other paragraph styles are based on, but you never apply it to a paragraph in the translated Scripture.</usage>
+			<help category="Paragraph_Elements"/>
+			<font type="publication" size="10 pt"/>
+			<paragraph next="Paragraph" lineSpacing="12 pt" lineSpacingType="exact" widowOrphan="true"/>
+		</tag>
+		<tag id="Notation_Tag" userlevel="0" context="internal" type="character">
+			<usage iculocale="en">Annotation Tag is an internal style used for labeling texts in the annotation view.</usage>
+			<help topic="Help_topic_does_not_exist.htm"/>
+			<font bold="true" size="9 pt"/>
+		</tag>
+		<tag id="Note_Cross-Reference_Paragraph" userlevel="1" context="note" type="paragraph">
+			<sfm>\x</sfm>
+			<usage iculocale="en">Note Cross-Reference Paragraph identifies a note that contains canonical (book-chapter-verse) cross-references.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font/>
+			<paragraph basedOn="Note_General_Paragraph" next="Note_Cross-Reference_Paragraph"/>
+		</tag>
+		<tag id="Note_General_Paragraph" userlevel="1" context="note" type="paragraph" use="prose">
+			<sfm>\f</sfm>
+			<usage iculocale="en">Note General Paragraph identifies a note.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font size="8 pt"/>
+			<paragraph basedOn="Paragraph" next="Note_General_Paragraph" lineSpacing="10 pt" lineSpacingType="atleast"/>
+		</tag>
+		<tag id="Note_Marker" userlevel="1" context="internal" type="character">
+			<sfm>\fm</sfm>
+			<usage iculocale="en">Note Marker identifies the location of a note (for example, a footnote).</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font bold="true" superscript="true" spellcheck="false"/>
+		</tag>
+		<tag id="Note_Target_Reference" userlevel="1" context="internalMappable" use="footnote" type="character">
+			<sfm paraStyleContext="Note_General_Paragraph">\fr</sfm>
+			<sfm paraStyleContext="Note_Cross-Reference_Paragraph">\xo</sfm>
+			<usage iculocale="en">Note Target Reference identifies the verse (or range of verses) that is referenced in a note.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Ordinal_Number_Ending" userlevel="3" context="general" type="character">
+			<sfm>\ord</sfm>
+			<usage iculocale="en">Ordinal Number Ending identifies an abbreviation for the ending of an ordinal number.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font superscript="true"/>
+		</tag>
+		<tag id="Paragraph" userlevel="0" structure="body" use="proseSentenceInitial" context="text" type="paragraph">
+			<sfm>\p</sfm>
+			<usage iculocale="en">Paragraph identifies a paragraph of prose.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Normal" next="Paragraph" firstLine="12 pt"/>
+		</tag>
+		<tag id="Paragraph_Continuation" userlevel="0" structure="body" use="prose" context="text" type="paragraph">
+			<sfm>\m</sfm>
+			<usage iculocale="en">Paragraph Continuation identifies the continuation of a paragraph of prose.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Paragraph" firstLine="0 pt"/>
+		</tag>
+		<tag id="Parallel_Passage_Reference" userlevel="1" structure="heading" context="text" type="paragraph">
+			<sfm>\r</sfm>
+			<usage iculocale="en">Parallel Passage Reference identifies canonical (book-chapter-verse) references to parallel passages.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="false" italic="true"/>
+			<paragraph basedOn="Section_Head" next="Paragraph" spaceBefore="-4 pt" spaceAfter="4 pt"/>
+		</tag>
+		<tag id="Quoted_Text" userlevel="1" context="general" type="character" use="proseSentenceInitial">
+			<sfm>\qt</sfm>
+			<usage iculocale="en">Quoted Text identifies less than a complete line or paragraph that is quoted, usually from the Old Testament.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font bold="true" italic="true"/>
+		</tag>
+		<tag id="Referenced_Text" userlevel="2" context="note" type="character">
+			<sfm paraStyleContext="Note_General_Paragraph">\fk</sfm>
+			<sfm paraStyleContext="Note_Cross-Reference_Paragraph">\xk</sfm>
+			<usage iculocale="en">Referenced Text identifies the text that is referenced in a note (that is, words from the text that the note is about).</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Refrain" userlevel="2" structure="body" use="lineSentenceInitial" context="text" type="paragraph">
+			<sfm>\qr</sfm>
+			<usage iculocale="en">Refrain identifies a line that is repeated.</usage>
+			<help category="Poetry_Elements"/>
+			<font italic="true"/>
+			<paragraph basedOn="Line1" next="Line1" alignment="right" indentLeft="0 pt" hanging="0 pt"/>
+		</tag>
+		<tag id="Remark" userlevel="1" context="annotation" type="paragraph">
+			<sfm>\rem</sfm>
+			<usage iculocale="en">Remark identifies a private note by the translator.</usage>
+			<help topic="Help_topic_does_not_exist.htm"/>
+			<font/>
+			<paragraph basedOn="Normal" next="Remark" firstLine="12 pt"/>
+		</tag>
+		<tag id="Section_Head" userlevel="0" structure="heading" context="text" type="paragraph">
+			<sfm>\s</sfm>
+			<usage iculocale="en">Section Head identifies the start of a normal section.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="true" italic="false" size="9 pt"/>
+			<paragraph basedOn="Normal" next="Paragraph" alignment="center" spaceBefore="8 pt" spaceAfter="4 pt"
+					   keepWithNext="true" keepTogether="true"/>
+		</tag>
+		<tag id="Section_Head_Major" userlevel="1" structure="heading" context="text" type="paragraph">
+			<sfm>\ms</sfm>
+			<usage iculocale="en">Section Head Major identifies the start of a major section.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font/>
+			<paragraph basedOn="Section_Head" next="Section_Head" alignment="center"/>
+		</tag>
+		<tag id="Section_Head_Minor" userlevel="1" structure="heading" context="text" type="paragraph">
+			<sfm>\s2</sfm>
+			<usage iculocale="en">Section Head Minor identifies the start of a subsection.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="false" italic="true"/>
+			<paragraph basedOn="Section_Head" next="Paragraph"/>
+		</tag>
+		<tag id="Section_Head_Series" userlevel="2" structure="heading" context="text" type="paragraph">
+			<sfm>\qa</sfm>
+			<usage iculocale="en">Section Head Series identifies the start of a section in a list of sections.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font/>
+			<paragraph basedOn="Section_Head" next="Section_Head_Series" alignment="center"/>
+		</tag>
+		<tag id="Section_Range_Paragraph" userlevel="2" structure="heading" context="text" type="paragraph">
+			<sfm>\mr</sfm>
+			<usage iculocale="en">Section Range Paragraph identifies the chapter-verse range of a major section on a separate line.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font/>
+			<paragraph basedOn="Section_Head" next="Section_Range_Paragraph" alignment="center" spaceBefore="-4 pt" spaceAfter="4 pt"/>
+		</tag>
+		<tag id="See_In_Glossary" userlevel="3" context="general" type="character">
+			<sfm>\w</sfm>
+			<usage iculocale="en">See In Glossary identifies words that are defined in the Glossary.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font/>
+		</tag>
+		<tag id="So_Called" userlevel="3" context="general" type="character">
+			<usage iculocale="en">So Called identifies text where the author or narrator of the original text distances himself from the words in question without attributing them to any other voice in particular.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font/>
+		</tag>
+		<tag id="Speech_Line1" userlevel="2" structure="body" use="lineSentenceInitial" context="text" type="paragraph">
+			<usage iculocale="en">Speech Line1 identifies a first-level line that is spoken by a particular speaker, usually in drama (for example, in Job and Song of Solomon).</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Line1" next="Speech_Line2"/>
+		</tag>
+		<tag id="Speech_Line2" userlevel="2" structure="body" use="line" context="text" type="paragraph">
+			<usage iculocale="en">Speech Line2 identifies a second-level line that is spoken by a particular speaker, usually in drama (for example, in Job and Song of Solomon).</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Speech_Line1" next="Speech_Line1" indentLeft="12 pt" hanging="24 pt"/>
+		</tag>
+		<tag id="Speech_Speaker" userlevel="1" structure="heading" context="text" type="paragraph">
+			<sfm>\sp</sfm>
+			<usage iculocale="en">Speech Speaker identifies the speaker (usually in drama) in a heading when it is not in the original text.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="false" italic="true" size="10 pt"/>
+			<paragraph basedOn="Section_Head" next="Speech_Line1" alignment="left"/>
+		</tag>
+		<tag id="Stanza_Break" userlevel="1" structure="body" use="stanzabreak" context="text" type="paragraph">
+			<sfm>\b</sfm>
+			<usage iculocale="en">Stanza Break identifies the break (blank line) between stanzas of poetry.</usage>
+			<help category="Poetry_Elements"/>
+			<font/>
+			<paragraph basedOn="Line1" next="Line1" hanging="0 pt"/>
+		</tag>
+		<tag id="Supplied" userlevel="3" context="general" type="character">
+			<sfm>\add</sfm>
+			<usage iculocale="en">Supplied identifies words that are not literally in the original text, but that are supplied to make the original meaning clear.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Table_Cell" userlevel="2" structure="body" use="table" context="text" type="paragraph">
+			<sfm>\tc</sfm>
+			<usage iculocale="en">Table Cell identifies a cell in a table.</usage>
+			<help category="Table_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Table_Cell" alignment="left" firstLine="0 pt"/>
+		</tag>
+		<tag id="Table_Cell_Head" userlevel="2" structure="body" use="table" context="text" type="paragraph">
+			<sfm>\th</sfm>
+			<usage iculocale="en">Table Cell Head identifies a cell that contains a heading in a table.</usage>
+			<help category="Table_Elements"/>
+			<font bold="true"/>
+			<paragraph basedOn="Table_Cell" next="Table_Cell_Head"/>
+		</tag>
+		<tag id="Table_Cell_Head_Last" userlevel="2" structure="body" use="table" context="text" type="paragraph">
+			<sfm>\thr</sfm>
+			<usage iculocale="en">Table Cell Head Last identifies the last cell in a row that contains a heading in a table.</usage>
+			<help category="Table_Elements"/>
+			<font/>
+			<paragraph basedOn="Table_Cell_Head" next="Table_Row" alignment="right"/>
+		</tag>
+		<tag id="Table_Cell_Last" userlevel="2" structure="body" use="table" context="text" type="paragraph">
+			<sfm>\tcr</sfm>
+			<usage iculocale="en">Table Cell Last identifies the last cell in a row in a table.</usage>
+			<help category="Table_Elements"/>
+			<font/>
+			<paragraph basedOn="Table_Cell" next="Table_Row" alignment="right"/>
+		</tag>
+		<tag id="Table_Row" userlevel="2" structure="body" use="table" context="text" type="paragraph">
+			<sfm>\tr</sfm>
+			<usage iculocale="en">Table Row identifies the start of a row in a table.</usage>
+			<help category="Table_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Table_Cell" alignment="left" firstLine="0 pt"/>
+		</tag>
+		<tag id="Title_Main" userlevel="0" context="title" type="paragraph">
+			<sfm>\mt</sfm>
+			<usage iculocale="en">Title Main identifies the main title of a book.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="true" italic="false" size="20 pt"/>
+			<paragraph basedOn="Section_Head" next="Title_Main" alignment="center" spaceBefore="36 pt" spaceAfter="12 pt" lineSpacing="24 pt" lineSpacingType="exact"/>
+		</tag>
+		<tag id="Title_Secondary" userlevel="3" context="title" type="character">
+			<sfm>\mt2</sfm>
+			<usage iculocale="en">Title Secondary identifies a part of the title that is of second-level importance.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font size="14 pt"/>
+		</tag>
+		<tag id="Title_Tertiary" userlevel="3" context="title" type="character">
+			<sfm>\mt3</sfm>
+			<usage iculocale="en">Title Tertiary identifies a part of the title that is of third-level importance.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font size="12 pt"/>
+		</tag>
+		<tag id="Untranslated_Word" userlevel="3" context="backTranslation" type="character">
+			<sfm>\uw</sfm>
+			<usage iculocale="en">Untranslated Word identifies vernacular words in a back translation that are not translated into the analysis language.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Variant" userlevel="3" context="general" type="character" use="proseSentenceInitial">
+			<usage iculocale="en">Variant identifies a textual reading in a note that can be regarded as part of the text, but textual scholarship cannot be taken as certain.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Variant_Paragraph" userlevel="3" structure="body" use="proseSentenceInitial" context="text" type="paragraph">
+			<usage iculocale="en">Variant Paragraph identifies a textual reading that can be regarded as part of the text, but textual scholarship cannot be taken as certain.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Paragraph" next="Variant_Paragraph"/>
+		</tag>
+		<tag id="Variant_Section_Head" userlevel="2" structure="heading" context="text" type="paragraph">
+			<usage iculocale="en">Variant Section Head identifies the start of a long variant passage.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="false" size="10 pt"/>
+			<paragraph basedOn="Section_Head" next="Paragraph" alignment="center" spaceBefore="12 pt" spaceAfter="12 pt" border="top"/>
+		</tag>
+		<tag id="Variant_Section_Tail" userlevel="2" structure="body" context="text" type="paragraph">
+			<sfm>\hr</sfm>
+			<usage iculocale="en">Variant Section Tail identifies the end of a long variant passage.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font/>
+			<paragraph basedOn="Variant_Section_Head" next="Section_Head" alignment="center" spaceBefore="0 pt" spaceAfter="12 pt" border="bottom"/>
+		</tag>
+		<tag id="Verse_Number" userlevel="0" structure="body" use="verse" context="text" type="character">
+			<sfm>\v</sfm>
+			<usage iculocale="en">Verse Number identifies the start of a verse.</usage>
+			<help category="Chapters_and_Verses"/>
+			<font superscript="true" spellcheck="false"/>
+		</tag>
+		<tag id="Verse_Number_Alternate" userlevel="4" structure="body" context="text" type="character">
+			<sfm>\va</sfm>
+			<usage iculocale="en">Verse Number Alternate identifies the start of a verse using an alternate numbering system (for example, Hebrew).</usage>
+			<help category="Chapters_and_Verses"/>
+			<font superscript="true" spellcheck="false"/>
+		</tag>
+		<tag id="Verse_Number_In_Note" userlevel="3" context="note" type="character">
+			<sfm>\fv</sfm>
+			<usage iculocale="en">Verse Number In Note identifies the start of a verse in a note.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font superscript="true" spellcheck="false"/>
+		</tag>
+		<tag id="Words_Of_Christ" userlevel="3" context="general" type="character" use="special">
+			<sfm>\wj</sfm>
+			<usage iculocale="en">Words Of Christ identifies words or phrases that are spoken by Jesus.</usage>
+			<help category="Special_Text_and_Character_Styles"/>
+			<font color="red"/>
+		</tag>
+	</markup>
+	<replacements>
+		<change old="Citation_Line3" new="Line3"/>
+		<change old="Citation_Reference" new="Cross-Reference"/>
+		<change old="Inscription_Foreign" new="Inscription"/>
+		<change old="Intro_Citation_Line3" new="Intro_Paragraph"/>
+		<change old="Intro_Paragraph_Continuation" new="Intro_Paragraph"/>
+		<change old="Intro_Section_Head_Minor" new="Intro_Paragraph"/>
+		<change old="Intro_Table_Cell" new="Intro_Paragraph"/>
+		<change old="Intro_Table_Cell_Head" new="Intro_Paragraph"/>
+		<change old="Intro_Table_Cell_Head_Last" new="Intro_Paragraph"/>
+		<change old="Intro_Table_Cell_Last" new="Intro_Paragraph"/>
+		<change old="Intro_Table_Row" new="Intro_Paragraph"/>
+		<change old="Name_Of_God_In_Book_Title_In_Text" new="Book_Title_In_Text"/>
+		<change old="Opening" new="Paragraph"/>
+		<change old="Section_Range" new="Canonical_Reference"/>
+		<change old="Section_Head_List" new="Section_Head_Series"/>
+		<change old="Note_Citation_Reference_Paragraph" new="Note_Cross-Reference_Paragraph"/>
+		<change old="Note_Allusion_Paragraph" new="Note_General_Paragraph"/>
+		<change old="Note_Background_Paragraph" new="Note_General_Paragraph"/>
+		<change old="Note_Exegesis_Paragraph" new="Note_General_Paragraph"/>
+		<change old="Note_Translation_Paragraph" new="Note_General_Paragraph"/>
+		<change old="Note_Variant_Paragraph" new="Note_General_Paragraph"/>
+		<change old="Notation_Discussion" new="Remark"/>
+		<change old="Notation_Quote" new="Remark"/>
+		<change old="Notation_Resolution" new="Remark"/>
+		<change old="Notation_Suggestion" new="Remark"/>
+		<!-- No need to do replacement for "Figure" to "Caption " because this style is never applied to text -->
+	</replacements>
+	<ImportMappingSets>
+		<ImportMapping name="TE Default">
+			<mapping id="_DateStampHasFourDigitYear" type="excluded" />
+			<mapping id="_sh" type="excluded" />
+			<mapping id="vref" type="excluded" />
+			<mapping id="add" type="style" styleName="Supplied" />
+			<mapping id="b" type="style" styleName="Stanza_Break" />
+			<mapping id="bk" type="style" styleName="Book_Title_In_Text" />
+			<mapping id="c" type="style" styleName="Chapter_Number" />
+			<mapping id="ca" type="style" styleName="Chapter_Number_Alternate" />
+			<mapping id="cap" type="property" propertyName="FigureCaption" />
+			<mapping id="cat" type="property" propertyName="FigureFilename" />
+			<mapping id="cl" type="property" propertyName="ChapterLabel" />
+			<mapping id="cls" type="style" styleName="Closing" />
+			<mapping id="cs" type="style" styleName="Section_Head" />
+			<mapping id="d" type="style" styleName="Hebrew_Title" />
+			<mapping id="di" type="style" styleName="Hebrew_Title" />
+			<mapping id="div" type="style" styleName="Section_Head_Major" />
+			<mapping id="dvrf" type="style" styleName="Canonical_Reference" />
+			<mapping id="e" type="excluded" />
+			<mapping id="em" type="style" styleName="Emphasis" />
+			<mapping id="f" type="style" styleName="Note_General_Paragraph" />
+			<mapping id="fig" type="property" propertyName="Figure" />
+			<mapping id="figcap" type="property" propertyName="FigureCaption" />
+			<mapping id="figcat" type="property" propertyName="FigureFilename" />
+			<mapping id="figcopy" type="property" propertyName="FigureCopyright" />
+			<mapping id="figdesc" type="property" propertyName="FigureDescription" />
+			<mapping id="figlaypos" type="property" propertyName="FigureLayoutPosition" />
+			<mapping id="figrefrng" type="property" propertyName="FigureRefRange" />
+			<mapping id="figscale" type="property" propertyName="FigureScale" />
+			<mapping id="fk" type="style" styleName="Referenced_Text" />
+			<mapping id="fq" type="style" styleName="Alternate_Reading" />
+			<mapping id="fqa" type="style" styleName="Alternate_Reading" />
+			<mapping id="fr" type="style" styleName="Note_Target_Reference"/>
+			<mapping id="ft" type="property" propertyName="DefaultFootnoteCharacters" />
+			<mapping id="fv" type="style" styleName="Verse_Number_In_Note" />
+			<mapping id="gmb" type="property" propertyName="FigureFilename" /> <!--From Indonesia branch standard-->
+			<mapping id="gmbj" type="property" propertyName="FigureCaption" /> <!--From Indonesia branch standard-->
+			<mapping id="h" type="property" propertyName="TitleShort" />
+			<mapping id="hr" type="style" styleName="Variant_Section_Tail" />
+			<mapping id="ib" type="style" styleName="Stanza_Break" />
+			<mapping id="id" type="style" styleName="Book_ID" />
+			<mapping id="ide" type="excluded" />
+			<mapping id="ie" type="excluded" />
+			<mapping id="iex" type="style" styleName="Intro_Paragraph" />
+			<mapping id="imi" type="style" styleName="Intro_Citation_Paragraph" />
+			<mapping id="imq" type="style" styleName="Intro_Citation_Paragraph" />
+			<mapping id="imt" type="style" styleName="Title_Main" />
+			<mapping id="imt1" type="style" styleName="Title_Main" />
+			<mapping id="imt2" type="style" styleName="Title_Secondary" />
+			<mapping id="imt3" type="style" styleName="Title_Tertiary" />
+			<mapping id="imte" type="style" styleName="Intro_Section_Head" />
+			<mapping id="io1" type="style" styleName="Intro_List_Item1" />
+			<mapping id="io2" type="style" styleName="Intro_List_Item2" />
+			<mapping id="io3" type="style" styleName="Intro_List_Item3" />
+			<mapping id="ior" type="style" styleName="Canonical_Reference" />
+			<mapping id="iot" type="style" styleName="Intro_Section_Head" />
+			<mapping id="ip" type="style" styleName="Intro_Paragraph" />
+			<mapping id="ipi" type="style" styleName="Intro_Paragraph" />
+			<mapping id="ipq" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="ipq1" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="ipq2" type="style" styleName="Intro_Citation_Line2" />
+			<mapping id="ipr" type="style" styleName="Intro_Cross-Reference" />
+			<mapping id="iq" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="iq1" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="iq2" type="style" styleName="Intro_Citation_Line2" />
+			<mapping id="is" type="style" styleName="Intro_Section_Head" />
+			<mapping id="is1" type="style" styleName="Intro_Section_Head" />
+			<mapping id="k" type="style" styleName="Key_Word" />
+			<mapping id="li" type="style" styleName="List_Item1" />
+			<mapping id="li1" type="style" styleName="List_Item1" />
+			<mapping id="li2" type="style" styleName="List_Item2" />
+			<mapping id="li3" type="style" styleName="List_Item3" />
+			<mapping id="lit" type="style" styleName="Congregational_Response" />
+			<mapping id="m" type="style" styleName="Paragraph_Continuation" />
+			<mapping id="mi" type="style" styleName="Embedded_Text_Paragraph_Continuation" />
+			<mapping id="mr" type="style" styleName="Section_Range_Paragraph" />
+			<mapping id="ms" type="style" styleName="Section_Head_Major" />
+			<mapping id="ms1" type="style" styleName="Section_Head_Major" />
+			<mapping id="mt" type="style" styleName="Title_Main" />
+			<mapping id="mt1" type="style" styleName="Title_Main" />
+			<mapping id="mt2" type="style" styleName="Title_Secondary" />
+			<mapping id="mt3" type="style" styleName="Title_Tertiary" />
+			<mapping id="mte" type="style" styleName="Section_Head" />
+			<mapping id="nb" type="property" propertyName="DefaultParagraphCharacters" />
+			<mapping id="nc" type="style" styleName="Variant_Section_Head" />
+			<mapping id="nd" type="style" styleName="Name_Of_God" />
+			<mapping id="no" type="property" propertyName="DefaultParagraphCharacters" />
+			<mapping id="ord" type="style" styleName="Ordinal_Number_Ending" />
+			<mapping id="p" type="style" styleName="Paragraph" />
+			<mapping id="pc" type="style" styleName="Inscription_Paragraph" />
+			<mapping id="ph" type="style" styleName="List_Item1" />
+			<mapping id="ph1" type="style" styleName="List_Item1" />
+			<mapping id="ph2" type="style" styleName="List_Item2" />
+			<mapping id="ph3" type="style" styleName="List_Item3" />
+			<mapping id="pi" type="style" styleName="Embedded_Text_Paragraph" />
+			<mapping id="pi1" type="style" styleName="List_Item1_Additional" />
+			<mapping id="pi2" type="style" styleName="List_Item2_Additional" />
+			<mapping id="pm" type="style" styleName="Embedded_Text_Paragraph" />
+			<mapping id="pmc" type="style" styleName="Embedded_Text_Closing" />
+			<mapping id="pmo" type="style" styleName="Embedded_Text_Opening" />
+			<mapping id="pmr" type="style" styleName="Embedded_Text_Refrain" />
+			<mapping id="pr" type="style" styleName="Cross-Reference" />
+			<mapping id="q" type="style" styleName="Line1" />
+			<mapping id="q1" type="style" styleName="Line1" />
+			<mapping id="q2" type="style" styleName="Line2" />
+			<mapping id="q3" type="style" styleName="Line3" />
+			<mapping id="qa" type="style" styleName="Section_Head_Series" />
+			<mapping id="qc" type="style" styleName="Doxology" />
+			<mapping id="qm" type="style" styleName="Embedded_Text_Line1" />
+			<mapping id="qm1" type="style" styleName="Embedded_Text_Line1" />
+			<mapping id="qm2" type="style" styleName="Embedded_Text_Line2" />
+			<mapping id="qm3" type="style" styleName="Embedded_Text_Line3" />
+			<mapping id="qr" type="style" styleName="Refrain" />
+			<mapping id="qs" type="style" styleName="Interlude" />
+			<mapping id="qt" type="style" styleName="Quoted_Text" />
+			<mapping id="r" type="style" styleName="Parallel_Passage_Reference" />
+			<mapping id="rcrd" type="excluded" />
+			<mapping id="rem" type="style" styleName="Remark" />
+			<mapping id="rr" type="style" styleName="Cross-Reference" />
+			<mapping id="s" type="style" styleName="Section_Head" />
+			<mapping id="s1" type="style" styleName="Section_Head" />
+			<mapping id="s2" type="style" styleName="Section_Head_Minor" />
+			<mapping id="sc" type="style" styleName="Inscription" />
+			<mapping id="sig" type="style" styleName="Hand" />
+			<mapping id="sk" type="style" styleName="Speech_Speaker" />
+			<mapping id="sp" type="style" styleName="Speech_Speaker" />
+			<mapping id="st" type="style" styleName="Title_Secondary" />
+			<mapping id="tc1" type="style" styleName="Table_Cell" />
+			<mapping id="tc2" type="style" styleName="Table_Cell" />
+			<mapping id="tc3" type="style" styleName="Table_Cell" />
+			<mapping id="tc4" type="style" styleName="Table_Cell" />
+			<mapping id="tcr1" type="style" styleName="Table_Cell_Last" />
+			<mapping id="tcr2" type="style" styleName="Table_Cell_Last" />
+			<mapping id="tcr3" type="style" styleName="Table_Cell_Last" />
+			<mapping id="tcr4" type="style" styleName="Table_Cell_Last" />
+			<mapping id="th1" type="style" styleName="Table_Cell_Head" />
+			<mapping id="th2" type="style" styleName="Table_Cell_Head" />
+			<mapping id="th3" type="style" styleName="Table_Cell_Head" />
+			<mapping id="th4" type="style" styleName="Table_Cell_Head" />
+			<mapping id="thr1" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="thr2" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="thr3" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="thr4" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="tir" type="style" styleName="Canonical_Reference" />
+			<mapping id="tl" type="style" styleName="Foreign" />
+			<mapping id="tr" type="style" styleName="Table_Row" />
+			<mapping id="v" type="style" styleName="Verse_Number" />
+			<mapping id="V" type="style" styleName="Verse_Number_In_Note" />
+			<mapping id="va" type="style" styleName="Verse_Number_Alternate" />
+			<mapping id="vt" type="property" propertyName="DefaultParagraphCharacters" />
+			<mapping id="w" type="style" styleName="See_In_Glossary" />
+			<mapping id="wj" type="style" styleName="Words_Of_Christ" />
+			<mapping id="x" type="style" styleName="Note_Cross-Reference_Paragraph" />
+			<mapping id="xk" type="style" styleName="Referenced_Text" />
+			<mapping id="xo" type="style" styleName="Note_Target_Reference"/>
+			<mapping id="xq" type="style" styleName="Alternate_Reading" />
+			<mapping id="xt" type="property" propertyName="DefaultFootnoteCharacters" />
+		</ImportMapping>
+	</ImportMappingSets>
+</Styles>

@@ -1,0 +1,4 @@
+LIBRARY	"Main DLL"
+
+EXPORTS
+   CleanupICU		@1

@@ -1,0 +1,25 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\SpecTestCases.xml">
+ <title tag="wrtsp">Specifying a test case</title>
+ <index>
+  <li>test cases: specifying</li>
+  <li>writing test cases</li>
+ </index>
+ <prerequisites>
+  <p>Before attempting to specify a test case, you should have</p>
+  <ul>
+   <li><link uri="IdTestCases.xml" type="module">identified each test case</link> for the test script.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>For each test case you identified, you will write some "heading" information and list test steps. For each test case write:</p>
+	  <ul>
+	   <li><p name="An identifier">Short, unique, alphanumeric. Used to track test cases. Use the test script abbreviation as a prefix.</p></li>
+	   <li><p name="A number">When combined with the test script number, gives another way to identify the test case. These should be in increasing order within a test script.</p></li>
+	   <li><p name="An order">Denotes execution order; "any order" or "in sequence". The tester will use the steps of this test case in the order specified.</p></li>
+	   <li><p name="title">The full title of the test case indicating what is being tested. For example, "Exercise Indentation controls" or "Activation".</p></li>
+	   <li><p name="context">A brief description of the state of the application or test environment required to duplicate the test case steps successfully. The first word should be "when" to set the mood. For example, "When the Format-Paragraph Dialog is displayed:".</p></li>
+	   <li><p name="steps">A list of "atomic" actions, their results and anticipated bugs. See the <i>Writing test case steps</i> link in the parent topic (click <i>Back</i>).</p></li>
+	  </ul>
+ </guidelines>
+</task>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+<!-- Creates an External Link to a file (here, launch DN), insert and select text for the link, and excerise and then delete the link/text.-->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+
+<!-- Go to Lexixon / Lexicon Edit-->
+	<click select="menubar/view/lexicon/lexicon-edit"/>
+
+<!-- Navigate to the "gu" record-->
+	<click select="toolbar/find-lexical-entry"/>
+	<model select="find-entry[@role='dialog']">
+	<on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">gu</insert>
+	  <var id="row" set="*"/>
+	  <var id="col" set="1"/>
+	  <click select="entries/col/entry" path="/value:-gu"/>
+	  <click select="go-to"/>
+	</on-dialog>
+	</model>
+
+<model select="lexicon-edit[@role='view']">
+
+<!--Click the Summary Definition field, and insert and then select "Link text"-->
+	<var id="ind" set="*"/>
+	<var id="fld" set="Summary Definition"/>
+	<var id="row" set="1"/>
+	<click select="entry/slice/string-field/text"/>
+
+	<insert wait="1000" >^{END}+{HOME}</insert><!-- select all existing text -->
+	<insert wait="1000">Link text</insert>
+	<glimpse id="desc" select="entry/slice/string-field/text" prop="value" on-fail="skip"/>
+	<insert wait="1000" >^{END}+{HOME}</insert><!-- select the link text -->
+
+<!-- Navigate to file and make "Link text" into an external link (Data Notebook.exe)-->
+	<insert wait="1000" >%i</insert>
+	<insert wait="1000" >x</insert>
+
+	<insert wait="1000" >"C:\Program Files\SIL\FieldWorks\FwNotebook.exe"</insert>
+	<insert wait="1000" >%{o}</insert><!-- Click  Open on the file dialog -->
+
+<!-- Click the new link and see if DN opens-->
+	<click dx="20" select="entry/slice/string-field/text"/>
+
+  <do-once until="30000" waiting-for="Lela-Teli 3 - Data Notebook">
+	<on-dialog title="InstallLanguage Message" on-fail="skip">
+	   <click path="$cancel"/>
+	</on-dialog>
+  </do-once>
+
+<on-application gui="DN" exe="FwNotebook.exe" title="Lela-Teli 3 - Data Notebook" run="no" >
+  <on-startup>
+	<on-dialog title="InstallLanguage Message">
+	   <click path="$cancel"/>
+	</on-dialog>
+  </on-startup>
+	<!--Exit DN -->
+	<insert wait="1000" >%f</insert>
+	<insert wait="300" >x</insert></on-application>
+
+<!-- back in FLEX remove the link -->
+<!--insert wait="5000" >%e</insert-->
+	<insert wait="1000" >^{END}+{HOME}</insert> <!-- select the link text -->
+	<insert wait="1000" >{BACKSPACE}</insert>
+
+	<click select="//toolbar/next-record"/>
+	<click select="//toolbar/previous-record"/>
+
+	<glimpse id="stillThere" select="entry/slice/string-field/text" prop="value" expect="$desc.value" on-pass="assert"/>
+
+	<click select="entry/slice/string-field/text"/>
+	<insert wait="1000">$desc.value</insert>
+
+
+<!-- Click where the link was - it should not launch -->
+	<click select="entry/slice/string-field/text"/>
+
+</model>
+
+<on-application gui="DN" exe="FwNotebook.exe" title="Lela-Teli 3 - Data Notebook" run="no" on-pass="assert">
+	<!--Exit DN : control should never get here -->
+	<insert wait="1000" >%f</insert>
+	<insert wait="300" >x</insert></on-application>
+
+ </on-application>
+</accil>

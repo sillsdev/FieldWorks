@@ -1,0 +1,1953 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LangProject SYSTEM "FwDatabase.dtd">
+<LangProject>
+<SemanticDomainList6001>
+<CmPossibilityList id="IC924BFCE-BEED-4382-95E8-62B54951C83D">
+<Depth8><Integer val="127"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<ItemClsid8><Integer val="66"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Semantic Domains</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Sem</AUni>
+</Abbreviation8>
+<Possibilities8>
+<CmSemanticDomain id="I63403699-07C1-43F3-A47C-069D6E4316E5">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>1A Universe, Creation;  14 Physical Events and States</Uni></LouwNidaCodes66>
+<OcmCodes66><Uni>772 Cosmology</Uni></OcmCodes66>
+<Name7>
+<AUni ws="en">The physical universe</AUni>
+<AUni ws="fr">L'univers physique</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words referring to the physical universe. Some languages may not have a single word for the universe and may have to use a phrase such as 'rain, soil, and things of the sky' or 'sky, land, and water' or a descriptive phrase such as 'everything you can see' or 'everything that exists'.</Run>
+</AStr>
+</Description7>
+<SubPossibilities7>
+<CmSemanticDomain id="I999581C4-1611-4ACB-AE1B-5E6C1DFE6F0C">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>1B Regions Above the Earth</Uni></LouwNidaCodes66>
+<Name7>
+<AUni ws="en">Sky</AUni>
+<AUni ws="fr">Ciel</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to the sky.</Run>
+</AStr>
+</Description7>
+<RelatedDomains66>
+<Link target="IB044E890-CE30-455C-AEDE-7E9D5569396E" ws="en" abbr="1.1.1.3" name="Star"/>
+<Link target="IB4AA4BBD-8ABF-4503-96E4-05C75EFD23D5" ws="en" abbr="1.1.3" name="Weather"/>
+</RelatedDomains66>
+<SubPossibilities7>
+<CmSemanticDomain id="I61A83439-7ABD-433A-AA11-82B92B6D8CC4">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>1D Heavenly Bodies</Uni></LouwNidaCodes66>
+<Name7>
+<AUni ws="en">Objects in the sky</AUni>
+<AUni ws="fr">Objets dans le ciel</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1.1</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words referring to things in the sky. Some languages may not have a single word for things in the sky, and may use a descriptive phrase or even list them, such as 'the sun, the moon, and the stars'.</Run>
+</AStr>
+</Description7>
+<SubPossibilities7>
+<CmSemanticDomain id="IDC1A2C6F-1B32-4631-8823-36DACC8CB7BB">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Sun</AUni>
+<AUni ws="fr">Soleil</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1.1.1</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to the sun. The sun does three basic things. It moves, it gives light, and it gives heat. These three actions are involved in the meanings of most of the words in this domain. Since the sun moves below the horizon, many words refer to it setting or rising. Since the sun is above the clouds, many words refer to it moving behind the clouds and the clouds blocking its light. The sun's light and heat also produce secondary effects. The sun causes plants to grow, and it causes damage to things.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to the sun?</AUni>
+<AUni ws="fr">Quels sont les mots pour parler du soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sun, sol, solar, daystar, our star</AUni>
+<AUni ws="fr">soleil, solaire, notre soleil</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to how the sun moves?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">cross (the sky), position of the sun</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words refer to the rising of the sun?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient le lever du soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sunrise, sunup, dawn, daybreak, cockcrow, rise, come up</AUni>
+</ExampleWords67>
+<ExampleSentences67>
+<AStr ws="en">
+<Run ws="en">We got up before </Run>
+<Run ws="en" bold="on">dawn</Run>
+<Run ws="en" bold="off">, in order to get an early start.</Run>
+</AStr>
+</ExampleSentences67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to the setting of the sun?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient le coucher du soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sunset, sundown, twilight, dusk, eventide, set, go down, sink</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words describe when the sun is shining?</AUni>
+<AUni ws="fr">Quels sont les mots pour le soleil qui brille?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">shine, give light, be sunny, be sunshiny, daytime, bright, come out, break through (the clouds)</AUni>
+<AUni ws="fr">Il fait du soleil, il fait jour, le jour</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words describe where the sun is shining?</AUni>
+<AUni ws="fr">Quels sont les mots pour l'endroit où le soleil répand sa lumière?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sunlit, lit by the sun, shine on, be (out) in the sun, be in the sunlight, sunny (spot)</AUni>
+<AUni ws="fr">ensoleillé, briller sur, au soleil</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words describe when or where the sun doesn't shine?</AUni>
+<AUni ws="fr">Quels sont les mots pour l'endroit et le moment où le soleil ne brille pas?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sunless, shade, shady, shadow, eclipse of the sun, to eclipse, go in, go behind (a cloud)</AUni>
+<AUni ws="fr">ombre, ombragé, éclipse, éclipser</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What words refer to the light of the sun?</AUni>
+<AUni ws="fr">Quels sont les mots pour la lumière du soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">light, sunlight, sunshine, ray, beam, sunbeam, radiance, glow, sparkle, glisten, glare</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(9) What words describe the brightness of the sun?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent la brillance du soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">bright, intense, brilliant, blinding, glaring, glistening, luminous, dim</AUni>
+<AUni ws="fr">brillant, intense, aveuglant, lumineux</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(10) What refer to the sun heating things?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">warm, heat, dry</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(11) What else does the sun do?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent les effets du soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">makes things grow, looks down on</AUni>
+<AUni ws="fr">chauffer, sécher, répandre lumière, faire pousser les choses</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(12) What words describe the damage done by sunlight?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent les problèmes causés par le soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sunburn, suntan, tan, sunstroke, heatstroke, prostration, sun damage, fading from the sun, bleached by the sun</AUni>
+<AUni ws="fr">un coup de soleil, quelque chose qui perd sa couleur dans le soleil, etc.</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(13) What do people use to protect themselves from the sun?</AUni>
+<AUni ws="fr">Qu'est-ce que les gens utilisent pour se protéger contre le soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sunglasses, suntan lotion, shade tree, awning, sun umbrella, parasol, sunbonnet, hat, visor</AUni>
+<AUni ws="fr">lunettes de soleil, ombre, arbre, parasol, chapeau</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(14) What words are used of telling time by the sun?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient dire l'heure par le soleil?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sundial, sun-clock, shoot the sun</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(15) What words refer to using the power of the sun?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">solar energy, solar power, solar panel</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="I1BD42665-0610-4442-8D8D-7C666FEE3A6D">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Moon</AUni>
+<AUni ws="fr">Lune</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1.1.2</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to the moon.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to the moon?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">moon, lunar, satellite</AUni>
+<AUni ws="fr">lune, lunaire, satellite</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words are used for when the moon is shining?</AUni>
+<AUni ws="fr">Quels sont les mots qu'on utilise quand la lune brille?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">moon is shining, moon is/comes out, by the light of the moon</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words are used for where the moon is shining?</AUni>
+<AUni ws="fr">Quels sont les mots pour l'endroit où la lune brille?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">moonlit, lit by the moon, shine on, be in the moonlight</AUni>
+<AUni ws="fr">clair de lune, éclairé par la lune</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words are used for when or where the moon doesn't shine?</AUni>
+<AUni ws="fr">Quels sont les mots pour le moment et l'endroit où la lune ne brille pas?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">moonless night, eclipse of the moon, to eclipse</AUni>
+<AUni ws="fr">une nuit sans lune, éclipse de la lune</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to the light of the moon?</AUni>
+<AUni ws="fr">Quels sont les mots qui correspondent à la lumière de la lune?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">moonlight, moonshine, moonbeam</AUni>
+<AUni ws="fr">clair de lune, rayon de lune</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words describe the effects of the moon?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent les effets de la lune?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">moon-struck, lunacy, lunatic, rising and falling of the tide</AUni>
+<AUni ws="fr">les marées hautes et basses, devenir fou à cause de la lune</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words refer to the rising of the moon?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient le lever de la lune?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">rising of the moon, moonrise, rise</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What words refer to the setting of the moon?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient le coucher de la lune?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">setting of the moon, moonset, set, sink</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(9) What words describe the appearance of the moon?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent l'apparence de la lune?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">man in the moon, harvest moon</AUni>
+<AUni ws="fr">(est-ce qu'on voit un animal ou une personne dans les contours de la pleine lune, par exemple?)</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(10) What words refer to the phases of the moon?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient les phases de la lune?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">phase, new moon, full moon, half moon, quarter moon, crescent, sliver, moon is waxing (getting bigger), moon is waning (getting smaller), wax and wane</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(11) What words refer to the time it takes for the moon to go through its phases?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">(lunar) month</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IB044E890-CE30-455C-AEDE-7E9D5569396E">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Star</AUni>
+<AUni ws="fr">Etoile</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1.1.3</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to the stars and other heavenly bodies.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words are used to refer to the stars?</AUni>
+<AUni ws="fr">Quels sont les mots pour parler des étoiles?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">star, starry, stellar</AUni>
+<AUni ws="fr">étoile, stellaire</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words describe the sky when the stars are shining?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent le ciel quand les étoiles brillent?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">starlit (sky), (sky is) ablaze with stars, starry (sky), star studded (sky), stars are shining</AUni>
+<AUni ws="fr">étoilé, un ciel plein d'étoiles</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words are used for where the stars are shining?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent l'endroit où les étoiles brillent?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">starlit, lit by the stars</AUni>
+<AUni ws="fr">étoilé, illuminé par les étoiles, baigné par la lumière des étoiles</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words are used for when or where the stars don't shine?</AUni>
+<AUni ws="fr">Quels sont les mots pour l'endroit et le moment où les étoiles ne brillent pas?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">starless (sky, night)</AUni>
+<AUni ws="fr">une nuit / un ciel sans étoiles</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to the light of the stars?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient la lumière des étoiles?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">starlight</AUni>
+<AUni ws="fr">lumière des étoiles</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words describe the brightness of the stars?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent la brillance des étoiles?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">bright, brilliant, dim, luminous</AUni>
+<AUni ws="fr">brillant, faible</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words describe the appearance of the stars?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent l'apparence des étoiles?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">twinkle, wink, glittering, star shaped</AUni>
+<AUni ws="fr">clignoter, la forme d'une étoile, scintiller</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What words refer to the study of the stars?</AUni>
+<AUni ws="fr">Quels sont les mots qui correspondent aux personnes qui regardent ou qui étudient les étoiles?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">astronomy, astronomer, astrology, astrologer, stargazer, magi</AUni>
+<AUni ws="fr">astrologue, roi mage, astronome, astrologie</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(9) What is a group of stars called?</AUni>
+<AUni ws="fr">Comment s'appelle un groupe d'étoiles?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">constellation, galaxy, nebula</AUni>
+<AUni ws="fr">constellation</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IA0D073DF-D413-4DFD-9BA1-C3C68F126D90">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Planet</AUni>
+<AUni ws="fr">Planète</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1.1.4</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to planets (large objects that circle the sun, looking like bright wandering stars in the sky), comets (objects that circle the sun, looking like a star with a tail), meteors (small objects that come from space and burn up when they hit the earth's atmosphere, causing a streak of light across the sky), and asteroids (small objects that circle the sun), planetary moons (large objects that circle the planets). Some cultures do not study the stars and will have few or no words in this domain. Others cultures that study the stars will have many words.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to a planet?</AUni>
+<AUni ws="fr">Quels sont les mots qu'on utilise pour une planète?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">planet, planetary, wandering star</AUni>
+<AUni ws="fr">planète, planétaire</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What are the names of the planets?</AUni>
+<AUni ws="fr">Quels sont les noms des planètes/</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">Mercury, Venus (Morning Star, Evening Star), Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words refer to how the planets move?</AUni>
+<AUni ws="fr">Que font les planètes?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">revolve (around the sun), orbit, </AUni>
+<AUni ws="fr">traverser le ciel, aller autour du soleil</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to the sun and planets?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">solar system</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to comets?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">comet, tail, head</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What do comets do?</AUni>
+<AUni ws="fr">Que font les comètes?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">appear, point, fade</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words refer to meteors?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">meteor, shooting star, falling star, meteor trail, meteor shower</AUni>
+<AUni ws="fr">météore, étoile filante</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What do meteors do?</AUni>
+<AUni ws="fr">Que font les météores?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">flash across the sky, blaze a trail across the sky, strike the earth, make a crater, burn up</AUni>
+<AUni ws="fr">traverser le ciel, laisser une trace, faire un cratère</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(9) What words are used for when a meteor hits the earth?</AUni>
+<AUni ws="fr">Quels sont les mots qu'on utilise quand un météore frappe la terre?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">meteorite, meteor crater</AUni>
+<AUni ws="fr">cratère, météorite</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(10) What is a small planet called?</AUni>
+<AUni ws="fr">Comment est-ce qu'on appelle une petite planète</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">asteroid, moon</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="I63781E49-4FAE-4FAD-A4BE-0F254CB8D7DC"><!-- custom -->
+<Name7>
+<AUni ws="en">UFO</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">X</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Unidentified Flying Object, otherwise referred to as a flying saucer</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">Does such a thing exist?</AUni>
+</Question67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What general words refer to the objects in the sky?</AUni>
+<AUni ws="fr">Quel terme général fait référence aux objets dans le ciel?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">heavenly body, celestial body, luminary</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to the study of the objects in the sky?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">astronomy</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words refer to something being in the sky?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">aloft, up in the air, </AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IE836B01B-6C1A-4D41-B90A-EA5F349F88D4">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>2B Air</Uni></LouwNidaCodes66>
+<Name7>
+<AUni ws="en">Air</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1.2</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to the air around us, including the air we breathe and the atmosphere around the earth.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to the air we breathe?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">air</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to how much water is in the air?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">humid, humidity, damp, dry, sticky, muggy</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words describe good air (such as when the air in a room is clean or doesn't smell bad)?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">fresh air, airy, well ventilated</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words describe bad air (such as when the air in a room is dirty, hot, smells bad, or too many people are breathing)?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">stuffy, airless, stifling, polluted, air pollution, smog</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to letting good air into a room?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">to air (out), ventilate</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words refer to putting air into something (such as a tire or balloon)?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">blow up, inflate, pump up, pneumatic</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words refer to keeping air out of something?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">seal, airtight</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What words refer to how much air is in something?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">air pressure, vacuum </AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IB4AA4BBD-8ABF-4503-96E4-05C75EFD23D5">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>14A Weather</Uni></LouwNidaCodes66>
+<OcmCodes66><Uni>132 Climate</Uni></OcmCodes66>
+<Name7>
+<AUni ws="en">Weather</AUni>
+<AUni ws="fr">Météo (le temps)</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.1.3</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to the weather.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to the weather?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">weather, weather conditions, atmospheric (conditions)</AUni>
+<AUni ws="fr">météo, temps</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words describe the weather when it is good?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sunny, sunshine, clear (weather), good (weather), fair (weather), fine (day)</AUni>
+<AUni ws="fr">soleil, ensoleillé, il fait du soleil, beau temps, il fait bon</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words describe the weather when it is getting better?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">clear, clear up, sun comes out, </AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words describe the weather when it is bad?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent le temps qu'il fait?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">bad, terrible, foul, inclement, rough, dirty sky, severe</AUni>
+<AUni ws="fr">mauvais, temps de chien</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words describe the weather when it is getting worse?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">cloud up, deteriorate</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words describe the weather when it changes?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">(cold/warm/storm) front</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words describe the weather when it stays the same?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">stretch (of good weather), keep up</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What words are used to describe any kind of weather?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">rain or shine, all weather, in all weathers</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(9) What words describe the temperature?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">temperature, hot, cold, chilly, crisp, mild, unseasonably warm/cold, scorching, heat wave</AUni>
+<AUni ws="fr">une chaleur/une froideur qui n'est pas de saison</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(10) What words describe the weather when there is a lot of water in the air?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">humid, humidity, damp, sultry</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(11) What words refer to the type of weather a place normally has?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">climate, dry/wet/cold/hot climate, tropical, temperate</AUni>
+<AUni ws="fr">climat</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(12) What words describe something that has been exposed to the weather for a long time?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">weather-beaten, weathered</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(13) What words refer to studying the weather?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">meteorology, meteorologist, weatherman</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(14) What instruments are used to study the weather?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">thermometer, barometer, weathervane</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(15) What words refer to a report about the weather?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">weather forecast, weather report, the weather, the outlook</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words are used to refer to the sky?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient le ciel?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">sky, firmament, celestial, canopy, vault</AUni>
+<AUni ws="fr">ciel, firmament</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to the air around the earth?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">air, aerial, airspace, atmosphere, atmospheric, stratosphere, stratospheric, ozone layer</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words are used to refer to the place or area beyond the sky?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient l'endroit ou le pays au-delà du ciel?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">heaven, heavenly, space, outer space, ether, void, solar system</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words describe the appearance of the sky?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent l'aspect du ciel?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">blue, black (night), clear, cloudy, cloud filled, brilliant, dark, night sky, foreboding, stormy, dark, star studded</AUni>
+<AUni ws="fr">bleu, noir, clair, nuageux, plein de nuages, brillant, ciel de nuit, orageux, étoilé, menaçant</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words describe the edge of the sky where it meets the ground?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent l'endroit où le ciel touche la terre?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">horizon, skyline</AUni>
+<AUni ws="fr">l'horizon</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words refer to the lights that appear in the northern (or southern) sky?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">aurora borealis, northern lights</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IB47D2604-8B23-41E9-9158-01526DD83894">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<OcmCodes66><Uni>130 Geography</Uni></OcmCodes66>
+<Name7>
+<AUni ws="en">World</AUni>
+<AUni ws="fr">La Terre</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.2</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words referring to the planet we live on.</Run>
+</AStr>
+</Description7>
+<SubPossibilities7>
+<CmSemanticDomain id="ICCE98603-FF8F-4213-945A-BD6746716139">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>1 Geographical Objects and Features;  1F The Earth's Surface</Uni></LouwNidaCodes66>
+<OcmCodes66><Uni>133 Topography and Geology</Uni></OcmCodes66>
+<Name7>
+<AUni ws="en">Land</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.2.1</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words referring to the ground we stand on, the earth versus the sky.</Run>
+</AStr>
+</Description7>
+<SubPossibilities7>
+<CmSemanticDomain id="I0AC5E5F9-E7FE-4D37-A631-EAB1CEB1F8AE">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>1G Elevated Land Formations</Uni></LouwNidaCodes66>
+<Name7>
+<AUni ws="en">Mountain</AUni>
+<AUni ws="fr">Montagne</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.2.1.1</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to mountains.</Run>
+</AStr>
+</Description7>
+<RelatedDomains66>
+<Link target="ID50F3921-FCEA-4AC9-B64A-25BF47DC3292" ws="en" abbr="1.2.1.2" name="Volcano"/>
+</RelatedDomains66>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What types of mountains are there?</AUni>
+<AUni ws="fr">Quelles sortes de montagnes y a-t-il?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">mountain, mount, hill, volcano, plateau, moor, butte, crag, dome, height, highland, upland, uplift, mound, formation</AUni>
+<AUni ws="fr">montagne, colline, volcan</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to a mountain with a flat top?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">plateau, mesa, tableland</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words describe land that has many mountains?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">mountain range, mountainous, the hills, hilly, rolling hills, highlands</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to the top of a mountain?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">top, summit, peak, pinnacle</AUni>
+<AUni ws="fr">le sommet</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to the side of a mountain?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">face, mountainside, hillside, slope, shoulder, foothill, saddle</AUni>
+<AUni ws="fr">un escarpement</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words refer to a steep place on a mountain?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">cliff, bluff, butte, escarpment, ridge, precipice, brow, ledge</AUni>
+<AUni ws="fr">falaise, bluff, promontoire, butte, tertre, escarpement, crête, ligne de faîte</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words describe how steep a mountain is?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">slope, steep, gentle, contour, gradient</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What words refer to the bottom of a mountain?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">foot, bottom</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(9) What words refer to snow on a mountain?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">snowcap, glacier</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(10) What words refer to rocks at the bottom of a mountain?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">moraine, talus</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(11) What words refer to when part of a mountain falls?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">landslide, avalanche</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(12) What do people do to mountains?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">climb</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(13) What words refer to a place you can travel through the mountains?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">pass, tunnel</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="ID50F3921-FCEA-4AC9-B64A-25BF47DC3292">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Volcano</AUni>
+<AUni ws="fr">Volcan</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.2.1.2</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words related to volcanoes.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to a volcano?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">volcano, volcanic</AUni>
+<AUni ws="fr">volcan, volcanique, volcanisme</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What are the parts of a volcano?</AUni>
+<AUni ws="fr">Quelles sont les parties d'un volcan?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">cone, cinder cone, core of a volcano, crater, lava flow</AUni>
+<AUni ws="fr">un cratère</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What do volcanoes do?</AUni>
+<AUni ws="fr">Que font les volcans?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">erupt, eruption, spew (gas, lava, ash), explode, blow, produce a cloud, cause earthquakes, bury things (under lava, ash), smoke</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What do volcanoes produce?</AUni>
+<AUni ws="fr">Que produisent les volcans?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">lava, molten lava, volcanic ash, cloud of ash, ash flow, pyroclastic flow, volcanic cinder, volcanic glass (obsidian), pumice, thunder egg</AUni>
+<AUni ws="fr">lave, cendre</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to whether a volcano is erupting or not?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">active, dormant, extinct</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to the land in contrast to the sea?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient la terre, pour la distinguer de la mer?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">land (and sea), dry land, mainland, continent, inland, interior</AUni>
+<AUni ws="fr">terre (et mer), zone terrestre</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What is the earth called in distinction to heaven or the sky?</AUni>
+<AUni ws="fr">Comment est-ce qu'on distingue entre le ciel et la Terre?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">(heaven and) earth, earth (and sky), (on the) ground</AUni>
+<AUni ws="fr">(ciel et) terre, (par) terre, (de retour à la) terre solide, terra firma</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words refer to the ground we stand on?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">ground</AUni>
+<AUni ws="fr">sol</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What general words refer to the type of land in an area?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">geography, topography, feature, landscape, terrain</AUni>
+<AUni ws="fr">terre, terrain, géographie, topographie, paysage</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to how high the land is?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">altitude, sea level</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words refer to the surface of the earth?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">surface, crust, lithosphere</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to the planet we live on?</AUni>
+<AUni ws="fr">Quels sont les mots qui signifient la planète où nous sommes?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">world, earth, the Earth, the globe, the planet</AUni>
+<AUni ws="fr">Terre, le monde</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words describe something that belongs to this world?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">earthly, terrestrial</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words are used to talk about the whole world, all the countries, or all the people?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">the whole world, the entire earth, all over the world, round the world, worldwide, global, universal</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to a part of the world?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">hemisphere, North Pole, South Pole, pole, polar, polar cap, equator, tropics, tropical, continent, time zone, the Third World, the West, the East, Orient</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to the study of the world?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">geography, geographical, geographer, geology</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="I60364974-A005-4567-82E9-7AAEFF894AB0">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>2D Water;  47 Activities Involving Liquids or Masses</Uni></LouwNidaCodes66>
+<Name7>
+<AUni ws="en">Water</AUni>
+<AUni ws="fr">Eau</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.3</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words referring to water.</Run>
+</AStr>
+</Description7>
+<SubPossibilities7>
+<CmSemanticDomain id="I79EBB5CE-F0FD-4FB5-9F22-1FA4965A555B">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>1J Bodies of Water</Uni></LouwNidaCodes66>
+<Name7>
+<AUni ws="en">Bodies of water</AUni>
+<AUni ws="fr">Plans d'eau</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.3.1</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words referring to bodies of water.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What general words refer to a body of water?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">body of water, hydrosphere</AUni>
+<AUni ws="fr">plan d'eau</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words describe something belonging to the water?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">marine, oceanic, riverine</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IBE065ABB-AE65-4CC8-940D-D0181BEEE04F"><!-- custom -->
+<Name7>
+<AUni ws="en">Liquids</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Y</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Things like oils, alcohols, and so forth</Run>
+</AStr>
+</Description7>
+</CmSemanticDomain>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What general words refer to water?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">water, H2O, moisture</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words describe something that belongs to the water or is found in water?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">watery, aquatic, amphibious</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words describe something that water cannot pass through?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">waterproof, watertight</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="I8D47C9EC-80C4-4309-9848-C453DCD71182">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Living things</AUni>
+<AUni ws="fr">Les plantes et les animaux</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.4</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words that relate to all living things.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to all living things, including both plants and animals?</AUni>
+<AUni ws="fr">Est-ce qu'il y a un mot ou une phrase qui signifie tout ce qui vit, comprenant les plantes aussi bien que les animaux?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">living things, life, all life, every living thing, everything that lives and breathes, plants and animals, organism, organic matter</AUni>
+<AUni ws="fr">les choses vivantes, la vie, tout ce qui vit, faune et flore, les plantes et les animaux</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to the study of life?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">biology, biologist, life science, ecology, ecologist, natural history, naturalist</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What general words refer to the parts of all living things?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">tissue, cell, membrane, DNA, gene, protoplasm</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to being alive?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">be alive, live</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words describe something that is living?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">living, alive, animate, organic</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words describe something that is not living and never has been?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">inanimate, inorganic, lifeless</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(7) What words refer to the theory of evolution?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">evolution, evolve, evolutionary</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(8) What words refer to a species dying out?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">extinct, extinction, endangered species</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(9) What words refer to microscopic living things?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">bacteria, germ, virus</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(10) What words refer to whether a plant or animal can be eaten?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">edible, inedible</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="I025DA6F4-B1B6-423A-8C0F-B324F531A6F1">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>3 Plants;  3A Plants (General Meaning)</Uni></LouwNidaCodes66>
+<OcmCodes66><Uni>137 Flora</Uni></OcmCodes66>
+<Name7>
+<AUni ws="en">Plant</AUni>
+<AUni ws="fr">Les plantes</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.5</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words for all plants. Use a book of pictures to identify plant names and the scientific name. Languages divide plants into various domains that are not always comparable from language to language. Critereal features may be characteristics (trees and bushes are distinguished by size and number of trunks) and use (grass and weeds are distinguished by their desirability). A common distinction is between trees and non-trees, with trees described as being big, woody, and having a life expectancy of several years, while non-trees are small, non-woody, and have a life expectancy of typically not more than one year (Heine, Bernd and Karsten Legere. 1995. Swahili plants. Rudiger Koppe Verlag: Koln.). Agricultural societies will divide plants into wild and cultivated. However most plants for which there are names have some use. Therefore it does not seem helpful to divide plant names into domains for useful and non-useful plants. Since only parts of plants are eaten, edible parts of plants are listed under the domain 'Food'. Some languages may have more domains than are used in this list, others may have fewer. The classification system used here does not agree entirely with the system used by botanists. For instance botanists do not classify all the tree species together. The palm trees belong to the class Monocotyledoneae and are classified with lilies, bananas, and orchids. Apple and cherry trees belong to the class Dicotyledoneae and are classified in the rose family along with roses and blackberries. The acacia tree also belongs to the class Dicotyledoneae and is classified in the pulse family along with lupines and beans. However most folk taxonomies bring all the trees together. The scientific classification system for plants and animals is taken from: Carruth, Gorton, ed. 1989. The Volume Library, Vols. 1 and 2. The Southwestern Company: Nashville.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to all plants?</AUni>
+<AUni ws="fr">Quel mot signifie toutes les plantes, en général?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">plant, flora, greenery, vegetation, herbage</AUni>
+<AUni ws="fr">plante, le vert, la végétation</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words describe types of plants?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">angiosperm, annual, aquatic, biennial, bracken, brake, deciduous, creeper, flower, greens, herbaceous, hybrid, leafy, legume, luscious, parasite, perennial, plankton, pulse, sedge, succulent, tropical, vegetable, vine, weed, woody, wort</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words are used to describe plants that grow wild?</AUni>
+<AUni ws="fr">Quels sont les mots qui décrivent les plantes qui ne sont pas cultivées, qui poussent naturellement dans la forêt ou la brousse?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">wild, uncultivated</AUni>
+<AUni ws="fr">sauvages, inculte</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to cultivated plants?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">cultivated</AUni>
+<AUni ws="fr">cultivé</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to a group of plants?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">bale, bouquet, bracken, brush, bunch, canopy, clump, cluster, cover, covert, corsage, crop, culture, farrow, forest, greenery, grove, growth, hassock, haystack, herbage, jungle, kelp, nosegay, orchard, scrub, sheaf, shock, shrubbery, skein, spray, stand, sward, thicket, tuft, turf, tussock, underbrush, undergrowth, vegetation, verdure, vermin</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words refer to the study of plants?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">botany, botanist, herbology, herbalist</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="I944CF5AF-469E-4B03-878F-A05D34B0D9F6">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>4 Animals;  4A Animals</Uni></LouwNidaCodes66>
+<OcmCodes66><Uni>136 Fauna</Uni></OcmCodes66>
+<Name7>
+<AUni ws="en">Animal</AUni>
+<AUni ws="fr">Les animaux</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.6</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words referring to animals.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What general words refer to all animals?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">animal, fauna, creature, critter, organism, wildlife</AUni>
+<AUni ws="fr">animal</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IAA57936D-F8A9-4603-8C3D-27ABCCD13531">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Nature, environment</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1.7</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for words referring to nature and the environment--the world around us. Include words that refer to how people damage or protect nature.</Run>
+</AStr>
+</Description7>
+<SubPossibilities7>
+<CmSemanticDomain id="I2BD48BD1-D8D5-4A5E-A883-D63D8E8652AA"><!-- custom -->
+<Name7>
+<AUni ws="en">wilderness</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Z</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">natural enivonment unspoiled by human activity</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+<Contents16>
+<Str>
+<Run ws="en">This is a wonderful custom semantic domain.</Run>
+</Str>
+</Contents16>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmSemanticDomain>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to the world around us?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">world, nature, environment, environmental</AUni>
+<AUni ws="fr">monde</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to damaging the environment?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">pollute, pollution, pollutant, acid rain, smog, deforestation, global warming, greenhouse effect</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words refer to protecting the environment?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">conserve, conservation, recycle, biodegradable</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to the study of the environment?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">ecology</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words refer to a person who studies or tries to protect the environment?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">environmentalist, conservationist, ecologist, Green Party</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to everything we can see?</AUni>
+<AUni ws="fr">Quels sont les mots qui font référence à tout ce qu'on peut voir?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">universe, heaven and earth, (all) creation, cosmos, macrocosm, everything that exists</AUni>
+<AUni ws="fr">univers, ciel, terre</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words describe something that happens in nature?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">natural phenomenon</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words refer to the study of the physical universe?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">science, natural science, physical science, physics, astronomy, chemistry, biology, ecology</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IBA06DE9E-63E1-43E6-AE94-77BEA498379A">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<LouwNidaCodes66><Uni>9 People;  9A Human Beings;  8 Body, Body Parts, and Body Products</Uni></LouwNidaCodes66>
+<Name7>
+<AUni ws="en">Person</AUni>
+<AUni ws="fr">Une personne</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">2</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words for a person or all mankind.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What words refer to a single member of the human race?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">person, human being, man, individual, figure</AUni>
+<AUni ws="fr">une personne, un être humain</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(2) What words refer to a person when you aren't sure who the person is?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">someone, somebody</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(3) What words refer to more than one person?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">people, folks, population, the public</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(4) What words refer to all of the human race?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">man, men, mankind, the human race, humanity, humankind, </AUni>
+<AUni ws="fr">l'humanité</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(5) What words describe something characteristic of man?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">human (adj), human nature</AUni>
+</ExampleWords67>
+</CmDomainQ>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(6) What words refer to no person</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">no one, nobody</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+<CmSemanticDomain id="IF4491F9B-3C5E-42AB-AFC0-F22E19D0FFF5">
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Language and thought</AUni>
+<AUni ws="fr">Le langage et la pensée</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">3</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">Use this domain for general words referring to mental and verbal activity. This domain is primarily for grouping many related domains. Therefore there may be no general word in a language to cover such a broad area of meaning.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+<Questions66>
+<CmDomainQ>
+<Question67>
+<AUni ws="en">(1) What general words refer to mental and verbal activity?</AUni>
+</Question67>
+<ExampleWords67>
+<AUni ws="en">psychology, life of the soul</AUni>
+</ExampleWords67>
+</CmDomainQ>
+</Questions66>
+</CmSemanticDomain>
+</Possibilities8>
+</CmPossibilityList>
+</SemanticDomainList6001>
+</LangProject>

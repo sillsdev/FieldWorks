@@ -1,0 +1,8 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="PropertiesFragment">
+		<Property Id="BUILD_DATE">Error</Property>
+		<Property Id="FEATURE_LIST"><![CDATA[DN,TLE,TE,FLEX,WP]]></Property>
+		<Property Id="ALLUSERS"><![CDATA[1]]></Property>
+	</Fragment>
+</Wix>

@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Extensions</title>
+</head>
+<body>
+
+<h1>Extensions</h1>
+WiX has support for three classes of extensions
+
+<h2>Introduction</h2>
+<ul>
+<li><b>Preprocessor Extensions</b> allow clients to modify authoring files before they are processed by the compiler.</li>
+<li><b>Compiler Extensions</b> allow clients to custom compile authored XML into internal table representation before it's written to binary form.</li>
+<li><b>Binder Extensions</b> allow clients to the feed the interlace image processing and data finalization.</li>
+</ul>
+Through these extensions one can extend WiX to support custom preprocessing, XML syntax compilation, or binding semantics for ones particular layout generation process.
+
+<h2>Common Requirements</h2>
+How to use each should start in the source code but they all have a few things in common
+<ul>
+	<li>Implemented in same version of .NET 1.1 as the rest of WiX</li>
+	<li>Build a subclass of the appropriate extension object giving it a easily distinguishable name.</li>
+	<li>Build a schema of the appropriate syntax to provide validation checking where possible.</li>
+	<li>Build internal table definitions and register them with the compiler.</li>
+	<li>Build overrides for extendable methods and virtual members which will get invoked at the approriate location during the single pass compile.</li>
+	<li>Build extension into a DLL.</li>
+	<li>Place extension DLL next to WiX EXEs.</li>
+	<li>Registered with WiX via command line argument to the compiler</li>
+</ul>
+<h2>Considerations</h2>
+Before investing in an extension, one should evaluate whether an external tool and the ?include syntax (from the preprocessor) will provide the needed flexability for your technical needs.
+Multiple extensions and extension types are supported but there is no guarentee of the order a particular class of extensions will be processes so there should be no sequencing dependencies between extensions within the same extension class.
+</body>
+</html>

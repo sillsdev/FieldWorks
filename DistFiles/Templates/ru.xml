@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Do not specify DTD for LD files in the template directory. Doing so causes kstidUILangNotFound error on
+	first startup after installation due to DoesWsXMLExist failing to load the LD file since the DTD is not in the template directory! -->
+<LanguageDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LgWritingSystem id="ru" language="ru" type="ISO-639-1">
+	<Name24>
+	  <AUni ws="en">Russian</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Rus</AUni>
+	</Abbr24>
+	<Locale24><Integer val="1049"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<BodyFontFeatures24><Uni>1051=0</Uni></BodyFontFeatures24>
+	<DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
+	<ValidChars24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;ValidCharacters&gt;
+  &lt;WordForming&gt;а￼А￼б￼Б￼в￼В￼г￼Г￼д￼Д￼е￼Е￼ё￼Ё￼ж￼Ж￼з￼З￼и￼И￼й￼Й￼к￼К￼л￼Л￼м￼М￼н￼Н￼о￼О￼п￼П￼р￼Р￼с￼С￼т￼Т￼у￼У￼ф￼Ф￼х￼Х￼ц￼Ц￼ч￼Ч￼ш￼Ш￼щ￼Щ￼ъ￼Ъ￼ы￼Ы￼ь￼Ь￼э￼Э￼ю￼Ю￼я￼Я&lt;/WordForming&gt;
+  &lt;Numeric&gt;0￼1￼2￼3￼4￼5￼6￼7￼8￼9&lt;/Numeric&gt;
+  &lt;Other&gt; ￼U+0020￼^￼-￼,￼;￼:￼!￼?￼.￼‘￼’￼“￼”￼(￼)￼[￼]&lt;/Other&gt;
+&lt;/ValidCharacters&gt;</Uni></ValidChars24>
+	<MatchedPairs24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;MatchedPairs&gt;
+  &lt;pair open=&quot;(&quot; close=&quot;)&quot; permitParaSpanning=&quot;false&quot; /&gt;
+&lt;/MatchedPairs&gt;</Uni></MatchedPairs24>
+	<PunctuationPatterns24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;PunctuationPatterns&gt;
+  &lt;pattern value=&quot;’ &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; ‘&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; “&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;” &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;.” &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; [&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;. &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;; &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; --&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;? &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;,) &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;, &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;: &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;] &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;--[&quot; context=&quot;WordBreaking&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;]: &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;]! &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;]; &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;) &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; -- &quot; context=&quot;Isolated&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;!` &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;-- &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;--&quot; context=&quot;WordBreaking&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;); &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;). &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;,] &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;), &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;.) &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;!.. &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;): &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;... &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;]? &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; --[&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;]`, &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;], &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;]. &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;! &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;-&quot; context=&quot;WordBreaking&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; (&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; ([&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;?, &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;:) &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;^^ &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;]). &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+&lt;/PunctuationPatterns&gt;</Uni></PunctuationPatterns24>
+	<QuotationMarks24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;QuotationMarks LangUsedFrom=&quot;en&quot; ContinuationType=&quot;RequireAll&quot; ContinuationMark=&quot;Opening&quot;&gt;
+  &lt;Levels&gt;
+	&lt;Pair Opening=&quot;“&quot; Closing=&quot;”&quot; /&gt;
+	&lt;Pair Opening=&quot;‘&quot; Closing=&quot;’&quot; /&gt;
+  &lt;/Levels&gt;
+&lt;/QuotationMarks&gt;</Uni></QuotationMarks24>
+	<ICULocale24><Uni>ru</Uni></ICULocale24>
+	<SpellCheckDictionary24><Uni>ru</Uni></SpellCheckDictionary24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1049"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+<EthnoCode>rus</EthnoCode>
+  <LocaleName>Russian</LocaleName>
+  <LocaleCountry />
+  <LocaleScript />
+  <LocaleVariant />
+  <Keyboard />
+  <EncodingConverter />
+</LanguageDefinition>

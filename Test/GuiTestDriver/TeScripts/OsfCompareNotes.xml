@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALVI OTHERSF IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- set case specific variables -->
+		<var id="MfrNotes" select="tests/test[@case='$TestCase;']/@mfr-notes"/>
+
+		<file-comp lookAt="files"
+		   of="C:\GuiTestResults\ImportOtherSF\Export OtherSF Notes.sf"
+		   to="$TestBranchDir;\Test\GuiTestDriver\TeExpectedTestResults\ImportOtherSF\$MfrNotes"/>
+
+	</on-application>
+
+</accil>

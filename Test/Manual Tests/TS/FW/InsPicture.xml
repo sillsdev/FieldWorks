@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="inspic" num="2.5.9" abbr="inpct" file="FW\InsPicture.xml">
+<title tag="inspic">Insert-Picture Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Inserts a graphic at the current text cursor position. This graphic may be in any of several formats supported by the system (BMP, GIF, JPEG). The menu item brings up a dialog by which the user can browse for the desired file (including seeing a preview). The behavior of the Insert Picture command is currently not implemented as we'd like. This needs further work.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/INSERTMENU.HTML#Insert-Picture" type="doc">Insert-Picture</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/PICTURE/InsertPicture.html" type="doc">Insert-Picture Dialog</link>
+</p>
+</introduction>
+<context>
+<p>Many insertion combinations are possible. Testing does not require exhaustive combinations of these, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert-Picture"</p>
+</context>
+
+ <case id="inpctInsp" num="0" order="any">
+  <title tag="inpctInsp">Inspection</title>
+  <context>
+<p>When the application is running and text is displayed in an active window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/INSERTMENU.HTML#Insert-Picture" type="doc">Insert-Picture</link>.</p>
+
+  <step name="0.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Insert-Picture menu item. Use short-cut Alt+I P.
+   <r>Report any failures as suggested using "Insert-Picture" as the name of the menu item.</r>
+  </step>
+
+</case>
+
+ <case id="inpctEx" num="1" order="any">
+  <title tag="inpctEx">Exercise</title>
+  <context>
+<p>When the application is running and text is displayed in an active window</p>
+</context>
+
+  <step name="1.1" link="Bug">While the cursor is in structured text or some structured text is selected, click Insert-Picture.
+   <r>The Insert Picture dialog is displayed.</r>
+   <p name="bug">Insert-Picture menu item fails to display dialog</p>
+  </step>
+  <step name="1.2" link="Bug">While the cursor is in non-structured editable text or some of this text is selected, click Insert-Picture.
+   <r>An error dialog appears, saying something to the effect of <i>Sorry, for now pictures can only be inserted in structured-paragraph fields</i>.</r>
+   <p name="bug">Insert-Picture menu item fails to display dialog</p>
+  </step>
+  <step name="1.3" link="Bug">While the cursor is not in editable text click Insert-Picture. (This may only be possible in Data Entry view)
+   <r>The menu item is disabled.</r>
+   <p name="bug">Insert-Picture menu item enabled for non-editable text</p>
+  </step>
+  <step name="1.4" link="Bug">After inserting a picture,
+   <r>The newly inserted picture shows up and the following text wraps and realigns correctly (although it may not be visible in Browse view if not on the first three lines of its field).</r>
+   <p name="bug">Inserted picture not visible</p>
+   <p name="bug">Inserted picture causes text contortions</p>
+  </step>
+  <step name="1.5" link="Bug">After inserting a picture, change to another view.
+   <r>The newly inserted picture shows up in all other views (although it may not be visible in Browse view if not on the first three lines of its field).</r>
+   <p name="bug">Inserted picture not visible in another view</p>
+  </step>
+  <step name="1.6" link="Bug">After inserting a picture, exit and restart the application.
+   <r>The inserted picture persists.</r>
+   <p name="bug">Inserted picture not visible after app restart</p>
+  </step>
+  <step name="1.7" link="Bug">In Browse view, while one or more of the records shown contain pictures, resize the columns so that the pictures wrap at the end of lines, or at the beginning of lines, or so that the column is narrower than one of the pictures.
+   <r>The pictures wrap correctly, never hanging over the edge of columns. Pictures that do not fit are not shown, or are cropped to fit within the column.</r>
+   <p name="bug">Inserted picture not visible after app restart</p>
+  </step>
+ </case>
+
+ <case id="inpctDia" num="2" order="any">
+  <title tag="inpctDia">Insert Picture Dialog</title>
+  <context>
+<p>When the Insert Picture dialog is active</p>
+</context>
+  <p name="Specification">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/PICTURE/InsertPicture.html" type="doc">Insert Picture dialog</link>. Inspection is not necessary since this is a system dialog.</p>
+  <step name="2.1" link="Bug">When the host system predates Windows 2000,
+   <r>No picture preview area is visible.</r>
+   <p name="bug">Insert Picture dialog shows preview in Win9X or NT</p>
+  </step>
+  <step name="2.2" link="Bug">Use the <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link>.
+   <r>Report any failures using the words "Insert Picture dialog".</r>
+   <p name="bug">Insert-Picture menu item fails to display dialog</p>
+  </step>
+  <step name="2.3" link="Bug">Select a non-image file. (You may have to type *.* Enter in the File name field to make non-image files visible.)
+   <r>
+<ul>
+	<li>No preview is displayed.</li>
+	<li>The preview area either displays a reasonable message or is empty.</li>
+	<li>The application doesn't crash.</li>
+   </ul>
+</r>
+   <p name="bug">Insert Picture dialog attempts to load a non-image file</p>
+   <p name="bug">Insert Picture dialog preview attempts to show a non-image file</p>
+   <p name="bug">Insert Picture dialog: non-image file crashes application</p>
+  </step>
+  <step name="2.4" link="Bug">While a non-image file is selected, press Open.
+   <r>
+<ul>
+	<li>The dialog closes.</li>
+	<li>An error message dialog is displayed, such as <i>The image could not be loaded</i>.</li>
+	<li>Nothing is inserted.</li>
+	<li>The application doesn't crash.</li>
+   </ul>
+</r>
+   <p name="bug">Insert Picture dialog Open attempts to load a non-image file</p>
+   <p name="bug">Insert Picture dialog Open shows no message for non-image files</p>
+   <p name="bug">Insert Picture dialog Open: non-image file crashes application</p>
+  </step>
+  <step name="2.5" link="Bug">Try inserting pictures in the various supported formats: bmp, gif, jpg [ico, wmf, emf, png].
+   <r>All formats import correctly.</r>
+   <p name="bug">Insert Picture mistreats format X</p>
+  </step>
+ </case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Jul-13-01" author="MikeL">Incorporated Lars and Ricks cases.</update>
+<update date="Sep-07-01" author="LarsH">minor update</update>
+
+</test>

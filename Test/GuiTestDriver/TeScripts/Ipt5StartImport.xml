@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 5 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!--This dialog will not appear very often - only sometimes after a failed test case-->
+		<on-dialog title="Welcome to FieldWorks" until="2000" on-fail="skip">
+			<click path="$Open"/>
+			<on-dialog title="Open Project" until="10000" on-fail="skip">
+				<glimpse id="project_found" path="9:Choose a Project:[2]/36:MALAY PARATEXT 5 IMPORT TEST" on-fail="skip"/>
+				<if>
+					<condition of="$project_found" is="true"/>
+					<then>
+						<click path="9:Choose a Project:[2]/36:MALAY PARATEXT 5 IMPORT TEST"/>
+						<click path="$Open"/>
+					</then>
+					<else>
+						<click path="$Cancel"/>
+					</else>
+				</if>
+			</on-dialog>
+		</on-dialog>
+
+		<!--This dialog will always appear-->
+		<on-dialog title="Empty Scripture" until="60000">
+			<click path="9:Import/43:Import"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

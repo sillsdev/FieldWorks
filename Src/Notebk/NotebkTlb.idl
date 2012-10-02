@@ -1,0 +1,21 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: NoteBkTlb.idl
+Responsibility: John Thomson
+Last reviewed: never
+
+	Provides a DeclareCoClass indicating that FwNotebook can be invoked using IFwTool.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+
+#include "Common.idh"
+
+DeclareLibrary(NoteBkLib, 1.0, "Research Notebook", 6B94B3E1-4DD4-11d4-8078-0000C0FB81B5)
+{
+	importlib("FwKernelTlb.tlb");	// provides needed definition of IFwTool
+
+	#include "NoteBk.idh"
+};

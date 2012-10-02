@@ -1,0 +1,146 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="ShortcutsFragment">
+		<Icon Id="Welcome.wpx" SourceFile="Binary\WorldPadIcon.wpx"/>
+		<DirectoryRef Id="TARGETDIR">
+			<Directory Id="DesktopFolder" SourceName="Desktop">
+				<Component Id="DeskShortcutFlex" Guid="F85EB1D2-3160-41CB-A45C-484C5A808339">
+					<Condition><![CDATA[SIL_DESKTOP_ICONS]]></Condition>
+					<Shortcut Id="DeskShortcutFlex" Directory="DesktopFolder" Name="Flex" LongName="Language Explorer" Target="[#Flex.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+				</Component>
+				<Component Id="DeskShortcutTE" Guid="7E67100B-1F55-4DC7-895B-6E192A2F5590">
+					<Condition><![CDATA[SIL_DESKTOP_ICONS]]></Condition>
+					<Shortcut Id="DeskShortcutTE" Directory="DesktopFolder" Name="TE" LongName="Translation Editor" Target="[#TE.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+				</Component>
+				<Component Id="DeskShortcutDN" Guid="8206945A-59D8-40E9-983A-7FD714BCCDEF">
+					<Condition><![CDATA[SIL_DESKTOP_ICONS]]></Condition>
+					<Shortcut Id="DeskShortcutDN" Directory="DesktopFolder" Name="DN" LongName="Data Notebook" Target="[#FwNotebook.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+				</Component>
+				<Component Id="DeskShortcutWP" Guid="82A00422-F4FF-42D1-BE36-5D79C2A866C9">
+					<Condition><![CDATA[SIL_DESKTOP_ICONS]]></Condition>
+					<Shortcut Id="DeskShortcutWP" Directory="DesktopFolder" Name="WorldPad" Target="[#WorldPad.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+				</Component>
+				<Component Id="DeskShortcutTLE" Guid="A3941E8D-EC0F-42C0-AED4-A41371E334A4">
+					<Condition><![CDATA[SIL_DESKTOP_ICONS]]></Condition>
+					<Shortcut Id="DeskShortcutTLE" Directory="DesktopFolder" Name="TLE" LongName="Topics List Editor" Target="[#FwListEditor.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+				</Component>
+			</Directory>
+			<Directory Id="StartMenuFolder" SourceName="StartMen" LongSource="Start Menu">
+				<Directory Id="ProgramMenuFolder" SourceName="Programs">
+					<Directory Id="FieldWorksMenu" Name="FW" LongName="FieldWorks">
+						<Component Id="ShortcutFieldWorksSuite" Guid="8F304138-A695-4288-A381-1AC334246A64">
+							<Shortcut Id="ShortcutFieldWorksSuite" Directory="FieldWorksMenu" Name="FwSuite" LongName="Information on the FieldWorks Suite" Target="[#FieldWorks_Suite_of_Applications_Help.chm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Helps" />
+						</Component>
+						<Component Id="ShortcutLicense" Guid="5FB51150-1BE9-4251-A3A6-B2D0F3FB496C">
+							<Shortcut Id="ShortcutLicense" Directory="FieldWorksMenu" Name="License" LongName="View the End User License Agreement" Target="[INSTALLDIR]License.rtf" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+						</Component>
+						<Component Id="ShortcutTechSupport" Guid="35E9397B-3E8E-48AC-A550-DDC8D6B8DA81">
+							<Shortcut Id="ShortcutTechSupport" Directory="FieldWorksMenu" Name="TechSupp" LongName="Technical Support" Target="[INSTALLDIR]TechSupport.txt" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+						</Component>
+						<Component Id="ShortcutReadMe" Guid="B4F66903-09AB-48d1-94ED-0461AD43BBAA">
+							<Shortcut Id="ShortcutReadMe" Directory="FieldWorksMenu" Name="ReadMe" LongName="View the ReadMe file" Target="[INSTALLDIR]ReadMe.rtf" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+						</Component>
+						<Directory Id="FlexMenu" Name="Flex" LongName="Language Explorer">
+							<Directory Id="FlexTrainingMenu" Name="Training">
+								<Component Id="ShortcutFlexManual" Guid="2545ABD6-00FA-4513-9105-E4E338915583">
+									<Shortcut Id="ShortcutFlexManual" Directory="FlexTrainingMenu" Name="FlexMan" LongName="View the Language Explorer Student Manual" Target="[#Flex_Student_Manual.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>
+								<Component Id="ShortcutFlexInstructorGuide" Guid="99A5B434-497B-4A92-9118-A7820514644B">
+									<Shortcut Id="ShortcutFlexInstructorGuide" Directory="FlexTrainingMenu" Name="FlexInst" LongName="View the Language Explorer Instructor Guide" Target="[#FLEx_Instructor_Guide.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>
+								<Component Id="ShortcutFlexExercises" Guid="4A54186A-C36D-46F9-B6AD-D99AD3C84879">
+									<Shortcut Id="ShortcutFlexExercises" Directory="FlexTrainingMenu" Name="FlexExer" LongName="View the Language Explorer Exercises" Target="[#FLEx_Exercises.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>
+							</Directory>
+							<Directory Id="FlexResourcesMenu" Name="Resource" LongName="Resources">
+								<Component Id="ShortcutFlexIntroLex" Guid="3722FB0B-3013-407E-B7CD-D13AD55F1311">
+									<Shortcut Id="ShortcutFlexIntroLex" Directory="FlexResourcesMenu" Name="FlexILex" LongName="View the Introduction to Lexicography" Target="[#Introduction_to_Lexicography.htm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Lexicography_Introduction" />
+								</Component>
+								<!--<Component Id="ShortcutFlexIntroPars" Guid="D0D086CE-8FF4-41B4-A465-0E95A579104D">
+									<Shortcut Id="ShortcutFlexIntroPars" Directory="FlexResourcesMenu" Name="FlexIpar" LongName="View the Introduction to Parsing" Target="[#???NO DOCUMENT???]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>-->
+								<Component Id="ShortcutFlexImportSFMHelp" Guid="3A23E891-9481-4391-AE6C-B26E4812B1E1">
+									<Shortcut Id="ShortcutFlexImportSFMHelp" Directory="FlexResourcesMenu" Name="FlexImpS" LongName="View Technical Notes on SFM Database Import" Target="[#Technical_Notes_on_SFM_Database_Import.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>
+								<Component Id="ShortcutFlexImportHelp" Guid="0478329F-18CF-43DC-92C5-6F944FAA48EE">
+									<Shortcut Id="ShortcutFlexImportHelp" Directory="FlexResourcesMenu" Name="FlexImp" LongName="View Technical Notes on LinguaLinks Database Import" Target="[#Technical_Notes_on_LinguaLinks_Database_Import.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>
+								<Component Id="ShortcutFlexWriSys" Guid="B2519FCF-B655-495C-8E90-ED5C387C6B55">
+									<Shortcut Id="ShortcutFlexWriSys" Directory="FlexResourcesMenu" Name="FlexWri" LongName="View Technical Notes on Writing Systems" Target="[#Technical_Notes_on_Writing_Systems.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>
+								<!--<Component Id="ShortcutFlexXLingPap" Guid="8613FDF0-C131-4781-81F6-F4B01FB8B097">
+									<Shortcut Id="ShortcutFlexXLingPap" Directory="FlexResourcesMenu" Name="FlexXLin" LongName="View Technical Notes on Editing Linguistics Papers Using XLingPap" Target="[#???NO DOCUMENT???]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training2" />
+								</Component>-->
+							</Directory>
+							<Component Id="ShortcutFlex" Guid="E37A4098-43E6-4218-87E3-5D632FB3C7E6">
+								<Shortcut Id="ShortcutFlex" Directory="FlexMenu" Name="Flex" LongName="Language Explorer" Target="[#Flex.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+							</Component>
+							<Component Id="ShortcutFLExReadMe" Guid="D1561E22-4270-492B-AB36-C23ADDEEA96F">
+								<Shortcut Id="ShortcutFLExReadMe" Directory="FlexMenu" Name="FlexRead.me" LongName="View the Language Explorer ReadMe file" Target="[Language_Explorer]FLExReadme.rtf" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="LexText" />
+							</Component>
+							<Component Id="ShortcutFlexHelp" Guid="3B75CADC-1716-49D3-A4D8-2C24EE9EDF14">
+								<Shortcut Id="ShortcutFlexHelp" Directory="FlexMenu" Name="FlexHelp" LongName="Language Explorer Help" Target="[#FieldWorks_Language_Explorer_Help.chm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Helps" />
+							</Component>
+							<Component Id="ShortcutMorphIntro" Guid="DF3231B9-1AE1-4494-AD12-03D5054F7C32">
+								<Shortcut Id="ShortcutMorphIntro" Directory="FlexMenu" Name="FlexMorf" LongName="Morphology Introduction" Target="[#ConceptualIntroduction.htm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="WW_ConceptualIntro" />
+							</Component>
+						</Directory>
+						<Directory Id="TEMenu" Name="TE" LongName="Translation Editor">
+							<Component Id="ShortcutTE" Guid="3D71C630-E96D-449B-9CFE-AE459291679E">
+								<Shortcut Id="ShortcutTE" Directory="TEMenu" Name="TE" LongName="Translation Editor" Target="[#TE.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+							</Component>
+							<Component Id="ShortcutTEReadMe" Guid="0D4EA8E4-2D7D-4638-AD49-62403D7B499E">
+								<Shortcut Id="ShortcutTEReadme" Directory="TEMenu" Name="TeRead.me" LongName="View the Translation Editor ReadMe file" Target="[Translation_Editor]TEReadMe.rtf" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Translation_Editor" />
+							</Component>
+							<Component Id="ShortcutTEManual" Guid="EE76C2EC-CAB1-4FE0-B6FD-9B9B88DA36F3">
+								<Shortcut Id="ShortcutTEManual" Directory="TEMenu" Name="TEManual" LongName="Translation Editor Student Manual" Target="[#TE_Student_Manual.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training3" />
+							</Component>
+							<Component Id="ShortcutTEHelp" Guid="62B4124F-7093-4F1F-B022-405E6643B87E">
+								<Shortcut Id="ShortcutTEHelp" Directory="TEMenu" Name="TEHelp" LongName="Translation Editor Help" Target="[#FieldWorks_Translation_Editor_Help.chm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Helps" />
+							</Component>
+							<Component Id="ShortcutTEMovies" Guid="42C7D184-4DA0-48c9-8F9F-F06F1E725353">
+								<Shortcut Id="ShortcutTEMovies" Directory="TEMenu" Name="TEMovies" LongName="Translation Editor Demos" Target="[#index.htm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Demos" />
+							</Component>
+						</Directory>
+						<Directory Id="WPMenu" Name="WorldPad">
+							<Component Id="ShortcutWP" Guid="7EF5C4F7-86CF-45B1-AC57-A71C2CDD9768">
+								<Shortcut Id="ShortcutWP" Directory="WPMenu" Name="WorldPad" Target="[#WorldPad.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="WorldPad" />
+							</Component>
+							<Component Id="ShortcutWPReadMe" Guid="C5B8150D-3F70-488A-ABBF-A5C097756779">
+								<Shortcut Id="ShortcutWPReadMe" Directory="WPMenu" Name="WpRead.me" LongName="View the WorldPad ReadMe file" Target="[WorldPad]WPReadMe.rtf" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="WorldPad" />
+							</Component>
+							<Component Id="ShortcutWPHelp" Guid="EC383C39-EB7F-4D2A-9AC2-823CB3544279">
+								<Shortcut Id="ShortcutWPHelp" Directory="WPMenu" Name="WPHelp" LongName="WorldPad Help" Target="[#FieldWorks_WorldPad_Help.chm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Helps" />
+							</Component>
+							<Component Id="ShortcutWPWelcome" Guid="BC1FEF2E-DD9E-4C5A-B702-07DEDB4A2409">
+								<Shortcut Id="ShortcutWPWelcome" Directory="WPMenu" Name="WPHello" LongName="Welcome to WorldPad!" Target="[#Welcome.wpx]" Hotkey="0" Icon="Welcome.wpx" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+							</Component>
+						</Directory>
+						<Directory Id="DNMenu" Name="DN" LongName="Data Notebook">
+							<Component Id="ShortcutDN" Guid="8C40D1D5-BC0F-4AB0-B3F8-DFF3F81D18A1">
+								<Shortcut Id="ShortcutDN" Directory="DNMenu" Name="DN" LongName="Data Notebook" Target="[#FwNotebook.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+							</Component>
+							<Component Id="ShortcutDnReadme" Guid="4F231B14-170B-47F2-8AC8-25D78BA1C635">
+								<Shortcut Id="ShortcutDnReadme" Directory="DNMenu" Name="DnRead.me" LongName="View the Data Notebook ReadMe file" Target="[Data_Notebook]DNReadMe.rtf" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Data_Notebook" />
+							</Component>
+							<Component Id="ShortcutDnHelp" Guid="FABF31A1-ADEE-439F-BB5A-28B34542E454">
+								<Shortcut Id="ShortcutDnHelp" Directory="DNMenu" Name="DnHelp" LongName="Data Notebook Help" Target="[#FieldWorks_Data_Notebook_Help.chm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Data_Notebook" />
+							</Component>
+							<Component Id="ShortcutDnManual" Guid="07678243-9DBA-4E3D-8B2A-B5FB691E8ECE">
+								<Shortcut Id="ShortcutDnManual" Directory="DNMenu" Name="DnManual" LongName="Data Notebook Student Manual" Target="[#DN_Student_Manual.doc]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Training" />
+							</Component>
+						</Directory>
+						<Directory Id="TLEMenu" Name="TLE" LongName="Topics List Editor">
+							<Component Id="ShortcutTLE" Guid="3B32BAF8-0253-4A83-97DF-C91739470942">
+								<Shortcut Id="ShortcutTLE" Directory="TLEMenu" Name="TLE" LongName="Topics List Editor" Target="[#FwListEditor.exe]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="INSTALLDIR" />
+							</Component>
+							<Component Id="ShortcutTLEHelp" Guid="ABDAE1B1-889B-44E7-840B-3A9E224944AC">
+								<Shortcut Id="ShortcutTLEHelp" Directory="TLEMenu" Name="TLEHelp" LongName="Topics List Editor Help" Target="[#FieldWorks_Topics_List_Editor_Help.chm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Helps" />
+							</Component>
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

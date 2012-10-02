@@ -1,0 +1,668 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>D:\Projects\Unicode\Conversions\Unicode conversons.html</title>
+</head>
+
+<body>
+
+<h1 align="center">ConvertString</h1>
+
+<p align="left">Author: Ken Zook</p>
+
+<h2>1. Background</h2>
+
+<p>In SIL we have language data encoded in dozens of non-standard
+encodings. Historically, this resulted from linguists needing
+special characters that were not part of any standard code page
+to which they had ready access. The solution was to modify an
+existing font, or build an entirely new font with the desired
+glyphs. In some cases a glyph was a composite base character with
+diacritic(s) and in other cases the diacritics were keyed as
+separate code points and they were combined by the rendering
+engine. This was our special character solution for both DOS and
+Windows environments.</p>
+
+<p>Our current goal is to move all of this data to Unicode,
+including the Private Use Area, and possibly surrogates. During
+the transition period, it is likely that users will need to
+convert data in both directions between their custom 8-bit
+encodings and Unicode encoded as UTF-8 or UTF-16. Note that
+Unicode can also have multiple code points per character since
+base characters and diacritics may be separate code points, and
+surrogate values are also pairs of code points. It's likely that
+we will also need to convert Unicode values to other Unicode
+values to clean up data problems.</p>
+
+<p>Language data may be contained in many kinds of documents. It
+may be included in XML files, standard format files, LinguaLinks,
+or FieldWorks databases, to name the most common examples.
+Different languages use different encodings, so must be treated
+separately by the conversion process. Files usually contain data
+in multiple languages plus markup. Higher-level parsing to
+extract language-specific strings from markup are left to other
+processes. Also, conversion from 8-bit or UTF-8 to 16-bit values
+and vice versa is left to other processes.</p>
+
+<p>???????? ICsConvertXToX interfaces are low-level string
+conversion COM interfaces designed to modify 16-bit strings in a
+single encoding. They can be used by any program to change
+strings to different encodings, or simply modify the code points
+in a single encoding. The conversion process is accomplished by a
+change engine that implements this interface. CsConvertXToX
+classes implement the ICsConvertXToX interfaces and include a
+built-in engine that uses a simple table lookup. Where more power
+is needed, additional change engines can be written to use this
+interface and provide more power. Each change engine uses its own
+table format. Potential change engines implementing this
+interface are CC and Perl.</p>
+
+<p>There are three interfaces used for converting strings:
+ICsConvertAToW, ICsConvertWToA, and ICsConvertWToW. The A in
+these names stands for 8-bit strings, and the W stands for 16-bit
+strings. Methods in these interfaces take another interface (ICsCallbackAToW,
+ICsCallbackWToA, or ICsCallbackWToW) for callback messages
+regarding initialization and processing failures.</p>
+
+<p>ICsConvertXToX is used as follows: </p>
+
+<ol>
+	<li>Get an appropriate ICsConvertXToX (ICsConvertAToW,
+		ICsConvertWToA, or ICsConvertWToW) interface via
+		CoCreateInstance for the engine you want to use. The
+		ProgIDs for the simple table lookup implementation of
+		these interfaces are SIL.CS.ConvertAToW, SIL.CS.ConvertWToA,
+		and SIL.CS.ConvertWToW.</li>
+	<li>Initialize the engine with an appropriate table.</li>
+	<li>Call the instance repeatedly to change strings of text.</li>
+	<li>Release the instance </li>
+</ol>
+
+<p>Here are some possible applications for ICsConvertXToX:</p>
+
+<ul>
+	<li>applications converting to and from Unicode while
+		importing or exporting (Shoebox, LinguaLinks, etc.)</li>
+	<li>UniConvert program for converting a FieldWorks XML file
+		to/from Unicode</li>
+	<li>a program to convert standard format files to/from
+		Unicode or other encodings</li>
+	<li>an application that changes spelling</li>
+	<li>an application that changes orthographies</li>
+	<li>a transducer to create a new encoding</li>
+</ul>
+
+<p>The power available in the conversion is dependent on the
+engine and its associated table.</p>
+
+<h2>ICsConvertAToW interface</h2>
+
+<p><strong>HRESULT Initialize([in] BSTR bstrTable, [in] BOOL
+fFileName, [in] ICsCallbackAToW * pccaw)</strong></p>
+
+<p>This method compiles a table and holds it in memory until
+ICsConvertAToW is released.</p>
+
+<p><em>bstrTable</em> is the path name for a file containing the
+table, or the actual table, depending on fFileName. This cannot
+be NULL.</p>
+
+<p><em>fFileName</em> is true if bstrTable contains a file path
+name and false if it contains the actual table text.</p>
+
+<p><em>pccaw</em> is used to trap and respond to initialization
+errors. This can be NULL if extended error information is not
+needed. If this is not NULL and there is an error while
+initializing the table, the ICsCallbackAToW::InitError method is
+called with information about the error. If this is NULL and
+there is an error while initializing the table, Initialize will
+return a failure code.</p>
+
+<p><strong>HRESULT Convert([in] CHAR * prgchSrc, [in] int cchSrc,
+[out, retval] BSTR* pbstrDst)</strong></p>
+
+<p>This method converts the input string to the output string
+using the compiled table. It is assumed that each string is in a
+single encoding and is complete. In other words, context is not
+maintained between calls to Convert and the associated table is
+reinitialized for each string. A string could be an entire file
+if it were all in one encoding. The returned BSTR is a newly
+allocated BSTR that the caller is responsible to free.</p>
+
+<p><em>prgchSrc</em> is an 8-bit string containing the text to be
+changed. This cannot be NULL.</p>
+
+<p><em>cchSrc</em> gives the number of characters in prgchSrc.</p>
+
+<p><em>pbstrDst</em> is a pointer to a BSTR containing the
+changed text. This is a newly allocated BSTR that the caller is
+responsible to free. This cannot be NULL.</p>
+
+<p><strong>HRESULT ConvertRgch([in] CHAR * prgchSrc, [in] int
+cchSrc, [out] OLECHAR * prgchDst, [in] int cchDst, [in]
+ICsCallbackAToW * pccaw, [out, retval] int * pcchNeed)</strong></p>
+
+<p>ConvertRgch is similar to Convert, but is optimized for C++
+access.</p>
+
+<p><em>prgchSrc</em> is a buffer of CHARs containing the 8-bit
+input string to change. This cannot be NULL.</p>
+
+<p><em>cchSrc</em> is the number of characters in prgchSrc.</p>
+
+<p><em>prgchDst</em> is a pointer to a buffer provided for the
+output string. It is filled as needed by the change engine, up to
+cchDst.</p>
+
+<p><em>cchDst</em> is the maximum number of wide characters
+available in the output buffer (prgchDst).</p>
+
+<p><em>pccaw</em> is used to trap processing errors. This can be
+NULL if extended error information is not needed. If this is not
+NULL and there is an error while converting the input text, the
+ICsCallbackAToW::ProcessError method is called with information
+about the error. If this is NULL, the error will be ignored, the
+character will be transferred directly to the output buffer, and
+processing will continue at the next character. Currently the
+only kind of processing error that can be trapped is a missing
+rule.</p>
+
+<p><em>pcchNeed</em> is the number of wide characters returned in
+prgchDst. This cannot be NULL.</p>
+
+<p>If prgchDst is NULL and cchDst is 0, pcchNeed will contain the
+size (in characters) needed for the output buffer.</p>
+
+<p>If there is not enough room in prgchDst to store the entire
+processed string, a failure code will be returned and the
+contents of prgchDst and pcchNeed should be ignored.</p>
+
+<p><strong>HRESULT ConvertCallback([in] CHAR * prgchSrc, [in] int
+cchSrc, [in] int cchChunk, [in] ICsCallbackAToW * pccaw)</strong></p>
+
+<p>ConvertCallback can be used in cases where a progress bar
+might be desired to show the progress of processing a large
+string. The ICsCallbackAToW::HaveText method will be called
+repeatedly until the whole input string has been converted.</p>
+
+<p><em>prgchSrc</em> is a buffer of CHARs containing the 8-bit
+input string to change. This cannot be NULL.</p>
+
+<p><em>cchSrc</em> is the number of characters in prgchSrc.</p>
+
+<p><em>cchChunk</em> is the number of characters to return in
+each callback message.</p>
+
+<p><em>pccaw</em> is used to return the output of the conversion.
+This cannot be NULL.</p>
+
+<h3>ICsCallbackAToW interface</h3>
+
+<p><strong>HRESULT HaveText([in] OLECHAR * prgch, [in] int cch, [in]
+int cchCompleted)</strong></p>
+
+<p>This callback method is called when a pointer to this
+interface is passed to ICsConvertAToW::ConvertCallback.</p>
+
+<p><em>prgch</em> contains the current 16-bit output string. If
+this information needs to be stored somewhere, it must be copied
+into a separate buffer, because once this method returns, the
+buffer pointed to by prgch will no longer be valid.</p>
+
+<p><em>cch</em> is the number of characters in prgch.</p>
+
+<p><em>cchCompleted</em> is the total number of characters that
+have been converted from the input buffer.</p>
+
+<p><strong>HRESULT InitError([in] InitErrorCode iec, [in] int
+iInvalidLine, [in] BSTR bstrInvalidLine, [out, retval] BOOL *
+pfContinue);</strong></p>
+
+<p>This callback method is called when an error occurs while
+initializing a table.</p>
+
+<p><em>iec</em> is the initialization error code.</p>
+
+<p><em>iInvalidLine</em> is the index of the line where the error
+occurred. If the bstrTable passed to Initialize was a filename,
+this is the line index in that file. If the bstrTable passed to
+Initialize was the actual table itself, this is the line index
+within the table buffer.</p>
+
+<p><em>bstrInvalidLine</em> contains the text of the line where
+the error occurred.</p>
+
+<p><em>pfContinue</em> is used to determine whether or not the
+error is fatal. If this is set to TRUE, Initialize should
+continue reading the table. If this is FALSE, Initialize should
+stop.</p>
+
+<p><strong>HRESULT ProcessError([in] int ichInput, [out, retval]
+BOOL * pfContinue);</strong></p>
+
+<p><em>ichInput</em> is the index of the character within the
+input buffer where the processing error occurred.</p>
+
+<p><em>pfContinue</em> is used to determine whether or not the
+error is fatal. If this is set to TRUE, ConvertCallback or
+ConvertRgch will continue reading the table. If this is FALSE,
+ConvertCallback or ConvertRgch will stop.</p>
+
+<p>Currently the only kind of processing error is a missing rule.
+If this happens, ichInput will give the index of the character in
+the input buffer which did not have a conversion rule specified
+for it.</p>
+
+<h2>ICsConvertWToA interface</h2>
+
+<p><strong>HRESULT Initialize([in] BSTR bstrTable, [in] BOOL
+fFileName, [in] ICsCallbackWToA * pccwa)</strong></p>
+
+<p>This method compiles a table and holds it in memory until
+ICsConvertWToA is released.</p>
+
+<p><em>bstrTable</em> is the path name for a file containing the
+table, or the actual table, depending on fFileName. This cannot
+be NULL.</p>
+
+<p><em>fFileName</em> is true if bstrTable contains a file path
+name and false if it contains the actual table text.</p>
+
+<p><em>pccwa</em> is used to trap and respond to initialization
+errors. This can be NULL if extended error information is not
+needed. If this is not NULL and there is an error while
+initializing the table, the ICsCallbackWToA::InitError method is
+called with information about the error. If this is NULL and
+there is an error while initializing the table, Initialize will
+return a failure code.</p>
+
+<p><strong>HRESULT Convert([in] BSTR bstrSrc, [out] CHAR **
+pprgchDst, [out, retval] int * pcchNeed)</strong></p>
+
+<p>This method converts the input string to the output string
+using the compiled table. It is assumed that each string is in a
+single encoding and is complete. In other words, context is not
+maintained between calls to Convert and the associated table is
+reinitialized for each string. A string could be an entire file
+if it were all in one encoding. The returned string is a newly
+allocated 16-bit buffer that the caller is responsible to free.</p>
+
+<p><em>bstrSrc</em> is a BSTR containing the text to be changed..</p>
+
+<p><em>pprgchDst</em> will contain a pointer to the 8-bit string
+containing the changed text. This is a newly allocated 8-bit
+string that the caller is responsible to free. This cannot be
+NULL.</p>
+
+<p><em>pcchNeed</em> will contain the number of characters in
+pprgchDst. This cannot be NULL.</p>
+
+<p><strong>HRESULT ConvertRgch([in] OLECHAR * prgchSrc, [in] int
+cchSrc, [out] CHAR * prgchDst, [in] int cchDst, [in]
+ICsCallbackWToA * pccwa, [out, retval] int * pcchNeed)</strong></p>
+
+<p>ConvertRgch is similar to Convert, but is optimized for C++
+access.</p>
+
+<p><em>prgchSrc</em> is a buffer of OLECHARs containing the 16-bit
+input string to change. This cannot be NULL.</p>
+
+<p><em>cchSrc</em> is the number of characters in prgchSrc.</p>
+
+<p><em>prgchDst</em> is a pointer to an 8-bit buffer provided for
+the output string. It is filled as needed by the change engine,
+up to cchDst.</p>
+
+<p><em>cchDst</em> is the maximum number of characters available
+in the output buffer (prgchDst).</p>
+
+<p><em>pccwa</em> is used to trap processing errors. This can be
+NULL if extended error information is not needed. If this is not
+NULL and there is an error while converting the input text, the
+ICsCallbackWToA::ProcessError method is called with information
+about the error. If this is NULL, the error will be ignored, the
+character will be transferred directly to the output buffer (causing
+invalid output if the character is &gt; 0xFF), and processing
+will continue at the next character. Currently the only kind of
+processing error that can be trapped is a missing rule.</p>
+
+<p><em>pcchNeed</em> is the number of characters returned in
+prgchDst. This cannot be NULL.</p>
+
+<p>If prgchDst is NULL and cchDst is 0, pcchNeed will contain the
+size (in characters) needed for the output buffer.</p>
+
+<p>If there is not enough room in prgchDst to store the entire
+processed string, a failure code will be returned and the
+contents of prgchDst and pcchNeed should be ignored.</p>
+
+<p><strong>HRESULT ConvertCallback([in] OLECHAR * prgchSrc, [in]
+int cchSrc, [in] int cchChunk, [in] ICsCallbackWToA * pccwa)</strong></p>
+
+<p>ConvertCallback can be used in cases where a progress bar
+might be desired to show the progress of processing a large
+string. The ICsCallbackWToA::HaveText method will be called
+repeatedly until the whole input string has been converted.</p>
+
+<p><em>prgchSrc</em> is a buffer of OLECHARs containing the 16-bit
+input string to change. This cannot be NULL.</p>
+
+<p><em>cchSrc</em> is the number of characters in prgchSrc.</p>
+
+<p><em>cchChunk</em> is the number of characters to return in
+each callback message.</p>
+
+<p><em>pccwa</em> is used to return the output of the conversion.
+This cannot be NULL.</p>
+
+<h3>ICsCallbackWToA interface</h3>
+
+<p><strong>HRESULT HaveText([in] CHAR * prgch, [in] int cch, [in]
+int cchCompleted)</strong></p>
+
+<p>This callback method is called when a pointer to this
+interface is passed to ICsConvertWToA::ConvertCallback.</p>
+
+<p><em>prgch</em> is the current 8-bit output string. If this
+information needs to be stored somewhere, it must be copied into
+a separate buffer, because once this method returns, the buffer
+pointed to by prgch will no longer be valid.</p>
+
+<p><em>cch</em> is the number of characters in prgch.</p>
+
+<p><em>cchCompleted</em> is the total number of characters that
+have been converted from the input buffer.</p>
+
+<p><strong>HRESULT InitError([in] InitErrorCode iec, [in] int
+iInvalidLine, [in] BSTR bstrInvalidLine, [out, retval] BOOL *
+pfContinue);</strong></p>
+
+<p>This callback method is called when an error occurs while
+initializing a table.</p>
+
+<p><em>iec</em> is the initialization error code.</p>
+
+<p><em>iInvalidLine</em> is the index of the line where the error
+occurred. If the bstrTable passed to Initialize was a filename,
+this is the line index in that file. If the bstrTable passed to
+Initialize was the actual table itself, this is the line index
+within the table buffer.</p>
+
+<p><em>bstrInvalidLine</em> contains the text of the line where
+the error occurred.</p>
+
+<p><em>pfContinue</em> is used to determine whether or not the
+error is fatal. If this is set to TRUE, Initialize will continue
+reading the table. If this is FALSE, Initialize will stop.</p>
+
+<p><strong>HRESULT ProcessError([in] int ichInput, [out, retval]
+BOOL * pfContinue);</strong></p>
+
+<p><em>ichInput</em> is the index of the character within the
+input buffer where the processing error occurred.</p>
+
+<p><em>pfContinue</em> is used to determine whether or not the
+error is fatal. If this is set to TRUE, ConvertCallback or
+ConvertRgch will continue reading the table. If this is FALSE,
+ConvertCallback or ConvertRgch will stop.</p>
+
+<h2>ICsConvertWToW interface</h2>
+
+<p><strong>HRESULT Initialize([in] BSTR bstrTable, [in] BOOL
+fFileName, [in] ICsCallbackWToW * pccww)</strong></p>
+
+<p>This method compiles a table and holds it in memory until
+ICsConvertWToW is released.</p>
+
+<p><em>bstrTable</em> is the path name for a file containing the
+table, or the actual table, depending on fFileName. This cannot
+be NULL.</p>
+
+<p><em>fFileName</em> is true if bstrTable contains a file path
+name and false if it contains the actual table text.</p>
+
+<p><em>pccwa</em> is used to trap and respond to initialization
+errors. This can be NULL if extended error information is not
+needed. If this is not NULL and there is an error while
+initializing the table, the ICsCallbackWToW::InitError method is
+called with information about the error. If this is NULL and
+there is an error while initializing the table, Initialize will
+return a failure code.</p>
+
+<p><strong>HRESULT Convert([in] BSTR bstrSrc, [out, retval] BSTR
+* pbstrDst)</strong></p>
+
+<p>This method converts the input string to the output string
+using the compiled table. It is assumed that each string is in a
+single encoding and is complete. In other words, context is not
+maintained between calls to Convert and the associated table is
+reinitialized for each string. A string could be an entire file
+if it were all in one encoding. The returned string is a newly
+allocated BSTR that the caller is responsible to free.</p>
+
+<p><em>bstrSrc</em> is a BSTR containing the text to be changed..</p>
+
+<p><em>pbstrDst</em> will contain a BSTR containing the changed
+text. This is a newly allocated BSTR that the caller is
+responsible to free. This cannot be NULL.</p>
+
+<p><strong>HRESULT ConvertRgch([in] OLECHAR * prgchSrc, [in] int
+cchSrc, [out] OLECHAR * prgchDst, [in] int cchDst, [in]
+ICsCallbackWToW * pccww, [out, retval] int * pcchNeed)</strong></p>
+
+<p>ConvertRgch is similar to Convert, but is optimized for C++
+access.</p>
+
+<p><em>prgchSrc</em> is a buffer of OLECHARs containing the 16-bit
+input string to change. This cannot be NULL.</p>
+
+<p><em>cchSrc</em> is the number of characters in prgchSrc.</p>
+
+<p><em>prgchDst</em> is a pointer to a 16-bit buffer provided for
+the output string. It is filled as needed by the change engine,
+up to cchDst.</p>
+
+<p><em>cchDst</em> is the maximum number of characters available
+in the output buffer (prgchDst).</p>
+
+<p><em>pccww</em> is used to trap conversion errors. This can be
+NULL if extended error information is not needed. If this is not
+NULL and there is an error while converting the input text, the
+ICsCallbackWToW::ProcessError method is called with information
+about the error. If this is NULL, the error will be ignored, the
+character will be transferred directly to the output buffer, and
+processing will continue at the next character. Currently the
+only kind of processing error that can be trapped is a missing
+rule.</p>
+
+<p><em>pcchNeed</em> is the number of characters returned in
+prgchDst. This cannot be NULL.</p>
+
+<p>If prgchDst is NULL and cchDst is 0, pcchNeed will contain the
+size (in characters) needed for the output buffer.</p>
+
+<p>If there is not enough room in prgchDst to store the entire
+processed string, a failure code will be returned and the
+contents of prgchDst and pcchNeed should be ignored.</p>
+
+<p><strong>HRESULT ConvertCallback([in] OLECHAR * prgchSrc, [in]
+int cchSrc, [in] int cchChunk, [in] ICsCallbackWToW * pccww)</strong></p>
+
+<p>ConvertCallback can be used in cases where a progress bar
+might be desired to show the progress of processing a large
+string. The ICsCallbackWToW::HaveText method will be called
+repeatedly until the whole input string has been converted.</p>
+
+<p><em>prgchSrc</em> is a buffer of OLECHARs containing the 16-bit
+input string to change. This cannot be NULL.</p>
+
+<p><em>cchSrc</em> is the number of characters in prgchSrc.</p>
+
+<p><em>cchChunk</em> is the number of characters to return in
+each callback message.</p>
+
+<p><em>pccww</em> is used to return the output of the conversion.
+This cannot be NULL.</p>
+
+<p>The ICsCallbackWToW::HaveText method will be called repeatedly
+until the whole input string has been converted.</p>
+
+<h3>ICsCallbackWToW interface</h3>
+
+<p><strong>HRESULT HaveText([in] OLECHAR * prgch, [in] int cch, [in]
+int cchCompleted)</strong></p>
+
+<p>This callback method is called when a pointer to this
+interface is passed to ICsConvertWToW::ConvertCallback.</p>
+
+<p><em>prgch</em> is the current 16-bit output string. If this
+information needs to be stored somewhere, it must be copied into
+a separate buffer, because once this method returns, the buffer
+pointed to by prgch will no longer be valid.</p>
+
+<p><em>cch</em> is the number of characters in prgch.</p>
+
+<p><em>cchCompleted</em> is the total number of characters that
+have been converted from the input buffer.</p>
+
+<p><strong>HRESULT InitError([in] InitErrorCode iec, [in] int
+iInvalidLine, [in] BSTR bstrInvalidLine, [out, retval] BOOL *
+pfContinue);</strong></p>
+
+<p>This callback method is called when an error occurs while
+initializing a table.</p>
+
+<p><em>iec</em> is the initialization error code.</p>
+
+<p><em>iInvalidLine</em> is the index of the line where the error
+occurred. If the bstrTable passed to Initialize was a filename,
+this is the line index in that file. If the bstrTable passed to
+Initialize was the actual table itself, this is the line index
+within the table buffer.</p>
+
+<p><em>bstrInvalidLine</em> contains the text of the line where
+the error occurred.</p>
+
+<p><em>pfContinue</em> is used to determine whether or not the
+error is fatal. If this is set to TRUE, Initialize will continue
+reading the table. If this is FALSE, Initialize will stop.</p>
+
+<p><strong>HRESULT ProcessError([in] int ichInput, [out, retval]
+BOOL * pfContinue);</strong></p>
+
+<p><em>ichInput</em> is the index of the character where the
+processing error occurred.</p>
+
+<p><em>pfContinue</em> is used to determine whether or not the
+error is fatal. If this is set to TRUE, ConvertCallback or
+ConvertRgch will continue reading the table. If this is FALSE,
+ConvertCallback or ConvertRgch will stop.</p>
+
+<h2>CsConvertXToX table lookup engine</h2>
+
+<p>CsConvertXToX classes are the simplest engine that implements
+the ICsConvertXToX interfaces. They areoptimized for fast table
+lookups. If more power is needed, then one of the other engines
+is used instead of CsConvertXToX.</p>
+
+<p>The internal table lookup engine reads a file, or takes an
+input string that contains a table of changes. The input file
+must be 16-bit. Each line contains one command</p>
+
+<blockquote>
+	<p>match &gt; replacement</p>
+</blockquote>
+
+<p>where match is composed of one or more hex codes (i.e. 131E 6C)
+separated by white space and replacement consists of zero or more
+hex codes separated by white space. Case and leading zeros are
+ignored when parsing hex codes. Code points between 10000 and 10ffff
+are assumed to be Unicode surrogates and are translated into the
+corresponding surrogate pair prior to matching or replacing.
+Anything above 10ffff, or anything that can't be interpreted as a
+hex number is considered an error. The order of lines in the
+table is significant. Blank lines are ignored.</p>
+
+<p>Comments may occur on any line. A comment begins with a hash
+mark (#) and continues to the end of the line.</p>
+
+<p>When the table is parsed during the Initialize method, it is
+loaded into a trie for fast lookup. If an error is encountered,
+the ICsCallbackXToX::InitError method is called to give extended
+error information.</p>
+
+<p>The Convert method works much like CC. It moves an input
+pointer one character at a time. If a match is found at the
+current input pointer, the replacement text is output and the
+input pointer moves past the matched text. If a match is not
+found, one character is output, the input pointer is moved to the
+next character, and the lookup process is repeated. This process
+means that replacement text is never processed again.</p>
+
+<p>Here is a sample table.</p>
+
+<blockquote>
+	<p># My conversions<br>
+	61 &gt; 61 # LATIN SMALL LETTER A<br>
+	62 &gt; 65 # Change 1 to 1<br>
+	87 &gt; 2021 # DOUBLE DAGGER<br>
+	61 62 63 &gt; 3abc # Changes 3 characters to one character<br>
+	89 &gt;&nbsp; # Deletes 89 from the input<br>
+	63 64 65 &gt; 70 71 72 # Changes 3 characters to 3 different
+	characters<br>
+	3010 &gt; 30 40 # Changes 1 character to 2 characters<br>
+	10001 &gt; 10401 # Changes one surrogate pair to another</p>
+</blockquote>
+
+<p>This table would convert</p>
+
+<blockquote>
+	<p>60 61 62 63 61 3010 d800 dc01 3abc 62 63 64 65 66 89</p>
+</blockquote>
+
+<p>to</p>
+
+<blockquote>
+	<p>60 61 65 63 61 30 40 d801 dc01 3abc 65 70 71 72 66</p>
+</blockquote>
+
+<p>Table Notes:</p>
+
+<p>10001 represents the surrogate pair d800 dc01, and 10401
+represents the surrogate pair d801 dc01, thus the last line is
+equivalent to<br>
+&nbsp;&nbsp;&nbsp; d800 dc01 &gt; d801 dc01</p>
+
+<p>The order of lines in the table is significant. As a result,
+the fourth line is never matched because the first line always
+processes the initial 61. In order for the fourth line to be
+processed, it would need to precede the first line.</p>
+
+<p>While the first line is a valid command, if the input and
+output are the same, the line can be omitted unless it is there
+to keep some later change from happening.</p>
+
+<p>The following lines would be illegal in the table and would
+cause an error when loading the table.</p>
+
+<blockquote>
+	<p>10 # No replacement<br>
+	20 &gt; 23 24 25 40 24<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 45 23 54 229&nbsp;
+	# Replacements cannot continue to a new line<br>
+	10 &gt; 2g3 # Illegal hex replacement<br>
+	0x24 &gt; 22 # Illegal hex match (we are not supporting C
+	notation)<br>
+	'cat' &gt; 'dog' # Illegal hex codes in input and output<br>
+	11ffff &gt; 2234 # Match hex code is too large<br>
+	-10 &gt; 35 # Negative numbers not allowed<br>
+	This is a comment line but is missing the beginning #<br>
+	40 &gt; 34<br>
+	40 &gt; 45&nbsp;&nbsp;&nbsp; # Duplicate input arguments not
+	allowed</p>
+</blockquote>
+</body>
+</html>

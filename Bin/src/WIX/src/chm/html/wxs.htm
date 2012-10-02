@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Source Files (.wxs)</title>
+</head>
+<body>
+<h1>Source Files (.wxs)</h1>
+<p>
+All .wxs files are well-formed XML documents that contain a single root element named &lt;Wix/&gt;.  The rest of the source file may or may not adhere to the WiX schema before preprocessing.  However, after being preprocessed all source files must conform to the WiX schema or they will fail to compile.
+</p>
+<p>
+The root &lt;Wix/&gt; element can contain at most one of the following two elements as children:  &lt;Product/&gt;, &lt;Module/&gt;.  However, there can be an unbounded number &lt;Fragment/&gt; elements as children of the root &lt;Wix/&gt; element.  When a source file is compiled into an object file, each instance of these elements creates a new section in the object file.  Therefore, these three elements are often referred to as section elements.
+</p>
+<p>
+It is important to note, that there can be only one &lt;Product/&gt; or &lt;Module/&gt; section element per source file because they are compiled into special sections called entry sections.  Entry sections are used as starting points in the linking process.  Sections, entry sections, and the entire linking process are described in greater detail later in this document.
+</p>
+<p>
+The children of the section elements define the contents of the Windows Installer database.  You’ll recognize &lt;Property/&gt; elements that map to entries in the Property table and a hierarchy of &lt;Directory/&gt; elements that build up the Directory table.  Most elements contain an “Id” attribute that will act as the primary key for the resulting row in the Windows Installer database.  Note, in the first release of the WiX schema the primary key was represented by the text of the element.  This location for the primary key was undesirable for several reasons and has been moved to the “Id” attribute.  In most cases, the “Id” attribute also defines a symbol when the source file is compiled into an object file.
+</p>
+</body>
+</html>

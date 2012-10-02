@@ -1,0 +1,348 @@
+;$Id: finnish.in 1.17 1998/04/14 11:31:39 Mike_Maxwell Exp $
+
+;Modified from FINNISH.RUL for HC
+
+; Consonant Gradation in Finnish
+
+; The following data and analysis are taken from Dalrymple et al.
+; 1987:42ff including this proviso: "These rules abstract away from
+; reality in that the alternation is here controlled solely by the
+; phonological environment" (p. 42).
+
+; ¤ = velar nasal
+; I'm assuming /j/ is an alveopalatal affricate
+
+(open_language message Finnish)
+
+(morpher_set message
+  (*pfeatures*
+	(voc      (+ -)
+	 cons     (+ -)
+	 sonorant (+ -)
+	 high     (+ -)
+	 low      (+ -)
+	 back     (+ -)
+	 round    (+ -)
+	 vd       (+ -)
+	 nasal    (+ -)
+	 ant      (+ -)
+	 cor      (+ -)
+	 del_rel  (+ -)
+	 strident (+ -)
+	 cont     (+ -)
+	 lateral  (+ -)
+	 syll     (onset nucleus coda)
+	)
+  )
+)
+
+;Ff from Hyman "Phonology: Theory and Analysis", Holt, Rinehart and Winston, pg. 241-244
+;bilabial =     [-back -high -low +ant -cor]
+;labiodental =  same
+;alveolar =     [-back -high -low +ant +cor]
+;alveopalatal = [-back +high -low -ant +cor]
+;velar =        [+back +high -low -ant -cor]
+;glottal =      [-back -high +low -ant -cor]
+
+(load_char_def_table message
+  <char_table
+  name table1
+  encoding Finnish
+  seg_defs
+	(
+	  (i   (cons - voc + sonorant + high + low - back - round - vd + cont + nasal -))
+	  (e   (cons - voc + sonorant + high - low - back - round - vd + cont + nasal -))
+	  (a   (cons - voc + sonorant + high - low + back + round - vd + cont + nasal -))
+	  (o   (cons - voc + sonorant + high - low - back + round + vd + cont + nasal -))
+	  (u   (cons - voc + sonorant + high + low - back + round + vd + cont + nasal -))
+	  (y   (cons - voc + sonorant + high + low - back - round + vd + cont + nasal -))
+	  (”   (cons - voc + sonorant + high - low - back - round + vd + cont + nasal -))
+	  („   (cons - voc + sonorant + high - low + back - round - vd + cont + nasal -))
+
+	  (p   (cons + voc - sonorant - back - high - low - ant + cor - vd - del_rel - nasal - strident - cont -))
+	  (t   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel - nasal - strident - cont -))
+	  (k   (cons + voc - sonorant - back + high + low - ant - cor - vd - del_rel - nasal - strident - cont -))
+
+	  (b   (cons + voc - sonorant - back - high - low - ant + cor - vd + del_rel - nasal - strident - cont -))
+	  (d   (cons + voc - sonorant - back - high - low - ant + cor + vd + del_rel - nasal - strident - cont -))
+	  (g   (cons + voc - sonorant - back + high + low - ant - cor - vd + del_rel - nasal - strident - cont -))
+
+	  (f   (cons + voc - sonorant - back - high - low - ant + cor - vd - del_rel - nasal - strident + cont +))
+	  (v   (cons + voc - sonorant - back - high - low - ant + cor - vd + del_rel - nasal - strident + cont +))
+	  (s   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel - nasal - strident + cont +))
+	  (z   (cons + voc - sonorant - back - high - low - ant + cor + vd + del_rel - nasal - strident + cont +))
+	  (c   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel + nasal - strident + cont -))
+	  (j   (cons + voc - sonorant - back - high + low - ant - cor + vd + del_rel + nasal - strident + cont -))
+	  (x   (cons + voc - sonorant - back + high + low - ant - cor - vd - del_rel - nasal - strident - cont +))
+	  (h   (cons + voc - sonorant - back - high - low + ant - cor - vd - del_rel - nasal - strident - cont +))
+
+	  (m   (cons + voc - sonorant + back - high - low - ant + cor - vd + del_rel - nasal + strident - cont -))
+	  (n   (cons + voc - sonorant + back - high - low - ant + cor + vd + del_rel - nasal + strident - cont - lateral -))
+	  (¤   (cons + voc - sonorant + back + high + low - ant - cor - vd + del_rel - nasal + strident - cont -))
+
+	  (l   (cons + voc - sonorant + back - high - low - ant + cor + vd + del_rel - nasal - strident - cont - lateral +))
+	  (r   (cons + voc - sonorant + back - high - low - ant + cor + vd + del_rel - nasal - strident - cont - lateral -))
+	)
+  >
+)
+
+
+
+;Now set the strata (just one):
+(morpher_set message
+  (*strata* (morphophonemic)))
+;...and set their ctables (msg 6550):
+(set_stratum message <stratum_setting nm morphophonemic type ctable value table1>)
+(set_stratum message <stratum_setting nm *surface* type ctable value table1>)
+;...and the cyclicity of the morphophonemic stratum (msg 6552):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value noncyclic>)
+;...and the order of the prules and mrules:
+(set_stratum message <stratum_setting nm morphophonemic type prule value linear>)
+(set_stratum message <stratum_setting nm morphophonemic type mrule value linear>)
+
+
+(merge_in_dictionary_file message
+  finnish.dic)
+
+
+;Load the natural classes:
+;probably some of the ff "natural" classes could be simplified, particularly those having to do with sonorants
+(load_nat_class message <nat_class name cons        features (cons + voc -)>)
+(load_nat_class message <nat_class name vowel       features (cons - voc +)>)
+
+(load_nat_class message <nat_class name syll_onset  features (syll onset cons +)>)
+(load_nat_class message <nat_class name syll_nuc    features (syll nucleus voc +)>)
+(load_nat_class message <nat_class name syll_coda   features (syll coda cons +)>)
+
+(load_nat_class message <nat_class name voiced      features (vd +)>)
+(load_nat_class message <nat_class name vl_stop     features (cons + vd - cont - strident -)>)
+(load_nat_class message <nat_class name nasal        features (nasal +)>)
+(load_nat_class message <nat_class name nasal_son   features (nasal + sonorant + vd +)>)
+(load_nat_class message <nat_class name nonnasal_son features (sonorant + nasal -)>)
+(load_nat_class message <nat_class name nonnasal_son_c features (cons + sonorant + nasal -)>)
+(load_nat_class message <nat_class name vd_son      features (sonorant + vd +)>)
+(load_nat_class message <nat_class name son_cons    features (sonorant + cons +)>)
+(load_nat_class message <nat_class name vd_strident features (cont + strident + vd +)>)
+(load_nat_class message <nat_class name bilabial    features (ant + back - high -)>)
+
+(load_nat_class message <nat_class name p           features (cons + ant + cor - vd - cont -)>)
+(load_nat_class message <nat_class name t           features (cons + cor + vd - cont - del_rel -)>)
+(load_nat_class message <nat_class name k           features (cons + cor - back + strident - cont - vd -)>)
+(load_nat_class message <nat_class name j           features (cont - vd + cor + del_rel + strident + back -)>)
+(load_nat_class message <nat_class name h           features (low + cons +)>)
+(load_nat_class message <nat_class name ny          features (nasal + sonorant + vd +)>)
+
+(load_nat_class message <nat_class name u           features (voc + high + back +)>)
+(load_nat_class message <nat_class name e           features (voc + back - high - round -)>)
+
+
+; Consonant Gradation is here broken into three disjunctive rules for p, t and k, since the exact
+; correspondences are different for the three underlying Cs.  (Gradation of geminates is handled by
+; a separate rule, see end.)
+;The ff are the general rules in PC-KIMMO's format:
+;RULE "3 Consonant Gradation Correspondences"
+;Doesn't correspond to anything in HC
+;RULE "4 Consonant gradation, P:B <= [V|LIQ]__VC[C|#]" 6 10
+;RULE "5 Consonant gradation, P:B => [V|LIQ]__VC[C|#]" 6 10
+; LR: papun  sotan  sikan
+; SR: pavun  sodan  si0an
+; Nasal Gradation
+; LR: kumpun  rantan  va¤kin
+; SR: kummun  rannan  va¤¤in
+;RULE "8 Nasal Gradation Correspondencs"
+; Doesn't correspond to anything in HC
+;RULE "9 Gradation after nasals, P:NAS <= NAS__VC[C|#]"  5 7
+;RULE "10 Gradation after nasals, P:NAS => NAS__VC[C|#]"  6 6
+;These are not repeated below for each HC rule,
+; rather only the alternations specific to each of the three underlying Cs are given below.
+
+;Syllabification.  We assume syllable struc is CV(C).
+(load_morpher_rule message
+  <prule  nm v_syllabification
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class vowel>)
+		  subrules (<psub out_pseq (<simp_cntxt class syll_nuc>)
+					>
+				   )
+  >
+)
+(load_morpher_rule message
+  <prule  nm c_syllabification
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class syll_coda>)
+						  right_environ <ptemp pseq (<simp_cntxt class cons>)>
+					>
+					<psub out_pseq (<simp_cntxt class syll_coda>)
+						  right_environ <ptemp fin true pseq ()>
+					>
+					<psub out_pseq (<simp_cntxt class syll_onset>)
+					>
+				   )
+  >
+)
+
+; Gradation of k between u's
+; LR: pukun
+; SR: puvun
+;RULE "11 Gradation of k between u's, k:v <= u__uC[C|#]"
+;RULE "12 Gradation of k between u's, k:v => u__uC[C|#]"
+;We handle this by first changing k --> p in the above environ, and then let the p --> v rule
+; handle the rest.
+(load_morpher_rule message
+  <prule  nm kp
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class k>)
+		  subrules (<psub out_pseq (<simp_cntxt class bilabial>)
+						  left_environ <ptemp pseq (<simp_cntxt class u>)>
+						  right_environ <ptemp pseq (<simp_cntxt class u>
+													<simp_cntxt class syll_coda>)>
+					>
+				   )
+  >
+)
+
+
+; p --> m / [+nasal] __ VC$
+;       v / [+son -nas] __ VC$
+;Also handles k-->v in conjunction with rule kp (above)
+(load_morpher_rule message
+  <prule  nm p
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class p>)
+		  subrules (<psub out_pseq (<simp_cntxt class nasal_son>)
+						  left_environ <ptemp pseq (<simp_cntxt class nasal>)>
+						  right_environ <ptemp pseq (<simp_cntxt class vowel>
+													<simp_cntxt class syll_coda>)>
+					>
+					<psub out_pseq (<simp_cntxt class vd_strident>)
+						  left_environ <ptemp pseq (<simp_cntxt class nonnasal_son>)>
+						  right_environ <ptemp pseq (<simp_cntxt class vowel>
+													 <simp_cntxt class syll_coda>)>
+					>
+				   )
+  >
+)
+
+
+; t  ***********
+;Additional processes for just /t/:
+; Gradation of t after liquids
+; LR: iltan
+; SR: illan
+;RULE "15  Gradation of t after liquids, t:{l,r} <= {l,r}__VC[C|#]"  5 9
+;RULE "16 Gradation of t after liquids, t:{l,r} => {l,r}__VC[C|#]"  8 8
+; Gradation of t after h
+; LR: iltan
+; SR: illan
+;RULE "17 Gradation of t after h, t:d <= h__VC[C|#]"  5 7
+;RULE "18 Gradation of t after h, t:d => h__VC[C|#]"  6 6
+; t --> {l r} / {l r} __ VC$     (combined with next line using alpha vars)
+;       n / [+nasal] __ VC$
+;       d / V __ VC$
+;       d / h __ VC$
+(load_morpher_rule message
+  <prule  nm t
+		  str (morphophonemic)
+		  var_fs (a nasal b cont c lateral)
+		   in_pseq (<simp_cntxt class t>)
+		   subrules (<psub out_pseq (<simp_cntxt class vd_son alpha_vars (a + b + c +)>)
+						   left_environ <ptemp pseq (<simp_cntxt class son_cons alpha_vars (a + b + c +)>)>
+						   right_environ <ptemp pseq (<simp_cntxt class vowel>
+													  <simp_cntxt class syll_coda>)>
+					>
+					 <psub out_pseq (<simp_cntxt class voiced>)
+						   left_environ <ptemp pseq (<simp_cntxt class vowel>)>
+						   right_environ <ptemp pseq (<simp_cntxt class vowel><simp_cntxt class syll_coda>)>
+					>
+					 <psub out_pseq (<simp_cntxt class voiced>)
+						   left_environ <ptemp pseq (<simp_cntxt class h>)>
+						   right_environ <ptemp pseq (<simp_cntxt class vowel>
+													  <simp_cntxt class syll_coda>)>
+					>
+				   )
+  >
+)
+
+
+; k  ***********
+; re gradation of k --> v / u __ uC$, see rule kp above (we first take k --> p, then the rule for
+; p --> v handles the rest)
+; Gradation of k after liquids
+; LR: kurken
+; SR: kurjen
+;RULE "13 Gradation of k after liquids, k:j <= LIQ__eC[C|#]"
+;RULE "14 Gradation of k after liquids, k:j => LIQ__eC[C|#]"
+; k --> j / [+cons +sonorant -nasal] __ eC$  (bleeds k --> 0 / [+voc]__VC$)
+;        ¤ / [+nasal] __ VC$
+;        0 / [+sonorant -nasal] __ VC$ (V can't be /e/, hence disjunction with k-->j rule; [-nasal]
+;                                       reqm't can also be handled by disjunction)
+;       v / u __ uC$     (handled earlier, see above note)
+(load_morpher_rule message
+  <prule  nm k
+		   str (morphophonemic)
+		   in_pseq (<simp_cntxt class k>)
+		   subrules (<psub out_pseq (<simp_cntxt class j>)
+						   left_environ <ptemp pseq (<simp_cntxt class nonnasal_son_c>)>
+						   right_environ <ptemp pseq (<simp_cntxt class e>
+													  <simp_cntxt class syll_coda>)>
+					>
+					 <psub out_pseq (<simp_cntxt class ny>)
+						   left_environ <ptemp pseq (<simp_cntxt class nasal>)>
+						   right_environ <ptemp pseq (<simp_cntxt class vowel>
+													  <simp_cntxt class syll_coda>)>
+					 >
+					 <psub out_pseq ()
+						   left_environ <ptemp pseq (<simp_cntxt class nonnasal_son>)>
+						   right_environ <ptemp pseq (<simp_cntxt class vowel>
+													  <simp_cntxt class syll_coda>)>
+					 >
+				   )
+  >
+)
+
+;Degemination.  Since all the degemination rules work the same, we have a separate rule for them.
+; Geminate Gradation (counterfeeds the other gradation rules)
+; LR: lappun  katton  tikkan
+; SR: lap0un  kat0on  tik0an
+;RULE "6 Geminate Gradation, {p,t,k}:0 <= {p,t,k}__VC[C|#]"
+;RULE "7 Geminate Gradation, {p,t,k}:0 => {p,t,k}__VC[C|#]"
+(load_morpher_rule message
+  <prule  nm degemination
+		  str (morphophonemic)
+		  var_fs (a ant b cor c back)
+		  in_pseq (<simp_cntxt class vl_stop alpha_vars (a + b + c +)>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class vl_stop alpha_vars (a + b + c +)>)>
+						  right_environ <ptemp pseq (<simp_cntxt class vowel>
+													 <simp_cntxt class syll_coda>)
+										>
+					>
+				   )
+  >
+)
+
+
+
+;Don't let errors stop us:
+(morpher_set message (*quit_on_error* false))
+
+;And run the tests:
+(morph_and_lookup_word message pavun)
+(morph_and_lookup_word message sodan)
+(morph_and_lookup_word message sian)
+(morph_and_lookup_word message lapun)
+(morph_and_lookup_word message katon)
+(morph_and_lookup_word message tikan)
+(morph_and_lookup_word message kummun)
+(morph_and_lookup_word message rannan)
+(morph_and_lookup_word message va¤¤in)
+(morph_and_lookup_word message puvun)
+(morph_and_lookup_word message jalan)
+(morph_and_lookup_word message kurjen)
+(morph_and_lookup_word message syljen)
+(morph_and_lookup_word message illan)
+(morph_and_lookup_word message parran)
+(morph_and_lookup_word message lehden)
+
+(close_language Finnish)

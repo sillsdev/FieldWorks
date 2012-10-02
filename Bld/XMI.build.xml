@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Included projects for XMI transforms -->
+<!-- This file is included in FieldWorks.build -->
+<project name="XMI" default="allXMI" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<property name="xmi-dir" value="${fwroot}\bin\src\XMI"/>
+	<!-- ********************************************************************************** -->
+	<!-- Add super target here -->
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- -->
+	<target name="XMI2Cellar" description="Build data layer project.">
+		<!-- Old 1XMI2Cellar.bat file, except output goes to different place. -->
+		<!-- Only one of the next two will be done. -->
+		<delete dir="${dir.xmiOutput}" failonerror="false" if="${clean}"/>
+		<if test="${not clean}">
+			<uptodate property="CellarDone">
+				<sourcefiles>
+					<include name="${xmi-dir}\FieldWorks.xml.zip"/>
+					<include name="${xmi-dir}\Transforms\MagicToCellarStage1.xsl"/>
+					<include name="${xmi-dir}\Transforms\MagicToCellarStage2.xsl"/>
+					<include name="${xmi-dir}\Transforms\MagicToCellarStage3.xsl"/>
+				</sourcefiles>
+				<targetfiles>
+					<include name="${dir.xmiOutput}\xmi2cellar1.xml"/>
+				</targetfiles>
+			</uptodate>
+			<if test="${not CellarDone}">
+				<unzip zipfile="${xmi-dir}\FieldWorks.xml.zip" todir="${dir.xmiOutput}"/>
+
+				<!-- Stage1. -->
+				<style in="${dir.xmiOutput}\FieldWorks.xml"
+					out="${dir.xmiOutput}\xmi2cellar1.xml"
+					extension="xml"
+					style="${xmi-dir}\Transforms\MagicToCellarStage1.xsl"/>
+
+				<!-- Stage2. -->
+				<style in="${dir.xmiOutput}\xmi2cellar1.xml"
+					out="${dir.xmiOutput}\xmi2cellar2.xml"
+					extension="xml"
+					style="${xmi-dir}\Transforms\MagicToCellarStage2.xsl"/>
+
+				<!-- Stage3. -->
+				<style in="${dir.xmiOutput}\xmi2cellar2.xml"
+					out="${dir.xmiOutput}\xmi2cellar3.xml"
+					extension="xml"
+					style="${xmi-dir}\Transforms\MagicToCellarStage3.xsl"/>
+			</if>
+		</if>
+	</target>
+	<!-- -->
+	<target name="CreateDTD" description="Build data layer project."
+		depends="XMI2Cellar">
+		<!-- Old 2CreateXSD.bat file and 2bCreateDTD.bat, except output goes to different place. -->
+		<!-- Creating FwDatabaseA.xsd from xmi2cellar3.xml -->
+		<fail message="CreateDTD is not implemented."/> <!-- It doesn't produce a valid DTD. -->
+<!--		<style in="xmi2cellar3.xml"
+			basedir="${dir.xmiOutput}"
+			out="FwDatabaseA.xsd"
+			destdir="${dir.xmiOutput}"
+			extension="xsd"
+			style="${xmi-dir}\Transforms\CreateFWDataXSDStage1.xsl" />-->
+		<!-- Adding Prop element:refs to Rules17 and StyleRules15 elements. -->
+<!--		<style in="FwDatabaseA.xsd"
+			basedir="${dir.xmiOutput}"
+			out="FwDatabaseB.xsd"
+			destdir="${dir.xmiOutput}"
+			extension="xsd"
+			style="${xmi-dir}\Transforms\CreateFWDataXSDStage1b.xsl" />-->
+		<!-- Sorting elements and attributes and outputting to FwDatabase.xsd -->
+<!--		<style in="FwDatabaseB.xsd"
+			basedir="${dir.xmiOutput}"
+			out="FwDatabase.xsd"
+			destdir="${dir.xmiOutput}"
+			extension="xsd"
+			style="${xmi-dir}\Transforms\CreateFWDataXSDStage2.xsl" />-->
+		<!-- Creating FwDatabase.dtd (used for validating data for import - e.g. TestLangProj.xml). -->
+<!--		<style in="FwDatabase.xsd"
+			basedir="${dir.xmiOutput}"
+			out="FwDatabase.dtd"
+			destdir="${dir.xmiOutput}"
+			extension="dtd"
+			style="${xmi-dir}\Transforms\XSD2DTD.xsl" />-->
+	</target>
+	<!-- -->
+	<target name="CreateCmFiles" description="Build data layer project."
+		depends="XMI2Cellar">
+		<fail message="CreateCmFiles is not implemented."/>
+<!-- 3CreateCmFiles.bat
+echo.
+echo Setting read-only attribute on current .cm files to false
+echo (regardless of whether or not you have them checked out)...
+echo.
+attrib -r ..\..\..\..\src\cellar\xml\cellar.cm
+attrib -r ..\..\..\..\src\featsys\xml\featsys.cm
+attrib -r ..\..\..\..\src\langproj\xml\langproj.cm
+attrib -r ..\..\..\..\src\ling\xml\ling.cm
+attrib -r ..\..\..\..\src\notebk\xml\notebk.cm
+attrib -r ..\..\..\..\src\scripture\xml\scripture.cm
+echo.
+echo Creating separate .cm files from temporary xmi2cellar3.xml...
+echo.
+echo Meaningless output from SAXON XSL engine:
+%fwroot%\Bin\saxon\saxon XMITempOutputs\xmi2cellar3.xml CreateCmFiles.xsl
+echo.
+echo.
+echo Transforming and sorting each .cm file's classes and attributes...
+echo.
+%fwroot%\Bin\msxsl XMITempOutputs\cellar.cmt CreateSortCms.xsl -xe -o ..\..\..\..\src\cellar\xml\cellar.cm
+%fwroot%\Bin\msxsl XMITempOutputs\featsys.cmt CreateSortCms.xsl -xe -o ..\..\..\..\src\featsys\xml\featsys.cm
+%fwroot%\Bin\msxsl XMITempOutputs\langproj.cmt CreateSortCms.xsl -xe -o ..\..\..\..\src\langproj\xml\langproj.cm
+%fwroot%\Bin\msxsl XMITempOutputs\ling.cmt CreateSortCms.xsl -xe -o ..\..\..\..\src\ling\xml\ling.cm
+%fwroot%\Bin\msxsl XMITempOutputs\notebk.cmt CreateSortCms.xsl -xe -o ..\..\..\..\src\notebk\xml\notebk.cm
+%fwroot%\Bin\msxsl XMITempOutputs\scripture.cmt CreateSortCms.xsl -xe -o ..\..\..\..\src\scripture\xml\scripture.cm
+-->
+	</target>
+	<!-- -->
+	<target name="ValidateCmFilesFromSrc" description="Build data layer project."
+		depends="CreateCmFiles,CreateDTD">
+		<fail message="ValidateCmFilesFromSrc is not implemented."/>
+<!-- 4ValidateCmFilesFromSrc.bat
+echo off
+rem Validate generated cm files.
+set fwdir=%FWROOT%
+cd %fwdir%\src\cellar\xml
+rem -e      = expand (external) entities
+rem -V      = validate against the DTD
+rem -s      = work "silently": without output other than error reports
+rem -f FILE = write error reports to FILE instead of stderr
+echo.
+echo Validating each .cm file...
+echo.
+REM echo ..\..\..\bin\rxp -Vs -f temp.err Cellar.cm
+..\..\..\bin\rxp -Vs -f temp.err Cellar.cm
+
+cd %fwdir%\src\featsys\xml\
+REM echo ..\..\..\bin\rxp -Vs -f temp.err featsys.cm
+..\..\..\bin\rxp -Vs -f temp.err featsys.cm
+
+cd %fwdir%\src\notebk\xml\
+REM echo ..\..\..\bin\rxp -Vs -f temp.err notebk.cm
+..\..\..\bin\rxp -Vs -f temp.err notebk.cm
+
+cd %fwdir%\src\ling\xml\
+REM echo ..\..\..\bin\rxp -Vs -f temp.err ling.cm
+..\..\..\bin\rxp -Vs -f temp.err ling.cm
+
+cd %fwdir%\src\langproj\xml\
+REM echo ..\..\..\bin\rxp -Vs -f temp.err langproj.cm
+..\..\..\bin\rxp -Vs -f temp.err langproj.cm
+
+cd %fwdir%\src\scripture\xml\
+REM echo ..\..\..\bin\rxp -Vs -f temp.err scripture.cm
+..\..\..\bin\rxp -Vs -f temp.err scripture.cm
+
+cd %fwdir%\bin\src\xmi\transforms\
+-->
+	</target>
+	<!-- -->
+	<target name="XMIClassList" description="Build the quick catalog."
+		depends="XMI2Cellar">
+		<!-- Old 5CreateClassList.bat, except output goes to different place. -->
+		<style in="${dir.xmiOutput}\xmi2cellar3.xml"
+			out="${dir.xmiOutput}\ClassList.htm"
+			extension="htm"
+			style="${xmi-dir}\Transforms\CreateClassList.xsl"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point without dependencies. -->
+	<!-- -->
+</project>

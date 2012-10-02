@@ -1,0 +1,78 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{D7300804-3F8E-4AE8-8B5D-C89F635F322C}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks.FDO.FdoGenerate</RootNamespace>
+	<AssemblyName>FdoGenerate</AssemblyName>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>bin\Debug\FdoGenerate.XML</DocumentationFile>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="NAnt.Core, Version=0.85.2311.0, Culture=neutral">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\bin\NAnt.Core.dll</HintPath>
+	</Reference>
+	<Reference Include="NVelocity, Version=0.5.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\bin\tasks\NVelocity.dll</HintPath>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="Base.cs" />
+	<Compile Include="Class.cs" />
+	<Compile Include="DummyClass.cs" />
+	<Compile Include="FdoGenerate.cs" />
+	<Compile Include="FdoGenerateTask.cs" />
+	<Compile Include="IClass.cs" />
+	<Compile Include="Model.cs" />
+	<Compile Include="CellarModule.cs" />
+	<Compile Include="ModuleInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Property.cs" />
+	<Compile Include="RelationalProperty.cs" />
+	<Compile Include="TypeInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

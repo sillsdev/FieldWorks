@@ -1,0 +1,800 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidNoMatchMsg" xml:space="preserve">
+	<value>Finished searching the document. The search item was not found.</value>
+	<comment>Displayed in a dialog box when the user tries to find text that isn't in a view.</comment>
+  </data>
+  <data name="kstidNoMoreMatchesMsg" xml:space="preserve">
+	<value>Finished searching the document.</value>
+	<comment>Displayed in a dialog box when the program cannot find any more occurrences of a search string.</comment>
+  </data>
+  <data name="kstidFindLessButtonText" xml:space="preserve">
+	<value>&amp;Less</value>
+	<comment>Displayed on the More/Less button on the find/replace dialog box.</comment>
+  </data>
+  <data name="kstidCreatingDB" xml:space="preserve">
+	<value>Creating new database...</value>
+	<comment>Displayed in the progress dialog box when creating a new language project</comment>
+  </data>
+  <data name="kstidInitializingDB" xml:space="preserve">
+	<value>Initializing new database...</value>
+	<comment>Displayed in the progress dialog box when creating a new language project</comment>
+  </data>
+  <data name="kstidCreatingWS" xml:space="preserve">
+	<value>Creating default writing systems...</value>
+	<comment>Displayed in the progress dialog box when creating a new language project</comment>
+  </data>
+  <data name="kstidCreateLangProjCaption" xml:space="preserve">
+	<value>Creating {0}</value>
+	<comment>Displayed in the progress dialog box caption when creating a new language project</comment>
+  </data>
+  <data name="kstidWsPropsCloseAdvancedButtonText" xml:space="preserve">
+	<value>&amp;Close</value>
+	<comment>Displayed on the Advanced button on the Modify Writing System Properties dialog</comment>
+  </data>
+  <data name="kstidNoLanguageDefinition" xml:space="preserve">
+	<value>Can't find the language definition file for '{0}'.</value>
+	<comment>Error message displayed when XML file couldn't be found.</comment>
+  </data>
+  <data name="kstidInvalidXMlFile" xml:space="preserve">
+	<value>Can't read XML file for '{0}' - invalid XML?</value>
+	<comment>Error message displayed when XML file can't be deserialized</comment>
+  </data>
+  <data name="kstidClose" xml:space="preserve">
+	<value>Close</value>
+	<comment>Button text for Cancel/Close button</comment>
+  </data>
+  <data name="kstidReplaceAllDone" xml:space="preserve">
+	<value>Finished searching the document and made {0} replacements.</value>
+	<comment>Displayed in a dialog box when a replace all has finished.</comment>
+  </data>
+  <data name="kstidReplaceAllStopped" xml:space="preserve">
+	<value>Search stopped by user before it finished searching the document; still made {0} replacements.</value>
+	<comment>Displayed in a dialog box when a replace all has finished.</comment>
+  </data>
+  <data name="kstidStop" xml:space="preserve">
+	<value>&amp;Stop</value>
+	<comment>Button text for stopping a replace all</comment>
+  </data>
+  <data name="kstidNone" xml:space="preserve">
+	<value>&lt;None&gt;</value>
+  </data>
+  <data name="kstidBuiltIn" xml:space="preserve">
+	<value>Built In</value>
+	<comment>Button text for choosing closest writing system when disabled for built-in locale</comment>
+  </data>
+  <data name="kstidWsAlreadyInDb" xml:space="preserve">
+	<value>This project already has a writing system named "{0}" that uses the full code "{1}". Do you want to remove the original writing system named "{3}" that uses the full code "{2}" and merge all data using it into the "{1}" writing system?{4}{4}Choose OK to merge all existing data or Cancel to change the full code (language, script, region, and/or variant) to something that is unique.{4}{4}Merging the data using this writing system could cause extensive changes to your data.  We recommend that you back up your project before proceeding.</value>
+  </data>
+  <data name="kstidLocaleAlreadyInLanguages" xml:space="preserve">
+	<value>This writing system named "{0}" with full code "{1}" is new to this project, but it exists in other projects. Only one definition for a given code is allowed for all projects on your computer.{2}Do you want to install the definition used by other projects?{2}Choose No to change the full code (language, script,  region, and/or variant) to something that is unique.</value>
+  </data>
+  <data name="kstidWspLabel" xml:space="preserve">
+	<value>Writing System Properties</value>
+	<comment>Message box header for error messages.</comment>
+  </data>
+  <data name="kstidCantChangeUserWs" xml:space="preserve">
+	<value>You cannot change the full code "{0}" of the default user writing system.</value>
+  </data>
+  <data name="kstidNwsCaption" xml:space="preserve">
+	<value>Distinguish New Writing System</value>
+  </data>
+  <data name="kstidCantOverwriteWsInDb" xml:space="preserve">
+	<value>The "{0}" writing system already uses the full code "{1}". To distinguish the new writing system you are creating from "{0}", add script,  region and/or variant information.{2}{2}Alternatively, cancel the Writing System Wizard and use the existing writing system, "{0}", if it meets your needs.</value>
+  </data>
+  <data name="kstidTooBadWsAlreadyInDb" xml:space="preserve">
+	<value>This project already has a writing system named "{0}" that uses the full code "{1}". This program cannot modify the original "{2}" writing system due to this conflict.</value>
+  </data>
+  <data name="kstidUnregistered" xml:space="preserve">
+	<value>Unregistered</value>
+	<comment>Displayed in HelpAbout dialog box if program is not registered</comment>
+  </data>
+  <data name="kstidErrorSavingWs" xml:space="preserve">
+	<value>Error saving writing system</value>
+	<comment>Displayed when we catch an exception from InstallLanguage.exe</comment>
+  </data>
+  <data name="kstidNewUser" xml:space="preserve">
+	<value>New User</value>
+	<comment>Name displayed in the User Properties dialog list when a new user is added</comment>
+  </data>
+  <data name="kstidAutoAddEnglish" xml:space="preserve">
+	<value>Several built-in lists have content in English only. FieldWorks is additionally creating an English writing system so that you can view the content of these lists.</value>
+  </data>
+  <data name="kstidNotAvailable" xml:space="preserve">
+	<value>Help is not available for this Tab.</value>
+  </data>
+  <data name="kstidNoStyle" xml:space="preserve">
+	<value>&lt;no style&gt;</value>
+	<comment>First entry in style menu in Find/Replace dialog</comment>
+  </data>
+  <data name="kstidMultipleStyles" xml:space="preserve">
+	<value>Multiple Styles</value>
+	<comment>Displayed when text box contains more than one style</comment>
+  </data>
+  <data name="kstidConfirmDelete" xml:space="preserve">
+	<value>Are you sure you want to delete "{0}"?  If you do, this account will no longer be able to access this language project.</value>
+	<comment>Displayed in a message box when user tries to delete a user configuration account.</comment>
+  </data>
+  <data name="kstidDeleteLabel" xml:space="preserve">
+	<value>Delete User Configuration</value>
+  </data>
+  <data name="kstidAddPuaTitle" xml:space="preserve">
+	<value>Add Custom Character</value>
+	<comment>The title of the PUA character dialog box when it is being used to add a new PUA character</comment>
+  </data>
+  <data name="kstidModifyPuaTitle" xml:space="preserve">
+	<value>Modify Custom Character</value>
+	<comment>The title of the PUA character dialog box when it is being used to modify a PUA character</comment>
+  </data>
+  <data name="kstidMessageIntro" xml:space="preserve">
+	<value>Please select the appropriate custom character information.</value>
+	<comment>The first and default message the user sees.</comment>
+  </data>
+  <data name="kstidMessageWarning" xml:space="preserve">
+	<value>Warning, you must select "false" (why do we even have a button???)</value>
+	<comment>A test warning message.</comment>
+  </data>
+  <data name="kstidConfirmModifyPuaCaption" xml:space="preserve">
+	<value>Modify Custom Character?</value>
+  </data>
+  <data name="kstidErrorNewDb" xml:space="preserve">
+	<value>Can't create new database: {0}</value>
+  </data>
+  <data name="kstidErrApp" xml:space="preserve">
+	<value>Programming error</value>
+  </data>
+  <data name="kstidPictureUnavailable" xml:space="preserve">
+	<value>{0} (original file does not exist)</value>
+	<comment>Appended to the path of a picture if the picture file cannot be found.</comment>
+  </data>
+  <data name="kstidInsertPictureChooseFileCaption" xml:space="preserve">
+	<value>Choose Picture</value>
+	<comment>Caption for open file box when choosing an image file</comment>
+  </data>
+  <data name="kstidInsertPictureReadError" xml:space="preserve">
+	<value>The selected file is not a supported image format.</value>
+	<comment>Content for message box when unable to read an image file.</comment>
+  </data>
+  <data name="kstidInsertPictureReadErrorCaption" xml:space="preserve">
+	<value>Unsupported Image Format</value>
+	<comment>Caption for message box when unable to read an image file.</comment>
+  </data>
+  <data name="kstidFindMystery" xml:space="preserve">
+	<value>The 'Find' operation failed. We've observed this before and the reasons are mysterious. If you can get it to happen repeatedly, please send the FieldWorks developers a copy of your database and the string you were searching for and tell us where the search started. Usually, the problem goes away if you just try again. That should be safe. </value>
+  </data>
+  <data name="kstidErrorInstallingWS" xml:space="preserve">
+	<value>The writing system could not be installed. There is a problem in your language definition. See the
+FieldWorks ReadMe for help in this area.</value>
+  </data>
+  <data name="kstidCannotInstallWS" xml:space="preserve">
+	<value>Cannot Install Writing System</value>
+	<comment>caption for error message box</comment>
+  </data>
+  <data name="kstidErrorAccessingEncConverters" xml:space="preserve">
+	<value>The encoding converter repository could not be accessed. A system administrator must either give
+your account write access to the appropriate directories, or else modify the writing system for you.</value>
+  </data>
+  <data name="kstidOverwriteRules" xml:space="preserve">
+	<value>Do you want to overwrite the existing collation rules (sorting)?</value>
+  </data>
+  <data name="kstidOverwriteRulesCaption" xml:space="preserve">
+	<value>Selecting similar writing system</value>
+  </data>
+  <data name="kstidNewCharacterStyle" xml:space="preserve">
+	<value>New Character Style</value>
+  </data>
+  <data name="kstidNewCharacterStyleWithNumber" xml:space="preserve">
+	<value>New Character Style {0}</value>
+  </data>
+  <data name="kstidNewParagraphStyle" xml:space="preserve">
+	<value>New Paragraph Style</value>
+  </data>
+  <data name="kstidNewParagraphStyleWithNumber" xml:space="preserve">
+	<value>New Paragraph Style {0}</value>
+  </data>
+  <data name="kstidCopyStyleNameFormat" xml:space="preserve">
+	<value>Copy of {0}</value>
+  </data>
+  <data name="kstidCopyStyleNameFormatNumber" xml:space="preserve">
+	<value>Copy {0} of {1}</value>
+  </data>
+  <data name="kstidNotInstalled" xml:space="preserve">
+	<value> - Not Installed</value>
+  </data>
+  <data name="kstidEncoderNotAvailable" xml:space="preserve">
+	<value>The selected encoding converter is not installed. Select a different encoding converter or create a new one.</value>
+  </data>
+  <data name="kstidErrorInRegEx" xml:space="preserve">
+	<value>Error in "Find what" text: {0}</value>
+	<comment>Displayed in a message box when an error in a regular expression occures</comment>
+  </data>
+  <data name="kstidErrorInRegExHeader" xml:space="preserve">
+	<value>Error in Regular Expression</value>
+	<comment>Displayed as the message box header for a regular expression error</comment>
+  </data>
+  <data name="kstidMultipleStylesMultipleWS" xml:space="preserve">
+	<value>Multiple Styles, Multiple Writing Systems</value>
+	<comment>Displayed when the text box contains more than one style and more than one writing system</comment>
+  </data>
+  <data name="kstidMultipleStylesOneWS" xml:space="preserve">
+	<value>Multiple Styles, {0}</value>
+	<comment>Displayed when the text box contains more than one style and only one writing system.</comment>
+  </data>
+  <data name="kstidMultipleWritingSystems" xml:space="preserve">
+	<value>Multiple Writing Systems</value>
+	<comment>Displayed when text box contains more than one writing system</comment>
+  </data>
+  <data name="kstidOneStyleMultipleWS" xml:space="preserve">
+	<value>{0}, Multiple Writing Systems</value>
+	<comment>Displayed when the text box contains one style and more than one writing system</comment>
+  </data>
+  <data name="kstidOneStyleOneWS" xml:space="preserve">
+	<value>{0}, {1}</value>
+	<comment>displayed when the text box contains one style and one writing system</comment>
+  </data>
+  <data name="ksAnalWsChangedMsg" xml:space="preserve">
+	<value>The analysis writing system list was changed in another program before you changed it here.  You need to shut down all FieldWorks programs and restart them.</value>
+  </data>
+  <data name="ksAvailDataForX" xml:space="preserve">
+	<value>Available Data for {0}</value>
+  </data>
+  <data name="ksAvailFeatsForX" xml:space="preserve">
+	<value>Available Features for {0}</value>
+  </data>
+  <data name="ksBdStemMenuCmd" xml:space="preserve">
+	<value>{0} Bound Stem</value>
+	<comment>Menu Command: {0} is an example of a Bound Stem</comment>
+  </data>
+  <data name="ksBrowseForFile" xml:space="preserve">
+	<value>Browse for file.</value>
+	<comment>help string</comment>
+  </data>
+  <data name="ksCannotSetFocus" xml:space="preserve">
+	<value>Couldn't set the focus</value>
+	<comment>error message</comment>
+  </data>
+  <data name="ksCannotUseProcessor" xml:space="preserve">
+	<value>Cannot Use Processor</value>
+	<comment>message box caption</comment>
+  </data>
+  <data name="ksCautions" xml:space="preserve">
+	<value>Cautions:</value>
+  </data>
+  <data name="ksCCTable" xml:space="preserve">
+	<value>CC Table</value>
+	<comment>file description for file chooser combo list</comment>
+  </data>
+  <data name="ksCodePageDisplay" xml:space="preserve">
+	<value>{0} [{1}]</value>
+	<comment>code page name plus code page ID number in brackets</comment>
+  </data>
+  <data name="ksCompiledTECKit" xml:space="preserve">
+	<value>Compiled TECkit</value>
+	<comment>file description for file chooser combo list</comment>
+  </data>
+  <data name="ksConverters" xml:space="preserve">
+	<value>Converters</value>
+  </data>
+  <data name="ksEncliticMenuCmd" xml:space="preserve">
+	<value>{0} Enclitic</value>
+	<comment>Menu Command: {0} is an example of an Enclitic</comment>
+  </data>
+  <data name="ksEnterRE" xml:space="preserve">
+	<value>Enter the regular expression</value>
+  </data>
+  <data name="ksError" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <data name="ksFindCCTableFile" xml:space="preserve">
+	<value>Find CC Table File</value>
+	<comment>dialog caption</comment>
+  </data>
+  <data name="ksFindConvMappingFile" xml:space="preserve">
+	<value>Find Conversion Mapping File</value>
+	<comment>dialog caption</comment>
+  </data>
+  <data name="ksFindUnknownSpecFile" xml:space="preserve">
+	<value>Find Spec file for unknown mapping type</value>
+	<comment>dialog caption</comment>
+  </data>
+  <data name="ksFwWsSyncProblem" xml:space="preserve">
+	<value>FieldWorks Project synchronization problem</value>
+  </data>
+  <data name="ksIllegalChars" xml:space="preserve">
+	<value>Illegal characters</value>
+  </data>
+  <data name="ksIllegalNameMsg" xml:space="preserve">
+	<value>The name cannot contain these characters:
+{0}</value>
+  </data>
+  <data name="ksInfixMenuCmd" xml:space="preserve">
+	<value>{0} Infix</value>
+	<comment>Menu Command: {0} is an example of an Infix</comment>
+  </data>
+  <data name="ksInvalidSortSpec" xml:space="preserve">
+	<value>The sorting specification is not valid. {0} Please correct the error to continue.</value>
+  </data>
+  <data name="ksLDFNotLoaded" xml:space="preserve">
+	<value>ERROR: Language Definition File not loaded: m_langDef == null</value>
+	<comment>cryptic internal error message</comment>
+  </data>
+  <data name="ksMorphemeBreakHelp" xml:space="preserve">
+	<value>Morpheme Break Help</value>
+	<comment>Menu Command</comment>
+  </data>
+  <data name="ksNeedTextSelection" xml:space="preserve">
+	<value>A text selection is required for this menu option.</value>
+  </data>
+  <data name="ksNew" xml:space="preserve">
+	<value>New</value>
+  </data>
+  <data name="ksNoUnicodeToUnicode" xml:space="preserve">
+	<value>The processor you have created does not perform a Unicode to Unicode conversion;
+it is for use with a legacy encoding.
+It cannot be used in Bulk Edit operations.</value>
+  </data>
+  <data name="ksPrefixMenuCmd" xml:space="preserve">
+	<value>{0} Prefix</value>
+	<comment>Menu Command: {0} is an example of a Prefix</comment>
+  </data>
+  <data name="ksProcliticMenuCmd" xml:space="preserve">
+	<value>{0} Proclitic</value>
+	<comment>Menu Command: {0} is an example of a Proclitic</comment>
+  </data>
+  <data name="ksQuestions" xml:space="preserve">
+	<value>???</value>
+  </data>
+  <data name="ksREAlternation" xml:space="preserve">
+	<value>{0} Alternation</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREAnyChar" xml:space="preserve">
+	<value>{0} Any single character</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREBeginLine" xml:space="preserve">
+	<value>{0} Beginning of line</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREBoundaryChar" xml:space="preserve">
+	<value>{0} Boundary</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRECharFromSet" xml:space="preserve">
+	<value>{0} Any one character in the set</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRECharNotFromSet" xml:space="preserve">
+	<value>{0} Any one character not in the set</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREDigitChar" xml:space="preserve">
+	<value>{0} Digit</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREEndLine" xml:space="preserve">
+	<value>{0} End of line</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREFirstCapture" xml:space="preserve">
+	<value>{0} First capture</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREGrouping" xml:space="preserve">
+	<value>{0} Grouping</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREHelp" xml:space="preserve">
+	<value>Regular Expression Help</value>
+	<comment>Menu Command</comment>
+  </data>
+  <data name="ksRemovingEnWs" xml:space="preserve">
+	<value>Removing Important Writing System</value>
+	<comment>message box header</comment>
+  </data>
+  <data name="ksRemovingEnWsMsg" xml:space="preserve">
+	<value>By removing the English writing system, some of your topics list items, may show "***" instead of their normal contents. For this reason, it is strongly recommended that you keep the English writing system active in your project. However, if you choose to remove English now and encounter problems viewing your topics list items, you may add English back at any time using the Add button.
+
+Do you want to remove English now?</value>
+  </data>
+  <data name="ksRENonboundaryChar" xml:space="preserve">
+	<value>{0} Non-boundary</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRENondigitChar" xml:space="preserve">
+	<value>{0} Non-digit</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRENonspaceChar" xml:space="preserve">
+	<value>{0} Non-space character</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRENonwordChar" xml:space="preserve">
+	<value>{0} Non-word character</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRENthCapture" xml:space="preserve">
+	<value>{0} nth capture</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRENTimes" xml:space="preserve">
+	<value>{0} Exactly n times</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREOneOrMore" xml:space="preserve">
+	<value>{0} One or more times</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREOptional" xml:space="preserve">
+	<value>{0} One or zero times</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREQuoteMeta" xml:space="preserve">
+	<value>{0} Quote metacharacter</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRESecondCapture" xml:space="preserve">
+	<value>{0} Second capture</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksRESpaceChar" xml:space="preserve">
+	<value>{0} Space character</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREThirdCapture" xml:space="preserve">
+	<value>{0} Third capture</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREWordChar" xml:space="preserve">
+	<value>{0} Word character</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksREZeroOrMore" xml:space="preserve">
+	<value>{0} Zero or more times</value>
+	<comment>Menu Command: {0} is the special regular expression metacharacter(s)</comment>
+  </data>
+  <data name="ksSelectAvailFeatsForX" xml:space="preserve">
+	<value>Select the features to make available for {0}.</value>
+  </data>
+  <data name="ksSimulfixMenuCmd" xml:space="preserve">
+	<value>{0} Simulfix</value>
+	<comment>Menu Command: {0} is an example of a Simulfix</comment>
+  </data>
+  <data name="ksSortSpecError" xml:space="preserve">
+	<value>Sort Specification Error</value>
+	<comment>message box caption</comment>
+  </data>
+  <data name="ksSpecifiesActualEC" xml:space="preserve">
+	<value>Specifies the actual encoding converter.</value>
+	<comment>help string</comment>
+  </data>
+  <data name="ksSpecifiesCCTable" xml:space="preserve">
+	<value>Specifies the CC table to use.</value>
+	<comment>help string</comment>
+  </data>
+  <data name="ksSpecifiesICUTrans" xml:space="preserve">
+	<value>Specifies the ICU transducer to use.</value>
+	<comment>help string</comment>
+  </data>
+  <data name="ksSpecifiesTECkitFile" xml:space="preserve">
+	<value>Specifies the TECkit file to use.</value>
+	<comment>help string</comment>
+  </data>
+  <data name="ksStemMenuCmd" xml:space="preserve">
+	<value>{0} Stem</value>
+	<comment>Menu Command: {0} is an example of a Stem</comment>
+  </data>
+  <data name="ksSuffixMenuCmd" xml:space="preserve">
+	<value>{0} Suffix</value>
+	<comment>Menu Command: {0} is an example of a Suffix</comment>
+  </data>
+  <data name="ksSuprafixMenuCmd" xml:space="preserve">
+	<value>{0} Suprafix</value>
+	<comment>Menu Command: {0} is an example of a Suprafix</comment>
+  </data>
+  <data name="ksTECkitMapping" xml:space="preserve">
+	<value>TECkit Mapping</value>
+	<comment>file description for file chooser combo list</comment>
+  </data>
+  <data name="ksVernWsChangedMsg" xml:space="preserve">
+	<value>The vernacular writing system list was changed in another program before you changed it here.  You need to shut down all FieldWorks programs and restart them.</value>
+  </data>
+  <data name="ksWhatItDoes" xml:space="preserve">
+	<value>What it does:</value>
+  </data>
+  <data name="ksWhenToUse" xml:space="preserve">
+	<value>When to use:</value>
+  </data>
+  <data name="ksUtilities" xml:space="preserve">
+	<value>Utilities</value>
+  </data>
+  <data name="ksDescription" xml:space="preserve">
+	<value>Description</value>
+  </data>
+  <data name="ksHelp" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="ks_Close" xml:space="preserve">
+	<value>&amp;Close</value>
+  </data>
+  <data name="ksRunUtilities" xml:space="preserve">
+	<value>&amp;Run Checked Utilities Now</value>
+  </data>
+  <data name="ksFwProjectUtilities" xml:space="preserve">
+	<value>FieldWorks Project Utilities</value>
+  </data>
+  <data name="khtpBulkReplaceTitle" xml:space="preserve">
+	<value>Bulk Replace Setup</value>
+  </data>
+  <data name="ksWsAlreadyExists" xml:space="preserve">
+	<value>Writing System Already Exists</value>
+  </data>
+  <data name="ksWSPropEthnologueEntryFor" xml:space="preserve">
+	<value>Ethnologue entry for {0}</value>
+  </data>
+  <data name="ksWSPropPUAChars" xml:space="preserve">
+	<value>Specify any custom Unicode characters needed for {0}:</value>
+  </data>
+  <data name="ksWSPropEncodingConverter" xml:space="preserve">
+	<value>Encoding converter for importing {0}:</value>
+  </data>
+  <data name="ksWSPropKeyboardInstruction" xml:space="preserve">
+	<value>Select the keyboard combination with which to type {0} text.</value>
+  </data>
+  <data name="ksWSPropKeyboardTest" xml:space="preserve">
+	<value>Test the {0} writing system:</value>
+  </data>
+  <data name="ksWSPropGeneralWSname" xml:space="preserve">
+	<value>This writing system for {0} is for:</value>
+  </data>
+  <data name="kstidCantCreateDuplicateWs" xml:space="preserve">
+	<value>The "{0}" writing system already exists. To distinguish the new writing system you are creating from "{0}", add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, "{0}", if it meets your needs.</value>
+  </data>
+  <data name="ksWsDefineNew" xml:space="preserve">
+	<value>&amp;Define New...</value>
+  </data>
+  <data name="ksWsNew" xml:space="preserve">
+	<value>&amp;New...</value>
+  </data>
+  <data name="ksWsNewFromExisting" xml:space="preserve">
+	<value>&amp;Writing System for {0}...</value>
+  </data>
+  <data name="ksWSPropValidChars" xml:space="preserve">
+	<value>Specify the set of valid characters for {0}.</value>
+	<comment>Label on Characters tab of Writing System Properties dialog box for setting valid characters.</comment>
+  </data>
+  <data name="kstidChangesAreLost" xml:space="preserve">
+	<value>Any changes made in the Styles dialog have been lost due to the change in the tool.</value>
+  </data>
+  <data name="kstidWarning" xml:space="preserve">
+	<value>Warning</value>
+  </data>
+  <data name="kstidChangingProjectName" xml:space="preserve">
+	<value>Changing the project name could be slow and will close and reopen the project.  Do you want to do this?</value>
+  </data>
+  <data name="ksMoveOrCopyToNewDir" xml:space="preserve">
+	<value>This project links to {0} external files in the previous external links folder. Would you like to move or copy the file to the new folder to make it easier to share and backup, along with your other project data?</value>
+	<comment>{0} is a number greater than or equal to 1 -- we aren't trying to match grammatical number here (yet)</comment>
+  </data>
+  <data name="ksChangedExtLinksRootDir" xml:space="preserve">
+	<value>Changed External Links Root Directory</value>
+  </data>
+  <data name="ksMoveOrCopyFile" xml:space="preserve">
+	<value>Move or Copy File?</value>
+  </data>
+  <data name="ksMoveOrCopyFileToExtDir" xml:space="preserve">
+	<value>The file you have selected is not in the external links folder for this project. Would you like to move or copy the file to that folder to make it easier to share and back up, along with your other project data?</value>
+  </data>
+  <data name="ksAlreadyExists" xml:space="preserve">
+	<value>{0} already exists.  Do you want to overwrite it?</value>
+  </data>
+  <data name="ksCopyFile" xml:space="preserve">
+	<value>&amp;Copy File</value>
+  </data>
+  <data name="ksMoveFile" xml:space="preserve">
+	<value>&amp;Move File</value>
+  </data>
+  <data name="ksLeaveFile" xml:space="preserve">
+	<value>&amp;Leave File</value>
+  </data>
+  <data name="ksPreviousFolder" xml:space="preserve">
+	<value>(Previous folder: {0})</value>
+  </data>
+  <data name="ksNewFolder" xml:space="preserve">
+	<value>(New folder: {0})</value>
+  </data>
+  <data name="ksExternalLinksFolder" xml:space="preserve">
+	<value>(External links folder: {0})</value>
+  </data>
+  <data name="ksDeletePictureBeforeReplacingFile" xml:space="preserve">
+	<value>If you want to replace a picture file, you must first delete the current picture.</value>
+  </data>
+  <data name="ksCannotReplaceDisplayedPicture" xml:space="preserve">
+	<value>Cannot Replace Displayed Picture</value>
+  </data>
+  <data name="kstidDestFolderMustBeInExtLinks" xml:space="preserve">
+	<value>Destination folder must be an existing subfolder of the External Links folder: {0}</value>
+	<comment>Error message displayed if user chooses a destination folderthat is not a sub-folder of the External Links folder.</comment>
+  </data>
+  <data name="kstidSelectExternalLinksSubFolder" xml:space="preserve">
+	<value>Select a location within the External Links folder ({0}) for the picture file.</value>
+	<comment>Description text displayed in Browse For Folder dialog box as accessed from Picture Properties dialog box. (Parameter is path to External Links base folder.)</comment>
+  </data>
+  <data name="ksWSPropPunctuation" xml:space="preserve">
+	<value>Specify punctuation usage for {0}.</value>
+	<comment>Label on Characters tab of Writing System Properties dialog box for setting punctuation.</comment>
+  </data>
+  <data name="ksWsNoDictionaryMatches" xml:space="preserve">
+	<value> &lt;NONE SELECTED&gt;</value>
+  </data>
+  <data name="kstidNoTokensFoundInCurrentScriptureProj" xml:space="preserve">
+	<value>No {0} found in the current Scripture project</value>
+	<comment>Format string for a message displayed when a scan finds no tokens in the current Scripture project. The parameter is the type of tokens sought (e.g., "punctuation patterns" or "characters"). Localizer should ensure that the text of this message corresponds appropriately to kstidCurrentScriptureProject in the FwStrings resources.</comment>
+  </data>
+  <data name="kstidNoTokensFoundInFile" xml:space="preserve">
+	<value>No {0} found in '{1}'.</value>
+	<comment>Format string for a message displayed when a file scan finds no tokens. First parameter is the type of tokens sought (e.g., "punctuation patterns" or "characters"). The second parameter is the filename that was scanned.</comment>
+  </data>
+  <data name="kstidOpen" xml:space="preserve">
+	<value />
+  </data>
+  <data name="PunctuationPatternsScanResultsNone" xml:space="preserve">
+	<value>The most recent scan found no new punctuation patterns.</value>
+	<comment>Displayed in label next the Scan button on the Punctuation Patterns tab of the Punctuation Usage dialog box after a scan that finds only patterns whose status is set to either valid or invalid.</comment>
+  </data>
+  <data name="PunctuationPatternsScanResultsPlural" xml:space="preserve">
+	<value>The most recent scan found {0} punctuation patterns which are not specified as either valid or invalid.</value>
+	<comment>Displayed in label next the Scan button on the Punctuation Patterns tab of the Punctuation Usage dialog box after a scan that finds more than one pattern that does not have its status set to either valid or invalid.</comment>
+  </data>
+  <data name="PunctuationPatternsScanResultsSingular" xml:space="preserve">
+	<value>The most recent scan found 1 punctuation pattern which is not specified as either valid or invalid.</value>
+	<comment>Displayed in label next the Scan button on the Punctuation Patterns tab of the Punctuation Usage dialog box after a scan that finds one pattern that does not have its status set to either valid or invalid.</comment>
+  </data>
+  <data name="ksNLPFolderCompressed" xml:space="preserve">
+	<value>The Database folder ({0}) is compressed. A new project cannot be created unless the folder is decompressed. To fix this problem, close down this application and any other open FieldWorks applications. When you next launch a FieldWorks application, there will be an opportunity to fix the folder automatically.</value>
+	<comment>Warning issued instead of New Language Project dialog if the database folder is compressed. {0} is the path of the folder.</comment>
+  </data>
+  <data name="ksNLPFolderEncrypted" xml:space="preserve">
+	<value>The Database folder ({0}) is encrypted. A new project cannot be created unless the folder is decrypted. To fix this problem, close down this application and any other open FieldWorks applications. When you next launch a FieldWorks application, there will be an opportunity to fix the folder automatically.</value>
+	<comment>Warning issued instead of New Language Project dialog if the database folder is encrypted. {0} is the path of the folder.</comment>
+  </data>
+  <data name="ksNLPFolderError" xml:space="preserve">
+	<value>Database folder problem</value>
+	<comment>Title for warning dialog issued instead of New Language Project dialog if the database folder is compressed.</comment>
+  </data>
+  <data name="kstidLoneDiacriticNotValid" xml:space="preserve">
+	<value>Combining marks (e.g. diacritics) cannot be added independently as valid characters. They must be combined with valid base characters.</value>
+	<comment>Message displayed in Valid Characters dialog when user attempts to enter a single diacritic character on the Manual Entry tab.</comment>
+  </data>
+  <data name="kstidNonUnicodeFileError" xml:space="preserve">
+	<value>The specified file could not be read or interpreted as Unicode text.
+
+{0}</value>
+	<comment>Content for message box reporting an error reading Unicode data from a file.</comment>
+  </data>
+  <data name="kstidOverwriteUnicode" xml:space="preserve">
+	<value>Warning: Do not overwrite this Unicode definition unless you know what you are doing!</value>
+	<comment>Displayed at bottom of PUA Character dialog when showing an existing character.</comment>
+  </data>
+  <data name="kstidOverwriteUserCode" xml:space="preserve">
+	<value>Warning: You are changing a definition of a custom character you've already defined.</value>
+	<comment>Displayed at bottom of PUA Character dialog when showing an existing user-defined character.</comment>
+  </data>
+</root>

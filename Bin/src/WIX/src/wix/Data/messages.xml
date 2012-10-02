@@ -1,0 +1,1573 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	Wix error/verbose/warning messages.
+-->
+<Messages Namespace="Microsoft.Tools.WindowsInstallerXml" Resources="Data.Messages" xmlns="http://schemas.microsoft.com/genmsgs/2004/07/messages">
+	<Class Name="WixErrors" ContainerName="WixError" BaseContainerName="MessageEventArgs" LevelType="ErrorLevel" StartNumber="1">
+		<Message Id="UnexpectedException" Level="Normal" SourceLineNumbers="no">
+			<Instance>{0}&#13;&#10;&#13;&#10;Exception Type: {1}&#13;&#10;&#13;&#10;Stack Trace:&#13;&#10;{2}
+				<Parameter Type="System.String" Name="message" />
+				<Parameter Type="System.String" Name="type" />
+				<Parameter Type="System.String" Name="stackTrace" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalVerbosityLevel" Level="Normal" SourceLineNumbers="no">
+			<Instance>Illegal value '{0}' for the -v command line option.  Legal values for the verbosity level are from 0 (show all messages) to 3 (show no messages).
+				<Parameter Type="System.String" Name="verbosityLevel" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalWarningLevel" Level="Normal" SourceLineNumbers="no">
+			<Instance>Illegal value '{0}' for the -w command line option.  Legal values for the warning level are from 0 (show all warnings) to 3 (show no warnings).
+				<Parameter Type="System.String" Name="warningLevel" />
+			</Instance>
+		</Message>
+		<Message Id="UnexpectedAttribute" Level="Normal">
+			<Instance>The {0} element contains an unexpected attribute '{1}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="UnexpectedElement" Level="Normal">
+			<Instance>The {0} element contains an unexpected child element '{1}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="childElementName" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalEmptyAttributeValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value cannot be an empty string.  If you want the value to be null or empty, simply remove the entire attribute.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="InsufficientVersion" Level="Normal">
+			<Instance>The current version of the toolset is {0}, but version {1} is required.
+				<Parameter Type="System.Version" Name="currentVersion" />
+				<Parameter Type="System.Version" Name="requiredVersion" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalIntegerValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal integer value.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalGuidValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal guid value.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalLcidValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal lcid value.  Legal lcid values are non-negative.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="ExpectedAttribute" Level="Normal">
+			<Instance>The {0}/@{1} attribute was not found; it is required.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute was not found; it is required when attribute {2} is specified.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute was not found; it is required when attribute {2} has a value of '{3}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherAttributeValue" />
+			</Instance>
+		</Message>
+		<Message Id="SecurePropertyNotUppercase" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', cannot contain lowercase characters.  Since this is a secure property, it must also be a public property.  This means the Property/@Id value must be completely uppercase.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="propertyId" />
+			</Instance>
+		</Message>
+		<Message Id="SearchPropertyNotUppercase" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', cannot contain lowercase characters.  Since this is a search property, it must also be a public property.  This means the Property/@Id value must be completely uppercase.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="BinaryOrIconIdentifierTooLong" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is too long for a Binary Or Icon identifier.  It cannot be more than than 55 characters long.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalIdentifier" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal identifier.  Identifier's may contain ASCII characters A-Z, a-z, digits, underscores (_), or periods (.).  Every identifier must begin with either a letter or an underscore.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalYesNoValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal yes/no value.  The only legal value is 'no' or 'yes'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="CabCreationFailed" Level="Fatal" SourceLineNumbers="no">
+			<Instance>Failed to create cab '{0}' while cabbing file '{1}' with error 0x{2:X8}.
+				<Parameter Type="System.String" Name="cabName" />
+				<Parameter Type="System.String" Name="fileName" />
+				<Parameter Type="System.Int32" Name="error" />
+			</Instance>
+			<Instance>Failed to create cab '{0}' with error 0x{1:X8}.
+				<Parameter Type="System.String" Name="cabName" />
+				<Parameter Type="System.Int32" Name="error" />
+			</Instance>
+		</Message>
+		<Message Id="CabExtractionFailed" Level="Fatal" SourceLineNumbers="no">
+			<Instance>Failed to extract cab '{0}' to directory '{1}'.  This is most likely due to a lack of available disk space on the destination drive.
+				<Parameter Type="System.String" Name="cabName" />
+				<Parameter Type="System.String" Name="directoryName" />
+			</Instance>
+			<Instance>Failed to extract cab '{0}' from merge module '{1}' to directory '{2}'.  This is most likely due to a lack of available disk space on the destination drive.
+				<Parameter Type="System.String" Name="cabName" />
+				<Parameter Type="System.String" Name="mergeModulePath" />
+				<Parameter Type="System.String" Name="directoryName" />
+			</Instance>
+		</Message>
+		<Message Id="AppIdIncompatibleAdvertiseState" Level="Normal">
+			<Instance>The {0}/@(1) attribute's value, '{2}' does not match the advertise state on its parent element: '{3}'.  (Note: AppIds nested under Fragment, Module, or Product elements must be advertised.)
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="parentValue" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeWhenAdvertised" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified because the element is advertised.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="ConditionExpected" Level="Normal">
+			<Instance>The {0} element's inner text cannot be an empty string or completely whitespace.  If you don't want a condition, then simply remove the entire {0} element.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is invalid.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is invalid.  It cannot contain the character '{3}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.Char" Name="character" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not one of the legal options: '{3}', or '{4}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="legalValue1" />
+				<Parameter Type="System.String" Name="legalValue2" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not one of the legal options: '{3}', '{4}', or '{5}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="legalValue1" />
+				<Parameter Type="System.String" Name="legalValue2" />
+				<Parameter Type="System.String" Name="legalValue3" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not one of the legal options: '{3}', '{4}', '{5}', or '{6}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="legalValue1" />
+				<Parameter Type="System.String" Name="legalValue2" />
+				<Parameter Type="System.String" Name="legalValue3" />
+				<Parameter Type="System.String" Name="legalValue4" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not one of the legal options: '{3}', '{4}', '{5}', '{6}', or '{7}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="legalValue1" />
+				<Parameter Type="System.String" Name="legalValue2" />
+				<Parameter Type="System.String" Name="legalValue3" />
+				<Parameter Type="System.String" Name="legalValue4" />
+				<Parameter Type="System.String" Name="legalValue5" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not one of the legal options: '{3}', '{4}', '{5}', '{6}', '{7}', or '{8}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="legalValue1" />
+				<Parameter Type="System.String" Name="legalValue2" />
+				<Parameter Type="System.String" Name="legalValue3" />
+				<Parameter Type="System.String" Name="legalValue4" />
+				<Parameter Type="System.String" Name="legalValue5" />
+				<Parameter Type="System.String" Name="legalValue6" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not one of the legal options: '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', or '{9}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="legalValue1" />
+				<Parameter Type="System.String" Name="legalValue2" />
+				<Parameter Type="System.String" Name="legalValue3" />
+				<Parameter Type="System.String" Name="legalValue4" />
+				<Parameter Type="System.String" Name="legalValue5" />
+				<Parameter Type="System.String" Name="legalValue6" />
+				<Parameter Type="System.String" Name="legalValue7" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not one of the legal options: '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', or '{10}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="legalValue1" />
+				<Parameter Type="System.String" Name="legalValue2" />
+				<Parameter Type="System.String" Name="legalValue3" />
+				<Parameter Type="System.String" Name="legalValue4" />
+				<Parameter Type="System.String" Name="legalValue5" />
+				<Parameter Type="System.String" Name="legalValue6" />
+				<Parameter Type="System.String" Name="legalValue7" />
+				<Parameter Type="System.String" Name="legalValue8" />
+			</Instance>
+		</Message>
+		<Message Id="CustomActionMultipleSources" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot coexist with a previously specified attribute on this element.  The {0} element may only have one of the following source attributes specified at a time: {2}, {3}, {4}, {5}, or {6}.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+				<Parameter Type="System.String" Name="attributeName3" />
+				<Parameter Type="System.String" Name="attributeName4" />
+				<Parameter Type="System.String" Name="attributeName5" />
+			</Instance>
+		</Message>
+		<Message Id="CustomActionMultipleTargets" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot coexist with a previously specified attribute on this element.  The {0} element may only have one of the following target attributes specified at a time: {2}, {3}, {4}, {5}, {6}, {7}, or {8}.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+				<Parameter Type="System.String" Name="attributeName3" />
+				<Parameter Type="System.String" Name="attributeName4" />
+				<Parameter Type="System.String" Name="attributeName5" />
+				<Parameter Type="System.String" Name="attributeName6" />
+				<Parameter Type="System.String" Name="attributeName7" />
+			</Instance>
+		</Message>
+		<Message Id="CustomActionIllegalInnerText" Level="Normal">
+			<Instance>The {0} element contains illegal inner text: '{1}'.  It may not contain inner text unless the {2} attribute is specified.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="innerText" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="DirectoryRootWithoutName" Level="Normal">
+			<Instance>The {0} element requires the {1} attribute because there is no parent {0} element.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalShortFilename" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a valid 8.3-compliant name.  Legal names contain no more than 8 characters followed by an optional extension of no more than 3 characters.  Any character except for the follow may be used: \ ? | &gt; &lt; : / * " + , ; = [ ] (space).
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalLongFilename" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a valid long name because it contains illegal characters.  Legal long names contain no more than 260 characters.  Any character except for the follow may be used: \ ? | &gt; &lt; : / * ".
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalShortFilenameDecompile" Level="Normal">
+			<Instance>The Table '{0}', Column '{1}', Value, '{2}', is not a valid 8.3-compliant name.  Legal names contain no more than 8 characters followed by an optional extension of no more than 3 characters.  Any character except for the follow may be used: \ ? | &gt; &lt; : / * " + , ; = [ ] (space).
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="TableNameTooLong" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is too long for a table name.  It cannot be more than than 31 characters long.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="FeatureConfigurableDirectoryNotUppercase" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', contains lowercase characters.  Since this directory is user-configurable, it needs to be a public property.  This means the value must be completely uppercase.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="FeatureCannotFavorAndDisallowAdvertise" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', cannot coexist with the {3} attribute's value of '{4}'.  These options would ask the installer to disallow the advertised state for this feature while at the same time favoring it.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherValue" />
+			</Instance>
+		</Message>
+		<Message Id="FeatureCannotFollowParentAndFavorLocalOrSource" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified if the {2} attribute's value is '{3}'.  These options would ask the installer to force this feature to follow the parent installation state and simultaneously favor a particular installation state just for this feature.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherValue" />
+			</Instance>
+		</Message>
+		<Message Id="DiskIdOutOfRange" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal DiskId because it is not equal to or greater than 1.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="MediaEmbeddedCabinetNameTooLong" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is too long for an embedded cabinet name.  It cannot be more than than 62 characters long.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="RegistrySubElementCannotBeRemoved" Level="Normal">
+			<Instance>The {0}/{1} element cannot be specified if the {2} attribute's value is '{3}' or '{4}'.
+				<Parameter Type="System.String" Name="registryElementName" />
+				<Parameter Type="System.String" Name="registryValueElementName" />
+				<Parameter Type="System.String" Name="actionAttributeName" />
+				<Parameter Type="System.String" Name="removeValue" />
+				<Parameter Type="System.String" Name="removeKeyOnInstallValue" />
+			</Instance>
+		</Message>
+		<Message Id="RegistryMultipleValuesWithoutMultiString" Level="Normal">
+			<Instance>Both the {0}/@{1} attribute and a {0}/{2} element cannot both be specified.  Only one may be specified if the {3} attribute's value is not '{4}'.
+				<Parameter Type="System.String" Name="registryElementName" />
+				<Parameter Type="System.String" Name="valueAttributeName" />
+				<Parameter Type="System.String" Name="registryValueElementName" />
+				<Parameter Type="System.String" Name="typeAttributeName" />
+				<Parameter Type="System.String" Name="multiStringValue" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeWithOtherAttribute" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified when attribute {2} is present.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute cannot be specified when attribute {2} is present with value '{3}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherAttributeValue" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeWithOtherAttributes" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified when attribute {2} or {3} is also present.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName1" />
+				<Parameter Type="System.String" Name="otherAttributeName2" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute cannot be specified when attribute {2}, {3}, or {4} is also present.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName1" />
+				<Parameter Type="System.String" Name="otherAttributeName2" />
+				<Parameter Type="System.String" Name="otherAttributeName3" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeWithoutOtherAttributes" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified without attribute {2} present.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute cannot be specified without attribute {2} or {3} present.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName1" />
+				<Parameter Type="System.String" Name="otherAttributeName2" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute cannot be specified without attribute {2}, {3}, or {4} present.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName1" />
+				<Parameter Type="System.String" Name="otherAttributeName2" />
+				<Parameter Type="System.String" Name="otherAttributeName3" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeValueWithoutOtherAttribute" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', cannot be specified without attribute {3} present with value '{4}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="attributeValue" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherAttributeValue" />
+			</Instance>
+		</Message>
+		<Message Id="IntegerSentinelCollision" Level="Normal">
+			<Instance>The integer value {0} collides with a sentinel value in the compiler code.  Please contact wix to resolve this issue.
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="MimeMapExtensionMissingPeriod" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a valid mime map extension.  It must begin with a period.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="attributeValue" />
+			</Instance>
+		</Message>
+		<Message Id="ExampleGuid" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal Guid value.  A Guid needs to be generated and put in place of '{2}' in the source file.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="TooManyChildren" Level="Normal">
+			<Instance>The {0} element contains multiple {1} child elements.  There can only be one {1} child element per {0} element.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="childElementName" />
+			</Instance>
+		</Message>
+		<Message Id="ComponentMultipleKeyPaths" Level="Normal">
+			<Instance>The {0} element has multiple key paths set.  The key path may only be set to '{2}' in one of the following locations: {0}/@{1}, {3}/@{1}, {4}/@{1}, or {5}/@{1}.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="fileElementName" />
+				<Parameter Type="System.String" Name="registryElementName" />
+				<Parameter Type="System.String" Name="odbcDataSourceElementName" />
+			</Instance>
+		</Message>
+		<Message Id="CabClosureFailed" Level="Normal" SourceLineNumbers="no">
+			<Instance>Failed to close cab '{0}'.
+				<Parameter Type="System.String" Name="cabName" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalTypeLibMajorVersion" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal TypeLib major version value.  The TypeLib major version must be non-negative and less than 65536.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="ExpectedAttributes" Level="Normal">
+			<Instance>The {0} element's {1} or {2} attribute was not found; one of these is required.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+			</Instance>
+			<Instance>The {0} element's {1} or {2} attribute was not found; one of these is required when attribute {3} has a value of '{4}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherAttributeValue" />
+			</Instance>
+			<Instance>The {0} element's {1}, {2}, {3}, {4}, {5}, {6}, or {7} attribute was not found; one of these is required.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+				<Parameter Type="System.String" Name="attributeName3" />
+				<Parameter Type="System.String" Name="attributeName4" />
+				<Parameter Type="System.String" Name="attributeName5" />
+				<Parameter Type="System.String" Name="attributeName6" />
+				<Parameter Type="System.String" Name="attributeName7" />
+			</Instance>
+		</Message>
+		<Message Id="CostOutOfRange" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal cost because it is less than 0.  Legal cost values must be non-negative.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="MissingTypeLibFile" Level="Normal">
+			<Instance>The {0} element is non-advertised and therefore requires a parent {1} element.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="FileElementName" />
+			</Instance>
+		</Message>
+		<Message Id="InvalidDocumentElement" Level="Normal">
+			<Instance>The document element name '{0}' is invalid.  A WiX {1} file must use '{2}' as the document element name.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="fileType" />
+				<Parameter Type="System.String" Name="expectedElementName" />
+			</Instance>
+		</Message>
+		<Message Id="InvalidSummaryCodepage" Level="Normal">
+			<Instance>The {0} element has an invalid SummaryCodepage value of '{1}', which is not valid. A value of '1252' represents Latin-1, which may be what you want.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.Int32" Name="codepageValue" />
+			</Instance>
+		</Message>
+		<Message Id="UnauthorizedAccess" Level="Fatal" SourceLineNumbers="no">
+			<Instance>Access to the path '{0}' is denied.
+				<Parameter Type="System.String" Name="filePath" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalModuleExclusionLanguageAttributes" Level="Normal">
+			<Instance>Cannot set both ExcludeLanguage and ExcludeExceptLanguage attributes on a ModuleExclusion element.</Instance>
+		</Message>
+		<Message Id="NoFirstControlSpecified" Level="Normal">
+			<Instance>The '{0}' dialog element does not have a valid tabbable control. You must either have a tabbable control that is not marked TabSkip='yes', or you must mark a control TabSkip='no'. If you have a page with no tabbable controls (a progress page, for example), you might want to set the first Text control to be TabSkip='no'.
+				<Parameter Type="System.String" Name="dialogName" />
+			</Instance>
+		</Message>
+		<Message Id="NoDataForColumn" Level="Normal">
+			<Instance>There is no data for column '{0}' in a contained row of custom table '{1}'.  A non-null value must be supplied for this column.
+				<Parameter Type="System.String" Name="columnName" />
+				<Parameter Type="System.String" Name="tableName" />
+			</Instance>
+		</Message>
+		<Message Id="ValueAndMaskMustBeSameLength" Level="Normal">
+			<Instance>The FileTypeMask/@Value and FileTypeMask/@Mask attributes must be the same length.
+			</Instance>
+		</Message>
+		<Message Id="TooManySearchElements" Level="Normal">
+			<Instance>Only one search element can appear under a '{0}' element.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeExceptOnElement" Level="Normal">
+			<Instance>The {1} attribute can only be specified on the {2} element.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="expectedElementName" />
+			</Instance>
+		</Message>
+		<Message Id="SearchElementRequired" Level="Normal">
+			<Instance>A '{0}' element must have a search element as a child.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="MultipleIdentifiersFound" Level="Normal">
+			<Instance>Under a '{0}' element, multiple identifiers were found: '{1}' and '{2}'.  All search elements under this element must have the same id.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="identifier" />
+				<Parameter Type="System.String" Name="mismatchIdentifier" />
+			</Instance>
+		</Message>
+		<Message Id="AdvertiseStateMustMatch" Level="Normal">
+			<Instance>The advertise state of this element: '{0}', does not match the advertise state set on the parent element: '{1}'.
+				<Parameter Type="System.String" Name="advertiseState" />
+				<Parameter Type="System.String" Name="parentAdvertiseState" />
+			</Instance>
+		</Message>
+		<Message Id="DuplicateContextValue" Level="Normal">
+			<Instance>The context value '{0}' was duplicated. Context values must be distinct.
+				<Parameter Type="System.String" Name="contextValue" />
+			</Instance>
+		</Message>
+		<Message Id="RelativePathForRegistryElement" Level="Normal">
+			<Instance>Cannot convert RelativePath into Registry elements.
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeWhenNested" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified when {0} element is nested underneath a {2} element.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="parentElement" />
+			</Instance>
+		</Message>
+		<Message Id="ExpectedElement" Level="Normal">
+			<Instance>A {0} element must have at least one child element of type {1}.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="childName" />
+			</Instance>
+		</Message>
+		<Message Id="RegistryRootInvalid" Level="Normal">
+			<Instance>Registry/@Root attribute is invalid on a nested Registry element.  Either remove the Root attribute or move the Registry element so it is not nested under another Registry element.
+			</Instance>
+		</Message>
+		<Message Id="IllegalYesNoDefaultValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal yes/no/default value.  The only legal values are 'default', 'no' or 'yes'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeInMergeModule" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified in a merge module.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="GenericReadNotAllowed" Level="Normal">
+			<Instance>Permission elements cannot have GenericRead as the only permission specified. Include at least one other permission.
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeWithInnerText" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified when the element has body text as well. Specify either the attribute or the body, but not both.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="SearchElementRequiredWithAttribute" Level="Normal">
+			<Instance>A {0} element must have a search element as a child when the {0}/@{1} attribute has the value '{2}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="attributeValue" />
+			</Instance>
+		</Message>
+		<Message Id="CannotAuthorSpecialProperties" Level="Normal">
+			<Instance>The {0} property was specified. Special MSI properties cannot be authored.  Use the attributes on the Property element instead.
+				<Parameter Type="System.String" Name="propertyName" />
+			</Instance>
+		</Message>
+		<Message Id="CannotSpecifySequenceAndOnExit" Level="Normal">
+			<Instance>The sequence number for a {0} element can be specified at most once, with either a 'Sequence' or 'OnExit' attribute, but not both.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="NeedSequenceBeforeOrAfter" Level="Normal">
+			<Instance>A {0} element must have a Before attribute, After attribute, or a Sequence attribute.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="ValueNotSupported" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}, is not supported by the Windows Installer.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="attributeValue" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAttributeWithoutComponent" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot be specified unless the element has a component as an ancestor. A {0} that does not have a component ancestor is not installed.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalElementWithoutComponent" Level="Normal">
+			<Instance>The {0} element cannot be specified unless the element has a component as an ancestor. A {0} that does not have a component ancestor is not installed.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="OneOfAttributesRequiredUnderComponent" Level="Normal">
+			<Instance>When nested under a component, the {0} element must have one of the following attributes specified: {1}, {2}, {3} or {4}.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+				<Parameter Type="System.String" Name="attributeName3" />
+				<Parameter Type="System.String" Name="attributeName4" />
+			</Instance>
+		</Message>
+		<Message Id="WebSiteAttributeUnderWebSite" Level="Normal">
+			<Instance>The {0}/@WebSite attribute cannot be specified when the {0} element is nested under a WebSite element.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="WebApplicationAlreadySpecified" Level="Normal">
+			<Instance>The {0} element can have at most a single WebApplication specified. This can be either through the WebApplication attribute, or through a nested WebApplication element, but not both.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="SingleBinaryRequired" Level="Normal">
+			<Instance>The {0} element must have a single Binary specified. This can be either through the Binary attribute, or through a nested Binary element, but not both.
+				<Parameter Type="System.String" Name="elementName" />
+			</Instance>
+		</Message>
+		<Message Id="TabbableControlNotAllowedInBillboard" Level="Normal">
+			<Instance>A {0} element was specified with Type='{1}' and TabSkip='no'. Tabbable controls are not allowed in Billboards.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="controlType" />
+			</Instance>
+		</Message>
+		<Message Id="CheckBoxValueOnlyValidWithCheckBox" Level="Normal">
+			<Instance>A {0} element was specified with Type='{1}' and a CheckBoxValue. Check box values can only be specified with Type='CheckBox'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="controlType" />
+			</Instance>
+		</Message>
+		<Message Id="CabFileDoesNotExist" Level="Fatal" SourceLineNumbers="no">
+			<Instance>Attempted to extract cab '{0}' from merge module '{1}' to directory '{2}'. The cab file was not found. This usually means that you have a merge module without a cabinet inside it.
+				<Parameter Type="System.String" Name="cabName" />
+				<Parameter Type="System.String" Name="mergeModulePath" />
+				<Parameter Type="System.String" Name="directoryName" />
+			</Instance>
+		</Message>
+		<Message Id="RadioButtonTypeInconsistent" Level="Normal">
+			<Instance>All RadioButton elements in a RadioButtonGroup must be consistent with their use of the Bitmap, Icon, and Text attributes. Ensure all of the RadioButton elements in this group have the same attribute specified.</Instance>
+		</Message>
+		<Message Id="RadioButtonBitmapAndIconDisallowed" Level="Normal">
+			<Instance>RadioButtonGroup elements that contain RadioButton elements with Bitmap or Icon attributes set to "yes" can only be specified under a Control element.  Move your RadioButtonGroup element as a child of the appropriate Control element.</Instance>
+		</Message>
+		<Message Id="PreprocessorExtensionError">
+			<Instance>Preprocessor extension error: {0}
+				<Parameter Type="System.String" Name="errorMessage" />
+			</Instance>
+		</Message>
+		<Message Id="CompilerExtensionError">
+			<Instance>Compiler extension error: {0}
+				<Parameter Type="System.String" Name="errorMessage" />
+			</Instance>
+		</Message>
+		<Message Id="LinkerExtensionError">
+			<Instance>Linker extension error: {0}
+				<Parameter Type="System.String" Name="errorMessage" />
+			</Instance>
+		</Message>
+		<Message Id="BinderExtensionError">
+			<Instance>Binder extension error: {0}
+				<Parameter Type="System.String" Name="errorMessage" />
+			</Instance>
+		</Message>
+		<Message Id="LibrarianExtensionError">
+			<Instance>Librarian extension error: {0}
+				<Parameter Type="System.String" Name="errorMessage" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalSuppressWarningId" SourceLineNumbers="no" Level="Normal">
+			<Instance>Illegal value '{0}' for the -sw&lt;N&gt; command line option. Specify a particular warning number, like '-sw6' to suppress the warning with ID 6, or '-sw' alone to suppress all warnings.
+				<Parameter Type="System.String" Name="suppressedId" />
+			</Instance>
+		</Message>
+		<Message Id="GenericError">
+			<Instance>{0}
+				<Parameter Type="System.String" Name="errorMessage" />
+			</Instance>
+		</Message>
+		<Message Id="PreprocessorIllegalForeachVariable" Level="Fatal">
+			<Instance>The variable named '{0}' is not allowed in a foreach expression.
+				<Parameter Type="System.String" Name="variableName" />
+			</Instance>
+		</Message>
+		<Message Id="PreprocessorMissingParameterPrefix" Level="Fatal">
+			<Instance>Could not find the prefix in parameter name: '{0}'.
+				<Parameter Type="System.String" Name="parameterName" />
+			</Instance>
+		</Message>
+		<Message Id="PreprocessorExtensionForParameterMissing" Level="Fatal">
+			<Instance>Could not find the preprocessor extension for parameter '{0}'.  A preprocessor extension is expected because the parameter prefix, '{1}', is not one of the standard types: 'env', 'res', 'sys', or 'var'.
+				<Parameter Type="System.String" Name="parameterName" />
+				<Parameter Type="System.String" Name="parameterPrefix" />
+			</Instance>
+		</Message>
+		<Message Id="CannotFindFile">
+			<Instance>The file with id '{0}' and name '{1}' could not be found with source path: '{2}'.
+				<Parameter Type="System.String" Name="fileId" />
+				<Parameter Type="System.String" Name="fileName" />
+				<Parameter Type="System.String" Name="filePath" />
+			</Instance>
+		</Message>
+		<Message Id="BinderExtensionMissingFile">
+			<Instance>{0}
+				<Parameter Type="System.String" Name="exceptionMessage" />
+			</Instance>
+		</Message>
+		<Message Id="InvalidFileName">
+			<Instance>Invalid file name '{0}'.
+				<Parameter Type="System.String" Name="fileName" />
+			</Instance>
+		</Message>
+		<Message Id="ComponentRefCannotBePrimaryUnderComponentGroup" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not legal when nested under a {3} element.  Please remove the {1} attribute.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="primaryAttributeName" />
+				<Parameter Type="System.String" Name="primaryAttributeValue" />
+				<Parameter Type="System.String" Name="parentElementName" />
+			</Instance>
+		</Message>
+		<Message Id="DecompilerExtensionError" SourceLineNumbers="no">
+			<Instance>Decompiler extension error: {0}
+				<Parameter Type="System.String" Name="errorMessage" />
+			</Instance>
+		</Message>
+		<Message Id="BinaryColumnTypesNotYetImplementedInWiXToolSet" Level="Normal">
+			<Instance>Support for binary column types are not-yet-implemented in WiX toolset: WiX element '{0}'; WiX attribute '{1}'; MSI table '{2}'; column '{3}'.
+				<Parameter Type="System.String" Name="element" />
+				<Parameter Type="System.String" Name="attribute" />
+				<Parameter Type="System.String" Name="table" />
+				<Parameter Type="System.String" Name="column" />
+			</Instance>
+		</Message>
+		<Message Id="GuidContainsLowercaseLetters" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is a mixed-case guid.  All letters in a guid value should be uppercase.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="InvalidDateTimeFormat" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value '{2}' is not a valid date/time value. A date/time value should follow the format YYYY-MM-DDTHH:mm:ss.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="MultipleEntrySections" Level="Normal">
+			<Instance>Multiple entry sections '{0}' and '{1}' found.  Only one entry section may be present in a single target.
+				<Parameter Type="System.String" Name="sectionName1" />
+				<Parameter Type="System.String" Name="sectionName2" />
+			</Instance>
+		</Message>
+		<Message Id="MultipleEntrySections2" Level="Normal">
+			<Instance>Location of entry section related to previous error.</Instance>
+		</Message>
+		<Message Id="DuplicateSymbol" Level="Normal">
+			<Instance>Duplicate symbol '{0}' found.
+				<Parameter Type="System.String" Name="symbolName" />
+			</Instance>
+		</Message>
+		<Message Id="DuplicateSymbol2" Level="Normal">
+			<Instance>Location of symbol related to previous error.</Instance>
+		</Message>
+		<Message Id="MissingEntrySection" SourceLineNumbers="no" Level="Fatal">
+			<Instance>Could not find entry section in provided list of intermediates.</Instance>
+		</Message>
+		<Message Id="UnresolvedReference" Level="Normal">
+			<Instance>Unresolved reference to symbol '{2}' in section '{0}:{1}'.
+				<Parameter Type="System.String" Name="sectionType" />
+				<Parameter Type="System.String" Name="sectionId" />
+				<Parameter Type="System.String" Name="referencedSymbol" />
+			</Instance>
+		</Message>
+		<Message Id="MultiplePrimaryReferences" Level="Normal">
+			<Instance>Multiple primary references were found for {0} {1} in {2} and {3}.
+				<Parameter Type="System.String" Name="crefChildType" />
+				<Parameter Type="System.String" Name="crefChildId" />
+				<Parameter Type="System.String" Name="crefParentType" />
+				<Parameter Type="System.String" Name="conflictParentId" />
+			</Instance>
+		</Message>
+		<Message Id="ComponentReferencedTwice" Level="Normal">
+			<Instance>Component {0} cannot be contained in a Module twice.
+				<Parameter Type="System.String" Name="crefChildId" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalTypeLibMinorVersion" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal TypeLib minor version value.  The TypeLib minor version must be non-negative and less than 256.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="DuplicateModuleFileIdentifier" Level="Normal">
+			<Instance>The merge module '{0}' contains a file identifier, '{1}', that is duplicated either in another merge module or in a File/@Id attribute.  File identifiers must be unique.  Please change one of the file identifiers to a different value.
+				<Parameter Type="System.String" Name="moduleId" />
+				<Parameter Type="System.String" Name="fileId" />
+			</Instance>
+		</Message>
+		<Message Id="DuplicateModuleCaseInsensitiveFileIdentifier" Level="Normal">
+			<Instance>The merge module '{0}' contains 2 or more file identifiers that only differ by case: '{1}' and '{2}'.  The WiX toolset extracts merge module files to the file system using these identifiers.  Since most file systems are not case-sensitive a collision is likely.  Please contact the owner of the merge module for a fix.
+				<Parameter Type="System.String" Name="moduleId" />
+				<Parameter Type="System.String" Name="fileId1" />
+				<Parameter Type="System.String" Name="fileId2" />
+			</Instance>
+		</Message>
+		<Message Id="ImplicitComponentKeyPath" Level="Normal">
+			<Instance>The component '{0}' does not have an explicit key path specified.  If the ordering of the elements under the Component element changes, the key path will also change.  To prevent accidental changes, the key path should be set to 'yes' in one of the following locations: Component/@KeyPath, File/@KeyPath, ODBCDataSource/@KeyPath, or Registry/@KeyPath.
+				<Parameter Type="System.String" Name="componentId" />
+			</Instance>
+		</Message>
+		<Message Id="DuplicateLocalizationIdentifier" Level="Normal">
+			<Instance>The localization identifier '{0}' has been duplicated in multiple locations.  Please resolve the conflict.
+				<Parameter Type="System.String" Name="localizationId" />
+			</Instance>
+		</Message>
+		<Message Id="DuplicateLocalizedCodepage" Level="Normal">
+			<Instance>The codepage '{0}' has been specified in multiple localization files.  Please resolve the conflict.
+				<Parameter Type="System.String" Name="codepage" />
+			</Instance>
+		</Message>
+		<Message Id="LocalizationStringUnclosed" Level="Normal" SourceLineNumbers="no">
+			<Instance>The localization expression in the value '{0}' is not closed.  Ensure that the expression $(loc.VARIABLE) has a close paren.
+				<Parameter Type="System.String" Name="expression" />
+			</Instance>
+		</Message>
+		<Message Id="LocalizationStringUnknown" Level="Normal" SourceLineNumbers="no">
+			<Instance>The localization string '{0}' is unknown.  Ensure that the localization variable $(loc.{0}) is defined.
+				<Parameter Type="System.String" Name="localizationId" />
+			</Instance>
+		</Message>
+		<Message Id="FileNotFound" Level="Normal" SourceLineNumbers="no">
+			<Instance>The system cannot find the file: '{0}'.
+				<Parameter Type="System.String" Name="file" />
+			</Instance>
+		</Message>
+		<Message Id="InvalidXml" Level="Normal">
+			<Instance>Not a valid {0} file; detail: {1}
+				<Parameter Type="System.String" Name="fileType" />
+				<Parameter Type="System.String" Name="detail" />
+			</Instance>
+		</Message>
+		<Message Id="FileSourceRequired" Level="Normal">
+			<Instance>File with identifier '{0}' did not have a source path provided.  A source path must be provided for each file.
+				<Parameter Type="System.String" Name="fileId" />
+			</Instance>
+		</Message>
+		<Message Id="ProgIdNestedTooDeep" Level="Normal">
+			<Instance>ProgId elements may not be nested more than 1 level deep.</Instance>
+		</Message>
+		<Message Id="PatchGroupOutOfRange" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal patch group because it is not equal to or greater than 1.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="CanNotHaveTwoParents" Level="Normal">
+			<Instance>The DirectorySearchRef {0} can not have a Parent attribute {1} and also be nested under parent element {2}
+				<Parameter Type="System.String" Name="directorySearch" />
+				<Parameter Type="System.String" Name="parentAttribute" />
+				<Parameter Type="System.String" Name="parentElement" />
+			</Instance>
+		</Message>
+		<Message Id="SchemaValidationFailed" Level="Normal">
+			<Instance>Schema validation failed with the following error: {0}
+				<Parameter Type="System.String" Name="validationError" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalVersionValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a valid version.  Legal version values should look like 'x.x.x.x' where x is an integer from 0 to 65534.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="LongSentinelCollision" Level="Normal">
+			<Instance>The long integral value {0} collides with a sentinel value in the compiler code.  Please contact wix to resolve this issue.
+				<Parameter Type="System.Int64" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="CustomTableNameTooLong" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is too long for a table name.  It cannot be more than than 31 characters long.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="CustomTableIllegalColumnWidth" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a valid column width.  Valid column widths are 2 or 4.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="CustomTableColumnTypeNotSupported" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not currently a supported column type.  This is a known issue and will not get fixed until the CustomTable processing code is rewritten.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="CustomTableMissingPrimaryKey" Level="Normal">
+			<Instance>The CustomTable is missing a Column element with the PrimaryKey attribute set to 'yes'.  At least one column must be marked as the primary key.</Instance>
+		</Message>
+		<Message Id="NullMsiAssemblyNameValue" Level="Fatal">
+			<Instance>The assembly in component '{0}' has a null or empty {1} assembly name value.
+				<Parameter Type="System.String" Name="componentName" />
+				<Parameter Type="System.String" Name="name" />
+			</Instance>
+		</Message>
+		<Message Id="ConnectionTimeoutOutOfRange" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a legal connection timeout value because it is not greater than 0.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.Int32" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="TypeSpecificationForExtensionRequired" Level="Normal" SourceLineNumbers="no">
+			<Instance>The parameter '{0}' must be followed by the extension's type specification.  The type specification should be a fully qualified class and assembly identity, for example: "MyNamespace.MyClass,myextension.dll".
+				<Parameter Type="System.String" Name="parameter" />
+			</Instance>
+		</Message>
+		<Message Id="FilePathRequired" Level="Normal" SourceLineNumbers="no">
+			<Instance>The parameter '{0}' must be followed by a file path.
+				<Parameter Type="System.String" Name="parameter" />
+			</Instance>
+		</Message>
+		<Message Id="DirectoryPathRequired" Level="Normal" SourceLineNumbers="no">
+			<Instance>The parameter '{0}' must be followed by a directory path.
+				<Parameter Type="System.String" Name="parameter" />
+			</Instance>
+		</Message>
+		<Message Id="FileOrDirectoryPathRequired" Level="Normal" SourceLineNumbers="no">
+			<Instance>The parameter '{0}' must be followed by a file or directory path.  To specify a directory path the string must end with a backslash, for example: "C:\Path\".
+				<Parameter Type="System.String" Name="parameter" />
+			</Instance>
+		</Message>
+		<Message Id="PathCannotContainQuote" Level="Normal" SourceLineNumbers="no">
+			<Instance>Your file or directory path '{0}' cannot contain a quote. Quotes are often accidentally introduced when trying to refer to a directory path with spaces in it, such as "C:\Out Directory\".  The correct representation for that path is: "C:\Out Directory\\".
+				<Parameter Type="System.String" Name="fileName" />
+			</Instance>
+		</Message>
+		<Message Id="AdditionalArgumentUnexpected" Level="Normal" SourceLineNumbers="no">
+			<Instance>Additional argument '{0}' was unexpected.  Remove the argument and add the '-?' switch for more information.
+				<Parameter Type="System.String" Name="argument" />
+			</Instance>
+		</Message>
+		<Message Id="RegistryNameValueIncorrect" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is incorrect.  It should not contain values of '+', '-', or '*' when the Registry/@Value attribute is not present.  Instead, remove the Name attribute and specify the proper Action attribute: for Name='+' use Action='createKey', for Name='-' use Action='removeKeyOnUninstall', for Name='*' use Action='createKeyAndRemoveKeyOnUninstall'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="FamilyNameTooLong" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}' is {3} characters long.  This is too long for a family name because the maximum allowed length is 8 characters long.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.Int32" Name="length" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalFamilyName" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value, '{2}' contains illegal characters for a family name.  Legal values include letters, numbers, and underscores.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="SP1ProbablyNotInstalled" Level="Normal" SourceLineNumbers="no">
+			<Instance>An error has occurred that most likely indicates that the .NET Framework 1.1 Service Pack 1 has not been installed.  Please see the following website for more information about the service pack and how to install it: http://support.microsoft.com/?kbid=867460</Instance>
+		</Message>
+		<Message Id="ActionScheduledRelativeToTerminationAction" Level="Normal" SourceLineNumbers="no">
+			<Instance>The {0} table contains an action '{1}' that is scheduled to come before or after action '{2}', which is a special action which only occurs when the installer terminates.  These special actions can be identified by their negative sequence numbers.  Please schedule the action '{1}' to come before or after a different action.
+				<Parameter Type="System.String" Name="sequenceTableName" />
+				<Parameter Type="System.String" Name="actionName1" />
+				<Parameter Type="System.String" Name="actionName2" />
+			</Instance>
+		</Message>
+		<Message Id="ActionScheduledRelativeToItself" Level="Normal">
+			<Instance>The {0}/@{1} attribute's value '{2}' is invalid because it would make this action dependent upon itself.  Please change the value to the name of a different action.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="attributeValue" />
+			</Instance>
+		</Message>
+		<Message Id="ExpectedRowInPatchCreationPackage" Level="Normal" SourceLineNumbers="no">
+			<Instance>Could not find a row in the '{0}' table for this patch creation package.  Patch creation packages must contain at least one row in the '{0}' table.
+				<Parameter Type="System.String" Name="tableName" />
+			</Instance>
+		</Message>
+		<Message Id="UnexpectedTableInMergeModule" Level="Normal">
+			<Instance>An unexpected row in the '{0}' table was found in this merge module.  Merge modules cannot contain the '{0}' table.
+				<Parameter Type="System.String" Name="tableName" />
+			</Instance>
+		</Message>
+		<Message Id="UnexpectedTableInPatchCreationPackage" Level="Normal">
+			<Instance>An unexpected row in the '{0}' table was found in this patch creation package.  Patch creation packages cannot contain the '{0}' table.
+				<Parameter Type="System.String" Name="tableName" />
+			</Instance>
+		</Message>
+	</Class>
+	<Class Name="WixWarnings" ContainerName="WixWarning" BaseContainerName="MessageEventArgs" LevelType="WarningLevel">
+		<Message Id="BinaryOrIconIdentifierCannotBeModularized" Level="Moderate" Number="1000">
+			<Instance>The {0}/@{1} attribute's value, '{2}', will be too long if modularized.  Binary and icon identifiers shouldn't be longer than 18 characters to allow for modularization (appending a guid for merge modules).
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="identifier" />
+			</Instance>
+		</Message>
+		<Message Id="EmptyAttributeValue" Number="1001">
+			<Instance>The {0}/@{1} attribute's value cannot be an empty string.  If you want the value to be null or empty, simply remove the entire attribute.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="UnableToFindFileFromCabOrImage" Number="1002">
+			<Instance>Unable to find existing file {0} to place in src location {1}.  Will likely cause a linker break.
+				<Parameter Type="System.String" Name="existingFileSpec" />
+				<Parameter Type="System.String" Name="srcFileSpec" />
+			</Instance>
+		</Message>
+		<Message Id="CopyFileFileIdUseless" Number="1003">
+			<Instance>Since the CopyFile/@FileId attribute was specified but none of the following attributes (DestinationName, DestinationDirectory, DestinationProperty) were specified, this authoring will not do anything.</Instance>
+		</Message>
+		<Message Id="NestedInstall" Number="1004">
+			<Instance>Nested installations are not supported by the Windows Installer XML team.  Use this feature at your user's peril.</Instance>
+		</Message>
+		<Message Id="OrphanedProgId" Number="1005">
+			<Instance>ProgId '{0}' is orphaned.  It has no associated component, so it will never install.  Every ProgId should have either a parent Class element or child Extension element (at any distance).
+				<Parameter Type="System.String" Name="progId" />
+			</Instance>
+		</Message>
+		<Message Id="PropertyUseless" Number="1006">
+			<Instance>Property '{0}' does not contain a Value attribute and is not marked as Admin, Secure, or Hidden.  The Property element is being ignored.
+				<Parameter Type="System.String" Name="id" />
+			</Instance>
+		</Message>
+		<Message Id="RemoveFileNameRequired" Number="1007">
+			<Instance>The RemoveFile/@Name attribute will soon become required.  In order to match the old functionality of not specifying this attribute, please use the new RemoveFolder element instead.</Instance>
+		</Message>
+		<Message Id="SuppressAction" Level="Moderate" Number="1008" SourceLineNumbers="no">
+			<Instance>The action '{0}' in the {1} table is being suppressed.
+				<Parameter Type="System.String" Name="action" />
+				<Parameter Type="System.String" Name="sequenceName" />
+			</Instance>
+		</Message>
+		<Message Id="SuppressMergedAction" Level="Moderate" Number="1009" SourceLineNumbers="no">
+			<Instance>The merged action '{0}' in the {1} table is being suppressed.
+				<Parameter Type="System.String" Name="action" />
+				<Parameter Type="System.String" Name="sequenceName" />
+			</Instance>
+		</Message>
+		<Message Id="OrphanedComponent" Number="1010">
+			<Instance>Found orphaned Component '{0}'.  Every Component should have at least one parent Feature.
+				<Parameter Type="System.String" Name="componentName" />
+			</Instance>
+		</Message>
+		<Message Id="AccessDeniedForDeletion" Number="1011">
+			<Instance>Access denied; cannot delete '{0}'.
+				<Parameter Type="System.String" Name="tempFilesBasePath" />
+			</Instance>
+		</Message>
+		<Message Id="DirectoryInUse" Number="1012">
+			<Instance>The directory '{0}' is in use and cannot be deleted.
+				<Parameter Type="System.String" Name="filePath" />
+			</Instance>
+		</Message>
+		<Message Id="MissingProgId" Number="1015">
+			<Instance>Default ProgId '{0}' was provided for ClassId '{1}' but there was no ProgId table.  The output source file will likely not compile/link.
+				<Parameter Type="System.String" Name="progId" />
+				<Parameter Type="System.String" Name="classId" />
+			</Instance>
+		</Message>
+		<Message Id="OverwritingFile" Number="1016">
+			<Instance>Overwriting file '{0}'.
+				<Parameter Type="System.String" Name="file" />
+			</Instance>
+		</Message>
+		<Message Id="NullLockPermissionPermission" Number="1017">
+			<Instance>Null in LockPermission.Permission field is reserved for future use.  Decompiler likely to fail.</Instance>
+		</Message>
+		<Message Id="IllegalMergeModuleTable" Number="1018">
+			<Instance>There is a {0} table in a merge module which is explicitly not allowed by the Windows Installer.  The {0} table will not be processed.
+				<Parameter Type="System.String" Name="table" />
+			</Instance>
+		</Message>
+		<Message Id="FilteringVSIStuff" Number="1019">
+			<Instance>Skipping {0} '{1}'.  User asked to filter out problematic VSI constructs.
+				<Parameter Type="System.String" Name="type" />
+				<Parameter Type="System.String" Name="name" />
+			</Instance>
+		</Message>
+		<Message Id="FilteringInstallShieldStuff" Number="1022">
+			<Instance>Skipping {0} '{1}'.  User asked to filter out problematic InstallShield constructs.
+				<Parameter Type="System.String" Name="type" />
+				<Parameter Type="System.String" Name="name" />
+			</Instance>
+		</Message>
+		<Message Id="IllegalAdvtExecuteSequenceCustomAction" Number="1023">
+			<Instance>Encountered CustomAction '{0}' while processing AdvtExecuteSequence.  CustomActions are not permitted in the AdvtExecuteSequence and will not be output to decompiled source file.
+				<Parameter Type="System.String" Name="customAction" />
+			</Instance>
+		</Message>
+		<Message Id="UnknownAction" Number="1024">
+			<Instance>Action '{0}' in sequence '{1}' is not a custom action, dialog, supported standard action, or known special action so this action is being left out.
+				<Parameter Type="System.String" Name="action" />
+				<Parameter Type="System.String" Name="sequence" />
+			</Instance>
+		</Message>
+		<Message Id="UnknownModularization" Number="1025">
+			<Instance>Unable to identify the appended GUID on Identifier ModuleSignature.ModuleId {0}.  The Element Module, Attribute guid will be incorrect as will all the identifiers.  The generated file will need significant manual intervention in order for it to compile.
+				<Parameter Type="System.String" Name="name" />
+			</Instance>
+			<Instance>Identifier {0} appended Guid {1} does not match module Guid {2}.  Truncating mismatched Guid in to conform with topic "Naming Primary Keys in Merge Module Databases [Windows Installer]".
+				<Parameter Type="System.String" Name="identifier" />
+				<Parameter Type="System.String" Name="appendedGuid" />
+				<Parameter Type="System.String" Name="moduleGuid" />
+			</Instance>
+		</Message>
+		<Message Id="IdentifierTooLong" Level="Moderate" Number="1026">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is too long for an identifier.  Standard identifiers are 72 characters long or less.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="GeneratingShortName" Number="1027">
+			<Instance>Table: {2}; Key: {3}; Column: {4}; does not have a valid short name ({0}) so decompiler generated short name ({1}).
+				<Parameter Type="System.String" Name="originalName" />
+				<Parameter Type="System.String" Name="generatedName" />
+				<Parameter Type="System.String" Name="table" />
+				<Parameter Type="System.String" Name="tableId" />
+				<Parameter Type="System.String" Name="tableColumnRequiringShortName" />
+			</Instance>
+		</Message>
+		<Message Id="GeneratingLongDirectoryName" Number="1028">
+			<Instance>DefaultDir column value {0} for Directory key {1} does not have a valid long name so decompiler generated LongName {2}.
+				<Parameter Type="System.String" Name="defaultDirValue" />
+				<Parameter Type="System.String" Name="directoryKey" />
+				<Parameter Type="System.String" Name="generatedShortName" />
+			</Instance>
+		</Message>
+		<Message Id="GeneratingIdentifier" Number="1029">
+			<Instance>Table: {1}; identifier: {0}; is invalid.  Using generated identifier {2} instead.
+				<Parameter Type="System.String" Name="oldIdentifier" />
+				<Parameter Type="System.String" Name="tableName" />
+				<Parameter Type="System.String" Name="generatedIdentifier" />
+			</Instance>
+		</Message>
+		<Message Id="UnknownPermission" Number="1030">
+			<Instance>Ignoring unknown permission at bit position {0} of {1}.
+				<Parameter Type="System.Int32" Name="value" />
+				<Parameter Type="System.String" Name="table" />
+			</Instance>
+		</Message>
+		<Message Id="DirectoryRedundantNames" Level="Moderate" Number="1031">
+			<Instance>The {0} element's {1} and {2} values are both '{3}'.  This is redundant; the {2} attribute should be removed.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="shortNameAttributeName" />
+				<Parameter Type="System.String" Name="longNameAttributeName" />
+				<Parameter Type="System.String" Name="attributeValue" />
+			</Instance>
+			<Instance>The {0} element's source and destination names are identical.  This is redundant; the {1} and {2} attributes should be removed if present.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="sourceNameAttributeName" />
+				<Parameter Type="System.String" Name="longSourceAttributeName" />
+			</Instance>
+		</Message>
+		<Message Id="UnableToResetAcls" Level="Moderate" Number="1032" SourceLineNumbers="no">
+			<Instance>Unable to reset acls on destination files.</Instance>
+		</Message>
+		<Message Id="MediaExternalCabinetFilenameIllegal" Level="Major" Number="1033">
+			<Instance>The {0}/@{1} attribute's value, '{2}', is not a valid external cabinet name.  Legal cabinet names must follow 8.3 format: they should contain no more than 8 characters followed by an optional extension of no more than 3 characters.  Any character except for the follow may be used: \ ? | &gt; &lt; : / * " + , ; = [ ] (space).  The Windows Installer team has recommended following the 8.3 format for external cabinet files and any other naming scheme is officially unsupported (which means its not guaranteed to work on all platforms).
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="InvalidNullTargetCustomAction" Number="1034">
+			<Instance>CustomAction {0} has a null target which is invalid for type {1}.
+				<Parameter Type="System.String" Name="name" />
+				<Parameter Type="System.String" Name="type" />
+			</Instance>
+		</Message>
+		<Message Id="NullConditionInConditionTable" Number="1035">
+			<Instance>Condition Table for Feature {0} has a null condition column which means the level in the Condition table should be the value in the Feature.Level.
+				<Parameter Type="System.String" Name="name" />
+			</Instance>
+		</Message>
+		<Message Id="PreprocessorExtensionWarning" Number="1036">
+			<Instance>Preprocessor extension warning: {0}
+				<Parameter Type="System.String" Name="warningMessage" />
+			</Instance>
+		</Message>
+		<Message Id="CompilerExtensionWarning" Number="1037">
+			<Instance>Compiler extension warning: {0}
+				<Parameter Type="System.String" Name="warningMessage" />
+			</Instance>
+		</Message>
+		<Message Id="LinkerExtensionWarning" Number="1038">
+			<Instance>Linker extension warning: {0}
+				<Parameter Type="System.String" Name="warningMessage" />
+			</Instance>
+		</Message>
+		<Message Id="BinderExtensionWarning" Number="1039">
+			<Instance>Binder extension warning: {0}
+				<Parameter Type="System.String" Name="warningMessage" />
+			</Instance>
+		</Message>
+		<Message Id="LibrarianExtensionWarning" Number="1040">
+			<Instance>Librarian extension warning: {0}
+				<Parameter Type="System.String" Name="warningMessage" />
+			</Instance>
+		</Message>
+		<Message Id="GenericWarning" Number="1041">
+			<Instance>{0}
+				<Parameter Type="System.String" Name="warningMessage" />
+			</Instance>
+		</Message>
+		<Message Id="DecompilerExtensionWarning" Number="1042" SourceLineNumbers="no">
+			<Instance>Decompiler extension warning: {0}
+				<Parameter Type="System.String" Name="warningMessage" />
+			</Instance>
+		</Message>
+		<Message Id="FileSearchFileNameIssue" Level="Major" Number="1043">
+			<Instance>The {0} element's {1} and {2} attributes were found.  Due to a bug with the Windows Installer, only the Name or LongName attribute should be used.  Use the Name attribute for 8.3 compliant file names and the LongName attribute for longer ones.  When using only the LongName attribute, ICE03 should be ignored for the Signature table's FileName column.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+			</Instance>
+		</Message>
+		<Message Id="AmbiguousFileOrDirectoryName" Level="Moderate" Number="1044">
+			<Instance>The {0}/@{1} attribute's value '{2}' is an ambiguous short name because it ends with a '~' character followed by a number.  Under some circumstances, this name could resolve to more than one file or directory name and lead to unpredictable results (for example 'MICROS~1' may correspond to 'Microsoft Shared' or 'Microsoft Foo' or literally 'Micros~1').
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+			</Instance>
+		</Message>
+		<Message Id="IdenticalRowWarning" Level="Minor" Number="1045">
+			<Instance>The row with symbol: '{0}' is defined identically in another section.  See the next message for the identical row.
+				<Parameter Type="System.String" Name="symbolName" />
+			</Instance>
+		</Message>
+		<Message Id="IdenticalRowWarning2" Level="Minor" Number="1046">
+			<Instance>Location of row related to previous error.</Instance>
+		</Message>
+		<Message Id="UnresolvedReferenceWarning" Level="Minor" Number="1047">
+			<Instance>Unresolved reference to symbol '{2}' in section '{0}:{1}'.
+				<Parameter Type="System.String" Name="sectionType" />
+				<Parameter Type="System.String" Name="sectionId" />
+				<Parameter Type="System.String" Name="referencedSymbol" />
+			</Instance>
+		</Message>
+		<Message Id="PossiblyIncorrectTypelibVersion" Level="Moderate" Number="1048" SourceLineNumbers="no">
+			<Instance>The Typelib table entry with Id '{0}' could have an incorrect version of '256.0'.  InstallShield has a bug relating to the Typelib Version column: it will incorrectly set the value '65536' in to represent version '1.0'.  However, this number actually corresponds to version '256.0'.  This bug will not affect the typelib version that is registered during installation, however, it will prevent the Windows Installer from correctly identifying whether a typelib is already installed and lead to unnecessary reinstallations of the typelib.
+				<Parameter Type="System.String" Name="id" />
+			</Instance>
+		</Message>
+		<Message Id="ImplicitPrimaryFeature" Level="Major" Number="1049" SourceLineNumbers="no">
+			<Instance>The component '{0}' does not have an explicit primary feature parent specified.  If the files are linked in a different order, the primary parent feature may change.  To prevent accidental changes, the primary feature parent should be set to 'yes' in one of the ComponentRef/@Primary or ComponentGroupRef/@Primary locations for this component.
+				<Parameter Type="System.String" Name="componentId" />
+			</Instance>
+		</Message>
+		<Message Id="UnexpectedTableInProduct" Level="Moderate" Number="1053">
+			<Instance>An unexpected row in the '{0}' table was found in this product.  Products should not contain the '{0}' table.
+				<Parameter Type="System.String" Name="tableName" />
+			</Instance>
+		</Message>
+		<Message Id="DangerousTableInMergeModule" Level="Moderate" Number="1054">
+			<Instance>Merge modules should not contain the '{0}' table because all merge conflicts cannot avoided.  However, this warning maybe supressed if all of the consumers of the Merge Module agree to not duplicate identifiers in the '{0}' table.
+				<Parameter Type="System.String" Name="tableName" />
+			</Instance>
+		</Message>
+	</Class>
+	<Class Name="WixVerboses" ContainerName="WixVerbose" BaseContainerName="MessageEventArgs" LevelType="VerboseLevel" StartNumber="2000">
+		<Message Id="ImportBinaryStream">
+			<Instance>Importing binary stream from '{0}'.
+				<Parameter Type="System.String" Name="streamSource" />
+			</Instance>
+		</Message>
+		<Message Id="ImportIconStream">
+			<Instance>Importing icon stream from '{0}'.
+				<Parameter Type="System.String" Name="streamSource" />
+			</Instance>
+		</Message>
+		<Message Id="ImportCabinetStream" Level="Verbose" SourceLineNumbers="no">
+			<Instance>Importing cabinet stream '{0}' from '{1}'.
+				<Parameter Type="System.String" Name="streamName" />
+				<Parameter Type="System.String" Name="streamSource" />
+			</Instance>
+		</Message>
+		<Message Id="CopyFile">
+			<Instance>Copying file '{0}' to '{1}'.
+				<Parameter Type="System.String" Name="sourceFile" />
+				<Parameter Type="System.String" Name="destinationFile" />
+			</Instance>
+		</Message>
+		<Message Id="MoveFile">
+			<Instance>Moving file '{0}' to '{1}'.
+				<Parameter Type="System.String" Name="sourceFile" />
+				<Parameter Type="System.String" Name="destinationFile" />
+			</Instance>
+		</Message>
+		<Message Id="CreateDirectory">
+			<Instance>The directory '{0}' does not exist, creating it now.
+				<Parameter Type="System.String" Name="directory" />
+			</Instance>
+		</Message>
+		<Message Id="RemoveDestinationFile">
+			<Instance>The destination file '{0}' already exists, attempting to remove it.
+				<Parameter Type="System.String" Name="destinationFile" />
+			</Instance>
+		</Message>
+		<Message Id="CabFile">
+			<Instance>Cabbing file {0} from '{1}'.
+				<Parameter Type="System.String" Name="fileId" />
+				<Parameter Type="System.String" Name="filePath" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingModule">
+			<Instance>Processing module: {0}.{1}.
+				<Parameter Type="System.String" Name="moduleName" />
+				<Parameter Type="System.String" Name="moduleIdUnderscored" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingProduct">
+			<Instance>Processing product...</Instance>
+		</Message>
+		<Message Id="ProcessingUI">
+			<Instance>Processing UI...</Instance>
+		</Message>
+		<Message Id="ProcessingSummaryInformation">
+			<Instance>Processing summary information...</Instance>
+		</Message>
+		<Message Id="ProcessingProperty">
+			<Instance>Processing property: {0}.
+				<Parameter Type="System.String" Name="property" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingPropertyType">
+			<Instance>Processing property table for property type: {0}.
+				<Parameter Type="System.String" Name="propertyType" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingFileSearchSignature">
+			<Instance>Processing file search signature: {0}.
+				<Parameter Type="System.String" Name="signature" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingLaunchConditions">
+			<Instance>Processing launch conditions...</Instance>
+		</Message>
+		<Message Id="ProcessingFeatureConditions">
+			<Instance>Processing feature conditions...</Instance>
+		</Message>
+		<Message Id="ProcessingFeatureComponent">
+			<Instance>Processing feature component: {0}.
+				<Parameter Type="System.String" Name="component" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingFeatureComponents">
+			<Instance>Processing feature components for feature: {0}.
+				<Parameter Type="System.String" Name="feature" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingClass">
+			<Instance>Processing class id: {0}.
+				<Parameter Type="System.String" Name="classId" />
+			</Instance>
+			<Instance>Processing class table for feature '{0}' component '{1}'...
+				<Parameter Type="System.String" Name="feature" />
+				<Parameter Type="System.String" Name="component" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingProgId">
+			<Instance>Processing ProgId table...</Instance>
+			<Instance>Processing ProgId: {0}.
+				<Parameter Type="System.String" Name="progId" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingExtension">
+			<Instance>Processing extension table...</Instance>
+			<Instance>Processing extension: {0}
+				<Parameter Type="System.String" Name="extension" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingFeature">
+			<Instance>Processing feature table...</Instance>
+			<Instance>Processing feature: {0}.
+				<Parameter Type="System.String" Name="feature" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingDirectory">
+			<Instance>Processing directory table...</Instance>
+			<Instance>Processing directory: {0}.
+				<Parameter Type="System.String" Name="directory" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingEnvironment">
+			<Instance>Processing environment table...</Instance>
+			<Instance>Processing environment: {0}.
+				<Parameter Type="System.String" Name="environment" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingRemoveFile">
+			<Instance>Processing RemoveFile table for component: {0}
+				<Parameter Type="System.String" Name="component" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingReserveCost">
+			<Instance>Processing ReserveCost table for component: {0}
+				<Parameter Type="System.String" Name="component" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingShortcut">
+			<Instance>Processing shortcut: {0}.
+				<Parameter Type="System.String" Name="shortcut" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingShortcutForComponent">
+			<Instance>Processing shortcut table for component: {0}.
+				<Parameter Type="System.String" Name="component" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingSequence">
+			<Instance>Processing sequence table: {0}.
+				<Parameter Type="System.String" Name="sequence" />
+			</Instance>
+		</Message>
+		<Message Id="ProcessingAction">
+			<Instance>Processing action: {0}.
+				<Parameter Type="System.String" Name="action" />
+			</Instance>
+		</Message>
+		<Message Id="UpdatingFileInformation" Level="Verbose" SourceLineNumbers="no">
+			<Instance>Updating file information.</Instance>
+		</Message>
+		<Message Id="GeneratingDatabase" Level="Verbose" SourceLineNumbers="no">
+			<Instance>Generating database.</Instance>
+		</Message>
+		<Message Id="MergingModules" Level="Verbose" SourceLineNumbers="no">
+			<Instance>Merging modules.</Instance>
+		</Message>
+		<Message Id="ProcessingMediaInformation" Level="Verbose" SourceLineNumbers="no">
+			<Instance>Processing media information.</Instance>
+		</Message>
+		<Message Id="ImportingStreams" Level="Verbose" SourceLineNumbers="no">
+			<Instance>Importing streams.</Instance>
+		</Message>
+		<Message Id="LayingOutMedia" Level="Verbose" SourceLineNumbers="no">
+			<Instance>Laying out media.</Instance>
+		</Message>
+		<Message Id="PreprocessorExtensionVerbose">
+			<Instance>Preprocessor extension verbose message: {0}
+				<Parameter Type="System.String" Name="verboseMessage" />
+			</Instance>
+		</Message>
+		<Message Id="CompilerExtensionVerbose">
+			<Instance>Compiler extension verbose message: {0}
+				<Parameter Type="System.String" Name="verboseMessage" />
+			</Instance>
+		</Message>
+		<Message Id="LinkerExtensionVerbose">
+			<Instance>Linker extension verbose message: {0}
+				<Parameter Type="System.String" Name="verboseMessage" />
+			</Instance>
+		</Message>
+		<Message Id="BinderExtensionVerbose">
+			<Instance>Binder extension verbose message: {0}
+				<Parameter Type="System.String" Name="verboseMessage" />
+			</Instance>
+		</Message>
+		<Message Id="LibrarianExtensionVerbose">
+			<Instance>Librarian extension verbose message: {0}
+				<Parameter Type="System.String" Name="verboseMessage" />
+			</Instance>
+		</Message>
+		<Message Id="GenericVerbose">
+			<Instance>{0}
+				<Parameter Type="System.String" Name="verboseMessage" />
+			</Instance>
+		</Message>
+		<Message Id="DecompilerExtensionVerbose" SourceLineNumbers="no">
+			<Instance>Decompiler extension verbose message: {0}
+				<Parameter Type="System.String" Name="verboseMessage" />
+			</Instance>
+		</Message>
+		<Message Id="ImportDigitalCertificateStream">
+			<Instance>Importing digital certificate from '{0}'.
+				<Parameter Type="System.String" Name="streamSource" />
+			</Instance>
+		</Message>
+	</Class>
+</Messages>

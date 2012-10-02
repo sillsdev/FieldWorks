@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<var id="Scripture_File_Exists" set="C:\\GuiTestResults\\RoundtripCompare\\Sena 3.oxes" file-exists="TRUE"/>
+
+		<!-- Menu Model = File > Export > Toolbox -->
+		<click select="menubar/file/export/open-xml"/>
+
+		<!-- Wait for the Export dialog to open -->
+		<on-dialog title="Bogus Dialog" until="10000" on-fail="skip"/>
+
+		<!-- Export Open XML \ Browse... Button -->
+		<insert>{TAB 3}</insert>
+		<insert>{ENTER}</insert>
+		<insert>C:\GuiTestResults\RoundtripCompare\Sena 3.oxes</insert>
+		<!-- Save As \ Save Button -->
+		<insert>{TAB 2}</insert>
+		<insert>{ENTER}</insert>
+		<!-- Export Open XML \ OK Button -->
+		<insert>{TAB 2}</insert>
+		<insert>{ENTER}</insert>
+
+		<if>
+			<condition of="$Scripture_File_Exists" is="TRUE"/>
+			<then>
+				<on-dialog title="Export Open XML for Editing Scripture" until="10000" on-fail="skip">
+					<click path="$Yes"/>
+				</on-dialog>
+			</then>
+		</if>
+
+		<on-dialog title="Translation Editor" until="10000" on-fail="skip">
+			<click path="$Yes"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="TestCommonCOMDlgs2008"
+	ProjectGUID="{8E60E788-63BD-45C0-937F-B6FCB22DCCF7}"
+	RootNamespace="TestCommonCOMDlgs"
+	SccProjectName="Perforce Project"
+	SccLocalPath="..\..\.."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\bin\mkComFWDlgs-tst.bat DONTRUN"
+				ReBuildCommandLine="..\..\..\bin\mkComFWDlgs-tst.bat DONTRUN cc"
+				CleanCommandLine="..\..\..\bin\mkComFWDlgs-tst.bat DONTRUN ec"
+				Output="..\..\..\output\debug\testCmnFwDlgs.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine=""
+				ReBuildCommandLine=""
+				CleanCommandLine=""
+				Output="TestCommonCOMDlgs.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\testCmnFwDlgs.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\testCmnFwDlgs.h"
+			>
+		</File>
+		<File
+			RelativePath=".\testCmnFwDlgs.mak"
+			>
+		</File>
+		<File
+			RelativePath=".\TestFwStylesDlg.h"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

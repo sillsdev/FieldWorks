@@ -1,0 +1,501 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 2002, 2004 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: CmnFwDlgs.idh
+Responsibility: Randy Regnier
+Last reviewed:
+
+	Includes interfaces used for
+	- File / Open project dlg (IOpenFWProjectDlg)
+	- File / Export dlg (IFwExportDlg)
+	- Format / Styles dlg (IFwCppStylesDlg)
+
+	This file will be processed by the MIDL tool to produce the type library
+	(CmnFwDlgsTlb.tlb), C++ headers (CmnFwDlgsTlb.h) and marshalling code.
+
+	******************************************* NOTE *******************************************
+	Rebuild the views dll when you change or add any interfaces in this file -- the views idl
+	file includes this file to resolve the circular dependencies that would otherwise result.
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+/*******************************************************************************************
+	Interface IOpenFWProjectDlg
+	This interface is implemented by objects that provide an end-user the means to select
+	a (language) project to work on and possibly a major object within the selected
+	project.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Use this interface whenever you want the user to select a project to work on.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_OpenProjectDlg or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: op}
+*******************************************************************************************/
+DeclareInterface(OpenFWProjectDlg, Unknown, 8cb6f2f9-3b0a-4030-8992-c50fb78e77f3)
+{
+	// Initialize and show a dialog window.
+	// @param fist The log stream.
+	// @param bstrCurrentServer The server where the current DB is located or null if there
+	//  isn't a current DB opened.
+	// @param bstrLocalServer The local server.
+	// @param bstrUserWs The user interface writing system (ICU Locale thereof).
+	// @param hwndParent The parent window for the modal dialog (may be 0).
+	// @param fAllowMenu Allow popup menu.
+	// @param clidSubitem The class ID for the subitems. May be null, if no subitems
+	//	are to be shown.
+	// @param bstrHelpFullUrl The URL for the help file. If null, then it will use the default
+	//	of "User_Interface/Menus/File/Open_a_FieldWorks_project.htm".
+	// @return S_OK.
+	HRESULT Show(
+		[in] IStream * fist,
+		[in] BSTR bstrCurrentServer,
+		[in] BSTR bstrLocalServer,
+		[in] BSTR bstrUserWs,
+		[in] DWORD hwndParent,
+		[in] ComBool fAllowMenu,
+		[in] int clidSubitem,
+		[in] BSTR bstrHelpFullUrl);
+
+	// Get resulting answers about selection(s).
+	// @param fHaveProject Return true, if a project was selected, otherwise false.
+	// @param hvoProj Return the ID of the selected project.
+	// @param bstrProject Return the project name.
+	// @param bstrDatabase Return the database name.
+	// @param bstrMachine Return the server name.
+	// @param guid Return the guid of the project.
+	// @param fHaveSubitem Return true, if a subitem was selected, otherwise false.
+	// @param hvoSubitem Return the ID of the selected subitem.
+	// @param bstrName Return the name of the selected subitem.
+	// @return S_OK.
+	HRESULT GetResults(
+		[out] ComBool * fHaveProject,
+		[out] int * hvoProj,
+		[out] BSTR * bstrProject,
+		[out] BSTR * bstrDatabase,
+		[out] BSTR * bstrMachine,
+		[out] GUID * guid,
+		[out] ComBool * fHaveSubitem,
+		[out] int * hvoSubitem,
+		[out] BSTR * bstrName);
+
+	// @param pwsf Pointer to current writing system factory.
+	[propputref] HRESULT WritingSystemFactory(
+		[in] ILgWritingSystemFactory * pwsf);
+};
+
+#ifndef NO_COCLASSES
+DeclareCoClass(OpenFWProjectDlg, D7C505D0-F132-4e40-BFE7-A2E66A46991A)
+{
+	interface IOpenFWProjectDlg;
+};
+#endif // !NO_COCLASSES
+
+/*******************************************************************************************
+	Interface IFwExportDlg
+	This interface is implemented by objects that provide an end-user the means to export
+	a subsection of a (language) project, using XSLT to produce the final result.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Use this interface whenever you want the user to export data to use in a different
+	program.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwExportDlg or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: fexp}
+*******************************************************************************************/
+DeclareInterface(FwExportDlg, Unknown, 67A68372-5727-4bd4-94A7-C2D703A75C36)
+{
+	// Initialize the FieldWorks File / Export dialog with the program / main window specific
+	// information.
+	//
+	// @param hwndParent HWND of the parent window (may be zero)
+	// @param pvss Pointer to the style sheet (must contain the database connection).
+	// @param pfcex Pointer to application's export customization interface.
+	// @param pclsidApp The application CLSID.
+	// @param bstrRegProgName The application name used in Registry keys.
+	// @param bstrProgHelpFile
+	// @param hvoLp The project's root database id.
+	// @param hvoObj The program's root object database id.
+	// @param flidSubitems The field id of subfields, if any.
+	HRESULT Initialize(
+		[in] DWORD hwndParent,
+		[in] IVwStylesheet * pvss,
+		[in] IFwCustomExport * pfcex,
+		[in] GUID * pclsidApp,
+		[in] BSTR bstrRegProgName,
+		[in] BSTR bstrProgHelpFile,
+		[in] BSTR bstrHelpTopic,
+		[in] int hvoLp,
+		[in] int hvoObj,
+		[in] int flidSubitems);
+
+	// Run the FieldWorks File / Export dialog, providing the specific view type and set of
+	// objects to export.  The dialog appears, the user does his thing, and then the program
+	// exports (or not) as desired.
+	//
+	// @param vwt The current user view type
+	// @param crec The number of records to export.
+	// @param rghvoRec Array of crec record database ids.
+	// @param rgclidRec Parallel array of crec record class ids.
+	// @param pnRet Pointer to dialog return value (generally return kctidOk or kctidCancel)
+	HRESULT DoDialog(
+		[in] int vwt,
+		[in] int crec,
+		[in, size_is(crec)] int * rghvoRec,
+		[in, size_is(crec)] int * rgclidRec,
+		[out, retval] int * pnRet);
+};
+#ifndef NO_COCLASSES
+DeclareCoClass(FwExportDlg, 86DD56A8-CDD0-49d2-BD57-C78F8367D6C4)
+{
+	interface IFwExportDlg;
+};
+#endif // !NO_COCLASSES
+
+
+/*******************************************************************************************
+	This enum lists the variations for the IFwCppStylesDlg controlled dialog box.
+
+	@h3{Hungarian: sdt}
+*******************************************************************************************/
+typedef [v1_enum] enum StylesDlgType
+{
+	ksdtStandard = 0,
+	ksdtTransEditor
+} StylesDlgType;
+
+
+/*******************************************************************************************
+	Interface IFwCppStylesDlg
+	This interface is implemented by objects that provide an end-user the means to specify
+	the format style.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Use this interface whenever you want the user to specify a format style.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_OpenProjectDlg or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: fwst}
+*******************************************************************************************/
+DeclareInterface(FwCppStylesDlg, Unknown, 85DC569C-1B4A-4f36-A0D4-7A52C79E7529)
+{
+	// @param sdt Selects the type of Styles Dialog to display
+	[propput] HRESULT DlgType(
+		[in] StylesDlgType sdt);
+
+	// @param fShowAll For some types, determines whether to show all fields or tabs.
+	[propput] HRESULT ShowAll(
+		[in] ComBool fShowAll);
+
+	// @param nMsrSys Provides the system measurement unit.
+	[propput] HRESULT SysMsrUnit(
+		[in] int nMsrSys);
+
+	// @param wsUser Provides the user interface language writing system.
+	[propput] HRESULT UserWs(
+		[in] int wsUser);
+
+	// @param bstrHelpFile Provides a relative path to the program's HTML help file.
+	[propput] HRESULT HelpFile(
+		[in] BSTR bstrHelpFile);
+
+	// @param tabNum The tab number to apply the help url to
+	// @param bstrHelpFileUrl The url inside the help file to use for the specified tab
+	[propput] HRESULT TabHelpFileUrl(
+		[in] int tabNum,
+		[in] BSTR bstrHelpFileUrl);
+
+	// @param pwsf Pointer to current writing system factory.
+	[propputref] HRESULT WritingSystemFactory(
+		[in] ILgWritingSystemFactory * pwsf);
+
+	// @param hwndParent Handle to the parent window.
+	[propput] HRESULT ParentHwnd(
+		[in] DWORD hwndParent);
+
+	// @param fCanDoRtl Flag whether we want the bidirectional version of the Paragraph tab.
+	[propput] HRESULT CanDoRtl(
+		[in] ComBool fCanDoRtl);
+
+	// @param fOuterRtl Flag whether the surrounding text is right-to-left when using the
+	//				bidirectional version of the Paragraph tab.
+	[propput] HRESULT OuterRtl(
+		[in] ComBool fOuterRtl);
+
+	// @param fFontFeatures Flag whether the Font Features button is shown on the Font tab.
+	[propput] HRESULT FontFeatures(
+		[in] ComBool fFontFeatures);
+
+	// @param pasts Pointer to the style sheet interface for this language project.
+	[propputref] HRESULT Stylesheet(
+		[in] IVwStylesheet * pasts);
+
+	// Specifies a set of style contexts that should be used to determine which styles can be
+	// applied. Selecting any style having a context not in this array will cause the Apply
+	// button to be grayed out.
+	// @param rgnContexts Array of integers that represent style contexts.
+	// @param cpnContexts Number of contexts in rgnContexts.
+	HRESULT SetApplicableStyleContexts(
+		[in, size_is(cpnContexts)] int * rgnContexts,
+		[in] int cpnContexts);
+
+	// @param fCanFormatChar Flag whether character styles are allowed even if no paragraph
+	//				styles are defined.
+	[propput] HRESULT CanFormatChar(
+		[in] ComBool fCanFormatChar);
+
+	// @param fOnlyCharStyles Flag whether paragrah styles are to used in the dialog, or
+	//				only character styles are used.
+	[propput] HRESULT OnlyCharStyles(
+		[in] ComBool fOnlyCharStyles);
+
+	// @param bstrStyleName Name of selected style on entry (possibly ignored).
+	[propput] HRESULT StyleName(
+		[in] BSTR bstrStyleName);
+
+	// @param level User style level to use for the custom style filter
+	[propput] HRESULT CustomStyleLevel(
+		[in] int level);
+
+	// @param rgpttpPara Array of pointers to text property interfaces for paragraph styles.
+	// @param cttpPara Number of paragraph styles in rgpttpPara.
+	// @param rgpttpChar Array of pointers to text property interfaces for character styles.
+	// @param cttpChar Number of character styles in rgpttpPara.
+	HRESULT SetTextProps(
+		[in, size_is(cttpPara)] ITsTextProps ** rgpttpPara,
+		[in] int cttpPara,
+		[in, size_is(cttpChar)] ITsTextProps ** rgpttpChar,
+		[in] int cttpChar
+	);
+
+	// @param hvoRootObj Object Id of the major language project object manipulated by the
+	// program.
+	[propput] HRESULT RootObjectId(
+		[in] int hvoRootObj);
+
+	// @param rgws Array of writing system codes for those writing systems currently selected
+	// by the user as being of interest.
+	// @param cws Number of codes in rgws.
+	HRESULT SetWritingSystemsOfInterest(
+		[in, size_is(cws)] int * rgws,
+		[in] int cws);
+
+	// @param pstrmLog Pointer to the log file stream interface for this program.
+	[propputref] HRESULT LogFile(
+		[in] IStream * pstrmLog);
+
+	// @param phtprov Pointer to a callback help topic provider interface object.
+	[propputref] HRESULT HelpTopicProvider(
+		[in] IHelpTopicProvider * phtprov);
+
+	// @param clsidApp Points to the CLSID of the currently running application.
+	[propput] HRESULT AppClsid(
+		[in] GUID clsidApp);
+
+	// Display the dialog modally and let it do its thing.
+	// @param pnResult Set according to how the user terminated the dialog.
+	HRESULT ShowModal(
+		[out, retval] int * pnResult);
+
+	// Get the results of calling ShowModal.
+	//
+	// @param pbstrStyleName Name of selected style.
+	// @param pfStylesChanged Flag whether anything changed.
+	// @param pfReloadDb Flag whether all the view data must be reloaded from the database; this
+	//				is needed when styles are renamed or deleted.
+	// @param pfApply Flag whether the Apply button was selected to close the dialog.
+	// @param pfResult Set to TRUE if either the Apply button closed the dialog, or OK closed
+	//				the dialog, and the styles changed.
+	//
+	// @return S_OK or an appropriate error code.
+	HRESULT GetResults(
+		[out] BSTR * pbstrStyleName,
+		[out] ComBool * pfStylesChanged,
+		[out] ComBool * pfApply,
+		[out] ComBool * pfReloadDb,
+		[out, retval] ComBool * pfResult);
+}
+
+#ifndef NO_COCLASSES
+DeclareCoClass(FwCppStylesDlg, 015B35A0-4BBA-47e9-9CDC-D901A721A958)
+{
+	interface IFwCppStylesDlg;
+};
+#endif // !NO_COCLASSES
+
+/*******************************************************************************************
+	Interface IFwDbMergeStyles
+	This interface is implemented to delete and rename styles in the database.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwDbMergeStyles or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: op}
+*******************************************************************************************/
+DeclareInterface(FwDbMergeStyles, Unknown, 452B9EFE-BF3A-42f7-A92A-B5C0B06C465F)
+{
+	// Initialize the string crawler / database fixup process.
+	//
+	// @param bstrServer Name of the database server.
+	// @param bstrDatabase Name of the database.
+	// @param pstrmLog Optional output stream for logging (may be NULL).
+	// @param hvoRootObj Database id of the program's root object.
+	// @param pclsidApp Class ID of the application
+	HRESULT Initialize(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pstrmLog,
+		[in] int hvoRootObj,
+		[in] const GUID * pclsidApp);
+
+	// Add a pair of styles to the list of replacements to be made when Process is called.
+	HRESULT AddStyleReplacement(
+		[in] BSTR bstrOldStyleName,
+		[in] BSTR bstrNewStyleName);
+
+	// Add a style to the list of deletions (actually replacements with the default style or
+	// "Default Paragraph Characters") to be made when Process is called.
+	HRESULT AddStyleDeletion(
+		[in] BSTR bstrDeleteStyleName);
+
+	// Crawl through the database (established by calling Initialize earlier), deleting
+	// occurrences of deleted styles and renaming instances of renamed styles.
+	// @param hWnd	Window handle of the parent window. Used to center the progress dialog over
+	//				parent dialog.
+	HRESULT Process([in] DWORD hWnd);
+
+	// Initialize the string crawler / database fixup process using an open database connection.
+	//
+	// @param pode Open database connection
+	// @param pstrmLog Optional output stream for logging (may be NULL).
+	// @param hvoRootObj Database id of the program's root object.
+	// @param pclsidApp Class ID of the application
+	HRESULT InitializeEx(
+		[in] IOleDbEncap * pode,
+		[in] IStream * pstrmLog,
+		[in] int hvoRootObj,
+		[in] const GUID * pclsidApp);
+};
+
+#ifndef NO_COCLASSES
+DeclareCoClass(FwDbMergeStyles, 217874B4-90FE-469d-BF80-3D2306F3BB06)
+{
+	interface IFwDbMergeStyles;
+};
+#endif // !NO_COCLASSES
+
+/*******************************************************************************************
+	Interface IFwDbMergeWrtSys
+	This interface is implemented by objects that provide an end-user the means to merge two
+	writing systems.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Use this interface whenever you need to update one writing system id to another.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_OpenProjectDlg or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: op}
+*******************************************************************************************/
+DeclareInterface(FwDbMergeWrtSys, Unknown, DE96B989-91A5-4104-9764-69ABE0BF0B9A)
+{
+	// Initialize the string crawler / database fixup process.
+	//
+	// @param pfwt Pointer to the application's IFwTool interface.
+	// @param bstrServer Name of the database server.
+	// @param bstrDatabase Name of the database.
+	// @param pstrmLog Optional output stream for logging (may be NULL).
+	// @param hvoProj Database id of the FieldWorks project.
+	// @param hvoRootObj Database id of the program's root object.
+	// @param wsUser User interface writing system id.
+	HRESULT Initialize(
+		[in] IFwTool * pfwt,
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pstrmLog,
+		[in] int hvoProj,
+		[in] int hvoRootObj,
+		[in] int wsUser);
+
+	// Crawl through the database (established by calling Initialize earlier), changing every
+	// occurrence of wsOld to wsNew.  This updates various writing system lists and sort
+	// specifications as well as the formatted string binary format fields.
+	//
+	// @param wsOld Obsolete writing system id.
+	// @param bstrOldName Name of the obsolete writing system.
+	// @param wsNew Desired writing system id.
+	// @param bstrNewName Name of the desired writing system.
+	HRESULT Process(
+		[in] int wsOld,
+		[in] BSTR bstrOldName,
+		[in] int wsNew,
+		[in] BSTR bstrNewName);
+}
+
+#ifndef NO_COCLASSES
+DeclareCoClass(FwDbMergeWrtSys, 40E4B757-4B7F-4B7C-A498-3EB942E7C6D6)
+{
+	interface IFwDbMergeWrtSys;
+};
+#endif // !NO_COCLASSES
+
+/*******************************************************************************************
+	Interface IFwCheckAnthroList
+	This interface is implemented by objects that provide an end-user the means to specify
+	the desired anthropology category list for a language project.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Use this interface whenever an application needs to initialize the anthropology category
+	list in a new language project.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwCheckAnthroList or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: fwst}
+*******************************************************************************************/
+DeclareInterface(FwCheckAnthroList, Unknown, 2159E7B0-0045-42B0-BF58-2245BAD46715)
+{
+	HRESULT CheckAnthroList(
+		[in] IOleDbEncap * pode,
+		[in] DWORD hwndParent,
+		[in] BSTR bstrProjName,
+		[in] int wsDefault);
+
+	[propput] HRESULT Description(
+		[in] BSTR bstrDescription);
+
+	[propput] HRESULT HelpFilename(
+		[in] BSTR bstrHelpFilename);
+}
+
+#ifndef NO_COCLASSES
+DeclareCoClass(FwCheckAnthroList, 4D84B554-D3C8-4E0F-9416-4B26A4F0324B)
+{
+	interface IFwCheckAnthroList;
+};
+#endif // !NO_COCLASSES

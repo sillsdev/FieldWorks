@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- The point here is to practice clicking "Show All Fields" and then navigating to a field normally hidden. From this test, we can then do a series of tests to insert Usage Types, Sense Types, and a bunch of other items that are normally hidden. In this test, I add and delete text in some fields, change the Grammatical Function and reset it back to the original that came in Kalaba.-->
+
+ <on-application args="-db Kalaba" run="ok" on-fail="assert">
+
+<!-- Go to Lexixon / Lexicon Edit-->
+   <click wait ="1000" path="window:MenuBar/menu:Tools/menu:Lexicon/menu:Lexicon Edit"/>
+
+<!-- Navigate to the "himbakosa" record-->
+   <click path="window:MenuBar/menu:Data/menu:Find lexical entry..."/>
+  <on-dialog title="Find Lexical Entry">
+   <insert wait="1000">himbakosa</insert>
+   <click wait="1000" path="item:bako"/>
+   <click wait="1000" path="button:Go To"/>
+  </on-dialog>
+
+<!-- Click "Show All Fields" -->
+<insert>%v</insert>
+<insert wait="1000">{DOWN 2}</insert>
+<insert wait="500">{ENTER}</insert>
+
+<!-- Find and click a field normally hidden (here Anthro Categories)-->
+
+<!--Click the Summary Definition field, and tab to Anth Cat-->
+<click wait="500" path="20:Summary Definition"/>
+
+<insert wait="1000">{TAB 29}</insert>
+
+<!-- I WOULD RATHER CLICK THE PAGE DOWN PART OF THE SCROLL BAR...Michael, HELP?!?-->
+
+<insert wait="500">{ENTER}</insert>
+
+<!--Close "Choose Anthropology Categories" chooser-->
+<insert wait="500">{ENTER}</insert>
+
+<!--Turn off "Show All Fields" via the Info Bar button-->
+<click path="9:InformationBar/9:Entry/9:Show All Fields"/>
+
+<!--Turn off "Show All Fields" via the Info Bar button-->
+<click wait="500" path="9:InformationBar/9:Entry/9:Show All Fields"/>
+
+<click path="client:RecordEditView.DataTree/window:string/grouping:Scientific Name"/>
+<insert wait="500">"Scientific Name"</insert>
+
+<insert wait="500">{TAB}</insert>
+<insert wait="500">"Anthropology Note"</insert>
+
+<insert wait="500">{TAB}</insert>
+<insert wait="500">"Bibliography"</insert>
+
+<click wait="1" path="9:RecordEditView.DataTree/9:msareferencecombobox/10:msareferencecombobox/9:Grammatical Function/9:NAMELESS/9:NAMELESS/43:NAMELESS"/>
+
+<insert wait="1000">{DOWN 2}{ENTER}</insert>
+
+<!-- reset Grammatical Functin to "bitransitive verb-->
+
+<insert wait="1000">{TAB}{ENTER}</insert>
+<click wait="1" path="9:RecordEditView.DataTree/9:msareferencecombobox/9:Grammatical Function/9:NAMELESS/9:NAMELESS/43:NAMELESS"/>
+
+<insert wait="500">b{ENTER}</insert>
+
+<!-- Delete the added text and hide normally hidden fields-->
+
+<click path="client:RecordEditView.DataTree/window:string/grouping:Scientific Name"/>
+<insert wait="500">^a{BACKSPACE}</insert>
+<insert wait="500">{TAB}</insert>
+<insert wait="500">^a{BACKSPACE}</insert>
+<insert wait="500">{TAB}</insert>
+<insert wait="500">^a{BACKSPACE}</insert>
+
+<!-- Click "Show All Fields" -->
+<insert>%v</insert>
+<insert wait="500">{DOWN 2}</insert>
+<insert wait="500">{ENTER}</insert>
+
+ </on-application>
+</accil>

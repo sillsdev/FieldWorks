@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<post-build>
+		<exec program="mt.exe" commandline="-nologo -manifest ${fwroot}\Src\asInvoker.manifest -outputresource:${dir.outputBase}\${config}\InstallLanguage.exe;#1"/>
+	</post-build>
+</include>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlbar" num="0.24" abbr="tb" file="StdCtrls\ToolBar.xml">
+ <title tag="tlbar">Toolbar Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A toolbar is an array of simple controls with immediate side-effects called "actions". The actions may be dependent on other control settings, selected text or may be exactly the same actions each time the button is pressed. Toolbar controls may include radio buttons, checkboxes, combo boxes and other "widgets" but are mostly buttons with icons on them. Toolbars can often be repositioned on the frame members of application windows.</p>
+  </introduction>
+  <context>
+<p>These tests apply to the toolbar as a whole, not to its individual controls. The first words of a bug report title should be "&lt;name&gt; Toolbar".</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, each toolbar is described in a specification.</p>
+  </warning>
+ <case id="tbInsp" num="1" order="any">
+  <title tag="tbInsp">Toolbar Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the toolbar button is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the toolbar.
+   <r>The toolbar and its controls must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Toolbar has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the toolbar relative to other visible controls.
+   <r>The toolbar is close to the position indicated in the specification.</r>
+   <p name="bug">Toolbar has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">Hover the cursor over the toolbar handle - the raised vertical bar to the left of the toolbar.
+   <r>The cursor changes shape to a small horizontal double headed arrow.</r>
+   <p name="bug">Toolbar handle hover does not affect cursor</p>
+  </step>
+
+ </case>
+
+ <case id="tbDoc" num="2" order="any">
+  <title tag="tbDoc">Toolbar Docking</title>
+  <context>
+<p>When the toolbar is displayed</p>
+</context>
+
+   <p name="Principle">Toolbars can be moved around.</p>
+
+  <step name="2.1" link="Bug">Click and drag the toolbar handle to a higher or lower toolbar row.
+   <r>
+<ul>
+<li>The toolbar moves and merges neatly.</li>
+<li>The toolbar row may resize itself vertically.</li>
+</ul>
+</r>
+   <p name="bug">Toolbar can not be moved</p>
+   <p name="bug">Toolbar covers another toolbar handle</p>
+   <p name="bug">Toolbar no new toolbar row appears when the others are full</p>
+  </step>
+  <step name="2.2" link="Bug">Having rearranged the toolbars to a custom configuration - changing their position as well as which ones are checked - exit the application and start it again.
+   <r>The toolbars reappear in the configuration they were in when you exited the application.</r>
+   <p name="bug">Toolbar configuration does not persist</p>
+  </step>
+
+ </case>
+ <update date="Sep-26-01" author="MikeL">Test created.</update>
+
+</test>

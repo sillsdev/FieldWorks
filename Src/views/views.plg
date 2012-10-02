@@ -1,0 +1,141 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: views - Win32 Debug--------------------
+</h3>
+
+=== Performing i Debug on c:\fw\Src\Views\Views.mak. ===
+
+C:\fw\Src\views>nmake /nologo  /f c:\fw\Src\Views\Views.mak
+Compiling .\VwEnv.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nma01788.
+VwEnv.cpp
+Compiling .\VwNotifier.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmb01788.
+VwNotifier.cpp
+Compiling .\VwSelection.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmc01788.
+VwSelection.cpp
+Compiling .\VwTableBox.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmd01788.
+VwTableBox.cpp
+Compiling c:\fw\Src\Views\Lib\VwGraphics.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nme01788.
+VwGraphics.cpp
+Compiling .\VwTxtSrc.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmf01788.
+VwTxtSrc.cpp
+Compiling c:\fw\Src\Generic\ModuleEntry.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmg01788.
+ModuleEntry.cpp
+Compiling c:\fw\Src\AppCore\AfColorTable.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmh01788.
+AfColorTable.cpp
+Compiling c:\fw\Src\AppCore\AfGfx.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmi01788.
+AfGfx.cpp
+Compiling .\VwPrintContext.cpp
+ cl.exe /nologo @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmj01788.
+VwPrintContext.cpp
+Compiling .\Views.rc
+ cl.exe /nologo >c:\fw\Obj\Debug\Views\Views.rc @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nmk01788.
+Views.rc
+ rc.exe  /I. /Ic:\fw\Output\Common /foc:\fw\Obj\Debug\Views\Views.res c:\fw\Obj\Debug\Views\Views.rc
+Compiling c:\fw\Obj\Debug\Views\Views.def
+ copy .\Views.def C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\Views.tmp
+		1 file(s) copied.
+ cl.exe /nologo >c:\fw\Obj\Debug\Views\Views.def @C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\nml01788.
+Views.tmp
+ del C:\DOCUME~1\THOMSO~1.DAL\LOCALS~1\Temp\Views.tmp
+Linking c:\fw\Output\Debug\Views.dll
+ link.exe  /out:"c:\fw\Output\Debug\Views.dll" /machine:IX86 /incremental:no /map:c:\fw\Obj\Debug\Views\Views.map /nod:dbguuid.lib /subsystem:windows /NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT /LIBPATH:"c:\fw\Lib\Debug" /LIBPATH:"c:\fw\Lib" /debug /pdb:"c:\fw\Output\Debug\Views.pdb" /dll /implib:"c:\fw\Obj\Debug\Views\Views.lib" /def:c:\fw\Obj\Debug\Views\Views.def @c:\fw\Obj\Debug\Views\Views.txt
+Microsoft (R) Incremental Linker Version 6.00.8447
+Copyright (C) Microsoft Corp 1992-1998. All rights reserved.
+
+c:\fw\Obj\Debug\Views\Views.res c:\fw\Obj\Debug\Views\autopch\VwOverlay.obj c:\fw\Obj\Debug\Views\autopch\VwPropertyStore.obj c:\fw\Obj\Debug\Views\autopch\ExplicitInstantiation.obj c:\fw\Obj\Debug\Views\autopch\VwSimpleBoxes.obj c:\fw\Obj\Debug\Views\autopch\VwTextBoxes.obj c:\fw\Obj\Debug\Views\autopch\VwRootBox.obj c:\fw\Obj\Debug\Views\autopch\VwEnv.obj c:\fw\Obj\Debug\Views\autopch\VwNotifier.obj c:\fw\Obj\Debug\Views\autopch\VwSelection.obj c:\fw\Obj\Debug\Views\autopch\VwTableBox.obj c:\fw\Obj\Debug\Views\autopch\VwGraphics.obj c:\fw\Obj\Debug\Views\autopch\VwTxtSrc.obj c:\fw\Obj\Debug\Views\autopch\ModuleEntry.obj c:\fw\Obj\Debug\Views\autopch\AfColorTable.obj c:\fw\Obj\Debug\Views\autopch\AfGfx.obj c:\fw\Obj\Debug\Views\autopch\VwPrintContext.obj Generic.lib c:\fw\Lib\Debug\DebugProcs.lib uuid.lib advapi32.lib kernel32.lib ole32.lib oleaut32.lib gdi32.lib comctl32.lib comdlg32.lib shell32.lib
+   Creating library c:\fw\Obj\Debug\Views\Views.lib and object c:\fw\Obj\Debug\Views\Views.exp
+Preprocessing .\ViewsPs.idl
+ if exist "c:\fw\Output\Common\ViewsPs.idl" del "c:\fw\Output\Common\ViewsPs.idl"
+ cl.exe /nologo /E /E  /DWIN32=1 /D_WINDOWS=1 /D_AFXDLL=1 /DDEBUG=1 /D_DEBUG=1 .\ViewsPs.idl >c:\fw\Output\Common\ViewsPs.idl
+ViewsPs.idl
+Compiling c:\fw\Output\Common\ViewsPs.idl
+ if exist "c:\fw\Output\Common\ViewsPs.h" del "c:\fw\Output\Common\ViewsPs.h"
+ midl.exe  /Oicf /env win32 /I"c:\fw\Output\Common"  /DWIN32=1 /D_WINDOWS=1 /D_AFXDLL=1 /DDEBUG=1 /D_DEBUG=1 /out c:\fw\Output\Common\Raw /tlb c:\fw\Output\Common\ViewsPs.tlb /dlldata c:\fw\Output\Common\Raw\ViewsPs_d.c c:\fw\Output\Common\ViewsPs.idl
+Microsoft (R) MIDL Compiler Version 5.01.0164
+Copyright (c) Microsoft Corp 1991-1997. All rights reserved.
+Processing c:\fw\Output\Common\ViewsPs.idl
+ViewsPs.idl
+Processing c:\fw\win32sdk\include\oaidl.idl
+oaidl.idl
+Processing c:\fw\win32sdk\include\objidl.idl
+objidl.idl
+Processing c:\fw\win32sdk\include\unknwn.idl
+unknwn.idl
+Processing c:\fw\win32sdk\include\wtypes.idl
+wtypes.idl
+Processing c:\fw\win32sdk\include\basetsd.h
+basetsd.h
+Processing c:\fw\win32sdk\include\guiddef.h
+guiddef.h
+Processing c:\fw\win32sdk\include\ocidl.idl
+ocidl.idl
+Processing c:\fw\win32sdk\include\oleidl.idl
+oleidl.idl
+Processing c:\fw\win32sdk\include\servprov.idl
+servprov.idl
+Processing c:\fw\win32sdk\include\urlmon.idl
+urlmon.idl
+Processing c:\fw\win32sdk\include\msxml.idl
+msxml.idl
+Processing c:\fw\Output\Common\FwKernelPs.idl
+FwKernelPs.idl
+Processing c:\fw\Output\Common\LanguagePs.idl
+LanguagePs.idl
+.\Views.idh(1907) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'prgpttp' of Procedure 'GetSelectionProps' ( Interface 'IVwSelection' ) ]
+.\Views.idh(1907) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'prgpvps' of Procedure 'GetSelectionProps' ( Interface 'IVwSelection' ) ]
+.\Views.idh(1914) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'prgpttp' of Procedure 'SetSelectionProps' ( Interface 'IVwSelection' ) ]
+.\Views.idh(1939) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'pptss' of Procedure 'TextSelInfo' ( Interface 'IVwSelection' ) ]
+.\Views.idh(1966) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'ppvps' of Procedure 'PropInfo' ( Interface 'IVwSelection' ) ]
+.\Views.idh(1980) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'prgvsli' of Procedure 'AllTextSelInfo' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2001) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'pvg' of Procedure 'Location' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2001) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'rcSrc' of Procedure 'Location' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2001) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'rcDst' of Procedure 'Location' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2001) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'prdPrimary' of Procedure 'Location' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2001) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'prdSecondary' of Procedure 'Location' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2008) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'pvg' of Procedure 'GetParaLocation' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2008) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'rcSrc' of Procedure 'GetParaLocation' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2008) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'rcDst' of Procedure 'GetParaLocation' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2008) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'prdLoc' of Procedure 'GetParaLocation' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2016) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'ptss' of Procedure 'ReplaceWithTsString' ( Interface 'IVwSelection' ) ]
+.\Views.idh(2020) : warning MIDL2039 : interface does not conform to [oleautomation] attribute : [ Parameter 'pptss' of Procedure 'GetSelectionString' ( Interface 'IVwSelection' ) ]
+ c:\fw\bin\sed.exe -e "s/EXTERN_C const \(IID\|CLSID\|LIBID\) \(IID\|CLSID\|LIBID\)_\(..*\);/#define \2_\3 __uuidof(\3)/" c:\fw\Output\Common\Raw\ViewsPs.h > c:\fw\Output\Common\ViewsPs.h
+ cl /c /Ox /W0 /I"c:\fw\Output\Common\Raw" /I"c:\fw\Output\Common\Raw"  /DWIN32 /D_WIN32_WINNT=0x0500 /DREGISTER_PROXY_DLL /Fo"c:\fw\Obj\Common\Views/" c:\fw\Output\Common\Raw\ViewsPs_d.c
+Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 12.00.8804 for 80x86
+Copyright (C) Microsoft Corp 1984-1998. All rights reserved.
+
+ViewsPs_d.c
+ cl /c /Ox /W0 /I"c:\fw\Output\Common\Raw" /I"c:\fw\Output\Common\Raw"  /DWIN32 /D_WIN32_WINNT=0x0500 /DREGISTER_PROXY_DLL /Fo"c:\fw\Obj\Common\Views/" c:\fw\Output\Common\Raw\ViewsPs_i.c
+Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 12.00.8804 for 80x86
+Copyright (C) Microsoft Corp 1984-1998. All rights reserved.
+
+ViewsPs_i.c
+ cl /c /Ox /W0 /I"c:\fw\Output\Common\Raw" /I"c:\fw\Output\Common\Raw"  /DWIN32 /D_WIN32_WINNT=0x0500 /DREGISTER_PROXY_DLL /Fo"c:\fw\Obj\Common\Views/" c:\fw\Output\Common\Raw\ViewsPs_p.c
+Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 12.00.8804 for 80x86
+Copyright (C) Microsoft Corp 1984-1998. All rights reserved.
+
+ViewsPs_p.c
+ link /dll /out:c:\fw\Output\Common\ViewsPs.dll /def:c:\fw\Obj\Common\Views\ViewsPs.def /entry:DllMain /implib:c:\fw\Obj\Common\Views\ViewsPs.lib  c:\fw\Obj\Common\Views\ViewsPs_d.obj  c:\fw\Obj\Common\Views\ViewsPs_i.obj c:\fw\Obj\Common\Views\ViewsPs_p.obj kernel32.lib rpcndr.lib rpcns4.lib rpcrt4.lib oleaut32.lib uuid.lib ole32.lib
+Microsoft (R) Incremental Linker Version 6.00.8447
+Copyright (C) Microsoft Corp 1992-1998. All rights reserved.
+
+   Creating library c:\fw\Obj\Common\Views\ViewsPs.lib and object c:\fw\Obj\Common\Views\ViewsPs.exp
+
+
+
+<h3>Results</h3>
+views.dll - 0 error(s), 17 warning(s)
+</pre>
+</body>
+</html>

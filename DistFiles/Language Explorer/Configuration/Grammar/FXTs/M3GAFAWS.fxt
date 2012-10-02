@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================
+FXT to generate output for GAFAWS processing of inflectional affix template slots
+================================================================
+Revision History is at the end of this file.
+-->
+<M3Dump>
+  <template>
+	<class name="LangProject">
+	  <group objProperty="PartsOfSpeechOA">
+		<PartsOfSpeech>
+		  <objVector objProperty="PossibilitiesOS"/>
+		</PartsOfSpeech>
+	  </group>
+	</class>
+<!--
+		PartOfSpeech
+		-->
+	<class name="PartOfSpeech">
+	  <element name="PartOfSpeech">
+		<attribute name="Id" simpleProperty="Hvo"/>
+		<element name="AffixSlots">
+		  <objVector objProperty="AffixSlotsOC"/>
+		</element>
+		<element name="AffixTemplates">
+		  <objVector objProperty="AffixTemplatesOS"/>
+		</element>
+		<objVector objProperty="SubPossibilitiesOS" itemLabel="poss" ordered="true"/>
+	  </element>
+	</class>
+<!--
+		MoInflAffixSlot
+		-->
+	<class name="MoInflAffixSlot">
+	  <element name="MoInflAffixSlot">
+		<attribute name="Id" simpleProperty="Hvo"/>
+	  </element>
+	</class>
+<!--
+		MoInflAffixTemplate
+		-->
+	<class name="MoInflAffixTemplate">
+	  <element name="MoInflAffixTemplate">
+		<attribute name="Id" simpleProperty="Hvo"/>
+		<refVector field="PrefixSlots" itemLabel="PrefixSlots" ordered="true"/>
+		<refVector field="SuffixSlots" itemLabel="SuffixSlots" ordered="true"/>
+	  </element>
+	</class>
+  </template>
+<!--
+================================================================
+Revision History
+- - - - - - - - - - - - - - - - - - -
+19-Jan-2006      Andy Black     Remove Name, Description, and Abbreviation since we don't use them.
+16-Mar-2004      Andy Black     Initial draft
+================================================================
+ -->
+</M3Dump>

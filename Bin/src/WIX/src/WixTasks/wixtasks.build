@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="wixtasks" default="wixtasks.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	wixtasks.build - Builds the WixTasks project (WixTasks.exe).
+	2005.09.25 johnls Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- Wix directories -->
+  <property name="wixtasks.file.wix.targets.source" value="${dir.src.wixtasks}\wix.targets" readonly="true" />
+  <property name="wixtasks.file.wix.targets.target" value="${dir.target.wix}\wix.targets" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="wixtasks.build" description="Peforms a full rebuild (clean then build)" depends="wixtasks.clean, wixtasks.inc" />
+
+  <!-- Clean -->
+  <target name="wixtasks.clean" description="Cleans the build">
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="WixTasks.dll" />
+		<include name="WixTasks.pdb" />
+	  </fileset>
+	</delete>
+	<delete>
+	  <fileset>
+		<include name="${wixtasks.file.wix.targets.target}"/>
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="wixtasks.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<nant buildfile="${dir.src.wixtasks}\wixtasks.net-2.0.build" inheritall="true" target="build" failonerror="false"/>
+
+	<!-- Copy the .target file to the target directory -->
+	<copy file="${wixtasks.file.wix.targets.source}" tofile="${wixtasks.file.wix.targets.target}"
+	  unless="${file::up-to-date(wixtasks.file.wix.targets.source, wixtasks.file.wix.targets.target)}" />
+
+  </target>
+
+</project>

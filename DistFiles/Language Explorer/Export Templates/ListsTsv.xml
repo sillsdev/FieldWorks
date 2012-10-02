@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="sf">
+	<FxtDocumentDescription dataLabel="Lists" formatLabel="Tab-delimited" defaultExtension="txt" filter="Tab-delimited files (*.txt)|*.txt|All files (*.*)|*.*">
+Export the following subset of lists into a single tab-delimited file: Grammatical Categories (POS), Anthropology Categories, Semantic Domains, People, Locations, Genres, Entry Types, Morpheme Types, Usages, Academic Domains, Lexical Relations, and Features. The top vernacular writing system for wordforms and the top analysis writing system for glosses are exported.
+	</FxtDocumentDescription>
+
+	<class name="LangProject">
+		<group objProperty="PartsOfSpeechOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="AnthroListOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="SemanticDomainListOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="PeopleOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="LocationsOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="GenreListOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="LexDbOA">
+			<group objProperty="ComplexEntryTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="VariantEntryTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="MorphTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="UsageTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="DomainTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="ReferencesOA">
+				<string simpleProperty="Name" ws="analysis"/><newLine/>
+				<text>Abbr.</text><tab/><text>Name</text>
+				<text>Rev. Abbr.</text><tab/><text>Rev. Name</text>
+				<newLine/>
+				<objVector objProperty="PossibilitiesOS"/>
+				<newLine/>
+			</group>
+		</group>
+		<group objProperty="MsFeatureSystemOA">
+			Features <newLine/>
+			<objVector objProperty="TypesOC"/>
+			<newLine/>
+		</group>
+	</class>
+
+	<class name="CmPossibilityList">
+		<string simpleProperty="Name" ws="analysis"/><newLine/>
+		<text>Abbr.</text><tab/><text>Name</text><newLine/>
+		<objVector objProperty="PossibilitiesOS"/>
+		<progress progressIncrement="true"/>
+		<newLine/>
+	</class>
+
+	<class name="PartOfSpeech">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="CmPossibility">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="Name" ws="analysis"/>
+		<newLine/>
+		<objVector objProperty="SubPossibilitiesOS"/>
+	</class>
+
+	<class name="LexEntryType">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="CmAnthroItem">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="CmSemanticDomain">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="MoMorphType">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="LexRefType">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="Name" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="ReverseAbbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="ReverseName" ws="analysis"/>
+		<newLine/>
+		<objVector objProperty="SubPossibilitiesOS"/>
+	</class>
+
+	<class name="FsFeatStrucType">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="Name" ws="analysis"/>
+		<objVector objProperty="FeaturesOC"/>
+		<newLine/>
+	</class>
+
+	<class name="FsComplexFeature">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="Name" ws="analysis"/>
+		<newLine/>
+	</class>
+
+	<class name="FsClosedFeature">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="Name" ws="analysis"/>
+		<objVector objProperty="ValuesOC"/>
+		<newLine/>
+	</class>
+
+	<class name="FsOpenFeature">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="Name" ws="analysis"/>
+		<newLine/>
+	</class>
+
+	<class name="FsSymFeatVal">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+		<tab/>
+		<string simpleProperty="Name" ws="analysis"/>
+		<newLine/>
+	</class>
+
+</template>

@@ -1,0 +1,1628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Categories PUBLIC "-//XMLmind//DTD POSes//EN"
+"file:///%SystemDrive%/Documents and Settings/%USERNAME%/Application Data/XMLmind/XMLEditor/addon/POSes/POSes.dtd">
+<!-- XMLMind XML Editor template file for Category Catalog -->
+<Categories>
+  <!--FieldWorks Language Explorer Category Catalog content.-->
+  <Category id="Adjective" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Adjective</Name>
+		<Abbreviation>adj</Abbreviation>
+		<Description>An adjective is a part of speech whose members modify
+		nouns. An adjective specifies the attributes of a noun referent. Note:
+		this is one case among many. Adjectives are a class of
+		modifiers.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:8</Citation>
+		  <Citation>Mish et al. 1990:56</Citation>
+		  <Citation>Payne 1997:63</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name>Adjetivo</Name>
+		<Abbreviation>adj</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name>Adjectif</Name>
+		<Abbreviation>adj</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+  </Category>
+  <Category id="Adposition" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Adposition</Name>
+		<Abbreviation>adp</Abbreviation>
+		<Description>An adposition is a part of speech whose members are of a
+		closed set and occur before or after a complement composed of a noun
+		phrase, noun, pronoun, or clause that functions as a noun phrase and
+		forms a single structure with the complement to express its
+		grammatical and semantic relation to another unit within a
+		clause.</Description>
+		<Citations>
+		  <Citation>Comrie 1989:91</Citation>
+		  <Citation>Crystal 1997: 305</Citation>
+		  <Citation>Mish et al. 1990:929</Citation>
+		  <Citation>Payne 1997:86</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name>Adposición</Name>
+		<Abbreviation>adpos</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name>Adposition</Name>
+		<Abbreviation>adpos</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+	<Category id="Postposition" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Postposition</Name>
+		  <Abbreviation>post</Abbreviation>
+		  <Description>A postposition is an adposition that occurs after its
+		  complement.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:300</Citation>
+			<Citation>Payne 1997:86</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Postposición</Name>
+		  <Abbreviation>post</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Postposition</Name>
+		  <Abbreviation>post</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="Preposition" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Preposition</Name>
+		  <Abbreviation>prep</Abbreviation>
+		  <Description>A preposition is an adposition that occurs before its
+		  complement.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:305</Citation>
+			<Citation>Mish et al. 1990:929</Citation>
+			<Citation>Payne 1997:86</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Preposición</Name>
+		  <Abbreviation>prep</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Préposition</Name>
+		  <Abbreviation>prép</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+  </Category>
+  <Category id="Adverb" use4newLangProjects="yes">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Adverb</Name>
+		<Abbreviation>adv</Abbreviation>
+		<Description>An adverb, narrowly defined, is a part of speech whose
+		members modify verbs for such categories as time, manner, place, or
+		direction. An adverb, broadly defined, is a part of speech whose
+		members modify any constituent class of words other than nouns, such
+		as verbs, adjectives, adverbs, phrases, clauses, or sentences. Under
+		this definition, the possible type of modification depends on the
+		class of the constituent being modified.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:11</Citation>
+		  <Citation>Mish et al. 1990:59</Citation>
+		  <Citation>Payne 1997:69</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name>Adverbio</Name>
+		<Abbreviation>Adv</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name>Adverbe</Name>
+		<Abbreviation>Adv</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+  </Category>
+  <Category id="Connective" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Connective</Name>
+		<Abbreviation>conn</Abbreviation>
+		<Description>Also known as a conjunction, a connective is a class of
+		parts of speech whose members syntactically link words or larger
+		constituents, and expresses a semantic relationship between them. A
+		conjunction is positionally fixed relative to one or more of the
+		elements related by it, thus distinguishing it from constituents such
+		as English conjunctive adverbs.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:81</Citation>
+		  <Citation>Mish et al. 1990:277-278</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+	<Category id="CoordinatingConnective" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Coordinating connective</Name>
+		  <Abbreviation>coordConn</Abbreviation>
+		  <Description>A coordinating connective is a connective that links
+		  constituents without syntactically subordinating one to the
+		  other.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:93</Citation>
+			<Citation>Mish et al. 1990:288</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	  <Category id="CorrelativeConnective" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Correlative connective</Name>
+			<Abbreviation>correlConn</Abbreviation>
+			<Description>A correlative connective is either of a pair of
+			coordinating conjunctions (connectives) used in ordered fashion.
+			Typically, one is used immediately before each member of a pair of
+			constituents.</Description>
+			<Citations>
+			  <Citation>Crystal 1997:96</Citation>
+			  <Citation>Mish et al. 1990:293</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	</Category>
+	<Category id="SubordinatingConnective" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Subordinating connective</Name>
+		  <Abbreviation>subordConn</Abbreviation>
+		  <Description>A subordinating connective is a connective that links
+		  constructions by making one of them a constituent of another. The
+		  subordinating conjunction typically marks the incorporated
+		  constituent.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:370</Citation>
+			<Citation>Mish et al. 1990:1175</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	  <Category id="Adverbializer" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Adverbializer</Name>
+			<Abbreviation>advlizer</Abbreviation>
+			<Description>An adverbializer is a subordinating connective that
+			links a subordinate clause to a main clause, and indicates that
+			the subordinate clause has an 'adverbial' or interpropositional
+			relation to the main clause, indicating purpose, condition, time,
+			and location.</Description>
+			<Citations>
+			  <Citation></Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	  <Category id="Complementizer" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Complementizer</Name>
+			<Abbreviation>comp</Abbreviation>
+			<Description>A complementizer is a connective which marks a
+			complement clause.</Description>
+			<Citations>
+			  <Citation>Crystal 1997:75</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	  <Category id="Relativizer" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Relativizer</Name>
+			<Abbreviation>rel</Abbreviation>
+			<Description>A relativizer is a subordinating connective that
+			links a relative clause to its head noun. It is distinguishable
+			from a relative pronoun in that it does not have a nominal
+			function within the relative clause.</Description>
+			<Citations>
+			  <Citation>Payne1997:332</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	</Category>
+  </Category>
+  <Category id="Determiner" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Determiner</Name>
+		<Abbreviation>det</Abbreviation>
+		<Description>A determiner is a part of speech whose members belong to
+		a class of noun modifiers and express the reference, including
+		quantity, of a noun.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:112</Citation>
+		  <Citation>Mish et al. 1990:346</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+	<Category id="Article" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Article</Name>
+		  <Abbreviation>art</Abbreviation>
+		  <Description>An article is a member of a small class of determiners
+		  that identify a noun's definite or indefinite reference, and new or
+		  given status.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:26</Citation>
+			<Citation>Mish et al. 1990:105</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Artículo</Name>
+		  <Abbreviation>art</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Article</Name>
+		  <Abbreviation>art</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	  <Category id="DefiniteArticle" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Definite article</Name>
+			<Abbreviation>defArt</Abbreviation>
+			<Description>A definite article is a part of speech whose members
+			refer to a specific, identifiable entity (or class of
+			entities).</Description>
+			<Citations>
+			  <Citation>Crystal 1997:107</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name>Artículo definido</Name>
+			<Abbreviation>déf</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name>Article défini</Name>
+			<Abbreviation>def</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	  <Category id="IndefiniteArticle" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Indefinite article</Name>
+			<Abbreviation>indefArt</Abbreviation>
+			<Description>An indefinite article is a part of speech whose
+			members are used to refer to an entity (or class of entities)
+			which is not capable of specific identification.</Description>
+			<Citations>
+			  <Citation>Crystal 1997:193</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name>Artículo indefinido</Name>
+			<Abbreviation>indef</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name>Article indéfini</Name>
+			<Abbreviation>indéf</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	</Category>
+	<Category id="Demonstrative" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Demonstrative</Name>
+		  <Abbreviation>dem</Abbreviation>
+		  <Description>A demonstrative is a determiner that is used
+		  deictically to indicate a referent's spatial, temporal, or discourse
+		  location. A demonstrative functions as a modifier of a noun, or a
+		  pronoun.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:312</Citation>
+			<Citation>Mish et al. 1990:338</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="Quantifier" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Quantifier</Name>
+		  <Abbreviation>quant</Abbreviation>
+		  <Description>A quantifier is a determiner that expresses a
+		  referent's definite or indefinite number or amount. A quantifier
+		  functions as a modifier of a noun, or a pronoun.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:317</Citation>
+			<Citation>Mish et al. 1990:963</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	  <Category id="Numeral" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Numeral</Name>
+			<Abbreviation>num</Abbreviation>
+			<Description>A numeral is a part of speech whose members function
+			most typically as adjectives or pronouns and express a number, or
+			relation to the number, such as one of the following: quantity,
+			sequence, frequency, fraction.</Description>
+			<Citations>
+			  <Citation>Hartmann and Stork 1972:155</Citation>
+			  <Citation>Pei and Gaynor 1954:149</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+		<Category id="CardinalNumeral" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Cardinal numeral</Name>
+			  <Abbreviation>cardNum</Abbreviation>
+			  <Description>A cardinal numeral is a numeral of the class whose
+			  members are considered basic in form, are used in counting, and
+			  are used in expressing how many objects are referred
+			  to.</Description>
+			  <Citations>
+				<Citation>Crystal 1997:52</Citation>
+				<Citation>Mish et al. 1990:207</Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+		<Category id="DistributiveNumeral" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Distributive numeral</Name>
+			  <Abbreviation>distNum</Abbreviation>
+			  <Description>A distributive numeral is a numeral which expresses
+			  a group of the number specified.</Description>
+			  <Citations>
+				<Citation></Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+		<Category id="MultiplicativeNumeral" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Multiplicative numeral</Name>
+			  <Abbreviation>multipNum</Abbreviation>
+			  <Description>A multiplicative numeral is a numeral that
+			  expresses how many fold or how many times.</Description>
+			  <Citations>
+				<Citation>Pei and Gaynor 1954:149</Citation>
+				<Citation>Hartmann and Stork 1972:147</Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+		<Category id="OrdinalNumeral" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Ordinal numeral</Name>
+			  <Abbreviation>ordNum</Abbreviation>
+			  <Description>An ordinal numeral is a numeral belonging to a
+			  class whose members designate positions in a
+			  sequence.</Description>
+			  <Citations>
+				<Citation>Crystal 1997:272</Citation>
+				<Citation>Mish et al. 1990:831</Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+		<Category id="PartitiveNumeral" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Partitive numeral</Name>
+			  <Abbreviation>Par</Abbreviation>
+			  <Description>A partitive numeral is a numeral that expresses a
+			  fraction.</Description>
+			  <Citations>
+				<Citation>Pei and Gaynor 1954:149</Citation>
+				<Citation>Hartmann and Stork 1972:165</Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+	  </Category>
+	</Category>
+  </Category>
+  <Category id="ExistentialMarker" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Existential marker</Name>
+		<Abbreviation>existMrkr</Abbreviation>
+		<Description>An existential marker is a part of speech whose members
+		are found in distinct clause types and which mark a referent's
+		existence.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:142</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+  </Category>
+  <Category id="Expletive" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Expletive</Name>
+		<Abbreviation>expl</Abbreviation>
+		<Description>An expletive (also known as a dummy word) is a part of
+		speech whose members have no meaning, but complete a sentence to make
+		it grammatical.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:127</Citation>
+		  <Citation>Mish et al. 1990:437</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+  </Category>
+  <Category id="Interjection" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Interjection</Name>
+		<Abbreviation>interj</Abbreviation>
+		<Description>An interjection is a part of speech, typically brief in
+		form, such as one syllable or word, whose members are used most often
+		as exclamations or parts of an exclamation. An interjection, typically
+		expressing an emotional reaction, often with respect to an
+		accompanying sentence, is not syntactically related to other
+		accompanying expressions, and may include a combination of sounds not
+		otherwise found in the language.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:200</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name>Interjección</Name>
+		<Abbreviation>interj</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name>Interjection</Name>
+		<Abbreviation>interj</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+  </Category>
+  <Category id="Noun" use4newLangProjects="yes">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Noun</Name>
+		<Abbreviation>N</Abbreviation>
+		<Description>A noun is a broad classification of parts of speech which
+		include substantives and nominals.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:371</Citation>
+		  <Citation>Mish et al. 1990:1176</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name>Nombre</Name>
+		<Abbreviation>Sus</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name>Nom</Name>
+		<Abbreviation>N</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+	<Category id="Nominal" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Nominal</Name>
+		  <Abbreviation>nom</Abbreviation>
+		  <Description>A nominal is a part of speech whose members differ
+		  grammatically from a substantive but which functions as
+		  one.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:260</Citation>
+			<Citation>Mish et al. 1990:801</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Nominal</Name>
+		  <Abbreviation>nom</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Nominal</Name>
+		  <Abbreviation>nom</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	  <Category id="Gerund" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Gerund</Name>
+			<Abbreviation>ger</Abbreviation>
+			<Description>A part of speech derived from a verb and used as a
+			noun, usually restricted to non-finite forms of the
+			verb.</Description>
+			<Citations>
+			  <Citation>Crystal 1997: 279</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	</Category>
+	<Category id="Substantive" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Substantive</Name>
+		  <Abbreviation>subs</Abbreviation>
+		  <Description>A substantive is a member of the syntactic class in
+		  which the names of physical, concrete, relatively unchanging
+		  experiences are most typically found whose members may act as
+		  subjects and objects, and most of whose members have inherently
+		  determined grammatical gender (in languages which inflect for
+		  gender).</Description>
+		  <Citations>
+			<Citation>Crystal 1997:264</Citation>
+			<Citation>Mish et al. 1990:808</Citation>
+			<Citation>Givon 1984:51-52</Citation>
+			<Citation>Payne 1997:33</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+  </Category>
+  <Category id="Particle" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Particle</Name>
+		<Abbreviation>prt</Abbreviation>
+		<Description>A particle is a part of speech whose members do not
+		belong to one of the main classes of words, is invariable, and
+		typically has grammatical or pragmatic meaning.</Description>
+		<Citations>
+		  <Citation></Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+	<Category id="NominalParticle" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Nominal particle</Name>
+		  <Abbreviation>nomPrt</Abbreviation>
+		  <Description>A nominal particle is a member of a closed class of
+		  particles that co-occur with nouns.</Description>
+		  <Citations>
+			<Citation></Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	  <Category id="Classifier" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Classifier</Name>
+			<Abbreviation>class</Abbreviation>
+			<Description>A classifier is a part of speech whose members
+			express the classification of a noun.</Description>
+			<Citations>
+			  <Citation>Crystal 1997:61</Citation>
+			  <Citation>Mish et al. 1990:246</Citation>
+			  <Citation>Payne 1997:107</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	</Category>
+	<Category id="QuestionParticle" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Question particle</Name>
+		  <Abbreviation>questPrt</Abbreviation>
+		  <Description>A particle is a part of speech whose members signal a
+		  yes/no question.</Description>
+		  <Citations>
+			<Citation>Payne 1997:296</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="VerbalParticle" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Verbal particle</Name>
+		  <Abbreviation>verbPrt</Abbreviation>
+		  <Description>A verbal particle is a member of a closed class of
+		  particles which co-occur with some verbs to form phrasal verbs. In
+		  some languages, verbal particles are identical to certain
+		  adpositions.</Description>
+		  <Citations>
+			<Citation></Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+  </Category>
+  <Category id="Prenoun" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Prenoun</Name>
+		<Abbreviation>prenoun</Abbreviation>
+		<Description>An element which may be compounded to the front of a noun
+		to signal information such as size, color, etc..</Description>
+		<Citations>
+		  <Citation>Valentine 2001: 152-154</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+  </Category>
+  <Category id="Preverb" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Preverb</Name>
+		<Abbreviation>preverb</Abbreviation>
+		<Description>An element which may be compounded to the front of a
+		verb, to signal information such as tense, direction,
+		etc..</Description>
+		<Citations>
+		  <Citation>Valentine 2001: 154-158</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+  </Category>
+  <Category id="Pro-form" use4newLangProjects="no">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Pro-form</Name>
+		<Abbreviation>pro-form</Abbreviation>
+		<Description>A pro-form is a part of speech whose members usually
+		substitute for other constituents, including phrases, clauses, or
+		sentences, and whose meaning is recoverable from the linguistic or
+		extralinguistic context.</Description>
+		<Citations>
+		  <Citation>Schachter 1985:24-25</Citation>
+		  <Citation>Crystal 1997:310</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name></Name>
+		<Abbreviation></Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+	<Category id="InterrogativeProform" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Interrogative pro-form</Name>
+		  <Abbreviation>interogPro-form</Abbreviation>
+		  <Description>An interrogative pro-form is a pro-form that is used in
+		  questions to stand for the item questioned.</Description>
+		  <Citations>
+			<Citation></Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="Pro-adjective" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Pro-adjective</Name>
+		  <Abbreviation>pro-adj</Abbreviation>
+		  <Description>A pro-adjective is a pro-form that substitutes for an
+		  adjective or adjective phrase.</Description>
+		  <Citations>
+			<Citation></Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="Pro-adverb" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Pro-adverb</Name>
+		  <Abbreviation>pro-adv</Abbreviation>
+		  <Description>A pro-adverb is a pro-form that substitutes for an
+		  adverb or other expression having an adverbial
+		  function.</Description>
+		  <Citations>
+			<Citation></Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name></Name>
+		  <Abbreviation></Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="Pronoun" use4newLangProjects="yes">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Pronoun</Name>
+		  <Abbreviation>pro</Abbreviation>
+		  <Description>A pronoun is a pro-form which functions like a noun and
+		  substitutes for a noun or noun phrase.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:312</Citation>
+			<Citation>Mish et al. 1990:942</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Pronombre</Name>
+		  <Abbreviation>Pro</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Pronom</Name>
+		  <Abbreviation>Pro</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	  <Category id="IndefinitePronoun" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Indefinite pronoun</Name>
+			<Abbreviation>indefPro</Abbreviation>
+			<Description>An indefinite pronoun is a pronoun that belongs to a
+			class whose members indicate indefinite reference.</Description>
+			<Citations>
+			  <Citation>Crystal 1997: 312</Citation>
+			  <Citation>Mish et al. 1990:612</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name>Pronombre indefinido</Name>
+			<Abbreviation>ind</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name>Pronom indéfini</Name>
+			<Abbreviation>ind</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	  <Category id="PersonalPronoun" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Personal pronoun</Name>
+			<Abbreviation>persPro</Abbreviation>
+			<Description>A personal pronoun is a pronoun that expresses a
+			distinction of person deixis.</Description>
+			<Citations>
+			  <Citation>Mish et al. 1990:878</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name>Pronombre personal</Name>
+			<Abbreviation>pers</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name>Pronom personnel</Name>
+			<Abbreviation>pers</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+		<Category id="EmphaticPronoun" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Emphatic pronoun</Name>
+			  <Abbreviation>emphPro</Abbreviation>
+			  <Description>An emphatic pronoun is a personal pronoun that is
+			  used to emphasize its referent.</Description>
+			  <Citations>
+				<Citation></Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+		<Category id="PossessivePronoun" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Possessive pronoun</Name>
+			  <Abbreviation>possPro</Abbreviation>
+			  <Description>A possessive pronoun is a pronoun that expresses
+			  ownership and relationships like ownership, such as kinship, and
+			  other forms of association.</Description>
+			  <Citations>
+				<Citation>Crystal 1997:312</Citation>
+				<Citation>Mish et al. 1990:918</Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+		<Category id="ReflexivePronoun" use4newLangProjects="no">
+		  <Languages>
+			<Language>
+			  <LangCode>en</LangCode>
+			  <Name>Reflexive pronoun</Name>
+			  <Abbreviation>reflexPro</Abbreviation>
+			  <Description>A reflexive pronoun is a pronoun that has
+			  coreference with the subject.</Description>
+			  <Citations>
+				<Citation>Mish et al. 1990:990</Citation>
+			  </Citations>
+			</Language>
+			<Language>
+			  <LangCode>es</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+			<Language>
+			  <LangCode>fr</LangCode>
+			  <Name></Name>
+			  <Abbreviation></Abbreviation>
+			  <Description></Description>
+			  <Citations></Citations>
+			</Language>
+		  </Languages>
+		</Category>
+	  </Category>
+	  <Category id="ReciprocalPronoun" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Reciprocal pronoun</Name>
+			<Abbreviation>recipPro</Abbreviation>
+			<Description>A reciprocal pronoun is a pronoun that expresses a
+			mutual feeling or action among the referents of a plural
+			subject.</Description>
+			<Citations>
+			  <Citation>Crystal 1997:323</Citation>
+			  <Citation>Mish et al. 1990:982</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name></Name>
+			<Abbreviation></Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	  <Category id="RelativePronoun" use4newLangProjects="no">
+		<Languages>
+		  <Language>
+			<LangCode>en</LangCode>
+			<Name>Relative pronoun</Name>
+			<Abbreviation>relPro</Abbreviation>
+			<Description>A relative pronoun is a pronoun that marks a relative
+			clause, functions grammatically within the relative clause, and is
+			coreferential to the word modified by the relative
+			clause.</Description>
+			<Citations>
+			  <Citation>Crystal 1997:329</Citation>
+			</Citations>
+		  </Language>
+		  <Language>
+			<LangCode>es</LangCode>
+			<Name>Pronombre relativo</Name>
+			<Abbreviation>rel</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		  <Language>
+			<LangCode>fr</LangCode>
+			<Name>Pronom relatif</Name>
+			<Abbreviation>rel</Abbreviation>
+			<Description></Description>
+			<Citations></Citations>
+		  </Language>
+		</Languages>
+	  </Category>
+	</Category>
+  </Category>
+  <Category id="Verb" use4newLangProjects="yes">
+	<Languages>
+	  <Language>
+		<LangCode>en</LangCode>
+		<Name>Verb</Name>
+		<Abbreviation>v</Abbreviation>
+		<Description>A verb is a part of speech whose members typically signal
+		events and actions; constitute, singly or in a phrase, a minimal
+		predicate in a clause; govern the number and types of other
+		constituents which may occur in the clause; and, in inflectional
+		languages, may be inflected for tense, aspect, voice, modality, or
+		agreement with other constituents in person, number, or grammatical
+		gender.</Description>
+		<Citations>
+		  <Citation>Crystal 1997:409</Citation>
+		  <Citation>Mish et al. 1990:1309</Citation>
+		  <Citation>Givon 1984:52</Citation>
+		  <Citation>Payne 1997:47</Citation>
+		</Citations>
+	  </Language>
+	  <Language>
+		<LangCode>es</LangCode>
+		<Name>Verbo</Name>
+		<Abbreviation>V</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	  <Language>
+		<LangCode>fr</LangCode>
+		<Name>Verbe</Name>
+		<Abbreviation>V</Abbreviation>
+		<Description></Description>
+		<Citations></Citations>
+	  </Language>
+	</Languages>
+	<Category id="DitransitiveVerb" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Ditransitive verb</Name>
+		  <Abbreviation>vd</Abbreviation>
+		  <Description>A ditransitive verb is a verb that takes two
+		  objects.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:397</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Verbo bitransitivo</Name>
+		  <Abbreviation>vb</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Verbe bitransitif</Name>
+		  <Abbreviation>vb</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="IntransitiveVerb" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Intransitive verb</Name>
+		  <Abbreviation>vi</Abbreviation>
+		  <Description>An intransitive verb is a verb that cannot take a
+		  direct object, and describes a property, state, or situation
+		  involving only one participant.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:397</Citation>
+			<Citation>Payne 1997:171</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Verbo intransitivo</Name>
+		  <Abbreviation>vi</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Verbe intransitif</Name>
+		  <Abbreviation>vi</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+	<Category id="TransitiveVerb" use4newLangProjects="no">
+	  <Languages>
+		<Language>
+		  <LangCode>en</LangCode>
+		  <Name>Transitive verb</Name>
+		  <Abbreviation>vt</Abbreviation>
+		  <Description>A transitive verb is a verb that takes a direct object,
+		  and describes a relation between two participants.</Description>
+		  <Citations>
+			<Citation>Crystal 1997:397</Citation>
+			<Citation>Mish et al. 1990:1254</Citation>
+			<Citation>Payne 1997:171</Citation>
+		  </Citations>
+		</Language>
+		<Language>
+		  <LangCode>es</LangCode>
+		  <Name>Verbo transitivo</Name>
+		  <Abbreviation>vt</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+		<Language>
+		  <LangCode>fr</LangCode>
+		  <Name>Verbe transitif</Name>
+		  <Abbreviation>vt</Abbreviation>
+		  <Description></Description>
+		  <Citations></Citations>
+		</Language>
+	  </Languages>
+	</Category>
+  </Category>
+</Categories>

@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="votivepp" default="votivepp.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	votivepp.build - Builds the votivepp project (VotivePP.exe).
+	2005.10.14 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="votivepp.build" description="Peforms a full rebuild (clean then build)" depends="votivepp.clean, votivepp.inc" />
+
+  <!-- Clean -->
+  <target name="votivepp.clean" description="Cleans the build">
+	<delete dir="${dir.build.votivepp}" failonerror="false" if="${directory::exists(dir.build.votivepp)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="VotivePP.exe" />
+		<include name="VotivePP.pdb" />
+		<include name="VotivePP.xml" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="votivepp.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Build the votivepp.exe -->
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\VotivePP.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  doc="${dir.target.wix}\VotivePP.xml"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <nowarn>
+		<!-- Missing XML comment for publicly visible type or member 'x' -->
+		<warning number="1591" />
+	  </nowarn>
+	  <sources basedir="${dir.src.votivepp}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="VotivePP.cs" />
+		<include name="VotivePPReturnValue.cs" />
+	  </sources>
+	</csc>
+  </target>
+
+</project>

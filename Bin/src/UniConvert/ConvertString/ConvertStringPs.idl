@@ -1,0 +1,15 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2000, SIL International. All rights reserved.
+
+File: ConvertStringPs.idl
+Responsibility: Darrell Zook
+Last reviewed:
+
+	Defines ConvertString interfaces.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+
+#include "Common.idh"
+
+#include "ConvertStringTlb.idh"

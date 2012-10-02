@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Preprocessor</title>
+</head>
+<body>
+<h1>Preprocessor</h1>
+
+<h2>Introduction</h2>
+<p>
+Often you will need to add different pieces of your setup during build time depending on many factors such as the SKU being built.  This is done by using conditional statements that will filter the xml before it is sent to the WiX compiler (candle).  If the statement evaluates to true, the block of xml will be sent to candle.  If the statement evaluates to false, candle will never see that section of xml.
+</p>
+
+<p>
+The conditional statements are Boolean expressions based on environment variables, variables defined in the xml, literal values, and more.
+</p>
+
+<h3>Example</h3>
+<p>
+Let’s start with an example.  Say you want to include a file if you’re building the “Enterprise SKU.”  Your build uses an environment variable %MySku%=Enterprise to specify this sku.
+</p>
+<p>
+When you build the enterprise sku, this file will be included in the xml passed on to candle.  When you build a different sku, the xml from EnterpriseFeature.wxs will be ignored.
+</p>
+<pre>
+&lt;?if $(env.MySku) = Enterprise ?&gt;
+  &lt;?include EnterpriseFeature.wxs ?&gt;
+&lt;?endif ?&gt;
+</pre>
+
+<h2>Include Files &lt;?include?&gt;</h2>
+<p>
+As shown in the example above, files can be included by using the include tag.  The filename referenced in the tag will be processed as if it were part of this file.
+</p>
+<p>
+The root element of the include file must be &lt;Include&gt;.   There are no other requirements beyond the expected wix schema.  For example,
+</p>
+<pre>
+&lt;Include&gt;
+   &lt;Feature Id='MyFeature' Title='My 1st Feature' Level='1'&gt;
+	  &lt;ComponentRef Id='MyComponent' /&gt;
+   &lt;/Feature&gt;
+&lt;/Include&gt;
+</pre>
+
+
+<h2>Variables</h2>
+<p>
+Any variable can be tested for its value or simply its existence.  Custom variables can also be defined in your xml.
+</p>
+
+Three types of variables are supported:
+<dl>
+<dt>$(env._NtPostBld)</dt>
+<dd>Gets the environment variable %_NtPostBld%</dd>
+<dt>$(sys.CurrentDir)</dt>
+<dd>Gets the system variable for the current directory</dd>
+<dt>$(var.A)</dt>
+<dd>Gets the variable A that was defined in this xml</dd>
+</dl>
+<p>
+The preprocessor evaluates variables throughout the entire document, including in &lt;?if?&gt; expressions and attribute values.
+</p>
+<h3>Environment Variables</h3>
+<p>
+Any environment variable can be referenced with the syntax $(env.VarName).  For example, if you want to retrieve the environment variable %_BuildArch%, you would use $(env._BuildArch).  Environment variable names are case-insensitive.
+</p>
+<h3>System Variables</h3>
+<p>
+WiX has some built-in variables.  They are referenced with the syntax $(sys.VARNAME) and are always in upper case.
+<ul>
+<li>CURRENTDIR - the current directory where the build process is running</li>
+<li>SOURCEFILEPATH – the full path to the file being processed</li>
+<li>SOURCEFILEDIR – the directory containing the file being processed</li>
+</ul>
+NOTE:  All built-in directory variables are “\” terminated.
+</p>
+<h3>Custom variables &lt;? define ?&gt;</h3>
+<p>
+If you want to define custom variables, you need to use the &lt;?define?&gt; statement.  Later, the variables are referred to in the &lt;?if?&gt; statements with the syntax $(var.VarName).  Variable names are case-sensitive.
+</p>
+<p>
+How to define the existence of a variable:<br />
+&lt;?define MyVariable ?&gt;<br />
+</p>
+<p>
+How to define the value of a variable (Quotes are only required if it contains spaces):<br />
+&lt;?define MyVariable = “Hello World” ?&gt;<br />
+</p>
+<p>
+The right side of the definition can also refer to another variable:<br />
+&lt;?define MyVariable = $(var.BuildPath)\x86\bin\ ?&gt;</p>
+<p>
+How to undefine a variable:<br />
+&lt;?undef MyVariable ?&gt;<br />
+</p>
+
+<h2>Conditional Statements</h2>
+There are several conditional statements, they include:
+<ul>
+<li>&lt;?if ?&gt;</li>
+<li>&lt;?ifdef ?&gt;</li>
+<li>&lt;?ifndef ?&gt;</li>
+<li>&lt;?else?&gt;</li>
+<li>&lt;?elseif ?&gt;</li>
+<li>&lt;?endif?&gt;</li>
+</ul>
+<p>
+The purpose of the conditional statement is to allow you to include or exclude a segment of xml at build time.  If the expression evaluates to true, it will be included.  If it evaluates to false, it will be ignored.
+</p>
+<p>
+The conditional statements always begin with either the &lt;?if ?&gt;, &lt;?ifdef ?&gt;, or &lt;?ifndef ?&gt; tags.  They are followed by an xml block, an optional &lt;?else?&gt; or &lt;?elseif ?&gt; tag, and must end with an &lt;?endif?&gt; tag.
+</p>
+
+<h3>Expressions (used in &lt;?if ?&gt; and &lt;?elseif ?&gt;)</h3>
+<p>
+For example: &lt;?if [expression]?&gt;
+</p>
+<p>
+The expression found inside the &lt;?if ?&gt; and &lt;?elseif ?&gt; tags is a Boolean expression.  It adheres to a simple grammar that follows these rules:
+</p>
+<ul>
+<li>The expression is evaluated left to right</li>
+<li>Expressions are case-sensitive with the following exceptions:</li>
+<ul>
+	<li>Environmental variable names</li>
+	<li>These keywords: and, or, not</li>
+</ul>
+<li>All variables must use the $() syntax or else they will be considered a literal value.</li>
+<li>If you want to use a literal $(, escape the dollar sign with a second one.  For example, $$(</li>
+<li>Variables can be used to check for existence</li>
+<li>Variables can be compared to a literal or another variable</li>
+<ul>
+	<li>Comparisons with = and != are string comparisons.</li>
+	<li>Comparisons with inequality operators (&lt;, &lt;=, &gt;, &gt;=) must be done on integers.</li>
+	<li>If the variable doesn't exist, evaluation will fail and an error will be raised.</li>
+</ul>
+<li>The operator precedence is as follows.  Note that “and” and “or” have the same precedence:</li>
+<ul>
+	<li>""</li>
+	<li>(), $( )</li>
+	<li>&lt;, &gt;, &lt;=, &gt;=, =, !=</li>
+	<li>Not</li>
+	<li>And, Or</li>
+</ul>
+<li>Nested parenthesis are allowed.</li>
+<li>Literals can be surrounded by quotes, although quotes are not required.</li>
+<li>Quotes, leading, and trailing white space are stripped off literal values.</li>
+<li>Invalid expressions will cause an exception to be thrown.</li>
+</ul>
+
+<h3>Variables (used in &lt;ifdef ?&gt; and &lt;ifndef ?&gt;)</h3>
+<p>
+For example: &lt;?ifdef [variable] ?&gt;
+</p>
+<p>
+For &lt;ifdef ?&gt;, if the variable has been defined, this statement will be true.  &lt;ifndef ?&gt; works in the exact opposite way.
+</p>
+
+<h3>More Examples</h3>
+Note that these examples will actually each be a no-op because there aren’t any tags between the if and endif tags.
+<pre>
+   &lt;?define myValue  = "3"?&gt;
+   &lt;?define system32=$(env.windir)\system32  ?&gt;
+   &lt;?define B = "good var" ?&gt;
+   &lt;?define C =3 ?&gt;
+   &lt;?define IExist ?&gt;
+
+   &lt;?if $(var.Iexist)       ?&gt;&lt;?endif?&gt; <span class="comment">&lt;!-- true --&gt;</span>
+   &lt;?if $(var.myValue) = 6  ?&gt;&lt;?endif?&gt; <span class="comment">&lt;!-- false --&gt;</span>
+   &lt;?if $(var.myValue)!=3   ?&gt;&lt;?endif?&gt; <span class="comment">&lt;!-- false --&gt;</span>
+   &lt;?if not "x"= "y"?&gt;              &lt;?endif?&gt; <span class="comment">&lt;!-- true --&gt;</span>
+   &lt;?if $(env.systemdrive)=a?&gt;&lt;?endif?&gt; <span class="comment">&lt;!-- false --&gt;</span>
+   &lt;?if 3 &lt; $(var.myValue)?&gt;   &lt;?endif?&gt; <span class="comment">&lt;!-- false --&gt;</span>
+   &lt;?if $(var.B) = "good VAR"?&gt; &lt;?endif?&gt; <span class="comment">&lt;!-- false --&gt;</span>
+   &lt;?if $(var.A) and not $(env.MyEnvVariable)      ?&gt; &lt;?endif?&gt; <span class="comment">&lt;!-- false --&gt;</span>
+   &lt;?if $(var.A) Or ($(var.B) And $(var.myValue) &gt;=3)?&gt;&lt;?endif?&gt; <span class="comment">&lt;!-- true --&gt;</span>
+   &lt;?ifdef IExist ?&gt; <span class="comment">&lt;!-- true --&gt;</span>
+	 &lt;?else?&gt; <span class="comment">&lt;!-- false --&gt;</span>
+   &lt;?endif?&gt;
+</pre>
+
+<h2>Iteration Statements</h2>
+There is a single iteration statement, &lt;?foreach variable-name in
+semi-colon-delimited-list ?&gt; &lt;?endforeach?&gt;.&nbsp; When this occurs the
+preprocessor will
+<ul>
+<li>create a private copy of the variable context</li>
+<li>set the variable in the foreach statement to an iteration on the semicolon delimited list</li>
+<li>generate a fragment with the variable substituted</li>
+</ul>
+The affect of this process is that the fragment authored is just template forwhich the preprocessor will do the iteration to generate the literal of fragments.  WiX natively only supports using LCID as a variable name in the ?foreach statement however, one can use the preprocessor extensions
+(more below) to provide custom support.&nbsp;
+The variable name in the ?foreach statement can be proceeded with a &quot;var.&quot;.&nbsp;
+When the variable is used in the fragment, it must be proceeded with a &quot;var.&quot;
+
+<p>An few examples:
+<pre>
+&lt;?foreach LCID in "1033;1041;1055"?&gt;
+	&lt;Fragment Id='Fragment.$(var.LCID)'&gt;
+		&lt;DirectoryRef Id='TARGETDIR'&gt;
+			&lt;Component Id='MyComponent.$(var.LCID)' /&gt;
+		&lt;/DirectoryRef&gt;
+	&lt;/Fragment&gt;
+&lt;?endforeach?&gt;
+</pre>
+or
+<pre>
+&lt;?define LcidList=1033;1041;1055?&gt;
+&lt;?foreach LCID in $(var.LcidList)?&gt;
+	&lt;Fragment Id='Fragment.$(var.LCID)'&gt;
+		&lt;DirectoryRef Id='TARGETDIR'&gt;
+			&lt;Component Id='MyComponent.$(var.LCID)' /&gt;
+		&lt;/DirectoryRef&gt;
+	&lt;/Fragment&gt;
+&lt;?endforeach?&gt;
+</pre>
+or
+<pre>
+filename: ExtentOfLocalization.wxi
+&lt;Include&gt;
+	&lt;?define LcidList=1033;1041;1055?&gt;
+&lt;/Include&gt;
+
+and
+
+&lt;?include ExtentOfLocalization.wxi ?&gt;
+&lt;?foreach LCID in $(var.LcidList)?&gt;
+	&lt;Fragment Id='Fragment.$(var.LCID)'&gt;
+		&lt;DirectoryRef Id='TARGETDIR'&gt;
+			&lt;Component Id='MyComponent.$(var.LCID)' /&gt;
+		&lt;/DirectoryRef&gt;
+	&lt;/Fragment&gt;
+&lt;?endforeach?&gt;
+</pre>
+
+</p><br />
+An
+alternative to the foreach process would be to write the template WiX fragment into a
+separate file and have another process generate the authoring that will be passed to WiX.  The greatest merit of this alternative is that it's easier to debug.
+<h2>Extensions</h2>
+<p>
+WiX has support for preprocessor <a href="extensions.htm">extensions</a> via the PreprocessorExtension class.  The PreprocessorExtension can provide callbacks with context at foreach initialization, variable evaluation, and the last call before invoking the compiler (for full custom preprocessing).  See the preprocessor.cs source file and the preprocessorextension.cs source file for more information.
+</p>
+</body>
+</html>

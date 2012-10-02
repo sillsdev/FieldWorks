@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="lit" default="lit.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	lit.build - Builds the lit project (lit.exe).
+	2005.09.12 johnls Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- lit-specific properties -->
+  <property name="lit.file.res.target" value="${dir.build.lit}\lit.res" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="lit.build" description="Peforms a full rebuild (clean then build)" depends="lit.clean, lit.inc" />
+
+  <!-- Clean -->
+  <target name="lit.clean" description="Cleans the build">
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="lit.exe" />
+		<include name="lit.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="lit.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the lit.exe.config -->
+	<copy todir="${dir.target.wix}">
+	  <fileset basedir="${dir.src.lit}">
+		<include name="lit.exe.config" />
+	  </fileset>
+	</copy>
+
+	<!-- Compile the lit.rc file -->
+	<rc rcfile="${dir.src.lit}\lit.rc" langid="0" output="${lit.file.res.target}" options="${rc.standardOptions} ${cl.standardIncludes}" />
+
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\lit.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.lit}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="lit.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <arg value="-win32res:&quot;${lit.file.res.target}&quot;" />
+	</csc>
+  </target>
+
+</project>

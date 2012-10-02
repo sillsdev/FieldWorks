@@ -1,0 +1,982 @@
+<html xmlns:html="http://www.w3.org/1999/xhtml" xmlns:dt="urn:schemas-microsoft-com:datatypes">
+
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-16">
+
+<title>Installer Monitor Tool</title>
+
+<script type="text/javascript">
+
+var RootFolder;
+var fso;
+var xmlChangedFiles;
+var xmlFileLibrary;
+var xmlFiles;
+var xmlFeatures;
+var WixFeatureNodes;
+var xmlDirectoryScanPrivate;
+var InstallerDirectoryScanNode;
+var NewFiles;
+var DeletedFiles;
+var FilesInInstaller;
+var FilesInLibrary;
+var KnownFolders;
+var ExcludedFolders;
+var ReadOnly;
+var buildType;
+
+// Called upon completion of page loading.
+function Initialize()
+{
+	// Get path details:
+	RootFolder = GetDocumentFolder().toLowerCase();
+
+	// If the script is in a subfolder called Installer, then set the root folder back one notch:
+	var iLastBackslash = RootFolder.lastIndexOf("\\");
+	if (iLastBackslash > 0)
+	{
+		if (RootFolder.slice(iLastBackslash + 1) == "installer")
+			RootFolder = RootFolder.slice(0, iLastBackslash + 1).toLowerCase();
+	}
+
+	fso = new ActiveXObject("Scripting.FileSystemObject");
+
+	xmlChangedFiles = new ActiveXObject("Msxml2.DOMDocument.4.0");
+	xmlChangedFiles.async = false;
+	xmlChangedFiles.load("ChangedFiles.xml");
+	if (xmlChangedFiles.parseError.errorCode != 0)
+	{
+		var myErr = xmlChangedFiles.parseError;
+		alert("XML error in ChangedFiles.xml: " + myErr.reason + "\non line " + myErr.line + " at position " + myErr.linepos);
+		showPage("BlockedContentWarning", false);
+		showPage("DOMDocumentError", true);
+		return;
+	}
+
+	xmlFileLibrary = new ActiveXObject("Msxml2.DOMDocument.4.0");
+	xmlFileLibrary.async = false;
+	xmlFileLibrary.load("FileLibrary.xml");
+	if (xmlFileLibrary.parseError.errorCode != 0)
+	{
+		var myErr = xmlFileLibrary.parseError;
+		alert("XML error in FileLibrary.xml: " + myErr.reason + "\non line " + myErr.line + " at position " + myErr.linepos);
+		showPage("BlockedContentWarning", false);
+		showPage("DOMDocumentError", true);
+		return;
+	}
+
+	xmlFiles = new ActiveXObject("Msxml2.DOMDocument.4.0");
+	xmlFiles.async = false;
+	xmlFiles.setProperty("SelectionNamespaces", 'xmlns:wix="http://schemas.microsoft.com/wix/2003/01/wi"');
+	xmlFiles.load("Files.wxs");
+	if (xmlFiles.parseError.errorCode != 0)
+	{
+		var myErr = xmlFiles.parseError;
+		alert("XML error in Files.wxs: " + myErr.reason + "\non line " + myErr.line + " at position " + myErr.linepos);
+		showPage("BlockedContentWarning", false);
+		showPage("DOMDocumentError", true);
+		return;
+	}
+
+	xmlFeatures = new ActiveXObject("Msxml2.DOMDocument.4.0");
+	xmlFeatures.async = false;
+	xmlFeatures.setProperty("SelectionNamespaces", 'xmlns:wix="http://schemas.microsoft.com/wix/2003/01/wi"');
+	xmlFeatures.load("Features.wxs");
+	if (xmlFeatures.parseError.errorCode != 0)
+	{
+		var myErr = xmlFeatures.parseError;
+		alert("XML error in Features.wxs: " + myErr.reason + "\non line " + myErr.line + " at position " + myErr.linepos);
+		showPage("BlockedContentWarning", false);
+		showPage("DOMDocumentError", true);
+		return;
+	}
+	WixFeatureNodes = xmlFeatures.selectNodes("//wix:Feature");
+
+	// Read principle list of paths to include and exclude in search:
+	xmlDirectoryScanPrivate = new ActiveXObject("Msxml2.DOMDocument.4.0");
+	xmlDirectoryScanPrivate.async = false;
+
+	// Test if DirectoryScanPrivate.xml exists:
+	if (fso.FileExists("DirectoryScanPrivate.xml"))
+	{
+		xmlDirectoryScanPrivate.load("DirectoryScanPrivate.xml");
+		if (xmlDirectoryScanPrivate.parseError.errorCode != 0)
+		{
+			var myErr = xmlDirectoryScanPrivate.parseError;
+			ReportError("XML error in DirectoryScanPrivate.xml: " + myErr.reason + "\non line " + myErr.line + " at position " + myErr.linepos);
+			WScript.Quit(-1);
+		}
+	}
+	else
+	{
+		// DirectoryScanPrivate.xml does not exist, so create main node manually:
+		xmlDirectoryScanPrivate.loadXML('<?xml version="1.0" encoding="UTF-8"?>\n<InstallerDirectoryScan>\n</InstallerDirectoryScan>\n');
+	}
+	InstallerDirectoryScanNode = xmlDirectoryScanPrivate.selectSingleNode("/InstallerDirectoryScan");
+
+	showPage("BlockedContentWarning", false);
+	showPage("StillInitializing", true);
+
+	// Make array describing all destination folders known so far in Files.wxs:
+	KnownFolders = new Array();
+	var xmlRootFolderNode = xmlFiles.selectSingleNode("//wix:Directory[@Id='TARGETDIR']");
+	GetSubFolderList(xmlRootFolderNode, "", 2);
+
+	NewFiles = new Array();
+	DeletedFiles = new Array();
+
+	var buildNode = xmlChangedFiles.selectSingleNode("//Build");
+	buildType = buildNode.getAttribute("Type");
+	var changedNodes = xmlChangedFiles.selectNodes("//New");
+	var tempStr;
+	for (node = 0; node < changedNodes.length; node++)
+	{
+		tempStr = changedNodes[node].getAttribute("Path");
+		tempStr = tempStr.replace(/\\\${config}\\/i, "\\" + buildType + "\\");
+		NewFiles.push(tempStr);
+	}
+
+	changedNodes = xmlChangedFiles.selectNodes("//Deleted");
+	for (node = 0; node < changedNodes.length; node++)
+	{
+		tempStr = changedNodes[node].getAttribute("Path");
+		tempStr = tempStr.replace(/\\\${config}\\/i, "\\" + buildType + "\\");
+		DeletedFiles.push(tempStr);
+	}
+
+	AddNewFiles("NewFileTable", NewFiles);
+	AddDeletedFiles("DeleteTable", DeletedFiles);
+
+	showPage("StillInitializing", false);
+	showPage("MainPage", true);
+}
+
+// Shows or hides a specified page or subpage of configuration settings.
+function showPage(sPage, bShow)
+{
+	var Element = document.getElementById(sPage);
+	Element.style.visibility = bShow ? 'visible' : 'hidden';
+	Element.style.position = bShow ? 'static' : 'absolute';
+}
+
+// Returns the folder containing the source document.
+function GetDocumentFolder()
+{
+	// Get URL of document, making sure we change backslashes, into forward ones, and the
+	// %20 mark with a proper space. These changes appeared new with IE7:
+	var URL = document.URLUnencoded;
+	URL = URL.replace(/\//g,"\\");
+	URL = URL.replace(/%20/g," ");
+	var iLastBackslash = URL.lastIndexOf("\\");
+	var iEndOfProtocol = 0;
+	if (URL.slice(0, 7) == "file:\\\\")
+		iEndOfProtocol = 7;
+	if (URL.slice(0, 8) == "file:\\\\\\")
+		iEndOfProtocol = 8;
+	return URL.substr(iEndOfProtocol, iLastBackslash - iEndOfProtocol);
+}
+
+// Recurses through Files.wxs, adding into the KnownFolders global array the details of all subfolders
+// found under the RootFolder node.
+function GetSubFolderList(RootFolder, Path, TabLevel)
+{
+	var SubFolderNodes = RootFolder.selectNodes("wix:Directory");
+	var d = 0; // Reset for each recursion.
+
+	for (d = 0; d < SubFolderNodes.length; d++)
+	{
+		var NewFolder = new Object();
+		NewFolder.Node = SubFolderNodes[d];
+		NewFolder.TabLevel = TabLevel;
+
+		var FolderName = null;
+		// Interpret a few known Windows Installer variable path names:
+		if (SubFolderNodes[d].getAttribute("Id") == "SystemFolder")
+			FolderName = "Windows\\System32";
+		else if (SubFolderNodes[d].getAttribute("Id") == "FontsFolder")
+			FolderName = "Windows\\Fonts";
+		else if (SubFolderNodes[d].getAttribute("Id") == "CommonFilesFolder")
+			FolderName = "Program Files\\Common Files";
+		else if (SubFolderNodes[d].getAttribute("Id") == "CommonAppDataFolder")
+			FolderName = "PrgramData";
+
+		if (!FolderName)
+			FolderName = SubFolderNodes[d].getAttribute("LongSource");
+		if (!FolderName)
+			FolderName = SubFolderNodes[d].getAttribute("SourceName");
+		if (!FolderName)
+			FolderName = SubFolderNodes[d].getAttribute("LongName");
+		if (!FolderName)
+			FolderName = SubFolderNodes[d].getAttribute("Name");
+
+		NewFolder.Path = Path + "\\" + FolderName;
+		KnownFolders.push(NewFolder);
+		GetSubFolderList(NewFolder.Node, NewFolder.Path, TabLevel + 1);
+	}
+}
+
+// Set which button (yes, no, dontknow) to apply to all files
+function setButton(ind)
+{
+	for (i = 0; i < WixFeatureNodes.length; i++)
+	{
+		var CheckBox = document.getElementById("MasterFileFeature" + i);
+		CheckBox.disabled = (ind==0 ? false : true);
+	}
+}
+
+// Apply chosen settings to all files
+function ApplySettings(T)
+{
+	var whichButton; //yes=0, no=1, dontknow=2
+	var Table = document.getElementById(T);
+	var YesButton = document.getElementById("MasterYes");
+	var NoButton = document.getElementById("MasterNo");
+	var DKButton = document.getElementById("MasterDontKnow");
+	var MasterFolder = document.getElementById("MasterDestFolder").selectedIndex;
+
+	if(YesButton.checked)
+		whichButton = 0;
+	else if(NoButton.checked)
+		whichButton = 1;
+	else if(DKButton.checked)
+		whichButton = 2;
+
+	for(i = 0; i < NewFiles.length; i++)
+	{
+		switch(whichButton)
+		{
+			case 0: {var b = document.getElementById("File" + i + "Yes");
+					 EnableFeatures(i,true);
+					 break;}
+
+			case 1: {var b = document.getElementById("File" + i + "No");
+					 EnableFeatures(i,false);
+					 break;}
+
+			case 2: {var b = document.getElementById("File" + i + "DontKnow");
+					 EnableFeatures(i,false);
+					 break;}
+			default: return;
+		 }
+		 b.checked = true;
+
+		 for (j = 0; j < WixFeatureNodes.length; j++)
+		 {
+			var masterBox = document.getElementById("MasterFileFeature" + j);
+			var box = document.getElementById("File" + i + "Feature" + j);
+			if(masterBox.checked)
+				box.checked = true;
+			else
+				box.checked = false;
+		 }
+
+		 if(MasterFolder != 0)
+		 {
+			 for (d = 0; d < KnownFolders.length; d++)
+			 {
+				var select = document.getElementById("DestinationFolder" + i);
+				select.selectedIndex = MasterFolder - 1;
+			 }
+		 }
+	}
+}
+
+// Fills in the specified object with data from the given Array.
+function AddNewFiles(TableName, List)
+{
+	// Get list of Features:
+	var FeaturesInInstaller = new Array();
+	for (i = 0; i <  WixFeatureNodes.length; i++)
+	{
+		var Id = WixFeatureNodes[i].getAttribute("Id");
+		var Description = WixFeatureNodes[i].getAttribute("Title");
+		FeaturesInInstaller.push(Id);
+	}
+
+	if(List.length == 0){
+		document.getElementById("NewSection").innerHTML = " ";
+		return;
+	}
+
+//Begin Master settings
+	var Table = document.getElementById(TableName);
+	var Row = Table.insertRow(Table.rows.length);
+	var Cell = Row.insertCell(Row.cells.length);
+
+	Cell.innerHTML = '<button id="MasterSettingButton" onclick="ApplySettings(' + TableName + ')" style="font-size:130%">Apply Settings to all Files</button>';
+
+	Cell.align = "right";
+
+	Cell = Row.insertCell(Row.cells.length);
+	var CellDef = '<font size="2" face="Impact">';
+	CellDef += '<input type="radio" name="MasterSet" id="MasterYes" onclick="setButton(' + 0 +')">Yes  </input>';
+	CellDef += '<input type="radio" name="MasterSet" id="MasterNo" onclick="setButton(' + 1 + ')">No  </input>';
+	CellDef += '<input type="radio" name="MasterSet" id="MasterDontKnow"  onclick="setButton(' + 2 + ')">Don\'t know  </input>';
+	CellDef += '</font>';
+	Cell.innerHTML = CellDef;
+	Cell.align = "center";
+
+	// Add feature check boxes
+	Cell = Row.insertCell(Row.cells.length);
+	CellDef = '<font size="2" face="Impact">';
+	for (j = 0; j < FeaturesInInstaller.length; j++)
+	{
+		CellDef += '<input type="checkbox" id="MasterFileFeature' + j + '" disabled="true">' + FeaturesInInstaller[j] + '  </input>';
+	}
+	CellDef += '</font>';
+	Cell.innerHTML = CellDef;
+
+	// Add List of known folders:
+	Cell = Row.insertCell(Row.cells.length);
+	CellDef = '<select name="MasterDestFolder" id="MasterDestFolder" size="1">';
+	CellDef += '<option value="Master" selected>Choose Folders Individually</option>';
+	for (d = 0; d < KnownFolders.length; d++)
+		CellDef += '<option value="' + d + '">' + KnownFolders[d].Path + '</option>';
+	CellDef += '</select>';
+	Cell.innerHTML = CellDef;
+//End Master settings
+
+
+	for (i = 0; i < List.length; i++)
+	{
+		var Row = Table.insertRow(Table.rows.length);
+		var Cell = Row.insertCell(Row.cells.length);
+
+		// Add path of file:
+		Cell.innerHTML = List[i];
+		Cell.align = "right";
+
+		// Add radio button group indicating if file should go in installer:
+		Cell = Row.insertCell(Row.cells.length);
+		var CellDef = '<input type="radio" name="File' + i + 'Set" id="File' + i + 'Yes"  onclick="EnableFeatures(' + i + ',true)">Yes  </input>';
+		CellDef += '<input type="radio" name="File' + i + 'Set" id="File' + i + 'No" onclick="EnableFeatures(' + i + ',false)">No  </input>';
+		CellDef += '<input type="radio" name="File' + i + 'Set" id="File' + i + 'DontKnow" checked="checked" onclick="EnableFeatures(' + i + ',false)">Don\'t know  </input>';
+		Cell.innerHTML = CellDef;
+		Cell.align = "center";
+
+		// Add checkboxes for features in installer:
+		Cell = Row.insertCell(Row.cells.length);
+		CellDef = "";
+		for (i2 = 0; i2 < FeaturesInInstaller.length; i2++)
+		{
+			CellDef += '<input type="checkbox" id="File' + i + 'Feature' + i2 + '" disabled="true">' + FeaturesInInstaller[i2] + '  </input>';
+		}
+		Cell.innerHTML = CellDef;
+
+		// Add List of known folders:
+		var SelectionTarget = GetSelectionTarget(List[i]);
+		Cell = Row.insertCell(Row.cells.length);
+		CellDef = '<select name="DestinationFolder' + i + '" id="DestinationFolder' + i + '" size="1">';
+		for (d = 0; d < KnownFolders.length; d++)
+		{
+			CellDef += '<option value="' + d + '"';
+			if (KnownFolders[d].Path.toLowerCase() == SelectionTarget.toLowerCase())
+				CellDef += 'selected'
+			CellDef += '>' + KnownFolders[d].Path + '</option>';
+		}
+		CellDef += '</select>';
+		Cell.innerHTML = CellDef;
+	}
+}
+
+// Fills in the specified object with data from the given Array.
+function AddDeletedFiles(TableName, List)
+{
+	if(List.length == 0){
+		document.getElementById("DeletedSection").innerHTML = " ";
+		return;
+	}
+
+	var CandidateFolders = new Array();
+	var Table = document.getElementById(TableName);
+	for (i = 0; i < List.length; i++)
+	{
+		var Row = Table.insertRow(Table.rows.length);
+		var Cell = Row.insertCell(Row.cells.length);
+
+		// Add path of file:
+		Cell.innerHTML = List[i];
+		Cell.align = "right";
+
+		// Add checkbox indicating if file should be deleted from installer:
+		Cell = Row.insertCell(Row.cells.length);
+		var CellDef = '<input type="checkbox" id="DeleteFile' + i + '"/>';
+		Cell.innerHTML = CellDef;
+		Cell.align = "center";
+
+		// Add button showing folder name in column for adding to DirectoryScanPrivate.xml:
+		Cell = Row.insertCell(Row.cells.length);
+		var FolderName = List[i];
+		var iLastBackslash = FolderName.lastIndexOf("\\");
+		if (iLastBackslash > 0)
+			FolderName = FolderName.slice(0, iLastBackslash);
+
+		var fFoundAlready = false;
+		for (i2 = 0; i2 < CandidateFolders.length; i2++)
+		{
+			if (CandidateFolders[i2] == FolderName)
+			{
+				fFoundAlready = true;
+				break;
+			}
+		}
+		if (fFoundAlready)
+		{
+			Cell.style.color = '#A0A0A0';
+			Cell.innerHTML = "[Duplicate] " + FolderName;
+		}
+		else
+		{
+			CellDef = '<button id="AddFolderToDirectoryScanPrivate' + i + '" onclick="AddFolderToDirectoryScanXml(' + i + ');">' + FolderName + '</button>';
+			Cell.innerHTML = CellDef;
+			Cell.align = "left";
+			CandidateFolders.push(FolderName);
+		}
+
+		// Add button showing file name in column for adding to DirectoryScanPrivate.xml:
+		Cell = Row.insertCell(Row.cells.length);
+		var FileName = List[i];
+		CellDef = '<button id="AddFileToDirectoryScanPrivate' + i + '" onclick="AddFileToDirectoryScanXml(' + i + ');">' + FileName + '</button>';
+		Cell.innerHTML = CellDef;
+		Cell.align = "left";
+	}
+}
+
+// Add the file for the specified DeletedFiles entry to the DirectoryScanPrivate.xml file.
+function AddFileToDirectoryScanXml(i)
+{
+	var ID = "AddFileToDirectoryScanPrivate" + i;
+	var Button = document.getElementById(ID);
+
+	// Add the new file to the DirectoryScanPrivate.xml file:
+	var NewExcludeElement = xmlDirectoryScanPrivate.createElement("Exclude");
+	// Make regular expression for re-inserting the ${config} variable where the built type string occurs:
+	var re = new RegExp("\\\\" + buildType + "\\\\", "i"); // Quadruple backslashes because regular expressions require \ to be doubled, and so does JScript.
+	var ModifiedFile = Button.value.slice(RootFolder.length).replace(re, "\\\${config}\\")
+	NewExcludeElement.setAttribute("File", ModifiedFile);
+	var FirstExclude = InstallerDirectoryScanNode.selectSingleNode("Exclude[1]");
+	InstallerDirectoryScanNode.insertBefore(NewExcludeElement, FirstExclude);
+	InstallerDirectoryScanNode.insertBefore(xmlDirectoryScanPrivate.createTextNode("\n"), FirstExclude);
+	InstallerDirectoryScanNode.insertBefore(xmlDirectoryScanPrivate.createTextNode("\t"), FirstExclude);
+
+	var tso = fso.OpenTextFile(fso.BuildPath(GetDocumentFolder(), "DirectoryScanPrivate.xml"), 2, true, 0);
+	tso.Write(xmlDirectoryScanPrivate.xml);
+	tso.Close();
+
+	Button.value += " - added";
+	Button.disabled = true;
+}
+
+// Add the folder for the specified DeletedFiles entry to the DirectoryScanPrivate.xml file.
+function AddFolderToDirectoryScanXml(i)
+{
+	var ID = "AddFolderToDirectoryScanPrivate" + i;
+	var Button = document.getElementById(ID);
+
+	// Add the new folder to the DirectoryScanPrivate.xml file:
+	var NewExcludeElement = xmlDirectoryScanPrivate.createElement("Exclude");
+	// Make regular expression for re-inserting the ${config} variable where the built type string occurs:
+	var re = new RegExp("\\\\" + buildType + "\\\\", "i"); // Quadruple backslashes because regular expressions require \ to be doubled, and so does JScript.
+	var ModifiedFolder = Button.value.slice(RootFolder.length).replace(re, "\\\${config}\\")
+	NewExcludeElement.setAttribute("Folder", ModifiedFolder);
+	var FirstExclude = InstallerDirectoryScanNode.selectSingleNode("Exclude[1]");
+	InstallerDirectoryScanNode.insertBefore(NewExcludeElement, FirstExclude);
+	InstallerDirectoryScanNode.insertBefore(xmlDirectoryScanPrivate.createTextNode("\n"), FirstExclude);
+	InstallerDirectoryScanNode.insertBefore(xmlDirectoryScanPrivate.createTextNode("\t"), FirstExclude);
+
+	var tso = fso.OpenTextFile(fso.BuildPath(GetDocumentFolder(), "DirectoryScanPrivate.xml"), 2, true, 0);
+	tso.Write(xmlDirectoryScanPrivate.xml);
+	tso.Close();
+
+	Button.value += " - added";
+	Button.disabled = true;
+}
+
+// Checks all the boxes of files proposed for deletion.
+function SelectAllDelete()
+{
+	for (i = 0; i < DeletedFiles.length; i++)
+	{
+		var CheckboxId = "DeleteFile" + i;
+		var Checkbox = document.getElementById(CheckboxId);
+		Checkbox.checked = true;
+	}
+}
+
+// Unchecks all the boxes of files proposed for deletion.
+function ClearAllDelete()
+{
+	for (i = 0; i < DeletedFiles.length; i++)
+	{
+		var CheckboxId = "DeleteFile" + i;
+		var Checkbox = document.getElementById(CheckboxId);
+		Checkbox.checked = false;
+	}
+}
+
+// Returns a string representing an intelligent guess at the given file's destination folder.
+function GetSelectionTarget(FilePath)
+{
+	// Remove the RootFolder and the file name:
+	var SourceFolder = FilePath.slice(RootFolder.length);
+	var iLastBackslash = SourceFolder.lastIndexOf("\\");
+	if (iLastBackslash > 0)
+		SourceFolder = SourceFolder.slice(0, iLastBackslash);
+
+	if (SourceFolder.slice(0, 9).toLowerCase() == "distfiles")
+		return fso.BuildPath("\\Program Files\\SIL\\FieldWorks", SourceFolder.slice(10));
+	if (SourceFolder.slice(0, 14).toLowerCase() == "output\\release")
+		return fso.BuildPath("\\Program Files\\SIL\\FieldWorks", SourceFolder.slice(15));
+	if (SourceFolder.slice(0, 12).toLowerCase() == "output\\debug")
+		return fso.BuildPath("\\Program Files\\SIL\\FieldWorks", SourceFolder.slice(13));
+	if (SourceFolder.slice(0, 11).toLowerCase() == "lib\\release")
+		return fso.BuildPath("\\Program Files\\SIL\\FieldWorks", SourceFolder.slice(12));
+
+	return "";
+}
+
+// Enables the features checkboxes for the given file, according to the boolean flag.
+function EnableFeatures(FileIndex, flag)
+{
+	var i;
+	for (i = 0; i < WixFeatureNodes.length; i++)
+	{
+		var CheckBox = document.getElementById('File' + FileIndex + "Feature" + i);
+		CheckBox.disabled = !flag;
+	}
+}
+
+// Checks all added and deleted files to see if they are read only
+// If there are any read only, return true
+function CheckReadOnly()
+{
+	ReadOnly = new Array();
+	var filelist = new Array();
+
+	filelist.push("FileLibrary.xml");
+	filelist.push("Features.wxs");
+	filelist.push("Files.wxs");
+
+	for(file = 0; file < filelist.length; file++)
+	{
+		f = fso.GetFile(fso.BuildPath(GetDocumentFolder(), filelist[file]));
+		if(f.attributes & 1)
+			ReadOnly.push(f.Path);
+	}
+
+	return (ReadOnly.length > 0);
+}
+
+// Responds to user pressing Save Changes button.
+// Collects user data, and amends Files.wxs, Features.wxs and FileLibrary.xml as appropriate.
+function Go()
+{
+	var r = true;
+	//if
+	while(CheckReadOnly() && r)
+	{
+		var FileList = new Array();
+		for(x in ReadOnly)
+			FileList.push("\n" + ReadOnly[x]);
+		//alert("These files are read only:" + FileList + "\nPlease check them out and click save changes again.");
+		//return;
+		r = confirm("These files are read only:" + FileList + "\nPlease check them out and click ok.");
+		if(r == false)
+			return;
+	}
+
+	// Test to make sure all added files have at least one feature checked:
+	for (i = 0; i < NewFiles.length; i++)
+	{
+		var AtLeastOneChecked = false;
+		var YesButton = document.getElementById('File' + i + 'Yes');
+		if (YesButton.checked)
+		{
+			for (feature = 0; feature < WixFeatureNodes.length; feature++)
+			{
+				var FeatureCheckbox = document.getElementById('File' + i + 'Feature' + feature);
+				if (FeatureCheckbox.checked)
+				{
+					AtLeastOneChecked = true;
+					break;
+				}
+			}
+			if (!AtLeastOneChecked)
+			{
+				alert("Error: for every file you add, you must check the boxes of any features that need it. '" + NewFiles[i] + "' has no features checked. Click OK to return to change selection.");
+				return;
+			}
+		}
+	}
+
+
+	var FileLibraryNode = xmlFileLibrary.selectSingleNode("FileLibrary");
+	var EditedLibrary = false;
+	var EditedInstaller = false;
+
+	// Make regular expression for re-inserting the ${config} variable where the built type string occurs:
+	var re = new RegExp("\\\\" + buildType + "\\\\", "i"); // Quadruple backslashes because regular expressions require \ to be doubled, and so does JScript.
+
+	// Iterate over every new file:
+	for (i = 0; i < NewFiles.length; i++)
+	{
+		// Get the Yes/No/Don't know user-response for the current file:
+		var IncludeInInstaller = false;
+		var IncludeInLibrary = false;
+		var Guid = null;
+
+		var YesButton = document.getElementById('File' + i + 'Yes');
+		if (YesButton.checked)
+		{
+			IncludeInInstaller = true;
+			// Check if NewFile[i] already exists in FileLibrary and has a GUID.
+			// If it does, then use the existing guid.  Else create a new GUID and add it to FileLibrary.
+			var SelectString = "//File[translate(@Path, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + NewFiles[i].slice(RootFolder.length).toLowerCase().replace(re, "\\\${config}\\") + "']";
+			var LibSearch = xmlFileLibrary.selectSingleNode(SelectString);
+			if (LibSearch)
+				Guid = LibSearch.getAttribute("ComponentGuid");
+			else
+			{
+				Guid = CreateGuid();
+				IncludeInLibrary = true;
+			}
+		}
+		else
+		{
+			var NoButton = document.getElementById('File' + i + 'No');
+			if (NoButton.checked)
+				IncludeInLibrary = true;
+		}
+
+		if (IncludeInLibrary)
+		{
+			// Add the new file to the File Library, including its new GUID, if one has been generated:
+			var NewFileElement = xmlFileLibrary.createElement("File");
+			NewFileElement.setAttribute("Path", NewFiles[i].slice(RootFolder.length).replace(re, "\\\${config}\\"));
+			if (Guid)
+				NewFileElement.setAttribute("ComponentGuid", Guid);
+
+			var FirstFile = FileLibraryNode.selectSingleNode("File[1]");
+			FileLibraryNode.insertBefore(NewFileElement, FirstFile);
+			FileLibraryNode.insertBefore(xmlFiles.createTextNode("\n"), FirstFile);
+			FileLibraryNode.insertBefore(xmlFiles.createTextNode("\t"), FirstFile);
+
+			EditedLibrary = true;
+		}
+
+		if (IncludeInInstaller)
+		{
+			// Find which folder was selected for current file:
+			var FolderListElement = document.getElementById('DestinationFolder' + i);
+			var SelectedPathIndex = FolderListElement.value;
+			var iLastBackslash = NewFiles[i].lastIndexOf("\\");
+			var FileName = NewFiles[i].substr(iLastBackslash + 1);
+			var ShortFileName = GetShortFileName(NewFiles[i]);
+			var Id = MakeId(FileName);
+
+			var FolderNode = KnownFolders[SelectedPathIndex].Node;
+
+			// Create a string we can insert containing the correct number of tabs for this level of folder:
+			var TabLevel = KnownFolders[SelectedPathIndex].TabLevel;
+			var DirectoryTabs = "";
+			for (t = 0; t < TabLevel + 1; t++)
+				DirectoryTabs += "\t";
+
+			// Create the enveloping component node, using the WIX global namespace:
+			var NewComponentElement = xmlFiles.createNode(1, "Component", "http://schemas.microsoft.com/wix/2003/01/wi");
+			NewComponentElement.setAttribute("Id", Id);
+			NewComponentElement.setAttribute("Guid", Guid);
+
+			// Create the file node, using the WIX global namespace:
+			var NewFileElement = xmlFiles.createNode(1, "File", "http://schemas.microsoft.com/wix/2003/01/wi");
+			NewFileElement.setAttribute("Id", Id);
+			NewFileElement.setAttribute("Name", ShortFileName);
+			if (ShortFileName != FileName)
+				NewFileElement.setAttribute("LongName", FileName);
+			NewFileElement.setAttribute("ReadOnly", "yes");
+			NewFileElement.setAttribute("Source", NewFiles[i].slice(RootFolder.length).replace(re, "\\\${config}\\"));
+			NewFileElement.setAttribute("DiskId", "1");
+
+			// Add the new file node to the new component node, along with correct newlines and tabs:
+			NewComponentElement.appendChild(xmlFiles.createTextNode("\n"));
+			NewComponentElement.appendChild(xmlFiles.createTextNode(DirectoryTabs + "\t\t"));
+			NewComponentElement.appendChild(NewFileElement);
+			NewComponentElement.appendChild(xmlFiles.createTextNode("\n"));
+			NewComponentElement.appendChild(xmlFiles.createTextNode(DirectoryTabs + "\t"));
+
+			// Add new component node to start of existing folder node, along with correct newlines and tabs:
+			var FirstComponent = FolderNode.selectSingleNode("wix:Component[1]");
+			FolderNode.insertBefore(NewComponentElement, FirstComponent);
+			FolderNode.insertBefore(xmlFiles.createTextNode("\n"), FirstComponent);
+			FolderNode.insertBefore(xmlFiles.createTextNode(DirectoryTabs + "\t"), FirstComponent);
+
+			// Add a reference to the new component into the features file, using the WIX global namespace:
+			for (feature = 0; feature < WixFeatureNodes.length; feature++)
+			{
+				var FeatureCheckbox = document.getElementById('File' + i + 'Feature' + feature);
+				if (FeatureCheckbox.checked)
+				{
+					// Add new component ref node to start of existing feature node:
+					var FirstComponentRef = WixFeatureNodes[feature].selectSingleNode("wix:ComponentRef[1]");
+
+					var NewFeatureElement = xmlFeatures.createNode(1, "ComponentRef", "http://schemas.microsoft.com/wix/2003/01/wi");
+					NewFeatureElement.setAttribute("Id", Id);
+
+					WixFeatureNodes[feature].insertBefore(NewFeatureElement, FirstComponentRef);
+					WixFeatureNodes[feature].insertBefore(xmlFiles.createTextNode("\n"), FirstComponentRef);
+					WixFeatureNodes[feature].insertBefore(xmlFiles.createTextNode("\t\t\t"), FirstComponentRef);
+				}
+			}
+
+			EditedInstaller = true;
+		}
+	}
+
+	// Remove all user-deleted files from Files.wxs and Features.wxs:
+	for (i = 0; i < DeletedFiles.length; i++)
+	{
+		var DeleteCheckbox = document.getElementById('DeleteFile' + i);
+		if (DeleteCheckbox.checked)
+		{
+			var CurrentFile = DeletedFiles[i].toLowerCase();
+
+			// Remove RootFolder, if it exists:
+			if (CurrentFile.slice(0, RootFolder.length) == RootFolder.toLowerCase())
+				CurrentFile = CurrentFile.slice(RootFolder.length);
+
+			// Re-insert the ${config} variable where the built type string occurs:
+			CurrentFile = CurrentFile.replace(re, "\\\${config}\\");
+
+			// Find the file via its source path in the Files.wxs file:
+			var SelectString = "//wix:File[translate(@Source, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + CurrentFile.toLowerCase() + "']";
+			var condemnedFile = xmlFiles.selectSingleNode(SelectString);
+
+			// Get current file node's parent component:
+			var CondemnedNode = condemnedFile.selectSingleNode("..");
+			// Get the Component ID:
+			var ComponentId = CondemnedNode.getAttribute("Id").toLowerCase();
+			// Delete the component, via its parent:
+			CondemnedNode.selectSingleNode("..").removeChild(CondemnedNode);
+
+			// Find the references to the component in the Features.wxs file:
+			var ComponentRefSelectString = "//wix:ComponentRef[translate(@Id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + ComponentId.toLowerCase() + "']";
+			var condemnedFeatureFiles = xmlFeatures.selectNodes(ComponentRefSelectString);
+
+			// Delete all the references:
+			condemnedFeatureFiles.removeAll();
+
+			EditedInstaller = true;
+		}
+	}
+
+	if (EditedLibrary)
+	{
+		// Save modified FileLibrary:
+		var tso = fso.OpenTextFile(fso.BuildPath(GetDocumentFolder(), "FileLibrary.xml"), 2, true, 0);
+		tso.Write(xmlFileLibrary.xml);
+		tso.Close();
+	}
+	if (EditedInstaller)
+	{
+		// Save modified Files.wxs:
+		var tso = fso.OpenTextFile(fso.BuildPath(GetDocumentFolder(), "Files.wxs"), 2, true, 0);
+		tso.Write(xmlFiles.xml);
+		tso.Close();
+
+		// Save modified Features.wxs:
+		var tso = fso.OpenTextFile(fso.BuildPath(GetDocumentFolder(), "Features.wxs"), 2, true, 0);
+		tso.Write(xmlFeatures.xml);
+		tso.Close();
+	}
+	document.getElementById("PostSaveText").innerHTML = "Changes have been saved";
+	document.getElementById("GoButton").style.visibility = 'hidden';
+}
+
+// Returns a new GUID.
+function CreateGuid()
+{
+	return new ActiveXObject("Scriptlet.Typelib").Guid.substr(1,36);
+}
+
+function GetShortFileName(LongPath)
+{
+	var FileSpec = LongPath;
+	try
+	{
+		var f = fso.GetFile(FileSpec);
+	}
+	catch (e)
+	{
+		return "TODO";
+	}
+	return f.ShortName;
+}
+
+// Returns a suitable Id based on the given name. (Removes spaces, etc.)
+// Identifiers may contain ASCII characters A-Z, a-z, digits, underscores (_), or periods (.).
+// Every identifier must begin with either a letter or an underscore.
+// The Id must also be unique within Files.wxs, so an index number will be appended if necessary.
+function MakeId(Name)
+{
+	var Id = Name.split("");
+	var ValidChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.";
+	var ValidStartChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
+
+	for (iChar = 0; iChar < Id.length; iChar++)
+		if (ValidChars.indexOf(Id[iChar]) == -1)
+			Id[iChar] = "_";
+
+	var Base;
+	if (ValidStartChars.slice(0, ValidChars.length - 1).indexOf(Id[0]) == -1)
+		Base = "_" + Id.join("");
+	else
+		Base = Id.join("");
+
+	// Check if Id is unique:
+	var Match = 1;
+	var fFound = false;
+	while (!fFound)
+	{
+		var Candidate = Base;
+		if (Match > 1)
+			Candidate = Base + Match;
+
+		if (xmlFiles.selectNodes("//wix:Component[translate(@Id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + Candidate.toLowerCase() + "']").length == 0)
+			if (xmlFiles.selectNodes("//wix:File[translate(@Id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + Candidate.toLowerCase() + "']").length == 0)
+				fFound = true;
+		if (!fFound)
+			Match++;
+	}
+
+	if (Match > 1)
+		return Base + Match;
+
+	return Base;
+}
+
+// Recurses given FolderPath and returns an array of path strings of files in the folder and its subfolders.
+// Omits any files whose folders are in the global ExcludedFolders list.
+function GetFileList(FolderPath)
+{
+	var ResultList = new Array();
+
+	// Check if current Folder is a Subversion metadata folder:
+	if (FolderPath.slice(-4) == ".svn")
+		return ResultList; // Don't include SVN folders.
+
+	// Check if current Folder is excluded:
+	for (ex = 0; ex < ExcludedFolders.length; ex++)
+		if (FolderPath.toLowerCase() == ExcludedFolders[ex])
+			return ResultList;
+
+	// Add files in current folder:
+	var Folder = fso.GetFolder(FolderPath);
+	var FileIterator = new Enumerator(Folder.files);
+	for (; !FileIterator.atEnd(); FileIterator.moveNext())
+		ResultList.push(FileIterator.item().Path);
+
+	// Now recurse all subfolders:
+	var SubfolderIterator = new Enumerator(Folder.SubFolders);
+	for (; !SubfolderIterator.atEnd(); SubfolderIterator.moveNext())
+		ResultList = ResultList.concat(GetFileList(SubfolderIterator.item().Path));
+
+	return ResultList;
+}
+
+// Show instructions and feature key
+function ShowInstructions()
+{
+	var Instr = document.getElementById("Instructions");
+	Instr.innerHTML = "<h3>For each file to be included, please select which installer features should include the file, and which folder the file should end up in.</h3>"
+		+ "When you are done, click the Save Changes button at the bottom of the list.<br />";
+	if(NewFiles.length > 0)
+	{
+		Instr.innerHTML +=  "<h3>Feature key:</h3>"
+		+ '<table border="0" id="FeatureKeyTable">'
+		+ "<tr>"
+		+ '<th align="center"><big>ID</big></th>'
+		+ '<th align="center"><big>Description</big></th>'
+		+ '</tr>'
+		+ "</table>";
+	}
+	Instr.innerHTML += "<h3>Note that the following assumptions will be made. If any don't apply in your case, you will have to make changes manually to the WIX sources.</h3>"
+		+ "<ul>"
+		+ "<li> New files can only be added to existing folders known to the installer."
+		+ "<li> New files will be marked as read only on the end user's machine."
+		+ "<li> New files will be embedded in the main MSI file and not the movie CAB files."
+		+ "</ul>";
+
+	if(NewFiles.length > 0)
+	{
+		var FeatureKeyTable = document.getElementById("FeatureKeyTable");
+		for (i = 0; i <  WixFeatureNodes.length; i++)
+		{
+			var Id = WixFeatureNodes[i].getAttribute("Id");
+			var Description = WixFeatureNodes[i].getAttribute("Title");
+			var Row = FeatureKeyTable.insertRow(FeatureKeyTable.rows.length);
+			var Cell = Row.insertCell(Row.cells.length);
+			Cell.innerHTML = Id;
+			Cell.align="center"
+			Cell = Row.insertCell(Row.cells.length);
+			Cell.innerHTML = Description;
+			Cell.align="center"
+		}
+	}
+}
+
+</script>
+</head>
+
+<body onload="Initialize();" bgcolor="#F8F8C8">
+<span style="font-size:250%"><b>FieldWorks WIX Installer File List Update Tool </b></span>
+<br/><br/>
+<div id="BlockedContentWarning" style="position:static; visibility:visible">
+	<h2>Please make sure that blocked content <u>and</u> active scripts are enabled in your browser.</h2>
+</div>
+<div id="DOMDocumentError" style="position:absolute; visibility:hidden">
+	<h2>Error - mssing XML file.</h2>
+</div>
+<div id="StillInitializing" style="position:absolute; visibility:hidden">
+	<h2>Initializing - please wait a minute or two...</h2>
+</div>
+<div id="MainPage" style="position:absolute; visibility:hidden">
+	<div id="Instructions">
+		<button id="InstructionsButton" onclick="ShowInstructions();">
+			Show Instructions.
+		</button> Further explanation is in file "Use of WIX Installer System.doc" in this folder.
+	</div>
+
+	<div id="NewSection">
+		<h2>Below are listed all new files. Please indicate which should go in the installer.</h2>
+		<table border="1" id="NewFileTable">
+			<tr>
+				<th align="center"><big>New File</big></th>
+				<th align="center"><big>Required in installer?</big></th>
+				<th align="center"><big>Select installer features</big></th>
+				<th align="center"><big>Select destination folder</big></th>
+			</tr>
+		</table>
+	</div>
+	<div id="DeletedSection">
+		<h2>Below are listed all missing files. Please consider if they should be removed from the installer.</h2>
+		<h3>In addition, you can specify folders and files to add to your DirectoryScanPrivate.xml file, so they won't be considered in the future.</h3>
+		<table border="1" id="DeleteTable">
+			<tr>
+				<th align="center"><big>File</big></th>
+				<th align="center">
+					<big>Confirm Delete</big><br>
+					<button id="SelectAllDeleteButton" onclick='SelectAllDelete();'>Select All</button>
+					<button id="ClearAllDeleteButton" onclick='ClearAllDelete();'>Clear All</button>
+				</th>
+				<th align="center"><big>Add folder to<br>DirectoryScanPrivate.xml<br>exclusion list</big></th>
+				<th align="center"><big>Add file to<br>DirectoryScanPrivate.xml<br>exclusion list</big></th>
+			</tr>
+		</table>
+	</div>
+	<br />
+	<button id="GoButton" onclick='Go();' style="font-size:130%">Save Changes</button>
+	<h2 id="PostSaveText"></h2>
+</div>
+</body>
+</html>

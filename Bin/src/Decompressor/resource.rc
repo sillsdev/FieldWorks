@@ -1,0 +1,20 @@
+#include "winres.h"
+#include "resource.h"
+
+IDR_MAIN_ICON		ICON		"SIL.ico"
+
+IDD_DIALOG_STATUS DIALOGEX 0, 0, 400, 200
+CAPTION "FieldWorks Data File Decompression and Decryption Status"
+EXSTYLE WS_EX_APPWINDOW | WS_EX_TOPMOST
+STYLE DS_SETFONT | WS_POPUP | WS_CAPTION | DS_CENTER | WS_SYSMENU
+FONT 10, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+	EDITTEXT        IDC_EDIT_STATUS,1,1,398,198,ES_MULTILINE |
+					ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL
+END
+
+STRINGTABLE
+BEGIN
+	IDS_QUIT_TITLE	"Cancel Requested"
+	IDS_QUIT_MSG	"Decompressing or decrypting sometimes takes a few minutes, giving a false impression that it has hung. Are you sure you wish to cancel?"
+END

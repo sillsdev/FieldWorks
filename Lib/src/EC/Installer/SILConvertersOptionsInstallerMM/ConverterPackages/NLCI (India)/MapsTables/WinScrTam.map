@@ -1,0 +1,406 @@
+; Winscript Tamil.map
+;Copyright (c) 2002 NLCI
+
+; Mapping table for NLCI's Winscript Tamil font version 05
+; New version by rde based on prabakar_norman@kastanet.org Winscript  Tamil map:
+
+EncodingName			"NLCI-Tamil"
+DescriptiveName		    "Winscript  Tamil"
+Version			        "1.01"
+Contact			        "mailto:prabakar_norman@kastanet.org"
+RegistrationAuthority	"NLCI"
+RegistrationName		"Tamil-Winscript"
+
+RHSFlags			(ExpectsNFC)
+; modify in l57 and 159
+; change to one side conversion s
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 4: map byte codes to Unicodes
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; This pass deals with "basic" byte codes; it never sees the "presentation form"
+; byte codes for half forms/conjuncts/positional variants
+
+pass(Byte_Unicode)
+
+ByteClass[CTL] = ( 0 .. 31 127 )
+UniClass[CTL]  = ( 0 .. 31 127 )
+ByteClass [digit] = ( '0' .. '9' )
+UniClass[digit] = (U+0030 .. U+0039)
+ByteClass[tdigit] = (128 .. 140)
+UniClass [tdigit] = ( U+0BE6 .. U+0BF2 )
+
+[CTL] <> [CTL]
+[digit] <> [digit]
+[tdigit] <> [tdigit]
+
+
+32	<>	space
+33	<>	exclamation_mark
+34	<>	quotation_mark
+;35	<>	number_sign
+36	<>	rupee_sign
+37	<>	percent_sign
+38	<>	ampersand
+39	<>	apostrophe
+40	<>	left_parenthesis
+41	<>	right_parenthesis
+42	<>	asterisk
+43	<>	plus_sign
+44	<>	comma
+45	<>	hyphen_minus
+46	<>	full_stop
+47	<>	solidus
+58	<>	colon
+59	<>	semicolon
+60	<>	less_than_sign
+61	<>	equals_sign
+62	<>	greater_than_sign
+63	<>	question_mark
+;64	<>	devanagari_letter_vocalic_r
+;vowel
+65  <>  tamil_letter_a
+66  <>  tamil_letter_aa
+67  <>  tamil_letter_i
+68  <>  tamil_letter_ii
+69  <>  tamil_letter_u
+70  <>  tamil_letter_uu
+71  <>  tamil_letter_e
+72  <>  tamil_letter_ee
+73  <>  tamil_letter_ai
+74  <>  tamil_letter_o
+75  <>  tamil_letter_oo
+74 252   <>  tamil_letter_au
+; 65 to 75 defined in Byteclass
+; consonant
+76	<>	tamil_letter_ka
+77	<>	tamil_letter_nga
+78	<>	tamil_letter_ca
+79     <> 	tamil_letter_nya
+80   	<> 	tamil_letter_tta
+81 	<>	tamil_letter_nna
+82 	<> 	tamil_letter_ta
+83	<>	tamil_letter_na
+84 	<> 	tamil_letter_pa
+85	<>	tamil_letter_ma
+86 	<> 	tamil_letter_ya
+87 	<> 	tamil_letter_ra
+88 	<> 	tamil_letter_la
+89	<>	tamil_letter_va
+90 	<> 	tamil_letter_llla
+91	<>	tamil_letter_lla
+92	<>	tamil_letter_rra
+93	<>	tamil_letter_nnna
+94	<>	tamil_letter_sa
+95	<>	tamil_letter_ja
+96	<>	tamil_letter_ssa
+97     <> 	tamil_letter_ha
+
+;98  <>  not in Unicode
+;99  <>  not in Unicode
+; consonant with aa
+76 244	 <>	tamil_letter_ka tamil_vowel_sign_aa
+77 244	 <>	tamil_letter_nga tamil_vowel_sign_aa
+78 244	 <>	tamil_letter_ca tamil_vowel_sign_aa
+79 244  <> 	tamil_letter_nya tamil_vowel_sign_aa
+80 244  <> 	tamil_letter_tta tamil_vowel_sign_aa
+81 244	 <>	tamil_letter_nna tamil_vowel_sign_aa
+82 244	 <> 	tamil_letter_ta tamil_vowel_sign_aa
+83 244	 <>	tamil_letter_na tamil_vowel_sign_aa
+84 244	 <> 	tamil_letter_pa tamil_vowel_sign_aa
+85 244	 <>	tamil_letter_ma tamil_vowel_sign_aa
+86 244	 <> 	tamil_letter_ya tamil_vowel_sign_aa
+87 244	 <> 	tamil_letter_ra tamil_vowel_sign_aa
+88 244	 <> 	tamil_letter_la tamil_vowel_sign_aa
+89 244	 <>	tamil_letter_va tamil_vowel_sign_aa
+90 244	 <> 	tamil_letter_llla tamil_vowel_sign_aa
+91 244	 <>	tamil_letter_lla tamil_vowel_sign_aa
+92 244	 <>	tamil_letter_rra tamil_vowel_sign_aa
+93 244	 <>	tamil_letter_nnna tamil_vowel_sign_aa
+94 244	 <>	tamil_letter_sa tamil_vowel_sign_aa
+95 244	 <>	tamil_letter_ja tamil_vowel_sign_aa
+96 244	 <>	tamil_letter_ssa tamil_vowel_sign_aa
+97 244  <> 	tamil_letter_ha tamil_vowel_sign_aa
+
+100 	<>  tamil_letter_ka tamil_sign_virama
+101	<>  tamil_letter_nga tamil_sign_virama
+102	<>  tamil_letter_ca tamil_sign_virama
+103  	<>  tamil_letter_nya tamil_sign_virama
+104 	<>  tamil_letter_tta tamil_sign_virama
+105 	<>  tamil_letter_nna tamil_sign_virama
+106 	<>  tamil_letter_ta tamil_sign_virama
+107	<>  tamil_letter_na tamil_sign_virama
+108 	<>  tamil_letter_pa tamil_sign_virama
+109	<>  tamil_letter_ma tamil_sign_virama
+110 	<>  tamil_letter_ya tamil_sign_virama
+111 	<>  tamil_letter_ra tamil_sign_virama
+112 	<>  tamil_letter_la tamil_sign_virama
+113	<>  tamil_letter_va tamil_sign_virama
+114 	<>  tamil_letter_llla tamil_sign_virama
+115	<>  tamil_letter_lla tamil_sign_virama
+116    <>  tamil_letter_rra tamil_sign_virama
+117	<>  tamil_letter_nnna tamil_sign_virama
+118	<>  tamil_letter_sa tamil_sign_virama
+119	<>  tamil_letter_ja tamil_sign_virama
+120    <>  tamil_letter_ssa tamil_sign_virama
+121  	<>  tamil_letter_ha tamil_sign_virama
+
+
+;121	<>	not in Unicode
+;122 	<>  	not in Unicode
+;123	<>	not in Unicode
+;124	<>	not inUnicode
+;125	<>	not in Unicode
+;126	<>	not in Unicode
+
+; 128 to 140 are tamil numbers
+88 141 	>  tamil_letter_la tamil_vowel_sign_ai ;(old la for winscript to Unicode conversion)
+251 88 	<>  tamil_letter_la tamil_vowel_sign_ai ;(la for Unicode to winscript conversion)
+91 141 	>  tamil_letter_lla tamil_vowel_sign_ai
+251 91 	<>  tamil_letter_lla tamil_vowel_sign_ai
+
+142 	>  tamil_letter_nna tamil_vowel_sign_aa
+81 244 	<> 	tamil_letter_nna tamil_vowel_sign_aa
+
+143 	>  tamil_letter_rra tamil_vowel_sign_aa
+92 244	<>	tamil_letter_rra tamil_vowel_sign_aa
+
+144	>	tamil_letter_nnna tamil_vowel_sign_aa
+93 244	<>	tamil_letter_nnna tamil_vowel_sign_aa
+
+;145		Not in Unicode
+;146		Not in Unicode
+
+; 147 TO 160 IS NOT USED
+
+161	<>	tamil_letter_ka tamil_vowel_sign_i
+162	<>	tamil_letter_nga  tamil_vowel_sign_i
+163    <> 	tamil_letter_ca  tamil_vowel_sign_i
+164	<>	tamil_letter_nya  tamil_vowel_sign_i
+165	<>	tamil_letter_tta  tamil_vowel_sign_i
+166    <> 	tamil_letter_nna  tamil_vowel_sign_i
+167	<>	tamil_letter_ta  tamil_vowel_sign_i
+168    <> 	tamil_letter_na  tamil_vowel_sign_i
+169    <> 	tamil_letter_pa  tamil_vowel_sign_i
+170	<>	tamil_letter_ma  tamil_vowel_sign_i
+171    <> 	tamil_letter_ya  tamil_vowel_sign_i
+172	<>	tamil_letter_ra  tamil_vowel_sign_i
+173	<>	tamil_letter_la  tamil_vowel_sign_i
+174	<>	tamil_letter_va  tamil_vowel_sign_i
+175	<>	tamil_letter_llla  tamil_vowel_sign_i
+176	<>	tamil_letter_lla  tamil_vowel_sign_i
+177	<>	tamil_letter_rra  tamil_vowel_sign_i
+178 <> 	tamil_letter_nnna  tamil_vowel_sign_i
+179 <> 	tamil_letter_sa  tamil_vowel_sign_i
+180	<>	tamil_letter_ja tamil_vowel_sign_i
+181 <> 	tamil_letter_ssa  tamil_vowel_sign_i
+182	<>	tamil_letter_ha tamil_vowel_sign_i
+;183 Not in Unicode
+
+184	<>	tamil_letter_ka tamil_vowel_sign_ii
+185	<>	tamil_letter_nga  tamil_vowel_sign_ii
+186 <>  tamil_letter_ca  tamil_vowel_sign_ii
+187	<>	tamil_letter_nya  tamil_vowel_sign_ii
+188	<>	tamil_letter_tta  tamil_vowel_sign_ii
+189 <> 	tamil_letter_nna  tamil_vowel_sign_ii
+190	<>	tamil_letter_ta  tamil_vowel_sign_ii
+191 <>  tamil_letter_na  tamil_vowel_sign_ii
+192 <> 	tamil_letter_pa  tamil_vowel_sign_ii
+193	<>	tamil_letter_ma  tamil_vowel_sign_ii
+194 <>  tamil_letter_ya  tamil_vowel_sign_ii
+195	<>	tamil_letter_ra  tamil_vowel_sign_ii
+196	<>	tamil_letter_la  tamil_vowel_sign_ii
+197	<>	tamil_letter_va  tamil_vowel_sign_ii
+198	<>	tamil_letter_llla  tamil_vowel_sign_ii
+199	<>	tamil_letter_lla  tamil_vowel_sign_ii
+200	<>	tamil_letter_rra  tamil_vowel_sign_ii
+201    <>  tamil_letter_nnna  tamil_vowel_sign_ii
+202    <>  tamil_letter_sa  tamil_vowel_sign_ii
+203	<> 	tamil_letter_ja tamil_vowel_sign_ii
+204    <>  tamil_letter_ssa  tamil_vowel_sign_ii
+205	<> 	tamil_letter_ha tamil_vowel_sign_ii
+;206	Not in Unicode
+
+207	<>	tamil_letter_ka tamil_vowel_sign_u
+208	<>	tamil_letter_nga  tamil_vowel_sign_u
+209    <>  tamil_letter_ca  tamil_vowel_sign_u
+210	<>	tamil_letter_nya  tamil_vowel_sign_u
+211	<>	tamil_letter_tta  tamil_vowel_sign_u
+212    <> 	tamil_letter_nna  tamil_vowel_sign_u
+213	<>	tamil_letter_ta  tamil_vowel_sign_u
+214    <> 	tamil_letter_na  tamil_vowel_sign_u
+215    <> 	tamil_letter_pa  tamil_vowel_sign_u
+216	<>	tamil_letter_ma  tamil_vowel_sign_u
+217    <>     tamil_letter_ya  tamil_vowel_sign_u
+218	<>	tamil_letter_ra  tamil_vowel_sign_u
+219	<>	tamil_letter_la  tamil_vowel_sign_u
+220	<>	tamil_letter_va  tamil_vowel_sign_u
+221	<>	tamil_letter_llla  tamil_vowel_sign_u
+222	<>	tamil_letter_lla  tamil_vowel_sign_u
+223	<>	tamil_letter_rra  tamil_vowel_sign_u
+224	<> 	tamil_letter_nnna  tamil_vowel_sign_u
+94 247 <> 	tamil_letter_sa  tamil_vowel_sign_u
+95 247	<> 	tamil_letter_ja tamil_vowel_sign_u
+96 247 <> 	tamil_letter_ssa  tamil_vowel_sign_u
+97 247	<> 	tamil_letter_ha tamil_vowel_sign_u
+
+225	 <>	tamil_letter_ka tamil_vowel_sign_uu
+226	 <>	tamil_letter_nga  tamil_vowel_sign_uu
+227     <>    tamil_letter_ca  tamil_vowel_sign_uu
+228	 <>	tamil_letter_nya  tamil_vowel_sign_uu
+229	 <>	tamil_letter_tta  tamil_vowel_sign_uu
+230     <> 	tamil_letter_nna  tamil_vowel_sign_uu
+231	 <>	tamil_letter_ta  tamil_vowel_sign_uu
+232     <>    tamil_letter_na  tamil_vowel_sign_uu
+233     <> 	tamil_letter_pa  tamil_vowel_sign_uu
+234	 <>	tamil_letter_ma  tamil_vowel_sign_uu
+235     <>    tamil_letter_ya  tamil_vowel_sign_uu
+236	 <>	tamil_letter_ra  tamil_vowel_sign_uu
+237	 <>	tamil_letter_la  tamil_vowel_sign_uu
+238	 <>	tamil_letter_va  tamil_vowel_sign_uu
+239	 <>	tamil_letter_llla  tamil_vowel_sign_uu
+240	 <>	tamil_letter_lla  tamil_vowel_sign_uu
+241	 <>	tamil_letter_rra  tamil_vowel_sign_uu
+242     <>    tamil_letter_nnna  tamil_vowel_sign_uu
+94 248  <>    tamil_letter_sa  tamil_vowel_sign_uu
+95 248	 <> 	tamil_letter_ja tamil_vowel_sign_uu
+96 248  <>    tamil_letter_ssa  tamil_vowel_sign_uu
+97 248	 <> 	tamil_letter_ha tamil_vowel_sign_uu
+
+249 76	 <>  tamil_letter_ka tamil_vowel_sign_e
+249 77	 <>  tamil_letter_nga  tamil_vowel_sign_e
+249 78	 <>  tamil_letter_ca  tamil_vowel_sign_e
+249 79	 <>  tamil_letter_nya  tamil_vowel_sign_e
+249 80	 <>  tamil_letter_tta  tamil_vowel_sign_e
+249 81	 <>  tamil_letter_nna  tamil_vowel_sign_e
+249 82	 <>  tamil_letter_ta  tamil_vowel_sign_e
+249 83	 <>  tamil_letter_na  tamil_vowel_sign_e
+249 84	 <>  tamil_letter_pa  tamil_vowel_sign_e
+249 85	 <>  tamil_letter_ma  tamil_vowel_sign_e
+249 86	 <>  tamil_letter_ya  tamil_vowel_sign_e
+249 87	 <>  tamil_letter_ra  tamil_vowel_sign_e
+249 88	 <>  tamil_letter_la  tamil_vowel_sign_e
+249 89	 <>  tamil_letter_va  tamil_vowel_sign_e
+249 90	 <>  tamil_letter_llla  tamil_vowel_sign_e
+249 91	 <>  tamil_letter_lla  tamil_vowel_sign_e
+249 92	 <>  tamil_letter_rra  tamil_vowel_sign_e
+249 93	 <>  tamil_letter_nnna  tamil_vowel_sign_e
+249 94	 <>  tamil_letter_sa tamil_vowel_sign_e
+249 95	 <>  tamil_letter_ja tamil_vowel_sign_e
+249 96	 <>  tamil_letter_ssa tamil_vowel_sign_e
+249 97  <>  tamil_letter_ha tamil_vowel_sign_e
+
+250 76	 <>  tamil_letter_ka tamil_vowel_sign_ee
+250 77	 <>  tamil_letter_nga  tamil_vowel_sign_ee
+250 78	 <>  tamil_letter_ca  tamil_vowel_sign_ee
+250 79	 <>  tamil_letter_nya  tamil_vowel_sign_ee
+250 80	 <>  tamil_letter_tta  tamil_vowel_sign_ee
+250 81	 <>  tamil_letter_nna  tamil_vowel_sign_ee
+250 82	 <>  tamil_letter_ta  tamil_vowel_sign_ee
+250 83	 <>  tamil_letter_na  tamil_vowel_sign_ee
+250 84	 <>  tamil_letter_pa  tamil_vowel_sign_ee
+250 85	 <>  tamil_letter_ma  tamil_vowel_sign_ee
+250 86	 <>  tamil_letter_ya  tamil_vowel_sign_ee
+250 87	 <>  tamil_letter_ra  tamil_vowel_sign_ee
+250 88	 <>  tamil_letter_la  tamil_vowel_sign_ee
+250 89	 <>  tamil_letter_va  tamil_vowel_sign_ee
+250 90	 <>  tamil_letter_llla  tamil_vowel_sign_ee
+250 91	 <>  tamil_letter_lla  tamil_vowel_sign_ee
+250 92	 <>  tamil_letter_rra  tamil_vowel_sign_ee
+250 93	 <>  tamil_letter_nnna  tamil_vowel_sign_ee
+250 94	 <>  tamil_letter_sa tamil_vowel_sign_ee
+250 95	 <>  tamil_letter_ja tamil_vowel_sign_ee
+250 96	 <>  tamil_letter_ssa tamil_vowel_sign_ee
+250 97  <>  tamil_letter_ha tamil_vowel_sign_ee
+
+251 76	 <>	tamil_letter_ka tamil_vowel_sign_ai
+251 77	 <>	tamil_letter_nga  tamil_vowel_sign_ai
+251 78	 <>    tamil_letter_ca  tamil_vowel_sign_ai
+251 79	 <>	tamil_letter_nya  tamil_vowel_sign_ai
+251 80	 <>	tamil_letter_tta  tamil_vowel_sign_ai
+251 81	 <> 	tamil_letter_nna  tamil_vowel_sign_ai
+251 82	 <>	tamil_letter_ta  tamil_vowel_sign_ai
+251 83	 <>    tamil_letter_na  tamil_vowel_sign_ai
+251 84	 <> 	tamil_letter_pa  tamil_vowel_sign_ai
+251 85	 <>	tamil_letter_ma  tamil_vowel_sign_ai
+251 86	 <>    tamil_letter_ya  tamil_vowel_sign_ai
+251 87	 <>	tamil_letter_ra  tamil_vowel_sign_ai
+251 88	 <>	tamil_letter_la  tamil_vowel_sign_ai
+251 89	 <>	tamil_letter_va  tamil_vowel_sign_ai
+251 90	 <>	tamil_letter_llla  tamil_vowel_sign_ai
+251 91	 <>	tamil_letter_lla  tamil_vowel_sign_ai
+251 92	 <>	tamil_letter_rra  tamil_vowel_sign_ai
+251 93	 <> 	tamil_letter_nnna  tamil_vowel_sign_ai
+251 94	 <>	tamil_letter_sa tamil_vowel_sign_ai
+251 95	 <>	tamil_letter_ja tamil_vowel_sign_ai
+251 96	 <>	tamil_letter_ssa tamil_vowel_sign_ai
+251 97  <>    tamil_letter_ha tamil_vowel_sign_ai
+
+249 76 244	<>  0x0b95 0x0bca ;  tamil_letter_ka tamil_vowel_sign_o
+249 77 244	<>  tamil_letter_nga tamil_vowel_sign_o
+249 78 244	<>  tamil_letter_ca tamil_vowel_sign_o
+249 79 244	<>  tamil_letter_nya tamil_vowel_sign_o
+249 80 244	<>  tamil_letter_tta tamil_vowel_sign_o
+249 81 244	<>  tamil_letter_nna tamil_vowel_sign_o
+249 82 244	<>  tamil_letter_ta tamil_vowel_sign_o
+249 83 244	<>  tamil_letter_na tamil_vowel_sign_o
+249 84 244	<>  tamil_letter_pa tamil_vowel_sign_o
+249 85 244	<>  tamil_letter_ma tamil_vowel_sign_o
+249 86 244	<>  tamil_letter_ya tamil_vowel_sign_o
+249 87 244	<>  tamil_letter_ra tamil_vowel_sign_o
+249 88 244	<>  tamil_letter_la tamil_vowel_sign_o
+249 89 244	<>  tamil_letter_va tamil_vowel_sign_o
+249 90 244	<>  tamil_letter_llla tamil_vowel_sign_o
+249 91 244	<>  tamil_letter_lla tamil_vowel_sign_o
+249 92 244	<>  tamil_letter_rra tamil_vowel_sign_o
+249 93 244	<>  tamil_letter_nnna tamil_vowel_sign_o
+249 94 244	<>  tamil_letter_sa tamil_vowel_sign_o
+249 95 244	<>  tamil_letter_ja tamil_vowel_sign_o
+249 96 244	<>  tamil_letter_ssa tamil_vowel_sign_o
+249 97 244	<>  tamil_letter_ha tamil_vowel_sign_o
+
+250 76 244	<>  tamil_letter_ka tamil_vowel_sign_oo
+250 77 244	<>  tamil_letter_nga tamil_vowel_sign_oo
+250 78 244	<>  tamil_letter_ca tamil_vowel_sign_oo
+250 79 244	<>  tamil_letter_nya tamil_vowel_sign_oo
+250 80 244	<>  tamil_letter_tta tamil_vowel_sign_oo
+250 81 244	<>  tamil_letter_nna tamil_vowel_sign_oo
+250 82 244	<>  tamil_letter_ta tamil_vowel_sign_oo
+250 83 244	<>  tamil_letter_na tamil_vowel_sign_oo
+250 84 244	<>  tamil_letter_pa tamil_vowel_sign_oo
+250 85 244	<>  tamil_letter_ma tamil_vowel_sign_oo
+250 86 244	<>  tamil_letter_ya tamil_vowel_sign_oo
+250 87 244	<>  tamil_letter_ra tamil_vowel_sign_oo
+250 88 244	<>  tamil_letter_la tamil_vowel_sign_oo
+250 89 244	<>  tamil_letter_va tamil_vowel_sign_oo
+250 90 244	<>  tamil_letter_llla tamil_vowel_sign_oo
+250 91 244	<>  tamil_letter_lla tamil_vowel_sign_oo
+250 92 244	<>  tamil_letter_rra tamil_vowel_sign_oo
+250 93 244	<>  tamil_letter_nnna tamil_vowel_sign_oo
+250 94 244	<>  tamil_letter_sa tamil_vowel_sign_oo
+250 95 244	<>  tamil_letter_ja tamil_vowel_sign_oo
+250 96 244	<>  tamil_letter_ssa tamil_vowel_sign_oo
+250 97 244	<>  tamil_letter_ha tamil_vowel_sign_oo
+
+249 76 252	<>  tamil_letter_ka tamil_vowel_sign_au
+249 77 252	<>  tamil_letter_nga tamil_vowel_sign_au
+249 78 252	<>  tamil_letter_ca tamil_vowel_sign_au
+249 79 252	<>  tamil_letter_nya tamil_vowel_sign_au
+249 80 252	<>  tamil_letter_tta tamil_vowel_sign_au
+249 81 252	<>  tamil_letter_nna tamil_vowel_sign_au
+249 82 252	<>  tamil_letter_ta tamil_vowel_sign_au
+249 83 252	<>  tamil_letter_na tamil_vowel_sign_au
+249 84 252 	<>  tamil_letter_pa tamil_vowel_sign_au
+249 85 252	<>  tamil_letter_ma tamil_vowel_sign_au
+249 86 252	<>  tamil_letter_ya tamil_vowel_sign_au
+249 87 252	<>  tamil_letter_ra tamil_vowel_sign_au
+249 88 252	<>  tamil_letter_la tamil_vowel_sign_au
+249 89 252	<>  tamil_letter_va tamil_vowel_sign_au
+249 90 252	<>  tamil_letter_llla tamil_vowel_sign_au
+249 91 252	<>  tamil_letter_lla tamil_vowel_sign_au
+249 92 252	<>  tamil_letter_rra tamil_vowel_sign_au
+249 93 252	<>  tamil_letter_nnna tamil_vowel_sign_au
+249 94 252	<>  tamil_letter_sa tamil_vowel_sign_au
+249 95 252	<>  tamil_letter_ja tamil_vowel_sign_au
+249 96 252	<>  tamil_letter_ssa tamil_vowel_sign_au
+249 97 252	<>  tamil_letter_ha tamil_vowel_sign_au

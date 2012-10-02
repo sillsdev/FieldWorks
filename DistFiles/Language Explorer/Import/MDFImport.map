@@ -1,0 +1,365 @@
+<!--=====================================================================
+Mapping file to import MDF standard format files into FieldWorks or some other application.
+See documentation in Lexicon Import.htm for information on customizing/using this file.
+=====================================================================-->
+<sfmMapping>
+
+<!--=====================================================================
+Global Settings
+=====================================================================-->
+<settings>
+<meaning app="fw.sil.org"/>
+</settings>
+
+<!--=====================================================================
+Language Definitions
+=====================================================================-->
+<languages>
+<langDef id="English" xml:lang="en" map="Windows1252&lt;&gt;Unicode"/>
+<langDef id="Vernacular" xml:lang ="Vernacular" map="Windows1252&lt;&gt;Unicode"/>
+<langDef id="Regional" xml:lang ="ignore" map="Windows1252&lt;&gt;Unicode"/>
+<langDef id="National" xml:lang ="ignore" map="Windows1252&lt;&gt;Unicode"/>
+</languages>
+
+<!--=====================================================================
+Level Hierarchy
+=====================================================================-->
+<hierarchy>
+<level name="Entry" partOf="records" beginFields="lx" additionalFields="a bw ce cf cn cr dt hm lc mn mr ph" multiFields="a bw ce cf cn cr lc mn mr ph"/>
+<level name="Subentry" partOf="Entry" beginFields="se" additionalFields="bw ce cf cn cr mn mr ph" multiFields="bw ce cf cn cr mn mr ph"/>
+<level name="Sense" partOf="Entry Subentry" beginFields="ge ps sn" additionalFields="1d 1e 1i 1p 1s 2d 2p 2s 3d 3p 3s 4d 4p 4s an bb de dn dr dv ee en er ev gn gr gv lt na nd ng np nq ns nt oe on or ov pc pd pde pdl pdn pdr pdv pl pn rd re rn rr sc sg so st sy tb ue un ur uv we wn wr" multiFields="1d 1e 1i 1p 1s 2d 2p 2s 3d 3p 3s 4d 4p 4s an bb de dn dr dv ee en er ev ge gn gr gv is lt na nd ng np nq ns nt oe on or ov pc pd pde pdl pdn pdr pdv pl pn rd re rn rr sc sd sg so st sy tb th ue un ur uv we wn wr"/>
+<level name="Etymology" partOf="Entry Subentry" beginFields="et" additionalFields="ec eg es" multiFields="ec eg"/>
+<level name="Example" partOf="Sense" beginFields="rf xv" additionalFields="xe xn xr" multiFields="xe xn xr"/>
+<level name="Function" partOf="Sense" beginFields="lf" additionalFields="lv"/>
+<level name="SemanticDomain" partOf="Sense" beginFields="is" additionalFields="sd th"/>
+<level name="Picture" partOf="Sense" beginFields="pc" additionalFields=""/>
+<level name="Pronunciation" partOf="Entry Subentry" beginFields="ph" additionalFields=""/>
+<level name="Variant" partOf="Entry Subentry" beginFields="va" additionalFields="ve vn vr"/>
+</hierarchy>
+
+<!--=====================================================================
+Field Descriptions
+=====================================================================-->
+<fieldDescriptions>
+<field sfm="1d" name="First dual" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="1e" name="First plural exclusive" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="1i" name="First plural inclusive" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="1p" name="First plural" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="1s" name="First singular" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="2d" name="Second dual" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="2p" name="Second plural" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="2s" name="Second singular" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="3d" name="Third dual" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="3p" name="Third plural" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="3s" name="Third singular" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="4d" name="Non-animate dual" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="4p" name="Non-animate plural" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="4s" name="Non-animate singular" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="a" name="Allomorph" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="allo"/>
+</field>
+<field sfm="an" name="Antonym Lexical Relation" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="lxrel" funcWS="en" func="Antonym"/>
+</field>
+<field sfm="bb" name="Bibliography" type="string" lang="English">
+<meaning app="fw.sil.org" id="sbib"/>
+</field>
+<field sfm="bw" name="Borrowed word (loan)" type="string" lang="English">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="ce" name="Cross-ref. gloss (English)" type="string" lang="English">
+<meaning app="fw.sil.org" id="eires"/>
+</field>
+<field sfm="cf" name="Compare Cross Reference" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="cref" funcWS="en" func="Compare"/>
+</field>
+<field sfm="cn" name="Cross-ref. gloss (national)" type="string" lang="National">
+<meaning app="fw.sil.org" id="eires"/>
+</field>
+<field sfm="cr" name="Cross-ref. gloss (regional)" type="string" lang="National">
+<meaning app="fw.sil.org" id="eires"/>
+</field>
+<field sfm="de" name="Definition" type="string" lang="English">
+<meaning app="fw.sil.org" id="def"/>
+</field>
+<field sfm="dn" name="Definition" type="string" lang="National">
+<meaning app="fw.sil.org" id="def"/>
+</field>
+<field sfm="dr" name="Definition" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="def"/>
+</field>
+<field sfm="dt" name="Date Modified" type="date" lang="English">
+<meaning app="fw.sil.org" id="mod"/>
+</field>
+<field sfm="dv" name="Definition" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="def"/>
+</field>
+<field sfm="ec" name="Etymology Comment" type="string" lang="English">
+<meaning app="fw.sil.org" id="etc"/>
+</field>
+<field sfm="ee" name="Encyclopedic Information" type="string" lang="English">
+<meaning app="fw.sil.org" id="enc"/>
+</field>
+<field sfm="eg" name="Etymology Gloss" type="string" lang="English">
+<meaning app="fw.sil.org" id="etg"/>
+</field>
+<field sfm="en" name="Encyclopedic Information" type="string" lang="National">
+<meaning app="fw.sil.org" id="enc"/>
+</field>
+<field sfm="er" name="Encyclopedic Information" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="enc"/>
+</field>
+<field sfm="es" name="Etymology Source" type="string" lang="English">
+<meaning app="fw.sil.org" id="ets"/>
+</field>
+<field sfm="et" name="Etymology (proto form)" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="etf"/>
+</field>
+<field sfm="ev" name="Encyclopedic Information" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="enc"/>
+</field>
+<field sfm="ge" name="Gloss" type="string" lang="English">
+<meaning app="fw.sil.org" id="glos"/>
+</field>
+<field sfm="gn" name="Gloss" type="string" lang="National">
+<meaning app="fw.sil.org" id="glos"/>
+</field>
+<field sfm="gr" name="Gloss" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="glos"/>
+</field>
+<field sfm="gv" name="Gloss" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="glos"/>
+</field>
+<field sfm="hm" name="Homonym number" type="integer" lang="English">
+<meaning app="fw.sil.org" id="hom"/>
+</field>
+<field sfm="is" name="Semantic Domain" type="string" lang="English" abbr="true">
+<meaning app="fw.sil.org" id="sem"/>
+</field>
+<field sfm="lc" name="Citation Form" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="cit"/>
+</field>
+<field sfm="le" name="Lexical function gloss (English)" type="string" lang="English">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="lf" name="Lexical Function" type="string" lang="English" abbr="true">
+<meaning app="fw.sil.org" id="func"/>
+</field>
+<!--field sfm="lf" name="Lexical Function and Lexeme" type="string" lang="Vernacular" abbr="true">
+<meaning app="fw.sil.org" id="funold"/>
+</field-->
+<field sfm="ln" name="Lexical function gloss (national)" type="string" lang="National">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="lr" name="Lexical function gloss (regional)" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="lt" name="Literally" type="string" lang="English">
+<meaning app="fw.sil.org" id="litm"/>
+</field>
+<field sfm="lv" name="Lexical Function Lexeme" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="funlex"/>
+</field>
+<field sfm="lx" name="Lexeme" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="lex"/>
+</field>
+<field sfm="mn" name="Main Entry Reference" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="meref"/>
+</field>
+<field sfm="mr" name="Morphology" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="eires"/>
+</field>
+<field sfm="na" name="Anthro  Note" type="string" lang="English">
+<meaning app="fw.sil.org" id="anote"/>
+</field>
+<field sfm="nd" name="Discourse Note" type="string" lang="English">
+<meaning app="fw.sil.org" id="dnote"/>
+</field>
+<field sfm="ng" name="GrammarNote" type="string" lang="English">
+<meaning app="fw.sil.org" id="grnote"/>
+</field>
+<field sfm="np" name="Phonology Note" type="string" lang="English">
+<meaning app="fw.sil.org" id="pnote"/>
+</field>
+<field sfm="nq" name="Notes (questions)" type="string" lang="English">
+<meaning app="fw.sil.org" id="gnote"/>
+</field>
+<field sfm="ns" name="Sociolinguistics Note" type="string" lang="English">
+<meaning app="fw.sil.org" id="slnote"/>
+</field>
+<field sfm="nt" name="General Note" type="string" lang="English">
+<meaning app="fw.sil.org" id="gnote"/>
+</field>
+<field sfm="oe" name="Restrictions" type="string" lang="English">
+<meaning app="fw.sil.org" id="srest"/>
+</field>
+<field sfm="on" name="Restrictions" type="string" lang="National">
+<meaning app="fw.sil.org" id="srest"/>
+</field>
+<field sfm="or" name="Restrictions" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="srest"/>
+</field>
+<field sfm="ov" name="Restrictions" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="srest"/>
+</field>
+<field sfm="pc" name="Picture" type="string" lang="English">
+<meaning app="fw.sil.org" id="picf"/>
+</field>
+<field sfm="pd" name="Paradigm" type="string" lang="English">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="pde" name="Paradigm form gloss (English)" type="string" lang="English">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="pdl" name="Paradigm label" type="string" lang="English">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="pdn" name="Paradigm form gloss (national)" type="string" lang="National">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="pdr" name="Paradigm form gloss (regional)" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="pdv" name="Paradigm form" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="ph" name="Phonetic form" type="string" lang="phonetic">
+<meaning app="fw.sil.org" id="prnf"/>
+</field>
+<field sfm="pl" name="Plural form" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="pn" name="Part of speech (national)" type="string" lang="National">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="ps" name="Part of Speech" type="string" lang="English" abbr="true">
+<meaning app="fw.sil.org" id="pos"/>
+</field>
+<field sfm="rd" name="Reduplication form(s)" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="re" name="Reversal" type="string" lang="English">
+<meaning app="fw.sil.org" id="rev"/>
+</field>
+<field sfm="rf" name="Reference of Example Sentence" type="string" lang="English">
+<meaning app="fw.sil.org" id="ref"/>
+</field>
+<field sfm="rn" name="Reversal" type="string" lang="National">
+<meaning app="fw.sil.org" id="rev"/>
+</field>
+<field sfm="rr" name="Reversal" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="rev"/>
+</field>
+<field sfm="sc" name="Scientific Name" type="string" lang="English">
+<meaning app="fw.sil.org" id="sci"/>
+</field>
+<field sfm="sd" name="Semantic Domain English Name" type="string" lang="English">
+<meaning app="fw.sil.org" id="seme"/>
+</field>
+<field sfm="se" name="Subentry" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sub" funcWS="en" func="Derivative"/>
+</field>
+<field sfm="sg" name="Singular form" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="sn" name="Sense Number" type="string" lang="English">
+<meaning app="fw.sil.org" id="sn"/>
+</field>
+<field sfm="so" name="Source" type="string" lang="English">
+<meaning app="fw.sil.org" id="src"/>
+</field>
+<field sfm="st" name="Status" type="string" lang="English">
+<meaning app="fw.sil.org" id="stat"/>
+</field>
+<field sfm="sy" name="Synonym Lexical Relation" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="lxrel" funcWS="en" func="Synonyms"/>
+</field>
+<field sfm="tb" name="Table" type="string" lang="English">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="th" name="Semantic Domain Vernacular Name" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="semv"/>
+</field>
+<field sfm="ue" name="Usage" type="string" lang="English">
+<meaning app="fw.sil.org" id="utyp"/>
+</field>
+<field sfm="un" name="Usage (national)" type="string" lang="National">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="ur" name="Usage (regional)" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="uv" name="Usage (vernacular)" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="va" name="Variant" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="var" funcWS="en" func="Irregularly Inflected Form" />
+</field>
+<field sfm="ve" name="Variant Comment" type="string" lang="English">
+<meaning app="fw.sil.org" id="varc"/>
+</field>
+<field sfm="vn" name="Variant Comment" type="string" lang="National">
+<meaning app="fw.sil.org" id="varc"/>
+</field>
+<field sfm="vr" name="Variant Comment" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="varc"/>
+</field>
+<field sfm="we" name="Word-level gloss (English)" type="string" lang="English">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="wn" name="Word-level gloss (national)" type="string" lang="National">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="wr" name="Word-level gloss (regional)" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="sires"/>
+</field>
+<field sfm="xe" name=" Translation of Example Sentence" type="string" lang="English">
+<meaning app="fw.sil.org" id="trans"/>
+</field>
+<field sfm="xn" name="Translation of Example Sentence" type="string" lang="National">
+<meaning app="fw.sil.org" id="trans"/>
+</field>
+<field sfm="xr" name="Translation of Example Sentence" type="string" lang="Regional">
+<meaning app="fw.sil.org" id="trans"/>
+</field>
+<field sfm="xv" name="Example Sentence in Vernacular" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="sent"/>
+</field>
+</fieldDescriptions>
+
+<!--=====================================================================
+In Field Markers (inline markers)
+=====================================================================-->
+<inFieldMarkers>
+	<!-- <ifm element="Remove" begin="|xx" end="*|xx" ignore="true" lang="Vernacular" style="Emphasized Text"/> -->
+</inFieldMarkers>
+
+</sfmMapping>

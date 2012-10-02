@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<xs:schema id="AdaptItKnowledgeBase" targetNamespace="http://www.sil.org/computing/schemas/AdaptIt KB.xsd"
+	xmlns:mstns="http://www.sil.org/computing/schemas/AdaptIt KB.xsd" xmlns="http://www.sil.org/computing/schemas/AdaptIt KB.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+	attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:element name="AdaptItKnowledgeBase" msdata:IsDataSet="true" msdata:EnforceConstraints="false">
+	<xs:complexType>
+	  <xs:sequence>
+		<xs:element name="KB" minOccurs="1" maxOccurs="1">
+		  <xs:complexType>
+			<xs:sequence>
+			  <xs:element name="MAP" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+				  <xs:sequence>
+					<xs:element name="TU" minOccurs="0" maxOccurs="unbounded">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element name="RS" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+							  <xs:attribute name="n" form="unqualified" type="xs:string" />
+							  <xs:attribute name="a" form="unqualified" type="xs:string" />
+							</xs:complexType>
+						  </xs:element>
+						</xs:sequence>
+						<xs:attribute name="f" form="unqualified" type="xs:string" />
+						<xs:attribute name="k" form="unqualified" type="xs:string" use="required" />
+					  </xs:complexType>
+					</xs:element>
+				  </xs:sequence>
+				  <xs:attribute name="mn" form="unqualified" type="xs:string" use="required" />
+				</xs:complexType>
+			  </xs:element>
+			</xs:sequence>
+			<xs:attribute name="docVersion" form="unqualified" type="xs:string" />
+			<xs:attribute name="srcName" form="unqualified" type="xs:string" />
+			<xs:attribute name="tgtName" form="unqualified" type="xs:string" />
+			<xs:attribute name="max" form="unqualified" type="xs:string" />
+		  </xs:complexType>
+		</xs:element>
+	  </xs:sequence>
+	</xs:complexType>
+	<xs:key name="MNKey" msdata:PrimaryKey="true">
+	  <xs:selector xpath=".//mstns:MAP" />
+	  <xs:field xpath="@mn" />
+	</xs:key>
+	<xs:key name="KKey" msdata:PrimaryKey="true">
+	  <xs:selector xpath=".//mstns:TU" />
+	  <xs:field xpath="@k" />
+	</xs:key>
+  </xs:element>
+</xs:schema>

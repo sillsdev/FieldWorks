@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================
+FXT to generate output for Morph Sketch Generator (for Stage 1)
+================================================================
+Revision History is at the end of this file.
+-->
+<M3Dump>
+   <template>
+	  <class name="LangProject">
+		 <LangProject>
+			<Name>
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</Name>
+			<Description>
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</Description>
+			<MainCountry>
+			   <string simpleProperty="MainCountry"  ws="BestAnalysis"/>
+			</MainCountry>
+			<VernWss>
+			   <objVector objProperty="CurVernWssRS"/>
+			</VernWss>
+			<AnalysisWss>
+			   <objVector objProperty="CurAnalysisWssRS"/>
+			</AnalysisWss>
+		 </LangProject>
+		 <group objProperty="PartsOfSpeechOA">
+			<PartsOfSpeech>
+			   <objVector objProperty="PossibilitiesOS" cached="true"/>
+			</PartsOfSpeech>
+		 </group>
+		 <objAtomic objProperty="PhonologicalDataOA"/>
+		 <objAtomic objProperty="MorphologicalDataOA"/>
+		 <group objProperty="LexDbOA">
+			<group objProperty="MorphTypesOA">
+			   <MoMorphTypes>
+				  <objVector objProperty="PossibilitiesOS"/>
+			   </MoMorphTypes>
+			</group>
+			<Lexicon>
+			   <Entries>
+				  <objVector objProperty="EntriesOC"/>
+			   </Entries>
+			   <MorphoSyntaxAnalyses>
+				  <objVector objProperty="AllMSAs"/>
+			   </MorphoSyntaxAnalyses>
+			   <Senses>
+				  <objVector objProperty="AllSenses"/>
+			   </Senses>
+			   <Allomorphs>
+				  <objVector objProperty="AllAllomorphs"/>
+			   </Allomorphs>
+			</Lexicon>
+		 </group>
+		 <FeatureSystem>
+			<objAtomic objProperty="MsFeatureSystemOA"/>
+		 </FeatureSystem>
+		 <PhFeatureSystem>
+			<objAtomic objProperty="PhFeatureSystemOA"/>
+		 </PhFeatureSystem>
+	  </class>
+	  <!--
+		CmPossibility
+		-->
+	  <class name="CmPossibility">
+		 <element name="CmPossibility">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		FsClosedFeature
+		-->
+	  <class name="FsClosedFeature">
+		 <element name="FsClosedFeature">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<Values>
+			   <objVector objProperty="ValuesOC"/>
+			</Values>
+		 </element>
+	  </class>
+	  <!--
+		FsClosedValue
+		-->
+	  <class name="FsClosedValue">
+		 <element name="FsClosedValue">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Value" simpleProperty="ValueRAHvo"/>
+			<call name="FsFeatureSpecification" flags="NoWrapper"/>
+		 </element>
+	  </class>
+	  <!--
+		FsComplexFeature
+		-->
+	  <class name="FsComplexFeature">
+		 <element name="FsComplexFeature">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			 <element name="Description">
+				 <string simpleProperty="Description"  ws="BestAnalysis"/>
+			 </element>
+			 <refAtomic name="Type" simpleProperty="TypeRA"/>
+		 </element>
+	  </class>
+	  <!--
+		FsComplexValue
+		-->
+	  <class name="FsComplexValue">
+		 <element name="FsComplexValue">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Feature" simpleProperty="FeatureRAHvo"/>
+			<objAtomic objProperty="ValueOA"/>
+		 </element>
+	  </class>
+	  <!--
+		FsFeatureSpecification
+		-->
+	  <class name="FsFeatureSpecification">
+		 <!--      Just append the feature hvo value as an attribute...
+<element name="FsFeatureSpecification">
+		<attribute name="Id" simpleProperty="Hvo"/> -->
+		 <attribute name="Feature" simpleProperty="FeatureRAHvo"/>
+		 <!--      </element> -->
+	  </class>
+	  <!--
+		FsFeatStruc
+		-->
+	  <class name="FsFeatStruc">
+		 <element name="FsFeatStruc">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Type" simpleProperty="TypeRAHvo"/>
+			<objVector objProperty="FeatureSpecsOC"/>
+		 </element>
+	  </class>
+	  <!--
+		FsFeatStrucType
+		-->
+	  <class name="FsFeatStrucType">
+		 <element name="FsFeatStrucType">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<Features>
+			   <refVector field="Features" itemLabel="Feature" ordered="true"/>
+			</Features>
+		 </element>
+	  </class>
+	  <!--
+		FsFeatureSystem
+		-->
+	  <class name="FsFeatureSystem">
+		 <Types>
+			<objVector objProperty="TypesOC"/>
+		 </Types>
+		 <Features>
+			<objVector objProperty="FeaturesOC"/>
+		 </Features>
+	  </class>
+	  <!--
+		FsNegatedValue
+		-->
+	  <class name="FsNegatedValue">
+		 <element name="FsNegatedValue">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Value" simpleProperty="ValueRAHvo"/>
+			<call name="FsFeatureSpecification" flags="NoWrapper"/>
+		 </element>
+	  </class>
+	  <!--
+		FsSymFeatVal
+		-->
+	  <class name="FsSymFeatVal">
+		 <element name="FsSymFeatVal">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		LexEntry
+		-->
+	  <class name="LexEntry">
+		 <element name="LexEntry">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="CitationForm">
+			   <!--          <string simpleProperty="CitationForm" ws="vernacular"/> -->
+			   <string simpleProperty="CitationFormWithAffixType" ws="vernacular"/>
+			</element>
+			<group objProperty="LexemeFormOA">
+			   <element name="LexemeForm">
+				  <attribute name="dst" simpleProperty="Hvo"/>
+				  <attribute name="MorphType" simpleProperty="MorphTypeRAHvo"/>
+			   </element>
+			</group>
+			<refVector field="AlternateForms" itemLabel="AlternateForms" ordered="true"/>
+			<refVector field="Senses" itemLabel="Sense" ordered="true"/>
+			<refVector field="MorphoSyntaxAnalyses" itemLabel="MorphoSyntaxAnalysis"/>
+		 </element>
+	  </class>
+	  <!--
+		LexSense
+		-->
+	  <class name="LexSense">
+		 <element name="LexSense">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Msa" simpleProperty="MorphoSyntaxAnalysisRAHvo"/>
+			<element name="Gloss">
+			   <string simpleProperty="Gloss"  ws="BestAnalysis"/>
+			</element>
+			 <element name="Definition">
+				 <string simpleProperty="Definition"  ws="BestAnalysis"/>
+			 </element>
+			 <objVector objProperty="SensesOS"/>
+			<!-- or should they not be nested?				<refVector field="Senses" itemLabel="Sense" ordered="true"/> -->
+		 </element>
+	  </class>
+	  <!--
+		LgWritingSystem
+		-->
+	  <class name="LgWritingSystem">
+		 <element name="LgWritingSystem">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="RightToLeft" simpleProperty="RightToLeft"/>
+			<element name="DefaultSerif">
+			   <string simpleProperty="DefaultSerif"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		MoAdhocProhib
+		-->
+	  <class name="MoAdhocProhib">
+		 <element name="MoAdhocProhib" hideFlag="NoWrapper">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Adjacency" simpleProperty="Adjacency"/>
+		 </element>
+	  </class>
+	  <!--
+		MoAdhocProhibGr
+		-->
+	  <class name="MoAdhocProhibGr">
+		 <element name="MoAdhocProhibGr">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<objVector objProperty="MembersOC"/>
+		 </element>
+	  </class>
+	  <!--
+		MoAffixAllomorph
+		-->
+	  <class name="MoAffixAllomorph">
+		 <element name="MoAffixAllomorph">
+			<call name="MoForm" flags="NoWrapper"/>
+			<refVector field="PhoneEnv" itemLabel="PhoneEnv"/>
+			<refVector field="Position" itemLabel="Position" ordered="true"/>
+			<refVector field="InflectionClasses" itemLabel="InflectionClasses"/>
+			<MsEnvFeatures>
+			   <objAtomic objProperty="MsEnvFeaturesOA"/>
+			</MsEnvFeatures>
+		 </element>
+	  </class>
+	  <!--
+		MoAffixForm
+		-->
+	  <class name="MoAffixForm">
+		 <element name="MoAffixForm">
+			<call name="MoForm" flags="NoWrapper"/>
+			<refVector field="InflectionClasses" itemLabel="InflectionClasses"/>
+		 </element>
+	  </class>
+	  <!--
+		MoAlloAdhocProhib
+		-->
+	  <class name="MoAlloAdhocProhib">
+		 <element name="MoAlloAdhocProhib">
+			<call name="MoAdhocProhib" flags="NoWrapper"/>
+			<refAtomic name="FirstAllomorph" simpleProperty="FirstAllomorphRA"/>
+			<refVector field="RestOfAllos" itemLabel="RestOfAllos" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		MoBinaryCompoundRule
+		-->
+	  <class name="MoBinaryCompoundRule">
+		 <element name="MoBinaryCompoundRule" hideFlag="NoWrapper">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="LeftMsa">
+			   <attribute name="dst" simpleProperty="LeftMsaOAHvo"/>
+			</element>
+			<element name="RightMsa">
+			   <attribute name="dst" simpleProperty="RightMsaOAHvo"/>
+			</element>
+			<refVector field="ToProdRestrict" itemLabel="ToProdRestrict" ordered="false"/>
+			<!-- ignoring linker now for stage 1
+		<element name="Linker">
+		  <attribute name="dst" simpleProperty="LinkerOAHvo"/>
+		</element>
+-->
+		 </element>
+	  </class>
+	  <!--
+		MoDerivAffMsa
+		-->
+	  <class name="MoDerivAffMsa">
+		 <element name="MoDerivAffMsa">
+			<call name="MoMorphSynAnalysis" flags="NoWrapper"/>
+			<attribute name="AffixCategory" simpleProperty="AffixCategoryRAHvo"/>
+			<attribute name="FromPartOfSpeech" simpleProperty="FromPartOfSpeechRAHvo"/>
+			<attribute name="ToPartOfSpeech" simpleProperty="ToPartOfSpeechRAHvo"/>
+			<attribute name="FromInflectionClass" simpleProperty="FromInflectionClassRAHvo"/>
+			<attribute name="ToInflectionClass" simpleProperty="ToInflectionClassRAHvo"/>
+			<attribute name="FromStemName" simpleProperty="FromStemNameRAHvo"/>
+			<FromMsFeatures>
+			   <objAtomic objProperty="FromMsFeaturesOA"/>
+			</FromMsFeatures>
+			<ToMsFeatures>
+			   <objAtomic objProperty="ToMsFeaturesOA"/>
+			</ToMsFeatures>
+			<refVector field="FromProdRestrict" itemLabel="FromProdRestrict" ordered="false"/>
+			<refVector field="ToProdRestrict" itemLabel="ToProdRestrict" ordered="false"/>
+		 </element>
+	  </class>
+	  <!--
+		MoEndoCompound
+		-->
+	  <class name="MoEndoCompound">
+		 <element name="MoEndoCompound">
+			<call name="MoBinaryCompoundRule" flags="NoWrapper"/>
+			<attribute name="HeadLast" simpleProperty="HeadLast"/>
+			<element name="OverridingMsa">
+			   <attribute name="dst" simpleProperty="OverridingMsaOAHvo"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		MoExoCompound
+		-->
+	  <class name="MoExoCompound">
+		 <element name="MoExoCompound">
+			<call name="MoBinaryCompoundRule" flags="NoWrapper"/>
+			<element name="ToMsa">
+			   <attribute name="dst" simpleProperty="ToMsaOAHvo"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		MoForm
+		-->
+	  <class name="MoForm">
+		 <element name="MoForm" hideFlag="NoWrapper">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="MorphType" simpleProperty="MorphTypeRAHvo"/>
+			<attribute name="IsAbstract" simpleProperty="IsAbstract"/>
+			<element name="Form">
+			   <string simpleProperty="Form" ws="vernacular"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		MoInflAffixSlot
+		-->
+	  <class name="MoInflAffixSlot">
+		 <element name="MoInflAffixSlot">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Optional" simpleProperty="Optional"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		MoInflAffixTemplate
+		-->
+	  <class name="MoInflAffixTemplate">
+		 <element name="MoInflAffixTemplate">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Final" simpleProperty="Final"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<refVector field="Slots" itemLabel="Slots" ordered="true"/>
+			<refVector field="PrefixSlots" itemLabel="PrefixSlots" ordered="true"/>
+			<refVector field="SuffixSlots" itemLabel="SuffixSlots" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		MoInflAffMsa
+		-->
+	  <class name="MoInflAffMsa">
+		 <element name="MoInflAffMsa">
+			<call name="MoMorphSynAnalysis" flags="NoWrapper"/>
+			<refAtomic name="AffixCategory" simpleProperty="AffixCategoryRAHvo"/>
+			<refAtomic name="PartOfSpeechRef" simpleProperty="PartOfSpeechRAHvo"/>
+			<refVector field="Slots" itemLabel="Slots" ordered="false"/>
+			<InflectionFeatures>
+			   <objAtomic objProperty="InflFeatsOA"/>
+			</InflectionFeatures>
+			<refVector field="FromProdRestrict" itemLabel="FromProdRestrict" ordered="false"/>
+		 </element>
+	  </class>
+	  <!--
+		MoInflClass
+		-->
+	  <class name="MoInflClass">
+		 <element name="MoInflClass">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<objVector objProperty="SubclassesOC" itemLabel="Subclasses" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		MoMorphAdhocProhib
+		-->
+	  <class name="MoMorphAdhocProhib">
+		 <element name="MoMorphAdhocProhib">
+			<call name="MoAdhocProhib" flags="NoWrapper"/>
+			<refAtomic name="FirstMorpheme" simpleProperty="FirstMorphemeRA"/>
+			<refVector field="RestOfMorphs" itemLabel="RestOfMorphs" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		MoMorphData
+		-->
+	  <class name="MoMorphData">
+		 <element name="MoMorphData">
+			<CompoundRules>
+			   <objVector objProperty="CompoundRulesOS"/>
+			</CompoundRules>
+			<AdhocCoProhibitions>
+			   <objVector objProperty="AdhocCoProhibitionsOC"/>
+			</AdhocCoProhibitions>
+			<group objProperty="ProdRestrictOA">
+			   <ProdRestrict>
+				  <objVector objProperty="PossibilitiesOS"/>
+			   </ProdRestrict>
+			</group>
+		 </element>
+	  </class>
+	  <!--
+		MoMorphSynAnalysis
+		-->
+	  <class name="MoMorphSynAnalysis">
+		 <element name="Fake" hideFlag="NoWrapper">
+			<attribute name="Id" simpleProperty="Hvo"/>
+		 </element>
+	  </class>
+	  <!--
+		MoMorphType
+		-->
+	  <class name="MoMorphType">
+		 <element name="MoMorphType">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Guid" simpleProperty="Guid"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="NumberOfLexEntries">
+			   <string simpleProperty="NumberOfLexEntries"/>
+			</element>
+			<objVector objProperty="SubPossibilitiesOS" itemLabel="moType" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		MoStemAllomorph
+		-->
+	  <class name="MoStemAllomorph">
+		 <element name="MoStemAllomorph">
+			<attribute name="StemName" simpleProperty="StemNameRAHvo"/>
+			<call name="MoForm" flags="NoWrapper"/>
+			<refVector field="PhoneEnv" itemLabel="PhoneEnv"/>
+		 </element>
+	  </class>
+	  <!--
+		MoStemMsa
+		-->
+	  <class name="MoStemMsa">
+		 <element name="MoStemMsa">
+			<call name="MoMorphSynAnalysis" flags="NoWrapper"/>
+			<attribute name="PartOfSpeech" simpleProperty="PartOfSpeechRAHvo"/>
+			<attribute name="InflectionClass" simpleProperty="InflectionClassRAHvo"/>
+			<InflectionFeatures>
+			   <objAtomic objProperty="MsFeaturesOA"/>
+			</InflectionFeatures>
+			<refVector field="ProdRestrict" itemLabel="ProdRestrict" ordered="false"/>
+			<FromPartsOfSpeech>
+			   <refVector field="FromPartsOfSpeech" itemLabel="FromPOS" ordered="false"/>
+			</FromPartsOfSpeech>
+		 </element>
+	  </class>
+	  <!--
+		MoStemName
+		-->
+	  <class name="MoStemName">
+		 <element name="MoStemName">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<element name="Regions">
+			   <objVector objProperty="RegionsOC"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		MoUnclassifiedAffixMsa
+		-->
+	  <class name="MoUnclassifiedAffixMsa">
+		 <element name="MoUnclassifiedAffixMsa">
+			<call name="MoMorphSynAnalysis" flags="NoWrapper"/>
+			<attribute name="PartOfSpeech" simpleProperty="PartOfSpeechRAHvo"/>
+		 </element>
+	  </class>
+	  <!--
+		PartOfSpeech
+		-->
+	  <class name="PartOfSpeech">
+		 <element name="PartOfSpeech">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="DefaultInflectionClass" simpleProperty="DefaultInflectionClassRAHvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<element name="NumberOfLexEntries">
+			   <string simpleProperty="NumberOfLexEntries"/>
+			</element>
+			<element name="AffixSlots">
+			   <objVector objProperty="AffixSlotsOC"/>
+			</element>
+			<element name="AffixTemplates">
+			   <objVector objProperty="AffixTemplatesOS"/>
+			</element>
+			<element name="InflectionClasses">
+			   <objVector objProperty="InflectionClassesOC"/>
+			</element>
+			<InflectableFeats>
+			   <refVector field="InflectableFeats" itemLabel="InflectableFeature"/>
+			</InflectableFeats>
+			<StemNames>
+			   <objVector objProperty="StemNamesOC"/>
+			</StemNames>
+			<objVector objProperty="SubPossibilitiesOS" itemLabel="poss" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		PhBdryMarker
+		-->
+	  <class name="PhBdryMarker">
+		 <element name="PhBdryMarker">
+			<attribute name="Guid" simpleProperty="Guid"/>
+			<call name="PhTerminalUnit" flags="NoWrapper"/>
+		 </element>
+	  </class>
+	  <!--
+		PhCode
+		-->
+	  <class name="PhCode">
+		 <element name="PhCode">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Representation">
+			   <string simpleProperty="Representation" ws="BestVernacular"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		PhEnvironment
+		-->
+	  <class name="PhEnvironment">
+		 <element name="PhEnvironment">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="StringRepresentation" simpleProperty="StringRepresentation"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		  PhFeatureConstraint
+	   -->
+	  <class name="PhFeatureConstraint">
+		 <PhFeatureConstraint>
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Feature" simpleProperty="FeatureRAHvo"/>
+		 </PhFeatureConstraint>
+	  </class>
+	  <!--
+		  PhIterationContext
+	   -->
+	  <class name="PhIterationContext">
+		 <element name="PhIterationContext">
+			 <attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="Minimum" simpleProperty="Minimum"/>
+			<attribute name="Maximum" simpleProperty="Maximum"/>
+			<element name="Member">
+			   <attribute name="dst" simpleProperty="MemberRAHvo"/>
+			</element>
+		 </element>
+	  </class>
+	  <!--
+		  PhNCFeatures
+	   -->
+	  <class name="PhNCFeatures">
+		 <element name="PhNCFeatures">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<Features>
+			   <objAtomic objProperty="FeaturesOA"/>
+			</Features>
+		 </element>
+	  </class>
+	  <!--
+		PhNCSegments
+		-->
+	  <class name="PhNCSegments">
+		 <element name="PhNCSegments">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<element name="Abbreviation">
+			   <string simpleProperty="Abbreviation"  ws="BestAnalysis"/>
+			</element>
+			<refVector field="Segments" itemLabel="Segments"/>
+		 </element>
+	  </class>
+	  <!--
+		PhPhoneme
+		-->
+	  <class name="PhPhoneme">
+		 <element name="PhPhoneme">
+			<call name="PhTerminalUnit" flags="NoWrapper"/>
+			<element name="BasicIPASymbol">
+			   <string simpleProperty="BasicIPASymbol"/>
+			</element>
+			<PhonologicalFeatures>
+			   <objAtomic objProperty="FeaturesOA"/>
+			</PhonologicalFeatures>
+		 </element>
+	  </class>
+	  <!--
+		PhPhonemeSet
+		-->
+	  <class name="PhPhonemeSet">
+		 <element name="PhPhonemeSet">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name"  ws="BestAnalysis"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<Phonemes>
+			   <objVector objProperty="PhonemesOC"/>
+			</Phonemes>
+			<BoundaryMarkers>
+			   <objVector objProperty="BoundaryMarkersOC"/>
+			</BoundaryMarkers>
+		 </element>
+	  </class>
+	  <class name="PhPhonData">
+		 <element name="PhPhonData">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<Environments>
+			   <objVector objProperty="EnvironmentsOS"/>
+			</Environments>
+			<NaturalClasses>
+			   <objVector objProperty="NaturalClassesOS"/>
+			</NaturalClasses>
+			<Contexts>
+			   <objVector objProperty="ContextsOS"/>
+			</Contexts>
+			<PhonemeSets>
+			   <objVector objProperty="PhonemeSetsOS"/>
+			</PhonemeSets>
+			<FeatureConstraints>
+			   <objVector objProperty="FeatConstraintsOS"/>
+			</FeatureConstraints>
+			<PhonRules>
+			   <objVector objProperty="PhonRulesOS"/>
+			</PhonRules>
+			<!-- Following a trick to get iteration contexts to work correctly -->
+			<PhIters/>
+			<PhIters/>
+			<PhIters/>
+			<PhIters/>
+			<PhIters/>
+			<PhIters/>
+		 </element>
+	  </class>
+	  <!--
+		  PhMetathesisRule
+	   -->
+	  <class name="PhMetathesisRule">
+		 <element name="PhMetathesisRule" hideFlag="NoWrapper">
+			<attribute name="StrucChange" simpleProperty="StrucChange"/>
+			<call name="PhSegmentRule" flags="NoWrapper"/>
+		 </element>
+	  </class>
+	  <!--
+		  PhRegularRule
+	   -->
+	  <class name="PhRegularRule">
+		 <element name="PhRegularRule" hideFlag="NoWrapper">
+			<call name="PhSegmentRule" flags="NoWrapper"/>
+			<RightHandSides>
+			   <objVector objProperty="RightHandSidesOS"/>
+			</RightHandSides>
+		 </element>
+	  </class>
+	  <!--
+		  PhSegmentRule
+	   -->
+	  <class name="PhSegmentRule" hideFlag="NoWrapper">
+		 <attribute name="Id" simpleProperty="Hvo"/>
+		 <attribute name="Direction" simpleProperty="Direction"/>
+		 <element name="Name">
+			<string simpleProperty="Name"  ws="BestAnalysis"/>
+		 </element>
+		 <element name="Description">
+			<string simpleProperty="Description"  ws="BestAnalysis"/>
+		 </element>
+		 <StrucDesc>
+			<objVector objProperty="StrucDescOS"/>
+		 </StrucDesc>
+	  </class>
+	  <!--
+		  PhSegRuleRHS
+	   -->
+	  <class name="PhSegRuleRHS">
+		 <attribute name="Id" simpleProperty="Hvo"/>
+		 <LeftContext>
+			<objAtomic objProperty="LeftContextOA"/>
+		 </LeftContext>
+		 <RightContext>
+			<objAtomic objProperty="RightContextOA"/>
+		 </RightContext>
+		 <StrucChange>
+			<objVector objProperty="StrucChangeOS"/>
+		 </StrucChange>
+			<refVector field="InputPOSes" itemLabel="InputPOSes" ordered="false"/>
+			<refVector field="ExclRuleFeats" itemLabel="ExclRuleFeats" ordered="false"/>
+			<refVector field="ReqRuleFeats" itemLabel="ReqRuleFeats" ordered="false"/>
+	  </class>
+	  <!--
+		  PhSequenceContext
+	   -->
+	  <class name="PhSequenceContext">
+		 <element name="PhSequenceContext">
+			<refVector field="Members" itemLabel="Members" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		  PhSimpleContext
+	   -->
+	  <class name="PhSimpleContext">
+		 <element name="PhSimpleContext" hideFlag="NoWrapper">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<attribute name="dst" simpleProperty="FeatureStructureRAHvo"/>
+		 </element>
+	  </class>
+	  <!--
+		  PhSimpleContextBdry
+	   -->
+	  <class name="PhSimpleContextBdry">
+		 <element name="PhSimpleContextBdry">
+			<call name="PhSimpleContext" flags="NoWrapper"/>
+		 </element>
+	  </class>
+	  <!--
+		  PhSimpleContextNC
+	   -->
+	  <class name="PhSimpleContextNC">
+		 <element name="PhSimpleContextNC">
+			<call name="PhSimpleContext" flags="NoWrapper"/>
+			<refVector field="MinusConstr" itemLabel="MinusConstr" ordered="true"/>
+			<refVector field="PlusConstr" itemLabel="PlusConstr" ordered="true"/>
+		 </element>
+	  </class>
+	  <!--
+		  PhSimpleContextSeg
+	   -->
+	  <class name="PhSimpleContextSeg">
+		 <element name="PhSimpleContextSeg">
+			<call name="PhSimpleContext" flags="NoWrapper"/>
+		 </element>
+	  </class>
+	  <!--
+		PhTerminalUnit
+		-->
+	  <class name="PhTerminalUnit">
+		 <element name="PhTerminalUnit" hideFlag="NoWrapper">
+			<attribute name="Id" simpleProperty="Hvo"/>
+			<element name="Name">
+			   <string simpleProperty="Name" ws="BestVernacular"/>
+			</element>
+			<element name="Description">
+			   <string simpleProperty="Description"  ws="BestAnalysis"/>
+			</element>
+			<Codes>
+			   <objVector objProperty="CodesOS"/>
+			</Codes>
+		 </element>
+	  </class>
+   </template>
+   <!--
+================================================================
+Revision History
+- - - - - - - - - - - - - - - - - - -
+24-Mar-2008      Ann Bush       Changes to shorten class/attribute names.
+27-Jan-2006      Andy Black     Add productivity restrictions info
+06-Jun-2005      Andy Black     Add exception feature info
+29-Nov-2004      Andy Black     Add VernWss and LgWritingSystem
+19-Nov-2004      Andy Black     Add Abbreviation to PhNCSegments
+27-May-2004      Andy Black     Reflect infl affix  msa model change
+07-May-2004      Andy Black     Use vernacular encoding for PhTerminalUnit name property
+12-Nov-2003      Andy Black     Initial draft
+================================================================
+ -->
+</M3Dump>

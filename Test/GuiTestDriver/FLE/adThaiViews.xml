@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+   <!-- In the Thai database:
+		 From Lexicon Entry, time opening Dictionary view.
+		 Time scrolling down.
+		 Time switch to Interlinear view/analyze tab
+		 Search for the "n"-shaped character in Lexicon Edit
+		 Time generating the Grammar Sketch -->
+
+	<var id="projectName" set="Thai"/>
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+	<on-application run = "ok" args = "-db $projectName" close = "no" on-fail = "assert">
+	   <!-- verify that the view is Lexicon Edit -->
+	   <var id="sbLxEdit" select="sidebar/list" add="Lexicon Edit"/>
+	   <glimpse id="lxEditLabel" path="$sbLxEdit" prop="selected"/>
+
+	   <var id="firstRec" select="toolbar/first-record"/>
+	   <var id="lastRec" select="toolbar/last-record"/>
+
+	   <!-- From Lexicon Entry, time opening Dictionary view. -->
+	   <monitor-time expect="999999999" desc="Thai db, Lex Edit to Dictionary">
+		  <click select="sidebar/list" path="Dictionary"/>
+		  <click path="$firstRec"/>
+	   </monitor-time>
+
+	   <!-- Time scrolling down a couple of times to test lazines.  -->
+	   <monitor-time expect="999999999" desc="Thai db Dictionary, Scroll down">
+		  <!-- click in the entries pane so key strokes go there -->
+		  <var id="ind" set="1"/>
+		  <var id="row" set="1"/>
+		  <click select="dictionary[@role='view']/entries/entry/para"/>
+		  <insert>{PGDN}</insert>
+		  <insert>{PGDN}</insert>
+		  <insert>{PGDN}</insert>
+		  <click path="$firstRec"/>
+	   </monitor-time>
+
+	   <!-- Time switch to Interlinear view/interlinear tab -->
+	   <var id="txInterlinear" select="menubar/view/texts-words/interlinear-texts"/>
+	   <model select="interlinear-texts[@role='view']/text/analyze">
+		  <monitor-time expect="999999999" desc="Thai db Texts Edit, click Interlinearize tab">
+			 <click path="$txInterlinear"/>
+			 <click select="tab"/>
+			 <click path="//$firstRec"/>
+		  </monitor-time>
+	   </model>
+
+	   <!-- Search for the "n"-shaped character (shows up in first record of Lexicon Edi). -->
+	   <click select="menubar/view/lexicon/lexicon-edit"/>
+	   <!-- verify that the view is Lexicon Edit -->
+	   <glimpse id="lxEditLabel2" path="$sbLxEdit" prop="selected"/>
+	   <model select="lexicon-edit[@role='view']">
+		  <click path="//$firstRec"/>
+		  <!-- copy the "n"-shaped thai character to search for -->
+		  <var id="ind" set="*"/>
+		  <click select="entry/slice/lexeme-form/data"/>
+		  <insert wait="300">+{LEFT}</insert> <!-- highlight just the one character -->
+		  <insert wait="500">^{c}</insert>  <!-- copy it -->
+		  <click path="//$lastRec"/>
+		  <click select="//toolbar/find-lexical-entry"/>
+		  <monitor-time expect="999999999" desc="Thai db Lex Edit, find n-shaped letter">
+			<on-dialog title="Find Lexical Entry">
+			  <insert wait="300">^{v}</insert>  <!-- paste it -->
+			  <click wait="6000" path="9:Go To/43:Go To"/>  <!-- go to the first one -->
+			</on-dialog>
+			<glimpse id="chkGloss" select="entry/slice/gloss/data" expect="gram" />
+		  </monitor-time>
+	   </model>
+
+	   <!-- Time generating the Grammar Sketch -->
+	   <click select="menubar/view/grammar/grammar-sketch"/>
+	   <monitor-time expect="999999999" desc="Thai db, generate Grammar Sketch">
+		  <click select="grammar-sketch/generate"/>
+		  <insert wait="70000">x</insert><!-- falls out of idle before generation is done, so force a wait -->
+		  <click select="grammar-sketch/back"/>
+	   </monitor-time>
+
+	</on-application>
+
+</accil>

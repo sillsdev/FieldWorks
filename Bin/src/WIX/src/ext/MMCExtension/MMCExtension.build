@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="mmcextension" default="mmcextension.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	mmcextension.build - Builds the mmcextension project
+  </description>
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- extension directories -->
+  <property name="mmcextension.wixext.dir.src" value="${dir.src.ext}\mmcextension\wixext" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="mmcextension.build" description="Peforms a full rebuild (clean then build)" depends="mmcextension.clean, mmcextension.inc" />
+
+  <!-- Clean -->
+  <target name="mmcextension.clean" description="Cleans the build">
+	<delete dir="${dir.build.ext.mmcextension}" failonerror="false" if="${directory::exists(dir.build.ext.mmcextension)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="WixMMCExtension.dll" />
+		<include name="WixMMCExtension.pdb" />
+		<include name="mmc.xsd" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="mmcextension.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the xsd file to the target directory -->
+	<copy file="${mmcextension.wixext.dir.src}\Xsd\mmc.xsd" todir="${dir.target.wix}" />
+
+	<!-- Flatten all of the xml/xsd files -->
+	<foreach item="File" property="flattenxml.source">
+	  <in>
+		<items>
+		  <include name="${mmcextension.wixext.dir.src}\Xsd\mmc.xsd" />
+		</items>
+	  </in>
+	  <do>
+		<property name="flattenxml.target" value="${dir.build.ext.mmcextension}\${path::get-file-name(flattenxml.source)}" />
+		<call target="flattenXml" />
+	  </do>
+	</foreach>
+
+	<!-- Pull in the wix tools NAnt tasks -->
+	<loadtasks assembly="${file.nanttasks}" />
+
+	<csc
+	  target="library"
+	  output="${dir.target.wix}\WixMMCExtension.dll"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${mmcextension.wixext.dir.src}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="MMCCompiler.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <resources failonempty="true" basedir="${dir.build.ext.mmcextension}" prefix="Microsoft.Tools.WindowsInstallerXml.Extensions.Xsd">
+		<include name="mmc.xsd" />
+	  </resources>
+	</csc>
+  </target>
+
+</project>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+   <on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+	<!--on-startup>
+	   <on-dialog until="2000" title="Backup Reminder" on-fail="skip">
+		  <click path="9:No/43:No"/>
+	   </on-dialog>
+	</on-startup-->
+	<insert wait="20000" >%{F}</insert>
+	<insert wait="300" >x</insert>  </on-application>
+
+</accil>

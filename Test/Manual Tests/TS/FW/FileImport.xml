@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fileimp" num="2.1.8" abbr="flim" file="FW\FileImport.xml">
+<title tag="fileimp">File - Import &gt; XML Format Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>This Import dialog is called in response to the File-Import &gt; XML Format command. (If the user wants to import a Standard Format file, he uses the Standard Format Import Wizard. Use the <link uri="FileImportStandard.xml" type="module">File-Import &gt; Standard Format Tests</link> to test importing a standard format.) The purpose of this XML Import dialog is to identify the file to import, and to gather information about just how to import it. It is intended to be implemented on Generic Application, and yet be highly customizable by individual applications.
+</p>
+
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Import" type="doc">File - Import</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/ImportExport/Import.html" type="doc">Import Dialog</link>
+</p>
+<p name="note"> Does not appear to be implemented yet.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "File - Import &gt; XML Format"</p>
+</context>
+
+<case id="flimAct" num="1" order="any">
+<title tag="flimAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke XML Format under the File - Import Menu. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Import" type="doc">Definition of File - Import.</link>
+<r>The <i>Import Data Notebook</i> dialog box appears.</r>
+<p name="bug">File - Import &gt; XML Format not working</p>
+</step>
+
+</case>
+
+<case id="flimDiac" num="2" order="any">
+<title tag="flimDiac">Exercise dialog controls</title>
+<context>
+<p>When the Import Dialog is displayed:</p>
+</context>
+
+<step name="2.1" link="Bug">Use <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/ImportExport/Import.html" type="doc">File - Import specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">File - Import &gt; XML Format: layout incorrect</p>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "File - Import &gt; XML Format" as the name of the dialog.</r>
+</step>
+<step name="2.3" link="Bug">Click the Browse. . . button.
+   <r>
+<ul>
+<li>The standard Windows Open Dialog appears.</li>
+<li>The Files of Type combo box is set to display files with .xml extensions.</li>
+</ul>
+</r>
+<p name="bug">File - Import: Browse not working</p>
+</step>
+<step name="2.4" link="Bug">After selecting a file in the Open Dialog, click OK.
+   <r>The Open Dialog closes and the File Name edit box of the Import Dialog contains the file you selected.</r>
+<p name="bug">File - Import &gt; XML Format: Open Dialog not working</p>
+</step>
+
+<step name="2.5">
+   Test the File Name text box functionality using the <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link>.
+   <r>Report any failures as suggested using "File - Import &gt; XML Format: File Name" as the name of the text box.</r>
+</step>
+
+<step name="2.6" link="Bug">
+   Try manually typing in a file name for import into the File Name text box.
+   <r>Import should work either by typing in the file name or selecting it with the Browse button. Verify this.</r>
+   <p name="bug">File - Import &gt; XML Format: manual entry of File Name not working</p>
+</step>
+
+</case>
+
+<case id="flimrdc" num="3" order="any">
+<title tag="flimrdc">Radio controls</title>
+<context>
+<p>When the File - Import is displayed:</p>
+</context>
+
+<step name="3.1">
+Test the radio button controls using the <link uri="../StdCtrls/radiobtn.xml" type="module">Radio Button Tests</link>.
+   <r>Report any failures as suggested using "File - Import" as the name of the control.</r>
+</step>
+</case>
+
+
+<case id="flimddrdc" num="4" order="any">
+<title tag="flimddrdc">Data Destination Radio controls</title>
+<context>
+<p>When the Import Dialog is displayed:</p>
+</context>
+
+<step name="4.1" link="Bug">Select the <i>Append this data to this Data Notebook</i> control and click OK.
+   <r>The records in the selected file are appended to the data currently loaded in the Data Notebook.</r>
+<p name="bug">File - Import: Data Destination radio buttons not working.</p>
+</step>
+
+<step name="4.2" link="Bug">Select the <i>Replace this Data Notebook with this new data</i> control and click OK.
+   <r>A Confirmation dialog should first be displayed: <i>You have requested that all exisitng data in the Data Notebook be
+discarded and replaced with the data in the import file.
+This action is permanent and cannot be undone.
+Do you wish to continue? Yes [No] Help</i> <p>If Yes is selected, the records in the selected file replace the data currently loaded in the Data Notebook.</p>
+</r>
+<p name="bug">File - Import: Data Destination radio buttons not working.</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-22-01" author="ShalomA">Test steps added based on test created and updated by RickM and LarsH.</update>
+<update date="Jun-07-02" author="RussD">Test script updated to specs.</update>
+</test>

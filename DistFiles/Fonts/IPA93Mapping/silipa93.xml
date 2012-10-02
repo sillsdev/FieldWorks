@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE characterMapping SYSTEM "CharacterMapping.dtd">
+
+<characterMapping
+  id="SIL-IPA93-2001"
+  version="13"
+  description="SIL IPA93 Font encoding"
+  contact="mailto:martin_hosken@sil.org"
+  registrationAuthority="SIL International"
+  registrationName="IPA93"
+  byte-font="SILDoulos IPA93"
+  normalization="NFD">
+
+<history>
+	<modified version="13" date="2006-12-06">
+		changed 0xCB to new Unicode value (1DAE), kept reverse conversion to PUA rule (F181)
+		8E, 92, 9x, and 84 are all correct and checked against IPA
+		added "with_middle_tilde" characters (U+1D6C..U+1D76)
+	</modified>
+	<modified version="12" date="2005-01-27">
+		change 02BE to 026E in class tall due to typo error
+	</modified>
+	<modified version="11" date="2004-09-9">
+		Change PUA to Unicode 4.0 but still support back mapping from PUA.
+		These PUA values are deprecated and will disappear once no more reference to the PUA
+		is needed (cf F181)
+	</modified>
+	<modified version="10" date="2002-10-7">
+		0X43 maps to decomposed sequence rather than composed form
+		version number corrected
+	</modified>
+	<modified version="9" date="2002-09-18">
+		Add explicit mappings for U+0334 precomposed characters.
+		Correct 0xCF from being U+029A.
+		g maps to U+0261 by default (significant shape change).
+		Add U+0320, U+032C to ldia, remove U+0331.
+		Remove 0xF2 mapping to indicate how naughty it is to use U+0334 nowadays.
+	</modified>
+	<modified version="8" date="2002-09-17">
+		Add itall and tall classes, change regexps accordingly. Changed 0xAD to U+0320 from U+0331
+	</modified>
+	<modified version="7" date="2001-08-23">
+		Finalise PUA codes to SIL corporate standard
+	</modified>
+	<modified version="6" date="2001-07-17">
+		Tidy up and conform to DTD
+	</modified>
+	<modified version="5" date="2001-07-07">
+		Fixed dotless reverse mapping
+	</modified>
+	<modified version="4" date="2001-06-29">
+		Changed context names: iwidth -> i-udia, i-ldia -> iwidth. Added more than
+		one optional ldia to i-udia and iwidth.
+	</modified>
+	<modified version="3" date="2001-05-10">
+		Changed 0x3D to U+0320 from U+0331
+	</modified>
+	<modified version="2" date="2001-05-10">
+		Still need to deal with ordering issues for over-arch and rhotic hook
+	</modified>
+	<modified version="1" date="2000-11-08">
+		Original. Trying new language extensions
+	</modified>
+</history>
+
+<validity>
+	<state type="FIRST" next="VALID" s="00" e="FF" max="FFFF"/>
+</validity>
+
+<assignments sub="3F">
+	<range bFirst="00" bLast="1F" uFirst="0000" uLast="001F"/>
+
+	<a b="20" u="0020"/>
+	<a b="21" u="030B"/>
+	<a b="22" u="0069" bactxt="byte-dia" uactxt="dotless"/>
+	<a b="22" u="0131"/>
+	<a b="23" u="0304"/>
+	<a b="24" u="0300"/>
+	<a b="25" u="030F"/>
+	<a b="26" u="030C"/>
+	<a b="27" u="02BC"/>
+	<a b="28" u="0306"/>
+	<a b="29" u="0303"/>
+	<a b="2A" u="030A"/>
+	<a b="2B" u="031F"/>
+	<a b="2C" u="002C"/>
+	<a b="2D" u="0324"/>
+	<a b="2E" u="002E"/>
+	<a b="2F" u="002F"/>
+
+	<a b="30" u="0330"/>
+	<a b="31" u="0318"/>
+	<a b="32" u="0319"/>
+	<a b="33" u="031D"/>
+	<a b="34" u="031E"/>
+	<a b="35" u="032A"/>
+	<a b="36" u="033B"/>
+	<a b="37" u="031C"/>
+	<a b="38" u="0325"/>
+	<a b="39" u="032F"/>
+	<a b="3A" u="02E1"/>
+	<a b="3B" u="029F"/>
+	<a b="3C" u="207F"/>
+	<a b="3D" u="0320"/>
+	<a b="3E" u="02D1"/>
+	<a b="3F" u="0294"/>
+
+	<a b="40" u="0301"/>
+	<a b="41" u="0251"/>
+	<a b="42" u="03B2"/>
+	<a b="43" u="0063 0327"/>
+	<a b="44" u="00F0"/>
+	<a b="45" u="025B"/>
+	<a b="46" u="0264"/>
+	<a b="47" u="0262"/>
+	<a b="48" u="02B0"/>
+	<a b="49" u="026A"/>
+	<a b="4A" u="02B2"/>
+	<a b="4B" u="029C"/>
+	<a b="4C" u="026E"/>
+	<a b="4D" u="0271"/>
+	<a b="4E" u="014B"/>
+	<a b="4F" u="00F8"/>
+
+	<a b="50" u="0275"/>
+	<a b="51" u="00E6"/>
+	<a b="52" u="027E"/>
+	<a b="53" u="0283"/>
+	<a b="54" u="03B8"/>
+	<a b="55" u="028A"/>
+	<a b="56" u="028B"/>
+	<a b="57" u="02B7"/>
+	<a b="58" u="03C7"/>
+	<a b="59" u="028F"/>
+	<a b="5A" u="0292"/>
+	<a b="5B" u="005B"/>
+	<a b="5C" u="005C"/>
+	<a b="5D" u="005D"/>
+	<a b="5E" u="0302"/>
+	<a b="5F" u="0308"/>
+
+	<a b="60" u="0329"/>
+	<a b="61" u="0061"/>
+	<a b="62" u="0062"/>
+	<a b="63" u="0063"/>
+	<a b="64" u="0064"/>
+	<a b="65" u="0065"/>
+	<a b="66" u="0066"/>
+	<a b="67" u="0261"/>
+	<a b="68" u="0068"/>
+	<a b="69" u="0069"/>
+	<a b="6A" u="006A"/>
+	<a b="6B" u="006B"/>
+	<a b="6C" u="006C"/>
+	<a b="6D" u="006D"/>
+	<a b="6E" u="006E"/>
+	<a b="6F" u="006F"/>
+
+	<a b="70" u="0070"/>
+	<a b="71" u="0071"/>
+	<a b="72" u="0072"/>
+	<a b="73" u="0073"/>
+	<a b="74" u="0074"/>
+	<a b="75" u="0075"/>
+	<a b="76" u="0076"/>
+	<a b="77" u="0077"/>
+	<a b="78" u="0078"/>
+	<a b="79" u="0079"/>
+	<a b="7A" u="007A"/>
+	<a b="7B" u="0280"/>
+	<a b="7C" u="031A"/>
+	<a b="7D" u="027D"/>
+	<a b="7E" u="033D"/>
+	<a b="7F" u="007F"/>
+
+	<a b="80" u="02E9 02E7"/>
+	<a b="81" u="0252"/>
+	<a b="82" u="0258"/>
+	<a b="83" u="0361"/>
+<!--    <a b="84" u="01C1"/>  check me - already 0x92 covers this -->
+	<a b="84" u="2016"/>
+	<a b="85" u="02E5 02E7"/>
+	<a b="86" u="02E5 02E9"/>
+	<a b="87" u="0298"/>
+	<a b="88" u="030B" ubctxt="udia"/>
+	<a b="89" u="030B" ubctxt="i-udia"/>
+	<a b="8A" u="02E5"/>
+	<a b="8B" u="2191"/>
+	<a b="8C" u="0250"/>
+	<a b="8D" u="0254"/>
+	<a b="8E" u="01C0"/>
+	<a b="8F" u="0301" ubctxt="udia"/>
+
+	<a b="90" u="0301" ubctxt="i-udia"/>
+	<a b="91" u="02E6"/>
+	<a b="92" u="01C1"/>
+	<a b="93" u="0304" ubctxt="udia"/>
+	<a b="94" u="0304" ubctxt="i-udia"/>
+	<a b="95" u="02E7"/>
+	<a b="96" u="007C"/>
+	<a b="97" u="01C3"/>
+	<a b="98" u="0300" ubctxt="udia"/>
+	<a b="99" u="0300" ubctxt="i-udia"/>
+	<a b="9A" u="02E8"/>
+	<a b="9B" u="2193"/>
+	<a b="9C" u="01C2"/>
+	<a b="9D" u="030F" ubctxt="udia"/>
+	<a b="9E" u="030F" ubctxt="i-udia"/>
+	<a b="9F" u="02E9"/>
+
+	<a b="A1" u="030A" ubctxt="iwidth"/>
+	<a b="A2" u="031E" ubctxt="iwidth"/>
+	<a b="A3" u="031D" ubctxt="iwidth"/>
+	<a b="A4" u="032C"/>
+	<a b="A5" u="0325" ubctxt="iwidth"/>
+	<a b="A6" u="0339"/>
+	<a b="A7" u="0282"/>
+	<a b="A8" u="0279"/>
+	<a b="A9" u="0260"/>
+	<a b="AA" u="0319" ubctxt="iwidth"/>
+	<a b="AB" u="0259"/>
+	<a b="AC" u="0289"/>
+	<a b="AD" u="0320" ubctxt="iwidth"/>
+	<a b="AE" u="0268" uactxt="dotless"/>
+	<a b="AF" u="0276"/>
+
+	<a b="B0" u="033A"/>
+	<a b="B1" u="031F" ubctxt="iwidth"/>
+	<a b="B2" u="0274"/>
+	<a b="B3" u="02E4"/>
+	<a b="B4" u="028E"/>
+	<a b="B5" u="026F"/>
+	<a b="B8" u="0278"/>
+	<a b="B9" u="02A2"/>
+	<a b="BA" u="0253"/>
+	<a b="BB" u="032F" ubctxt="iwidth"/>
+	<a b="BC" u="0330" ubctxt="iwidth"/>
+	<a b="BD" u="0290"/>
+	<a b="BE" u="006A" uactxt="dotless"/>
+	<a b="BF" u="0153"/>
+
+	<a b="C0" u="0295"/>
+	<a b="C1" u="0318" ubctxt="iwidth"/>
+	<a b="C2" u="026C"/>
+	<a b="C3" u="028C"/>
+	<a b="C4" u="0263"/>
+	<a b="C6" u="029D"/>
+	<a b="C7" u="02CC"/>
+	<a b="C8" u="02C8"/>
+	<a b="C9" u="1D50"/>  <!-- superscript m: was PUA code F180 before Unicode 4.0 -->
+		 <fub b="C9" u="F180"/>
+	<a b="CA" u="200A"/>
+	<a b="CB" u="1DAE"/>  <!-- superscript nya: was PUA code F181 before Unicode 4.1 -->
+		 <fub b="CB" u="F181"/>
+	<a b="CC" u="2197"/>
+	<a b="CD" u="2198"/>
+	<a b="CE" u="025C"/>
+	<a b="CF" u="025E"/>
+
+	<a b="D0" u="0324" ubctxt="iwidth"/>
+	<a b="D1" u="033C"/>
+	<a b="D2" u="0281"/>
+	<a b="D3" u="027B"/>
+	<a b="D4" u="1D51"/>  <!-- superscript eng: was PUA code F182 before Unicode 4.0 -->
+		 <fub b="D4" u="F182"/>
+	<a b="D5" u="02DE"/>
+	<a b="D6" u="002D"/>
+	<a b="D7" u="0284"/>
+	<a b="D8" u="02E7 02E5"/>
+	<a b="D9" u="02E7 02E9"/>
+	<a b="DA" u="030B" ubctxt="iwidth"/>
+	<a b="DB" u="0301" ubctxt="iwidth"/>
+	<a b="DC" u="0304" ubctxt="iwidth"/>
+	<a b="DD" u="0300" ubctxt="iwidth"/>
+	<a b="DE" u="030F" ubctxt="iwidth"/>
+	<a b="DF" u="0302" ubctxt="iwidth"/>
+
+	<a b="E0" u="030C" ubctxt="iwidth"/>
+	<a b="E1" u="0306" ubctxt="iwidth"/>
+	<a b="E2" u="0303" ubctxt="iwidth"/>
+	<a b="E3" u="028D"/>
+	<a b="E4" u="027A"/>
+	<a b="E5" u="0270"/>
+	<a b="E6" u="0302" ubctxt="i-udia"/>
+	<a b="E7" u="0265"/>
+	<a b="E8" u="02E9 02E5"/>
+	<a b="E9" u="0302" ubctxt="udia"/>
+	<a b="EA" u="0256"/>
+	<a b="EB" u="0257"/>
+	<a b="EC" u="02E0"/>
+	<a b="ED" u="203F"/>
+	<a b="EE" u="0267"/>
+	<a b="EF" u="025F"/>
+
+	<a b="F0" u="0127"/>
+	<a b="F1" u="026D"/>
+	<a b="6C F2" u="026B"/>
+	<a b="62 F2" u="1D6C"/>
+	<a b="64 F2" u="1D6D"/>
+	<a b="66 F2" u="1D6E"/>
+	<a b="6D F2" u="1D6F"/>
+	<a b="6E F2" u="1D70"/>
+	<a b="70 F2" u="1D71"/>
+	<a b="72 F2" u="1D72"/>
+	<a b="52 F2" u="1D73"/>
+	<a b="73 F2" u="1D74"/>
+	<a b="74 F2" u="1D75"/>
+	<a b="7A F2" u="1D76"/>
+<!--    <a b="F2" u="0334"/>    -->
+	<a b="F3" u="030C" ubctxt="i-udia"/>
+	<a b="F4" u="030C" ubctxt="udia"/>
+	<a b="F5" u="0299"/>
+	<a b="F6" u="0268"/>
+	<a b="F7" u="0273"/>
+	<a b="F8" u="0272"/>
+	<a b="F9" u="02D0"/>
+	<a b="FA" u="0266"/>
+	<a b="FB" u="02A1"/>
+	<a b="FC" u="0291"/>
+	<a b="FD" u="029B"/>
+	<a b="FE" u="0255"/>
+	<a b="FF" u="0288"/>
+</assignments>
+<contexts>
+
+	<group id="i-udia" alt="1">
+		<group>
+			<class-ref name="ilow"/>
+			<class-ref name="ldia" min="0" max="3"/>
+			<class-ref name="udia"/>
+		</group>
+		<group>
+			<class-ref name="itall"/>
+			<class-ref name="ldia" min="0" max="3"/>
+		</group>
+	</group>
+
+	<group id="iwidth">
+		<class-ref name="ilow"/>
+		<class-ref name="ldia" min="0" max="3"/>
+	</group>
+
+	<group id="byte-dia">
+		<class-ref name="ldiab" min="0" max="3"/>
+		<class-ref name="udiab"/>
+	</group>
+
+	<group id="dotless">
+		<class-ref name="ldia" min="0" max="3"/>
+		<class-ref name="udia_all"/>
+	</group>
+
+	<group id="udia" alt="1">
+		<class-ref name="udia"/>
+		<group>
+			<class-ref name="tall"/>
+			<class-ref name="ldia" min="0" max="3"/>
+		</group>
+	</group>
+
+	<class name="ilow">
+		0069 006A 0072 0131 0268 026A 0279 027B 027D 027E 029D 1D72 1D73
+	</class>
+	<class name="itall">
+		0066 006C 0074 026D 027A 0283 0284 0288 1D6E 1D75
+	</class>
+	<class name="tall">
+		0062 0064 0068 006B 00F0 0127 01C3 0253 0256 0257 0260 0266 0267 026C
+		026E 0278 028E 0294 0295 02A1 02A2 03B2 03B8 1D6C 1D6D
+	</class>
+	<class name="ldiab" size="bytes">
+		2B 2D 30 31 32 33 34 35 36 37 38 39 3D 60 B1 A2 A3 A4 A5 A6 AA B0 BB
+		BC C1 D0 D1
+	</class>
+
+	<class name="ldia">
+		0318 0319 031C 031D 031E 031F 0320 0324 0325 0329 032A 032C 032F 0330 0339
+		033A 033B 033C
+	</class>
+
+	<!-- udiab includes tone, udia doesn't -->
+	<class name="udiab" size="bytes">
+		28 29 2A 5F 7E A1 E1 E2 21 23 24 25 26 40 5E 88 89 8F 90 93 94 98 99
+		9D 9E DA DB DC DD DE DF E0 E6 E9 F3 F4
+	</class>
+	<class name="udia">0303 0306 0308 030A 033D</class>
+	<class name="udia_all">
+		<class-include name="udia"/>
+		0300 0301 0302 0304 030B 030C 030F
+	</class>
+
+</contexts>
+</characterMapping>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<open-project role="dialog" title="Open Project" path="18:Open Project/" root="yes">
+
+  <look-in role="text" name="Look in:" path="9:$name;">
+	<label name="Look in:" path="/41:$name;"/>
+	<list path="[2]/36:" />
+  </look-in>
+
+  <choose role="text" name="Choose a Project:" path="9:$name">
+	<label name="Choose a Project:" path="/41:$name"/>
+	<list path="[2]/36:" />
+  </choose>
+
+  <open name="Open" path="9:$name;/43:$name;"/>
+  <cancel name="Cancel" path="9:$name;/43:$name;"/>
+  <help name="Help" path="9:$name;.../43:$name;...">
+	<dialog title="FieldWorks Language Explorer Help" topic="Open a FieldWorks project" topic-path="$topic"/>
+  </help>
+
+</open-project>

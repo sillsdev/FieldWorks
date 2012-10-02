@@ -1,0 +1,78 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{E44F49EA-789A-4C28-B029-F6255B7390F3}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>XCore</RootNamespace>
+	<AssemblyName>xCoreInterfacesTests</AssemblyName>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+	<Reference Include="nunit.framework">
+	  <Name>nunit.framework</Name>
+	  <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="xCoreInterfaces">
+	  <Name>xCoreInterfaces</Name>
+	  <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="PropertyTableTests.cs">
+	</Compile>
+	<Compile Include="TestMessageSequencer.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

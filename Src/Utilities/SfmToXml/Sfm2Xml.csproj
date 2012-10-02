@@ -1,0 +1,161 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{2B805C11-CA0A-4A86-B598-5D58E8EB18E1}</ProjectGuid>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>App.ico</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>Sfm2Xml</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>Sfm2Xml</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+	<OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>false</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="App.ico" />
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ClsFieldDescription.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ClsHierarchyEntry.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ClsInFieldMarker.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ClsLanguage.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Converter.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CRC.cs" />
+	<Compile Include="FieldHierarchyInfo.cs" />
+	<Compile Include="FileReader.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LanguageInfoUI.cs" />
+	<Compile Include="LexImportField.cs" />
+	<Compile Include="LexImportFields.cs" />
+	<Compile Include="Log.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Sfm2XmlStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>Sfm2XmlStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="Statics.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="Sfm2XmlStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Sfm2XmlStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

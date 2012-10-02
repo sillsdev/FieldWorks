@@ -1,0 +1,82 @@
+﻿Hey, that's an impressive start.
+
+We aren't getting highlighting in the grid, but it seems to copy anyway.
+
+This query on TestLangProj will show a bunch of Unicode in the output that
+looks nice.
+
+declare @own int
+select @own=owner$ from StTxtPara_ where contents like '%French IPA%'
+select contents from StTxtPara_ where owner$ = @own
+
+It appears that I can't do anything that modifies the database. It always
+gives "Attempted to divide by zero."
+
+
+update StStyle set UserLevel = 1 where id=6647  ===> fails
+
+update sttxtpara set contents = N'把草药敷在痛处。 一种舞' where id = 6857
+===> fails
+
+Gotta run, but it's a good start.
+
+Don't worry about changing the order in the database combo. We can probably
+live with it showing up the first one, alphabetically. It shouldn't show
+master, though by default. That's too dangerous.
+
+Love, Dad
+
+
+
+WINDOWS APPLICATION (dbwin.exe)
+
+This program provides basic functions similar to Query Analyzer. Input and
+output should all be in Unicode. The minimum menus I'd recommend are:
+
+File...Connect
+File...Disconnect
+File...New
+File...Open
+File...Save
+File...Save As
+File...Print (nice but could be added later)
+File...Exit
+
+Edit...Undo
+Edit...Cut
+Edit...Copy
+Edit...Paste
+Edit...Select All
+Edit...Find (nice but could be added later)
+Edit...Find Next (nice but could be added later)
+Edit...Go to Line (nice but could wait)
+
+Query...Execute
+Query...Stop Execution
+Query...Results in Text
+Query...Results in Table
+Query...Results to File...  (this should allow output to tab delimited text,
+or CSV format, and ANSI or UTF-8).
+
+Window...Cascade (nice but could be added later)
+Window...Tile Horizontally (nice but could be added later)
+Window...Tile Vertically (nice but could be added later)
+
+Help...About
+
+It would be nice to have the MDI window with different windows for each
+connection, as in QA. The adjustable split pane is also very helpful.
+
+It would be nice if the status bar could show the current server and
+database name for this window, the line and column number (if not too hard),
+and the total rows returned from the query.
+
+It would be nice for the toolbar to have File and Edit buttons similar to QA
+that are limited to our menu items. It should also have an Execute and Stop
+execution button, and a combo to allow choosing a database. In the combo, we
+should show FieldWorks databases first in alphabetical order, a dotted line,
+and then the system databases in alphabetical order. The default on program
+startup would be the first FieldWorks database.
+
+If any of the above is especially complex, let me know and we'll rethink the
+specifications.

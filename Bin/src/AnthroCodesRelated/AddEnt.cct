@@ -1,0 +1,2 @@
+c Adds an entity to Index*.htm files so that XSL parser can work.
+"transitional.dtd" d34 > dup "[<!ENTITY nbsp " d34 "&#160;" d34 d62 "]"

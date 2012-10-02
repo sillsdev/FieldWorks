@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE lingPaper
+  PUBLIC "-//XMLmind//DTD XLingPap//EN" "file://%SystemDrive%/Documents and Settings/%USERNAME%/Application Data/XMLmind/XMLEditor/addon/XLingPap/XLingPap.dtd">
+<lingPaper>
+<frontMatter>
+<title></title>
+<author></author>
+</frontMatter>
+<part id="p1"><secTitle></secTitle><p></p>
+<chapter id="c1"><secTitle></secTitle><p></p></chapter>
+</part>
+<part id="p2"><secTitle></secTitle><p></p>
+<chapter id="c2"><secTitle></secTitle><p></p></chapter>
+</part>
+</lingPaper>

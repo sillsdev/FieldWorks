@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Quiet Execution CustomAction</title>
+</head>
+<body>
+<h1>Quiet Execution CustomAction</h1>
+
+<p>
+There is a qtexec custom action that is part of the wixca that can run arbitrary command lines.
+</p>
+
+<h2>Immediate execution</h2>
+
+<pre>
+&lt;Property Id="QtExecCmdLine" Value="command line to run"/&gt;
+&lt;CustomAction Id="QtExec" BinaryKey="wixca" DllEntry="CAQuietExec" Execute="immediate" Return="check"/&gt;
+&lt;Binary Id="wixca" src="wixca.dll"/&gt;
+.
+.
+.
+&lt;InstallExecuteSequence&gt;
+	&lt;Custom Action="QtExec" After="TheActionYouWantItAfter"/&gt;
+&lt;/InstallExecuteSequence&gt;
+</pre>
+
+<p>
+This will result in running the command line in the immediate sequence.  If the exit code of the command
+line is an error (not 0) then because Return is set to “check" it will cause the install to fail.  You
+can change this value to “ignore" if you don’t want it to cause an install failure (it will be logged still).
+</p>
+
+<p>
+If you want to run more than one command line in the immediate sequence then you’ll need schedule QtExec
+multiple times and set the QtExecCmdLine property (using a type 51 custom action) right before you want
+each of them executed.
+</p>
+
+
+<h2>Deferred execution</h2>
+
+<p>
+You can also run command lines in the differed script using this tool by setting the custom action data property. If
+the code is running in immediate mode it will try to execute the value of the QtExecCmdLine if it is running in
+deferred (or rollback) mode it will try to execute the value of the custom action data.  The custom action data
+is a property that is named the same as the custom action.
+
+Here’s an example of authoring deferred command line execution:
+</p>
+
+<pre>
+&lt;Property Id="QtExecDeferred" Value="command line to run"/&gt;
+&lt;CustomAction Id="QtExecDeferred" BinaryKey="wixca" DllEntry="CAQuietExec" Execute="deferred" Return="check"/&gt;
+&lt;Binary Id="wixca" src="wixca.dll"/&gt;
+.
+.
+.
+&lt;InstallExecuteSequence&gt;
+	&lt;Custom Action="QtExecDeferred" After="TheActionYouWantItAfter"/&gt;
+&lt;/InstallExecuteSequence&gt;
+</pre>
+
+</body>
+</html>

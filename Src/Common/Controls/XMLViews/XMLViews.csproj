@@ -1,0 +1,361 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{BC490547-D278-4442-BD34-3580DBEFC405}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>XMLViews</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.Common.Controls</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\..\output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\XMLViews.XML</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Accessibility">
+	  <Name>Accessibility</Name>
+	</Reference>
+	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="Enchant.Net, Version=1.3.1.1, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\DistFiles\Enchant.Net.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\..\..\Output\debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FdoUiLowLevel, Version=1.0.2378.27308, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Filters">
+	  <Name>Filters</Name>
+	  <HintPath>..\..\..\..\Output\Debug\Filters.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls">
+	  <Name>FwControls</Name>
+	  <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgs">
+	  <Name>FwCoreDlgs</Name>
+	  <HintPath>..\..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources">
+	  <Name>FwResources</Name>
+	  <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils">
+	  <Name>FwUtils</Name>
+	  <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.VisualBasic">
+	  <Name>Microsoft.VisualBasic</Name>
+	</Reference>
+	<Reference Include="Reporting">
+	  <Name>Reporting</Name>
+	  <HintPath>..\..\..\..\Output\Debug\Reporting.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite">
+	  <Name>RootSite</Name>
+	  <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="ScrFDO, Version=5.3.0.16931, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="SimpleRootSite">
+	  <Name>SimpleRootSite</Name>
+	  <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="stdole">
+	  <Name>stdole</Name>
+	  <HintPath>..\..\..\..\..\Program Files\Microsoft.NET\Primary Interop Assemblies\stdole.dll</HintPath>
+	  <AssemblyFolderKey>hklm\primary interop assemblies</AssemblyFolderKey>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="Widgets">
+	  <Name>Widgets</Name>
+	  <HintPath>..\..\..\..\Output\Debug\Widgets.dll</HintPath>
+	</Reference>
+	<Reference Include="xCore">
+	  <Name>xCore</Name>
+	  <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
+	</Reference>
+	<Reference Include="xCoreInterfaces">
+	  <Name>xCoreInterfaces</Name>
+	  <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLUtils">
+	  <Name>XMLUtils</Name>
+	  <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="BrowseViewer.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="BulkEditBar.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ChooserCommandBase.cs" />
+	<Compile Include="ColumnConfigureDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ConfiguredExport.cs" />
+	<Compile Include="DhListView.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="FilterBar.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FilterSdaDecorator.cs" />
+	<Compile Include="FlatListView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FlatListView.Designer.cs">
+	  <DependentUpon>FlatListView.cs</DependentUpon>
+	</Compile>
+	<Compile Include="LayoutMerger.cs" />
+	<Compile Include="SimpleDateMatchDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SimpleDateMatchDlg.Designer.cs">
+	  <DependentUpon>SimpleDateMatchDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LayoutCache.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LayoutFinder.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NonEmptyTargetControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="PartGenerator.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ReallySimpleListChooser.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SimpleIntegerMatchDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SimpleMatchDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="XmlBrowseRDEView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="XmlBrowseView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="XmlBrowseViewBase.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="XmlBrowseViewBaseVc.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlBrowseViewVc.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlRDEBrowseViewVc.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlSeqView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="XmlVc.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlView.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="XMLViewsStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>XMLViewsStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="XmlViewsUtils.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<EmbeddedResource Include="BrowseViewer.resx">
+	  <DependentUpon>BrowseViewer.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="BulkEditBar.resx">
+	  <DependentUpon>BulkEditBar.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ColumnConfigureDialog.resx">
+	  <DependentUpon>ColumnConfigureDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DhListView.resx">
+	  <DependentUpon>DhListView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="NonEmptyTargetControl.resx">
+	  <DependentUpon>NonEmptyTargetControl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ReallySimpleListChooser.resx">
+	  <DependentUpon>ReallySimpleListChooser.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SimpleDateMatchDlg.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>SimpleDateMatchDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SimpleIntegerMatchDlg.resx">
+	  <DependentUpon>SimpleIntegerMatchDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SimpleMatchDlg.resx">
+	  <DependentUpon>SimpleMatchDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="XmlBrowseRDEView.resx">
+	  <DependentUpon>XmlBrowseRDEView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="XmlBrowseView.resx">
+	  <DependentUpon>XmlBrowseView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="XmlBrowseViewBase.resx">
+	  <DependentUpon>XmlBrowseViewBase.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="XmlSeqView.resx">
+	  <DependentUpon>XmlSeqView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="XmlView.resx">
+	  <DependentUpon>XmlView.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="XMLViewsStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>XMLViewsStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

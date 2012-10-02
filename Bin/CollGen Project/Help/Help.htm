@@ -1,0 +1,70 @@
+<html>
+<head></head>
+<title>Collection Generator Help</title>
+<body bgcolor="#EEFFFF">
+<center>
+<h1>Collection Generator Help</h1>
+</center>
+<hr>
+<p>
+The Collection Generator is a utility that lets you easily create source code for your own, strongly-typed collections. All you need to is fill in the missing information, and then a collection is made to that specification.
+<p>
+The basis for the generated code is a class called CollectionBase. CollectionBase provides the basic structure for a standard, list-based collection. Therefore, if what you need is a collection of buttons, pens, customers or employees (as examples), this generator can quickly, and easily serve your purpose. However, if you need a dictionary based solution, that is a collection of key-value pairs, then you will need to use a different solution (see IDictionary and Hashtable in the .NET Framework SDK Help).
+<p>
+<center>
+<table border=0 width=800 cellspacing=5>
+<tr>
+<td bgcolor="#FFFFEE"><pre>
+/// <value>
+///    <para> The entry at the specified index of the collection.</para>
+/// </value>
+/// <exception cref='System.ArgumentOutOfRangeException'><paramref name='index'/> is outside the valid range of indexes for the collection.</exception>
+public Customer this[int index] {
+	get {
+		return ((Customer)(List[index]));
+	}
+	set {
+		List[index] = value;
+	}
+}</pre>
+</td></tr>
+</table>
+<font size=2><i>A snippet from an example of the code generated</i></font>
+</center>
+<p>
+Because the generated collection inherits from CollectionBase, it includes all the necessary parts to fulfill the contract with that base class (base line comments are also generated for all of your members, to easily fill out and explain, if desired!). Functional base code is also provided so that once generated, if you have the type of object which you will store in the collection already made, then your new collection will work straight away: there is no need for you to add any extra code. Having said that, you always have the opportunity to add any verification, or other code into the collection to ensure it meets your specific needs.
+<p>
+The collection you generate can easily be saved into one of three langauges: Visual Basic, CSharp, or JScript. The CodeDom classes are used to generate the colleection based on a rule system, therefore it is easy to compare any collection generated in one langage, to it's alternate cousin.
+<p>
+The source code for the generator is included with this application, and can be found in the 'CollGen Project' subdirectory
+<p>
+<hr>
+To view an explanation of the Sections you can fill out when using the Collection Generator, <a href="explanation.htm">Click Here</a>
+<p>
+To view the source code for an object to store in your collection, as well as some code that might use your collection, and the objects in it, <a href="dummycode.htm">Click Here</a>
+<br>
+<hr>
+<p>
+<center>
+<table border=0>
+<tr>
+<td width=200><center>
+<font size=2>
+<a href="help.htm">Main Help Page</a>
+</font>
+</td>
+<td width=200><center>
+<font size=2>
+<a href="explanation.htm">Explanation of Fields</a>
+</font>
+</td>
+<td width=200><center>
+<font size=2>
+<a href="dummycode.htm">Code Example</a>
+</font>
+</td>
+</tr>
+</table>
+</center>
+</body>
+</html>

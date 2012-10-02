@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?>
+
+<!-- This model is independant of database -->
+
+<fwuiml id="FLE" model="Language Explorer" title =" - FieldWorks Language Explorer">
+
+ <section file="Menu.xml"/>
+ <section file="Sidebar.xml" />
+ <section file="Toolbar.xml" />
+ <section file="Statusbar.xml" />
+
+ <section file="VwLiAdvEd.xml" />
+ <section file="VwLiList.xml" />
+ <section file="VwLxLexEdit.xml" />
+ <section file="VwLxBrowse.xml" />
+ <section file="VwLxDictionary.xml" />
+ <section file="VwLxClassifiedDictionary.xml" />
+ <section file="VwLxCategorizedEntry.xml" />
+ <section file="VwLxBeEntries.xml" />
+ <section file="VwLxBeSenses.xml" />
+ <section file="VwLxReversalIndexes.xml" />
+ <section file="VwLxBeReversal.xml" />
+ <section file="VwTxEdit.xml" />
+ <section file="VwWdAnalysis.xml" />
+ <section file="VwWdConcordance.xml" />
+ <section file="VwWdWLConcordance.xml" />
+ <section file="VwGmCatEdit.xml" />
+ <section file="VwGmCatBrowse.xml" />
+ <section file="VwGmEnvironments.xml" />
+ <section file="VwGmExFeatures.xml" />
+ <section file="VwGmFeatures.xml" />
+ <section file="VwGmNaturalClasses.xml" />
+ <section file="VwGmPhonemes.xml" />
+ <section file="VwGmSketch.xml" />
+
+ <section file="DiaBackupRestore.xml" />
+ <section file="DiaConfInterlinear.xml" />
+ <section file="DiaFindAndReplace.xml" />
+ <section file="DiaFindLexEntry.xml" />
+ <section file="DiaFwProjProp.xml" />
+ <section file="DiaNewEntry.xml" />
+ <section file="DiaNewProject.xml" />
+ <section file="DiaOpenProject.xml" />
+ <section file="DiaWritingSysProp.xml" />
+
+  <!-- Model-wide variable definitions used in paths -->
+  <var id="nl" set="9:NAMELESS"/>
+  <var id="NL" set="$nl;/"/>
+  <var id="NL2" set="$NL;$NL"/>
+  <var id="NL22" set="$NL;$nl;[2]/"/>
+  <var id="NL32" set="$NL;$NL22"/>
+  <var id="NL4" set="$NL2;$NL2"/>
+  <var id="Col" set="28:Row/29:Cell"/>
+  <var id="Text" set="42:Paragraph"/>  <var id="ok" set="9:OK/43:OK"/>
+  <var id="more" set="9:More/43:More"/>
+  <var id="cancel" set="9:Cancel/43:Cancel"/>
+  <var id="close" set="9:Close/43:Close"/>
+  <var id="create" set="9:Create/43:Create"/>
+  <var id="add" set="9:Add/43:Add"/>
+  <var id="delete" set="9:Delete/43:Delete"/>
+  <var id="yes" set="9:Yes/43:Yes"/>
+  <var id="no" set="9:No/43:No"/>
+  <var id="next" set="9:Next &gt;/43:Next &gt;"/>
+  <var id="goto" set="9:Go To/43:Go To"/>
+
+</fwuiml>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlvDOC" num="2.7.9.1.2" abbr="tlvDOC" file="DN\OptVwDoc.xml">
+
+ <title tag="tlvDOC">Tools-Options-Views-Document View Tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+	<p>The controls for customizing Document View are accessed through the views tab in the Tools-Options Dialog. In Document view the orientation is towards paragraphs (or blocks of fields) as opposed to individual fields (as in the Data Entry view). In Document view settings can be changed for visibility and ordering of these blocks and also fields within the blocks.</p>
+  </introduction>
+
+  <context>
+	<p>The specs for these tests are based on the following link: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheViewsTab" type="doc">Tools-Options-Views Tab</link>. Links showing the Document view are the following <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Document/DocView.html" type="doc">Document Views</link>.</p>
+	<p>Many of the controls for Document View are tested under the test script for <link uri="OptVwDE.xml">Data Entry View</link>. Only the controls specific to Document view are tested here.</p>
+<p>Use "Tools-Options-Views-Doc" in bug reports.</p>
+  </context>
+
+<case id="tlvDOC1" num="1" order="any">
+  <title tag="tlvDOC1">Changing Settings</title>
+  <context>
+<p>In Tools-Options-Views-Document</p>
+</context>
+
+  <step name="1.1" link="Bug">For particular fields within a block or for particular blocks change the visibility setting by right-clicking over it and check the effects in the Document view. Possible settings are 1) Always 2) Not visible 3) Visible If Data Present
+ <r>
+<ul>
+<li>A pop-up menu allows visibility settings to be changed.</li>
+<li>The settings are reflected in the Document view.</li>
+</ul>
+</r>
+<p name="Note">If they're not, check that you're modifying the settings in the right entry type, e.g. Event, Analysis, etc.</p>
+<p name="bug">Tools-Options-Views-Doc settings don't persist</p>
+  </step>
+
+  <step name="1.2" link="Bug">Fields in combo box: this box lists the various types of records available for a view (e.g. Event and Analysis). When the Document view is selected select an entry from this combo box.
+	<r>
+<ul>
+<li>When the entry type is selected the block and fields for the entry type appear in the Field list.</li>
+<li>They agree with the corresponding list in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/Document/DocView.html" type="doc">Document Views</link> spec.</li>
+</ul>
+</r>
+  <p name="bug">Tools-Options-Views-Doc entry fields are wrong</p>
+  <p name="bug">Tools-Options-Views-Doc list is wrong</p>
+  </step>
+
+</case>
+
+ <update date="May-25-00" author="RickM">Test created.</update>
+ <update date="Sep-20-01" author="MikeL">Revisited and revised.</update>
+ <update date="May-22-02" author="JoelC">Minor changes to reflect changes in specs.</update>
+
+</test>

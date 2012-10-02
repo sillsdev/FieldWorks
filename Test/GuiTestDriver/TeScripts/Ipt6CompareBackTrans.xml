@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 6 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- set case specific variables -->
+		<var id="MfrBT" select="tests/test[@case='$TestCase;']/@mfr-bt"/>
+
+		<file-comp lookAt="files"
+		   of="C:\GuiTestResults\ImportParatext6\Export Paratext6 BT.sf"
+		   to="$TestBranchDir;\Test\GuiTestDriver\TeExpectedTestResults\ImportParatext6\$MfrBT"/>
+
+	</on-application>
+
+</accil>

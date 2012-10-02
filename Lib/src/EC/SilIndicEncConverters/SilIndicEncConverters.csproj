@@ -1,0 +1,155 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+	<OutputPath>..\..\..\release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<BaseAddress>285212672</BaseAddress>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>true</RegisterForComInterop>
+	<DebugType>
+	</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{DC0A7A02-87B7-4619-B45F-D5A3ECB599A9}</ProjectGuid>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>SilIndicEncConverters30</AssemblyName>
+	<AssemblyOriginatorKeyFile>FieldWorks.snk</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>VBScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SilEncConverters30</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SignAssembly>true</SignAssembly>
+	<OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\debug\</OutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>true</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\release\</OutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>false</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>true</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+	<DebugSymbols>true</DebugSymbols>
+	<OutputPath>..\..\..\debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<BaseAddress>285212672</BaseAddress>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<RegisterForComInterop>true</RegisterForComInterop>
+	<DebugType>full</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\release\ECInterfaces.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\release\SilEncConverters30.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Configuration.Install">
+	  <Name>System.Configuration.Install</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Management" />
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Font2IsciiEncConverter.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ITransEncConverter.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="UTransEncConverter.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="FieldWorks.snk" />
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="TRFFC17.ICO" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

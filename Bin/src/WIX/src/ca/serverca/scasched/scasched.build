@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="scasched" default="scasched.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	scasched.build - Builds scasched.dll
+	2005.11.16 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- scasched-specific properties -->
+  <property name="scasched.file.targetPdb" value="${path::change-extension(file.target.scasched, '.pdb')}" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="scasched.build" description="Peforms a full rebuild (clean then build)" depends="scasched.clean, scasched.inc" />
+
+  <!-- Clean -->
+  <target name="scasched.clean" description="Cleans the build">
+	<delete dir="${dir.build.scasched}" failonerror="false" if="${directory::exists(dir.build.scasched)}" />
+	<delete file="${file.target.scaexec}" failonerror="false" if="${file::exists(file.target.scaexec)}" />
+	<delete file="${scasched.file.targetPdb}" failonerror="false" if="${file::exists(scasched.file.targetPdb)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="scasched.inc" description="Performs an incremental build" depends="makeDirs">
+	<fileset id="compileCpp.fileset.sources" basedir="${dir.src.ca.serverca}\scasched">
+	  <include name="scasched.cpp" />
+	  <include name="scaapppool.cpp" />
+	  <include name="scacert.cpp" />
+	  <include name="scadb.cpp" />
+	  <include name="scafilter.cpp" />
+	  <include name="scaiis.cpp" />
+	  <include name="scahttpheader.cpp" />
+	  <include name="scamimemap.cpp" />
+	  <include name="scaproperty.cpp" />
+	  <include name="scasmbsched.cpp" />
+	  <include name="scasqlstr.cpp" />
+	  <include name="scassl.cpp" />
+	  <include name="scauser.cpp" />
+	  <include name="scavdir.cpp" />
+	  <include name="scaweb.cpp" />
+	  <include name="scawebaddr.cpp" />
+	  <include name="scawebapp.cpp" />
+	  <include name="scawebappext.cpp" />
+	  <include name="scawebdir.cpp" />
+	  <include name="scaweberr.cpp" />
+	  <include name="scaweblog.cpp" />
+	  <include name="scawebprop.cpp" />
+	  <include name="scawebsvcext.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.scasched}" />
+	<property name="compileCpp.file.precomp.h" value="${dir.src.ca.serverca}\scasched\precomp.h" />
+	<property name="compileCpp.additionalOptions" value="-I&quot;${dir.src.ca.wcautil}&quot; -I&quot;${dir.src.ca.serverca}\inc&quot;" />
+	<property name="compileCpp.file.rc" value="${dir.src.ca.serverca}\scasched\scasched.rc" />
+	<property name="makeNativeDll.file.target" value="${file.target.scasched}" />
+	<property name="makeNativeDll.file.def" value="${dir.src.ca.serverca}\scasched\scasched.def" />
+	<property name="makeNativeDll.additionalLibs" value="" />
+	<foreach property="libFile" item="String" delim=";" in="${file.target.wcautil};${file.target.dutil};${dir.platformsdk.lib}\msi.lib;${dir.platformsdk.lib}\certidl.lib;${dir.platformsdk.lib}\crypt32.lib;${dir.platformsdk.lib}\netapi32.lib">
+	  <property name="makeNativeDll.additionalLibs" value="${makeNativeDll.additionalLibs} &quot;${libFile}&quot;" />
+	</foreach>
+
+	<!-- Make scasched.dll -->
+	<call target="makeNativeDll" />
+  </target>
+
+</project>

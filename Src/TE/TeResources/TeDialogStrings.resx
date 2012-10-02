@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidFootnoteResequenceCaption" xml:space="preserve">
+	<value>Recalculating Footnotes</value>
+	<comment>window caption for recalculating footnotes progress dialog</comment>
+  </data>
+  <data name="kstidConvertChapterVerseNumbersCaption" xml:space="preserve">
+	<value>Converting Chapter/Verse Numbers</value>
+	<comment>window caption for converting chapter/verse numbers progress dialog</comment>
+  </data>
+  <data name="kstidFootnoteResequenceMessage" xml:space="preserve">
+	<value>Updating {0}</value>
+	<comment>progress dialog status message with book name</comment>
+  </data>
+  <data name="kstidConvertChapterVerseNumbersMessage" xml:space="preserve">
+	<value>Converting numbers in {0}</value>
+	<comment>progress dialog status message with book name</comment>
+  </data>
+  <data name="kstidArabicIndic" xml:space="preserve">
+	<value>Arabic-Indic</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidExtArabicIndic" xml:space="preserve">
+	<value>Arabic-Indic (Extended)</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidDevanagari" xml:space="preserve">
+	<value>Devanagari</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidBengali" xml:space="preserve">
+	<value>Bengali</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidGurmukhi" xml:space="preserve">
+	<value>Gurmukhi</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidGujarati" xml:space="preserve">
+	<value>Gujarati</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidOriya" xml:space="preserve">
+	<value>Oriya</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidTamil" xml:space="preserve">
+	<value>Tamil</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidTelugu" xml:space="preserve">
+	<value>Telugu</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidKannada" xml:space="preserve">
+	<value>Kannada</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidMalayalam" xml:space="preserve">
+	<value>Malayalam</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidThai" xml:space="preserve">
+	<value>Thai</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidLao" xml:space="preserve">
+	<value>Lao</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidTibetan" xml:space="preserve">
+	<value>Tibetan</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidMyanmar" xml:space="preserve">
+	<value>Myanmar</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidEthiopic" xml:space="preserve">
+	<value>Ethiopic</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidKhmer" xml:space="preserve">
+	<value>Khmer</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidMongolian" xml:space="preserve">
+	<value>Mongolian</value>
+	<comment>script language</comment>
+  </data>
+  <data name="kstidStyleLevelBasic" xml:space="preserve">
+	<value>Basic</value>
+	<comment>show style level</comment>
+  </data>
+  <data name="kstidStyleLevelIntermediate" xml:space="preserve">
+	<value>Intermediate</value>
+	<comment>show style level</comment>
+  </data>
+  <data name="kstidStyleLevelAdvanced" xml:space="preserve">
+	<value>Advanced</value>
+	<comment>show style level</comment>
+  </data>
+  <data name="kstidStyleLevelExpert" xml:space="preserve">
+	<value>Expert</value>
+	<comment>show style level</comment>
+  </data>
+  <data name="kstidNoDifferencesDetected" xml:space="preserve">
+	<value>No differences were found in {0}.</value>
+	<comment>message to indicate that there are no differences when comparing two versions of a book</comment>
+  </data>
+  <data name="kstidMergeProgress" xml:space="preserve">
+	<value>Calculating differences for {0}...</value>
+	<comment>Progress dialog message displayed when calculating differences for the diff view</comment>
+  </data>
+  <data name="kstidCompareCaption" xml:space="preserve">
+	<value>Comparison Progress</value>
+	<comment>Caption for the progress dialog when calculating differences</comment>
+  </data>
+  <data name="kstidOverwriteCaption" xml:space="preserve">
+	<value>Replace Range Progress</value>
+	<comment>Caption for the progress dialog when overwriting a book</comment>
+  </data>
+  <data name="kstidUnknown" xml:space="preserve">
+	<value>?</value>
+	<comment>Symbol or short string representing an unknown number of unreviewed differences in the Merge Imported Scripture dialog box</comment>
+  </data>
+  <data name="kstidBookFilterCaption" xml:space="preserve">
+	<value>Filter by Book</value>
+	<comment>window caption for book filter</comment>
+  </data>
+  <data name="kstidUpdateVerseBridges" xml:space="preserve">
+	<value>Updating verse bridges</value>
+	<comment>window caption for updating verse bridges</comment>
+  </data>
+  <data name="kstidUpdateVerseBridgesInBook" xml:space="preserve">
+	<value>Updating {0}</value>
+	<comment>status text for progress dialog when updating verse bridges</comment>
+  </data>
+  <data name="kstidExportRtfProgress" xml:space="preserve">
+	<value>Exporting Scripture to RTF</value>
+	<comment>progress dialog text for exporting RTF scripture</comment>
+  </data>
+  <data name="kstidExportRtfKeyTerms" xml:space="preserve">
+	<value>Exporting Biblical Terms</value>
+	<comment>progress dialog text for exporting RTF biblical terms</comment>
+  </data>
+  <data name="kstidExportUSFMProgress" xml:space="preserve">
+	<value>Exporting Scripture to USFM</value>
+	<comment>progress dialog text for exporting USFM scripture</comment>
+  </data>
+  <data name="kstidExportUSFMInterleavedLabel" xml:space="preserve">
+	<value>(interleaved)</value>
+	<comment>label add-on for interleaved control in exporting USFM scripture</comment>
+  </data>
+  <data name="kstidExportXmlProgress" xml:space="preserve">
+	<value>Exporting to Open XML for Editing Scripture</value>
+	<comment>progress dialog title for exporting XML scripture</comment>
+  </data>
+  <data name="kstidExportBookStatus" xml:space="preserve">
+	<value>Exporting {0}...</value>
+	<comment>progress dialog book name template</comment>
+  </data>
+  <data name="kstidImportFilesUnavailable" xml:space="preserve">
+	<value>No files are available for import.</value>
+	<comment>Message when there are no files to import</comment>
+  </data>
+  <data name="kstidUndoDeleteArchiveBook" xml:space="preserve">
+	<value>Delete Saved Version of Book</value>
+	<comment>Message for undo/redo of deletion of a saved version of a book</comment>
+  </data>
+  <data name="kstidUndoDeleteArchive" xml:space="preserve">
+	<value>Delete Saved Version</value>
+	<comment>Message for undo/redo of deletion of an entire saved version</comment>
+  </data>
+  <data name="kstidBookAbbrevColHeader" xml:space="preserve">
+	<value>Abbreviation</value>
+	<comment>Used as column header for displaying the abbreviation of a Scripture book in multiple writing systems</comment>
+  </data>
+  <data name="kstidBookNameColHeader" xml:space="preserve">
+	<value>Name</value>
+	<comment>Used as column header for displaying the name of a Scripture book in multiple writing systems</comment>
+  </data>
+  <data name="kstidOxesExportDescription" xml:space="preserve">
+	<value>{0} exported by {1} on {2} {3}, {4} at {5}</value>
+	<comment>{0} is the project's name; {1} is a person's computer login name; {2} is the name of the current month; {3} is the day of the month; {4} is the year; and {5} is the current time</comment>
+  </data>
+  <data name="kstidOxesExportEmptyHeading" xml:space="preserve">
+	<value>(No text in section heading)</value>
+  </data>
+  <data name="kstidOxesExportIntro" xml:space="preserve">
+	<value>{0} Intro: {1}</value>
+	<comment>{0} is the 3-letter book abbreviation. {1} is the intro. section heading.</comment>
+  </data>
+  <data name="kstidOxesExportRef" xml:space="preserve">
+	<value>{0}: {1}</value>
+	<comment>{0} is the standardized Scripture range reference. {1} is a section heading.</comment>
+  </data>
+  <data name="kstidExportXHTML" xml:space="preserve">
+	<value>Export XHTML</value>
+	<comment>displayed as header text of the dialog</comment>
+  </data>
+  <data name="kstidExportPs" xml:space="preserve">
+	<value>Export using Pathway</value>
+	<comment>displayed as header text of the dialog</comment>
+  </data>
+  <data name="kstidOverwriteCurrentWithSaved" xml:space="preserve">
+	<value>Replace Range in Current with Saved Version</value>
+	<comment>Message for Undo/Redo of Overwriting current with saved version. (May just copy, if no current version of book.)</comment>
+  </data>
+  <data name="kstidProperties" xml:space="preserve">
+	<value>Properties...</value>
+	<comment>Menu item for bringing up Properties dialog (in Saved versions dialog)</comment>
+  </data>
+  <data name="kstidProtectedVersionCaption" xml:space="preserve">
+	<value>Protected Version</value>
+	<comment>Message Box title for error message about trying to delete a protected version or a book contained in a protected version,</comment>
+  </data>
+  <data name="kstidCannotDeleteBookFromProtectedVersion" xml:space="preserve">
+	<value>This version is protected. You must unprotect it in order to delete books from it.</value>
+	<comment>Message when attempting to delete a book from a protected saved version.</comment>
+  </data>
+  <data name="kstidCannotDeleteProtectedVersion" xml:space="preserve">
+	<value>This version is protected. You must unprotect it in order to delete it.</value>
+	<comment>Message when attempting to delete a protected saved version.</comment>
+  </data>
+  <data name="kstidAlreadyExists" xml:space="preserve">
+	<value>File {0} already exists.
+Do you want to replace it?</value>
+	<comment>{0} is the file pathname.  Note the internal newline characters.</comment>
+  </data>
+  <data name="kstidExportOXES" xml:space="preserve">
+	<value>Export Open XML for Editing Scripture</value>
+	<comment>message box caption</comment>
+  </data>
+  <data name="ksRedoDraftProperties" xml:space="preserve">
+	<value>Redo Setting Saved Version Properties</value>
+	<comment>Text for Redo menu item</comment>
+  </data>
+  <data name="ksUndoDraftProperties" xml:space="preserve">
+	<value>Undo Setting Saved Version Properties</value>
+	<comment>Text for Undo menu item</comment>
+  </data>
+  <data name="kstidAutoMerging" xml:space="preserve">
+	<value>Replacing range of imported sections in current version of {0}...</value>
+	<comment>Progress dialog message displayed when replacing range in imported version.</comment>
+  </data>
+</root>

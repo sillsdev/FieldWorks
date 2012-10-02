@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="tlsoptovl" num="2.7.9.4" abbr="tlool" file="FW\OptOverlays.xml">
+<title tag="tlsoptovl">Tools-Options-Overlays Tab Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The user adds, selects, deletes, copies and modifies various overlay specifications.</p>
+<p>This test script is similar to the one in the <link uri="http://lsdev.sil.org/intranet/Test/Manual Tests/TS/DN/OptOverlays.xml" type="doc">DN directory</link>.</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" type="doc">Tools-Options-Overlays Tab</link>
+</p>
+
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Options-Overlays Tab"</p>
+</context>
+<case id="tloolAct" num="1" order="any">
+<title tag="tloolAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="1.1" link="Bug">Invoke Tools-Options-Overlays Tab. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" type="doc">Tools-Options-Overlays Tab specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab dialog fails to open</p>
+<p name="bug">Tools-Options-Overlays Tab dialog layout incorrect</p>
+</step>
+<step name="1.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>When invoked from a overlay button right-click, associated overlay is selected.</li>
+<li>The Overlay settings fields are filled with data of the selected overlay.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays TabTools-Options-Overlays Tab associated overlay is selected failed</p>
+<p name="bug">Tools-Options-Overlays TabTools-Options-Overlays Tab Overlay settings fields are filled with data of the selected overlay failed</p>
+</step>
+<step name="1.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The overlay is activated on the current view.</li>
+<li>Report any failures as suggested using "Tools-Options-Overlays Tab" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab dialog remains after OK</p>
+<p name="bug">Tools-Options-Overlays Tab overlay is activated on the current view failed</p>
+</step>
+</case>
+
+<case id="tloolovl" num="2" order="any">
+<title tag="tloolovl">Overlays List Box</title>
+<context>
+<p>When the Overlays tab  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;l&gt; to test the Overlays list box.<r>
+<ul>
+<li>The shortcut "l" is underlined.</li>
+<li>There is a list below the text box.</li>
+<li>The default is "&lt;overlays in the project&gt;".</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Overlays".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Overlays shortcut is not &lt;l&gt;</p>
+<p name="bug">Tools-Options-Overlays Tab Overlays has list problems</p>
+<p name="bug">Tools-Options-Overlays Tab Overlays default is not "&lt;overlays in the project&gt;"</p>
+</step>
+<step name="2.2" link="Bug">Check the list entries.<r>
+<ul>
+<li>The cursor highlights each item.</li>
+	 <li>The list contains overlays in the project.</li>
+	 <li>The list is sorted descending alphabetical order.</li>
+	</ul>
+</r>
+<p name="bug">Tools-Options-Overlays TabOverlays list items not highlighted</p>
+	 <p name="bug">Tools-Options-Overlays TabOverlays drop list missing &lt;overlays in the project&gt;</p>
+	 <p name="bug">Tools-Options-Overlays TabOverlays drop list not sorted right</p>
+	</step>
+<step name="2.3" link="Bug">Slow double-click the Overlays listbox.<r>Opens up an in-place edit box on selected item.</r>
+<p name="bug">Tools-Options-Overlays Tab Slow double-click  failed</p>
+</step>
+<step name="2.4" link="Bug">Right-click rename the Overlays listbox.<r>Opens up an in-place edit box on selected item.</r>
+<p name="bug">Tools-Options-Overlays Tab Right-click rename  failed</p>
+<p name="Note">Specs do not state this; not implemented either.</p>
+</step>
+<step name="2.5" link="Bug">Select an item.<r>Overlay tags display as Overlay Settings.</r>
+<p name="bug">Tools-Options-Overlays Tab Select  failed</p>
+</step>
+</case>
+
+<case id="tlooladd" num="3" order="any">
+<title tag="tlooladd">Add Button</title>
+<context>
+<p>When the Overlays tab  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;A&gt; to test the Add button.<r>
+<ul>
+<li>The shortcut "A" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Add".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Add shortcut is not &lt;A&gt;</p>
+</step>
+<step name="3.2" link="Bug">Click the Add button.
+ <r>Opens the New Overlay Dialog.</r>
+<p name="bug">Tools-Options-Overlays Tab Click  failed</p>
+</step>
+</case>
+
+<case id="tlooladddlg" num="4" order="any">
+<title tag="tlooladddlg">New Overlay Dialog</title>
+<context>
+<p>When the New Overlay dialog is displayed</p>
+</context>
+<step name="4.1">Use the Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Overlays/Overlays.htm" type="doc">Tools-Options-Overlays Tab specification</link> to visually inspect the layout of the dialog controls.
+ <r>
+<ul>
+  <li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+  <li>Default values are tested in the control cases below.</li>
+  <li>Shortcuts are as tested in the control cases below.</li>
+  <li>On OK, unique Overlay name is validated. If not, and info dialog with message "A unique name must be give for each overlay. Please provide a unique name." It returns user to the New Overlay Dialog with the cursor in the name box.</li>
+  <li>If a unique name is provided, a new overlay is created and placed in the left pane.</li>
+  <li>On Cancel, user is returned to the Tools-Options-Overlay dialog as it was before.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Add shortcut is not &lt;A&gt;</p>
+</step>
+<step name="4.2" link="Bug">Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and the short cut &lt;Alt&gt;&lt;N&gt; to test the New overlay name text box.
+ <r>Default value is "New Overlay"</r>
+<p name="bug">Tools-Options-Overlays New Overlay dlg default not "New Overlay"</p>
+</step>
+<step name="4.3" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and the short cut &lt;Alt&gt;&lt;A&gt; to test the Associated list list box.
+ <r>
+<ul>
+  <li>Default value is the first item on the list</li>
+  <li>The list of Topics Lists is displayed alphabetically</li>
+  <li>A Topics List is always selected</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Overlays New Overlay dlg Associated list list box</p>
+</step>
+<step name="4.4" link="Bug">Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> to test the Include all items check box.
+ <r>Default checked</r>
+<p name="bug">Tools-Options-Overlays New Overlay dlg include all items default not checked</p>
+</step>
+</case>
+
+<case id="tloolcpy" num="5" order="any">
+<title tag="tloolcpy">Copy Button</title>
+<context>
+<p>When the Overlays tab  is displayed</p>
+</context>
+<step name="5.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;C&gt; to test the Copy button.<r>
+<ul>
+<li>The shortcut "C" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Copy".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Copy shortcut is not &lt;C&gt;</p>
+</step>
+<step name="5.2" link="Bug">Click the Copy button.<r>Copies the selected overlay.</r>
+<p name="bug">Tools-Options-Overlays Tab Click  failed</p>
+</step>
+<step name="5.3" link="Bug">Click the Copy button.<r>Assigns name 'Copy(i) of X'. (i is the copy number, no number is given for the first copy)</r>
+<p name="bug">Tools-Options-Overlays Tab Click  failed</p>
+</step>
+<step name="5.4" link="Bug">Click the Copy button.<r>In-place edit box opens.</r>
+<p name="bug">Tools-Options-Overlays Tab Click  failed</p>
+</step>
+</case>
+
+<case id="tlooldel" num="6" order="any">
+<title tag="tlooldel">Delete Button</title>
+<context>
+<p>When the Overlays tab  is displayed</p>
+</context>
+<step name="6.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;D&gt; to test the Delete button.<r>
+<ul>
+<li>The shortcut "D" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Delete".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Delete shortcut is not &lt;D&gt;</p>
+</step>
+<step name="6.2" link="Bug">Click the Delete button.<r>Brings up confirmation dialog.</r>
+<p name="bug">Tools-Options-Overlays Tab Click  failed</p>
+</step>
+<step name="6.3" link="Bug">When confirmed, Click the Delete button.<r>Deletes the selected overlay.</r>
+<p name="bug">Tools-Options-Overlays Tab Click When confirmed failed</p>
+</step>
+<step name="6.4" link="Bug">When confirmed, Click the Delete button.<r>Selects previous overlay.</r>
+<p name="bug">Tools-Options-Overlays Tab Click When confirmed failed</p>
+</step>
+<step name="6.5" link="Bug">When no more overlays:
+  <r>Overlay Settings are disabled.</r>
+<p name="bug">Tools-Options-Overlays Tab Overlays  not in sync with Overlay Settings</p>
+</step>
+</case>
+
+<case id="tlooltgtxt" num="7" order="any">
+<title tag="tlooltgtxt">Overlay Settings Tag Name Text Box</title>
+<context>
+<p>When the  Overlays tab  is displayed</p>
+</context>
+<step name="7.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the tag name text box - shortcut &lt;Alt&gt;&lt;S&gt;.<r>
+<ul>
+<li>It is enabled when an overlay is selected from the list (which should be always if an overlay exists).</li>
+<li>The shortcut "S" is underlined.</li>
+<li>It is a type ahead box that coordinates with the List box below it.</li>
+<li>The item displayed should stay in sync with the item selected in the list box as closely as possible.</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab tag name".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab tag name disabled when an overlay is selected from the list</p>
+<p name="bug">Tools-Options-Overlays Tab tag name type ahead feature not working properly</p>
+</step>
+<step name="7.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is the abbreviation-name of the selected tag in the list box below.</li>
+	   <li>Changing the value tries to select the closest matching tag in the list box below.</li>
+	  </ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab tag name default value is not the name of the selected tag</p>
+	   <p name="bug">Tools-Options-Overlays Tab value is not a valid tag belonging to the selected overlay</p>
+	  </step>
+</case>
+
+<case id="tlooltg" num="8" order="any">
+<title tag="tlooltg">Overlay Settings Tags List Box</title>
+<context>
+<p>When the  Overlays tab  is displayed</p>
+</context>
+<step name="8.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> to test the tags list box.<r>
+<ul>
+<li>There is a list below the text box.</li>
+<li>The default is "&lt;tags in the overlay&gt;".</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab tags".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab tags has list problems</p>
+<p name="bug">Tools-Options-Overlays Tab tags default is not "&lt;tags in the overlay&gt;"</p>
+</step>
+<step name="8.2" link="Bug">Check the list entries.<r>
+<ul>
+<li>The cursor highlights each item.</li>
+	   <li>The list contains tags in the overlay.</li>
+	   <li>The list is sorted descending alphabetical order.</li>
+	  </ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tabtags list items not highlighted</p>
+	   <p name="bug">Tools-Options-Overlays Tabtags drop list missing &lt;tags in the overlay&gt;</p>
+	   <p name="bug">Tools-Options-Overlays Tabtags drop list not sorted right</p>
+	  </step>
+<step name="8.3" link="Bug">Select an item.<r>
+<ul>
+<li>Tag name appears in text box.</li>
+<li>The selected tag's settings are also displayed.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Select  failed</p>
+</step>
+</case>
+
+<case id="tloolcht" num="9" order="any">
+<title tag="tloolcht">Choose Tags Button</title>
+<context>
+<p>When the  Overlays tab  is displayed</p>
+</context>
+<step name="9.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the Choose Tags button.<r>
+<ul>
+<li>The shortcut "T" is underlined.</li>
+<li>Brings up the Overlay Chooser dialog for the list associated with the overlay</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Choose Tags".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Choose Tags shortcut is not &lt;T&gt;</p>
+</step>
+<step name="9.2" link="Bug">Examine the Overlay Chooser dialog that appears.<r>
+<ul>
+<li>The dialog appears similar to the List Chooser dialog with the main difference being the right click and Options menu</li>
+<li>The menu items that allow Insertion, Merging and Deleting in the List Chooser have been replaced by the Exclude and Include menu items found in the Overlay Palette/Chooser</li>
+<li>The rest of the dialog should function like the List Chooser</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Overlay Chooser incorrect</p>
+</step>
+
+<step name="9.3" link="Bug">Check/Uncheck some items in the Chooser
+<r>
+<ul>
+<li>The items checked in the Chooser should be the same as the items present in the tag list</li>
+  <li>Unchecking an item removes the item from the tag list and excludes it from that overlay.</li>
+  <li>Checking an item adds the item to the tag list and includes it in that overlay.</li>
+  <li>Checking an item and including it and unchecking an item and excluding it mean the same thing respectively</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Overlay Chooser not updating tag list correctly</p>
+</step>
+
+</case>
+
+<case id="tloolfgnd" num="10" order="any">
+<title tag="tloolfgnd">Foreground Color Pallet</title>
+<context>
+<p>When the  Overlays tab  is displayed</p>
+</context>
+<step name="10.1" link="Bug">
+	Use the <link uri="../StdCtrls/ColorPal.xml">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;F&gt; to test the Foreground color pallet.<r>
+<ul>
+<li>The shortcut "F" is underlined.</li>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "&lt;unspecified&gt;".</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Foreground".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Foreground shortcut is not &lt;F&gt;</p>
+<p name="bug">Tools-Options-Overlays Tab Foreground missing drop-down</p>
+<p name="bug">Tools-Options-Overlays Tab Foreground default is not "&lt;unspecified&gt;"</p>
+</step>
+<step name="10.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+		<li>The list contains color pallet.</li>
+	   </ul>
+</r>
+<p name="bug">Tools-Options-Overlays TabForeground drop-down not showing</p>
+		<p name="bug">Tools-Options-Overlays TabForeground drop list missing &lt;color palet&gt;</p>
+	   </step>
+<step name="10.3" link="Bug">Arrow keys the Foreground color.<r>Moves to another color square.</r>
+<p name="bug">Tools-Options-Overlays Tab Arrow keys  failed</p>
+</step>
+<step name="10.4" link="Bug">Select an item.<r>Color selection shows up in box.</r>
+<p name="bug">Tools-Options-Overlays Tab Select  failed</p>
+</step>
+</case>
+
+<case id="tloolbgnd" num="11" order="any">
+<title tag="tloolbgnd">Background Color Pallet</title>
+<context>
+<p>When the  Overlays tab  is displayed</p>
+</context>
+<step name="11.1" link="Bug">
+	Use the <link uri="../StdCtrls/ColorPal.xml">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;B&gt; to test the Background color pallet.<r>
+<ul>
+<li>The shortcut "B" is underlined.</li>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "&lt;unspecified&gt;".</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Background".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Background shortcut is not &lt;B&gt;</p>
+<p name="bug">Tools-Options-Overlays Tab Background missing drop-down</p>
+<p name="bug">Tools-Options-Overlays Tab Background default is not "&lt;unspecified&gt;"</p>
+</step>
+<step name="11.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+		<li>The list contains color pallet.</li>
+	   </ul>
+</r>
+<p name="bug">Tools-Options-Overlays TabBackground drop-down not showing</p>
+		<p name="bug">Tools-Options-Overlays TabBackground drop list missing &lt;color pallet&gt;</p>
+	   </step>
+<step name="11.3" link="Bug">Arrow keys the Background color.<r>Moves to another color square.</r>
+<p name="bug">Tools-Options-Overlays Tab Arrow keys  failed</p>
+</step>
+<step name="11.4" link="Bug">Select an item.<r>Color selection shows up in box.</r>
+<p name="bug">Tools-Options-Overlays Tab Select  failed</p>
+</step>
+</case>
+
+<case id="tloolulst" num="12" order="any">
+<title tag="tloolulst">Underline Style Combo Box</title>
+<context>
+<p>When the  Overlays tab  is displayed</p>
+</context>
+<step name="12.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;y&gt; to test the Underline Style combo box.<r>
+<ul>
+<li>The shortcut "y" is underlined.</li>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "&lt;none&gt;".</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Underline Style".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Underline Style shortcut is not &lt;y&gt;</p>
+<p name="bug">Tools-Options-Overlays Tab Underline Style missing drop-down</p>
+<p name="bug">Tools-Options-Overlays Tab Underline Style default is not "&lt;none&gt;"</p>
+</step>
+<step name="12.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+		<li>The list contains underline styles.</li>
+		<li>The list contains <i>none</i>.</li>
+	   </ul>
+</r>
+<p name="bug">Tools-Options-Overlays TabUnderline Style drop-down not showing</p>
+		<p name="bug">Tools-Options-Overlays TabUnderline Style drop list missing &lt;underline styles&gt;</p>
+		<p name="bug">Tools-Options-Overlays TabUnderline Style drop list missing &lt;none&gt;</p>
+	   </step>
+<step name="12.3" link="Bug">Select an item.<r>Style selection shows up in box.</r>
+<p name="bug">Tools-Options-Overlays Tab Select  failed</p>
+</step>
+</case>
+
+<case id="tloolulcl" num="13" order="any">
+<title tag="tloolulcl">Color Color Pallet</title>
+<context>
+<p>When the Overlays tab  is displayed</p>
+</context>
+<step name="13.1" link="Bug">
+	Use the <link uri="../StdCtrls/ColorPal.xml">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;o&gt; to test the Color color pallet.<r>
+<ul>
+<li>The shortcut "o" is underlined.</li>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "&lt;unspecified&gt;".</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Color".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Color shortcut is not &lt;o&gt;</p>
+<p name="bug">Tools-Options-Overlays Tab Color missing drop-down</p>
+<p name="bug">Tools-Options-Overlays Tab Color default is not "&lt;unspecified&gt;"</p>
+</step>
+<step name="13.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+		<li>The list contains color pallet.</li>
+	   </ul>
+</r>
+<p name="bug">Tools-Options-Overlays TabColor drop-down not showing</p>
+		<p name="bug">Tools-Options-Overlays TabColor drop list missing &lt;color palet&gt;</p>
+	   </step>
+<step name="13.3" link="Bug">Arrow keys the Color color.<r>Moves to another color square.</r>
+<p name="bug">Tools-Options-Overlays Tab Arrow keys  failed</p>
+</step>
+<step name="13.4" link="Bug">Select an item.<r>Color selection shows up in box.</r>
+<p name="bug">Tools-Options-Overlays Tab Select  failed</p>
+</step>
+</case>
+
+<case id="tlooltsadv" num="14" order="any">
+<title tag="tlooltsadv">Advanced Button</title>
+<context>
+<p>When the Overlays tab is displayed</p>
+</context>
+<step name="14.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;v&gt; to test the Advanced button.<r>
+<ul>
+<li>The shortcut "v" is underlined.</li>
+<li>Report any failures using the first words, "Tools-Options-Overlays Tab Advanced".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Overlays Tab Advanced shortcut is not &lt;v&gt;</p>
+</step>
+<step name="14.2" link="Bug">Click the Advanced button.<r>Brings up the Advanced Overlay Attributes dialog.</r>
+<p name="bug">Tools-Options-Overlays Tab Click  failed</p>
+</step>
+</case>
+
+<case id="opovAdvS" num="15" order="any">
+<title tag="opovAdvS">Advanced Global Overlay Settings</title>
+<context>
+<p>When the Tools-Options-Overlays-Advanced dialog is displayed</p>
+</context>
+<step name="15.1">Execute the <link uri="../StdCtrls/ListBox.xml" type="module">List Box / Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;f&gt; to test the <b>Font</b> combo box.
+ <r>The selected font appears in the combo box and the preview area is updated to use the selected font. Report any failures using "Advanced Global Overlays Settings dialog font combo box" as the name of the control.</r>
+</step>
+
+<step name="15.2">Execute the <link uri="../StdCtrls/ListBox.xml" type="module">List Box / Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;s&gt; to test the <b>Size</b> combo box.
+ <r>The selected size appears in the combo box and the preview area is updated to use the selected font size. Report any failures using "Advanced Global Overlays Settings dialog size combo box" as the name of the control.</r>
+</step>
+
+<step name="15.3">Execute the <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> and use the shortcuts &lt;Alt&gt;&lt;o&gt;, &lt;Alt&gt;&lt;c&gt;, &lt;Alt&gt;&lt;t&gt;, &lt;Alt&gt;&lt;b&gt;, and &lt;Alt&gt;&lt;r&gt; to test the <b>Show</b> check boxes.
+ <r>The preview area is updated to show the tags and brackets as dictated by the selected check boxes. Preview should be as dictated in the specifications. Report any failures using "Advanced Global Overlays Settings Show check boxes" as the name of the control.</r>
+</step>
+
+<step name="15.4">Execute the <link uri="../StdCtrls/ListBox.xml" type="module">List Box / Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;h&gt; to test the <b>Show up to this many tags at a boundary</b> combo box.
+ <r>The selected number of tags appears in the combo box and the preview area is updated to show the selected number of tags. Report any failures using "Advanced Global Overlays Settings dialog size combo box" as the name of the control.</r>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="May-28-02" author="JoelC">Added case 15 (formerly 18).</update>
+<update date="Jun-28-02" author="JoelC">Updated New Overlay case and other changes.</update>
+<update date="Jul-30-02" author="RussD">Removed cases for outdated specs, updated Case/Step Numbers, other minor changes</update>
+</test>

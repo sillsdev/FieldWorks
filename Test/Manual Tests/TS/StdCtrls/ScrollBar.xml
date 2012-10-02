@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="scrollbar" num="0.9" abbr="slbr" file="StdCtrls\ScrollBar.xml">
+ <title tag="scrollbar">Scroll Bar Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A scroll bar is an elongated control that moves a view up and down or side-to-side in a window. They may be hidden until text or a list exceeds the window size or may always be present, but perhaps "grayed out". Each scroll bar has a slider between arrows at each end. The slider usually reflects how much view content is visible in the window in proportion to its length. Clicking on an arrow moves the view a small amount. Clicking between the slider and an arrow moves the view a "page". The slider can be dragged by the mouse or the mouse wheel (but not yet).</p>
+<p>Our <i>window splitter control</i> is not part of a scroll bar or any standard control. It is part of the window background.</p>
+  </introduction>
+  <context>
+<p>This control communicates with the window to bring view elements to the screen. Bugs should be reported for the view not the scroll bar except for appearance. The first words of a typical bug report title for this control should be a noun phrase containing the name of the view.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, each scroll bar is described in a specification.</p>
+  </warning>
+ <case id="slbrInsp" num="1" order="any">
+  <title tag="slbrInsp">Scroll Bar Inspection</title>
+  <context>
+<p>When the scroll bar is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">To see the scroll bar or activate it, it may be necessary to increase the content of the associated view or decrease the size of the containing window.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the scroll bar.
+   <r>The scroll bar must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Scroll bar has incorrect appearance</p>
+   <p name="bug">View X scroll bar does not display</p>
+   <p name="bug">View X scroll bar does not activate</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the scroll bar relative to other visible controls.
+   <r>The scroll bar should be close to the positions indicated in the specification.</r>
+   <p name="bug">Scroll bar has incorrect location</p>
+  </step>
+
+ </case>
+ <case id="slbrOp" num="2" order="any">
+  <title tag="slbrOp">Scroll Bar Operation</title>
+  <context>
+<p>When the scroll bar is displayed and active</p>
+</context>
+
+   <p name="Principle">Operation of a scroll bar includes changing the data in the view window in a consistent manner and in deactivating the control when the view contains less data than the window size permits.</p>
+
+  <step name="2.1" link="Bug">Click on a scroll bar arrow.
+   <r>Unless touching, the slider moves toward the arrow and the content of the window moves in the opposite direction a small amount.</r>
+   <p name="Notes">
+A "small amount" is usually the height of a line or item or a portion of the width of the window.
+   </p>
+   <p name="bug">View X scroll bar arrow fails to move view content.</p>
+  </step>
+  <step name="2.2" link="Bug">Hold the left click on a scroll bar arrow.
+   <r>Unless touching, the slider moves continuously toward the arrow and the content of the window moves in the opposite direction at a rapid, steady rate.</r>
+   <p name="bug">View X scroll bar fails to scroll steadily</p>
+  </step>
+  <step name="2.3" link="Bug">Click between the slider and a scroll bar arrow.
+   <r>Unless touching, the slider moves toward the arrow and the content of the window moves in the opposite direction by a "page" amount.</r>
+   <p name="Notes">
+A "page" is usually the height of the window or width of the window.
+   </p>
+   <p name="bug">View X scroll bar fails to page view content.</p>
+  </step>
+  <step name="2.4" link="Bug">Hold the left click between the slider and a scroll bar arrow.
+   <r>Unless touching, the slider moves continuously toward the arrow and the content of the window moves in the opposite direction at a very rapid, steady rate.</r>
+   <p name="bug">View X scroll bar fails to scroll rapidly</p>
+  </step>
+  <step name="2.5" link="Bug">Drag the slider.
+   <r>Unless touching an arrow in the direction of dragging, the slider moves with the cursor and the content of the window moves in the opposite direction at a corresponding rate.</r>
+   <p name="bug">View X scroll bar fails to scroll when dragged</p>
+  </step>
+  <step name="2.6" link="Bug">Delete view content or expand the window so all content fits in the window.
+   <r>
+<ul>
+	<li>The vertical scroll bar should disappear or be grayed out if the content fits vertically.</li>
+	<li>The horizontal scroll bar should disappear or be grayed out if the content fits horizontally.</li>
+   </ul>
+</r>
+   <p name="bug">View X scroll bar fails to hide when content fits window</p>
+  </step>
+
+ </case>
+ <update date="Dec-20-00" author="MikeL">Test created.</update>
+
+</test>

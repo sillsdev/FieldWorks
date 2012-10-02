@@ -1,0 +1,87 @@
+<!-- TePublications.dtd -->
+<!-- IMPORTANT NOTE TO MAINTAINERS
+	*********************************************************************************************
+	ANY change to this DTD must be accompanied by the generation of a new DTDVer using guidgen.
+	The DTD version should be changed below and in TePublications.xml and TePublicationInit.cs.
+	TE will only work with publications having the DTD version for which they were created.
+	TE must be modified and recompiled to process a file having an updated DTD. Field personnel
+	who do not have the capability to rebuild the software should not modify this file.
+	*********************************************************************************************
+-->
+<!ELEMENT PublicationDefaultsForNewProject (Publications, HeaderFooterSets)>
+<!ATTLIST PublicationDefaultsForNewProject
+	date CDATA #REQUIRED
+	DTDver (9E835785-F508-4b58-844B-02A3D6EC3579) #REQUIRED
+	version CDATA #REQUIRED
+	label CDATA #IMPLIED
+>
+
+<!ELEMENT Publications (Publication+)>
+<!ATTLIST Publication
+id ID #REQUIRED
+Name CDATA #REQUIRED
+Description CDATA #IMPLIED
+MeasurementUnits CDATA #IMPLIED
+IsLandscape (TRUE|FALSE|true|false) #IMPLIED
+PageSize IDREF #REQUIRED
+GutterMargin CDATA #IMPLIED
+GutterLocation CDATA #IMPLIED
+BaseCharSize CDATA #IMPLIED
+BaseLineSize CDATA #IMPLIED
+SheetLayout (simplex|duplex|booklet) #IMPLIED>
+
+<!ELEMENT Publication (SupportedPublicationSizes, Divisions)>
+<!ELEMENT Divisions (Division+)>
+<!ELEMENT Division (PageLayout+)>
+<!ELEMENT SupportedPublicationSizes (PublicationPageSize+)>
+
+<!ELEMENT PublicationPageSize (Name+)>
+<!ATTLIST PublicationPageSize
+id CDATA #REQUIRED
+Height CDATA #IMPLIED
+Width CDATA #IMPLIED>
+
+<!ELEMENT Name (#PCDATA)>
+<!ATTLIST Name
+	iculocale CDATA #REQUIRED
+>
+
+<!ATTLIST Division
+id CDATA #IMPLIED
+StartAt (oddPage|newPage|continuous) #IMPLIED
+NumberOfColumns CDATA #IMPLIED
+HeaderFooterSetRef IDREF #IMPLIED>
+
+<!ELEMENT PageLayout (#PCDATA)>
+<!ATTLIST PageLayout
+OriginalPageLayoutName CDATA #IMPLIED
+MarginTop CDATA #IMPLIED
+MarginBottom CDATA #IMPLIED
+MarginInside CDATA #IMPLIED
+MarginOutside CDATA #IMPLIED
+PositionHeader CDATA #IMPLIED
+PositionFooter CDATA #IMPLIED>
+
+<!ELEMENT HeaderFooterSet (DefaultHeader?, DefaultFooter?, FirstHeader?, FirstFooter?, EvenHeader?, EvenFooter?)>
+<!ATTLIST HeaderFooterSet
+id ID #REQUIRED
+Name CDATA #IMPLIED
+Description CDATA #IMPLIED>
+
+<!ELEMENT DefaultHeader (Inside?,Center?,Outside?)>
+<!ELEMENT DefaultFooter (Inside?,Center?,Outside?)>
+<!ELEMENT FirstHeader (Inside?,Center?,Outside?)>
+<!ELEMENT FirstFooter (Inside?,Center?,Outside?)>
+<!ELEMENT EvenHeader (Inside?,Center?,Outside?)>
+<!ELEMENT EvenFooter (Inside?,Center?,Outside?)>
+
+<!ELEMENT Inside (Element+)>
+<!ELEMENT Center (Element+)>
+<!ELEMENT Outside (Element+)>
+
+<!ELEMENT Element (#PCDATA)>
+<!ATTLIST Element
+type CDATA #IMPLIED
+ws CDATA #IMPLIED>
+
+<!ELEMENT HeaderFooterSets (HeaderFooterSet+)>

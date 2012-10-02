@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <?include $(var.caerrwxi)?>
+
+  <!-- IIS Search Definitions -->
+
+  <Fragment>
+	<Property Id="IISMAJORVERSION">
+	  <RegistrySearch Id="IIsMajorVersionSearch" Root="HKLM" Key="SOFTWARE\Microsoft\InetStp" Name="MajorVersion" Type="raw"/>
+	</Property>
+
+	<Property Id="IISMINORVERSION">
+	  <RegistrySearch Id="IIsMinorVersionSearch" Root="HKLM" Key="SOFTWARE\Microsoft\InetStp" Name="MinorVersion" Type="raw"/>
+	</Property>
+  </Fragment>
+
+  <!-- Server Custom Action Definitions -->
+
+  <Fragment>
+	<IgnoreModularization Name="ConfigureIIs" Type="Action" />
+	<IgnoreModularization Name="StartMetabaseTransaction" Type="Action" />
+	<IgnoreModularization Name="RollbackMetabaseTransaction" Type="Action" />
+	<IgnoreModularization Name="CommitMetabaseTransaction" Type="Action" />
+	<IgnoreModularization Name="WriteMetabaseChanges" Type="Action" />
+
+	<UI>
+	  <Error Id="$(var.msierrIISCannotConnect)">Cannot connect to Internet Information Server.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadWebs)">Failed to read IIsWebs table.   ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadWebDirs)">Failed to read IIsWebDirs table.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadVDirs)">Failed to read IIsVirtualDirs table.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadFilters)">Failed to read IIsFilters table.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadMimeMap)">Failed to read IIsMimeMap table. ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadAppPool)">Failed to read IIsAppPool table. ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadProp)">Failed to read the IIsProperty table. ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadWebSvcExt)">Failed to read the IIsWebServiceExtension table. ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedReadHttpHeader)">Failed to read IIsHttpHeader table. ([2]   [3]   [4]   [5])</Error>
+
+	  <Error Id="$(var.msierrIISFailedSchedTransaction)">Failed to schedule transaction for changes to IIS.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedInstallWebs)">Failed to schedule install of IIS Web Sites.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedInstallWebDirs)">Failed to schedule install of IIS Web Directories.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedInstallVDirs)">Failed to schedule install of IIS Virtual Directories.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedInstallFilters)">Failed to schedule install of IIS Filters.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedInstallAppPool)">Failed to schedule install of IIS AppPools.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedInstallProp)">Failed to schedule install of IIS Properties.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedInstallWebSvcExt)">Failed to schedule install of IIS Web Service Extensions.  ([2]   [3]   [4]   [5])</Error>
+
+	  <Error Id="$(var.msierrIISFailedSchedUninstallWebs)">Failed to schedule uninstall of IIS Web Sites.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedUninstallWebDirs)">Failed to schedule uninstall of IIS Web Directories.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedUninstallVDirs)">Failed to schedule uninstall of IIS Virtual Directories.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedUninstallFilters)">Failed to schedule uninstall of IIS Filters.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedUninstallAppPool)">Failed to schedule uninstall of IIS AppPools.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedUninstallProp)">Failed to schedule uninstall of IIS Properties.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedSchedUninstallWebSvcExt)">Failed to schedule uninstall of IIS Web Service Extensions.  ([2]   [3]   [4]   [5])</Error>
+
+	  <Error Id="$(var.msierrIISFailedStartTransaction)">Failed to start IIS transaction. ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedOpenKey)">Failed to open metabase key.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedCreateKey)">Failed to create metabase key.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedWriteData)">Failed to write data to metabase key.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedCreateApp)">Failed to create web application.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrIISFailedDeleteKey)">Failed to delete metabase key.  ([2]   [3]   [4]   [5])</Error>
+
+	  <ProgressText Action="ConfigureIIs">Configuring IIS</ProgressText>
+	  <ProgressText Action="StartMetabaseTransaction">Starting IIS Metabase Transaction</ProgressText>
+	  <ProgressText Action="RollbackMetabaseTransaction">Rolling back IIS Metabase Transaction</ProgressText>
+	  <ProgressText Action="CommitMetabaseTransaction">Committing IIS Metabase Transaction</ProgressText>
+	  <ProgressText Action="WriteMetabaseChanges">Installing Metabase Keys and Values</ProgressText>
+	</UI>
+
+	<CustomAction Id="ConfigureIIs" BinaryKey="ScaSchedule" DllEntry="ConfigureIIs" Execute="immediate" Return="check" />
+	<CustomAction Id="StartMetabaseTransaction" BinaryKey="ScaExecute" DllEntry="StartMetabaseTransaction" Impersonate="no" Execute="deferred" Return="check" />
+	<CustomAction Id="RollbackMetabaseTransaction" BinaryKey="ScaExecute" DllEntry="RollbackMetabaseTransaction" Impersonate="no" Execute="rollback" Return="check" />
+	<CustomAction Id="CommitMetabaseTransaction" BinaryKey="ScaExecute" DllEntry="CommitMetabaseTransaction" Impersonate="no" Execute="commit" Return="check" />
+	<CustomAction Id="WriteMetabaseChanges" BinaryKey="ScaExecute" DllEntry="WriteMetabaseChanges" Impersonate="no" Execute="deferred" Return="check" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="ConfigureIIs" After="InstallCertificates">NOT SKIPCONFIGUREIIS</Custom>
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment>
+	<IgnoreModularization Name="ConfigureSql" Type="Action" />
+	<IgnoreModularization Name="CreateDatabase" Type="Action" />
+	<IgnoreModularization Name="RollbackCreateDatabase" Type="Action" />
+	<IgnoreModularization Name="DropDatabase" Type="Action" />
+	<IgnoreModularization Name="ExecuteSqlStrings" Type="Action" />
+	<IgnoreModularization Name="RollbackExecuteSqlStrings" Type="Action" />
+
+	<UI>
+	  <Error Id="$(var.msierrSQLFailedCreateDatabase)">Error [2]: failed to create SQL database: [3], error detail: [4].</Error>
+	  <Error Id="$(var.msierrSQLFailedDropDatabase)">Error [2]: failed to drop SQL database: [3], error detail: [4].</Error>
+	  <Error Id="$(var.msierrSQLFailedConnectDatabase)">Failed to connect to SQL database.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrSQLFailedExecString)">Error [2]: failed to execute SQL string, error detail: [3], SQL key: [4] SQL string: [5]</Error>
+	  <Error Id="$(var.msierrSQLDatabaseAlreadyExists)">The database [3] already exists do you wish to continue?</Error>
+
+	  <ProgressText Action="ConfigureSql">Configuring SQL Server</ProgressText>
+	  <ProgressText Action="CreateDatabase">Creating Databases</ProgressText>
+	  <ProgressText Action="DropDatabase">Dropping Databases</ProgressText>
+	  <ProgressText Action="ExecuteSqlStrings">Executing SQL Strings</ProgressText>
+	  <ProgressText Action="RollbackExecuteSqlStrings">Rolling back SQL Strings</ProgressText>
+	</UI>
+
+	<!-- The SQL custom actions should impersonate the user because the user"s cridentials are used when connected to the database if none are provided -->
+	<CustomAction Id="ConfigureSql" BinaryKey="ScaSchedule" DllEntry="ConfigureSql" Execute="immediate" Return="check" />
+	<CustomAction Id="CreateDatabase" BinaryKey="ScaExecute" DllEntry="CreateDatabase" Execute="deferred" Return="check" />
+	<CustomAction Id="RollbackCreateDatabase" BinaryKey="ScaExecute" DllEntry="DropDatabase" Execute="rollback" Return="check" />
+	<CustomAction Id="DropDatabase" BinaryKey="ScaExecute" DllEntry="DropDatabase" Execute="deferred" Return="check" />
+	<CustomAction Id="ExecuteSqlStrings" BinaryKey="ScaExecute" DllEntry="ExecuteSqlStrings" Execute="deferred" Return="check" />
+	<CustomAction Id="RollbackExecuteSqlStrings" BinaryKey="ScaExecute" DllEntry="ExecuteSqlStrings" Execute="rollback" Return="check" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="ConfigureSql" After="InstallFiles" />
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment>
+	<IgnoreModularization Name="InstallCertificates" Type="Action" />
+	<IgnoreModularization Name="UninstallCertificates" Type="Action" />
+	<IgnoreModularization Name="AddUserCertificates" Type="Action" />
+	<IgnoreModularization Name="AddMachineCertificates" Type="Action" />
+	<IgnoreModularization Name="DeleteUserCertificates" Type="Action" />
+	<IgnoreModularization Name="DeleteMachineCertificates" Type="Action" />
+	<IgnoreModularization Name="RollbackAddUserCertificates" Type="Action" />
+	<IgnoreModularization Name="RollbackAddMachineCertificates" Type="Action" />
+	<IgnoreModularization Name="RollbackDeleteUserCertificates" Type="Action" />
+	<IgnoreModularization Name="RollbackDeleteMachineCertificates" Type="Action" />
+
+	<!-- UI>
+	  <Error Id="$(var.msierrCertificate)">Failed to .  ([2]   [3]   [4]   [5])</Error>
+	</UI -->
+
+	<CustomAction Id="InstallCertificates" BinaryKey="ScaSchedule" DllEntry="InstallCertificates" Execute="immediate" Return="check" />
+	<CustomAction Id="UninstallCertificates" BinaryKey="ScaSchedule" DllEntry="UninstallCertificates" Execute="immediate" Return="check" />
+
+	<CustomAction Id="AddUserCertificate" BinaryKey="ScaExecute" DllEntry="AddUserCertificate" Impersonate="yes" Execute="deferred" Return="check" />
+	<CustomAction Id="AddMachineCertificate" BinaryKey="ScaExecute" DllEntry="AddMachineCertificate" Impersonate="no" Execute="deferred" Return="check" />
+	<CustomAction Id="DeleteUserCertificate" BinaryKey="ScaExecute" DllEntry="DeleteUserCertificate" Impersonate="yes" Execute="deferred" Return="check" />
+	<CustomAction Id="DeleteMachineCertificate" BinaryKey="ScaExecute" DllEntry="DeleteMachineCertificate" Impersonate="no" Execute="deferred" Return="check" />
+
+	<CustomAction Id="RollbackAddUserCertificate" BinaryKey="ScaExecute" DllEntry="DeleteUserCertificate" Impersonate="yes" Execute="rollback" Return="check" />
+	<CustomAction Id="RollbackAddMachineCertificate" BinaryKey="ScaExecute" DllEntry="DeleteMachineCertificate" Impersonate="no" Execute="rollback" Return="check" />
+	<CustomAction Id="RollbackDeleteUserCertificate" BinaryKey="ScaExecute" DllEntry="AddUserCertificate" Impersonate="yes" Execute="rollback" Return="check" />
+	<CustomAction Id="RollbackDeleteMachineCertificate" BinaryKey="ScaExecute" DllEntry="AddMachineCertificate" Impersonate="no" Execute="rollback" Return="check" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="UninstallCertificates" Before="RemoveFiles" />
+	  <Custom Action="InstallCertificates" After="InstallFiles" />
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment>
+	<IgnoreModularization Name="ConfigureUsers" Type="Action" />
+	<IgnoreModularization Name="CreateUser" Type="Action" />
+	<IgnoreModularization Name="CreateUserRollback" Type="Action" />
+	<IgnoreModularization Name="RemoveUser" Type="Action" />
+
+	<UI>
+	  <Error Id="$(var.msierrUSRFailedUserCreate)">Failed to create user.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrUSRFailedUserCreatePswd)">Failed to create user due to invalid password.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrUSRFailedUserGroupAdd)">Failed to add user to group.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrUSRFailedUserCreateExists)">Failed to create user because it already exists.  ([2]   [3]   [4]   [5])</Error>
+	</UI>
+
+	<!-- This is necessary to hide the CreateUser custom action data property that could potentially contain passwords -->
+	<Property Id="CreateUser" Value="nothing" Hidden="yes" />
+
+	<CustomAction Id="ConfigureUsers" BinaryKey="ScaSchedule" DllEntry="ConfigureUsers" Execute="immediate" Return="check" />
+	<CustomAction Id="CreateUser" BinaryKey="ScaExecute" DllEntry="CreateUser" Impersonate="no" Execute="deferred" Return="check" HideTarget="yes" />
+	<CustomAction Id="CreateUserRollback" BinaryKey="ScaExecute" DllEntry="RemoveUser" Impersonate="no" Execute="rollback" Return="check" />
+	<!-- RemoveUser is a type commit action because it is not possible to rollback the removal of a user -->
+	<CustomAction Id="RemoveUser" BinaryKey="ScaExecute" DllEntry="RemoveUser" Impersonate="no" Execute="commit" Return="check" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="ConfigureUsers" Before="InstallFiles" />
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment>
+	<IgnoreModularization Name="ConfigureSmb" Type="Action" />
+	<IgnoreModularization Name="CreateSmb" Type="Action" />
+	<IgnoreModularization Name="CreateSmbRollback" Type="Action" />
+	<IgnoreModularization Name="DropSmb" Type="Action" />
+
+	<UI>
+	  <Error Id="$(var.msierrSMBFailedCreate)">Failed to create network share.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrSMBFailedDrop)">Failed to drop network share.  ([2]   [3]   [4]   [5])</Error>
+	</UI>
+
+	<CustomAction Id="ConfigureSmb" BinaryKey="ScaSchedule" DllEntry="ConfigureSmb" Execute="immediate" Return="check" />
+	<CustomAction Id="CreateSmb" BinaryKey="ScaExecute" DllEntry="CreateSmb" Impersonate="no" Execute="deferred" Return="check" />
+	<CustomAction Id="CreateSmbRollback" BinaryKey="ScaExecute" DllEntry="DropSmb" Impersonate="no" Execute="rollback" Return="ignore" />
+	<!-- DropSmb is a type commit action because it is not possible to rollback the removal of a fileshare -->
+	<CustomAction Id="DropSmb" BinaryKey="ScaExecute" DllEntry="DropSmb" Impersonate="no" Execute="commit" Return="check" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="ConfigureSmb" After="InstallFiles" />
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment>
+	<IgnoreModularization Name="ConfigurePerfmonInstall" Type="Action" />
+	<IgnoreModularization Name="ConfigurePerfmonUninstall" Type="Action" />
+	<IgnoreModularization Name="RegisterPerfmon" Type="Action" />
+	<IgnoreModularization Name="UnregisterPerfmon" Type="Action" />
+	<IgnoreModularization Name="RollbackRegisterPerfmon" Type="Action" />
+	<IgnoreModularization Name="RollbackUnregisterPerfmon" Type="Action" />
+
+	<UI>
+	  <Error Id="$(var.msierrPERFMONFailedRegisterDLL)">Failed to register DLL with PerfMon.  ([2]   [3]   [4]   [5])</Error>
+	  <Error Id="$(var.msierrPERFMONFailedUnregisterDLL)">Failed to unregister DLL with PerfMon.  ([2]   [3]   [4]   [5])</Error>
+	</UI>
+
+	<CustomAction Id="ConfigurePerfmonInstall" BinaryKey="ScaSchedule" DllEntry="ConfigurePerfmonInstall" Execute="immediate" Return="check" />
+	<CustomAction Id="ConfigurePerfmonUninstall" BinaryKey="ScaSchedule" DllEntry="ConfigurePerfmonUninstall" Execute="immediate" Return="check" />
+	<CustomAction Id="RegisterPerfmon" BinaryKey="ScaExecute" DllEntry="RegisterPerfmon" Impersonate="no" Execute="deferred" Return="check" />
+	<CustomAction Id="UnregisterPerfmon" BinaryKey="ScaExecute" DllEntry="UnregisterPerfmon" Impersonate="no" Execute="deferred" Return="check" />
+	<CustomAction Id="RollbackRegisterPerfmon" BinaryKey="ScaExecute" DllEntry="UnregisterPerfmon" Impersonate="no" Execute="rollback" Return="check" />
+	<CustomAction Id="RollbackUnregisterPerfmon" BinaryKey="ScaExecute" DllEntry="RegisterPerfmon" Impersonate="no" Execute="rollback" Return="check" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="ConfigurePerfmonInstall" After="WriteRegistryValues" />
+	  <Custom Action="ConfigurePerfmonUninstall" After="RemoveRegistryValues" />
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <!-- Server Custom Action DLL Definitions -->
+
+  <Fragment>
+	<Binary Id="ScaSchedule" SourceFile="scasched.dll" />
+	<Binary Id="ScaExecute" SourceFile="scaexec.dll" />
+  </Fragment>
+</Wix>

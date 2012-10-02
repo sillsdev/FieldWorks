@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Show/Hide Unused Items in Lexicon Edit Classified dictionary-->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+ <bug id="6914" desc="View not initialized"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Lexicon/Classified Dictionary-->
+	<click wait="4000" select="menubar/view/lexicon/classified-dictionary"/>
+
+  <on-dialog title="Information">
+   <click path="$ok"/>
+  </on-dialog>
+
+<model select="classified-dictionary[@role='view']">
+
+<!--make sure "show unused items" checkbox is unchecked-->
+<glimpse wait="1000" id ="check1" select="entries/show-unused/checkbox" prop="checked" on-fail="skip"/>
+<if><condition of="$check1" is="True"/>
+ <then><click select="entries/show-unused/checkbox"/></then>
+</if>
+
+<var id="ind" set="2"/>
+<var id="row" set="1"/>
+<glimpse wait="1000" id ="check2" select="entries/entry/paragraph/string" prop="value" expect="2 Person"/>
+
+<!--check "show unused items"-->
+<click select="entries/show-unused/checkbox"/>
+
+<glimpse wait="1000" id ="check3" select="entries/entry/paragraph/string" prop="value" expect="1.1 Sky"/>
+
+<!--toggle "show unused items"-->
+<click select="entries/show-unused/checkbox"/>
+
+<click select="entries/entry/paragraph/string" /> <!-- get the cursor off the title pane -->
+
+</model>
+
+ </on-application>
+</accil>

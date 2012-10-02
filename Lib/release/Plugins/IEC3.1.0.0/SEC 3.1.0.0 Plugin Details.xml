@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<EncConverterPlugins xmlns="http://www.sil.org/computing/schemas/ECPlugins.xsd">
+  <ECPluginDetails ImplementationName="SIL.cc"
+				   ImplementationProgId="SilEncConverters31.CcEncConverter"
+				   Priority="2"
+				   DisplayName="CC Table"
+				   ConfiguratorProgId="SilEncConverters31.CcEncConverterConfig"
+				   DefiningExtension=".cct"
+				   AssemblyReference="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.comp"
+				   ImplementationProgId="SilEncConverters31.CmpdEncConverter"
+				   Priority="0"
+				   DisplayName="Compound (daisy-chained) Converter"
+				   ConfiguratorProgId="SilEncConverters31.CmpdEncConverterConfig"
+				   AssemblyReference="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="cp"
+				   ImplementationProgId="SilEncConverters31.CpEncConverter"
+				   Priority="6"
+				   DisplayName="Code Page Converter"
+				   DefiningProcessType="16"
+				   ConfiguratorProgId="SilEncConverters31.CpEncConverterConfig"
+				   AssemblyReference="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.fallback"
+				   ImplementationProgId="SilEncConverters31.FallbackEncConverter"
+				   Priority="0"
+				   DisplayName="Primary-Fallback Converter"
+				   ConfiguratorProgId="SilEncConverters31.FallbackEncConverterConfig"
+				   AssemblyReference="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.tec"
+				   ImplementationProgId="SilEncConverters31.TecEncConverter"
+				   Priority="3"
+				   DisplayName="TECkit map"
+				   ConfiguratorProgId="SilEncConverters31.TecEncConverterConfig"
+				   DefiningExtension=".tec"
+				   AssemblyReference="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.map"
+				   ImplementationProgId="SilEncConverters31.TecEncConverter"
+				   Priority="4"
+				   DefiningExtension=".map"
+				   AssemblyReference="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+  <ECPluginDetails ImplementationName="SIL.tecForm"
+				   ImplementationProgId="SilEncConverters31.TecFormEncConverter"
+				   Priority="5"
+				   AssemblyReference="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+</EncConverterPlugins>

@@ -1,0 +1,354 @@
+
+/*********************************************************************************
+	File: stakdiac.gdl
+
+	Sample GDL file for testing stacking diacritics.
+
+	Compile with SILDoulos UnicodeIPA (sildub3.ttf).
+
+	Key equivalents:
+
+	` = grave - 0300
+	' = acute - 0301
+	^ = circumflex - 0302
+	~ = tilde - 0303
+	: = dieresis - 0308
+	| = vertical line - 030D
+
+	+- = macron - 0304
+	+_ = overline - 0305
+	+u = breve - 0306
+	+. = dot above 0307
+	+o = ring above - 030A
+	'' = double acute - 030B
+	+v = caron - 030C
+	`` = double grave - 030F
+	+n = inverted breve - 0311
+	+N = wide inverted breve - 0361
+
+	-' = grave accent below - 0316
+	-` = acute accent below - 0317
+	-| = left tack below - 0318
+	|- = right tack below - 0319
+	-t = down tack below - 031E
+	-+ = plus sign below - 031F
+	-- = minus sign below - 0320
+	-o = ring below - 0325
+	-# = square below - 033B
+	-m = seagull below - 033C
+	-~ = tilde below - 0330
+
+	sh = esh - 0283
+	zh = ezh - 0292
+*********************************************************************************/
+
+#include "stddef.gdh"
+
+Bidi = false;
+
+ExtraAscent = 0x500;
+ExtraDescent = 400;
+
+table(feature)
+
+// Select and editing diacritics independently.
+editDiac {
+	id = 100;
+	name.1033 = string("Edit Diacritics");
+	default = no;
+	settings {
+		yes.value = 1;
+		no.value = 0;
+	}
+}
+
+// For when there is no Keyman module, so we are working with 8-bit data: convert it
+// to the equivalent of 16-bit Unicode.
+eightBit {
+	id = 101;
+	name.1033 = string("Use Eight-bit Data");
+	default = no;
+	settings {
+		yes.value = 1;
+		no.value = 0;
+	}
+}
+
+endtable; // feature
+
+
+table(glyph)
+
+	//	Underlying characters:
+
+	c_a = pseudo(glyphid(80), 97);
+	c_b = pseudo(glyphid(81), 98);
+	c_c = pseudo(glyphid(82), 99);
+	c_d = pseudo(glyphid(83), 100);
+	c_e = pseudo(glyphid(84), 101);
+	c_f = pseudo(glyphid(85), 102);
+	c_g = pseudo(glyphid(86), 103);
+	c_h = pseudo(glyphid(87), 104);
+	c_i = pseudo(glyphid(88), 105);
+	c_j = pseudo(glyphid(89), 106);
+	c_k = pseudo(glyphid(90), 107);
+	c_l = pseudo(glyphid(91), 108);
+	c_m = pseudo(glyphid(92), 109);
+	c_n = pseudo(glyphid(93), 110);
+	c_o = pseudo(glyphid(94), 111);
+	c_p = pseudo(glyphid(95), 112);
+	c_q = pseudo(glyphid(96), 113);
+	c_r = pseudo(glyphid(97), 114);
+	c_s = pseudo(glyphid(98), 115);
+	c_t = pseudo(glyphid(99), 116);
+	c_u = pseudo(glyphid(100), 117);
+	c_v = pseudo(glyphid(101), 118);
+	c_w = pseudo(glyphid(102), 119);
+	c_x = pseudo(glyphid(103), 120);
+	c_y = pseudo(glyphid(104), 121);
+	c_z = pseudo(glyphid(105), 122);
+
+	c_N = pseudo(glyphid(61), 78);
+
+	cSpace = pseudo(glyphid(2), 32) { dir = DIR_WHITESPACE; break = BREAK_WHITESPACE };
+
+	cBackquote 		= pseudo(glyphid(79), 96);
+	cApostrophe		= pseudo(glyphid(22), 39);
+	cCaret		= pseudo(glyphid(77), 94);
+	cTilde		= pseudo(glyphid(109), 126);
+	cColon		= pseudo(glyphid(41), 58);
+	cVLine 		= pseudo(glyphid(14), 124);
+	cHyphen		= pseudo(glyphid(28), 45);
+	cPlus			= pseudo(glyphid(26), 43);
+	cUnderscore		= pseudo(glyphid(78), 95);
+	cPeriod		= pseudo(glyphid(29), 46);
+	cHash		= pseudo(glyphid(18), 35);
+
+	//	Diacritics - glyphs for rendering
+
+	// upper
+	dGrave		= glyphid(79);
+	dAcute		= glyphid(123);
+	dCircumflex		= glyphid(176);
+	dTilde		= glyphid(297)
+	dMacron		= glyphid(178);	// xB2
+	dOverline		= glyphid(156);
+	dBreve		= glyphid(179);
+	dDot			= glyphid(171);	// period
+	dDieresis		= glyphid(124);
+	dRing			= glyphid(313);
+	dDoubleAcute	= glyphid(300);
+	dCaron		= glyphid(308);
+	dVLine		= glyphid(329);
+	dDoubleGrave	= glyphid(303);
+	dInvertedBreve	= glyphid(310);	// borrowing lower diac - x136
+	dWideInvBreve	= glyphid(283);   // x11B
+
+	// lower
+	dGraveBelow		= glyphid(301);
+	dAcuteBelow		= glyphid(298);
+	dLeftTackBelow	= glyphid(291);
+	dRightTackBelow	= glyphid(292);
+	dDownTackBelow	= glyphid(289);
+	dPlusBelow		= glyphid(315);
+	dMinusBelow		= glyphid(293);	// x125
+	dRingBelow		= glyphid(312);
+	dSquareBelow	= glyphid(320);
+	dSeagull		= glyphid(311);
+	dTildeBelow		= glyphid(295);
+
+	clsGlyphid = (dGrave, dAcute, dCircumflex, dTilde, dMacron, dOverline, dBreve,
+		dDot, dDieresis, dRing, dDoubleAcute, dCaron, dVLine, dDoubleGrave,
+		dInvertedBreve, dWideInvBreve, dGraveBelow, dAcuteBelow, dLeftTackBelow,
+		dRightTackBelow, dDownTackBelow, dPlusBelow, dMinusBelow, dRingBelow, dSquareBelow,
+		dSeagull, dTildeBelow);
+
+	//	Unicode-maps for original input
+
+	// upper
+	uGrave		= unicode(0x0300);
+	uAcute		= unicode(0x0301);
+	uCircumflex		= unicode(0x0302);
+	uTilde		= unicode(0x0303)
+	uMacron		= unicode(0x0304);
+	uOverline		= pseudo(glyphid(156), 0x0305);	// not in cmap
+	uBreve		= unicode(0x0306);
+	uDot			= pseudo(glyphid(171), 0x0307);	// not in cmap
+	uDieresis		= unicode(0x0308);
+	uRing			= unicode(0x030A);
+	uDoubleAcute	= unicode(0x030B);
+	uCaron		= unicode(0x030C);
+	uVLine		= pseudo(glyphid(66), 0x030D);	// not in cmap
+	uDoubleGrave	= unicode(0x030F);
+	uInvertedBreve	= pseudo(glyphid(310), 0x0311);	// not in cmap
+	uWideInvBreve	= unicode(0x0361);
+
+	// lower
+	uGraveBelow		= unicode(0x0316);
+	uAcuteBelow		= unicode(0x0317);
+	uLeftTackBelow	= unicode(0x0318);
+	uRightTackBelow	= unicode(0x0319);
+	uDownTackBelow	= unicode(0x031E);
+	uPlusBelow		= unicode(0x031F);
+	uMinusBelow		= unicode(0x0320);
+	uRingBelow		= unicode(0x0325);
+	uSquareBelow	= unicode(0x033B);
+	uSeagull		= unicode(0x033C);
+	uTildeBelow		= unicode(0x0330);
+
+	clsUnicode = (uGrave, uAcute, uCircumflex, uTilde, uMacron, uOverline, uBreve,
+		uDot, uDieresis, uRing, uDoubleAcute, uCaron, uVLine, uDoubleGrave,
+		uInvertedBreve, uWideInvBreve, uGraveBelow, uAcuteBelow, uLeftTackBelow,
+		uRightTackBelow, uDownTackBelow, uPlusBelow, uMinusBelow, uRingBelow, uSquareBelow,
+		uSeagull, uTildeBelow);
+
+	//	Affricates
+
+	gSh = unicode(0x0283);
+	gZh = unicode(0x0292);
+	clsAffricate1 = codepoint("ptd");
+	clsAffricate2 = (codepoint("sz"), gSh, gZh);
+
+	clsInvBreve = (dInvertedBreve, dWideInvBreve);
+
+
+	clsBase = (c_a, c_b, c_c, c_d, c_e, c_f, c_g, c_h, c_i, c_j, c_k, c_l, c_m, c_n, c_o, c_p,
+				c_q, c_r, c_s, c_t, c_u, c_v, c_w, c_x, c_y, c_z, gSh, gZh)
+		{	udap = point(aw/2, bb.top + 50m);
+			ldap = point(aw/2, bb.bottom - 50m)
+		}
+
+	clsUpperDiac = (dGrave, dAcute, dCircumflex, dTilde, dMacron, dOverline, dBreve, dDot, dDieresis,
+				dRing, dDoubleAcute, dCaron, dVLine, dDoubleGrave, dInvertedBreve, dWideInvBreve)
+		{	udap = point(lsb + bb.width/2, bb.top + 20m);
+			ldap = point(lsb + bb.width/2, bb.bottom - 20m)
+;
+bbRight = bb.right;
+bbLeft = bb.left;
+bbTop = bb.top;
+bbBottom = bb.bottom
+		}
+
+	clsLowerDiac = (dGraveBelow, dAcuteBelow, dLeftTackBelow, dRightTackBelow,
+				dDownTackBelow, dPlusBelow, dMinusBelow, dRingBelow, dSquareBelow,
+				dSeagull, dTildeBelow)
+		{	udap = point(lsb + bb.width/2, bb.top + 20m);
+			ldap = point(lsb + bb.width/2, bb.bottom - 20m)
+;
+bbRight = bb.right;
+bbLeft = bb.left;
+bbTop = bb.top;
+bbBottom = bb.bottom
+		}
+
+endtable;	// glyph
+
+
+table(sub)
+
+if (eightBit)
+
+	//	Convert underlying ANSI into Unicode.
+
+	cBackquote > dGrave;
+	cApostrophe > dAcute;
+	cCaret > dCircumflex;
+	cTilde > dTilde;
+	cColon > dDieresis;
+	cVLine > dVLine;
+
+	cPlus cHyphen  >  dMacron:(1 2) _;
+	cPlus cUnderscore  >  dOverline:(1 2) _;
+	cPlus c_u  > dBreve:(1 2) _;
+	cPlus cPeriod  >  dDot:(1 2) _;
+	cPlus c_o  >  dRing:(1 2) _;
+	cApostrophe cApostrophe >  dDoubleAcute:(1 2) _;
+	cPlus c_v  >  dCaron:(1 2) _;
+	cBackquote cBackquote  > dDoubleGrave:(1 2) _;
+	cPlus c_n  > dInvertedBreve:(1 2) _;
+	cPlus c_N  >  dWideInvBreve:(1 2) _;
+
+	cHyphen cBackquote  >  dGraveBelow:(1 2) _;
+	cHyphen cApostrophe  >  dAcuteBelow:(1 2) _;
+	cHyphen cVLine  > dLeftTackBelow:(1 2) _;
+	cVLine cHyphen  >  dRightTackBelow:(1 2) _;
+	cHyphen c_t  >  dDownTackBelow:(1 2) _;
+	cHyphen cPlus  >  dPlusBelow:(1 2) _;
+	cHyphen cHyphen  >  dMinusBelow:(1 2) _;
+	cHyphen c_o  >  dRingBelow:(1 2) _;
+	cHyphen cHash  >  dSquareBelow:(1 2) _;
+	cHyphen c_m  >  dSeagull:(1 2) _;
+	cHyphen cTilde  >  dTildeBelow:(1 2) _;
+
+	c_s  c_h  >  gSh:(1 2) _;
+	c_z  c_h  >  gZh:(1 2) _;
+
+else
+
+	// This is overkill to handle the fact that the original glyphs from the font's cmap
+	// might not correspond to the glyphs we're using to render (there are multiple
+	// tildes, etc).
+
+	clsUnicode > clsGlyphid;
+
+endif;
+
+endtable;	// sub
+
+
+table(pos)
+
+#define attached user1
+
+#define UPPERDIACSEQ [clsUpperDiac [clsUpperDiac clsUpperDiac?]? ]?
+#define LOWERDIACSEQ [clsLowerDiac [clsLowerDiac clsLowerDiac?]? ]?
+
+pass(1)
+
+	//	Affricates
+
+	clsAffricate1
+		clsInvBreve { attach {to = @1;
+					at.x = (@1.udap.x + (@3.pos.x - @1.pos.x) + @3.udap.x) / 2;
+					at.y = max(@1.udap.y, @3.udap.y);
+					with = ldap } }
+		clsAffricate2 { insert = false };
+
+
+	//	Stacking diacritics
+
+	// sequence of lower followed by upper: attach first of each seq, then reprocess
+	// the first lower to attach its chain
+	clsBase
+		clsLowerDiac { attach {to = @1; at = ldap; with = udap}; attached = true }
+		clsUpperDiac { attach {to = @1; at = udap; with = ldap}; attached = true }
+		/ _ ^ _ [clsLowerDiac clsLowerDiac?]? _;
+
+	// sequence of upper followed by lower: attach first lower, then reprocess base
+	// to attach the upper chain
+	clsBase clsLowerDiac { attach {to = @1; at = ldap; with = udap}; attached = true }
+		/ ^ _ UPPERDIACSEQ _ {attached == false};
+
+	// upper, or sequence of upper
+	clsBase clsUpperDiac { attach {to = @1; at = udap; with = ldap}; attached = true }
+		/ ^ _ _ {attached == false};
+
+	// upper followed by upper: make a chain
+	clsUpperDiac clsUpperDiac { attach {to = @1; at = udap; with = ldap }}
+		/ _ ^ LOWERDIACSEQ _;
+
+	// lower followed by lower: make a chain
+	clsLowerDiac clsLowerDiac { attach {to = @1; at = ldap; with = udap }}
+		/ _ ^ UPPERDIACSEQ _;
+
+endpass; // 1
+
+pass(2)
+
+	if (editDiac)
+		(clsBase clsUpperDiac clsLowerDiac) { insert = true };
+	endif
+
+endpass; // 2
+
+endtable; // pos

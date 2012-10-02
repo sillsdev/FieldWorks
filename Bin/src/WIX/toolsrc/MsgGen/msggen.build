@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="msggen" default="msggen.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	msggen.build - Builds the msggen project (MsgGen.exe).
+	2005.10.14 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="msggen.build" description="Peforms a full rebuild (clean then build)" depends="msggen.clean, msggen.inc" />
+
+  <!-- Clean -->
+  <target name="msggen.clean" description="Cleans the build">
+	<delete dir="${dir.build.msggen}" failonerror="false" if="${directory::exists(dir.build.msggen)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="MsgGen.exe" />
+		<include name="MsgGen.pdb" />
+		<include name="MsgGen.xml" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="msggen.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Flatten the xsd file -->
+	<property name="flattenxml.source" value="${dir.src.msggen}\Xsd\messages.xsd" />
+	<property name="flattenxml.target" value="${dir.build.msggen}\messages.xsd" />
+	<call target="flattenXml" />
+
+	<!-- Build the msggen.exe -->
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\MsgGen.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  doc="${dir.target.wix}\MsgGen.xml"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.msggen}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="GenerateMessageFiles.cs" />
+		<include name="MsgGen.cs" />
+	  </sources>
+	  <!-- Embed the XSD into the assembly -->
+	  <resources failonempty="true" basedir="${dir.build.msggen}" prefix="Microsoft.Tools.MsgGen.Xsd">
+		<include name="messages.xsd" />
+	  </resources>
+	</csc>
+  </target>
+
+</project>

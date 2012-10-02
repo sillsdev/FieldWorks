@@ -1,0 +1,192 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{17ADF054-A7C7-42BA-AFEA-C61F1432C260}</ProjectGuid>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>votive</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>Microsoft.Tools.WindowsInstallerXml.VisualStudio</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>bin\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE;DEBUG;USE_NET20_FRAMEWORK</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE;USE_NET20_FRAMEWORK</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>false</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Microsoft.VisualStudio.OLE.Interop">
+	  <Name>Microsoft.VisualStudio.OLE.Interop</Name>
+	  <HintPath>..\..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.VisualStudio.Shell.Interop">
+	  <Name>Microsoft.VisualStudio.Shell.Interop</Name>
+	  <HintPath>..\..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="wix">
+	  <Name>wix</Name>
+	  <HintPath>..\..\..\..\..\Target\wix\x86\debug\lang-neutral\wix.dll</HintPath>
+	</Reference>
+	<ProjectReference Include="..\..\sconce\Sconce2005.csproj">
+	  <Name>Sconce2005</Name>
+	  <Project>{A0A82600-B8B1-4E6C-8B8C-248587175210}</Project>
+	  <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+	</ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CandleSettings.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LightSettings.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixBuildableProjectConfiguration.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixBuildSettings.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixFileNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixHierarchyImages.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixlibReferenceFileNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixlibReferenceFolderNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixLocalizedCategoryAttribute.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixLocalizedDescriptionAttribute.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixLocalizedDisplayNameAttribute.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixManagedResourceManager.cs" />
+	<Compile Include="WixPackage.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixPackageContext.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixPackageSettings.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixProject.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixProjectConfiguration.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixProjectFactory.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixProjectNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixProjectSerializer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WixStrings.cs" />
+	<EmbeddedResource Include="SolutionExplorerIcons.bmp" />
+	<EmbeddedResource Include="Strings.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<Content Include="Votive.rc" />
+	<None Include="BuildFiles\Common.rsp" />
+	<None Include="BuildFiles\Debug.rsp" />
+	<None Include="BuildFiles\Release.rsp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>echo Compiling the Win32 resources...
+"$(DevEnvDir)..\..\VC\bin\rc.exe" /d "UNICODE" /d "_UNICODE" /d "_X86_=1" /d "i386=1" /d "WIN32" /d "WINNT=1" /d "_DEBUG" /d "DEBUG" /d "_NEW_SDK=1" /l 0x409 /I "$(DevEnvDir)..\..\VC\atlmfc\include" /I "$(DevEnvDir)..\..\VC\PlatformSDK\Include" /I "$(ProjectDir)..\..\..\..\dtools\inc\dtools" /I "$(ProjectDir)..\..\..\inc" /fo "$(TargetDir)$(TargetName).res" "$(ProjectDir)$(TargetName).rc"
+
+echo Recompiling the project to embed the Win32 resource file...
+pushd "$(ProjectDir)"
+"%25SystemRoot%25\Microsoft.NET\Framework\v2.0.50727\csc.exe" @BuildFiles\Common.rsp @BuildFiles\$(ConfigurationName).rsp /d:USE_NET20_FRAMEWORK /recurse:*.cs /nologo "$(ProjectDir)..\..\..\..\wix\inc\wixver.cs"
+popd
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

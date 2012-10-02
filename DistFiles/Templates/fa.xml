@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Do not specify DTD for LD files in the template directory. Doing so causes kstidUILangNotFound error on
+	first startup after installation due to DoesWsXMLExist failing to load the LD file since the DTD is not in the template directory! -->
+<LanguageDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LgWritingSystem id="fa" language="fa" type="ISO-639-1">
+	<Name24>
+	  <AUni ws="en">Farsi, Western</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Far</AUni>
+	</Abbr24>
+	<Locale24><Integer val="1065"/></Locale24>
+	<RightToLeft24><Boolean val="true"/></RightToLeft24>
+	<DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Times New Roman</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
+	<ValidChars24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;ValidCharacters&gt;
+  &lt;WordForming&gt;‌￼آ￼ا￼اَ￼اِ￼اُ￼اً￼أ￼ؤ￼ئ￼ب￼بَ￼بَّ￼بِ￼بِّ￼بُ￼بُّ￼بْ￼پ￼پَ￼پَّ￼پِ￼پِّ￼پُ￼پُّ￼پْ￼ت￼تَ￼تَّ￼تِ￼تِّ￼تُ￼تُّ￼تْ￼ث￼ثَ￼ثَّ￼ثِ￼ثِّ￼ثُ￼ثُّ￼ثْ￼ج￼جَ￼جَّ￼جِ￼جِّ￼جُ￼جُّ￼جْ￼چ￼چَ￼چَّ￼چِ￼چِّ￼چُ￼چُّ￼چْ￼ح￼حَ￼حَّ￼حِ￼حِّ￼حُ￼حُّ￼حْ￼خ￼خَ￼خَّ￼خِ￼خِّ￼خُ￼خُّ￼خْ￼د￼دَ￼دَّ￼دِ￼دِّ￼دُ￼دُّ￼دْ￼ذ￼ذَ￼ذَّ￼ذِ￼ذِّ￼ذُ￼ذُّ￼ذْ￼ر￼رَ￼رَّ￼رِ￼رِّ￼رُ￼رُّ￼رْ￼ز￼زَ￼زَّ￼زِ￼زِّ￼زُ￼زُّ￼زْ￼ژ￼ژَ￼ژَّ￼ژِ￼ژِّ￼ژُ￼ژُّ￼ژْ￼س￼سَ￼سَّ￼سِ￼سِّ￼سُ￼سُّ￼سْ￼ش￼شَ￼شَّ￼شِ￼شِّ￼شُ￼شُّ￼شْ￼ص￼صَ￼صَّ￼صِ￼صِّ￼صُ￼صُّ￼صْ￼ض￼ضَ￼ضَّ￼ضِ￼ضِّ￼ضُ￼ضُّ￼ضْ￼ط￼طَ￼طَّ￼طِ￼طِّ￼طُ￼طُّ￼طْ￼ظ￼ظَ￼ظَّ￼ظِ￼ظِّ￼ظُ￼ظُّ￼ظْ￼ع￼عَ￼عَّ￼عِ￼عِّ￼عُ￼عُّ￼عْ￼غ￼غَ￼غَّ￼غِ￼غِّ￼غُ￼غُّ￼غْ￼ف￼فَ￼فَّ￼فِ￼فِّ￼فُ￼فُّ￼فْ￼ق￼قَ￼قَّ￼قِ￼قِّ￼قُ￼قُّ￼قْ￼ک￼کَ￼کَّ￼کِ￼کِّ￼کُ￼کُّ￼کْ￼گ￼گَ￼گَّ￼گِ￼گِّ￼گُ￼گُّ￼گْ￼ل￼لَ￼لَّ￼لِ￼لِّ￼لُ￼لُّ￼لْ￼م￼مَ￼مَّ￼مِ￼مِّ￼مُ￼مُّ￼مْ￼ن￼نَ￼نَّ￼نِ￼نِّ￼نُ￼نُّ￼نْ￼و￼وَ￼وَّ￼وِ￼وِّ￼وُ￼وُّ￼وْ￼ه￼هَ￼هَّ￼هِ￼هِّ￼هُ￼هُّ￼هْ￼ۀ￼ی￼یَ￼یَّ￼یِ￼یِّ￼یُ￼یُّ￼یْ￼یٰ&lt;/WordForming&gt;
+  &lt;Numeric&gt;۰￼۱￼۲￼۳￼۴￼۵￼۶￼۷￼۸￼۹&lt;/Numeric&gt;
+  &lt;Other&gt;U+0020￼،￼؛￼:￼!￼؟￼.￼‹￼›￼«￼»￼(￼)￼[￼]￼*&lt;/Other&gt;
+&lt;/ValidCharacters&gt;</Uni></ValidChars24>
+	<MatchedPairs24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;MatchedPairs&gt;
+  &lt;pair open=&quot;)&quot; close=&quot;(&quot; permitParaSpanning=&quot;false&quot; /&gt;
+  &lt;pair open=&quot;]&quot; close=&quot;[&quot; permitParaSpanning=&quot;false&quot; /&gt;
+&lt;/MatchedPairs&gt;</Uni></MatchedPairs24>
+	<PunctuationPatterns24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;PunctuationPatterns&gt;
+  &lt;pattern value=&quot;، &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;. &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;: &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; «&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;.» &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;؛ &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;* &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; ‹&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;؟ &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;؟» &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;!» &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;! &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;.› &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;». &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;» &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;‹&quot; context=&quot;WordBreaking&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;،› &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;› &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;؟› &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;!› &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;»، &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;»؛ &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot; [&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;.] &quot; context=&quot;WordFinal&quot; valid=&quot;false&quot; /&gt;
+  &lt;pattern value=&quot; (&quot; context=&quot;WordInitial&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;). &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+  &lt;pattern value=&quot;) &quot; context=&quot;WordFinal&quot; valid=&quot;true&quot; /&gt;
+&lt;/PunctuationPatterns&gt;</Uni></PunctuationPatterns24>
+	<QuotationMarks24><Uni>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+&lt;QuotationMarks LangUsedFrom=&quot;sq&quot; ContinuationType=&quot;RequireAll&quot; ContinuationMark=&quot;Opening&quot;&gt;
+  &lt;Levels&gt;
+	&lt;Pair Opening=&quot;«&quot; Closing=&quot;»&quot; /&gt;
+	&lt;Pair Opening=&quot;‹&quot; Closing=&quot;›&quot; /&gt;
+  &lt;/Levels&gt;
+&lt;/QuotationMarks&gt;</Uni></QuotationMarks24>
+	<ICULocale24><Uni>fa</Uni></ICULocale24>
+	<SpellCheckDictionary24><Uni>&lt;None&gt;</Uni></SpellCheckDictionary24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1065"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+<EthnoCode>pes</EthnoCode>
+  <LocaleName>Farsi, Western</LocaleName>
+  <LocaleCountry />
+  <LocaleScript />
+  <LocaleVariant />
+  <Keyboard />
+  <EncodingConverter />
+</LanguageDefinition>

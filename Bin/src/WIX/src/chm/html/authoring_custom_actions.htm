@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Adding Custom Actions</title>
+</head>
+<body>
+<h1>Adding Custom Actions</h1>
+
+<p>
+Now that you’re comfortable with the basics for creating Windows Installer packages, let’s take it to the next level and add a CustomAction.  Since every release of the Windows Installer XML toolset comes with a drop of the WiX Server CustomActions, we’ll use those for our example.  So go now to the wix\bin\ca directory and copy the "sca*.dll" to the same directory as your "product.wxs" and “readme.txt” files.  You should have "scasched.dll" and "scaexec.dll".
+</p>
+
+<p>
+Rather than put the CustomAction definitions in the same source file as our product definition, let's exercise a little modularity and create a new source file to define the CustomActions called "sca.wxs".  Let's begin by adding the immediate CustomAction that reads the custom server tables and schedules the deferred actions.
+</p>
+
+<pre>
+&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+<b>   &lt;Fragment Id="ServerCustomActions"&gt;
+	  &lt;CustomAction Id='ConfigureIIs' BinaryKey='ScaSchedule' DllEntry='ConfigureIIs' Execute='immediate'
+					Return='check'/&gt;
+	  &lt;CustomAction Id='ConfigureSql' BinaryKey='ScaSchedule' DllEntry='ConfigureSql' Execute='immediate'
+					Return='check'/&gt;
+
+	  &lt;Binary Id='ScaSchedule' src='scasched.dll'/&gt;
+   &lt;/Fragment&gt;</b>
+&lt;/Wix&gt;
+</pre>
+
+<p>
+That little bit of code should compile but it will not link.  Remember linking requires that you have an entry section and a &lt;Fragment/&gt; alone is not an entry section.  We would need to link this source file along with a source file that contained &lt;Product/&gt; or &lt;Module/&gt; to successfully complete.  Before we bother getting everything to link properly, let's add the deferred CustomActions to this source file since they are as important as the immediate CustomActions you already added.
+</p>
+
+<pre>
+&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+   &lt;Fragment Id="ServerCustomActions"&gt;
+	  &lt;CustomAction Id='ConfigureIIs' BinaryKey='ScaSchedule' DllEntry='ConfigureIIs' Execute='immediate'
+					Return='check'/&gt;
+	  &lt;CustomAction Id='ConfigureSql' BinaryKey='ScaSchedule' DllEntry='ConfigureSql' Execute='immediate'
+					Return='check'/&gt;
+<b>
+	  &lt;CustomAction Id='ErrorOut' BinaryKey='ScaExecute' DllEntry='ErrorOut' Execute='deferred'
+					Return='check'/&gt;
+
+	  &lt;CustomAction Id='StartMetabaseTransaction' BinaryKey='ScaExecute'
+					DllEntry='StartMetabaseTransaction' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='RollbackMetabaseTransaction' BinaryKey='ScaExecute'
+					DllEntry='RollbackMetabaseTransaction' Execute='rollback' Return='check'/&gt;
+	  &lt;CustomAction Id='CommitMetabaseTransaction' BinaryKey='ScaExecute'
+					DllEntry='CommitMetabaseTransaction' Execute='commit' Return='check'/&gt;
+
+	  &lt;CustomAction Id='CreateMetabaseKey' BinaryKey='ScaExecute'
+					DllEntry='CreateMetabaseKey' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='DeleteMetabaseKey' BinaryKey='ScaExecute'
+					DllEntry='DeleteMetabaseKey' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='CreateAspApp' BinaryKey='ScaExecute'
+					DllEntry='CreateAspApp' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='WriteMetabaseValue' BinaryKey='ScaExecute'
+					DllEntry='WriteMetabaseValue' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='WriteMetabaseMultiString' BinaryKey='ScaExecute'
+					DllEntry='WriteMetabaseMultiString' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='DeleteMetabaseMultiString' BinaryKey='ScaExecute'
+					DllEntry='DeleteMetabaseMultiString' Execute='deferred' Return='check'/&gt;
+
+	  &lt;CustomAction Id='CreateDatabase' BinaryKey='ScaExecute'
+					DllEntry='CreateDatabase' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='DropDatabase' BinaryKey='ScaExecute'
+					DllEntry='DropDatabase' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='ExecuteSqlStrings' BinaryKey='ScaExecute'
+					DllEntry='ExecuteSqlStrings' Execute='deferred' Return='check'/&gt;
+	  &lt;CustomAction Id='RollbackExecuteSqlStrings' BinaryKey='ScaExecute'
+					DllEntry='ExecuteSqlStrings' Execute='rollback' Return='check'/&gt;
+</b>
+	  &lt;Binary Id='ScaSchedule' src='scasched.dll'/&gt;
+<b>      &lt;Binary Id='ScaExecute' src='scaexec.dll'/&gt;</b>
+   &lt;/Fragment&gt;
+&lt;/Wix&gt;
+</pre>
+
+<p>
+Okay, that's it.  We're done with editing the "sca.wxs" source file.  You have successfully defined all of the entry points into the WiX Server CustomActions.  Now, how about we add a call to the WiX Server CustomActions to the example product.wxs source file you've been working with so far.  Instead of configuring IIS or SQL Server (and requiring you to have one of them installed), let's just add a call to the CustomAction I use to inject errors into the installation process for testing purposes.  That's the "ErrorOut" CustomAction.
+</p>
+
+<pre>
+&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+   &lt;Product Id='12345678-1234-1234-1234-123456789012' Name='Test Package' Language='1033'
+			Version='1.0.0.0' Manufacturer='Microsoft Corporation'&gt;
+	  &lt;Package Id='12345678-1234-1234-1234-123456789012'
+			Description='My first Windows Installer package'
+			Comments='This is my first attempt at creating a Windows Installer database'
+			Manufacturer='Microsoft Corporation' InstallerVersion='200' Compressed='yes' /&gt;
+
+	  &lt;Media Id='1' Cabinet='product.cab' EmbedCab='yes' /&gt;
+
+	  &lt;Directory Id='TARGETDIR' Name='SourceDir'&gt;
+		 &lt;Directory Id='ProgramFilesFolder' Name='PFiles'&gt;
+			&lt;Directory Id='MyDir' Name='TestProg' LongName='Test Program'&gt;
+			   &lt;Component Id='MyComponent' Guid='12345678-1234-1234-1234-123456789012'&gt;
+				  &lt;File Id='readme' Name='readme.txt' DiskId='1' src='readme.txt' /&gt;
+			   &lt;/Component&gt;
+
+			   &lt;Merge Id='MyModule' Language='1033' src='module.msm' DiskId='1' /&gt;
+			&lt;/Directory&gt;
+		 &lt;/Directory&gt;
+	  &lt;/Directory&gt;
+
+	  &lt;Feature Id='MyFeature' Title='My 1st Feature' Level='1'&gt;
+		 &lt;ComponentRef Id='MyComponent' /&gt;
+		 &lt;MergeRef Id='MyModule' /&gt;
+	  &lt;/Feature&gt;
+<b>
+	  &lt;InstallExecuteSequence&gt;
+		 &lt;Custom Action='ErrorOut' After='InstallFiles'/&gt;
+	  &lt;/InstallExecuteSequence&gt;</b>
+   &lt;/Product&gt;
+&lt;/Wix&gt;
+</pre>
+
+<p>
+Those three lines are all you need to add to your Windows Installer package source file to call the "ErrorOut" CustomAction.  Now that we have two files to link together our call to light.exe gets a little more complicated.  Here are the compile, link, and installation steps.
+</p>
+
+<pre>
+C:\test&gt; <b>candle product.wxs module.wxs sca.wxs</b>
+Microsoft (R) Windows Installer Xml Compiler version 1.0.1256.19889
+Copyright (C) Microsoft Corporation 2003. All rights reserved.
+
+product.wxs
+module.wxs
+sca.wxs
+
+C:\test&gt; <b>light module.wixobj</b>
+Microsoft (R) Windows Installer Xml Linker version 1.0.1256.19889
+Copyright (C) Microsoft Corporation 2003. All rights reserved.
+
+C:\test&gt; <b>light product.wixobj sca.wixobj –out product.msi</b>
+Microsoft (R) Windows Installer Xml Linker version 1.0.1220.15022
+Copyright (C) Microsoft Corporation 2003. All rights reserved
+
+C:\test&gt; <b>msiexec /i product.msi</b>
+</pre>
+
+<p>
+Don't be alarmed when the MSI mysteriously starts rolling back the installation.  Remember after installing the files the "ErrorOut" CustomAction is called and that forces the installation to fail.  MSI then rolls back the files and silently returns.  Adding a success and an error dialog are excercises left to the interested reader.
+</p>
+
+</body>
+</html>

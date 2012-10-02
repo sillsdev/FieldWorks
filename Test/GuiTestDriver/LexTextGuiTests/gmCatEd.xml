@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests optionality and select default inflection class in grammar category edit-->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Grammar/Category Edit-->
+  <click select="menubar/view/grammar/category-edit"/>
+
+  <model select="category-edit[@role='view']">
+
+<!--select "common noun" from center list-->
+  <click select="categories/record" path="common noun"/>
+
+<!--insert affix slot-->
+  <var id="ind" set="*"/>
+  <click select="category/slice/affix-slots"/>
+  <click side="right" select="category/slice/affix-slots"/>
+  <insert>{DOWN}~</insert>
+
+<!--change optionality  unfortunately, the panel number changes from 1 to 2 on different runs. -->
+
+  <var id="ind" set="*"/>
+  <click select="category/slice/optional/check"/>
+  <glimpse wait="1000" id ="check1" select="category/slice/optional/check" prop="checked" expect="True"/>
+
+<!--change optionality-->
+  <click select="category/slice/optional/check"/>
+
+<!--delete slot-->
+  <var id="ind" set="*"/>
+  <click side="right" select="category/slice/slot-name/label"/>
+  <insert>{DOWN}~</insert>
+  <insert>{LEFT}~</insert>
+
+<!--insert inflection class-->
+  <var id="ind" set="*"/>
+  <click select="category/slice/inflection-class-info"/>
+  <click side="right" select="category/slice/inflection-class-info"/>
+  <insert>{DOWN}~</insert>
+
+<!--set default inflection class-->
+  <var id="ind" set="*"/>
+  <click select="category/slice/default-inflection-class/label"/>
+  <click select="category/slice/default-inflection-class/chooser"/>
+   <on-dialog title="Choose Default Inflection Class">
+	<click path="$NL;outline:NAMELESS/outlineitem:1st nominal declension"/>
+	<click path="$ok"/>
+   </on-dialog>
+
+<!--check-->
+ <glimpse id ="check2" select="category/slice/default-inflection-class/data" prop="value" expect="1st nominal declension"/>
+
+<!--insert subclass-->
+  <var id="ind" set="*"/>
+  <click side="right" select="category/slice/subclasses"/>
+  <insert wait="500">{DOWN}~</insert>
+
+<!--check subclass-->
+  <var id="ind" set="*"/>
+  <glimpse id="NoSubclass" select="category/slice/subclass-name"/>
+
+<!--delete inflection class-->
+  <click id="deleteInfl" side="right" select="category/slice/subclass-name"/>
+  <insert>{DOWN}~</insert>
+  <insert>d</insert>
+
+<!--insert affix template-->
+  <var id="ind" set="*"/>
+  <click id="insertAffixTemp" select="category/slice/affix-templates"/>
+  <click side="right" select="category/slice/affix-templates"/>
+  <insert>{DOWN}~</insert>
+
+<!--edit template table-->
+  <var id="ind" set="*"/>
+  <var id="col" set="*"/>
+  <click side="right" select="category/slice/table/head" path="/value:rexp#STEM"/>
+  <insert>~</insert>
+
+   <on-dialog title="Choose Slot">
+	<insert wait="1000">{TAB}~</insert><!-- a wait is needed sometimes before clicking -->
+	<insert wait="100">%{F4}</insert><bug id="LT-xxxx" desc="closes on 2nd click" />
+	<!--var id="addOpt" set="Add an optional slot to noun"/--><!-- add a prefix slot -->
+	<!--click path="9:$addOpt;/41:$addOpt;/30:$addOpt"/-->
+   </on-dialog>
+
+<!--check-->
+  <var id="ind" set="*"/>
+  <var id="col" set="1"/>
+ <glimpse id ="check3" select="category/slice/table/head" path="/value:rexp#Unnamed1" prop="value" expect="rexp#Unnamed1"/>
+
+<!--delete template-->
+  <var id="ind" set="*"/>
+  <click side="right" select="category/slice/template-name/label"/>
+  <insert>{DOWN}~</insert>
+  <insert>d</insert>
+
+<!--insert subcategory-->
+  <var id="ind" set="*"/>
+  <click select="category/slice/subcategories"/>
+  <click side="right" select="category/slice/subcategories"/>
+  <insert>{DOWN}~</insert>
+
+  <on-dialog title="Add from Catalog">
+   <click path="$add"/>
+  </on-dialog>
+
+<!--delete subcategory-->
+  <click select="//toolbar/delete"/>
+  <insert>d</insert>
+  <bug id="6035"/>
+
+  <insert wait="3000">^{HOME}</insert> <!--wait for delete to finish before letting the next test run-->
+
+  <!-- still have to get the cursor off the delete button or the next test fails -->
+  <var id="ind" set="*"/>
+  <var id="row" set="1"/>
+  <click select="category/slice/name/data"/>
+
+  </model>
+
+ </on-application>
+</accil>

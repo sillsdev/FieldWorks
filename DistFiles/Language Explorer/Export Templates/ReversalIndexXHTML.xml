@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xhtml" type="reversal" datatype="html" xslt="ReversalIndexXHTML.xsl">
+	<FxtDocumentDescription dataLabel="Reversal Index" formatLabel="XHTML" defaultExtension="xhtml" filter="XHTML files (*.xhtml)|*.xhtml|All files (*.*)|*.*">
+Export the current configured reversal index to XHTML. (This only works in the Reversal Indexes view.)
+	</FxtDocumentDescription>
+</template>

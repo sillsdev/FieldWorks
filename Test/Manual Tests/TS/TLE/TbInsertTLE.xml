@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbinsertTLE" num="3.5" abbr="tbinTLE" file="TLE\TbInsertTLE.xml">
+<title tag="tbinsertTLE">Insert Toolbar Tests (TLE)</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>This script covers the portion of the Insert Toolbar that is specific to Topics List Editor.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#InsertToolbar" type="doc">Insert Toolbar</link>
+</p>
+<p name="Note">To test the other generic Insert Item buttons, use the generic <link uri="../FW/TbInsert.xml" type="module">Insert Toolbar Tests</link> script</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "TLE: Insert Toolbar"</p>
+</context>
+
+<case id="tbinTLE" num="1" order="any">
+<title tag="tbinTLE">Topics List Editor Specific Toolbar Buttons</title>
+<context>
+<p>When the Insert Toolbar is displayed in Topics List Editor</p>
+</context>
+
+<step name="1.1">Use <link uri="../StdCtrls/TlbButton.xml">Toolbar Button Tests</link> to test the Insert Item toolbar button(s)
+<r>File any errors using the words "TLE: Insert Toolbar" in the bug report</r>
+</step>
+
+<step name="1.2">Use <link uri="InsertItem.xml" type="module">Insert Item tests</link> to test the Insert Item toolbar button(s) functionality.
+<r>File any errors using the words "TLE: Insert Toolbar" in the bug report</r>
+</step>
+
+</case>
+
+<update date="Jul-11-02" author="RussD">Test Script Created.</update>
+
+</test>

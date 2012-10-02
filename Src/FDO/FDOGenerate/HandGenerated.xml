@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HandGenerated>
+	<Class id="CmFile">
+		<property name="InternalPath"/>
+	</Class>
+	<Class id="CmPicture">
+		<property name="ScaleFactor"/>
+	</Class>
+	<Class id="CmProject">
+		<property name="DateModified"/>
+	</Class>
+	<Class id="StFootnote">
+		<property name="DisplayFootnoteMarker"/>
+		<property name="DisplayFootnoteReference"/>
+	</Class>
+	<Class id="LexDb">
+		<property name="Entries"/>
+	</Class>
+	<Class id="LexSense">
+		<property name="MorphoSyntaxAnalysis"/>
+	</Class>
+	<Class id="MoDerivAffMsa">
+		<property name="ToPartOfSpeech"/>
+		<property name="FromPartOfSpeech"/>
+	</Class>
+	<Class id="MoDerivStepMsa">
+		<property name="PartOfSpeech"/>
+	</Class>
+	<Class id="MoInflAffMsa">
+		<property name="PartOfSpeech"/>
+	</Class>
+	<Class id="MoMorphAdhocProhib">
+		<property name="FirstMorpheme"/>
+	</Class>
+	<Class id="MoStemMsa">
+		<property name="PartOfSpeech"/>
+	</Class>
+	<Class id="ScrImportSet">
+		<property name="ImportSettings"/>
+	</Class>
+	<Class id="Scripture">
+		<property name="RefSepr"/>
+		<property name="ChapterVerseSepr"/>
+		<property name="VerseSepr"/>
+		<property name="Bridge"/>
+		<property name="CrossRefMarkerSymbol"/>
+		<property name="CrossRefMarkerType"/>
+		<property name="DisplayCrossRefReference"/>
+		<property name="Versification"/>
+	</Class>
+	<Class id="ScrBook">
+		<property name="CanonicalNum"/>
+	</Class>
+	<Class id="ScrSection">
+		<property name="VerseRefMin"/>
+		<property name="VerseRefMax"/>
+		<property name="VerseRefStart"/>
+		<property name="VerseRefEnd"/>
+	</Class>
+  <Class id="WfiMorphBundle">
+	<property name="Msa"/>
+  </Class>
+  <!-- TODO (FWM-138): When we remove StyleName from the database model, we also need to remove this. -->
+  <Class id="StPara">
+	<property name="StyleName"/>
+  </Class>
+</HandGenerated>

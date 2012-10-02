@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="plain">
+	<FxtDocumentDescription dataLabel="Wordforms" formatLabel="Tab-delimited" defaultExtension="txt" filter="Tab-delimited files (*.txt)|*.txt|All files (*.*)|*.*">
+	Export the wordforms and associated information to a tab-delimited file that can be imported into Word or Excel. This is slow due to producing the counts.
+	</FxtDocumentDescription>
+
+	<class name="LangProject">
+		<text>Wordforms</text>
+		<tab/>
+		<text>Gloss</text>
+		<tab/>
+		<text>Category</text>
+		<tab/>
+		<text>NumberInCorpus</text>
+		<tab/>
+		<text>UserAnalyses</text>
+		<tab/>
+		<text>PredictedAnalyses</text>
+		<newLine/>
+		<group objProperty="WordformInventoryOA">
+			<objVector objProperty="WordformsOC"/>
+		</group>
+	</class>
+
+	<class name="WfiWordform">
+		<string simpleProperty="Form" ws="vernacular"/>
+		<tab/>
+		<objVector objProperty="AnalysesOC" count="1"/>
+		<tab/>
+		<string simpleProperty="FullConcordanceCount"/>
+		<tab/>
+		<string simpleProperty="UserCount"/>
+		<tab/>
+		<string simpleProperty="ParserCount"/>
+		<progress progressIncrement="true"/>
+		<newLine/>
+	</class>
+
+<!-- Note, this implementation messes up the tab-delimited data because it puts a tab out whether there is data or not. Furthermore, the desire is to accumulate all glosses for analyses and all categories for analyses and put them both together in a single column. Fxt doesn't provide this capability.  -->
+	<class name="WfiAnalysis">
+		<objVector objProperty="MeaningsOC"/>
+		<tab/>
+		<objAtomic objProperty="CategoryRA"/>
+	</class>
+
+	<class name="WfiGloss">
+		<string simpleProperty="Form" ws="analysis"/>
+	</class>
+
+	<class name="PartOfSpeech">
+		<string simpleProperty="Name" ws="analysis"/>
+	</class>
+
+</template>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InstallerDirectoryScan>
+	<Include Folder="DistFiles"/>
+	<Include Folder="Output\${config}"/>
+	<Include Folder="Output\SampleData"/>
+	<Include Folder="Output\Common"/>
+	<Include Folder="Lib\${config}"/>
+
+	<Exclude Folder="DistFiles\Data"/>
+	<Exclude Folder="DistFiles\Pictures"/>
+	<Exclude Folder="DistFiles\Media"/>
+	<Exclude Folder="DistFiles\Icu36"/>
+	<Exclude Folder="DistFiles\Icu40"/>
+	<Exclude Folder="Output\SampleData"/>
+	<Exclude File="DistFiles\Templates\NewLangProj-Import.log"/>
+	<Exclude File="DistFiles\python25.dll"/>
+	<Exclude File="DistFiles\pythoncom25.dll"/>
+	<Exclude File="DistFiles\pywintypes25.dll"/>
+</InstallerDirectoryScan>

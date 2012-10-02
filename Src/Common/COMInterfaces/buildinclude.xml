@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<pre-build>
+		<idlimp output="${dir.srcProj}\FwCellar.cs" namespace="SIL.FieldWorks.Common.COMInterfaces">
+			<sources>
+				<include name="${dir.outputBase}\Common\FwCellarTlb.idl"/>
+			</sources>
+			<idhfiles>
+				<include name="${fwroot}\Src\Cellar\Cellar.idh"/>
+			</idhfiles>
+		</idlimp>
+		<!-- idlimp output="${dir.srcProj}\DbAccess.cs" idlfile="${dir.outputBase}\Common\DbAccessTlb.idl"
+			namespace="SIL.FieldWorks.Common.COMInterfaces" -->
+		<!-- using name="FwKernelLib"/ -->
+		<!-- using name="FwDbAccess"/ -->
+		<!-- /idlimp -->
+		<idlimp output="${dir.srcProj}\FwKernel.cs" namespace="SIL.FieldWorks.Common.COMInterfaces">
+			<sources>
+				<include name="${dir.outputBase}\Common\FwKernelTlb.idl"/>
+			</sources>
+			<using name="SIL.FieldWorks.Common.Utils"/>
+			<idhfiles>
+				<include name="${fwroot}\Src\Kernel\FwKernel.idh"/>
+				<include name="${fwroot}\Src\Kernel\TextServ.idh"/>
+				<include name="${fwroot}\Src\Language\Language.idh"/>
+				<include name="${fwroot}\Src\Language\Render.idh"/>
+				<include name="${fwroot}\Src\DbAccess\DbAccess.idh"/>
+			</idhfiles>
+		</idlimp>
+
+		<!-- Although COMInterfaces defines the Language.idh interfaces, we no longer build a separate
+Language.cs file. This is because, I think to avoid circularity problems, we made FwKernel include
+Language.idh. So building FwKernel.cs into COMInterfaces brings in all the language stuff.
+Note that this means you have to cc mkfwk to get a new Language interface available in C# -->
+		<!-- idlimp output="${dir.srcProj}\Language.cs" idlfile="${dir.outputBase}\Common\LanguageTlb.idl"
+			namespace="SIL.FieldWorks.Common.COMInterfaces" -->
+		<!-- using name="FwKernelLib"/ -->
+		<!-- using name="FwLanguage"/ -->
+		<!-- using name="SIL.FieldWorks.Common.Utils"/ -->
+		<!-- /idlimp -->
+		<idlimp output="${dir.srcProj}\Views.cs" namespace="SIL.FieldWorks.Common.COMInterfaces">
+			<sources>
+				<include name="${dir.outputBase}\Common\ViewsTlb.idl"/>
+			</sources>
+			<using name="SIL.FieldWorks.Common.Utils"/>
+			<idhfiles>
+				<include name="${fwroot}\Src\views\Views.idh"/>
+				<include name="${fwroot}\Src\CommonCOMDlgs\CmnFwDlgs.idh"/>
+				<include name="${fwroot}\Src\MigrateData\MigrateData.idh"/>
+			</idhfiles>
+			<references basedir="${dir.outputBase}\Common\">
+				<include name="FwKernelTlb.iip"/>
+			</references>
+		</idlimp>
+		<!-- idlimp output="${dir.srcProj}\MigrateData.cs" namespace="SIL.FieldWorks.Common.COMInterfaces">
+			<sources>
+				<includes name="${dir.outputBase}\Common\MigrateDataTlb.idl"/>
+			</sources>
+		</idlimp -->
+	</pre-build>
+	<post-clean>
+		<delete file="${dir.srcProj}\FwCellar.cs" verbose="true" failonerror="false"/>
+		<!-- delete file="${dir.srcProj}\DbAccess.cs" verbose="true" failonerror="false"/ -->
+		<delete file="${dir.srcProj}\FwKernel.cs" verbose="true" failonerror="false"/>
+		<!-- delete file="${dir.srcProj}\Language.cs" verbose="true" failonerror="false"/ -->
+		<delete file="${dir.srcProj}\Views.cs" verbose="true" failonerror="false"/>
+		<!-- delete file="${dir.srcProj}\MigrateData.cs" verbose="true" failonerror="false"/ -->
+
+		<delete verbose="false" failonerror="false">
+			<fileset basedir="${dir.outputBase}\Common">
+				<include name="FwCellarTlb.iip"/>
+				<include name="FwKernelTlb.iip"/>
+				<include name="ViewsTlb.iip"/>
+			</fileset>
+		</delete>
+	</post-clean>
+</include>

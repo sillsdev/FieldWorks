@@ -1,0 +1,193 @@
+//--------------------------------------------------------------------------------------------------
+// <copyright file="VotiveUI.rc" company="Microsoft">
+//    Copyright (c) Microsoft Corporation.  All rights reserved.
+//
+//    The use and distribution terms for this software are covered by the
+//    Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+//    which can be found in the file CPL.TXT at the root of this distribution.
+//    By using this software in any fashion, you are agreeing to be bound by
+//    the terms of this license.
+//
+//    You must not remove this notice, or any other, from this software.
+// </copyright>
+//
+// <summary>
+// Resource file for the votiveui.dll
+// </summary>
+//--------------------------------------------------------------------------------------------------
+
+#define VER_DLL
+#define VER_ORIGINAL_FILENAME  "votiveui.dll"
+#define VER_INTERNAL_NAME      "VotiveUI"
+#define VER_PRODUCT_NAME       "Votive Resources"
+#define VER_FILE_DESCRIPTION   "Votive Visual Studio package resources"
+#include "wix.rc"
+
+#include "..\Resource.h"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Menus
+//
+
+1000  CTMENU       "MenuCommands.cto"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Bitmaps
+//
+
+IDB_MENU_IMAGES         BITMAP                  "..\MenuImages.bmp"
+IDB_SPLASH_IMAGE        BITMAP                  "..\Splash.bmp"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Icons
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_PACKAGE             ICON                    "..\..\Icons\ProjectFile.ico"
+IDI_PRODUCTFILE         ICON                    "..\..\Icons\ProductFile.ico"
+IDI_MODULEFILE          ICON                    "..\..\Icons\ModuleFile.ico"
+IDI_INCLUDEFILE         ICON                    "..\..\Icons\IncludeFile.ico"
+IDI_BLANKFILE           ICON                    "..\..\Icons\BlankFile.ico"
+IDI_RESOURCEFILE        ICON                    "..\..\Icons\ResourceFile.ico"
+IDI_PROJECTFILE         ICON                    "..\..\Icons\ProjectFile.ico"
+IDI_PRODUCTPROJECT      ICON                    "..\..\Icons\ProductProject.ico"
+IDI_MODULEPROJECT       ICON                    "..\..\Icons\ModuleProject.ico"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// String Tables
+//
+
+STRINGTABLE
+BEGIN
+	IDS_OFFICIALNAME        "Windows Installer XML"
+	IDS_PID                 " "
+	IDS_PRODUCTDETAILS      "Windows Installer XML (WiX) Toolset"
+	IDS_COMPANYNAME         VER_COMPANY_NAME
+	IDS_VERSION             VER_PRODUCT_VERSION_STRING
+	IDS_MINVSEDITION        "Standard"
+	IDS_EDITOR_NAME         "WiX Editor"
+	IDS_DEFAULT_NAME        "MyWiXPackage.wxs"
+	IDS_EDITOR_TEMPLATE     "WiX Editor"
+	IDS_FILE_DESCRIPTION    "WiX Editor File (wxs)"
+	IDS_READONLY            " [Read Only]"
+	IDS_PROJECTFILES_FILTER "Microsoft WiX Project Files (*.wixproj);*.wixproj"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_OUTSIDEEDITORFILECHANGE
+							"This file has changed outside the editor. Do you wish to reload it?"
+	IDS_E_INVALIDSERVICEINSTANCE
+							"The service instance must derive from or implement '{0}'."
+	IDS_E_DUPLICATESERVICE  "The service '{0}' already exists in the service container."
+	IDS_E_SITEALREADYSET    "A site has already been set on package '{0}'."
+	IDS_E_FAILEDTOPROFFERSERVICE "Failed to proffer service '{0}'."
+	IDS_OPENFILES_FILTER    "WiX files (*.wxs;*.wxi;*.wxl;*.wixout;*.wixlib)\n*.wxs;*.wxi;*.wxl;*.wixout;*.wixlib\n\n"
+	IDS_FINDFILES_FILTER    "WiX files (*.wxs;*.wxi;*.wxl;*.wixout;*.wixlib)\n*.wxs;*.wxi;*.wxl;*.wixout;*.wixlib\n\n"
+	IDS_WINDOW_TITLE        "WiX Tool Window"
+	IDS_E_CANTCREATETOOL    "Unable to create the tool"
+	IDS_ADDITEM_TEMPLATES_ENTRY "WiX Files"
+	IDS_E_UNADVISINGUNREGISTEREDEVENTSINK
+							"Attempting to unadvise an unregistered event sink '{0}'."
+	IDS_E_EMPTYSTRING       "Value cannot be an empty string."
+END
+
+STRINGTABLE
+BEGIN
+	IDS_PROJECT_SAVEAS_FILTER
+							"UTF-8 Project File (*.wixproj)\n*.wixproj\nANSI Project File (*.wixproj)\n*.wixproj\nUnicode Project File (*.wixproj)\n*.wixproj\n\n"
+	IDS_E_PROJECTFILESAVE_TITLE
+							"There was an error in trying to save the WiX project file '{0}' to disk."
+	IDS_E_PROJECTFILESAVE   "Detailed message: {0}"
+	IDS_E_INVALIDPROJECTFILE_TITLE "Cannot load the WiX project."
+	IDS_E_INVALIDPROJECTFILE
+							"The WiX project file '{0}' is corrupt or contains poorly formed XML."
+	IDS_E_INTERNALERROR     "Internal error."
+	IDS_E_PROJFILE_MISSINGSECTION
+							"Unable to open the WiX project file '{0}' because it is missing the '{1}' section."
+	IDS_E_MUSTUPGRADEPROJECT_TITLE
+							"The project '{0}' must be converted to the current project format. After it has been converted, you will not be able to edit it in previous versions of Visual Studio."
+	IDS_E_MUSTUPGRADEPROJECT "Convert and open this project?"
+	IDS_E_PROJECTFILENEWERVERSION
+							"Unable to read the project file '{0}'. The project was created with a newer version of Visual Studio which is incompatible with your version. You can only open this project with newer versions of Visual Studio."
+	IDS_FILEALREADYEXISTS   "A file with the name '{0}' already exists. Do you want to replace it?"
+	IDS_E_ADDITEMTOPROJECT  "There was an internal error while trying to add the items to the project '{0}'."
+END
+
+STRINGTABLE
+BEGIN
+	IDS_PROJECTITEMS_CODE   "Code"
+	IDS_PROJECTITEMS_RESOURCES "Resources"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_PROJECTITEMS_WIXPRODUCTFILE "WiX Product File"
+	IDS_PROJECTITEMS_WIXPRODUCTFILE_DESC
+							"An empty WiX product file (to create an MSI)"
+	IDS_PROJECTITEMS_WIXPRODUCTFILE_BASE "Product"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_PROJECTITEMS_WIXMODULEFILE "WiX Merge Module File"
+	IDS_PROJECTITEMS_WIXMODULEFILE_DESC
+							"An empty WiX module file (to create an MSM)"
+	IDS_PROJECTITEMS_WIXMODULEFILE_BASE "MergeModule"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_PROJECTITEMS_WIXINCLUDEFILE "WiX Include File"
+	IDS_PROJECTITEMS_WIXINCLUDEFILE_DESC "An empty WiX include file"
+	IDS_PROJECTITEMS_WIXINCLUDEFILE_BASE "Include"
+	IDS_PROJECTITEMS_WIXBLANKFILE "WiX File"
+	IDS_PROJECTITEMS_WIXBLANKFILE_DESC "A blank WiX file"
+	IDS_PROJECTITEMS_WIXBLANKFILE_BASE "WixFile"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_E_COPYFILE_UNAUTHORIZED
+							"You do not have the correct permissions to copy the file '{0}' to the project directory '{1}'."
+	IDS_E_COPYFILE          "An error occurred while trying to copy '{0}' to the project directory '{1}'."
+	IDS_PLK                 "MQRZZ9D0PTMKC3DCKRIZD0M1KIETE0RKZJMMDZAKDCJMICZIR3KAQMJRZAHKK9R3MAJHEJZ3EEZMKRCHD9M8JDHMI9ZQDKJHZIE1H1H1PCHACAMIQDR3ZCPIR2R9AHCI"
+	IDS_E_PROJFILE_MISSINGATTRIBUTE
+							"Unable to open the WiX project file '{0}' because it is missing the '{1}' attribute in the '{2}' section."
+	IDS_E_PROJFILE_INVALIDATTRIBUTE
+							"Unable to open the WiX project file '{0}' because the '{1}' attribute in the '{2}' section is invalid."
+	IDS_E_BUILD             "There was an internal error when trying to build the project."
+	IDS_PROJECTS_DISPLAYNAME "WiX Projects"
+	IDS_PROJECTITEMS_DISPLAYNAME "WiX Files"
+	IDS_ANOTHERPROJECTBUILDING "Another project is already building. Please cancel that build before starting another one."
+	IDS_E_TRACELOG_CREATION_TITLE "The trace log could not be created at '{0}'. No logging will be performed."
+	IDS_E_TRACELOG_CREATION "Detailed reason: {0}"
+	IDS_E_DELETEFROMPROJECT_TITLE "The item could not be deleted from disk."
+	IDS_E_DELETEFROMPROJECT "Detailed reason: {0}"
+	IDS_DELETECONFIRMATION_TITLE "'{0}' will be permanently deleted."
+	IDS_DELETECONFIRMATION  "Are you sure you want to delete '{0}'?"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_PROJECTS_PRODUCT    "WiX Project"
+	IDS_PROJECTS_PRODUCT_DESC
+							"A project for creating a WiX-based Windows Installer MSI file"
+	IDS_PROJECTS_PRODUCT_BASE "WixProject"
+	IDS_PROJECTS_MODULE     "WiX Module Project"
+	IDS_PROJECTS_MODULE_DESC
+							"A project for creating a WiX-based Windows Installer MSM file"
+	IDS_PROJECTS_MODULE_BASE "WixModule"
+END
+
+STRINGTABLE
+BEGIN
+	IDS_PROJECTITEMS_WIXLANGFILE "WiX Language File"
+	IDS_PROJECTITEMS_WIXLANGFILE_DESC "An empty WiX language file"
+	IDS_PROJECTITEMS_WIXLANGFILE_BASE "Languages"
+END

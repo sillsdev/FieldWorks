@@ -1,0 +1,139 @@
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\chartbl.in > ) )
+;Test loading of char def tables
+;Open a new language for testing purposes (msg 6510):
+(message (
+ <hc6510 lname Phonology Test Language > ) )
+;Don't let abort make us quit:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;First we try to load a char def table without first having set the var
+; *pfeatures*.  That should give error msg 6020:
+ERROR:hc6020 --- <hc6020  >
+;Then we set the *pfeatures* var, which should result in msg 6502:
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Then a load_char_def_table command, which should result in msg 6501:
+(message (
+ <hc6501 table_name table1 > ) )
+;Then a show_char_def_table command for a table which has not yet been
+; loaded.  It should output the error msg 6004:
+ERROR:hc6004 --- <hc6004 table_name foobar >
+;Likewise for deleting a table which has not been loaded, we should again
+; get error msg 6004:
+ERROR:hc6004 --- <hc6004 table_name foobar >
+;Then a show_char_def_table command for a table which HAS been loaded.
+; It should output the char def table we just loaded:
+(pretty_print
+ <char_table name table1 encoding test encoding seg_defs ((a (voc + cons - high - low + back + round - vd + ) ) (i (voc + cons - high + low - back - round - vd + ) ) (u (voc + cons - high + low - back + round + vd + ) ) ("u (voc + cons - high + low - back - round + vd + ) ) (-i (voc + cons - high + low - back + round - vd + ) ) (p (voc - cons + vd - poa bilabial asp - ) ) (t (voc - cons + vd - poa alveolar asp - del_rel - ) ) (k (voc - cons + vd - poa velar asp - ) ) (ts (voc - cons + vd - poa alveolar asp - del_rel + ) ) (ph (voc - cons + vd - poa bilabial asp + ) ) (th (voc - cons + vd - poa alveolar asp + del_rel - ) ) (kh (voc - cons + vd - poa velar asp + ) ) (tsh (voc - cons + vd - poa alveolar asp + del_rel + ) ) (b (voc - cons + vd + poa bilabial ) ) (d (voc - cons + vd + poa alveolar ) ) (g (voc - cons + vd + poa velar ) ) ) > )
+;Then another load_char_def_table command, should give msg 6501:
+(message (
+ <hc6501 table_name table2 > ) )
+;Then a show_char_def_table command for the table which was just loaded.
+; It should output the char def table:
+(pretty_print
+ <char_table name table2 encoding test encoding seg_defs ((a (voc + cons - high - low + back + round - vd + ) ) (i (voc + cons - high + low - back - round - vd + ) ) (u (voc + cons - high + low - back + round + vd + ) ) ("u (voc + cons - high + low - back - round + vd + ) ) (-i (voc + cons - high + low - back + round - vd + ) ) (p (voc - cons + vd - poa bilabial ) ) (t (voc - cons + vd - poa alveolar del_rel - ) ) (k (voc - cons + vd - poa velar ) ) (ts (voc - cons + vd - poa alveolar del_rel + ) ) (b (voc - cons + vd + poa bilabial ) ) (d (voc - cons + vd + poa alveolar ) ) (g (voc - cons + vd + poa velar ) ) ) bdry_defs ($xyz + # ! . ) > )
+;While we're at it, we're going to test the assignment of ctables to strata.
+; So define some strata (msg m6502):
+(message (
+ <hc6502 var_name '*strata*' > ) )
+;And assign ctables to the strata (m6550)
+(message (
+ <hc6550 sname morphophonemic ctable_name table1 > ) )
+(message (
+ <hc6550 sname allophonic ctable_name table2 > ) )
+;Now show the allophonic stratum (m6558):
+(message (
+ <hc6558 sname allophonic table_name table2 templates ( ) > ) )
+;Set the morphophonemic stratum to some non-default values (cyclic, m6551):
+(message (
+ <hc6551 sname morphophonemic > ) )
+;Show it (m6557):
+(message (
+ <hc6557 sname morphophonemic table_name table1 templates ( ) > ) )
+;Add a template (msg 6565):
+(message (
+ <hc6565 sname morphophonemic > ) )
+;Show the stratum again; the template should appear:
+(message (
+ <hc6557 sname morphophonemic table_name table1 templates (
+  <affix_template nm verb r_pos ('V' ) slots ((nonesuch ed_rz ) (evidential ) ) > ) > ) )
+;Get rid of the template again (msg 6565 again):
+(message (
+ <hc6565 sname morphophonemic > ) )
+;Show the stratum again; the template should be gone:
+(message (
+ <hc6557 sname morphophonemic table_name table1 templates ( ) > ) )
+;Set linearly ordered prules (m6555):
+(message (
+ <hc6555 sname morphophonemic > ) )
+;Show the stratum (m6559):
+(message (
+ <hc6559 sname morphophonemic table_name table1 templates ( ) > ) )
+;...and linearly ordered mrules (m6556):
+(message (
+ <hc6556 sname morphophonemic > ) )
+;Show the stratum (m6563):
+(message (
+ <hc6563 sname morphophonemic table_name table1 templates ( ) > ) )
+;Set prules back to default (=simultaneous, m6553):
+(message (
+ <hc6553 sname morphophonemic > ) )
+;Show the stratum (m6561):
+(message (
+ <hc6561 sname morphophonemic table_name table1 templates ( ) > ) )
+;Do the same with allophonic stratum, but leaving it noncyclic.
+; First set linearly ordered prules (m6555):
+(message (
+ <hc6555 sname allophonic > ) )
+;Show the stratum (m6560):
+(message (
+ <hc6560 sname allophonic table_name table2 templates ( ) > ) )
+;...and linearly ordered mrules (m6556):
+(message (
+ <hc6556 sname allophonic > ) )
+;Show the stratum (m6564):
+(message (
+ <hc6564 sname allophonic table_name table2 templates ( ) > ) )
+;Set prules back to default (=simultaneous, m6553):
+(message (
+ <hc6553 sname allophonic > ) )
+;Show the stratum (m6562):
+(message (
+ <hc6562 sname allophonic table_name table2 templates ( ) > ) )
+;Then a del_char_def_table command for table1.  Since this table is used,
+; we'll get two error msgs, the last one being 6054:
+ERROR:hc6004 --- <hc6004 table_name table1 >
+ERROR:hc6054 --- <hc6054  >
+;Ensure that table1 is still there:
+(pretty_print
+ <char_table name table1 encoding test encoding seg_defs ((a (voc + cons - high - low + back + round - vd + ) ) (i (voc + cons - high + low - back - round - vd + ) ) (u (voc + cons - high + low - back + round + vd + ) ) ("u (voc + cons - high + low - back - round + vd + ) ) (-i (voc + cons - high + low - back + round - vd + ) ) (p (voc - cons + vd - poa bilabial asp - ) ) (t (voc - cons + vd - poa alveolar asp - del_rel - ) ) (k (voc - cons + vd - poa velar asp - ) ) (ts (voc - cons + vd - poa alveolar asp - del_rel + ) ) (ph (voc - cons + vd - poa bilabial asp + ) ) (th (voc - cons + vd - poa alveolar asp + del_rel - ) ) (kh (voc - cons + vd - poa velar asp + ) ) (tsh (voc - cons + vd - poa alveolar asp + del_rel + ) ) (b (voc - cons + vd + poa bilabial ) ) (d (voc - cons + vd + poa alveolar ) ) (g (voc - cons + vd + poa velar ) ) ) > )
+;Check that del_char_def_table works correctly when a table is not used.
+; First load a new table (6501):
+(message (
+ <hc6501 table_name table3 > ) )
+;Then delete it (msg 6509):
+(message (
+ <hc6509 table_name table3 > ) )
+;Now we'll load a new version of table2, msg 6520:
+(message (
+ <hc6520 table_name table2 > ) )
+;Show the table, to ensure the changes took effect:
+(pretty_print
+ <char_table name table2 encoding test encoding seg_defs ((a (voc + cons - high - low + back + round - vd + ) ) ) > )
+;Now we'll load a table with a bad fvalue (the last one),
+; which should give us err msg 6010:
+ERROR:hc6010 --- <hc6010 fname vd fvalue x table_name table2 >
+;Now we'll load a table with a bad fname (the last one),
+; which should again give us err msg 6010:
+ERROR:hc6010 --- <hc6010 fname voiced fvalue + table_name table2 >
+;Now we'll try to load a char table with a segment that's too long
+; (20 characters is the limit).  Error msg 6305:
+ERROR:hc6305 --- <hc6305 string a23456789012345678901 >
+;Finally, we'll try to load a char table with too many boundaries (32 is the
+; global limit--since this table has 33, it will easily push us over the limit).
+; Error msg 6304:
+ERROR:hc6304 --- <hc6304 table_name table2 >
+;Done; morpher will now terminate
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\chartbl.in > ) )

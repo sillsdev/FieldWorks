@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="ui" default="ui.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	ui.build - Builds wixui.wixlib.
+	2005.10.18 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- UI-specific properties -->
+  <property name="ui.dir.target.bitmaps" value="${dir.target.wix}\Bitmaps" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="ui.build" description="Peforms a full rebuild (clean then build)" depends="ui.clean, ui.inc" />
+
+  <!-- Clean -->
+  <target name="ui.clean" description="Cleans the build">
+	<delete failonerror="false" dir="${dir.build.ui}" if="${directory::exists(dir.build.ui)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="wixui.wixlib" />
+		<include name="License.rtf" />
+	  </fileset>
+	</delete>
+	<delete failonerror="false" dir="${ui.dir.target.bitmaps}" if="${directory::exists(ui.dir.target.bitmaps)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="ui.inc" description="Performs an incremental build" depends="makeDirs, ui.wixlib" />
+
+  <!-- Dialogs -->
+  <target name="ui.wixlib" description="Builds wixui.wixlib">
+	<!-- Pull in the wix tools NAnt tasks -->
+	<loadtasks assembly="${file.nanttasks}" />
+
+	<!-- Copy the bitmaps and the license.rtf file to the target directory -->
+	<copy todir="${ui.dir.target.bitmaps}">
+	  <fileset basedir="${dir.src.ui}\wixui\Bitmaps">
+		<include name="Up.ico" />
+		<include name="bannrbmp.bmp" />
+		<include name="info.ico" />
+		<include name="New.ico" />
+		<include name="exclamic.ico" />
+		<include name="dlgbmp.bmp" />
+	  </fileset>
+	</copy>
+	<copy file="${dir.src.ui}\wixui\License.rtf" todir="${dir.target.wix}" />
+	<copy file="${dir.src.ui}\wixui\WixUI_de-de.wxl" todir="${dir.target.wix}" />
+	<copy file="${dir.src.ui}\wixui\WixUI_en-us.wxl" todir="${dir.target.wix}" />
+	<copy file="${dir.src.ui}\wixui\WixUI_es-es.wxl" todir="${dir.target.wix}" />
+	<copy file="${dir.src.ui}\wixui\WixUI_hu-hu.wxl" todir="${dir.target.wix}" />
+	<copy file="${dir.src.ui}\wixui\WixUI_nl-nl.wxl" todir="${dir.target.wix}" />
+
+	<!-- Build the common dialogs -->
+	<candle out="${dir.build.ui}\" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <sources basedir="${dir.src.ui}\wixui">
+		<include name="BrowseDlg.wxs" />
+		<include name="CancelDlg.wxs" />
+		<include name="Common.wxs" />
+		<include name="CustomizeDlg.wxs" />
+		<include name="DiskCostDlg.wxs" />
+		<include name="ErrorDlg.wxs" />
+		<include name="ErrorProgressText.wxs" />
+		<include name="ExitDialog.wxs" />
+		<include name="FatalError.wxs" />
+		<include name="FilesInUse.wxs" />
+		<include name="LicenseAgreementDlg.wxs" />
+		<include name="MaintenanceTypeDlg.wxs" />
+		<include name="MaintenanceWelcomeDlg.wxs" />
+		<include name="MsiRMFilesInUse.wxs" />
+		<include name="OutOfDiskDlg.wxs" />
+		<include name="OutOfRbDiskDlg.wxs" />
+		<include name="PrepareDlg.wxs" />
+		<include name="ProgressDlg.wxs" />
+		<include name="ResumeDlg.wxs" />
+		<include name="SetupTypeDlg.wxs" />
+		<include name="UserExit.wxs" />
+		<include name="VerifyReadyDlg.wxs" />
+		<include name="WaitForCostingDlg.wxs" />
+		<include name="WelcomeDlg.wxs" />
+
+		<include name="featuretree\WixUI_FeatureTree.wxs" />
+
+		<include name="InstallDirDlg.wxs" />
+		<include name="installdir\WixUI_InstallDir.wxs" />
+
+		<include name="WelcomeEulaDlg.wxs" />
+		<include name="minimal\WixUI_Minimal.wxs" />
+
+		<include name="mondo\WixUI_Mondo.wxs" />
+	  </sources>
+	</candle>
+
+	<lit out="${dir.target.wix}\wixui.wixlib" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <sources basedir="${dir.build.ui}">
+		<include name="BrowseDlg.wixobj" />
+		<include name="CancelDlg.wixobj" />
+		<include name="Common.wixobj" />
+		<include name="CustomizeDlg.wixobj" />
+		<include name="DiskCostDlg.wixobj" />
+		<include name="ErrorDlg.wixobj" />
+		<include name="ErrorProgressText.wixobj" />
+		<include name="ExitDialog.wixobj" />
+		<include name="FatalError.wixobj" />
+		<include name="FilesInUse.wixobj" />
+		<include name="LicenseAgreementDlg.wixobj" />
+		<include name="MaintenanceTypeDlg.wixobj" />
+		<include name="MaintenanceWelcomeDlg.wixobj" />
+		<include name="MsiRMFilesInUse.wixobj" />
+		<include name="OutOfDiskDlg.wixobj" />
+		<include name="OutOfRbDiskDlg.wixobj" />
+		<include name="PrepareDlg.wixobj" />
+		<include name="ProgressDlg.wixobj" />
+		<include name="ResumeDlg.wixobj" />
+		<include name="SetupTypeDlg.wixobj" />
+		<include name="UserExit.wixobj" />
+		<include name="VerifyReadyDlg.wixobj" />
+		<include name="WaitForCostingDlg.wixobj" />
+		<include name="WelcomeDlg.wixobj" />
+
+		<include name="WixUI_FeatureTree.wixobj" />
+
+		<include name="InstallDirDlg.wixobj" />
+		<include name="WixUI_InstallDir.wixobj" />
+
+		<include name="WelcomeEulaDlg.wixobj" />
+		<include name="WixUI_Minimal.wixobj" />
+
+		<include name="WixUI_Mondo.wixobj" />
+	  </sources>
+	</lit>
+  </target>
+</project>

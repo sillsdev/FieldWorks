@@ -1,0 +1,49 @@
+#define CMCG_SQL_DEFNS 1
+#include "CmTypes.h"
+#undef CMCG_SQL_DEFNS
+
+#define SpBegin() \
+	declare @err int, @tc int, @tn varchar(10) \
+	set @tc = @@trancount \
+	set @tn = 'tr' + convert(varchar(8), @@nestlevel) \
+	if @tc = 0 begin tran @tn else save tran @tn
+
+#define SpEnd() \
+	if @tc = 0 commit tran @tn \
+	return 0 \
+	LFail: \
+	rollback tran @tn \
+	return @err
+
+#define SpCheck(e) \
+	if e <> 0 begin set @err = e goto LFail end
+
+#define SpCheckErr() \
+	if @err <> 0 goto LFail
+
+/* Define DbgNuke and DbgGo */
+#ifdef DEBUG
+
+#define DbgNuke(name, type) \
+	if not object_id(#@name) is null begin \
+		print 'removing ' + #@type + ' ' + #@name \
+		drop type name \
+	end
+
+#define DbgGo() go
+
+#else // !DEBUG
+
+#define DbgNuke(name, type)
+#define DbgGo()
+
+#endif // !DEBUG
+
+#define kcchMaxInt 11
+#define kcchMaxName 100
+#define kcchMaxSql 400
+#define kcbMaxVarBin 8000
+#define kcchMaxVarChar 8000
+#define kcchMaxUniVarChar 4000
+
+#define kclidCmObject 0

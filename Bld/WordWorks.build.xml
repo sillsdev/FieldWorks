@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<!-- Included projects for WordWorks -->
+<!-- This file is included in FieldWorks.build.xml -->
+<project name="WordWorks" default="WordWorks" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- ********************************************************************************** -->
+	<!-- Add super target here -->
+	<!-- -->
+	<!-- Sample apps are: xCoreSample,ANAAnalysis,ParserWatcher,FxtExe.
+	The other targets are real apps. -->
+	<target name="WordWorks" description="Build all of the WordWorks projects."
+		depends="LexTextExe,xCoreSample,GAFAWSAnalysis,ParserWatcher,FxtExe,RBRExtensions"/>
+	<!-- -->
+	<target name="remakeww" description="Completely rebuilds WordWorks.">
+		<property name="remakeSfx" value="ww"/>
+		<call target="remakeFOO" cascade="false"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- -->
+	<target name="DetailControls" description="Build DetailControls project."
+			depends="COMInterfaces,FDO,FdoUi,Utils,xCoreInterfaces,Framework,XMI2Cellar,RootSite,mkgre,
+			PhonEnvValidator,XMLUtils,XMLViews,LexTextControls,Widgets,SimpleRootSite,FwResources,FwCoreDlgs,MessageBoxExLib,FwUtils,Framework">
+		<call target="DetailControls-nodep" cascade="false"/>
+	</target>
+	<target name="DetailControls-nodep" description="Build DetailControls project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\DetailControls"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="XmlViews" description="alias for XMLViews">
+		<call target="XMLViews" cascade="false"/>
+	</target>
+	<target name="XMLViews" description="Build XMLViews project."
+		depends="COMInterfaces,RootSite,Reporting, Utils,XMLUtils,FwControls,xCoreInterfaces,Widgets,FDO,FdoUiLowLevel,Filters,FwResources,SimpleRootSite,FwCoreDlgs,EncConvertersDlls,FwUtils,Framework">
+		<call target="XMLViews-nodep" cascade="false"/>
+	</target>
+	<target name="XMLViews-nodep" description="Build XMLViews project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\XMLViews"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Filters" description="Build Filters project."
+		depends="COMInterfaces,Utils,FDO,xCoreInterfaces,xCore,XMLUtils,mklg,mkvw">
+		<call target="Filters-nodep" cascade="false"/>
+	</target>
+	<target name="Filters-nodep" description="Build Filters project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Filters"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="LexTextControls" description="Build LexTextControls project."
+			depends="FwControls,Sfm2Xml,FDO,xCoreInterfaces,xCore,RootSite,Utils,COMInterfaces,
+			XMLUtils,Filters,SimpleRootSite,MGA,ParserCore,ParserServiceClasses,FxtDll,
+			Sfm2Xml,FdoUiLowLevel,FwUtils,Framework,MessageBoxExLib,EncConvertersDlls,Widgets">
+		<call target="LexTextControls-nodep" cascade="false"/>
+	</target>
+	<target name="LexTextControls-nodep" description="Build LexTextControls project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\LexTextControls"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="MGA" description="Build MGA (Morphosyntactic Glossing Assistant) project."
+			depends="FDO,Utils,XMLUtils,CopyDlls,xCoreInterfaces,Framework,FwUtils">
+		<call target="MGA-nodep" cascade="false"/>
+	</target>
+	<target name="MGA-nodep" description="Build MGA (Morphosyntactic Glossing Assistant) project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\Morphology\MGA"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ParserUI" description="Build ParserUI project."
+			depends="FDO,FdoUi,FdoUiLowLevel,xCoreInterfaces, XMLUtils,ParserCore, COMInterfaces,xWorks,Utils,FwControls,Widgets,SimpleRootSite,
+			mklg,mkvw,Framework,FwUtils,RootSite,ITextDll">
+		<call target="ParserUI-nodep" cascade="false"/>
+	</target>
+	<target name="ParserUI-nodep" description="Build ParserUI project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\ParserUI"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="PhonEnvValidator" description="Build PhonEnvValidator project.">
+		<call target="PhonEnvValidator-nodep" cascade="false"/>
+	</target>
+	<target name="PhonEnvValidator-nodep" description="Build PhonEnvValidator project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\PhonEnvValidator"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="XMLUtils" description="Build XMLUtils project."
+		depends="Utils,CopyDlls,BasicUtils">
+		<call target="XMLUtils-nodep" cascade="false"/>
+	</target>
+	<target name="XMLUtils-nodep" description="Build XMLUtils project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Utilities\XMLUtils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="MessageBoxExLib" description="Build MessageBoxExLib project." depends="BasicUtils">
+		<call target="MessageBoxExLib-nodep" cascade="false"/>
+	</target>
+	<target name="MessageBoxExLib-nodep" description="Build MessageBoxExLib project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Utilities\MessageBoxExLib"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TestManager" description="Build TestManager project.">
+		<call target="TestManager-nodep" cascade="false"/>
+	</target>
+	<target name="TestManager-nodep" description="Build TestManager project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Utilities\TestManager"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="xWorks" description="Build xWorks project." depends="xCore,FDO,FdoUi,Framework,Utils,FwControls,
+		COMInterfaces,FwCoreDlgs,RootSite,Filters,mkComFWDlgs,ScrUtilsInterfaces,
+		DetailControls,Reporting,XMLUtils,FxtDll,TestManager,XMLViews,xCoreInterfaces,TestManager,MessageBoxExLib,FwUtils,FwResources,Widgets,SharedScrUtils">
+	<call target="xWorks-nodep" cascade="false"/>
+	</target>
+	<target name="xWorks-nodep" description="Build xWorks project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\xWorks"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="FieldWorksLink" description="Build FieldWorksLink project." depends="xWorks">
+		<call target="FieldWorksLink-nodep" cascade="false"/>
+	</target>
+	<target name="FieldWorksLink-nodep" description="Build FieldWorksLink project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\FieldWorksLink"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- ************************* Parser related targets *************************** -->
+	<!-- -->
+	<target name="ParserServiceClasses" description="Build ParserServiceClasses project."
+		depends="ParserCore,FDO,xCoreInterfaces,Utils,FwUtils,COMInterfaces">
+		<call target="ParserServiceClasses-nodep" cascade="false"/>
+	</target>
+	<target name="ParserServiceClasses-nodep" description="Build ParserServiceClasses project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\ParserEngine\ParserService\ParserServiceClasses"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ParserCore" description="Build ParserCore project."
+		depends="Utils,FDO,COMInterfaces,Utils,TestUtils,FxtDll,GAFAWSAnalysis,XMLUtils">
+		<call target="ParserCore-nodep" cascade="false"/>
+	</target>
+	<target name="ParserCore-nodep" description="Build ParserCore project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\ParserEngine\ParserCore"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ParserWatcher" description="Build ParserWatcher project. (This is a sample app, so don't include it in a merge module.)"
+		depends="ParserCore,FDO,ParserServiceClasses,Utils">
+		<call target="ParserWatcher-nodep" cascade="false"/>
+	</target>
+	<target name="ParserWatcher-nodep" description="Build ParserWatcher project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\ParserEngine\ParserWatcher"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- ************************* End Parser related targets *************************** -->
+	<!-- ************************* GAFAWS related targets *************************** -->
+	<!-- -->
+	<target name="GAFAWSAnalysis" description="Build GAFAWSAnalysis project.">
+		<call target="GAFAWSAnalysis-nodep" cascade="false"/>
+	</target>
+	<target name="GAFAWSAnalysis-nodep" description="Build GAFAWSAnalysis project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\GAFAWS\GAFAWSAnalysis"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- ************************* End GAFAWS targets *************************** -->
+	<!-- -->
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- WordWorks database builds go here. -->
+	<!-- -->
+	<target name="WW-DBs" description="Build the databases used for WW development.."
+		depends="ZPITest,ZPU"/>
+	<!-- -->
+	<target name="ZPITest" description="Import ZPI data."
+		depends="init-masterdb">
+		<call target="ZPITest-nodep" cascade="false"/>
+	</target>
+	<target name="ZPITest-nodep" description="Import ZPI test data.">
+		<property name="dir.srcProj" value="${fwroot}\ww\TestData\ZPI"/>
+		<property name="dbzipfile" value="ZPIcnv.zip"/>
+		<property name="xmldatafile" value="ZPIcnv.xml"/>
+		<property name="databaseName" value="ZPITest"/>
+		<call target="makeDB-internal" cascade="false" unless="${clean}"/>
+	</target>
+	<!-- -->
+	<target name="ZPU" description="Import ZPU data."
+		depends="init-masterdb">
+		<call target="ZPU-nodep" cascade="false"/>
+	</target>
+	<target name="ZPU-nodep" description="Import ZPU data.">
+		<property name="dir.srcProj" value="${fwroot}\ww\TestData\ZPU"/>
+		<property name="dbzipfile" value="Zpu.zip"/>
+		<property name="xmldatafile" value="Zpu.xml"/>
+		<property name="databaseName" value="ZPU"/>
+		<call target="makeDB-internal" cascade="false" unless="${clean}"/>
+	</target>
+	<!-- -->
+	<target name="KQR" description="Import KQR data."
+		depends="init-masterdb">
+		<call target="KQR-nodep" cascade="false"/>
+	</target>
+	<target name="KQR-nodep" description="Import KQR data.">
+		<property name="dir.srcProj" value="${fwroot}\ww\TestData\KQR"/>
+		<property name="dbzipfile" value="Kqr.zip"/>
+		<property name="xmldatafile" value="Kqr.xml"/>
+		<property name="databaseName" value="KQR"/>
+		<call target="makeDB-internal" cascade="false" unless="${clean}"/>
+	</target>
+	<!-- -->
+	<target name="TOB" description="Import TOB data."
+		depends="init-masterdb">
+		<call target="TOB-nodep" cascade="false"/>
+	</target>
+	<target name="TOB-nodep" description="Import TOB data.">
+		<property name="dir.srcProj" value="${fwroot}\ww\TestData\TOB"/>
+		<property name="dbzipfile" value="Tob.zip"/>
+		<property name="xmldatafile" value="Tob.xml"/>
+		<property name="databaseName" value="TOB"/>
+		<call target="makeDB-internal" cascade="false" unless="${clean}"/>
+	</target>
+	<!-- -->
+	<target name="Kalaba" description="Import Kalaba data."
+		depends="init-masterdb">
+		<call target="Kalaba-nodep" cascade="false"/>
+	</target>
+	<target name="Kalaba-nodep" description="Import Kalaba data.">
+		<property name="dir.srcProj" value="${fwroot}\ww\TestData\Kalaba"/>
+		<property name="dbzipfile" value="Kalaba.zip"/>
+		<property name="xmldatafile" value="Kalaba.xml"/>
+		<property name="databaseName" value="Kalaba"/>
+		<call target="makeDB-internal" cascade="false" unless="${clean}"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add internal project targets here. These should not be called outside of this project. -->
+	<!-- -->
+	<target name="remakeww-internal" description="Completely rebuilds WordWorks - don't call directly">
+		<property name="fw-remake-internal-error" value="true"/>
+		<call target="remakeww-internal-core" cascade="false"/>
+		<property name="fw-remake-internal-error" value="false"/>
+	</target>
+	<target name="remakeww-internal-core" description="Allows for replacing two 'call' task with one 'depends'."
+		depends="requiredTestDatabases,WordWorks"/>
+	<!-- -->
+	<target name="unzip-internal" description="Do the actual unzipping.">
+		<unzip zipfile="${dir.srcProj}\${dbzipfile}" todir="${dir.wwoutput}"/>
+		<!-- The file in the zip file will always be older, so make it newer. -->
+		<touch file="${dir.wwoutput}\${xmldatafile}"/>
+	</target>
+	<!-- -->
+	<!--<target name="makeDB-internal" depends="cmNewLangProj" -->
+	<target name="makeDB-internal"
+		 description="Unzip, validate and load the XML data into a newly created database.">
+		<if test="${showTargetsRunInReport}">
+			<property name="appTargName" value="${databaseName}"/>
+			<call target="appendTargetName"/>
+		</if>
+		<property name="filesInCache" value="false" unless="${usefilecache}"/>
+		<filescached property="filesInCache" handleproperty="handle.zip" if="${usefilecache}">
+			<files>
+				<include name="${dir.srcProj}\${dbzipfile}"/>
+				<include name="${fwroot}\Test\FwDatabase.dtd"/>
+				<include name="${fwroot}\output\common\NewLangProj.sql"/>
+				<include name="${dir.outputBase}\FwCellar.dll"/>
+				<include name="${dir.outputBase}\DbAccess.dll"/>
+				<include name="${dir.outputBase}\DebugProcs.dll"/>
+				<include name="${dir.outputBase}\FwKernel.dll"/>
+				<include name="${dir.outputBase}\Language.dll"/>
+				<include name="${dir.outputBase}\Views.dll"/>
+			</files>
+		</filescached>
+		<if test="${not filesInCache or not usefilecache}">
+			<mkdir dir="${dir.wwoutput}"/>
+			<if test="${not file::up-to-date(dir.srcProj + '\' + dbzipfile, dir.wwoutput + '\' + xmldatafile)}">
+				<call target="unzip-internal" cascade="false"/>
+			</if>
+			<property name="dir.srcProj" value="${dir.wwoutput}"/>
+			<call target="makeDB-unzipped-internal"/>
+			<if test="${usefilecache}">
+				<!-- cache output files -->
+				<call target="detachDB"/>
+				<cachenewfiles handle="handle.zip">
+					<output basedir="${dir.sqlserverSILFWdata}">
+						<include name="${databaseName}.mdf"/>
+						<include name="${databaseName}_log.ldf"/>
+					</output>
+				</cachenewfiles>
+				<call target="attachDB"/>
+			</if>
+		</if>
+		<if test="${filesInCache and usefilecache}">
+			<call target="detachDB"/>
+			<copyfromcache handle="handle.zip" outputdir="${dir.sqlserverSILFWdata}"/>
+			<call target="attachDB"/>
+		</if>
+	</target>
+	<target name="makeDB-unzipped"
+		 description="Validate and load the XML data into a newly created database. The xml file is already unzipped">
+		<if test="${showTargetsRunInReport}">
+			<property name="appTargName" value="${databaseName}"/>
+			<call target="appendTargetName"/>
+		</if>
+		<property name="filesInCache" value="false" unless="${usefilecache}"/>
+		<filescached property="filesInCache" handleproperty="handle" if="${usefilecache}">
+			<files>
+				<include name="${dir.srcProj}\${xmldatafile}"/>
+				<include name="${fwroot}\Test\FwDatabase.dtd"/>
+				<include name="${fwroot}\output\common\NewLangProj.sql"/>
+				<include name="${dir.outputBase}\FwCellar.dll"/>
+				<include name="${dir.outputBase}\DbAccess.dll"/>
+				<include name="${dir.outputBase}\DebugProcs.dll"/>
+				<include name="${dir.outputBase}\FwKernel.dll"/>
+				<include name="${dir.outputBase}\Language.dll"/>
+				<include name="${dir.outputBase}\Views.dll"/>
+			</files>
+		</filescached>
+		<if test="${not filesInCache or not usefilecache}">
+			<call target="makeDB-unzipped-internal"/>
+			<if test="${usefilecache}">
+				<!-- cache output files -->
+				<echo message="About to cache..."/>
+				<call target="detachDB"/>
+				<cachenewfiles handle="handle">
+					<output basedir="${dir.sqlserverSILFWdata}">
+						<include name="${databaseName}.mdf"/>
+						<include name="${databaseName}_log.ldf"/>
+					</output>
+				</cachenewfiles>
+				<call target="attachDB"/>
+			</if>
+		</if>
+		<if test="${filesInCache and usefilecache}">
+			<call target="detachDB"/>
+			<copyfromcache handle="handle" outputdir="${dir.sqlserverSILFWdata}"/>
+			<call target="attachDB"/>
+		</if>
+	</target>
+	<target name="makeDB-unzipped-internal"
+		 description="Validate and load the XML data into a newly created database. The xml file is already unzipped">
+		<if test="${not file::exists(dir.srcProj + '\FwDatabase.dtd')}">
+			<copy file="${fwroot}\Test\FwDatabase.dtd" todir="${dir.srcProj}"/>
+			<attrib file="${dir.srcProj}\FwDatabase.dtd" readonly="false"/>
+		</if>
+		<exec program="${fwroot}\bin\rxp.exe"
+			commandline="-Vs &quot;${xmldatafile}&quot;"
+			failonerror="true"
+			workingdir="${dir.srcProj}" verbose="${verbose}"/>
+		<call target="dropDB"/>
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;create database [${databaseName}] ON (NAME = '${databaseName}', FILENAME = '${dir.sqlserverSILFWdata}\${databaseName}.mdf') LOG ON ( NAME = '${databaseName}_log', FILENAME = '${dir.sqlserverSILFWdata}\${databaseName}_log.ldf',SIZE = 10MB,MAXSIZE = UNLIMITED,FILEGROWTH = 5MB )&quot; -n "
+			failonerror="true" verbose="true"
+			workingdir="${dir.srcProj}"/>
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -d&quot;${databaseName}&quot; -i${fwroot}\output\common\NewLangProj.sql -a 8192 -n -m 1"
+			failonerror="true"
+			workingdir="${dir.srcProj}" verbose="${verbose}"/>
+		<echo>Loading ${databaseName} data...</echo>
+		<exec program="${fwroot}\Bin\loadxml.exe"
+			commandline="-i&quot;${xmldatafile}&quot; -d &quot;${databaseName}&quot;"
+			failonerror="true"
+			workingdir="${dir.srcProj}"
+			verbose="true"/>
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;alter database [${databaseName}] set recovery simple&quot; -n "
+			failonerror="true"
+			workingdir="${dir.srcProj}" verbose="${verbose}"/>
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;alter database [${databaseName}] set auto_shrink on&quot; -n "
+			failonerror="true"
+			workingdir="${dir.srcProj}" verbose="${verbose}"/>
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;alter database [${databaseName}] set auto_close off&quot; -n "
+			failonerror="true"
+			workingdir="${dir.srcProj}" verbose="${verbose}"/>
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;DBCC shrinkdatabase ('${databaseName}')&quot; -n "
+			failonerror="true"
+			workingdir="${dir.srcProj}" verbose="${verbose}"/>
+	</target>
+	<!-- -->
+	<target name="dropDB" description="Drop the database specified in the 'databaseName' property.">
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;drop database [${databaseName}]&quot; -n "
+			failonerror="false" verbose="${verbose}"/>
+		<if test="${file::exists(dir.sqlserverSILFWdata + '\' + databaseName + '_log.LDF')}">
+			<delete failonerror="false">
+				<fileset basedir="${dir.sqlserverSILFWdata}">
+					<include name="${databaseName} + '_log.LDF'"/>
+				</fileset>
+			</delete>
+		</if>
+	</target>
+	<!-- -->
+	<target name="detachDB" description="Detach the database specified in the 'databaseName' property.">
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;sp_detach_db [${databaseName}]&quot; -n "
+			failonerror="true" verbose="${verbose}"/>
+	</target>
+	<!-- -->
+	<target name="attachDB" description="Attach the database specified in the 'databaseName' property.">
+		<property name="dbpathname" value="${dir.sqlserverSILFWdata}\${databaseName}"/>
+		<exec program="osql.exe"
+			commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster -Q&quot;sp_attach_db @dbname = N'${databaseName}', @filename1 = N'${dbpathname}.mdf', @filename2 = N'${dbpathname}_log.ldf'&quot; -n "
+			failonerror="true" verbose="true"/>
+	</target>
+	<!-- -->
+	<target name="safecopyDB" description="Copy DB specified in the 'databaseName' property to a safe place.">
+		<call target="detachDB"/>
+		<call target="safecopyDB-basic"/>
+		<call target="attachDB"/>
+	</target>
+	<!-- -->
+	<target name="safecopyDB-basic" description="Copy DB specified in the 'databaseName' property to a safe place.">
+		<copy todir="${dir.safecopy}">
+			<fileset basedir="${dir.sqlserverSILFWdata}">
+				<include name="${databaseName}.mdf"/>
+				<include name="${databaseName}_log.ldf"/>
+			</fileset>
+		</copy>
+	</target>
+	<!-- -->
+	<target name="safecopyTLP" description="Safely copy TestLangProj.">
+		<property name="databaseName" value="TestLangProj"/>
+		<call target="safecopyDB" cascade="false"/>
+	</target>
+	<!-- -->
+	<target name="restoreDB" description="Restore DB specified in the 'databaseName' property from the safe copy.">
+		<call target="detachDB"/>
+		<copy todir="${dir.sqlserverSILFWdata}" overwrite="true">
+			<fileset basedir="${dir.safecopy}">
+				<include name="${databaseName}.mdf"/>
+				<include name="${databaseName}_log.ldf"/>
+			</fileset>
+		</copy>
+		<call target="attachDB"/>
+	</target>
+	<target name="restoreTLP" description="Restore TestLangProj, after test have been run.">
+		<property name="databaseName" value="TestLangProj"/>
+		<call target="restoreDB" cascade="false"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add project includes here -->
+	<include buildfile="${fwroot}\Bld\LexText.build.xml"/>
+	<include buildfile="${fwroot}\Bld\WordWorks_xCore.build.xml"/>
+	<include buildfile="${fwroot}\Bld\WordWorks_FXT.build.xml"/>
+	<include buildfile="${fwroot}\Bld\RBRPersonal.build.xml"/>
+	<!-- -->
+</project>

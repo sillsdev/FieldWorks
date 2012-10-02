@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration name="POSes" xmlns="http://www.xmlmind.com/xmleditor/schema/configuration" xmlns:cfg="http://www.xmlmind.com/xmleditor/schema/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xmlmind.com/xmleditor/schema/configuration
+				../../../../addon/config/configuration/xsd/configuration.xsd">
+<!-- XMLMind XML Editor configuration file for Category Catalog -->
+	<detect>
+		<dtdPublicId>-//XMLmind//DTD POSes//EN</dtdPublicId>
+	</detect>
+	<css name="Style sheet" location="POSes.css"/>
+	<template name="Template" location="POSesTemplate.xml"/>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="i"/>
+		<command name="insertNewLanguage"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="r"/>
+		<command name="removeLanguage"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="s"/>
+		<command name="createInitialSetOfCategories"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="c"/>
+		<command name="createCategoryCatalog"/>
+	</binding>
+	<menu label="_Category Catalog">
+		<item label="_Insert New Language    ESC+i" icon="xxe-config:common/icons/RowInsertAfter16.gif" command="insertNewLanguage"/>
+		<item label="_Remove Language    ESC+r" icon="xxe-config:common/icons/RowDelete16.gif" command="removeLanguage"/>
+		<separator/>
+		<item label="Create Initial _Set of Categories    ESC+s" icon="xxe-config:common/icons2/itemizedlist.gif" command="createInitialSetOfCategories"/>
+		<item label="_Create Category Catalog    ESC+c" icon="xxe-config:common/icons2/table.gif" command="createCategoryCatalog"/>
+	</menu>
+	<command name="insertNewLanguage">
+		<macro>
+			<sequence>
+				<command name="prompt" parameter='LangCode "Enter code of new language:"'/>
+				<command name="insertNewLanguageTransform" parameter="%_"/>
+				<command name="XXE.open" parameter="%D"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="insertNewLanguageTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="InsertNewLanguage.xsl" cacheStylesheet="true" file="in.xml" to="%D">
+				<parameter name="sLangCode">%0</parameter>
+			</transform>
+		</process>
+	</command>
+	<command name="removeLanguage">
+		<macro>
+			<sequence>
+				<command name="prompt" parameter='LangCode "Enter code of language to remove:"'/>
+				<set variable="lc" expression="%_" plainString="true"/>
+				<command name="prompt" parameter='LangCode "Are you sure you want to remove this language from *every* category?"'/>
+				<get expression="$lc"/>
+				<command name="removeLanguageTransform" parameter="%_"/>
+				<command name="XXE.open" parameter="%D"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="removeLanguageTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="RemoveLanguage.xsl" cacheStylesheet="true" file="in.xml" to="%D">
+				<parameter name="sLangCode">%0</parameter>
+			</transform>
+		</process>
+	</command>
+	<command name="createInitialSetOfCategories">
+		<macro>
+			<sequence>
+				<command name="createInitialSetOfCategoriesTransform"/>
+			<command name="alert" parameter="File %{P}\POS.xml has just been created.  You can copy it to FieldWorksInstallDirectory\templates"/>
+<!--                <command name="XXE.open" parameter="%{P}/%{R}Initial.%E"/> -->
+			</sequence>
+		</macro>
+	</command>
+	<command name="createInitialSetOfCategoriesTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="CreateInitialSetOfCategories.xsl" cacheStylesheet="true" file="in.xml" to="%{P}/POS.xml"/>
+		</process>
+	</command>
+	<command name="createCategoryCatalog">
+		<macro>
+			<sequence>
+				<command name="createCategoryCatalogTransform"/>
+			<command name="alert" parameter="File %{P}\GOLDEtic.xml has just been created.  You can copy it to FieldWorksInstallDirectory\templates"/>
+<!--                <command name="XXE.open" parameter="%{P}/%{R}Catalog.%E"/> -->
+			</sequence>
+		</macro>
+	</command>
+	<command name="createCategoryCatalogTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="CreateCategoryCatalog.xsl" cacheStylesheet="true" file="in.xml" to="%{P}/GOLDEtic.xml"/>
+		</process>
+	</command>
+</configuration>

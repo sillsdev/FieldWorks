@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="EnvironmentVarsFragment">
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="FwPath" Guid="9E876F78-9266-4C85-B532-F617F61EFEA9">
+				<Environment Id="FwPath" Name="PATH" Action="set" System="yes" Part="first" Value="[INSTALLDIR]" />
+			</Component>
+			<Component Id="WpEnvVars" Guid="404039BD-3E13-41F7-BA7B-D04BBE8AEBAD">
+				<Environment Id="GraphitePath" Name="PATH" Action="set" System="yes" Part="last" Value="[$gdlpp.exe]" />
+				<Environment Id="GLDPP_PREFS" Name="GLDPP_PREFS" Action="set" System="yes" Value='"-I[$stddef.gdh]"' />
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

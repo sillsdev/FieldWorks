@@ -1,0 +1,16 @@
+// $ANTLR 2.7.7 (20060930): SurveyorTags.g -> SurveyorParserTokenTypes.txt$
+SurveyorParser    // output token vocab name
+DOLLAR=4
+LBRACE=5
+IDENTIFIER=6
+TABLE=7
+RBRACE=8
+ROW=9
+CELL=10
+HTTP=11
+REFERENCE=12
+POUND=13
+DIGIT=14
+LETTER=15
+WS=16
+IGNORE=17

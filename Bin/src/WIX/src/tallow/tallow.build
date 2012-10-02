@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="tallow" default="tallow.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	tallow.build - Builds the tallow project (tallow.exe).
+	2005.09.12 johnls Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- tallow-specific properties -->
+  <property name="tallow.file.res.target" value="${dir.build.tallow}\tallow.res" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="tallow.build" description="Peforms a full rebuild (clean then build)" depends="tallow.clean, tallow.inc" />
+
+  <!-- Clean -->
+  <target name="tallow.clean" description="Cleans the build">
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="tallow.exe" />
+		<include name="tallow.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="tallow.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the tallow.exe.config -->
+	<copy todir="${dir.target.wix}">
+	  <fileset basedir="${dir.src.tallow}">
+		<include name="tallow.exe.config" />
+	  </fileset>
+	</copy>
+
+	<!-- Compile the tallow.rc file -->
+	<rc rcfile="${dir.src.tallow}\tallow.rc" langid="0" output="${tallow.file.res.target}" options="${rc.standardOptions} ${cl.standardIncludes}" />
+
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\tallow.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.tallow}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="tallow.cs" />
+		<include name="tallowrc.cs" />
+		<include name="tallwreg.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <arg value="-win32res:&quot;${tallow.file.res.target}&quot;" />
+	</csc>
+  </target>
+
+</project>

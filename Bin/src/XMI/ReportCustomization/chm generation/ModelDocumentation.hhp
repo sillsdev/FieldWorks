@@ -1,0 +1,18 @@
+[OPTIONS]
+Auto TOC=9
+Compatibility=1.1 or later
+Compiled file=ModelDocumentation.chm
+Default Window=Default
+Default topic=TopBrowser.html
+Display compile progress=No
+Full-text search=Yes
+Index file=fw.html
+Language=0x409 English (United States)
+
+[WINDOWS]
+Default="FieldWorks Model Documentation",,,"indexleft.html",,,,,,0x22520,10,0x304e,,0x30000,,,1,2,,0
+
+
+[FILES]
+
+[INFOTYPES]

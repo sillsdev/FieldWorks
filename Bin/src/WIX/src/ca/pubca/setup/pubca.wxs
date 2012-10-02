@@ -1,0 +1,127 @@
+<?xml version='1.0'?>
+<!--
+<copyright file="pubca.wxs" company="Microsoft">
+   Copyright (c) Microsoft Corporation.  All rights reserved.
+
+   The use and distribution terms for this software are covered by the
+   Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+   which can be found in the file CPL.TXT at the root of this distribution.
+   By using this software in any fashion, you are agreeing to be bound by
+   the terms of this license.
+
+   You must not remove this notice, or any other, from this software.
+</copyright>
+
+<summary>
+   Windows Installer XML Public CustomAction WixLib.
+</summary>
+-->
+<Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
+	<?include caerr.wxi?>
+
+	<!-- Public Custom Action Error Text Definitions -->
+
+	<Fragment Id='ComPlusCustomActionErrors'>
+		<UI>
+			<Error Id='$(var.msierrComPlusCannotConnect)'>Cannot connect to the COM+ admin catalog.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusPartitionReadFailed)'>Failed to read COM+ partitions.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusPartitionRoleReadFailed)'>Failed to read COM+ partition roles.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusUserInPartitionRoleReadFailed)'>Failed to read COM+ users in partition roles.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusPartitionUserReadFailed)'>Failed to read COM+ partition users.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationReadFailed)'>Failed to read COM+ applications.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationRoleReadFailed)'>Failed to read COM+ application roles.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusUserInApplicationRoleReadFailed)'>Failed to read COM+ users in application roles.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusAssembliesReadFailed)'>Failed to read COM+ assemblies.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusSubscriptionReadFailed)'>Failed to read COM+ event subscriptions.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusPartitionDependency)'>Another entity is dependent on a COM+ partition that is not being installed.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusPartitionNotFound)'>The COM+ partition was not found.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusPartitionIdConflict)'>A COM+ partition with the same id already exists.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusPartitionNameConflict)'>A COM+ partition with the same name already exists.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationDependency)'>Another entity is dependent on a COM+ application that is not being installed.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationNotFound)'>The COM+ application was not found.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationIdConflict)'>A COM+ application with the same id already exists.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationNameConflict)'>A COM+ application with the same name already exists.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationRoleDependency)'>Another entity is dependent on a COM+ application role that is not being installed.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationRoleNotFound)'>The COM+ application role was not found.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusApplicationRoleConflict)'>A COM+ application role with the same name already exists.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusAssemblyDependency)'>Another entity is dependent on a COM+ assembly that is not being installed.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusSubscriptionIdConflict)'>A COM+ component event subscription with the same id already exists.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusSubscriptionNameConflict)'>A COM+ component event subscription with the same name already exists.  ([2]   [3]   [4]   [5])</Error>
+			<Error Id='$(var.msierrComPlusFailedLookupNames)'>Failed to lookup user account names.  ([2]   [3]   [4]   [5])</Error>
+
+			<ProgressText Action="ComPlusInstallExecute">Registering COM+ components</ProgressText>
+			<ProgressText Action="ComPlusUninstallExecute">Unregistering COM+ components</ProgressText>
+
+			<ProgressText Action="CreateComPlusPartitions" Template="Partition: [1]">Creating COM+ partitions</ProgressText>
+			<ProgressText Action="RemoveComPlusPartitions" Template="Partition: [1]">Removing COM+ partitions</ProgressText>
+			<ProgressText Action="AddUsersToComPlusPartitionRoles" Template="Role: [1]">Adding users to COM+ partition roles</ProgressText>
+			<ProgressText Action="RemoveUsersFromComPlusPartitionRoles" Template="Role: [1]">Removing users from COM+ partition roles</ProgressText>
+			<ProgressText Action="AddComPlusPartitionUsers" Template="User: [1]">Setting default COM+ partitions for users</ProgressText>
+			<ProgressText Action="RemoveComPlusPartitionUsers" Template="User: [1]">Removing default COM+ partitions for users</ProgressText>
+			<ProgressText Action="CreateComPlusApplications" Template="Application: [1]">Creating COM+ applications</ProgressText>
+			<ProgressText Action="RemoveComPlusApplications" Template="Application: [1]">Removing COM+ applications</ProgressText>
+			<ProgressText Action="CreateComPlusApplicationRoles" Template="Role: [1]">Creating COM+ application roles</ProgressText>
+			<ProgressText Action="RemoveComPlusApplicationRoles" Template="Role: [1]">Removing COM+ application roles</ProgressText>
+			<ProgressText Action="AddUsersToComPlusApplicationRoles" Template="User: [1]">Adding users to COM+ application roles</ProgressText>
+			<ProgressText Action="RemoveUsersFromComPlusApplicationRoles" Template="User: [1]">Removing users from COM+ application roles</ProgressText>
+			<ProgressText Action="RegisterComPlusAssemblies" Template="DLL: [1]">Registering COM+ components</ProgressText>
+			<ProgressText Action="UnregisterComPlusAssemblies" Template="DLL: [1]">Unregistering COM+ components</ProgressText>
+			<ProgressText Action="AddComPlusRoleAssignments" Template="Component: [1]">Assigning roles to COM+ components</ProgressText>
+			<ProgressText Action="RemoveComPlusRoleAssignments" Template="Component: [1]">Removing role assignments from COM+ components</ProgressText>
+			<ProgressText Action="CreateSubscriptionsComPlusComponents" Template="Subscription: [1]">Creating subscriptions for COM+ components</ProgressText>
+			<ProgressText Action="RemoveSubscriptionsComPlusComponents" Template="Subscription: [1]">Removing subscriptions for COM+ components</ProgressText>
+		</UI>
+	</Fragment>
+
+	<!-- Public Custom Action Definitions -->
+
+	<Fragment Id='ComPlusCustomActions'>
+		<IgnoreModularization Name='ConfigureComPlusInstall' Type='Action'/>
+		<IgnoreModularization Name='ConfigureComPlusUninstall' Type='Action'/>
+		<IgnoreModularization Name='ComPlusInstallPrepare' Type='Action'/>
+		<IgnoreModularization Name='ComPlusRollbackInstallPrepare' Type='Action'/>
+		<IgnoreModularization Name='ComPlusInstallExecute' Type='Action'/>
+		<IgnoreModularization Name='ComPlusInstallExecuteCommit' Type='Action'/>
+		<IgnoreModularization Name='ComPlusRollbackInstallExecute' Type='Action'/>
+		<IgnoreModularization Name='ComPlusInstallCommit' Type='Action'/>
+		<IgnoreModularization Name='ComPlusUninstallPrepare' Type='Action'/>
+		<IgnoreModularization Name='ComPlusRollbackUninstallPrepare' Type='Action'/>
+		<IgnoreModularization Name='ComPlusUninstallExecute' Type='Action'/>
+		<IgnoreModularization Name='ComPlusRollbackUninstallExecute' Type='Action'/>
+		<IgnoreModularization Name='ComPlusUninstallCommit' Type='Action'/>
+
+		<FragmentRef Id='ComPlusCustomActionErrors'/>
+
+		<Property Id='ComPlusInstallExecute' Value='nothing' Hidden='yes'/>
+		<Property Id='ComPlusInstallExecuteCommit' Value='nothing' Hidden='yes'/>
+		<Property Id='ComPlusRollbackInstallExecute' Value='nothing' Hidden='yes'/>
+		<Property Id='ComPlusUninstallExecute' Value='nothing' Hidden='yes'/>
+		<Property Id='ComPlusRollbackUninstallExecute' Value='nothing' Hidden='yes'/>
+
+		<CustomAction Id='ConfigureComPlusInstall' BinaryKey='WixPubSchedule' DllEntry='ConfigureComPlusInstall' Execute='immediate' Return='check' Impersonate='no'/>
+		<CustomAction Id='ConfigureComPlusUninstall' BinaryKey='WixPubSchedule' DllEntry='ConfigureComPlusUninstall' Execute='immediate' Return='check' Impersonate='no'/>
+		<CustomAction Id='ComPlusInstallPrepare' BinaryKey='WixPubExecute' DllEntry='ComPlusPrepare' Execute='deferred' Return='check' Impersonate='no'/>
+		<CustomAction Id='ComPlusRollbackInstallPrepare' BinaryKey='WixPubExecute' DllEntry='ComPlusCleanup' Execute='rollback' Return='check' Impersonate='no'/>
+		<CustomAction Id='ComPlusInstallExecute' BinaryKey='WixPubExecute' DllEntry='ComPlusInstallExecute' Execute='deferred' Return='check' HideTarget='yes' Impersonate='no'/>
+		<CustomAction Id='ComPlusInstallExecuteCommit' BinaryKey='WixPubExecute' DllEntry='ComPlusInstallExecuteCommit' Execute='commit' Return='check' HideTarget='yes' Impersonate='no'/>
+		<CustomAction Id='ComPlusRollbackInstallExecute' BinaryKey='WixPubExecute' DllEntry='ComPlusRollbackInstallExecute' Execute='rollback' Return='check' HideTarget='yes' Impersonate='no'/>
+		<CustomAction Id='ComPlusInstallCommit' BinaryKey='WixPubExecute' DllEntry='ComPlusCleanup' Execute='commit' Return='check' Impersonate='no'/>
+		<CustomAction Id='ComPlusUninstallPrepare' BinaryKey='WixPubExecute' DllEntry='ComPlusPrepare' Execute='deferred' Return='check' Impersonate='no'/>
+		<CustomAction Id='ComPlusRollbackUninstallPrepare' BinaryKey='WixPubExecute' DllEntry='ComPlusCleanup' Execute='rollback' Return='check' Impersonate='no'/>
+		<CustomAction Id='ComPlusUninstallExecute' BinaryKey='WixPubExecute' DllEntry='ComPlusUninstallExecute' Execute='deferred' Return='check' HideTarget='yes' Impersonate='no'/>
+		<CustomAction Id='ComPlusRollbackUninstallExecute' BinaryKey='WixPubExecute' DllEntry='ComPlusInstallExecute' Execute='rollback' Return='check' HideTarget='yes' Impersonate='no'/>
+		<CustomAction Id='ComPlusUninstallCommit' BinaryKey='WixPubExecute' DllEntry='ComPlusCleanup' Execute='commit' Return='check' Impersonate='no'/>
+
+		<InstallExecuteSequence>
+			<Custom Action='ConfigureComPlusUninstall' After='DeleteServices'>VersionNT >= 500</Custom>
+			<Custom Action='ConfigureComPlusInstall' Before='InstallServices'>VersionNT >= 500</Custom>
+		</InstallExecuteSequence>
+	</Fragment>
+
+	<!-- Public Custom Action DLL Definitions -->
+
+	<Fragment Id='WixPublicCustomActionBinaries'>
+		<Binary Id='WixPubSchedule' src='pcasched.dll'/>
+		<Binary Id='WixPubExecute' src='pcaexec.dll'/>
+	</Fragment>
+</Wix>

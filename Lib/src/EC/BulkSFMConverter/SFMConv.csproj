@@ -1,0 +1,188 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{7580E2C0-F919-4FA5-AC2C-ADCAE4F8C14E}</ProjectGuid>
+	<OutputType>WinExe</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SFMConv</RootNamespace>
+	<AssemblyName>SFMConv</AssemblyName>
+	<StartupObject>SFMConv.Program</StartupObject>
+	<ApplicationIcon>TRFFC17.ICO</ApplicationIcon>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<ApplicationManifest>app.manifest</ApplicationManifest>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\..\release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+	<DebugSymbols>true</DebugSymbols>
+	<OutputPath>..\..\..\debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DebugType>full</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+	<OutputPath>..\..\..\release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<Optimize>true</Optimize>
+	<DebugType>pdbonly</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+	<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\release\ECInterfaces.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\release\SilEncConverters30.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Deployment" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="BaseConverterForm.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="BaseConverterForm.designer.cs">
+	  <DependentUpon>BaseConverterForm.cs</DependentUpon>
+	</Compile>
+	<Compile Include="SCConvForm.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SCConvForm.Designer.cs">
+	  <DependentUpon>SCConvForm.cs</DependentUpon>
+	</Compile>
+	<Compile Include="Program.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<EmbeddedResource Include="BaseConverterForm.resx">
+	  <DependentUpon>BaseConverterForm.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SCConvForm.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>SCConvForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Properties\Resources.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<Compile Include="Properties\Resources.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	  <DesignTime>True</DesignTime>
+	</Compile>
+	<None Include="app.config" />
+	<None Include="Properties\Settings.settings">
+	  <Generator>SettingsSingleFileGenerator</Generator>
+	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	</None>
+	<Compile Include="Properties\Settings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>Settings.settings</DependentUpon>
+	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	</Compile>
+	<Compile Include="Settings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="app.manifest" />
+	<None Include="Images\RefreshDocViewHS.png" />
+	<None Include="Images\openHS.GIF" />
+	<None Include="Images\SaveUnicode.gif" />
+	<None Include="Images\SaveLegacy.gif" />
+	<None Include="Images\BreakpointHS.png" />
+	<Content Include="TRFFC17.ICO" />
+	<None Include="Images\Unicode openHS.gif" />
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

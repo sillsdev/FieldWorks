@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Changes the vernacular default ws font. -->
+
+<accil on-fail="assert">
+  <bug id="lt-6810" desc="Word concordance result list initially inactive"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application run="ok" args="-db $projectName" on-fail="assert">
+
+ <var id="sentence1" set="hesy nikalo pus seyullikpe yubilibi kalo."/>
+ <var id="sentence2" set="seyullikpe yalozo hesy tiusgelbi."/>
+ <var id="sentence3" set="timibakosa palgo migelbi."/>
+ <var id="sentence4" set="moyulbiligu hesy palgo kasapa yaloni."/>
+
+<!-- Go to View/Texts/Edit -->
+   <click select="menubar/view/texts-words/interlinear-texts"/>
+
+<!-- Instance 1: click New Text button-->
+   <click select="toolbar/new-text"/>
+
+<model select="interlinear-texts[@role='view']">
+
+<!-- click Baseline tab-->
+ <click select="text/baseline/tab"/>
+<!--Enter Text title: "Invasion of the Martians"-->
+ <var id="row" set="2"/>
+ <click select="text/Title/data"/>
+  <insert>^AInvasion of the Martians</insert><!-- ^A selects the whole field to replace it-->
+<!--Enter text in Text Edit area-->
+ <click select="text/baseline/line"/>
+ <insert>^A$sentence1</insert><!-- ^A selects the whole field to replace it-->
+
+<!-- Instance 2: click New Text button-->
+   <click select="//toolbar/new-text"/>
+<!-- click Baseline tab-->
+ <click select="text/baseline/tab"/>
+<!--Enter Text title: "Invasion of the Klingons"-->
+ <click select="text/Title/data"/>
+  <insert>^AInvasion of the Klingons</insert><!-- ^A selects the whole field to replace it-->
+<!--Enter text in Text Edit area-->
+ <click select="text/baseline/line"/>
+ <insert>^A$sentence2</insert><!-- ^A selects the whole field to replace it-->
+
+<!-- Instance 3: click New Text button-->
+   <click select="//toolbar/new-text"/>
+<!-- click Baseline tab-->
+ <click select="text/baseline/tab"/>
+<!--Enter Text title: "The Underminer Strikes Again"-->
+ <click select="text/Title/data"/>
+  <insert>^AThe Underminer Strikes Again</insert><!-- ^A selects the whole field to replace it-->
+<!--Enter text in Text Edit area-->
+ <click select="text/baseline/line"/>
+ <insert>^A$sentence3</insert><!-- ^A selects the whole field to replace it-->
+
+<!-- Instance 4: click New Text button-->
+   <click select="//toolbar/new-text"/>
+<!-- click Baseline tab-->
+ <click select="text/baseline/tab"/>
+<!--Enter Text title: "Slugs are Gross"-->
+ <click select="text/Title/data"/>
+  <insert>^ASlugs are Gross</insert><!-- ^A selects the whole field to replace it-->
+<!--Enter text in Text Edit area-->
+ <click select="text/baseline/line"/>
+ <insert>^A$sentence4</insert><!-- ^A selects the whole field to replace it-->
+
+</model>
+
+
+<!-- Go to View/Texts + Words/Concordance -->
+   <click select="menubar/view/texts-words/concordance"/>
+
+<model select="concordance[@role='view']">
+
+<!-- Click on combo box, go to "Search in the line:"-->
+  <click select="criteria/search-in/drop"/>
+  <insert wait="200">b~</insert>
+  <click select="criteria/for-the-text/value"/>
+   <insert wait="300">{END}+{HOME}</insert>
+   <insert wait="200">hesy</insert>
+  <click select="criteria/search"/>
+
+<!--Click edit tab to make sure edit box is showing-->
+  <click select="full-context/interlinear/baseline/tab"/>
+
+<!--Compare first line in "Occurence" column to first line in edit box-->
+ <var id="row" set="2"/>
+ <var id="col" set="2"/>
+   <click select="results/record/col"/>
+   <glimpse id="inEdit1" select="full-context/interlinear/baseline/text" prop="value" expect="$sentence1"/>
+  <glimpse id="inTable1" select="results/record/col" prop="value" expect="$sentence1"/>
+
+<!--Click on second line in "Occurence" column, then compare to first line in edit box-->
+ <var id="row" set="3"/>
+   <click select="results/record/col"/>
+   <glimpse id="inEdit2" select="full-context/interlinear/baseline/text" prop="value" expect="$sentence2"/>
+   <glimpse id="inTable2" select="results/record/col" prop="value" expect="$sentence2"/>
+
+<!--Click on third line in "Occurence" column, then compare to first line in edit box-->
+ <var id="row" set="4"/>
+   <click select="results/scroll/down"/>
+   <click select="results/record/col"/>
+   <glimpse id="inEdit3" select="full-context/interlinear/baseline/text" prop="value" expect="$sentence4"/>
+   <glimpse id="inTable3" select="results/record/col" prop="value" expect="$sentence4"/>
+
+<!-- Click on combo box, go to "For the text:"-->
+  <click select="criteria/for-the-text/value"/>
+   <insert wait="300">{END}+{HOME}</insert>
+   <insert wait="200">palgo</insert>
+  <click select="criteria/search"/>
+
+<!--Click edit tab to make sure edit box is showing-->
+  <click select="full-context/interlinear/baseline/tab"/>
+
+<!--Compare first line in "Occurence" column to first line in edit box-->
+ <var id="row" set="1"/>
+   <click select="results/record/col"/>
+   <glimpse id="inEdit4" select="full-context/interlinear/baseline/text" prop="value" expect="$sentence3"/>
+   <glimpse id="inTable4" select="results/record/col" prop="value" expect="$sentence3"/>
+
+<!--Click on second line in "Occurence" column, then compare to first line in edit box-->
+ <var id="row" set="2"/>
+   <click select="results/record/col"/>
+   <glimpse id="inEdit5" select="full-context/interlinear/baseline/text" prop="value" expect="$sentence4"/>
+   <glimpse id="inTable5" select="results/record/col" prop="value" expect="$sentence4"/>
+
+</model>
+
+
+
+<!-- delete the texts -->
+<!-- Go to View/Texts/Edit -->
+   <click select="menubar/view/texts-words/interlinear-texts"/>
+
+<model select="interlinear-texts[@role='view']">
+
+ <var id="row" set="5"/>
+ <click select="texts/record/col"/>
+ <var id="row" set="2"/>
+<glimpse id="del5" select="text/Title/data" prop="value" expect="My Green Mat" on-fail="skip"/>
+<if><condition of="$del5" is="false"/>
+<then>
+  <click select="//toolbar/delete"/>
+  <insert>d</insert>
+</then>
+</if>
+
+ <var id="row" set="4"/>
+ <click select="texts/record/col"/>
+ <var id="row" set="2"/>
+<glimpse id="del4" select="text/Title/data" prop="value" expect="My Green Mat" on-fail="skip"/>
+<if><condition of="$del4" is="false"/>
+<then>
+  <click select="//toolbar/delete"/>
+  <insert>d</insert>
+</then>
+</if>
+
+ <var id="row" set="3"/>
+ <click select="texts/record/col"/>
+ <var id="row" set="2"/>
+<glimpse id="del3" select="text/Title/data" prop="value" expect="My Green Mat" on-fail="skip"/>
+<if><condition of="$del3" is="false"/>
+<then>
+  <click select="//toolbar/delete"/>
+  <insert>d</insert>
+</then>
+</if>
+
+ <var id="row" set="2"/>
+ <click select="texts/record/col"/>
+<glimpse id="del2" select="text/Title/data" prop="value" expect="My Green Mat" on-fail="skip"/>
+<if><condition of="$del2" is="false"/>
+<then>
+  <click select="//toolbar/delete"/>
+  <insert>d</insert>
+</then>
+</if>
+
+ <var id="row" set="1"/>
+ <click select="texts/record/col"/>
+ <var id="row" set="2"/>
+<glimpse id="del1" select="text/Title/data" prop="value" expect="My Green Mat" on-fail="skip"/>
+<if><condition of="$del1" is="false"/>
+<then>
+  <click select="//toolbar/delete"/>
+  <insert>d</insert>
+</then>
+</if>
+
+ <!-- still have to get the cursor off the delete button or the next test fails -->
+<var id="row" set="2"/>
+<click select="text/Title/data"/>
+<glimpse wait="500" select="text/Title/data" prop="value" expect="My Green Mat"/>
+
+</model>
+
+ </on-application>
+</accil>

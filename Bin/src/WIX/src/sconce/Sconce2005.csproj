@@ -1,0 +1,322 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{A0A82600-B8B1-4E6C-8B8C-248587175210}</ProjectGuid>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>sconce</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>Microsoft.Tools.WindowsInstallerXml.VisualStudioInfrastructure</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>bin\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE;DEBUG;USE_NET20_FRAMEWORK</DefineConstants>
+	<DocumentationFile>bin\Debug\sconce.xml</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>1591</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE;USE_NET20_FRAMEWORK</DefineConstants>
+	<DocumentationFile>bin\Release\sconce.dll</DocumentationFile>
+	<DebugSymbols>false</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>1591</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Microsoft.VisualStudio.Designer.Interfaces, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+	<Reference Include="Microsoft.VisualStudio.OLE.Interop">
+	  <Name>Microsoft.VisualStudio.OLE.Interop</Name>
+	  <HintPath>..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.VisualStudio.Shell.Interop">
+	  <Name>Microsoft.VisualStudio.Shell.Interop</Name>
+	  <HintPath>..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Drawing">
+	  <Name>system.drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>system.windows.forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>system.xml</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="..\..\inc\wixver.cs">
+	  <Link>wixver.cs</Link>
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="AddFileDialogType.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="BuildableProjectConfiguration.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="BuildAction.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="BuildOperation.cs" />
+	<Compile Include="BuildSettings.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CloneableCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CommandStatus.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConfigurationProvider.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DirtyableObject.cs" />
+	<Compile Include="DisplayNameAttribute.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DocumentInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ErrorUtility.cs" />
+	<Compile Include="EventListenerCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileChangeNotificationSuspender.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileNodeProperties.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FolderFirstComparer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FolderNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FolderNodeProperties.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="GeneralPropertyPage.cs" />
+	<Compile Include="Hierarchy.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="HierarchyImages.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IDirtyable.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LaunchPad.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LocalizedCategoryAttribute.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LocalizedDescriptionAttribute.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LocalizedDisplayNameAttribute.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ManagedResourceManager.cs" />
+	<Compile Include="NativeMethods.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NativeResourceManager.cs" />
+	<Compile Include="Node.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NodeCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NodeProperties.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Package.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PackageContext.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PackageSettings.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PackageUtility.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Project.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectConfiguration.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectConfigurationCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectDocumentsTracker.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectFactory.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectFileXmlWriter.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectNodeProperties.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ProjectSerializer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PropertyGridPropertyDescriptor.cs" />
+	<Compile Include="PropertyGridTypeDescriptor.cs" />
+	<Compile Include="PropertyPage.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PropertyPageSettings.cs" />
+	<Compile Include="ReferenceFileNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ReferenceFileNodeCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ReferenceFileNodeProperties.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ReferenceFolderNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ResourceId.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="RunningDocumentTable.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SconceStrings.cs" />
+	<Compile Include="ServiceProvider.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SortedCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="String.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TextNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Tracer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VirtualFolderNode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsBuildStatusEventListenerCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsCfgProviderEventListenerCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsCommand.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsCommand2K.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsGuids.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsHelperMethods.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsHierarchyEventListenerCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsLogicalView.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsMenus.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsMessageBoxResult.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VsOpenFileDialogFlags.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlHelperMethods.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<None Include="ResourceId.cs.pp" />
+	<EmbeddedResource Include="SolutionExplorerIcons.bmp" />
+	<EmbeddedResource Include="Strings.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

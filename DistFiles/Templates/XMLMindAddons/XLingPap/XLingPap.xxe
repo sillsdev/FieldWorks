@@ -1,0 +1,901 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration name="XLingPap" xmlns="http://www.xmlmind.com/xmleditor/schema/configuration" xmlns:cfg="http://www.xmlmind.com/xmleditor/schema/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xmlmind.com/xmleditor/schema/configuration
+				../../../../addon/config/configuration/xsd/configuration.xsd">
+	<detect>
+		<or>
+			<dtdPublicId>-//XMLmind//DTD XLingPap//EN</dtdPublicId>
+			<and>
+				<schemaType xsi:nil="true"/>
+				<or>
+					<rootElementLocalName>lingPaper</rootElementLocalName>
+					<rootElementLocalName>references</rootElementLocalName>
+				</or>
+			</and>
+		</or>
+	</detect>
+	<!-- DTD-less documents (such as the references one) will be considered to be XLingPap documents -->
+	<dtd publicId="-//XMLmind//DTD XLingPap//EN" systemId="XLingPap.dtd"/>
+	<css name="XLingPap" location="XLingPap.css"/>
+	<template name="XLingPap Main Section-oriented Document" location="template/XLingPapTemplate.xml"/>
+	<template name="XLingPap Main Chapter-oriented Document" location="template/XLingPapChaptersTemplate.xml"/>
+	<template name="XLingPap Main Part-oriented Document" location="template/XLingPapPartsTemplate.xml"/>
+	<template name="XLingPap References (part of a modular document" location="template/XLingPapReferencesTemplate.xml"/>
+	<cfg:preserveSpace elements="styles"/>
+
+<!--
+========================================
+Borrowed from xhtml
+========================================
+-->
+  <!-- Inside a p (and only inside a p), XXE attempts to behave
+	   like a word-processor. -->
+
+  <binding>
+	<keyPressed code="ENTER" />
+	<command name="xhtml.splitOrInsertNewLine" />
+  </binding>
+
+  <binding>
+	<keyPressed code="DELETE" />
+	<command name="xhtml.joinOrDeleteChar" />
+  </binding>
+
+  <binding>
+	<keyPressed code="BACK_SPACE" />
+	<command name="xhtml.joinOrDeleteChar" parameter="backwards" />
+  </binding>
+
+  <command name="xhtml.splitOrInsertNewLine">
+	<macro>
+	  <choice>
+		<command name="insertControlChar" parameter="\n" />
+
+	<sequence>
+		  <command name="selectNode"
+			   parameter="ancestorOrSelf[implicitElement] p" />
+	  <command name="split" />
+	</sequence>
+	  </choice>
+	</macro>
+  </command>
+
+  <command name="xhtml.joinOrDeleteChar">
+	<macro>
+	  <choice>
+	<sequence>
+		  <test
+			expression="$dot/ancestor::p and not($selected) and not($mark)" />
+		  <command name="deleteSelectionOrJoinOrDeleteChar" parameter="%0" />
+	</sequence>
+
+		<command name="deleteSelectionOrDeleteChar" parameter="%0" />
+	  </choice>
+	</macro>
+  </command>
+
+
+  <!-- Easy way to add p, li, dt+dd -->
+
+  <binding>
+	<keyPressed code="ENTER" modifiers="mod" />
+	<command name="xhtml.appendSame" />
+  </binding>
+
+  <binding>
+	<keyPressed code="ENTER" modifiers="mod shift" />
+	<command name="xhtml.prependSame" />
+  </binding>
+
+  <command name="xhtml.appendSame">
+	<macro>
+	  <choice>
+	<sequence>
+		  <command name="selectNode"
+			   parameter="ancestorOrSelf[implicitElement] p" />
+	  <command name="insertNode" parameter="sameElementAfter" />
+	</sequence>
+
+		<command name="xhtml.appendListItem" />
+	  </choice>
+	</macro>
+  </command>
+
+  <command name="xhtml.prependSame">
+	<macro>
+	  <choice>
+	<sequence>
+		  <command name="selectNode"
+			   parameter="ancestorOrSelf[implicitElement] p" />
+	  <command name="insertNode" parameter="sameElementBefore" />
+	</sequence>
+
+		<command name="xhtml.prependListItem" />
+	  </choice>
+	</macro>
+  </command>
+
+  <command name="xhtml.appendListItem">
+	<macro undoable="true" label="Add li or dt+dd">
+	  <sequence>
+		<command name="selectNode"
+				 parameter="ancestorOrSelf[implicitElement] li dd dt" />
+
+		<choice>
+		  <sequence>
+			<match context="$selected" pattern="li" />
+		<command name="insertNode" parameter="sameElementAfter" />
+		  </sequence>
+
+		  <sequence>
+			<!-- Match dd|dt -->
+
+		<!-- Assumes that a dt is followed by a dd. -->
+			<choice>
+			  <match context="$selected" pattern="dd" />
+		  <command name="selectNode" parameter="nextSibling dd" />
+			</choice>
+
+		<command name="insert" parameter="after dt" />
+		<command name="insert" parameter="after dd" />
+		<command name="selectNode" parameter="previousSibling" />
+		  </sequence>
+		</choice>
+	  </sequence>
+	</macro>
+  </command>
+
+  <command name="xhtml.prependListItem">
+	<macro undoable="true" label="Add li or dt+dd">
+	  <sequence>
+		<command name="selectNode"
+				 parameter="ancestorOrSelf[implicitElement] li dd dt" />
+
+		<choice>
+		  <sequence>
+			<match context="$selected" pattern="li" />
+		<command name="insertNode" parameter="sameElementBefore" />
+		  </sequence>
+
+		  <sequence>
+			<!-- Match dd|dt -->
+
+		<!-- Assumes that a dt is followed by a dd. -->
+			<choice>
+			  <match context="$selected" pattern="dt" />
+		  <command name="selectNode" parameter="previousSibling dt" />
+			</choice>
+
+		<command name="insert" parameter="before dd" />
+		<command name="insert" parameter="before dt" />
+		  </sequence>
+		</choice>
+	  </sequence>
+	</macro>
+  </command>
+
+  <!-- An easy way to insert a br -->
+
+  <binding>
+	<keyPressed code="ENTER" modifiers="shift" />
+	<command name="xhtml.insertLineBreak" />
+  </binding>
+
+  <command name="xhtml.insertLineBreak">
+	<macro undoable="true" label="Insert br">
+	  <sequence>
+		<command name="insert" parameter="into br" />
+	<!-- harmless if macro fails starting from here -->
+		<command name="insertNode" parameter="textAfter" />
+		<command name="cancelSelection" />
+	  </sequence>
+	</macro>
+  </command>
+
+<!--
+========================================
+ XLingPap-specific
+========================================
+-->
+	<command name="applyXLingPapTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="XLingPap1.xsl" cacheStylesheet="true" file="in.xml" to="%{P}/%{R}.htm"/>
+		</process>
+	</command>
+
+  <binding>
+	<keyPressed code="ESCAPE"/>
+	<charTyped char="a"/>
+	<command name="applyXLingPapTransform" />
+  </binding>
+
+  <command name="xhtml.tableEdit">
+	<class>com.xmlmind.xmleditapp.xhtml.table.HTMLTableEdit</class>
+  </command>
+
+	<menu label="_XLingPap">
+	<menu label="Table C_olumn">
+	  <item label="_Insert Before"
+			icon="xxe-config:common/icons/ColumnInsertBefore16.gif"
+			command="xhtml.tableEdit" parameter="insertColumnBefore"/>
+	  <item label="I_nsert After"
+			icon="xxe-config:common/icons/ColumnInsertAfter16.gif"
+			command="xhtml.tableEdit" parameter="insertColumnAfter"/>
+	  <separator />
+	  <item label="_Cut"
+			icon="xxe-config:common/icons/Cut16.gif"
+			command="xhtml.tableEdit" parameter="cutColumn"/>
+	  <item label="C_opy"
+			icon="xxe-config:common/icons/Copy16.gif"
+			command="xhtml.tableEdit" parameter="copyColumn"/>
+	  <item label="_Paste Before"
+			icon="xxe-config:common/icons/PasteBefore16.gif"
+			command="xhtml.tableEdit" parameter="pasteColumnBefore"/>
+	  <item label="P_aste After"
+			icon="xxe-config:common/icons/PasteAfter16.gif"
+			command="xhtml.tableEdit" parameter="pasteColumnAfter"/>
+	  <item label="_Delete"
+			icon="xxe-config:common/icons/ColumnDelete16.gif"
+			command="xhtml.tableEdit" parameter="deleteColumn"/>
+	</menu>
+	<menu label="Table _Row">
+	  <item label="_Insert Before"
+			icon="xxe-config:common/icons/RowInsertBefore16.gif"
+			command="xhtml.tableEdit" parameter="insertRowBefore"/>
+	  <item label="I_nsert After"
+			icon="xxe-config:common/icons/RowInsertAfter16.gif"
+			command="xhtml.tableEdit" parameter="insertRowAfter"/>
+	  <separator />
+	  <item label="_Cut"
+			icon="xxe-config:common/icons/Cut16.gif"
+			command="xhtml.tableEdit" parameter="cutRow"/>
+	  <item label="C_opy"
+			icon="xxe-config:common/icons/Copy16.gif"
+			command="xhtml.tableEdit" parameter="copyRow"/>
+	  <item label="_Paste Before"
+			icon="xxe-config:common/icons/PasteBefore16.gif"
+			command="xhtml.tableEdit" parameter="pasteRowBefore"/>
+	  <item label="P_aste After"
+			icon="xxe-config:common/icons/PasteAfter16.gif"
+			command="xhtml.tableEdit" parameter="pasteRowAfter"/>
+	  <item label="_Delete"
+			icon="xxe-config:common/icons/RowDelete16.gif"
+			command="xhtml.tableEdit" parameter="deleteRow"/>
+	</menu>
+	<menu label="Table C_ell">
+	  <item label="_Increment Column Span"
+			icon="xxe-config:common/icons2/incrColumnSpan.gif"
+			command="xhtml.tableEdit" parameter="incrColumnSpan"/>
+	  <item label="_Decrement Column Span"
+			icon="xxe-config:common/icons2/decrColumnSpan.gif"
+			command="xhtml.tableEdit" parameter="decrColumnSpan"/>
+	  <separator />
+	  <item label="I_ncrement Row Span"
+			icon="xxe-config:common/icons2/incrRowSpan.gif"
+			command="xhtml.tableEdit" parameter="incrRowSpan"/>
+	  <item label="D_ecrement Row Span"
+			icon="xxe-config:common/icons2/decrRowSpan.gif"
+			command="xhtml.tableEdit" parameter="decrRowSpan"/>
+	</menu>
+	<separator />
+		<item label="_Apply XLingPap Transform  ESC+a" icon="xxe-config:common/icons2/table.gif" command="applyXLingPapTransform"/>
+	</menu>
+
+<!--
+========================================
+	 Element templates
+========================================
+-->
+
+<!--
+- - - - - - - - - - - - - - - - - - - -
+part, chapter, sections, appendix
+- - - - - - - - - - - - - - - - - - - -
+-->
+
+  <elementTemplate xmlns="" name="p">
+	<appendix id="a">
+	  <secTitle></secTitle>
+	  <p></p>
+	</appendix>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<chapter id="c">
+	  <secTitle></secTitle>
+	  <p></p>
+	</chapter>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<part id="p">
+	  <secTitle></secTitle>
+	  <p></p>
+	</part>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<section1 id="s">
+	  <secTitle></secTitle>
+	  <p></p>
+	</section1>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<section2 id="s">
+	  <secTitle></secTitle>
+	  <p></p>
+	</section2>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<section3 id="s">
+	  <secTitle></secTitle>
+	  <p></p>
+	</section3>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<section4 id="s">
+	  <secTitle></secTitle>
+	  <p></p>
+	</section4>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<section5 id="s">
+	  <secTitle></secTitle>
+	  <p></p>
+	</section5>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<section6 id="s">
+	  <secTitle></secTitle>
+	  <p></p>
+	</section6>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="sec">
+	<sectionRef sec="s" />
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="app">
+	<appendixRef app="a" />
+  </elementTemplate>
+
+<!--
+- - - - - - - - - - - - - - - - - - - -
+citations
+- - - - - - - - - - - - - - - - - - - -
+-->
+
+  <elementTemplate xmlns="" name="ref">
+	<citation ref="r" />
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="article">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<article>
+		  <jTitle></jTitle>
+		  <jVol></jVol>
+		  <jPages></jPages>
+		</article>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="book">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<book>
+		  <publisher></publisher>
+		  <location></location>
+		</book>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="collection">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<collection>
+		  <collEd></collEd>
+		  <collTitle></collTitle>
+		  <collVol></collVol>
+		  <collPage></collPage>
+		  <publisher></publisher>
+		  <location></location>
+		</collection>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="dissertation">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<dissertation>
+		  <institution></institution>
+		  <location></location>
+		</dissertation>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="ms">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<ms>
+		  <institution></institution>
+		</ms>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="paper">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<paper>
+		  <conference></conference>
+		  <location></location>
+		</paper>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="proceedings">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<proceedings>
+		  <procEd></procEd>
+		  <procTitle></procTitle>
+		  <procVol></procVol>
+		  <procPage></procPage>
+		  <publisher></publisher>
+		  <location></location>
+		</proceedings>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="thesis">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<thesis>
+		  <institution></institution>
+		  <location></location>
+		</thesis>
+	</refWork>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="webPage">
+	<refWork id="r">
+	  <refDate></refDate>
+	  <refTitle></refTitle>
+		<webPage>
+		  <url></url>
+		</webPage>
+	</refWork>
+  </elementTemplate>
+
+<!--
+- - - - - - - - - - - - - - - - - - - -
+examples
+- - - - - - - - - - - - - - - - - - - -
+-->
+
+  <elementTemplate xmlns="" name="num">
+	<exampleRef num="x" />
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="letter">
+	<exampleRef letter="x" />
+  </elementTemplate>
+
+  <elementTemplate name="chart">
+	<example xmlns="" num="x">
+	  <chart> </chart>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="interlinear_1_g">
+	<example num="x">
+	  <interlinear>
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+	  </interlinear>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="interlinear_1_g_free">
+	<example num="x">
+	  <interlinear>
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+		<free></free>
+	  </interlinear>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="interlinear_1_1_g_free">
+	<example num="x">
+	  <interlinear>
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+		<free></free>
+	  </interlinear>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="listInterlinear_1_g">
+	<example num="x">
+	  <listInterlinear letter="x">
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+	  </listInterlinear>
+	  <listInterlinear letter="x">
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+	  </listInterlinear>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="listInterlinear_1_g_free">
+	<example num="x">
+	  <listInterlinear letter="x">
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+		<free></free>
+	  </listInterlinear>
+	  <listInterlinear letter="x">
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+		<free></free>
+	  </listInterlinear>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="listInterlinear_1_1_g_free">
+	<example num="x">
+	  <listInterlinear letter="x">
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+		<free></free>
+	  </listInterlinear>
+	  <listInterlinear letter="x">
+		<lineGroup>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<langData lang="l"></langData>
+		  </line>
+		  <line>
+			<gloss lang="l"></gloss>
+		  </line>
+		</lineGroup>
+		<free></free>
+	  </listInterlinear>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="listSingle_with_gloss">
+	<example num="x">
+	  <listSingle letter="x">
+		<langData lang="l"></langData>
+		<gloss lang="l"></gloss>
+	  </listSingle>
+	  <listSingle letter="x">
+		<langData lang="l"></langData>
+		<gloss lang="l"></gloss>
+	  </listSingle>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate name="listSingle_without_gloss">
+	<example xmlns="" num="x">
+	  <listSingle letter="x">
+		<langData lang="l"></langData>
+	  </listSingle>
+	  <listSingle letter="x">
+		<langData lang="l"></langData>
+	  </listSingle>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="listWord_with_gloss">
+	<example num="x">
+	  <listWord letter="x">
+		<langData lang="l"></langData>
+		<gloss lang="l"></gloss>
+	  </listWord>
+	  <listWord letter="x">
+		<langData lang="l"></langData>
+		<gloss lang="l"></gloss>
+	  </listWord>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate name="listWord_without_gloss">
+	<example xmlns="" num="x">
+	  <listWord letter="x">
+		<langData lang="l"></langData>
+	  </listWord>
+	  <listWord letter="x">
+		<langData lang="l"></langData>
+	  </listWord>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="single_with_gloss">
+	<example num="x">
+	  <single>
+		<langData lang="l"></langData>
+		<gloss lang="l"></gloss>
+	  </single>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate name="single_without_gloss">
+	<example xmlns="" num="x">
+	  <single>
+		<langData lang="l"></langData>
+	  </single>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate name="table">
+	<example xmlns="" num="x">
+	  <table border="1">
+		<tr>
+		 <td></td>
+		 <td></td>
+		</tr>
+		<tr>
+		 <td></td>
+		 <td></td>
+		</tr>
+	  </table>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate name="tree">
+	<example xmlns="" num="x">
+	  <tree> </tree>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate name="tree_with_img">
+	<example xmlns="" num="x">
+	  <tree>
+	   <img src="fileName" />
+	 </tree>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="word_with_gloss">
+	<example num="x">
+	  <word>
+		<langData lang="l"></langData>
+		<gloss lang="l"></gloss>
+	  </word>
+	</example>
+  </elementTemplate>
+
+  <elementTemplate name="word_without_gloss">
+	<example xmlns="" num="x">
+	  <word>
+		<langData lang="l"></langData>
+	  </word>
+	</example>
+  </elementTemplate>
+
+<!--
+- - - - - - - - - - - - - - - - - - - -
+endnote
+- - - - - - - - - - - - - - - - - - - -
+-->
+
+  <elementTemplate xmlns="" name="ref">
+	<endnoteRef ref="n" />
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="p">
+	<endnote id="n">
+	  <p></p>
+	</endnote>
+  </elementTemplate>
+
+<!--
+- - - - - - - - - - - - - - - - - - - -
+language
+- - - - - - - - - - - - - - - - - - - -
+-->
+
+  <elementTemplate xmlns="" name="l">
+	<language id="l"></language>
+  </elementTemplate>
+
+
+  <elementTemplate xmlns="" name="dt_dd">
+	<dl>
+	  <dt></dt>
+	  <dd></dd>
+	</dl>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="2">
+	<ol>
+	  <li></li>
+	  <li></li>
+	</ol>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="2">
+	<ul>
+	  <li></li>
+	  <li></li>
+	</ul>
+  </elementTemplate>
+
+<!--
+- - - - - - - - - - - - - - - - - - - -
+table
+- - - - - - - - - - - - - - - - - - - -
+-->
+<!-- just use simple table instead
+  <elementTemplate xmlns="" name="2_2">
+	 <table border="1">
+		<tr>
+		 <td></td>
+		 <td></td>
+		</tr>
+		<tr>
+		 <td></td>
+		 <td></td>
+		</tr>
+	  </table>
+  </elementTemplate>
+-->
+  <elementTemplate name="simple" selectable="override">
+	<table xmlns="" border="1">
+	  <tr>
+		<td></td><td></td>
+	  </tr>
+	  <tr>
+		<td></td><td></td>
+	  </tr>
+	</table>
+  </elementTemplate>
+
+  <elementTemplate name="head_row">
+	<table xmlns="" border="1" >
+	<tr>
+	  <th></th><th></th>
+	</tr>
+	<tr>
+	  <td></td><td></td>
+	</tr>
+	<tr>
+	  <td></td><td></td>
+	</tr>
+	</table>
+  </elementTemplate>
+
+
+  <!-- These are HTML 4 table -->
+<!-- not set up for these yet
+  <elementTemplate name="head_row">
+	<table xmlns="" frame="box" rules="all">
+	  <thead align="center">
+	<tr>
+	  <th></th><th></th>
+	</tr>
+	  </thead>
+	  <tbody>
+	<tr>
+	  <td></td><td></td>
+	</tr>
+	<tr>
+	  <td></td><td></td>
+	</tr>
+	  </tbody>
+	</table>
+  </elementTemplate>
+
+  <elementTemplate name="head_column">
+	<table xmlns="" frame="box" rules="all">
+	  <col align="center" span="1" />
+	  <tbody>
+	<tr>
+	  <th></th><td></td>
+	</tr>
+	<tr>
+	  <th></th><td></td>
+	</tr>
+	<tr>
+	  <th></th><td></td>
+	</tr>
+	  </tbody>
+	</table>
+  </elementTemplate>
+
+  <elementTemplate name="head_row_column">
+	<table xmlns="" frame="box" rules="all">
+	  <col align="center" span="1" />
+	  <thead align="center">
+	<tr>
+	  <th></th><th></th>
+	</tr>
+	  </thead>
+	  <tbody>
+	<tr>
+	  <th></th><td></td>
+	</tr>
+	<tr>
+	  <th></th><td></td>
+	</tr>
+	<tr>
+	  <th></th><td></td>
+	</tr>
+	  </tbody>
+	</table>
+  </elementTemplate>
+-->
+</configuration>

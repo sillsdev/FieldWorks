@@ -1,0 +1,364 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ks_Add" xml:space="preserve">
+	<value>&amp;Add</value>
+	<comment>button label</comment>
+  </data>
+  <data name="ks_Find_" xml:space="preserve">
+	<value>&amp;Find:</value>
+  </data>
+  <data name="ks_GoTo" xml:space="preserve">
+	<value>&amp;Go To</value>
+  </data>
+  <data name="ks_Link" xml:space="preserve">
+	<value>&amp;Link</value>
+	<comment>button label</comment>
+  </data>
+  <data name="ks_MoveEntry" xml:space="preserve">
+	<value>&amp;Move Entry</value>
+  </data>
+  <data name="ks_Replace" xml:space="preserve">
+	<value>&amp;Replace</value>
+  </data>
+  <data name="ksAlternateForms" xml:space="preserve">
+	<value>Alternate Forms</value>
+  </data>
+  <data name="ksAlwaysVisible" xml:space="preserve">
+	<value>Always visible</value>
+	<comment>menu item</comment>
+  </data>
+  <data name="ksCannotRedoReassignHomographs" xml:space="preserve">
+	<value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
+  </data>
+  <data name="ksCategoryToMergeInto" xml:space="preserve">
+	<value>category to merge into</value>
+  </data>
+  <data name="ksCategoryToMoveTo" xml:space="preserve">
+	<value>category to move to</value>
+  </data>
+  <data name="ksCreateLexRefType_" xml:space="preserve">
+	<value>Create New Lexical Relation...</value>
+	<comment>menu item</comment>
+  </data>
+  <data name="ksDeleteLexTree" xml:space="preserve">
+	<value>Note: this will remove this entire {0} reference set tree.</value>
+	<comment>{0} is a line feed</comment>
+  </data>
+  <data name="ksDeleteSequenceCollectionA" xml:space="preserve">
+	<value>Note: the listed references will still be {0} related in a </value>
+	<comment>{0} is a line feed.</comment>
+  </data>
+  <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
+	<value> relation.</value>
+  </data>
+  <data name="ksDeletingThisRevIndex" xml:space="preserve">
+	<value>You are deleting the following Reversal Index:</value>
+  </data>
+  <data name="ksEditX" xml:space="preserve">
+	<value>Edit {0}</value>
+  </data>
+  <data name="ksFieldVisibility" xml:space="preserve">
+	<value>Field Visibility</value>
+	<comment>menu item</comment>
+  </data>
+  <data name="ksFind_" xml:space="preserve">
+	<value>Find:</value>
+  </data>
+  <data name="ksFindExampleSentenceDlgBrowseViewPaneTitle" xml:space="preserve">
+	<value>Concordance</value>
+  </data>
+  <data name="ksFindExampleSentenceDlgPreviewPaneTitle" xml:space="preserve">
+	<value>Sentence with Translations</value>
+  </data>
+  <data name="ksFindRevEntry" xml:space="preserve">
+	<value>Find Reversal Entry</value>
+  </data>
+  <data name="ksHelp" xml:space="preserve">
+	<value>Help...</value>
+	<comment>menu item</comment>
+  </data>
+  <data name="ksHiddenUnlessData" xml:space="preserve">
+	<value>Normally hidden, unless non-empty</value>
+	<comment>menu item</comment>
+  </data>
+  <data name="ksIdentifySense" xml:space="preserve">
+	<value>Identify sense</value>
+  </data>
+  <data name="ksIdentifyXEntry" xml:space="preserve">
+	<value>Add Reference ({0})</value>
+  </data>
+  <data name="ksIdentifyXLexEntry" xml:space="preserve">
+	<value>Add Reference ({0})</value>
+  </data>
+  <data name="ksIdentifyXLexEntryOrSense" xml:space="preserve">
+	<value>Add Reference ({0})</value>
+  </data>
+  <data name="ksIdentifyXSense" xml:space="preserve">
+	<value>Add Reference ({0})</value>
+  </data>
+  <data name="ksLexRelation2" xml:space="preserve">
+	<value>{0}/{1} relation</value>
+	<comment>{0}/{1} Parts/Whole names for a tree relation</comment>
+  </data>
+  <data name="ksMoveRevEntry" xml:space="preserve">
+	<value>Move Reversal Entry</value>
+  </data>
+  <data name="ksMustSelectOne" xml:space="preserve">
+	<value>You must select one to create.</value>
+  </data>
+  <data name="ksNormallyHidden" xml:space="preserve">
+	<value>Normally hidden</value>
+	<comment>menu item</comment>
+  </data>
+  <data name="ksReallyWantToDeleteRevIndex" xml:space="preserve">
+	<value>Do you really want to delete this Reversal Index?</value>
+  </data>
+  <data name="ksReassignHomographs" xml:space="preserve">
+	<value>Reassign Homographs</value>
+  </data>
+  <data name="ksRedoAddRevToSense" xml:space="preserve">
+	<value>Redo Add Reversal Entry to Sense</value>
+  </data>
+  <data name="ksRedoBulkEditRevPOS" xml:space="preserve">
+	<value>Redo Bulk Edit Reversal Entry POS</value>
+  </data>
+  <data name="ksRedoDelete" xml:space="preserve">
+	<value>Redo Delete</value>
+  </data>
+  <data name="ksRedoDeleteRevFromSense" xml:space="preserve">
+	<value>Redo Delete Reversal Entry from Sense</value>
+  </data>
+  <data name="ksRedoEditFunction" xml:space="preserve">
+	<value>Redo Edit Function</value>
+  </data>
+  <data name="ksRedoInsertLexRefType" xml:space="preserve">
+	<value>Redo Insert Lexical Reference Type</value>
+  </data>
+  <data name="ksRedoMergeRevCategory" xml:space="preserve">
+	<value>Redo Merge Reversal Category</value>
+  </data>
+  <data name="ksRedoMoveRevCategory" xml:space="preserve">
+	<value>Redo Move Reversal Category</value>
+  </data>
+  <data name="ksRedoMoveRevEntry" xml:space="preserve">
+	<value>Redo Move Reversal Entry</value>
+  </data>
+  <data name="ksRedoSetRevEntries" xml:space="preserve">
+	<value>Redo Set Reversal Entries</value>
+  </data>
+  <data name="ksReplaceXEntry" xml:space="preserve">
+	<value>Replace Reference</value>
+  </data>
+  <data name="ksSenses" xml:space="preserve">
+	<value>Senses</value>
+  </data>
+  <data name="ksSetReversal" xml:space="preserve">
+	<value>Set Reversal</value>
+	<comment>button label</comment>
+  </data>
+  <data name="ksStars" xml:space="preserve">
+	<value>***</value>
+	<comment>signals missing/unknown value</comment>
+  </data>
+  <data name="ksSwapLexWithAllo" xml:space="preserve">
+	<value>Swap Lexeme Form with Allomorph</value>
+  </data>
+  <data name="ksSwapXWithY" xml:space="preserve">
+	<value>Swap: "{0}"{2}With: "{1}"</value>
+  </data>
+  <data name="ksUndoAddRevToSense" xml:space="preserve">
+	<value>Undo Add Reversal Entry to Sense</value>
+  </data>
+  <data name="ksUndoBulkEditRevPOS" xml:space="preserve">
+	<value>Undo Bulk Edit Reversal Entry POS</value>
+  </data>
+  <data name="ksUndoDelete" xml:space="preserve">
+	<value>Undo Delete</value>
+  </data>
+  <data name="ksUndoDeleteRevFromSense" xml:space="preserve">
+	<value>Undo Delete Reversal Entry from Sense</value>
+  </data>
+  <data name="ksUndoEditFunction" xml:space="preserve">
+	<value>Undo Edit Function</value>
+  </data>
+  <data name="ksUndoInsertLexRefType" xml:space="preserve">
+	<value>Undo Insert Lexical Reference Type</value>
+  </data>
+  <data name="ksUndoMergeRevCategory" xml:space="preserve">
+	<value>Undo Merge Reversal Category</value>
+  </data>
+  <data name="ksUndoMoveRevCategory" xml:space="preserve">
+	<value>Undo Move Reversal Category</value>
+  </data>
+  <data name="ksUndoMoveRevEntry" xml:space="preserve">
+	<value>Undo Move Reversal Entry</value>
+  </data>
+  <data name="ksUndoSetRevEntries" xml:space="preserve">
+	<value>Undo Set Reversal Entries</value>
+  </data>
+  <data name="ksWhatIsReassignHomographs" xml:space="preserve">
+	<value>This utility cleans up the homographs numbers of lexical entries. It preserves the current relative order of homographs, so you won't lose any ordering you have done.</value>
+  </data>
+  <data name="ksWhenToReassignHomographs" xml:space="preserve">
+	<value>Run this utility when the FieldWorks project has entries with duplicate or missing homograph numbers, or when there are gaps in the homograph number sequences.</value>
+  </data>
+  <data name="ksShowInReversalIndex" xml:space="preserve">
+	<value>Show in Reversal Index</value>
+  </data>
+  <data name="ksConvertFormLoseCaption" xml:space="preserve">
+	<value>Warning!</value>
+  </data>
+  <data name="ksConvertFormLoseEnv" xml:space="preserve">
+	<value>The environment will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseEnvGramInfo" xml:space="preserve">
+	<value>The environment and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseEnvInfixLoc" xml:space="preserve">
+	<value>The environment and infix position will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseEnvInfixLocGramInfo" xml:space="preserve">
+	<value>The environment, infix position, and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseGramInfo" xml:space="preserve">
+	<value>Some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseInfixLoc" xml:space="preserve">
+	<value>The infix position will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseInfixLocGramInfo" xml:space="preserve">
+	<value>The infix position and some grammatical information will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksConvertFormLoseRule" xml:space="preserve">
+	<value>The affix process rule will be lost! Do you still want to continue?</value>
+  </data>
+  <data name="ksRedoAddComponent" xml:space="preserve">
+	<value>Redo Add Component</value>
+  </data>
+  <data name="ksRedoVariantOf" xml:space="preserve">
+	<value>Redo Variant Of</value>
+  </data>
+  <data name="ksUndoAddComponent" xml:space="preserve">
+	<value>Undo Add Component</value>
+  </data>
+  <data name="ksUndoVariantOf" xml:space="preserve">
+	<value>Undo Variant Of</value>
+  </data>
+</root>

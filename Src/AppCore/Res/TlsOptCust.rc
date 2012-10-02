@@ -1,0 +1,179 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "TlsOptCustRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"TlsOptCustRes.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"#include ""resource.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsOptDlgCst DIALOGEX 0, 0, 378, 188
+STYLE DS_SETFONT | WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "D&efine in:",kcidTlsOptDlgCstDfnCap,7,3,61,8
+	COMBOBOX        kcidTlsOptDlgCstDfn,7,13,115,99,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "&Fields:",kcidTlsOptDlgCstFldCap,7,33,48,9
+	CONTROL         "List1",kcidTlsOptDlgCstFld,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					LVS_EDITLABELS | LVS_NOCOLUMNHEADER | WS_BORDER |
+					WS_TABSTOP,7,44,111,101
+	PUSHBUTTON      "&Add",kcidTlsOptDlgCstAdd,7,154,31,14
+	PUSHBUTTON      "&Copy",kcidTlsOptDlgCstCopy,42,154,31,14
+	PUSHBUTTON      "&Delete...",kcidTlsOptDlgCstDel,78,154,40,14
+	GROUPBOX        "Settings",IDC_STATIC,126,7,233,162
+	LTEXT           "De&scription:",kstidTlsOptDlgCstDes,129,20,38,8
+	EDITTEXT        kcidTlsOptDlgCstDes,173,19,180,79,ES_MULTILINE |
+					WS_VSCROLL
+	LTEXT           "Field &Type:",kstidTlsOptDlgCstTyp,129,102,42,8,
+					WS_TABSTOP
+	COMBOBOX        kcidTlsOptDlgCstTyp,173,101,180,67,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "&References this List:",kstidTlsOptDlgCstLstCap,129,122,
+					65,8
+	COMBOBOX        kcidTlsOptDlgCstLstcbo,203,118,136,75,CBS_DROPDOWNLIST |
+					CBS_SORT | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "...",kcidTlsOptDlgCstLst,341,118,12,13
+	LTEXT           "&Number of List Items:",kstidTlsOptDlgCstCap,129,138,67,
+					8
+	COMBOBOX        kcidTlsOptDlgCstLimit,203,135,150,51,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Default &Writing system:",kstidTlsOptDlgCstWS,129,154,
+					73,8
+	COMBOBOX        kcidTlsOptDlgCstWS,203,152,150,75,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Click Add to create a Custom Field, then specify its settings.",
+					IDC_STATIC,5,174,364,11
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+	kridTlsOptDlgCst, DIALOG
+	BEGIN
+		VERTGUIDE, 353
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	kcidTlsOptDlgCstDfn     "Identifies an entry type category for the custom field(s) you previously created or want to create."
+	kcidTlsOptDlgCstFld     "Lists custom fields in this entry type category you have previously created."
+	kcidTlsOptDlgCstAdd     "Adds a new item to the custom fields list."
+	kcidTlsOptDlgCstDel     "Deletes the selected custom field from the list."
+	kcidTlsOptDlgCstDes     "Stores a description of the custom field, if desired."
+	kcidTlsOptDlgCstTyp     "Specifies a field type for the custom field."
+	kcidTlsOptDlgCstLstcbo  "For list reference fields only, specifies the topics list that provides items for this custom field."
+	kcidTlsOptDlgCstLst     "For list reference fields only, opens a dialog so you can add or modify a topics list for this custom field."
+	kcidTlsOptDlgCstLimit   "For list reference fields only, sets the custom field to accept a single item or multiple items."
+	kcidTlsOptDlgCstWS      "For text fields only, specifies the writing system(s) to appear in this custom field."
+	kstidTlsOptCust         "Fields"
+END
+
+STRINGTABLE
+BEGIN
+	kstidTlsOptCuMul        "Multiple Items"
+	kstidTlsOptCuOne        "One Item"
+	kstidTlsOptCuAsc        "Normal (a-z)"
+	kstidTlsOptCuDes        "Reversed (z-a)"
+	kstidTlsOptCuNSrt       "Not Sorted"
+	kcidTlsOptDlgCstCopy    "Copies a new item to the fields list."
+	kstidTlsOptCTSingle     "Single-Line Text"
+	kstidTlsOptCTInt        "Integer"
+	kstidTlsOptCTDate       "Date"
+	kstidTlsOptCTLst        "List Reference"
+	kstidTlsOptCTTxt        "Multiparagraph text (not sortable)"
+	kstidTlsOptNewFld       "New Field"
+END
+
+STRINGTABLE
+BEGIN
+	kstidTlsOptCpyFld       "Copy of "
+	kstidTlsOptCuDelDataA   "This custom field currently contains data.\nFirst delete any data that is in this field.\nThen try to delete the field again."
+	kstidTlsOptCuDelDataB   "Delete Field Notice"
+	kstidTlsOptCuDel        "Delete Field"
+	kstidTlsOptCuDMsg       "This deletion is permanent and cannot be reversed with Undo.\nAre you sure you want to delete this field?"
+	kstidTlsOptCuDifLab     "There is already a field with this Label. Please choose a different name."
+	kstidTlsOptCuDifLabCap  "Label already exists"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

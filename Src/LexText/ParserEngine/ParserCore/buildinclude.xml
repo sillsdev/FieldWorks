@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+	  <property name="args" value="" if="${user::is-admin()}"/>
+	  <property name="args" value="/c" unless="${user::is-admin()}"/>
+	  <!-- register the XAmpleCOMWrapper.dll -->
+	  <exec program="regsvrex.exe" commandline="${args} ${fwroot}\Lib\XAmpleCOMWrapper.dll"/>
+	  <tlbimp typelib="${fwroot}\Lib\XAmpleCOMWrapper.dll" output="${fwroot}\Output\${config}\XAmpleCOMWrapperInterop.dll" namespace="XAmpleCOMWrapper"/>
+	  <!-- register the Patr100.dll -->
+	  <exec program="regsvrex.exe" commandline="${args} ${fwroot}\Lib\Patr100.dll"/>
+	  <tlbimp typelib="${fwroot}\Lib\Patr100.dll" output="${fwroot}\Output\${config}\Patr100Interop.dll" namespace="PcPatr"/>
+  </pre-build>
+</include>

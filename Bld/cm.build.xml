@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Include for makeing Conceptual Models and Stored Procedures of FieldWorks -->
+<!-- This file is included in FieldWorks.build -->
+<project name="cm" default="cmNewLangProj" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- -->
+	<!-- Rules for building Conceptual Models modules -->
+	<target name="cmNewLangProj" description="Conceptual Models"
+		depends="mkcel,cmScripture,cmFeatSys,cmNotebook,cmLinguistics,cmLangProject">
+		<call target="cmNewLangProj-nodep" cascade="false"/>
+	</target>
+	<target name="cmNewLangProj-nodep" description="Conceptual Models. Combines all other modules in a single SQL script file">
+		<if test="${not clean}">
+			<!-- The makefile called fw\bin\cat.exe with parameter -squeeze-blank.
+				However, this still resulted in having many empty lines, so the concat
+				task that doesn't support removing empty lines should work as well. -->
+			<if test="${showTargetsRunInReport}">
+				<property name="appTargName" value="cmNewLangProj"/>
+				<call target="appendTargetName"/>
+			</if>
+			<uptodate property="NewLangProj.uptodate">
+				<sourcefiles basedir="${dir.fwoutput}\Common">
+					<include name="FwCellar.sql"/>
+					<include name="FeatSys.sql"/>
+					<include name="Notebk.sql"/>
+					<include name="Ling.sql"/>
+					<include name="Scripture.sql"/>
+					<include name="LangProj.sql"/>
+				</sourcefiles>
+				<targetfiles>
+					<include name="${dir.fwoutput}\Common\NewLangProj.sql"/>
+				</targetfiles>
+			</uptodate>
+			<if test="${not NewLangProj.uptodate}">
+				<concatex removeleadingwhitespace="true" force="true"
+					destfile="${dir.fwoutput}\Common\NewLangProj.sql"
+					file="${dir.fwoutput}\Common\FwCellar.sql"/>
+				<concatex append="true" removeleadingwhitespace="true" force="true"
+					destfile="${dir.fwoutput}\Common\NewLangProj.sql"
+					file="${dir.fwoutput}\Common\FeatSys.sql"/>
+				<concatex append="true" removeleadingwhitespace="true" force="true"
+					destfile="${dir.fwoutput}\Common\NewLangProj.sql"
+					file="${dir.fwoutput}\Common\Notebk.sql"/>
+				<concatex append="true" removeleadingwhitespace="true" force="true"
+					destfile="${dir.fwoutput}\Common\NewLangProj.sql"
+					file="${dir.fwoutput}\Common\Ling.sql"/>
+				<concatex append="true" removeleadingwhitespace="true" force="true"
+					destfile="${dir.fwoutput}\Common\NewLangProj.sql"
+					file="${dir.fwoutput}\Common\Scripture.sql"/>
+				<concatex append="true" removeleadingwhitespace="true" force="true"
+					destfile="${dir.fwoutput}\Common\NewLangProj.sql"
+					file="${dir.fwoutput}\Common\LangProj.sql"/>
+<!-- This doesn't work, since it concatenates them in an order other than that given in the fileset.
+				<concatex removeleadingwhitespace="true" force="true">
+					destfile="${dir.fwoutput}\Common\NewLangProj.sql"
+					<fileset basedir="${dir.fwoutput}\Common">>
+						<include name="FwCellar.sql"/>
+						<include name="FeatSys.sql"/>
+						<include name="Notebk.sql"/>
+						<include name="Ling.sql"/>
+						<include name="Scripture.sql"/>
+						<include name="LangProj.sql"/>
+					</fileset>
+				</concatex>-->
+			</if>
+		</if>
+		<delete file="${dir.fwoutput}\Common\NewLangProj.sql" failonerror="true" if="${clean}"/>
+	</target>
+	<!-- -->
+	<target name="cmScripture" description="Scripture module"
+		depends="mkcel,cmFeatSys,cmNotebook,cmLinguistics">
+		<call target="cmScripture-nodep" cascade="false"/>
+	</target>
+	<target name="cmScripture-nodep" description="Scripture module">
+		<property name="cm-module" value="Scripture"/>
+		<call target="cm-build"/>
+	</target>
+	<!-- -->
+	<target name="cmFeatSys" description="Conceptual Models"
+		depends="mkcel">
+		<call target="cmFeatSys-nodep" cascade="false"/>
+	</target>
+	<target name="cmFeatSys-nodep" description="Conceptual Models">
+		<property name="cm-module" value="FeatSys"/>
+		<call target="cm-build"/>
+	</target>
+	<!-- -->
+	<target name="cmNotebook" description="Conceptual Models"
+		depends="mkcel">
+		<call target="cmNotebook-nodep" cascade="false"/>
+	</target>
+	<target name="cmNotebook-nodep" description="Conceptual Models">
+		<property name="cm-module" value="Notebk"/>
+		<call target="cm-build"/>
+	</target>
+	<!-- -->
+	<target name="cmLinguistics" description="Conceptual Models"
+		depends="mkcel,cmFeatSys">
+		<call target="cmLinguistics-nodep" cascade="false"/>
+	</target>
+	<target name="cmLinguistics-nodep" description="Conceptual Models">
+		<property name="cm-module" value="Ling"/>
+		<call target="cm-build"/>
+	</target>
+	<!-- -->
+	<target name="cmLangProject" description="Conceptual Models"
+		depends="mkcel,cmFeatSys,cmNotebook,cmLinguistics,cmScripture">
+		<call target="cmLangProject-nodep" cascade="false"/>
+	</target>
+	<target name="cmLangProject-nodep" description="Conceptual Models">
+		<property name="cm-module" value="LangProj"/>
+		<call target="cm-build"/>
+	</target>
+	<!-- -->
+	<!-- -->
+	<target name="cm-build">
+		<if test="${showTargetsRunInReport}">
+			<property name="appTargName" value="${cm-module}"/>
+			<call target="appendTargetName"/>
+		</if>
+		<uptodate property="cm-module.uptodate">
+			<sourcefiles>
+				<include name="${fwroot}\src\${cm-module}\XML\${cm-module}.cm"/>
+			</sourcefiles>
+			<targetfiles>
+				<include name="${dir.fwoutput}\Common\${cm-module}.sqh"/>
+			</targetfiles>
+		</uptodate>
+		<if test="${not cm-module.uptodate}">
+			<delete failonerror="false">
+				<fileset>
+					<include name="${dir.fwobj}\Common\${cm-module}\${cm-module}.sqo"/>
+					<include name="${dir.fwoutput}\Common\${cm-module}.sqh"/>
+				</fileset>
+			</delete>
+			<mkdir dir="${dir.fwobj}\Common\${cm-module}"/>
+			<exec program="${fwroot}\bin\cmcg.exe"
+				commandline='-p"${fwroot}\src\${cm-module}\XML" ${cm-module}.cm ${dir.fwobj}\Common\${cm-module}\${cm-module}.sqo ${dir.fwoutput}\Common\${cm-module}.sqh'/>
+		</if>
+		<uptodate property="cm-module.sql.uptodate">
+			<sourcefiles>
+				<include name="${fwroot}\src\${cm-module}\${cm-module}.sql"/>
+			</sourcefiles>
+			<targetfiles>
+				<include name="${dir.fwoutput}\Common\${cm-module}.sql"/>
+			</targetfiles>
+		</uptodate>
+		<if test="${not cm-module.sql.uptodate}">
+			<property name="cl-options" value="/DDEBUG=1 /D_DEBUG=1" if="${debug}"/>
+			<property name="cl-options" value="/DNDEBUG=1" unless="${debug}"/>
+			<cl outputdir="${dir.fwoutput}\Common"
+				options="/nologo /EP /P /DWIN32=1 /D_WINDOWS=1 /D_AFXDLL=1 ${cl-options}">
+				<sources>
+					<include name="${fwroot}\src\${cm-module}\${cm-module}.sql"/>
+				</sources>
+				<includedirs>
+					<include name="${fwroot}\src\Cellar\Lib"/>
+					<include name="${fwroot}\src\${cm-module}"/>
+					<include name="${dir.fwoutput}\Common"/>
+					<include name="${dir.fwobj}\Common\${cm-module}"/>
+				</includedirs>
+			</cl>
+			<move file="${cm-module}.i" tofile="${dir.fwoutput}\Common\${cm-module}.sql"
+				overwrite="true"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="cm-clean">
+		<delete failonerror="false" verbose="true">
+			<fileset>
+				<include name="${dir.fwoutput}\Common\${cm-module}.sql"/>
+				<include name="${dir.fwobj}\Common\${cm-module}\${cm-module}.sqo"/>
+				<include name="${dir.fwoutput}\Common\${cm-module}.sqh"/>
+			</fileset>
+		</delete>
+	</target>
+</project>

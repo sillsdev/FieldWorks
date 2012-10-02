@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Authoring Your First .wxs File</title>
+</head>
+<body>
+<h1>Authoring Your First .wxs File</h1>
+
+<p>
+Pick your favorite XML editor—for all of the examples, I’ll use notepad--and create a new file called “product.wxs”.  Nothing about that name is special, but the .wxs extension lets us know that this is a Windows Installer Xml Source File.  Now, let’s add the three lines of text all .wxs files have:
+</p>
+
+<b><pre>
+&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+&lt;/Wix&gt;
+</pre></b>
+
+<p>
+That forms the outer skeleton for our source file and, honestly, any other source file we ever want to get compiled.  You can feed this empty source file to candle.exe and get out an empty object file.  Tell you what, let's do that.  Follow the following steps and you should see very similar output:
+</p>
+
+<pre>
+C:\test&gt; <b>candle product.wxs</b>
+Microsoft (R) Windows Installer Xml Compiler version 1.0.1220.15022
+Copyright (C) Microsoft Corporation 2003. All rights reserved
+
+
+C:\test&gt; <b>type product.wixobj</b>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;wixObject
+xmlns="http://schemas.microsoft.com/wix/2003/04/objects"
+src="C:\test\product.wxs" /&gt;
+
+C:\test&gt;
+</pre>
+
+<p>
+Let's notice a couple things before continuing.  First, notice that when there is no error candle doesn't print any text other than its header.  In fact, you can even suppress the header output by specifying "-nologo" on the command line.  In that case, candle will print nothing unless there is a failure.  Second, notice that the path to the original source file is stored in the .wixobj file.  This can be useful when tracking down where an error is coming from.  In fact, the linker uses that "src" attribute to print more informative error messages when it encounters a problem.
+</p>
+
+<p>
+Okay, now that we've seen an empty source file create an empty object file, let's create an installable Windows Installer package.  Add the following content to your product.wxs file:
+</p>
+
+<pre>
+&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+<b>   &lt;Product Id='12345678-1234-1234-1234-123456789012' Name='Test Package' Language='1033'
+			Version='1.0.0.0' Manufacturer='Microsoft Corporation'&gt;
+	  &lt;Package Id='12345678-1234-1234-1234-123456789012'
+			   Description='My first Windows Installer package'
+			   Comments='This is my first attempt at creating a Windows Installer database'
+			   Manufacturer='Microsoft Corporation' InstallerVersion='200' Compressed='yes' /&gt;
+
+	  &lt;Directory Id='TARGETDIR' Name='SourceDir'&gt;
+		 &lt;Component Id='MyComponent' Guid='12345678-1234-1234-1234-123456789012' /&gt;
+	  &lt;/Directory&gt;
+<br />
+	  &lt;Feature Id='MyFeature' Title='My 1st Feature' Level='1'&gt;
+		 &lt;ComponentRef Id='MyComponent' /&gt;
+	  &lt;/Feature&gt;
+   &lt;/Product&gt;</b>
+&lt;/Wix&gt;
+</pre>
+
+<p>
+This should allow us to create a MSI with a ProductCode of "{12345678-1234-1234-1234-123456789012}" with ProductLanguage of "1033" and a ProductVersion of "1.0.0.0".  All of that information is taken from the &lt;Product/&gt; element.  The &lt;Package/&gt; element defines all of the information that goes in our MSI's summary information stream.  Finally, a simple &lt;Directory/&gt; and &lt;Feature/&gt; tree is created with a single &lt;Component/&gt;.  This is enough to get our MSI registered on the machine.
+</p>
+
+<p>
+So let's compile, link, and install then take a look at the registered packages for our MSI.  Follow the instructions:
+</p>
+
+<p>
+<i>Note: This MSI requires admin privileges and will silently fail if you are not installing as an Administrator.</i>
+</p>
+
+<pre>
+C:\test&gt; <b>candle product.wxs</b>
+Microsoft (R) Windows Installer Xml Compiler version 1.0.1220.15022
+Copyright (C) Microsoft Corporation 2003. All rights reserved
+
+product.wxs
+
+C:\test&gt; <b>light product.wixobj</b>
+Microsoft (R) Windows Installer Xml Linker version 1.0.1220.15022
+Copyright (C) Microsoft Corporation 2003. All rights reserved
+
+C:\test&gt; <b>msiexec /i product.msi</b>
+
+C:\test&gt; <b>\\delivery\tools\msiconfig.exe</b>
+.
+.
+.
+{12345678-1234-1234-1234-123456789012} Test Package
+.
+.
+.
+</pre>
+
+<p>
+You should see your "Test Package" listed with all the other Windows Installer packages installed on your machine.  You can also go to Add/Remove Programs in the Control Panel and see "Test Package" registered there.  Go ahead and remove the package now, so we don't forget it later.
+</p>
+
+<p>
+Great!  Now that we have a package that installs and uninstalls properly, let's actually install something.  So, create a new text file called "readme.txt" next to your "product.wxs" file and type a message to yourself in there.  "Hello, World!" is a favorite.  Then, we need to modify the product.wxs to tell it about the file:
+</p>
+
+<pre>
+&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+   &lt;Product Id='12345678-1234-1234-1234-123456789012' Name='Test Package' Language='1033'
+			Version='1.0.0.0' Manufacturer='Microsoft Corporation'&gt;
+	  &lt;Package Id='12345678-1234-1234-1234-123456789012'
+				Description='My first Windows Installer package'
+				Comments='This is my first attempt at creating a Windows Installer database'
+				Manufacturer='Microsoft Corporation' InstallerVersion='200' Compressed='yes' /&gt;
+
+	  <b>&lt;Media Id='1' Cabinet='product.cab' EmbedCab='yes' /&gt;</b>
+
+	  &lt;Directory Id='TARGETDIR' Name='SourceDir'&gt;
+		 <b>&lt;Directory Id='ProgramFilesFolder' Name='PFiles'&gt;
+			&lt;Directory Id='MyDir' Name='TestProg' LongName='Test Program'&gt;
+			   </b>&lt;Component Id='MyComponent' Guid='12345678-1234-1234-1234-123456789012'&gt;<b>
+				  &lt;File Id='readme' Name='readme.txt' DiskId='1' src='readme.txt' /&gt;
+			   &lt;/Component&gt;
+			&lt;/Directory&gt;
+		 &lt;/Directory&gt;</b>
+	  &lt;/Directory&gt;
+
+	  &lt;Feature Id='MyFeature' Title='My 1st Feature' Level='1'&gt;
+		 &lt;ComponentRef Id='MyComponent' /&gt;
+	  &lt;/Feature&gt;
+   &lt;/Product&gt;
+&lt;/Wix&gt;
+</pre>
+
+<p>
+You should be able to compile, link, and install that MSI and see that you do get a directory called "Test Program" in your system's "Program Files" folder.  In that "Test Program" directory should be the "readme.txt" file you created with the message to yourself.  Spiffy, eh?  Again, remember to uninstall the MSI so you can rebuild and install it again later.
+</p>
+
+<p>
+Believe it or not, that's all there is to creating a Windows Installer package.  Sure, you can add UI and things like that now, but we've covered the basics.  Everything just comes down to filling in the right XML elements.  So, let's move on and look at creating a Merge Module we can incorporate into our spiffy new package.
+</p>
+
+</body>
+</html>

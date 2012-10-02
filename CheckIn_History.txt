@@ -1,0 +1,15 @@
+FieldWorks check-in process, and also to record a history of the changes made to the project.
+
+Please read CheckIn_Process.txt for details on how to check changes in to Perforce.
+
+NB: Multiple check-outs of this file are not allowed! It is also forbidden to keep it checked
+out for an extended time. It should be checked out only when you have finished a unit of work
+and are ready to integrate your work and check it in.
+
+Here begins the recent check-in history - please add your notes at the end:
+------------------------------------------------------------------------------------------------
+KenZ 26 Mar 2010. Integration from FW_6.0 branch.(Actually 6.0.4 with last checking on 11 May 2010).
+DamienD, 10 Jun 2010. Made changes to allows building on 64-bit Windows.
+DamienD, 11 Jun 2010. WP-262: Provide an option to pass NFC data to Graphite.
+CorrellS, 9 Mar 2011. Changes to support v2.0 of the Graphite Glat table.
+KenZ, 24 Mar 2011. Fixed broken Graphite engine build following Sharon's integration of new changes.

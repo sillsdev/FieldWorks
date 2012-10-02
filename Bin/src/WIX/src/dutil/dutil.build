@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="dutil" default="dutil.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	dutil.build - Builds dutil.lib.
+	2005.09.18 bobarnso Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="dutil.build" description="Peforms a full rebuild (clean then build)" depends="dutil.clean, dutil.inc" />
+
+  <!-- Clean -->
+  <target name="dutil.clean" description="Cleans the build">
+	<delete dir="${dir.build.dutil}" failonerror="false" if="${directory::exists(dir.build.dutil)}" />
+	<delete file="${file.target.dutil}" failonerror="false" if="${file::exists(file.target.dutil)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="dutil.inc" description="Performs an incremental build" depends="makeDirs">
+	<fileset id="compileCpp.fileset.sources" basedir="${dir.src.dutil}">
+	  <include name="aclutil.cpp" />
+	  <include name="cabcutil.cpp" />
+	  <include name="cabutil.cpp" />
+	  <include name="dirutil.cpp" />
+	  <include name="dutil.cpp" />
+	  <include name="fileutil.cpp" />
+	  <include name="memutil.cpp" />
+	  <include name="metautil.cpp" />
+	  <include name="perfutil.cpp" />
+	  <include name="sqlutil.cpp" />
+	  <include name="strutil.cpp" />
+	  <include name="xmlutil.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.dutil}" />
+	<property name="compileCpp.file.precomp.h" value="${dir.src.dutil}\precomp.h" />
+	<property name="makeNativeLib.file.target" value="${file.target.dutil}" />
+	<!-- Make dutil.lib -->
+	<call target="makeNativeLib" />
+  </target>
+</project>

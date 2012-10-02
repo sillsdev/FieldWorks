@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblWordToTry.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_lblWordToTry.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 20</value>
+  </data>
+  <data name="m_lblWordToTry.Size" type="System.Drawing.Size, System.Drawing">
+	<value>80, 16</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblWordToTry.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_lblWordToTry.Text" xml:space="preserve">
+	<value>&amp;Word to try:</value>
+  </data>
+  <data name="&gt;&gt;m_lblWordToTry.Name" xml:space="preserve">
+	<value>m_lblWordToTry</value>
+  </data>
+  <data name="&gt;&gt;m_lblWordToTry.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblWordToTry.Parent" xml:space="preserve">
+	<value>m_pnlWord</value>
+  </data>
+  <data name="&gt;&gt;m_lblWordToTry.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_btnClose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="m_btnClose.Location" type="System.Drawing.Point, System.Drawing">
+	<value>353, 8</value>
+  </data>
+  <data name="m_btnClose.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnClose.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_btnClose.Text" xml:space="preserve">
+	<value>&amp;Close</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.Name" xml:space="preserve">
+	<value>m_btnClose</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.Parent" xml:space="preserve">
+	<value>m_pnlClose</value>
+  </data>
+  <data name="&gt;&gt;m_btnClose.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_btnTryIt.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_btnTryIt.Location" type="System.Drawing.Point, System.Drawing">
+	<value>408, 16</value>
+  </data>
+  <data name="m_btnTryIt.Size" type="System.Drawing.Size, System.Drawing">
+	<value>96, 24</value>
+  </data>
+  <data name="m_btnTryIt.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_btnTryIt.Text" xml:space="preserve">
+	<value>&amp;Try it</value>
+  </data>
+  <data name="&gt;&gt;m_btnTryIt.Name" xml:space="preserve">
+	<value>m_btnTryIt</value>
+  </data>
+  <data name="&gt;&gt;m_btnTryIt.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnTryIt.Parent" xml:space="preserve">
+	<value>m_pnlWord</value>
+  </data>
+  <data name="&gt;&gt;m_btnTryIt.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_lblResults.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblResults.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_lblResults.Size" type="System.Drawing.Size, System.Drawing">
+	<value>517, 16</value>
+  </data>
+  <data name="m_lblResults.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_lblResults.Text" xml:space="preserve">
+	<value>  Results:</value>
+  </data>
+  <data name="&gt;&gt;m_lblResults.Name" xml:space="preserve">
+	<value>m_lblResults</value>
+  </data>
+  <data name="&gt;&gt;m_lblResults.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblResults.Parent" xml:space="preserve">
+	<value>m_pnlResults</value>
+  </data>
+  <data name="&gt;&gt;m_lblResults.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_pnlResults.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_pnlResults.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 176</value>
+  </data>
+  <data name="m_pnlResults.Size" type="System.Drawing.Size, System.Drawing">
+	<value>529, 297</value>
+  </data>
+  <data name="m_pnlResults.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_pnlResults.Name" xml:space="preserve">
+	<value>m_pnlResults</value>
+  </data>
+  <data name="&gt;&gt;m_pnlResults.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlResults.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_pnlResults.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_lblStatus.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblStatus.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 5</value>
+  </data>
+  <data name="m_lblStatus.Size" type="System.Drawing.Size, System.Drawing">
+	<value>338, 28</value>
+  </data>
+  <data name="m_lblStatus.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_lblStatus.Text" xml:space="preserve">
+	<value>  Parser Status:</value>
+  </data>
+  <data name="&gt;&gt;m_lblStatus.Name" xml:space="preserve">
+	<value>m_lblStatus</value>
+  </data>
+  <data name="&gt;&gt;m_lblStatus.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblStatus.Parent" xml:space="preserve">
+	<value>m_pnlClose</value>
+  </data>
+  <data name="&gt;&gt;m_lblStatus.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="buttonHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="buttonHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>441, 8</value>
+  </data>
+  <data name="buttonHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="buttonHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="buttonHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Name" xml:space="preserve">
+	<value>buttonHelp</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Parent" xml:space="preserve">
+	<value>m_pnlClose</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_pnlClose.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Bottom</value>
+  </data>
+  <data name="m_pnlClose.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 473</value>
+  </data>
+  <data name="m_pnlClose.Size" type="System.Drawing.Size, System.Drawing">
+	<value>529, 36</value>
+  </data>
+  <data name="m_pnlClose.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_pnlClose.Name" xml:space="preserve">
+	<value>m_pnlClose</value>
+  </data>
+  <data name="&gt;&gt;m_pnlClose.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlClose.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_pnlClose.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_cbDoSelectMorphs.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_cbDoSelectMorphs.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_cbDoSelectMorphs.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 65</value>
+  </data>
+  <data name="m_cbDoSelectMorphs.Size" type="System.Drawing.Size, System.Drawing">
+	<value>352, 17</value>
+  </data>
+  <data name="m_cbDoSelectMorphs.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_cbDoSelectMorphs.Text" xml:space="preserve">
+	<value>Let me &amp;break the word into its morphemes (this can make it run faster)</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoSelectMorphs.Name" xml:space="preserve">
+	<value>m_cbDoSelectMorphs</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoSelectMorphs.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoSelectMorphs.Parent" xml:space="preserve">
+	<value>m_pnlWord</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoSelectMorphs.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_cbDoTrace.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_cbDoTrace.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 46</value>
+  </data>
+  <data name="m_cbDoTrace.Size" type="System.Drawing.Size, System.Drawing">
+	<value>485, 17</value>
+  </data>
+  <data name="m_cbDoTrace.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_cbDoTrace.Text" xml:space="preserve">
+	<value>&amp;Let me see all the detailed steps the parser tried (this may take a very long time in some instances)</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoTrace.Name" xml:space="preserve">
+	<value>m_cbDoTrace</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoTrace.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoTrace.Parent" xml:space="preserve">
+	<value>m_pnlWord</value>
+  </data>
+  <data name="&gt;&gt;m_cbDoTrace.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_tbWordForm.Location" type="System.Drawing.Point, System.Drawing">
+	<value>104, 16</value>
+  </data>
+  <data name="m_tbWordForm.Size" type="System.Drawing.Size, System.Drawing">
+	<value>288, 20</value>
+  </data>
+  <data name="m_tbWordForm.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_tbWordForm.Name" xml:space="preserve">
+	<value>m_tbWordForm</value>
+  </data>
+  <data name="&gt;&gt;m_tbWordForm.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=5.5.0.29180, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_tbWordForm.Parent" xml:space="preserve">
+	<value>m_pnlWord</value>
+  </data>
+  <data name="&gt;&gt;m_tbWordForm.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_pnlWord.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Top</value>
+  </data>
+  <data name="m_pnlWord.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_pnlWord.Size" type="System.Drawing.Size, System.Drawing">
+	<value>529, 86</value>
+  </data>
+  <data name="m_pnlWord.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_pnlWord.Name" xml:space="preserve">
+	<value>m_pnlWord</value>
+  </data>
+  <data name="&gt;&gt;m_pnlWord.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlWord.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_pnlWord.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <metadata name="m_timer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_pnlSandbox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Top</value>
+  </data>
+  <data name="m_pnlSandbox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 86</value>
+  </data>
+  <data name="m_pnlSandbox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>529, 90</value>
+  </data>
+  <data name="m_pnlSandbox.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_pnlSandbox.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_pnlSandbox.Name" xml:space="preserve">
+	<value>m_pnlSandbox</value>
+  </data>
+  <data name="&gt;&gt;m_pnlSandbox.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlSandbox.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_pnlSandbox.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>529, 509</value>
+  </data>
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		AAABAAIAEBAAAAAAAABoBQAAJgAAACAgAAAAAAAAqAgAAI4FAAAoAAAAEAAAACAAAAABAAgAAAAAAAAB
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAFUAAACqAAAA/wAAAAAkAABVJAAAqiQAAP8kAAAASQAAVUkAAKpJ
+		AAD/SQAAAG0AAFVtAACqbQAA/20AAACSAABVkgAAqpIAAP+SAAAAtgAAVbYAAKq2AAD/tgAAANsAAFXb
+		AACq2wAA/9sAAAD/AABV/wAAqv8AAP//AAAAACQAVQAkAKoAJAD/ACQAACQkAFUkJACqJCQA/yQkAABJ
+		JABVSSQAqkkkAP9JJAAAbSQAVW0kAKptJAD/bSQAAJIkAFWSJACqkiQA/5IkAAC2JABVtiQAqrYkAP+2
+		JAAA2yQAVdskAKrbJAD/2yQAAP8kAFX/JACq/yQA//8kAAAASQBVAEkAqgBJAP8ASQAAJEkAVSRJAKok
+		SQD/JEkAAElJAFVJSQCqSUkA/0lJAABtSQBVbUkAqm1JAP9tSQAAkkkAVZJJAKqSSQD/kkkAALZJAFW2
+		SQCqtkkA/7ZJAADbSQBV20kAqttJAP/bSQAA/0kAVf9JAKr/SQD//0kAAABtAFUAbQCqAG0A/wBtAAAk
+		bQBVJG0AqiRtAP8kbQAASW0AVUltAKpJbQD/SW0AAG1tAFVtbQCqbW0A/21tAACSbQBVkm0AqpJtAP+S
+		bQAAtm0AVbZtAKq2bQD/tm0AANttAFXbbQCq220A/9ttAAD/bQBV/20Aqv9tAP//bQAAAJIAVQCSAKoA
+		kgD/AJIAACSSAFUkkgCqJJIA/ySSAABJkgBVSZIAqkmSAP9JkgAAbZIAVW2SAKptkgD/bZIAAJKSAFWS
+		kgCqkpIA/5KSAAC2kgBVtpIAqraSAP+2kgAA25IAVduSAKrbkgD/25IAAP+SAFX/kgCq/5IA//+SAAAA
+		tgBVALYAqgC2AP8AtgAAJLYAVSS2AKoktgD/JLYAAEm2AFVJtgCqSbYA/0m2AABttgBVbbYAqm22AP9t
+		tgAAkrYAVZK2AKqStgD/krYAALa2AFW2tgCqtrYA/7a2AADbtgBV27YAqtu2AP/btgAA/7YAVf+2AKr/
+		tgD//7YAAADbAFUA2wCqANsA/wDbAAAk2wBVJNsAqiTbAP8k2wAASdsAVUnbAKpJ2wD/SdsAAG3bAFVt
+		2wCqbdsA/23bAACS2wBVktsAqpLbAP+S2wAAttsAVbbbAKq22wD/ttsAANvbAFXb2wCq29sA/9vbAAD/
+		2wBV/9sAqv/bAP//2wAAAP8AVQD/AKoA/wD/AP8AACT/AFUk/wCqJP8A/yT/AABJ/wBVSf8Aqkn/AP9J
+		/wAAbf8AVW3/AKpt/wD/bf8AAJL/AFWS/wCqkv8A/5L/AAC2/wBVtv8Aqrb/AP+2/wAA2/8AVdv/AKrb
+		/wD/2/8AAP//AFX//wCq//8A////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbba2tra2
+		tra2tra2trYAAG3/AP//////AgL///+2AABt/wD//wAAAC//AAAAtgAAbf8A//8A//8vL////7YAAG3/
+		AP//AP//AgL///+2AABt/wD//wAAAC//AAAAtgAAbf8A//8A//8vL////7YAAG3/AP8CAv////////+2
+		AABt/wAAL/8AAAAAAAD/tgAAbf8A/y8v/////////7YAAG3/AP////////////+2AAACAgICAgICAgIC
+		AgICAgAAA5cvLy8vLy8vLy8vLy8AAAMDAwMDAwMDAwMDAwMDAAD//zExAAExMQABMTEAATExAAExMQAB
+		kgoAAZL/AAEAAAABMTEAAZKSAAExMQABMTEAAf//AAEKCgABkv8AAQAAKAAAACAAAABAAAAAAQAIAAAA
+		AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVAAAAqgAAAP8AAAAAJAAAVSQAAKokAAD/JAAAAEkAAFVJ
+		AACqSQAA/0kAAABtAABVbQAAqm0AAP9tAAAAkgAAVZIAAKqSAAD/kgAAALYAAFW2AACqtgAA/7YAAADb
+		AABV2wAAqtsAAP/bAAAA/wAAVf8AAKr/AAD//wAAAAAkAFUAJACqACQA/wAkAAAkJABVJCQAqiQkAP8k
+		JAAASSQAVUkkAKpJJAD/SSQAAG0kAFVtJACqbSQA/20kAACSJABVkiQAqpIkAP+SJAAAtiQAVbYkAKq2
+		JAD/tiQAANskAFXbJACq2yQA/9skAAD/JABV/yQAqv8kAP//JAAAAEkAVQBJAKoASQD/AEkAACRJAFUk
+		SQCqJEkA/yRJAABJSQBVSUkAqklJAP9JSQAAbUkAVW1JAKptSQD/bUkAAJJJAFWSSQCqkkkA/5JJAAC2
+		SQBVtkkAqrZJAP+2SQAA20kAVdtJAKrbSQD/20kAAP9JAFX/SQCq/0kA//9JAAAAbQBVAG0AqgBtAP8A
+		bQAAJG0AVSRtAKokbQD/JG0AAEltAFVJbQCqSW0A/0ltAABtbQBVbW0Aqm1tAP9tbQAAkm0AVZJtAKqS
+		bQD/km0AALZtAFW2bQCqtm0A/7ZtAADbbQBV220AqtttAP/bbQAA/20AVf9tAKr/bQD//20AAACSAFUA
+		kgCqAJIA/wCSAAAkkgBVJJIAqiSSAP8kkgAASZIAVUmSAKpJkgD/SZIAAG2SAFVtkgCqbZIA/22SAACS
+		kgBVkpIAqpKSAP+SkgAAtpIAVbaSAKq2kgD/tpIAANuSAFXbkgCq25IA/9uSAAD/kgBV/5IAqv+SAP//
+		kgAAALYAVQC2AKoAtgD/ALYAACS2AFUktgCqJLYA/yS2AABJtgBVSbYAqkm2AP9JtgAAbbYAVW22AKpt
+		tgD/bbYAAJK2AFWStgCqkrYA/5K2AAC2tgBVtrYAqra2AP+2tgAA27YAVdu2AKrbtgD/27YAAP+2AFX/
+		tgCq/7YA//+2AAAA2wBVANsAqgDbAP8A2wAAJNsAVSTbAKok2wD/JNsAAEnbAFVJ2wCqSdsA/0nbAABt
+		2wBVbdsAqm3bAP9t2wAAktsAVZLbAKqS2wD/ktsAALbbAFW22wCqttsA/7bbAADb2wBV29sAqtvbAP/b
+		2wAA/9sAVf/bAKr/2wD//9sAAAD/AFUA/wCqAP8A/wD/AAAk/wBVJP8AqiT/AP8k/wAASf8AVUn/AKpJ
+		/wD/Sf8AAG3/AFVt/wCqbf8A/23/AACS/wBVkv8AqpL/AP+S/wAAtv8AVbb/AKq2/wD/tv8AANv/AFXb
+		/wCq2/8A/9v/AAD//wBV//8Aqv//AP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAktra2tra2tra2tra2tra2tra2tra2tra
+		2traAAAAAACS/////wD//////////////////////////9oAAAAAAJL/////AP//////////////////
+		////////2gAAAAAAkv////8A//////////8CAgIC///////////aAAAAAACS/////wD//////////y//
+		/wP//////////9oAAAAAAJL/////AP////8AAAAAL///A/8AAAAAAAD/2gAAAAAAkv////8A/////wD/
+		//8vLy8D///////////aAAAAAACS/////wD/////AP///////////////////9oAAAAAAJL/////AP//
+		//8A////////////////////2gAAAAAAkv////8A/////wD///8CAgIC///////////aAAAAAACS////
+		/wD/////AP///y///wP//////////9oAAAAAAJL/////AP////8AAAAAL///A/8AAAAAAAD/2gAAAAAA
+		kv////8A/////wD///8vLy8D///////////aAAAAAACS/////wD/////AP///////////////////9oA
+		AAAAAJL/////AP////8A////////////////////2gAAAAAAkv////8A//8CAgIC////////////////
+		///aAAAAAACS/////wD//y///wP//////////////////9oAAAAAAJL/////AAAAL///A/8AAAAAAAAA
+		AAAA////2gAAAAAAkv////8A//8vLy8D///////////////////aAAAAAACS/////wD/////////////
+		/////////////9oAAAAAAJL/////AP//////////////////////////2gAAAAAAkv//////////////
+		///////////////////aAAAAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgIAAAAAAAMzMy8vLy8v
+		Ly8vLy8vLy8vLy8vLy8vLy8vLwAAAAAAAzMzLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vAAAAAAADAwMD
+		AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////////////////wAAAA8AAAAPAAAADwAAAA8AA
+		AAPAAAADwAAAA8AAAAPAAAADwAAAA8AAAAPAAAADwAAAA8AAAAPAAAADwAAAA8AAAAPAAAADwAAAA8AA
+		AAPAAAADwAAAA8AAAAPAAAADwAAAA8AAAAPAAAAD//////////8=
+</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+	<value>545, 300</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Try a Word</value>
+  </data>
+  <data name="&gt;&gt;m_timer.Name" xml:space="preserve">
+	<value>m_timer</value>
+  </data>
+  <data name="&gt;&gt;m_timer.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Timer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>ParseWordDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

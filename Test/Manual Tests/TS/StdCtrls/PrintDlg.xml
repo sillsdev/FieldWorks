@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="printdlg" num="0.20" abbr="prtd" file="StdCtrls\PrintDlg.xml">
+ <title tag="printdlg">Standard Print Dialog Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The Print dialog allows the user to print all or part of a file.</p>
+   <p name="Specifications">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Print" type="module">FW File-Print</link> and
+	<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/Print/Print.html" type="module">FW File-Print Dialog</link>
+</p>
+  </introduction>
+  <context>
+<p>Many more print setting combinations are usually possible through a page setup dialog and hardware settings than from this simple print dialog. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Print Dialog".</p>
+  </context>
+ <case id="prtdAct" num="0" order="any">
+  <title tag="prtdAct">Activation</title>
+  <context>
+<p>When the application is running and the printer status application from the system Printers folder (can get to it from the Control Panel or Explorer) is up</p>
+</context>
+  <step name="0.1" link="Bug">Invoke the Print dialog.
+   <r>Only Print range-All and Print range-Pages are enabled from amongst the Print range radio buttons. Selection is disabled.</r>
+   <p name="bug">Print Dialog invokation not working</p>
+  </step>
+  <step name="0.2" link="Bug">Invoke the Print dialog and click OK. (make sure the printer is setup and on-line)
+   <r>
+<ul>
+	<li>A small message window with a cancel button appears momentarily during the operation.</li>
+	<li>Within a few seconds, an entry in the printer status app should appear for the print job then disappear.</li>
+	<li>Output should be produced by the printer according to the selections in the Print dialog.</li>
+   </ul>
+</r>
+   <p name="bug">Print Dialog does not print file</p>
+  </step>
+  <step name="0.3" link="Bug">Invoke the Print dialog, change some settings and click OK. Invoke the Print dialog again.
+   <r>The file prints. The Print dialog does not remember settings. Rather, each time the Print dialog is invoked, the controls are reset to default values.</r>
+   <p name="bug">Print Dialog does not print file</p>
+   <p name="bug">Print Dialog not reset after use</p>
+  </step>
+
+ </case>
+ <case id="prtdDiab" num="1" order="any">
+  <title tag="prtdDiab">Exercise dialog buttons</title>
+  <context>
+<p>When the Print Dialog is displayed and the printer status application from the system Printers folder is up</p>
+</context>
+  <step name="1.1" link="Bug">Open the Print dialog in WordPad to visually compare the dialog layouts.
+   <r>These two dialogs are identical.</r>
+   <p name="bug">Print Dialog layout incorrect</p>
+  </step>
+  <step name="1.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>This dialog has no Help button. Report any failures as suggested using "Print" as the name of the dialog.</r>
+  </step>
+
+ </case>
+ <case id="prtdPrtr" num="2" order="any">
+  <title tag="prtdPrtr">Printer Selection</title>
+  <context>
+<p>When the Print dialog is visible</p>
+</context>
+  <step name="2.1">Use <link uri="../StdCtrls/ListBox.xml" type="module">List Box / Combo Box Tests</link> to test the Printer Name combo box. Use shortcut &lt;Alt&gt;&lt;N&gt;.
+   <r>Report any failures as suggested using "Printer Name" as the name of the control.</r>
+  </step>
+  <step name="2.2">Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the Printer Properties button. Use shortcut &lt;Alt&gt;&lt;P&gt;.
+   <r>The button brings up a properties dialog for the printer selected in the Printer Name combo box. Each property dialog is different. Report any failures as suggested using "Printer Properties" as the name of the control.</r>
+  </step>
+  <step name="2.3">Inspect the Printer Status, Type, Where and Comment fields.
+   <r>
+<ul>
+	<li>The Type and Where fields can be checked from the printer status application properties on the Details tab (Win98) or Ports tab (WinNT).</li>
+	<li>Status can be checked by turning the printer on and off.</li>
+	<li>Not sure how to check the comments field.</li>
+   </ul>
+</r>
+  </step>
+  <step name="2.4">Use <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> to test the Print to file check box. Use shortcut &lt;Alt&gt;&lt;l&gt;.
+   <r>
+<ul>
+	<li>Upon clicking OK, a Print To File dialog should prompt for a path and file name.</li>
+	<li>Check that the file is created and contains the print data.</li>
+	<li>Report any failures as suggested using "Printer Print to file check box" as the name of the control.</li>
+   </ul>
+</r>
+   <p name="Notes">This control is enabled only when you have added the generic text printer to the system printer folder.</p>
+  </step>
+
+ </case>
+ <case id="prtdCopy" num="3" order="any">
+  <title tag="prtdCopy">Copies Controls</title>
+  <context>
+<p>When the Print dialog is visible</p>
+</context>
+
+   <p name="Notes">There is currently no spec for how the preview should work. This needs to be filled out ... depending on how the programmer implements it? and in comparison with MS Word.</p>
+
+  <step name="3.1">Use <link uri="../StdCtrls/SpinCtrl.xml" type="module">Spin Control Tests</link> to test the Copies Number of copies spin control. Use shortcut &lt;Alt&gt;&lt;c&gt;.
+   <r>The value takes effect when OK is pressed. The default and minimum value is 1. Report any failures as suggested using "Copies Number of copies spin control" as the name of the control.</r>
+  </step>
+  <step name="3.2">Use <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> to test the Copies Collate check box. Use shortcut &lt;Alt&gt;&lt;o&gt;.
+   <r>
+<ul>
+	<li>If Collate is not checked, the (1,1:2,2:3,3) graphic is displayed to the left of the check box and copies are printed in page sets.</li>
+	<li>Otherwise, the (1,2,3:1,2,3) graphic is displayed and the copies print collated (i.e. as whole documents).</li>
+	<li>Report any failures as suggested using "Copies Collate check box" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+
+ </case>
+ <case id="prtdRange" num="4" order="any">
+  <title tag="prtdRange">Print Range Controls</title>
+  <context>
+<p>When the Print dialog is visible</p>
+</context>
+  <step name="4.1">Use <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link> to test the Print range All radio button. Use shortcut &lt;Alt&gt;&lt;A&gt;.
+   <r>Dotting this radio button leaves the Pages from-to values set. Report any failures as suggested using "Print range All radio button" as the name of the control.</r>
+  </step>
+  <step name="4.2">Use <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link> to test the Print range Pages radio button. Use shortcut &lt;Alt&gt;&lt;g&gt;.
+   <r>
+<ul>
+	<li>Dotting this radio button shifts focus to the from text box.</li>
+	<li>When OK is clicked, the indicated page range is printed.</li>
+	<li>A message window "'From' value cannot be greater than the 'to' value" may appear.</li>
+	<li>Report any failures as suggested using "Print range Pages radio button" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+  <step name="4.3">Use <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link> to test the Print range Pages from text box. Use shortcut &lt;Alt&gt;&lt;f&gt;.
+   <r>
+<ul>
+	<li>Entering a number causes a dot to appear in the Print range Pages radio button control.</li>
+	<li>When OK is clicked, this is the first page printed.</li>
+	<li>A message window "'From' value cannot be greater than the 'to' value" may appear.</li>
+	<li>Report any failures as suggested using "Print range Pages from text box" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+  <step name="4.4">Use <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link> to test the Print range Pages to text box. Use shortcut &lt;Alt&gt;&lt;t&gt;.
+   <r>
+<ul>
+	<li>Entering a number causes a dot to appear in the Print range Pages radio button control.</li>
+	<li>When OK is clicked, this is the last page printed.</li>
+	<li>A message window "'From' value cannot be greater than the 'to' value" may appear.</li>
+	<li>Report any failures as suggested using "Print range Pages to text box" as the name of the control.</li>
+   </ul>
+</r>
+  </step>
+  <step name="4.5">Use <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link> to test the Print range Selection radio button. Use shortcut &lt;Alt&gt;&lt;S&gt;.
+   <r>Dotting this radio button leaves the Pages from-to values set. Report any failures as suggested using "Print range Selection radio button" as the name of the control.</r>
+  </step>
+
+ </case>
+
+ <case id="prtdAddi" num="5" order="any">
+  <title tag="prtdAddi">Additional Print Controls</title>
+  <context>
+<p>When the Print dialog is displayed with a record oriented application</p>
+</context>
+  <p name="note">This may not be implemented for version 1</p>
+
+  <step name="5.1" link="Bug">
+Use <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link> to test the Current Entry radio button.
+  <r>
+<ul>
+<li>Prints the entry currently displayed in the active child window.</li>
+<li>If the active window is not showing an entry, then this item is grayed out.</li>
+<li>The word Entry is customizable by the individual application.</li>
+</ul>
+</r>
+  <p name="bug">
+</p>
+  </step>
+
+<step name="5.2" link="Bug">
+Use <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link> to test the Entries radio button.
+  <r>
+<ul>
+<li>The user can enter the numbers of the entries he wishes to print out.</li>
+<li>The numbers are interpreted according to the current sort order, and the current filter (if any).</li>
+<li> (The edit control field is disabled unless the corresponding radio button has been set.)</li>
+<li> Again, the word Entries is customizable. </li>
+</ul>
+</r>
+  <p name="bug">
+</p>
+  </step>
+ </case>
+
+ <case id="prtdUse" num="6" order="any">
+   <title tag="prtdUse">Print Usage</title>
+   <context>
+<p>Using the print dialog to print under various application conditions.</p>
+</context>
+
+   <step name="6.1" link="Bug">
+   Adjust the settings in the Page Setup dialog (available from the File menu). Then Print.
+   <r>The changed settings in the Page Setup dialog should be reflected in the printed document.</r>
+   <p name="bug">
+</p>
+   </step>
+
+   <step name="6.2" link="Bug">
+   Try printing under different views (Document, Data Entry, Browse, etc.) that are available.
+   <r>
+<ul>
+<li>Printing should be available from all views.</li>
+	  <li>The document printed should reflect the view it was printed from.</li>
+</ul>
+   </r>
+   <p name="bug">
+</p>
+   </step>
+
+   <step name="6.3" link="Bug">
+   Try printing with a filter, sort, or overlay active if available.
+   <r>The filter, sort or overlay affects the current view and should be reflected in the printed document.</r>
+   <p name="bug">
+</p>
+   </step>
+
+ </case>
+
+ <update date="Jan-05-01" author="MikeL">File created.</update>
+ <update date="Jul-02-02" author="RussD">Added cases 5 and 6.</update>
+</test>

@@ -1,0 +1,118 @@
+<html>
+<head></head>
+<title>Collection Generator Help</title>
+<body bgcolor="#EEFFFF">
+<center>
+<h1>Collection Generator: Explanations</h1>
+</center>
+<p>
+<hr>
+This file briefly explains all of the sections you can fill in, which affects how your collection is actually created. One of the best ways to test the generator however, is to actually try it out. You can find some example code which will let you test a Collection that you make, by <a href="dummycode.htm">Clicking Here</a>.
+<hr>
+<p>
+<center>
+<img src="CollGen.gif">
+<p>
+<table cellspacing=5>
+<tr>
+<td valign=top bgcolor="#FFFF00"><b>Section</b></td>
+<td valign=top bgcolor="#FFFF00"><b>Explanation</b></td>
+<td valign=top bgcolor="#FFFF00"><b>Required</b></td>
+</tr>
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Code Generation Path</center></td>
+<td valign=top bgcolor="#FFFFEE">This field allows you to specify the path to the file that will be generated from this utility. When specifying the path, do not include the actual name of the file being generated. Note that although this field is required, if it is empty, then it will automatically be filled with the location in which this utily is stored. Therefore, it can be left blank (you will see it get filled automatically once all required fields are filled).
+<p>
+The button next to this field can be used to browse to a location to store the file. If you specify a file, it is a good idea to ensure it has a 'cs' extension for CSharp files, 'vb' extension for Visual Basic files, and a 'js' extension for JScript files. You can select, or specify a file with a different extension if you wish, and it will be used. Note however that you will not be able to see this until you geerate the file, since the enxtension is removed from the file name. Once you have selected or specified a file, the path appears in the 'Code Generation Path' Field and the filename (less the extension, if specified) is placed in the 'File Name' field. Be careful not too specify the names of any critical files, no verification is performed.<p>
+<td valign=top bgcolor="#FFFFEE"><center><b><i>Yes</i></b></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>File Name</center></td>
+<td valign=top bgcolor="#FFFFEE">Use this field to specify the name of the file you will be saving. Please note that you should not specify an extension, since if you do, another will be automatically concatenated to it based on the radio button you select for the language. The name chose should generally reflect thename of the collection itself, so if you were to be storing customers in your collection, a good name might be 'CustomerCollection' or perhaps 'CustomerList'.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>Yes</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Language</center></td>
+<td valign=top bgcolor="#FFFFEE">Here is where you can specify the language in which the source code will be generated. Note that if you do change this selection, the results will be seen immediately (if al critical fields are filled). The language you select also impacts the extension given to your file: 'cs" for CSharp, 'vb' for Visual Basic, and 'js' for JScript. Note that you can specify a different extension by using the File Browser button (found beside the 'Code Generation Path' field) however if you click any of these buttons having used the browser, then the extensino will rever to 'cs', 'vb', or 'js'.<p>
+<td valign=top bgcolor="#FFFFEE"><center><b>Yes</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Nested Enumerator</center></td>
+<td valign=top bgcolor="#FFFFEE">If this box is selected, then the enumerator for your collection is nested in the collection itself. This is a small, but sometimes critical difference. The enumerator is always found at the very bottom of the generated code. It's name is base on the name specified in the 'Type Stored' field, concatenated with the word 'Enumerator'. For example, if you have specified that the Type Stored is 'Customer' then the enumerator will be called 'CustomerEnumerator'.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>No</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Add Validation</center></td>
+<td valign=top bgcolor="#FFFFEE">Checking this box means that some 'dummy' code is added for validation routines. The validation routines (if present) are always found just above the enumerator, near the bottom of the generated code. They include dummy (routines with no  code inside) code for OnSet, OnInsert, OnClear, OnRemove, and OnValidate. You can add validation code to these methods to ensure that any actions performed on your collection are valid.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>No</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Collection's Namespace</center></td>
+<td valign=top bgcolor="#FFFFEE">This is the namespace in which your collection is defined. It's only practical effect on your code is that it changes the namespace defined at the top of the code. It is also used however in the comments generated for your code ,but being prefixed on the name of your collection in these comments.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>Yes</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Type Stored</center></td>
+<td valign=top bgcolor="#FFFFEE">This field allows you to specify the name of the object which you want to store in your collection. This affects much of the code, since this is the primary piece of information which affects the code generation. In addition, this field affects the actual name given to your collection. For example, if you state that the Type Stored is 'Customer' then the name given to your collectoin will be 'CustomerCollection'. Don't confuse this with the File Name field, although it is often a good idea for the name of your collection to match the name of the file in which is is stored.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>Yes</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Type's Namespace</center></td>
+<td valign=top bgcolor="#FFFFEE">Often, the type you are storing in your colelction will actually be defined in a completely different namespace. In these cases, you can specify the name of that namespace in this field. Because the type may be in the same namespace as this collection (or you may already reference the namespace) then this field is optional. Note that the onlycode affect of this statement is to add another 'using' (CSharp), 'Imports' (VB) or 'import' (JScript) statement at the top of your code.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>No</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Preview</center></td>
+<td valign=top bgcolor="#FFFFEE">This large box gives you a view of the code that will be generated, before it is actually saved to disk. You can view the code and ensure that everything is as expected, or make changes as needed. Note that you cannot edit this field. If you want to make changes to the code, save the file first, then reopen the file in the editor of your choice, and make changes there. The reason editting is not allowed is that this field is automatically regenerated when any changes to the fields, and buttons on the left of the preview box are made. To ensure any changes you make are not lost due to this utility, editting of the generated file should be done with a different application.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>No</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Show Example</center></td>
+<td valign=top bgcolor="#FFFFEE">If you don't know where to start, you can click this button, to see some 'dummy' entries placed in the fields, to see what happens. The example is for a collection of customers.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>No</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Generate</center></td>
+<td valign=top bgcolor="#FFFFEE">Clicking this button will actually generate the source code for your new collection, in the location you specified. This action is critical in that if you don't take it, your source will never be saved.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>Yes</b></center></td>
+</tr>
+
+<tr>
+<td valign=top bgcolor="#FFFFEE"><center><b>Clear</center></td>
+<td valign=top bgcolor="#FFFFEE">If you want to start over, you can quickly clear all the fields by clicking this button. Note that if you have changed the language selection, this remains as it is. In addition, the validation, and enumerator checkboxes remain unaffected.<p></td>
+<td valign=top bgcolor="#FFFFEE"><center><b>No</b></center></td>
+</tr>
+</table>
+<p>
+<table border=0>
+<tr>
+<td width=200><center>
+<font size=2>
+<a href="help.htm">Main Help Page</a>
+</font>
+</td>
+<td width=200><center>
+<font size=2>
+<a href="explanation.htm">Explanation of Fields</a>
+</font>
+</td>
+<td width=200><center>
+<font size=2>
+<a href="dummycode.htm">Code Example</a>
+</font>
+</td>
+</tr>
+</table>
+</center>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Conceptual Intro to Parsing test -->
+<!-- Section 2.1.2.4  Part 10 to 14 -->
+<!-- Adds Category Verb Caquinte and its complex template-->
+<!-- Adds environments for Natural Class Vowels -->
+<!-- Adds interlinear text to Inflection Examples and fully parses it -->
+
+<accil on-fail="assert">
+
+ <var id="projectName" set="CIPTest"/>
+
+<!--  -->
+<on-application args="-db $projectName" title="$projectName$FlexSig" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncGrammar.xml"/>
+		 <include from="IncLexicon.xml"/>
+		 <include from="IncTexts.xml"/>
+		 <include from="IncWords.xml"/>
+
+  <var id="Subject" set="$grmCeHeader;/$Text;/value:rexp#Subject"/>
+
+<!-- 10.	Go to Grammar / Category Edit -->
+  <click path="$menuGRAMMAR;menu:Category Edit"/>
+<!-- a.	Add a new Category -->
+  <click path="$insGrmCat"/>
+<!-- b.	Click on the link to create a custom category. -->
+  <on-dialog title="Add from Catalog">
+	<click path="$grmCeCustCat"/>
+  </on-dialog>
+<!-- c.	Name: Verb Caquinte -->
+  <click path="$gmCeName"/>
+  <insert wait="2000">Verb Caquinte</insert>
+<!-- d.	Abbreviation: VCaq -->
+  <click path="$gmCeAbbr"/>
+  <insert>VCaq</insert>
+
+<!-- e.	Create affix template: -->
+  <click side="right" path="$gmCeAfxTmpl"/>
+  <insert>{DOWN}~</insert><!-- Create affix template -->
+<!-- i.	Name: Caquinte Verbal Complex -->
+  <click path="$gmCeField;Template Name"/>
+  <insert wait="1000">Caquinte Verbal Complex</insert>
+
+<!-- ii.	Insert an obligatory slot before the Stem and rename it to  "Subject" -->
+  <insert wait="500">{TAB}</insert>
+  <click side="right" path="$grmCeHeader;/$Text;/value:rexp#STEM"/>
+  <insert>~</insert><!-- insert slot before Stem -->
+
+  <on-dialog title="Choose Slot">
+	 <insert wait="500">{TAB}</insert>
+	 <click path="$addObSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+  <click dx="20" path="$grmCeHeader;/$Text"/>
+  <insert>^{END}+{HOME}</insert><!-- select the old name -->
+  <insert>Subject</insert>
+
+<!-- 1.	Add inflectional morpheme to Subject -->
+  <click side="right" path="$Subject"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Subject -->
+
+  <on-dialog title="Choose Inflectional Affixes">
+<!-- 2.	Create new inflectional affix -->
+	  <click path="$grmCeNewInfAfx"/>
+ </on-dialog>
+  <on-dialog title="New Entry">
+<!-- 3.	Lexeme form: no dash -->
+	<insert>no</insert>
+<!-- 4.	Gloss: 1Subj -->
+	<click path="$neGloss"/>
+	<insert>1Subj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 5.	Repeat 1 to 2 for: -->
+
+<!-- a.	a dash / 1InclSubj -->
+<click side="right" path="$Subject"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Subject -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>a</insert>
+	<click path="$neGloss"/>
+	<insert>1InclSubj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- b.	pi dash / 2Subj -->
+<click side="right" path="$Subject"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Subject -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>pi</insert>
+	<click path="$neGloss"/>
+	<insert>2Subj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- c.	i dash / 3MascSubj -->
+<click side="right" path="$Subject"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Subject -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>i</insert>
+	<click path="$neGloss"/>
+	<insert>3MascSubj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- d.	o dash 3FemSubj -->
+<click side="right" path="$Subject"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Subject -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>o</insert>
+	<click path="$neGloss"/>
+	<insert>3FemSubj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- iii.	Insert an optional slot after the Subject slot and rename it to  "Future" -->
+  <click side="right" path="$grmCeHeader;[2]/$Text;/value:rexp#STEM"/>
+  <insert>~</insert><!-- insert slot after Subject -->
+  <on-dialog title="Choose Slot">
+	 <click path="$addOpSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+  <click dx="50" path="$grmCeHeader;[2]/$Text;"/>
+  <insert>{HOME}+{END}</insert><!-- select the old name -->
+  <insert>Future</insert>
+  <var id="Future" set="$grmCeHeader;[2]/$Text;/value:rexp#Future"/>
+
+<!-- 1.	Add inflectional morpheme to Future -->
+  <click side="right" path="$Future"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Future -->
+  <on-dialog title="Choose Inflectional Affixes">
+<!-- 2.	Create new inflectional affix -->
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- 3.	Lexeme form: N dash -->
+	<insert>N</insert>
+<!-- 4.	Gloss: FUT -->
+	<click path="$neGloss"/>
+	<insert>FUT</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- iv.	Insert an optional slot after the stem and rename it to "Future" -->
+  <click side="right" path="$grmCeHeader;[3]/$Text;/value:rexp#STEM"/>
+  <insert>{DOWN}~</insert><!-- insert slot after Stem -->
+  <on-dialog title="Choose Slot">
+	 <click path="$addOpSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+  <click dx="50" path="$grmCeHeader;[4]/$Text;"/>
+  <insert>{HOME}+{END}</insert><!-- select the old name -->
+  <insert>Future</insert>
+  <var id="Future2" set="$grmCeHeader;[4]/$Text;/value:rexp#Future"/>
+
+<!-- 1.	Add inflectional morpheme to Future -->
+<click side="right" path="$Future2"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Future -->
+  <on-dialog title="Choose Inflectional Affixes">
+<!-- 2.	Create new inflectional affix -->
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- 3.	Lexeme form: dash e -->
+	<insert>e</insert>
+<!-- 4.	Gloss: F -->
+	<click path="$neGloss"/>
+	<insert>F</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- v.	Insert an optional slot after the Future suffix slot and rename it to  "Object" -->
+  <click side="right" path="$Future2;/$Text"/>
+  <insert>{DOWN 2}~</insert><!-- insert slot after Future -->
+  <on-dialog title="Choose Slot">
+	 <click path="$addOpSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+  <click dx="50" path="$grmCeHeader;[5]/$Text;"/>
+  <insert>{HOME}+{END}</insert><!-- select the old name -->
+  <insert>Object</insert>
+  <var id="Object" set="$grmCeHeader;[5]/$Text;/value:rexp#Object"/>
+
+<!-- 1.	Add inflectional morpheme to Object -->
+<click side="right" path="$Object"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Object -->
+  <on-dialog title="Choose Inflectional Affixes">
+<!-- 2.	Create new inflectional affix -->
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- 3.	Lexeme form:  dash na -->
+	<insert>na</insert>
+<!-- 4.	Gloss: 1Obj -->
+	<click path="$neGloss"/>
+	<insert>1Obj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 5.	Repeat 1 to 2 for: -->
+
+<!-- a.	dash ahi / 1InclObj -->
+<click side="right" path="$Object"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Object -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>ahi</insert>
+	<click path="$neGloss"/>
+	<insert>1InclObj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- b.	dash mpi / 2Obj -->
+<click side="right" path="$Object"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Object -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>mpi</insert>
+	<click path="$neGloss"/>
+	<insert>2Obj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- c.	dash ri  / 3MascObj -->
+<click side="right" path="$Object"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Object -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>ri</insert>
+	<click path="$neGloss"/>
+	<insert>3MascObj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- d.	dash ro / 3FemObj -->
+<click side="right" path="$Object"/>
+  <insert>~</insert><!-- Add inflectional morpheme to Object -->
+  <on-dialog title="Choose Inflectional Affixes">
+	  <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>ro</insert>
+	<click path="$neGloss"/>
+	<insert>3FemObj</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 12.	Go to Lexicon / Lexicon Edit -->
+  <click path="$vwLexEdit"/>
+<!-- a.	Create a new entry: tsave / stem / tell / category of Verb Caquinte -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert wait="200">tsave</insert>
+	<click path="$neGloss"/>
+	<insert wait="200">tell</insert>
+	<insert wait="200">%{y}</insert><!-- category -->
+	<insert wait="200">vv~</insert><!-- Verb Caquinte -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- b.	Find the N- entry -->
+  <click path="$lxFindLex"/>
+  <on-dialog title="Find Lexical Entry">
+	<insert>N</insert>
+	<click path="$goto"/>
+  </on-dialog>
+<!-- i.	Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+<!-- ii.	Check box by Is Abstract Form -->
+  <click  path="$multiEdFIELD;9:checkbox/$sp;2/9:Is Abstract Form/44:Is Abstract Form"/>
+<!-- iii.	Set Visibility for Is Abstract Form to "Normally hidden, unless non-empty" -->
+  <click path="$multiEdFIELD;9:checkbox/$sp;1/9:Is Abstract Form"/>
+  <insert>{DOWN}{RIGHT}{DOWN}~</insert>
+<!-- iv.	Turn off Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+
+<!-- v.	Insert Allomorph of n -->
+  <click side="right" path="$multiSection;Alternate Forms"/>
+  <insert>{DOWN}~</insert>
+  <insert>n</insert>
+<!-- have to set visibility on Environments to always -->
+<!-- i.	Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+  <!-- page down -->
+  <click path="$multiEdFIELD;43:Page down"/>
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert>{DOWN }</insert>
+  <insert>{RIGHT}~</insert><!-- always visible-->
+<!-- iv.	Turn off Show Hidden Fields -->
+  <click path="$multiEdHidden"/>
+
+<!-- 1.	Environments are "/ _ t" and "/ _ k" --><!-- use vernacular keyboard keys -->
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment Slash -->
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment bar -->
+  <insert wait="200"> t</insert>
+
+  <insert wait="500">{RIGHT}</insert>
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment Slash -->
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment bar -->
+  <insert wait="200"> k</insert>
+  <insert wait="500">+{TAB 2}</insert><!-- needs to commit the text -->
+
+<!-- vi.	Insert Allomorph of m -->
+  <click side="right" path="$multiSection;Alternate Forms"/>
+  <insert>{DOWN}~</insert>
+  <insert>m</insert>
+<!-- 1.	Environment is "/ _ p" --><!-- use vernacular keyboard keys -->
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference[2]/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment Slash -->
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference[2]/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment bar -->
+  <insert wait="200"> p</insert>
+  <insert wait="500">+{TAB 2}</insert><!-- needs to commit the text -->
+
+<!-- c.	Create a new entry: -ako / suffix / DAT / Derivational / Attaches: Verb Caquinte / Changes to: Verb Caquinte -->
+  <click path="$insEntry"/>
+
+  <!-- TEST breaks here many times for no appearant reason: can't find the dialog -->
+  <on-dialog title="New Entry">
+	<insert wait="200">-ako</insert>
+	<!--insert wait="200">%{M}-</insert--><!-- set Morpheme Type to suffix -->
+	<click path="$neGloss"/>
+	<insert wait="200">DAT</insert>
+	<insert wait="200">%{t}</insert><!-- affix type -->
+	<insert wait="200">d~</insert><!-- Derivational -->
+	<insert wait="200">%{y}</insert><!-- Attaches to -->
+	<insert wait="200">vv~</insert><!-- Verb Caquinte -->
+	<insert wait="200">%{h}</insert><!-- Changes to : this is also the HELP hot key -->
+	<insert wait="200">vv~</insert><!-- Verb Caquinte -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+<!-- i.	Insert Allomorph of tako -->
+  <click side="right" path="$multiSection;Alternate Forms"/>
+  <insert wait="200">{DOWN}~</insert>
+  <insert wait="200">tako</insert>
+<!-- 1.	Environment is "/ [V] _ " --><!-- use vernacular keyboard keys -->
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment Slash -->
+  <insert wait="200"> </insert>
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN 2}~</insert><!-- choose Insert Natural Class -->
+  <on-dialog title="Choose Natural Class">
+	<click path="$NL;36:Vowels"/>
+	<click path="$ok"/>
+  </on-dialog>
+  <insert wait="200"> </insert>
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment bar -->
+  <insert wait="500">+{TAB 2}</insert><!-- needs to commit the text -->
+
+<!--/skip-->
+
+<!-- d.	Create a new entry: -hi / suffix / PAS / Derivational / Attaches: Verb Caquinte / Changes to: Verb Caquinte -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert wait="200">hi</insert>
+	<insert wait="200">{TAB}-</insert><!-- set Morpheme Type to suffix %{M}- -->
+	<click path="$neGloss"/>
+	<insert wait="200">PAS</insert>
+	<insert wait="200">%{t}</insert><!-- affix type -->
+	<insert wait="200">d~</insert><!-- Derivational -->
+	<insert wait="200">%{y}</insert><!-- Attaches to -->
+	<insert wait="200">vv~</insert><!-- Verb Caquinte -->
+	<insert wait="200">%{h}</insert><!-- Changes to -->
+	<insert wait="200">vv~</insert><!-- Verb Caquinte -->
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- e.	Find -e F entry -->
+  <click path="$lxFindLex"/>
+  <on-dialog title="Find Lexical Entry">
+	<insert>e</insert>
+	<click path="$goto"/>
+  </on-dialog>
+<!-- i.	Insert Allomorph of te -->
+  <click side="right" path="$multiSection;Alternate Forms"/>
+  <insert>{DOWN}~</insert>
+  <insert>te</insert>
+<!-- 1.	Environment is "/ [V] _ " --><!-- use vernacular keyboard keys -->
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment Slash -->
+  <insert wait="200"> </insert>
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN 2}~</insert><!-- choose Insert Natural Class -->
+  <on-dialog title="Choose Natural Class">
+	<click path="$NL;36:Vowels"/>
+	<click path="$ok"/>
+  </on-dialog>
+  <insert wait="200"> </insert>
+  <click side="right" path="$multiEdFIELD;9:phoneenvreference/$sp;1/9:Environments"/>
+  <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment bar -->
+  <insert wait="500">+{TAB 2}</insert><!-- needs to commit the text -->
+
+<!-- 13.	Go to Texts / Edit -->
+  <click path="$menuTEXTS;menu:Interlinear Texts"/>
+<!-- a.	In the "Inflection Examples" text, click on Baseline tab -->
+  <click path="$txtBaseline"/>
+<!-- b.	Type the following line at the end -->
+  <click path="$txtBLInput"/>
+  <insert>^{END}</insert>
+  <insert>~</insert>
+<!-- i.	intsavetakohitero -->
+  <insert>intsavetakohitero</insert>
+<!-- c.	Click on the Interlinearize tab -->
+  <click path="$txtInterlinear"/>
+<!-- d.	Do menu Parser / Reparse all words -->
+  <click path="$menuPARSER;menu:Reparse all words"/>
+
+<!--/skip-->
+
+<!-- 14.	Go to Words / Analyses -->
+  <click path="$menuTEXTS;menu:Word Analyses"/>
+	<click path="$refresh"/>
+	<click path="$menuPARSER;menu:Start Parser"/>
+	<insert wait="10000">{ESC}</insert><!-- esc does nothing, so it's just waiting -->
+
+<!-- a.	All words should have a 1 in both the Number in Corpus and Predicted Analyses. -->
+<click path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:intsavetakohitero"/>
+<click wait="1000" path="$wrdFormRec;[*int]/$Col;[1]/$Text;/value:intsavetakohitero"/>
+<do-once until="999999">
+  <glimpse id="1" path="$wrdFormRec;[$int;]/$Col;[2]/$Text" prop="value" expect="1"/>
+</do-once>
+<do-once until="999999">
+  <glimpse id="2" path="$wrdFormRec;[$int;]/$Col;[3]/$Text" prop="value" expect="1"/>
+</do-once>
+
+<!--/skip-->
+
+ </on-application>
+</accil>

@@ -1,0 +1,222 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "AfSortMethodRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"AfSortMethodRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridSortMethodImages  BITMAP  DISCARDABLE  "../../Common/Framework/Resources/FWSort-Small.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsOptDlgSort DIALOGEX 0, 0, 378, 188
+STYLE DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "&Sort Methods:",IDC_STATIC,7,5,60,8
+	CONTROL         "List1",kctidSortList,"SysListView32",
+					LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS |
+					LVS_EDITLABELS | LVS_NOCOLUMNHEADER | /*LVS_SORTASCENDING |*/
+					WS_BORDER | WS_TABSTOP,7,17,111,129,WS_EX_CLIENTEDGE
+	PUSHBUTTON      "&Add",kctidAddSort,7,153,34,14
+	PUSHBUTTON      "&Copy",kctidCopySort,44,153,31,14
+	PUSHBUTTON      "&Delete...",kctidDeleteSort,78,153,40,14
+	LTEXT           "Click on a sort method, then specify its criteria.",
+					IDC_STATIC,7,174,231,8
+
+	GROUPBOX        "Criteria ",kctidSortCriteria,124,4,250,163
+
+	CHECKBOX        "&Include subentries",kctidSortIncludeSubrecords,160,13,90,10
+
+	LTEXT           "Sort &by:", IDC_STATIC,130,23,30,8
+	LTEXT           "", IDC_STATIC, 160,27,201,1, SS_SUNKEN
+	PUSHBUTTON      "Choose",kctidSortByFirst,160,34,120,14,WS_GROUP
+	CHECKBOX        "&Reversed",kctidSortByFirstReversed,295,34,55,10
+	LTEXT           "This shows the expanded field name",
+					kcidSortByFirstField, 160,50,201,8
+	LTEXT           "This shows the language (writing system) collation",
+					kcidSortByFirstLanguage, 160,60,201,8
+
+	LTEXT           "&Then by:", kctidSortThenBySecond,130,71,30,8
+	LTEXT           "", IDC_STATIC, 160,75,201,1, SS_SUNKEN
+	PUSHBUTTON      "Choose",kctidSortBySecond,160,82,120,14,WS_GROUP
+	CHECKBOX        "R&eversed",kctidSortBySecondReversed,295,82,55,10
+	LTEXT           "Secondary key field", kcidSortBySecondField, 160,98,201,8
+	LTEXT           "Secondary key collation", kcidSortBySecondLanguage, 160,108,201,8
+
+	LTEXT           "T&hen by:", kctidSortThenByThird,130,117,33,8
+	LTEXT           "", IDC_STATIC, 160,121,201,1, SS_SUNKEN
+	PUSHBUTTON      "Choose",kctidSortByThird,160,128,120,14,WS_GROUP
+	CHECKBOX        "Re&versed",kctidSortByThirdReversed,295,128,55,10
+	LTEXT           "Tertiary key field", kcidSortByThirdField, 160,144,201,8
+	LTEXT           "Tertiary key collation", kcidSortByThirdLanguage, 160,154,201,8
+END
+
+
+kridSortMethodTurnOffDlg DIALOG DISCARDABLE  0, 0, 220, 80
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Turn Off Sort Method?"
+FONT 8, "MS Sans Serif"
+BEGIN
+	ICON            "",kctidSortInfoIcon,7,7,21,20
+	LTEXT           "A sort method is currently on.  In order to insert a new entry, the sort method must be turned off.",
+					kcidSortTurnOffInfo, 40,13,170,20
+	LTEXT           "Do you want to turn off the sort method and insert the new entry now?",
+					kcidSortTurnOffQuestion, 40,35,171,20
+	PUSHBUTTON      "Insert", kctidOk, 40,60,50,14, WS_GROUP
+	PUSHBUTTON      "Cancel", kctidCancel, 95,60,50,14
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+// Context help for Sort Methods dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidSortList           "Shows available sort methods. Select a sort method to modify its settings."
+	kctidAddSort            "Adds a new sort method to the list."
+	kctidCopySort           "Copies the selected sort method and adds it to the list."
+	kctidDeleteSort         "Deletes the selected sort method."
+
+	// kctidSortIncludeSubrecords is now defined in Cle.rc and NoteBk.rc
+//	kctidSortIncludeSubrecords "When selected, includes subentries in the sort and displays them in the sorted view as if they were entries."
+	kctidSortByFirst           "Opens a series of cascading menus so you can specify the field and field features for the primary sort."
+	kctidSortByFirstReversed   "When selected, reverses the order of the sort. For example, sorts  English from z to a."
+	kctidSortBySecond          "Opens a series of cascading menus so you can specify the field and field features for the secondary sort."
+	kctidSortBySecondReversed  "When selected, reverses the order of the sort. For example, sorts  English from z to a."
+	kctidSortByThird           "Opens a series of cascading menus so you can specify the field and field features for the tertiary sort."
+	kctidSortByThirdReversed   "When selected, reverses the order of the sort. For example, sorts  English from z to a."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptSort         "Sort Methods"
+	kstidDefaultSort        "Default Sort"
+	kstidDefaultSortHotKey  "&Default Sort"
+	kstidDeleteSortMethod   "Delete Sort Method"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSortCaseI       "Case Insensitive"
+	kstidSortAccentI     "Accent Insensitive"
+	kstidSortCaseAccentI "Case and Accent Insensitive"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSortNone           "None"
+	kstidSortChoose         "Choose"
+	kstidSortDefaultName    "Default Sort"
+	kstidSortNewMethod      "New Sort Method"
+	kstidSortOnAbbr         "Abbreviation"
+	kstidSortOnName         "Name"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSortRenEmptyMsg    "A sort method must have a non-empty name."
+	kstidSortRenMethodMsg   "Each sort method must have a unique name."
+	kstidSortDelMethodMsg   "This deletion is permanent and cannot be reversed with Undo.\r\nAre you sure you want to delete this sort method?"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSortByFirstTip     "Choose the field for the primary sorting key."
+	kstidSortBySecondTip    "Choose the (optional) field for the secondary sorting key."
+	kstidSortByThirdTip     "Choose the (optional) field for the tertiary sorting key."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSortCannotCreate       "Cannot Create Sort Method"
+	kstidSortUndefinedMethod    "The sort method ""%<0>s"" is not yet defined.\r\nClick on OK to continue without this sort method, or\r\nclick on Cancel to first finish defining this sort method."
+	kstidSortUndefinedMethods   "Some sort methods (%<0>s) are not yet defined.\r\nClick on OK to continue without these sort methods, or\r\nclick on Cancel to first finish defining the sort methods."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSortNoValue            "(undefined)"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSortError      "Sort Method Error"
+	kstidSortImproper   "The selected sort method is not constructed properly.  This is a programming\r\nerror, not a mistake by the user."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidStBar_ApplyingSort             "Sorting according to %<0>s ..."
+	kstidStBar_ApplyingDefaultSort      "Applying the default sort ..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Patch Building</title>
+</head>
+<body>
+<h1>Patch Building</h1>
+
+<h1>Creating a Patch with Wix</h1>
+Note: You must have Windows Installer 3.0 installed\
+<ol>
+  <li><a href="#admin">Do an administrative install of the RTM version (Target Image).</a></li>
+  <li><a href="#update">Update Package Id in Main.wxs.</a></li>
+  <li><a href="#new">Make new Installer.msi</a></li>
+  <li><a href="#adminagain">Do an administrative install of the latest version (Update Image with new files you want to patch).</a></li>
+  <li><a href="#pcp">Create a patch creation properties (.pcp) file.</a></li>
+  <li><a href="#create">Create the patch.</a></li>
+  <li><a href="#runpatch">Run the patch</a></li>
+</ol>
+
+<h2>1. <a name="admin">Administrative</a> install of RTM version</h2>
+With the RTM installer.msi, run
+<pre>
+md c:\patchdir
+md c:\patchdir\rtm
+msiexec /a installer.msi TARGETDIR=c:\patchdir\rtm
+</pre>
+
+<h2>2. <a name="update">Update</a> Package Id in source .wxs file.</h2>
+Make a new Guid for the Id= attribute under the %lt;Package&gt; tag in the wxs files.
+
+<h2>3. <a name="new">Make</a> new installer.msi</h2>
+<h2>4. <a name="adminagain">Administrative</a> install of latest version</h2>
+With the new installer.msi, run
+<pre>
+md c:\patchdir\latest
+
+msiexec /a installer.msi TARGETDIR=c:\patchdir\latest
+</pre>
+
+
+<h2>5. <a name="pcp">Create</a> a Patch Creation Properties (.pcp) file</h2>
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi"&gt;
+  &lt;?define WixDir = . ?&gt;
+  &lt;?define Proj1 = "rtm" ?&gt;
+  &lt;?define Proj2 = "latest" ?&gt;
+
+  &lt;PatchCreation
+	 Id="<font size="large">put-guid-here</font>"
+	   CleanWorkingFolder="yes"
+	   OutputPath="patch.pcp"
+	   WholeFilesOnly="yes"
+	   &gt;
+
+		&lt;PatchInformation
+			  Description="Patches the andmagichappens.cmd file"
+			  Comments="Patch for new dll"
+			  ShortNames="no"
+			  Languages="1033"
+			  Compressed="yes"
+			  Manufacturer="<font size="large"><i>insert-organization-name-here</i></font>"/&gt;
+
+		&lt;PatchMetadata
+			  AllowRemoval="yes"
+			  Description="Patches the andmagichappens.cmd file"
+			  ManufacturerName="<font size="large"><i>insert-organization-name-here</i></font>"
+			  TargetProductName="<font size="large"><i>insert-product-name-here</i></font>"
+			  MoreInfoURL="<font size="large"><i>insert-info-url-here</i></font>"
+			  Classification="Hotfix"
+			  DisplayName="<font size="large"><i>insert-product-abbreviaiton-here</i></font> Patch 1.<font size="large" color="red">01</font>"/&gt;
+
+		&lt;Family DiskId="2" MediaSrcProp="<font size="large"><i>insert-product-abbreviaiton-here</i></font>prop_2_1_<font size="large" color="red">01</font>"
+			   Name="<font size="large"><i>insert-organization-name-here</i></font> <b>and</b> <font size="large"><i>insert-product-abbreviaiton-here</i></font>1" SequenceStart="1<font size="large" color="red">01</font>0"&gt;
+			   &lt;UpgradeImage src="$(var.Proj2)\Installer.msi" Id="<font size="large"><i>insert-product-abbreviaiton-here</i></font>Upgrade"&gt;
+					  &lt;TargetImage src="$(var.Proj1)\Installer.msi" Order="2"
+								  Id="<font size="large"><i>insert-product-abbreviaiton-here</i></font>Target" IgnoreMissingFiles="no" /&gt;
+			   &lt;/UpgradeImage&gt;
+		&lt;/Family&gt;
+
+		 &lt;PatchSequence
+			 PatchFamily="<font size="large"><i>insert-organization-name-here</i></font> <b>and</b> <font size="large"><i>insert-product-abbreviaiton-here</i></font>1" Sequence="2.1.0.<font size="large" color="red">01</font>0" Supersede="0"
+				 Target="<font size="large"><i>insert-product-abbreviaiton-here</i></font>Target" /&gt;
+
+	&lt;/PatchCreation&gt;
+&lt;/Wix&gt;
+</pre>
+
+<h3>Notes:</h3>
+<ul>
+	<li>The <font color="red" size="large">01</font> in red in the above file is a patch id.  It should be incremented by <b>1</b> with each patch.  Also, the <b>Id</b>= under &lt;PatchCreation&gt; should be set to a new Guid for each patch created.</li>
+
+	<li>The <b>SequenceStart</b> value is influenced by the number of files that the previous
+		patch delivered, as well as the number of files that this patch will deliver.
+		This tells PatchWiz.dll to start assigning File sequence numbers from this
+		number. So if this patch ships 11 files, and the next patch uses a SequenceStart of
+		1020, it will step on the 11th file’s assigned sequence number.  In this case
+		the next patch would use a SequenceStart of 1030, and 03 as the patch id to
+		avoid conflicts with this patch.  This scheme helps prevent this by coordinating
+		the SequenceStart (file sequence numbers) with the patch sequence number.
+		Also, note that the SequenceStart of the first patch must be greater than the
+		number of files in the original installation.   If the original installation
+		contained more than 1000 files(rare), then the SequenceStart for the first
+		patch must be set to a higher value (e.g 2010.)</li>
+
+</ul>
+
+<h2>6. <a name="create">Create</a> the patch msp file</h2>
+<pre>
+candle patch.wxs
+
+light patch.wixobj -out patch.pcp
+
+msimsp -s patch.pcp -p patch.msp -l msimsp.log
+</pre>
+
+
+
+<h2>7.<a name="run">Run</a> the patch</h2>
+<pre>
+msiexec /update patch.msp REINSTALL=ALL /L*v patch.log
+</pre>
+</body>
+</html>

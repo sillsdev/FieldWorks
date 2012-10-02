@@ -1,0 +1,1033 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: FwKernel.idh
+Responsibility: John Thomson
+Last reviewed: never
+
+	Defines "Kernel" interfaces widely used in FieldWorks, not including the TextServ
+	interfaces which, though part of FwKernel, are in a separate IDH file.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+interface ITsString;
+interface IFwFldSpec;
+interface IUndoGrouper;		// used by ActionHandler
+
+typedef [v1_enum] enum UndoResult
+{
+	kuresSuccess,		// Undo succeeded and refresh is not needed (Not yet used)
+	kuresRefresh,		// Undo succeeded and refresh IS needed	(Default)
+	kuresFailed,		// Legitimate failure, typically data changed since original action.
+						// If an UndoGrouper is installed, CancelGroup has already been called
+						// to roll back the transaction. Typically a Refresh is needed
+						// along with a warning message.
+	kuresError,			// A serious unexpected error occurred. The group has been rolled back.
+						// Typically a Refresh is needed along with an error message.
+} UndoResult;
+
+const OLECHAR DefaultBodyFont = L"<default pub font>";
+const OLECHAR DefaultSerif = L"<default serif>";
+const OLECHAR DefaultSans = L"<default sans serif>";
+const OLECHAR DefaultMono = L"<default monospace>";
+
+/*******************************************************************************************
+	Interface IFwCustomExport
+	This interface provides custom methods for exporting certain types of data.
+
+	@h3{When to implement}
+	Whenever customization is required.
+
+	@h3{When to use}
+	Whenever customization is required.
+
+	@h3{How to obtain an instance}
+	However the program using it creates custom COM interfaces.
+
+	@h3{Hungarian: fcex}
+*******************************************************************************************/
+DeclareInterface(FwCustomExport, Unknown, 40300033-D5F9-4136-9A8C-B401D8582E9B)
+{
+	// Store label style strings for use by the other methods.  This method is called once by
+	// the Export process, before any of the Build* or Get* methods are called.
+	//
+	// @param bstrLabel Label string used in top level records.
+	// @param bstrSubLabel Label string used in subrecords.
+	HRESULT SetLabelStyles(
+		[in] BSTR bstrLabel,
+		[in] BSTR bstrSubLabel);
+
+	// Store a mapping associating a field id with a character style name.  This method may be
+	// called any number of of times, but only before any of the Build* or Get* methods are
+	// called.
+	//
+	// @param flid Field id value.
+	// @param bstrStyle Style name string.
+	HRESULT AddFlidCharStyleMapping(
+		[in] int flid,
+		[in] BSTR bstrStyle);
+
+	// Build a TsString that contains the label (if desired) and the sequence of certain
+	// subitems owned by the current record.
+	//
+	// @param pffsp Pointer to the current user view field specification COM object.
+	// @param hvoRec Database id of the current record (object).
+	// @param ws Language writing system desired for output.
+	// @param pptss Address of the TsString pointer used for returning the computed value.
+	HRESULT BuildSubItemsString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+	// Build a TsString that contains the label (if desired) and the object reference contained
+	// by the current record.
+	//
+	// @param pffsp Pointer to the current user view field specification COM object.
+	// @param hvoRec Database id of the current record (object).
+	// @param ws Language writing system desired for output.
+	// @param pptss Address of the TsString pointer used for returning the computed value.
+	HRESULT BuildObjRefSeqString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+	// Build a TsString that contains the label (if desired) and the object reference contained
+	// by the current record.
+	//
+	// @param pffsp Pointer to the current user view field specification COM object.
+	// @param hvoRec Database id of the current record (object).
+	// @param ws Language writing system desired for output.
+	// @param pptss Address of the TsString pointer used for returning the computed value.
+	HRESULT BuildObjRefAtomicString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+	// Build a TsString that contains the label (if desired) and the "expandable" information
+	// contained by the current record.
+	//
+	// @param pffsp Pointer to the current user view field specification COM object.
+	// @param hvoRec Database id of the current record (object).
+	// @param ws Language writing system desired for output.
+	// @param pptss Address of the TsString pointer used for returning the computed value.
+	HRESULT BuildExpandableString(
+		[in] IFwFldSpec * pffsp,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+	// Obtain the string for the enumeration value stored by the given field.  This method
+	// should be overridden for the specific type of export.
+	//
+	// @param flid Id of field containing an enumeration value.
+	// @param itss Index of enumeration value.
+	HRESULT GetEnumString(
+		[in] int flid,
+		[in] int itss,
+		[out, retval] BSTR * pbstrName);
+
+	// Get the actual indentation level for the current record.  In some cases (such as the
+	// Data Notebook), this value is implicitly maintained by the structure of the object.  In
+	// other cases (such as Topics List Editor), the hiearchy is marked explicitly in the data.
+	//
+	// @param nLevel (Indentation) level of the record (0 means top level, >0 means subrecord)
+	// @param hvoRec Database id of the current record (object).
+	// @param ws Language writing system desired for output.
+	HRESULT GetActualLevel(
+		[in] int nLevel,
+		[in] int hvoRec,
+		[in] int ws,
+		[out, retval] int * pnActualLevel);
+
+	// Build the start and end tags for the current record.  This method may return empty
+	// strings if the default of <Entry level="0">, <Entry level="1">, etc. is acceptable.
+	//
+	// @param nLevel (Indentation) level of the record (0 means top level, >0 means subrecord)
+	// @param hvo Database id of the current record (object).
+	// @param clid Database class id of the current record (object).
+	// @param pbstrStartTag Pointer to the output BSTR start tag.
+	// @param pbstrEndTag Pointer to the output BSTR end tag.
+	HRESULT BuildRecordTags(
+		[in] int nLevel,
+		[in] int hvo,
+		[in] int clid,
+		[out] BSTR * pbstrStartTag,
+		[out] BSTR * pbstrEndTag);
+
+	// Return all the interesting page setup values used for printing.  It is permissible to
+	// set all of these to 0 (or NULL), although that would not result in very interesting
+	// export output.
+	//
+	// @param pnOrientation Pointer to page orientation value (from AfCore::POrientType enum).
+	// @param pnPaperSize Pointer to paper size value (from AfCore::PgSizeType enum).
+	// @param pdxmpLeftMargin Pointer to left margin size in millipoints.
+	// @param pdxmpRightMargin Pointer to right margin size in millipoints.
+	// @param pdympTopMargin Pointer to top margin size in millipoints.
+	// @param pdympBottomMargin Pointer to bottom margin size in millipoints.
+	// @param pdympHeaderMargin Pointer to header margin size in millipoints.
+	// @param pdympFooterMargin Pointer to footer margin size in millipoints.
+	// @param pdxmpPageWidth Pointer to page width in millipoints.
+	// @param pdympPageHeight Pointer to page height in millipoints.
+	// @param pptssHeader Pointer to the header string COM object pointer.
+	// @param pptssFooter Pointer to the footer string COM object pointer.
+	HRESULT GetPageSetupInfo(
+		[out] int * pnOrientation,
+		[out] int * pnPaperSize,
+		[out] int * pdxmpLeftMargin,
+		[out] int * pdxmpRightMargin,
+		[out] int * pdympTopMargin,
+		[out] int * pdympBottomMargin,
+		[out] int * pdympHeaderMargin,
+		[out] int * pdympFooterMargin,
+		[out] int * pdxmpPageWidth,
+		[out] int * pdympPageHeight,
+		[out] ITsString ** pptssHeader,
+		[out] ITsString ** pptssFooter);
+
+	// Give calling application chance to post-process generated XML file before it is
+	// passed to the XSL. Originally added so that chapter and verse numbers could be changed
+	// from vernacular script to western digits.
+	// Default no-op implementation would be to copy input file name to output file.
+	//
+	// @param bstrInputFile Name of input file (XML file created on export)
+	// @param pbstrOutputFile Name of output file
+	HRESULT PostProcessFile(
+		[in] BSTR bstrInputFile,
+		[out, retval] BSTR * pbstrOutputFile);
+
+	// Let calling application determine if object data should be included when
+	// TsStrings are written as XML.
+
+	// @param pbWriteObjData If returned bool is true, object data will be included
+	HRESULT IncludeObjectData(
+		[out, retval] ComBool *pbWriteObjData);
+};
+
+/*----------------------------------------------------------------------------------------------
+	IFwTool defines methods for starting up a FieldWorks application, typically used by the
+	FW Explorer.
+	Creating an instance of IFwTool using a particular CLSID (e.g., CLSID_ResearchNotebook)
+	starts up the application. Then you can use other methods to set it up.
+	Hungarian: tss
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(FwTool, Unknown, 37396941-4DD1-11d4-8078-0000C0FB81B5)
+{
+	// Open a main window on a particular object in a particular database.
+	// Will fail if the specified tool cannot handle the specified top-level object.
+	// Returns a value which can be used to identify the particular window in subsequent calls.
+	// @param bstrServerName Name of the MSDE/SQLServer computer.
+	// @param bstrDbName Name of the database.
+	// @param hvoLangProj Which language project within the database.
+	// @param hvoMainObj The top-level object on which to open the window.
+	// @param encUi The user-interface writing system.
+	// @param nTool A tool-dependent identifier of which tool to use.
+	// @param nParam Another tool-dependent parameter.
+	// @param ppidNew Process id of the new main window's process.
+	// @param phtool Handle to the newly created main window.
+	HRESULT NewMainWnd(
+		[in] BSTR bstrServerName,
+		[in] BSTR bstrDbName,
+		[in] int hvoLangProj,
+		[in] int hvoMainObj,
+		[in] int encUi,
+		[in] int nTool,
+		[in] int nParam,
+		[out] int * ppidNew,
+		[out, retval] long * phtool);
+
+	// Open a main window on a particular object in a particular database.
+	// Will fail if the specified tool cannot handle the specified top-level object.
+	// This attempts to open using a particular view and opens with the selection on a specified
+	// object or field. The selection is specified by providing a path from a normal record to
+	// the sub-record and field. For example, if subentry 1582 is to be displayed, the following
+	// input might be used:
+	// prghvo: 1579, 1581, 1582,  chvo: 3
+	// prgflid: 4004009, 4004009,  cflid: 2
+	// 1579 is the main record. 1581 is a subentry in the 4004009 flid of 1579. 1582 is a
+	// subentry in the 4004009 flid of 1581. When the window opens, we try to display the
+	// cursor in the 1582 record. If a third flid is supplied, we try to position the cursor
+	// in that field. It should also be possible to specify a view without specifying a path,
+	// in which case the tool should open on the first record using the specified view.
+	// @param bstrServerName Name of the MSDE/SQLServer computer.
+	// @param bstrDbName Name of the database.
+	// @param hvoLangProj Which languate project within the database.
+	// @param hvoMainObj The top-level object on which to open the window.
+	// @param encUi The user-interface writing system.
+	// @param nTool A tool-dependent identifier of which tool to use.
+	// @param nParam Another tool-dependent parameter.
+	// @param prghvo Pointer to an array of object ids.
+	// @param chvo Number of object ids in prghvo.
+	// @param prgflid Pointer to an array of flids.
+	// @param cflid Number of flids in prgflid.
+	// @param ichCur Cursor offset from beginning of field.
+	// @param nView The view to display when showing the first object. Use -1 to use the first
+	//		data entry view.
+	// @param ppidNew Process id of the new main window's process.
+	// @param phtool Handle to the newly created window.
+	// Returns a value which can be used to identify the particular window in subsequent calls.
+	HRESULT NewMainWndWithSel(
+		[in] BSTR bstrServerName,
+		[in] BSTR bstrDbName,
+		[in] int hvoLangProj, // which language project within the database
+		[in] int hvoMainObj, // the top-level object on which to open the window.
+		[in] int encUi, // the user-interface writing system
+		[in] int nTool, // tool-dependent identifier of which tool to use
+		[in] int nParam, // another tool-dependend parameter
+		[in, size_is(chvo)] const long * prghvo,
+		[in] int chvo,
+		[in, size_is(cflid)] const int * prgflid,
+		[in] int cflid,
+		[in] int ichCur,
+		[in] int nView,
+		[out] int * ppidNew,			// process id of the new main window's process
+		[out, retval] long * phtool);	// handle to the newly created main window
+
+	// Ask a main window to close. May return *pfCancelled true if closing the window requires
+	// the user to confirm a save, and the user says cancel. In this case the caller should
+	// normally abort whatever required the window to close.
+	// If the window is not found (invalid handle, or a handle to a window that already closed),
+	// returns S_FALSE.
+	HRESULT CloseMainWnd(
+		[in] long htool,
+		[out, retval] ComBool *pfCancelled);
+
+	// Close any windows associated with a database, save the database, clear all caches, and
+	// shutdown the connection to the database.
+	// @param bstrSvrName The name of the server owning bstrDbName
+	// @param bstrDbName The name of the database to close
+	// @param fOkToClose If true, and if the app is only open on a single database, this will
+	//    close the app. Otherwise it will remain open.
+	HRESULT CloseDbAndWindows(
+		[in] BSTR bstrSvrName,
+		[in] BSTR bstrDbName,
+		[in] ComBool fOkToClose);
+
+	// Prepare application to enter or leave a state in which an app-modal process can be
+	// performed. A typical implementation would be to disable/enable all main windows
+	// associated with this tool.
+	// @param fModalState If true, this will enter the modal state. Otherwise it will leave modal
+	// state.
+	HRESULT SetAppModalState(
+		[in] ComBool fModalState);
+};
+
+/***********************************************************************************************
+	Interface IUndoAction
+
+	This interface is used in conjunction with the ActionHandler interface to provide
+	undo/redo functionality in an application.
+
+	@h3{When to implement}
+	You could create an implementation of this interface if you want a very plain "undo
+	action" to be used with the ActionHandler.
+
+	@h3{When to use}
+	When the client code performs an action that it would like to be reversible, create
+	an UndoAction (or more likely, a subclass of one) and give it to the ActionHandler
+	(via the ${IActionHandler#StartSeq} or ${IActionHandler#AddAction} methods as
+	appropriate).  For subclasses of UndoAction, there may be further requirements.
+
+	@h3{How to obtain an instance}
+	While an implementation of this interface could be made, right now, its primary reason
+	for existence is to be used by the SqlUndoAction implementation and to keep things open
+	for future implementations.  In this way, the ActionHandler does not have to know about
+	databases and so can be used for simpler undo/redo functionality.
+
+	@h3{Hungarian: uact}
+***********************************************************************************************/
+DeclareInterface(UndoAction, Unknown, FC80F56E-F3F7-4d63-A7FF-9F297AE413EA)
+{
+	// Reverses (or "un-does") an action. Sets *pfSuccess to true if successful. If not successful
+	// because the database state has changed unexpectedly, sets *pfSuccess to false but still
+	// returns S_OK. More catastrophic errors may produce error result codes.
+	// @param fRefreshPending Set to true if app will call refresh after all Undo actions are
+	// finished. This means the UndoAction doesn't have to call PropChanged.
+	HRESULT Undo(
+		[in] ComBool fRefreshPending,
+		[out, retval] ComBool * pfSuccess);
+
+	// Re-applies (or "re-does") an action.
+	// @param fRefreshPending Set to true if app will call refresh after all Undo actions are
+	// finished. This means the UndoAction doesn't have to call PropChanged.
+	HRESULT Redo(
+		[in] ComBool fRefreshPending,
+		[out, retval] ComBool * pfSuccess);
+
+	// Irreversibly commits an action.
+	HRESULT Commit();
+
+	// True for most actions, which make changes to data; false for actions that represent
+	// updates to the user interface, like replacing the selection.
+	HRESULT IsDataChange([out,retval] ComBool * pfRet);
+
+	// True for most actions, which are redoable; false for actions that aren't, like
+	// Scripture import.
+	HRESULT IsRedoable([out,retval] ComBool * pfRet);
+
+	// False for most actions that call PropChanged; true for actions that don't completely
+	// reload the cache and thus need a refresh.
+	HRESULT RequiresRefresh([out,retval] ComBool * pfRet);
+
+	// Sets whether this undo action should notify the world that the action has been undone
+	// or redone. For ISqlUndoAction, this supresses the PropChanged notifications.
+	[propput] HRESULT SuppressNotification(
+		[in] ComBool fSuppress);
+};
+
+
+/*******************************************************************************************
+	Interface IActionHandler
+
+	Use this interface to implement undo/redo functionality for an application.
+	Examine the following document for further information on how it works:
+
+	@code{~FWROOT/Doc/Architecture/Database/ActionHandler.htm}
+
+	@h3{When to implement}
+	The standard implementation should suffice for both database and non-database
+	applications.
+
+	@h3{When to use}
+	A class implementing this interface should be created right at the initialization of
+	an application.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_ActionHandler or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: acth}
+*******************************************************************************************/
+DeclareInterface(ActionHandler, Unknown, 7E506C44-FD91-47da-B6FF-258C68A93C46)
+{
+	// Begin a sequence of actions that will be treated as one task for the purposes
+	// of undo and redo. If there is already such a task in process, this sequence will be
+	// included (nested) in that one, and the descriptive strings will be ignored.
+	// @param bstrUndo Short description of an action.  This is intended to appear on the
+	// "undo" menu item (e.g. "Typing" or "Clear")
+	// @param bstrRedo Short description of an action.  This is intended to appear on the
+	// "redo" menu item (e.g. "Typing" or "Clear").  Usually, this is the same as @i{bstrUndo}
+	HRESULT BeginUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	// End the current task sequence. If an outer sequence is in progress, that one will
+	// continue.
+	HRESULT EndUndoTask();
+
+	// Continue the previous sequence. This is intended to be called from a place like
+	// OnIdle that performs "clean-up" operations that are really part of the previous
+	// sequence.
+	HRESULT ContinueUndoTask();
+
+	// End the current sequence, and any outer ones that are in progress. This is intended
+	// to be used as a clean-up function to get everything back in sync.
+	HRESULT EndOuterUndoTask();
+
+	// Break the current undo task into two at the current point. Subsequent actions will
+	// be part of new task which will be assigned the given labels.
+	HRESULT BreakUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	// Sets a flag which makes the ActionHandler create a mark if there is no mark and
+	// another action is added to the stack.
+	HRESULT CreateMarkIfNeeded(
+		[in] ComBool fCreateMark);
+
+	// Begins an action sequence.  An action sequence consists of one or more UndoAction's
+	// that constitute a single task (at least, from the user's perspective).  Note that
+	// calling this method requires that an UndoAction be supplied to "seed" the action
+	// sequence.
+	// @param bstrUndo Short description of an action.  This is intended to appear on the
+	// "undo" menu item (e.g. "Undo Typing")
+	// @param bstrRedo Short description of an action.  This is intended to appear on the
+	// "redo" menu item (e.g. "Redo Typing").  Usually, this is the same as @i{bstrUndo}
+	// @param puact Pointer to an IUndoAction interface.  This is the first action of an
+	// action sequence.
+	HRESULT StartSeq(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo,
+		[in] IUndoAction * puact);
+
+	// Adds an UndoAction to the current action sequence.  Note that an action sequence
+	// @b{MUST} already be started before an additional UndoAction can be added.
+	// @param puact Pointer to an UndoAction interface.  Note that this is @b{NEVER} the
+	// first action of an action sequence.
+	HRESULT AddAction(
+		[in] IUndoAction * puact);
+
+	// Returns the "undo" description of the current action sequence, as was given in
+	// the ${IActionHandler#StartSeq} call.
+	// @param pbstrUndoText "Undo" description of the current action sequence.
+	HRESULT GetUndoText(
+		[out, retval] BSTR * pbstrUndoText);
+
+	// Returns the "undo" description of the specified action sequence, as was given in
+	// the ${IActionHandler#StartSeq} call.
+	// @param iAct Zero-based index of the undo action
+	// @param pbstrUndoText "Undo" description of the current action sequence.
+	HRESULT GetUndoTextN(
+		[in] int iAct,
+		[out, retval] BSTR * pbstrUndoText);
+
+	// Returns the "redo" description of the action sequence that would be re-done,
+	// as was given in the ${IActionHandler#StartSeq} call.  This is usually the same
+	// as the "undo" description.
+	// @param pbstrRedoText "Redo" description of the current action sequence.
+	HRESULT GetRedoText(
+		[out, retval] BSTR * pbstrRedoText);
+
+	// Returns the "redo" description of the specified action sequence, as was given in
+	// the ${IActionHandler#StartSeq} call.  This is usually the same as the "undo"
+	// description.
+	// @param iAct Zero-based index of the redo action
+	// @param pbstrRedoText "Redo" description of the current action sequence.
+	HRESULT GetRedoTextN(
+		[in] int iAct,
+		[out, retval] BSTR * pbstrRedoText);
+
+	// Indicates if there is an action sequence on the stack that can be undone.
+	// @param pfCanUndo Flag indicating if there is an action sequence to undo.
+	HRESULT CanUndo(
+		[out, retval] ComBool * pfCanUndo);
+
+	// Indicates if there is an action sequence on the stack that can be redone.
+	// @param pfCanRedo Flag indicating if there is an action sequence to redo.
+	HRESULT CanRedo(
+		[out, retval] ComBool * pfCanRedo);
+
+	// Un-does an action sequence.  Note that this can involve the reversal of several
+	// UndoAction's.
+	HRESULT Undo(
+		[out, retval] UndoResult * pures);
+
+	// Re-does an action sequence.  Note that this can involve the re-application of
+	// several UndoAction's.
+	HRESULT Redo(
+		[out, retval] UndoResult * pures);
+
+	// Rollback an action sequence to the outmost current task. This needs to be called
+	// before an EndUndoTask. Note that this can involve the reversal of several UndoAction's.
+	HRESULT Rollback(
+		[in] int nDepth);
+
+	// Gets the current depth of the nested BeginUndoTask() calls. Used to set the depth
+	// back during a Rollback(). Should be called before the BeginUndoTask() call.
+	[propget] HRESULT CurrentDepth(
+		[out, retval] int * pnDepth);
+
+	// Irreversably commits all actions that have been executed so far (or at least since
+	// the last Commit) and clears the action stack.  (Note that currently, both undo and
+	// redo actions are cleared).
+	HRESULT Commit();
+
+	// Deletes all actions that are on the (internal) action stack, thereby releasing
+	// references and resources.  This should be called just before the application is to
+	// end so that there aren't any circular reference problems.
+	HRESULT Close();
+
+	// Inserts a mark and returns a handle that can be used later to discard all Undo items
+	// back to the mark. Handle will never be zero.
+	HRESULT Mark(
+		[out, retval] int * phMark);
+
+	// Collapses all Undo tasks back to a specified mark and creates a single Undo task for
+	// them all. Also discards the mark.
+	// @param hMark The mark handle
+	// @param bstrUndo Short description of an action.  This is intended to appear on the
+	// "undo" menu item (e.g. "Undo Typing") for the task created by collapsing all tasks
+	// following the mark
+	// @param bstrRedo Short description of an action.  This is intended to appear on the
+	// "redo" menu item (e.g. "Redo Typing") for the task created by collapsing all tasks
+	// following the mark. Usually, this is the same as @i{bstrUndo}
+	HRESULT CollapseToMark(
+		[in] int hMark,
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	// Discard all Undo items back to the specified mark (or the most recent mark, if any,
+	// if handle is zero).
+	HRESULT DiscardToMark(
+		[in] int hMark);
+
+	// Get the handle to the top mark. If there are no marks on the undo stack, returns 0.
+	[propget] HRESULT TopMarkHandle(
+		[out, retval] int * phMark);
+
+	// Return true if there is anything undoable after the top mark (and if there is at
+	// least one mark).
+	[propget] HRESULT TasksSinceMark(
+		[in] ComBool fUndo,
+		[out, retval] ComBool * pf);
+
+	// Return the number of outstanding Undoable actions. This may be more than the number of
+	// times the user could issue the Undo command, as that depends on individual items
+	// being grouped into sequences. This does not count items that could be redone.
+	[propget] HRESULT UndoableActionCount(
+		[out, retval] int * pcAct);
+
+	// Returns the number of Undoable sequences. This is the number of times the user
+	// could issue the Undo command.
+	[propget] HRESULT UndoableSequenceCount(
+		[out, retval] int * pcSeq);
+
+	// Returns the number of Redoable sequences. This is the number of times the user
+	// could issue the Redo command.
+	[propget] HRESULT RedoableSequenceCount(
+		[out, retval] int * pcSeq);
+
+	// This will return the current UndoGrouper for the AH - if one exists, otherwise returns null.
+	[propget] HRESULT UndoGrouper(
+		[out, retval] IUndoGrouper ** ppundg);
+
+	// This will set the UndoGrouper for this AH.
+	[propput] HRESULT UndoGrouper(
+		[in] IUndoGrouper * pundg);
+
+	// Tells whether an Undo or Redo operation is in progress. During such operations,
+	// actions should not be added to the sequence, and some other side-effect tasks
+	// may be suppressed. For example, we don't update modify times when a data field
+	// is modified by Undo/Redo; it is assumed that there is an action in the sequence
+	// to set the modify time to the appropriate value.
+	[propget] HRESULT IsUndoOrRedoInProgress(
+		[out, retval] ComBool * pfInProgress);
+};
+#ifndef NO_COCLASSES
+DeclareCoClass(ActionHandler, E228A12D-F550-45be-9898-17F137839DBE)
+{
+	interface IActionHandler;
+};
+#endif // !NO_COCLASSES
+
+
+/***********************************************************************************************
+	Interface IAdvInd
+	This interface provides a way for an ${AfStatusBar} to be updated by the
+	${VwOleDbDa#Load} method (when several slow commands are being executed) without having
+	to turn ${AfStatusBar} into a COM object.  It may eventually have other uses.
+
+	@h3{When to implement}
+	Currently, only ${AfStatusBar} implements this interface because it's too much work to
+	covert the whole ${AfStatusBar} class to COM.
+
+	@h3{When to use}
+	Use this interface if you want the implementing object to receive notifications from
+	another object that progress has been made on a given task (done by the second object).
+
+	@h3{How to obtain an instance}
+	You can directly create an ${AfStatusBar} as part of your application, but more
+	commonly, your application will have an AfMainWnd, and you obtain the status bar by
+	calling ${AfMainWnd#GetStatusBarWnd}. If you have access to an ${AfWnd} pointer that
+	is embedded in an AfMainWnd, you can get the frame by calling ${AfWnd#MainWindow}.
+
+	@h3{Hungarian: advi}
+***********************************************************************************************/
+DeclareInterface(AdvInd, Unknown, 5F74AB40-EFE8-4a0d-B9AE-30F493FE6E21)
+{
+	// Cause the progress indicator to advance by the specified amount. (This is typically
+	// relative to a range set by some other process.) Pass zero for the default amount
+	// of progress. (See ${AfStatusBar} for more details.)
+	// @param nStepAmt Amount of progress. (ENHANCE JohnT: PaulP says 1 is usually passed.)
+	HRESULT Step(
+		[in] int nStepAmt);
+};
+
+/***********************************************************************************************
+	Interface IAdvInd2
+	This interface is a more advanced version of IAdvInd and may eventually replace it.
+	In addition to allowing the caller to indicate progress in steps, it can also indicate
+	progress in stages.
+
+	@h3{When to implement}
+	When you want to receive notification from a client that expects an instance of this
+	interface.
+
+	@h3{When to use}
+	Use this interface when implementing a function that needs to report progress.
+
+	@h3{How to obtain an instance}
+	Generally you will implement this yourself and create an instance using NewObj.
+
+	@h3{Hungarian: advi2}
+***********************************************************************************************/
+DeclareInterface(AdvInd2, AdvInd, 639C98DB-A241-496d-BE19-1EFC85CA1DD7)
+{
+	// This is called when one complete stage of the process being monitored is complete.
+	HRESULT NextStage();
+};
+
+/***********************************************************************************************
+	Interface IAdvInd3
+	This interface is a more advanced version of IAdvInd that interfaces with more functionality
+	to a progress report dialog window.
+
+	@h3{When to implement}
+	When you want to receive notification from a client that expects an instance of this
+	interface.
+
+	@h3{When to use}
+	Use this interface when implementing a function that needs to report progress.
+
+	@h3{How to obtain an instance}
+	This is implemented by ${AfProgressDlg}.
+
+	@h3{Hungarian: advi3}
+***********************************************************************************************/
+DeclareInterface(AdvInd3, AdvInd, 86B6AE62-3DFA-4020-B5D1-7FA28E7726E4)
+{
+	// Set the title of the progress display window.
+	// @param bstrTitle Title string.
+	[propput] HRESULT Title(
+		[in] BSTR bstrTitle);
+	// Set the message within the progress display window.
+	// @param bstrMessage Message string.
+	[propput] HRESULT Message(
+		[in] BSTR bstrMessage);
+	// Set the current position of the progress bar.  This should be within the limits set by
+	// SetRange.  If it is not, then the value is set to either the minimum or the maximum.
+	[propput] HRESULT Position(
+		[in] int nPos);
+	// Set the size of the step increment used by Step.
+	[propput] HRESULT StepSize(
+		[in] int nStepInc);
+	// Set the minimum and maximum values of the progress bar.
+	HRESULT SetRange(
+		[in] int nMin,
+		[in] int nMax);
+};
+
+/***********************************************************************************************
+	Interface IAdvInd4
+	This interface is a more advanced version of IAdvInd3 that adds more functionality for
+	interacting with a progress report.
+
+	@h3{When to implement}
+	When you want to receive notification from a client that expects an instance of this
+	interface.
+
+	@h3{When to use}
+	Use this interface when implementing a function that needs to report progress.
+
+	@h3{How to obtain an instance}
+	This is implemented by ${AfProgressDlg}.
+
+	@h3{Hungarian: advi4}
+***********************************************************************************************/
+DeclareInterface(AdvInd4, AdvInd, 38C43885-5024-4057-B627-C7DF1651AD9D)
+{
+	/*:Ignore in Surveyor
+	NOTE: We can't derive from AdvInd3 because by doing that [propput] comes before [propget],
+	and this messes things up in managed code.
+	/*:End Ignore*/
+
+	// Get the title of the progress display window.
+	// @param bstrTitle Title string.
+	[propget] HRESULT Title(
+		[out, retval] BSTR * pbstrTitle);
+	// Set the title of the progress display window.
+	// @param bstrTitle Title string.
+	[propput] HRESULT Title(
+		[in] BSTR bstrTitle);
+	// Get the message within the progress display window.
+	// @param bstrMessage Message string.
+	[propget] HRESULT Message(
+		[out, retval] BSTR * pbstrMessage);
+	// Set the message within the progress display window.
+	// @param bstrMessage Message string.
+	[propput] HRESULT Message(
+		[in] BSTR bstrMessage);
+	// Get the current position of the progress bar.  This should be within the limits set by
+	// SetRange, or returned by GetRange.
+	[propget] HRESULT Position(
+		[out, retval] int * pnPos);
+	// Set the current position of the progress bar.  This should be within the limits set by
+	// SetRange.  If it is not, then the value is set to either the minimum or the maximum.
+	[propput] HRESULT Position(
+		[in] int nPos);
+	// Get the size of the step increment used by Step.
+	[propget] HRESULT StepSize(
+		[out, retval] int * pnStepInc);
+	// Set the size of the step increment used by Step.
+	[propput] HRESULT StepSize(
+		[in] int nStepInc);
+	// Get the minimum and maximum values of the progress bar.
+	HRESULT GetRange(
+		[out] int * pnMin,
+		[out] int * pnMax);
+	// Set the minimum and maximum values of the progress bar.
+	HRESULT SetRange(
+		[in] int nMin,
+		[in] int nMax);
+};
+
+#ifdef DEBUG
+/*----------------------------------------------------------------------------------------------
+	Report type
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum CrtReportType
+{
+	Warn    = 0x0,	// Warning
+	Error   = 0x1,	// Error
+	Assert  = 0x2,	// Assertion
+} CrtReportType;
+
+/*----------------------------------------------------------------------------------------------
+	Interface IDebugReportSink
+	This interface is used in managed code (C#) for debugging purposes. It allows managed
+	code to get and display debug output and assertions from unmanaged code.
+	Debug version only.
+
+	@h3{When to implement}
+	When you want to receive (or ignore) debug output in a non-standard way.
+
+	@h3{When to use}
+	You pass this interface to the SetSink method of IDebugReport.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_DebugReportSink or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: dbrs}
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(DebugReportSink, Unknown, 14E389C6-C986-4e31-AE70-1CC10CC35471)
+{
+	// Method that gets called to report any debug messages. This is needed to display
+	// debug output and assert messages in managed code that happen in unmanaged code when
+	// unmanaged debugging is not turned on.
+	// @param nReportType Type of report
+	// @param szMsg Debug message
+	HRESULT Report(
+		[in] CrtReportType nReportType,
+		[in] BSTR szMsg);
+};
+
+/*----------------------------------------------------------------------------------------------
+	Interface IDebugReport
+	This interface provides means for managed code (C#) to detour debug output and control
+	the popping up of message boxes on asserts.
+	Debug version only.
+
+	@h3{When to implement}
+	Usually the default implementation should be sufficient.
+
+	@h3{When to use}
+	In managed code when you want to receive debug output from unmanaged code.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_DebugReport or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: dbr}
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(DebugReport, Unknown, 05E21528-6B39-4c25-9CDC-38C318ECE22C)
+{
+	// Sets a flag that controls if an assert in unmanaged code will pop up a message box
+	// or not.
+	HRESULT ShowAssertMessageBox(
+		[in] ComBool fShowMessageBox);
+
+	// Sets the DebugReport sink object that gets called for reporting debug output.
+	HRESULT SetSink(
+		[in] IDebugReportSink * pSink);
+
+	// Sets the DebugReport sink object to NULL
+	HRESULT ClearSink();
+};
+
+#ifndef NO_COCLASSES
+DeclareCoClass(DebugReport, 24636FD1-DB8D-4b2c-B4C0-44C2592CA482)
+{
+	interface IDebugReport;
+};
+#endif // !NO_COCLASSES
+
+#endif // DEBUG
+
+/*******************************************************************************************
+	Interface IHelpTopicProvider
+
+	Dialogs can accept a pointer to this interface in order to request app-specific help
+	file and topics. For example, a dialog can request a help file URL to use when the user
+	presses the dialog's help button.
+
+	@h3{When to implement}
+	Any app which has a help file should implement this directly or own an object dedicated
+	to implementing this.
+
+	@h3{When to use}
+	A class implementing this interface should be created right at the initialization of
+	an application.
+
+	@h3{Hungarian: htprov}
+*******************************************************************************************/
+DeclareInterface(HelpTopicProvider, Unknown, AF8960FB-B7AF-4259-832B-38A3F5629052)
+{
+	// Gets a property for a dialog.
+	HRESULT GetHelpString(
+		[in] BSTR bstrPropName,
+		[in] int iKey,
+		[out, retval] BSTR * pbstrPropValue);
+};
+
+/*******************************************************************************************
+	Interface IFwFldSpec
+	This interface provides information for a user view field specification.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwFldSpec or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: ffsp}
+*******************************************************************************************/
+DeclareInterface(FwFldSpec, Unknown, 06F93AE5-6A28-4e68-9C19-A0ED0D9CE759)
+{
+	[propget] HRESULT Visibility(
+		[out, retval] int * pnVis);
+	[propput] HRESULT Visibility(
+		[in] int nVis);
+
+	[propget] HRESULT HideLabel(
+		[out, retval] ComBool * pfHide);
+	[propput] HRESULT HideLabel(
+		[in] ComBool fHide);
+
+	[propget] HRESULT Label(
+		[out, retval] ITsString ** pptssLabel);
+	[propput] HRESULT Label(
+		[in] ITsString * ptssLabel);
+
+	[propget] HRESULT FieldId(
+		[out, retval] int * pflid);
+	[propput] HRESULT FieldId(
+		[in] int flid);
+
+	[propget] HRESULT ClassName(
+		[out, retval] BSTR * pbstrClsName);
+	[propput] HRESULT ClassName(
+		[in] BSTR bstrClsName);
+
+	[propget] HRESULT FieldName(
+		[out, retval] BSTR * pbstrFieldName);
+	[propput] HRESULT FieldName(
+		[in] BSTR bstrFieldName);
+
+	[propget] HRESULT Style(
+		[out, retval] BSTR * pbstrStyle);
+	[propput] HRESULT Style(
+		[in] BSTR bstrStyle);
+};
+
+
+/*******************************************************************************************
+	Interface IUndoGrouper
+	This interface supports grouping a seq. of Undo and/or Redo actions into a transaction.
+	Note that it is NOT used for the grouping of the original 'doing' of the actions; that
+	is the responsibility of the code that is executing the original actions. Rather, it
+	is used by the ActionHandler during an actual Undo or Redo operation to group the
+	(possibly several) UndoActions that make up a single action-handler Undo/Redo.
+
+	@h3{When to implement}
+	The existing implementation in IOleDbEncap is sufficient.
+
+	@h3{When to use}
+	Pass the instance of this to the ActionHandler if you have one. All other calls will be
+	made by the ActionHandler.
+
+	@h3{How to obtain an instance}
+	QueryInterface on IOleDbEncap.
+
+	@h3{Hungarian: undg}
+*******************************************************************************************/
+DeclareInterface(UndoGrouper, Unknown, C38348D3-392C-4e02-BD50-A01DC4189E1D)
+{
+	// Called before the seq of undo actions is undone or redone. (Begin Transaction)
+	// Returns a handle that must be passed to the corresponding EndGroup or CancelGroup.
+	HRESULT BeginGroup(
+		[out, retval] int * phndl);
+
+	// Called to end a seq of undo actions. (End Transaction)
+	HRESULT EndGroup(
+		[in] int hndl);
+
+	// Call following and error condition to return things to the state where it was when the
+	// BeginGroup was called. (Rollback)
+	HRESULT CancelGroup(
+		[in] int hndl);
+};
+
+
+#ifndef NO_COCLASSES
+DeclareCoClass(FwFldSpec, 51C4C464-12D2-4CB8-96F3-66E18A6A3AC6)
+{
+	interface IFwFldSpec;
+};
+#endif // !NO_COCLASSES
+
+/*******************************************************************************************
+	Interface IIcuCleanupCallback
+
+	An interface that is implemented by clients using IcuCleanupManager, to receive
+	a callback when IcuCleanup is called. See views\VwPattern.cpp and
+	VwPatternIcuCleanupCallback (in VwPattern.h) for an example.
+
+	@h3{When to implement}
+	Whenever you need to use the IcuCleanupManager.
+
+	@h3{When to use}
+	Don't use directly; called by the cleanup manager.
+
+	@h3{Hungarian: iclncb}
+*******************************************************************************************/
+DeclareInterface(IcuCleanupCallback, Unknown, 0736143E-A316-4d7f-A710-F3B95475E73F)
+{
+	// Informs the implementor that a cleanup has been performed. The receiver should NOT
+	// recreate the object immediately, as that will invalidate the purpose of the cleanup.
+	// It should only be re-created when actually needed.
+	HRESULT DoneCleanup();
+}
+
+/*******************************************************************************************
+	Interface IIcuCleanupManager
+
+	An interface that supports registry of ICU objects, so that when we need to clean up
+	ICU to allow us to install a language, we can clean up the objects that will be
+	invalidated. This is a singleton. A client typically implements an IcuCleanupCallback
+	and creates one when creating an ICU object that it intends to hold on to.
+
+	Note: do not retain a pointer to an IcuCleanupManager. When no callbacks are registered,
+	the singleton is discarded, and a new one made when next needed. This helps avoid
+	memory leaks at shutdown.
+
+	@h3{When to implement}
+	The standard implementation should be used.
+
+	@h3{When to use}
+	Whenever you create an ICU object and intend to hang on to it beyond the lifetime of
+	a single method (or past any operation that might call IcuCleanup).
+
+	@h3{Hungarian: icln}
+*******************************************************************************************/
+DeclareInterface(IcuCleanupManager, Unknown, 45DFFD32-BD95-4762-8574-39A06CBFF3C8)
+{
+	// Register a callback to be notified when a cleanup is performed.
+	HRESULT RegisterCleanupCallback(
+		[in] IIcuCleanupCallback * piclncb);
+	// Unregister a callback no longer needed.
+	HRESULT UnregisterCleanupCallback(
+		[in] IIcuCleanupCallback * piclncb);
+	// Perform a cleanup and inform everyone.
+	HRESULT Cleanup();
+}
+
+#ifndef NO_COCLASSES
+	DeclareCoClass(IcuCleanupManager, 7834827A-D68D-4dbb-877E-EC46400BF651)
+	{
+		interface IIcuCleanupManager;
+	};
+#endif // !NO_COCLASSES

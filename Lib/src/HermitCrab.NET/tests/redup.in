@@ -1,0 +1,184 @@
+;Test reduplication.
+(load_nat_class message <nat_class name null features ()>)
+(load_nat_class message <nat_class name C features (cons +)>)
+(load_nat_class message <nat_class name V features (cons -)>)
+(load_nat_class message <nat_class name voiced features (vd +)>)
+(load_nat_class message <nat_class name affricate features (del_rel + cont -)>)
+;Load a mrule (msg 6505):
+;Reduplicate the first CV of the word:
+(load_morpher_rule message
+  <mrule  nm redup
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl RED
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class C>
+									   <simp_cntxt class V>
+									  )
+									  (<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>)
+									 )
+						 >
+					  out <m_rhs p_out (1 1 2)>
+					>
+				  )
+	>
+)
+;Trace it (msg 6535):
+(trace_morpher_rule message (true true redup))
+;Also trace lex lookup:
+(trace_lexical_lookup message true)
+;Now test:
+(morph_and_lookup_word pretty_print sasag)
+
+;Add a prule, which will apply after redup to slightly alter the output by
+; modifying part of the stem.
+; s --> [+vd] / V__V
+; The result is that the reduplicated piece won't be quite identical to
+; the part of the stem on which it was based:
+(load_morpher_rule message
+  <prule  nm voicing
+		  str (allophonic)
+		  in_pseq (<seg rep s ctable table1>)
+		  subrules (<psub out_pseq (<simp_cntxt class voiced>)
+						  left_environ  <ptemp pseq (<simp_cntxt class V>)>
+						  right_environ <ptemp pseq (<simp_cntxt class V>)>
+					>
+				   )
+  >
+)
+;Test:
+(morph_and_lookup_word pretty_print sazag)
+
+;Add another prule, which will also apply after redup, but will modify
+; the reduplicated morpheme instead:
+; s --> [+del_rel] / #__
+(load_morpher_rule message
+  <prule  nm affrication
+		  str (allophonic)
+		  in_pseq (<seg rep s ctable table1>)
+		  subrules (<psub out_pseq (<simp_cntxt class affricate>)
+						  left_environ <ptemp init true pseq ()>
+					>
+				   )
+  >
+)
+;Test:
+(morph_and_lookup_word pretty_print tsazag)
+
+;Modify the reduplication rule to reduplicate the last VC (probably not realistic,
+; but who cares?)
+(load_morpher_rule message
+  <mrule  nm redup
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl RED
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>)
+									  (<simp_cntxt class V>
+									   <simp_cntxt class C>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (1 2 2)>
+					>
+				  )
+	>
+)
+;Test:
+(morph_and_lookup_word pretty_print tsagag)
+
+;Tidy things up a bit by removing the prules:
+(remove_morpher_rule message voicing)
+(remove_morpher_rule message affrication)
+
+;Modify the reduplication rule to be total reduplication of a CVC stem,
+; but only the CVC part of a larger stem:
+(load_morpher_rule message
+  <mrule  nm redup
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl RED
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>)
+									  (<simp_cntxt class C>
+									   <simp_cntxt class V>
+									   <simp_cntxt class C>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (1 2 2)>
+					>
+				  )
+	>
+)
+;Test, first with a CVC stem:
+(morph_and_lookup_word pretty_print sagsag)
+;...and with a larger stem:
+(morph_and_lookup_word pretty_print sasibudbud)
+
+;Now restore the previous version of the reduplication rule:
+(load_morpher_rule message
+  <mrule  nm redup
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl RED
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>)
+									  (<simp_cntxt class V>
+									   <simp_cntxt class C>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (1 2 2)>
+					>
+				  )
+	>
+)
+;Add a deletion rule to modify the stem, and see if we can still match:
+; g --> 0 / V__V (like Turkish)
+(load_morpher_rule message
+  <prule  nm g_delete
+		  str (allophonic)
+		  in_pseq (<seg rep g ctable table1>)
+		  subrules (<psub out_pseq ()
+						  left_environ  <ptemp pseq (<simp_cntxt class V>)>
+						  right_environ <ptemp pseq (<simp_cntxt class V>)>
+					>
+				   )
+  >
+)
+;Test:
+(morph_and_lookup_word pretty_print saag)
+
+;Modify the deletion rule to do it to the reduplicated part, rather than
+; to the stem:
+(load_morpher_rule message
+  <prule  nm g_delete
+		  str (allophonic)
+		  in_pseq (<seg rep g ctable table1>)
+		  subrules (<psub out_pseq ()
+						  right_environ <ptemp fin true pseq ()>
+					>
+				   )
+  >
+)
+;Test:
+(morph_and_lookup_word pretty_print saga)
+
+;Remove remaining rules (msg 6506):
+(remove_morpher_rule message redup)
+(remove_morpher_rule message g_delete)
+;...and the natural classes (msg 6542):
+(remove_nat_class message null)
+(remove_nat_class message C)
+(remove_nat_class message V)
+(remove_nat_class message voiced)
+(remove_nat_class message affricate)

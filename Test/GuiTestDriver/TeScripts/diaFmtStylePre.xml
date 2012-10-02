@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <click wait="1000" path="button:Views" />
+  <click path="button:Draft" />
+  <!-- put the cursor on some default paragraph style text -->
+  <select-text id="snip" path="view:Draft" loc="b:0/s:3/p:2" at="0" run="100"/>
+  <click path="menu:Format/menu:Style..." />
+  <on-dialog title="Style">
+   <glimpse path="combobox:List:" prop="name" expect="List:" on-fail="assert">
+	Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+   </glimpse>
+   <glimpse select="//dialog[@name='Style']/*[name()!='tabs']" prop="name" on-fail="assert">
+	Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+   </glimpse>
+   <!--click wait="1000" select="//dialog[@id='diaFmtStyle']/tabs/tab" /-->
+   <!--click path="tab:Font"/>
+   <glimpse select="//dialog[@name='Style']/tabs/tab[@name='Font']/*" prop="name" on-fail="assert">
+	Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+   </glimpse-->
+   <click path="tab:Paragraph"/>
+   <glimpse select="//dialog[@name='Style']/tabs/tab[@name='Paragraph']/*" prop="name" on-fail="assert">
+	Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+   </glimpse>
+   <!--glimpse select="//menubar[@id='mainMenu']/button//item" prop="hotkey" on-fail="assert">
+	Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+   </glimpse-->
+   <click wait="1000" path="tab:General"/>
+   <click path="button:Cancel" />
+  </on-dialog>
+ </on-application>
+</accil>

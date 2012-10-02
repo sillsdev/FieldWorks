@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="residgen" default="residgen.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	residgen.build - Builds the residgen project (ResIdGen.exe).
+	2005.10.14 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="residgen.build" description="Peforms a full rebuild (clean then build)" depends="residgen.clean, residgen.inc" />
+
+  <!-- Clean -->
+  <target name="residgen.clean" description="Cleans the build">
+	<delete dir="${dir.build.residgen}" failonerror="false" if="${directory::exists(dir.build.residgen)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="ResIdGen.exe" />
+		<include name="ResIdGen.pdb" />
+		<include name="ResIdGen.xml" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="residgen.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Build the residgen.exe -->
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\ResIdGen.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  doc="${dir.target.wix}\ResIdGen.xml"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <nowarn>
+		<!-- Missing XML comment for publicly visible type or member 'x' -->
+		<warning number="1591" />
+	  </nowarn>
+	  <sources basedir="${dir.src.residgen}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="ResIdGen.cs" />
+		<include name="ReturnValue.cs" />
+	  </sources>
+	</csc>
+  </target>
+
+</project>

@@ -1,0 +1,80 @@
+	/*******************************************************************************************
+		Interface IBackupDelegates
+
+		IBackupDelegates provides a means for the backup and restore process to gain access to
+		certain methods within an application. Before using this interface for that purpose, a
+		pointer to an AfDbApp object was passed to the backup and restore Init() method. Since
+		that made the backup and restore object unusable from .Net applications, this interface
+		was created to solve that problem. For the most part, this interface duplicates the
+		methods the backup and restore process used to use on the AfDbApp pointer. Now pointer
+		to a BackupDelegates interface is passed to the backup and retore's Init() method and
+		the application must implement the interface.
+
+		@h3{When to implement}
+		In applications that want to use the backup and restore object. (A default implementation
+		should be in $(AfDbApp). AfDbApp is derived from this interface.)
+
+		@h3{When to use}
+		Whenever you call the Init() method of the backup and restore object.
+
+		@h3{How to obtain an instance}
+		Assuming your application derives from IBackupDelegates, use "this".
+
+		@h3{Hungarian bkupd}
+	*******************************************************************************************/
+	DeclareInterface(BackupDelegates, Unknown, 88C08ADA-BCB9-4410-A937-79CB22C77125)
+	{
+		// Returns the local server name.
+		HRESULT GetLocalServer_Bkupd(
+			[out, retval] BSTR * pbstrSvrName);
+
+		// Returns a pointer to a log stream for backup/restore logging, if it is not null.
+		HRESULT GetLogPointer_Bkupd(
+			[out, retval] IStream** ppfist);
+
+		// A useful implementation of this method should cycle through its main windows to
+		// call SaveData on each one which is connected to the specified database.
+		// A useless implementation would calculate pi to 16 digits and then throw an exception.
+		HRESULT SaveAllData_Bkupd(
+			[in, string] const OLECHAR * pszServer,
+			[in, string] const OLECHAR * pszDbName);
+
+		// Close any windows associated with a database, save the database, clear all caches,
+		// and shutdown the connection to the database.
+		HRESULT CloseDbAndWindows_Bkupd(
+			[in, string]  const OLECHAR * pszSvrName,
+			[in, string]  const OLECHAR * pszDbName,
+			[in]  ComBool fOkToClose,
+			[out, retval] ComBool * pfWindowsClosed);
+
+		// Increment the count of objects (currently, typically FwTool objects) an
+		// application has made available to other processes.
+		HRESULT IncExportedObjects_Bkupd();
+
+		// Decrement the count of objects (currently, typically FwTool objects) an
+		// application has made available to other processes.
+		HRESULT DecExportedObjects_Bkupd();
+
+		// Check for compatibility between an application and a database. If they match then
+		// return true. Otherwise return false.
+		HRESULT CheckDbVerCompatibility_Bkupd(
+			[in, string]  const OLECHAR * pszSvrName,
+			[in, string]  const OLECHAR * pszDbName,
+			[out, retval] ComBool * pfCompatible);
+
+		// Re-open a new main window on the specified data. This is intended to be used after a
+		// Restore operation, so that the user is not left with nothing after his windows were
+		// shut down before the restore.
+		HRESULT ReopenDbAndOneWindow_Bkupd(
+			[in, string] const OLECHAR * pszSvrName,
+			[in, string] const OLECHAR * pszDbName);
+
+		// Get default for backup/restore directory
+		HRESULT GetDefaultBackupDirectory(
+			[out, retval] BSTR * pbstrDefBackupDir);
+
+		HRESULT IsDbOpen_Bkupd(
+			[in, string] const OLECHAR * pszServer,
+			[in, string] const OLECHAR * pszDbName,
+			[out, retval] ComBool * pfIsOpen);
+	};

@@ -1,0 +1,1459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================
+FXT to generate output for M3 Parser (for Stage 2)
+================================================================
+Revision History is at the end of this file.
+-->
+<M3Dump><PartsOfSpeech><PartOfSpeech DefaultInflectionClass="0" Id="242"><Name>Adverb</Name>
+<Abbreviation>adv</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="244"><Name>Pro-form</Name>
+<Abbreviation>pro-form</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="245" ord="0"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="245"><Name>Pronoun</Name>
+<Abbreviation>pro</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="246"><Name>Verb</Name>
+<Abbreviation>v</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="18428"><Name>Noun</Name>
+<Abbreviation>n</Abbreviation>
+<AffixSlots><MoInflAffixSlot Id="18430" Optional="0"><Name>Case and number</Name>
+<Description></Description>
+</MoInflAffixSlot>
+</AffixSlots>
+<AffixTemplates><MoInflAffixTemplate Final="1" Id="18429"><Name>Noun endings</Name>
+<Description></Description>
+<SuffixSlots dst="18430" ord="0"/>
+</MoInflAffixTemplate>
+</AffixTemplates>
+<InflectionClasses><MoInflClass Id="18431"><Name>5th declension nouns</Name>
+<Abbreviation>5th Decl. N.</Abbreviation>
+<Description>Nouns of the fifth declension</Description>
+</MoInflClass>
+<MoInflClass Id="18432"><Name>4th declension nouns</Name>
+<Abbreviation>4th Decl. N.</Abbreviation>
+<Description>Nouns of the fourth declension</Description>
+<MoInflClass Id="19018"><Name>4th declension -us nouns</Name>
+<Abbreviation>4th Decl. -us N.</Abbreviation>
+<Description>4th declension masculine and feminine nouns with nominative singular ending in -us</Description>
+</MoInflClass>
+<MoInflClass Id="19019"><Name>4th declension -u nouns</Name>
+<Abbreviation>4th Decl. -u N.</Abbreviation>
+<Description>4th declension neuter nouns with nominative singular ending in -u</Description>
+</MoInflClass>
+</MoInflClass>
+<MoInflClass Id="18433"><Name>3rd declension nouns</Name>
+<Abbreviation>3rd Decl. N.</Abbreviation>
+<Description>Nouns of the third declension</Description>
+<MoInflClass Id="19007"><Name>3rd declension consonant stem nouns</Name>
+<Abbreviation>3rd Decl. Cons. N.</Abbreviation>
+<Description>Nouns of the third declension so-called consonant stem</Description>
+<MoInflClass Id="19008"><Name>3rd declension consonant stem masculine or feminine nouns</Name>
+<Abbreviation>3rd Decl. Cons. M/F N.</Abbreviation>
+<Description>Masculine and feminine nouns of the third declension so-called consonant stem</Description>
+</MoInflClass>
+<MoInflClass Id="19012"><Name>3rd declension consonant stem neuter nouns</Name>
+<Abbreviation>3rd Decl. Cons. Neut. N.</Abbreviation>
+<Description>Neuter nouns of the third declension so-called consonant stem</Description>
+</MoInflClass>
+</MoInflClass>
+<MoInflClass Id="19013"><Name>3rd declension i-stem nouns</Name>
+<Abbreviation>3rd Decl. I. N.</Abbreviation>
+<Description>Nouns of the third declension so-called i-stem</Description>
+<MoInflClass Id="19014"><Name>3rd declension i-stem masculine or feminine nouns</Name>
+<Abbreviation>3rd Decl. I. M/F N.</Abbreviation>
+<Description>Masculine and feminine nouns of the third declension so-called i-stem</Description>
+</MoInflClass>
+<MoInflClass Id="19015"><Name>3rd declension i-stem neuter nouns</Name>
+<Abbreviation>3rd Decl. I. Neut. N.</Abbreviation>
+<Description>Neuter nouns of the third declension so-called i-stem</Description>
+</MoInflClass>
+</MoInflClass>
+</MoInflClass>
+<MoInflClass Id="18434"><Name>2nd declension nouns</Name>
+<Abbreviation>2nd Decl. N.</Abbreviation>
+<Description>Nouns of the second declension</Description>
+<MoInflClass Id="19005"><Name>2nd declension masculine nouns</Name>
+<Abbreviation>2nd Decl. Masc. N.</Abbreviation>
+<Description>2nd declension masculine nouns</Description>
+<MoInflClass Id="19009"><Name>2nd declension masculine stem in -r nouns</Name>
+<Abbreviation>2nd Decl. -r N.</Abbreviation>
+<Description>2nd declension masculine nouns where the nominative singular ends in -er and is not formed by regular inflection of the stem</Description>
+</MoInflClass>
+<MoInflClass Id="19010"><Name>2nd declension masculine stem in -er nouns</Name>
+<Abbreviation>2nd Decl. -er N.</Abbreviation>
+<Description>2nd declension masculine nouns that end in -er in the nominative singular which is also the stem form.</Description>
+</MoInflClass>
+<MoInflClass Id="19011"><Name>2nd declension masculine regular nominative singular in -us nouns</Name>
+<Abbreviation>2nd Decl. Masc. Reg. N.</Abbreviation>
+<Description>Regular 2nd declension masculine nouns that end in -us in the nominative singular.</Description>
+</MoInflClass>
+</MoInflClass>
+<MoInflClass Id="19006"><Name>2nd declension neuter nouns</Name>
+<Abbreviation>2nd Decl. Neut. N.</Abbreviation>
+<Description>2nd declension regular neuter nouns that end in -um in the nominative singular.</Description>
+</MoInflClass>
+</MoInflClass>
+<MoInflClass Id="18435"><Name>1st declension nouns</Name>
+<Abbreviation>1st Decl. N.</Abbreviation>
+<Description>Nouns of the first declension</Description>
+</MoInflClass>
+</InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="17784"><Name>Preposition</Name>
+<Abbreviation>prep</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="17809"><Name>Coordinating connective</Name>
+<Abbreviation>coordconn</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="18318"><Name>Adjective</Name>
+<Abbreviation>adj</Abbreviation>
+<AffixSlots><MoInflAffixSlot Id="19059" Optional="0"><Name>Gender, number &amp; case</Name>
+<Description></Description>
+</MoInflAffixSlot>
+</AffixSlots>
+<AffixTemplates><MoInflAffixTemplate Final="1" Id="19058"><Name>Adjective agreement</Name>
+<Description>Suffixes for adjectives to make them agree with their nouns in gender, number and case.</Description>
+<SuffixSlots dst="19059" ord="0"/>
+</MoInflAffixTemplate>
+</AffixTemplates>
+<InflectionClasses><MoInflClass Id="19047"><Name>1st and 2nd declension adjectives</Name>
+<Abbreviation>1st &amp; 2nd Decl. Adj,</Abbreviation>
+<Description>Adjectives of the 1st and 2nd declensions</Description>
+<MoInflClass Id="19214"><Name>1st and 2nd declension adjectives stem in -er</Name>
+<Abbreviation>1st &amp; 2nd Decl. Adj, -er</Abbreviation>
+<Description>Adjectives of the 1st and 2nd declensions where the nominative masculine singular ends in -er and is not formed by regular inflection of the stem</Description>
+</MoInflClass>
+</MoInflClass>
+<MoInflClass Id="19060"><Name>3rd declension adjectives</Name>
+<Abbreviation>3rd Decl. Adj.</Abbreviation>
+<Description>Adjectives of the 3rd declension</Description>
+<MoInflClass Id="19061"><Name>3rd declension 3-form adjectives</Name>
+<Abbreviation>3rd Decl. Adj. 3f</Abbreviation>
+<Description>Adjectives of the 3rd declension having 3 nominative singular forms</Description>
+</MoInflClass>
+<MoInflClass Id="19062"><Name>3rd declension 2-form adjectives</Name>
+<Abbreviation>3rd Decl. Adj. 2f</Abbreviation>
+<Description>Adjectives of the 3rd declension having 2 nominative singular forms</Description>
+</MoInflClass>
+<MoInflClass Id="19063"><Name>3rd declension 1-form adjectives</Name>
+<Abbreviation>3rd Decl. Adj. 1f</Abbreviation>
+<Description>Adjectives of the 3rd declension having 1 nominative singular form</Description>
+<MoInflClass Id="19374"><Name>3rd declension 1-form consonant stem adjectives</Name>
+<Abbreviation>3rd Decl. Adj. 1f C-Stem</Abbreviation>
+<Description>Adjectives of the 3rd declension having 1 nominative singular form, declining on the pattern of the consonant stems of the 3rd declension</Description>
+</MoInflClass>
+</MoInflClass>
+</MoInflClass>
+</InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+</PartsOfSpeech>
+<PhPhonData Id="439"><Environments><PhEnvironment Id="18941" LeftContext="0" RightContext="0" StringRepresentation="/ # _ #"><Name>Unattached morpheme</Name>
+</PhEnvironment>
+</Environments>
+<NaturalClasses><PhNCSegments Id="440"><Abbreviation>C</Abbreviation>
+<Segments dst="457"/>
+<Segments dst="459"/>
+<Segments dst="461"/>
+<Segments dst="463"/>
+<Segments dst="465"/>
+<Segments dst="467"/>
+<Segments dst="469"/>
+<Segments dst="473"/>
+<Segments dst="477"/>
+<Segments dst="479"/>
+<Segments dst="481"/>
+<Segments dst="485"/>
+<Segments dst="487"/>
+<Segments dst="489"/>
+<Segments dst="491"/>
+</PhNCSegments>
+<PhNCSegments Id="441"><Abbreviation>V</Abbreviation>
+<Segments dst="447"/>
+<Segments dst="449"/>
+<Segments dst="451"/>
+<Segments dst="453"/>
+<Segments dst="455"/>
+</PhNCSegments>
+</NaturalClasses>
+<Contexts></Contexts>
+<PhonemeSets><PhPhonemeSet Id="442"><Name>Main phoneme set</Name>
+<Phonemes><PhPhoneme Id="447"><Codes><PhCode Id="448"><Representation>i</Representation>
+</PhCode>
+<PhCode Id="18416"><Representation>j</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="449"><Codes><PhCode Id="450"><Representation>e</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="451"><Codes><PhCode Id="452"><Representation>a</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="453"><Codes><PhCode Id="454"><Representation>o</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="455"><Codes><PhCode Id="456"><Representation>u</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="457"><Codes><PhCode Id="458"><Representation>p</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="459"><Codes><PhCode Id="460"><Representation>b</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="461"><Codes><PhCode Id="462"><Representation>t</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="463"><Codes><PhCode Id="464"><Representation>d</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="465"><Codes><PhCode Id="466"><Representation>c</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="467"><Codes><PhCode Id="468"><Representation>g</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="469"><Codes><PhCode Id="470"><Representation>f</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="473"><Codes><PhCode Id="474"><Representation>s</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="477"><Codes><PhCode Id="478"><Representation>x</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="479"><Codes><PhCode Id="480"><Representation>m</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="481"><Codes><PhCode Id="482"><Representation>n</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="485"><Codes><PhCode Id="486"><Representation>l</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="487"><Codes><PhCode Id="488"><Representation>r</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="489"><Codes><PhCode Id="490"><Representation>v</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="491"><Codes><PhCode Id="492"><Representation>h</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="18417"><Codes><PhCode Id="18418"><Representation>q</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+</Phonemes>
+<BoundaryMarkers><PhBdryMarker Guid="7db635e0-9ef3-4167-a594-12551ed89aaa" Id="443"><Name>#</Name>
+<Codes><PhCode Id="444"><Representation>#</Representation>
+</PhCode>
+</Codes>
+</PhBdryMarker>
+<PhBdryMarker Guid="3bde17ce-e39a-4bae-8a5c-a8d96fd4cb56" Id="445"><Name>+</Name>
+<Codes><PhCode Id="446"><Representation>+</Representation>
+</PhCode>
+</Codes>
+</PhBdryMarker>
+</BoundaryMarkers>
+</PhPhonemeSet>
+</PhonemeSets>
+<FeatConstraints></FeatConstraints>
+<PhonRules></PhonRules>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+</PhPhonData>
+<ParserParameters><XAmple><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxNulls>1</MaxNulls><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters><CompoundRules></CompoundRules>
+<AdhocCoProhibitions></AdhocCoProhibitions>
+<ProdRestrict></ProdRestrict>
+<MoMorphTypes><MoMorphType Guid="56db04bf-3d58-44cc-b292-4c8aa68538f4" Id="102"><Name>particle</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713da-e8cf-11d3-9764-00c04f186933" Id="103"><Name>infix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713db-e8cf-11d3-9764-00c04f186933" Id="104"><Name>prefix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713dc-e8cf-11d3-9764-00c04f186933" Id="105"><Name>simulfix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713dd-e8cf-11d3-9764-00c04f186933" Id="106"><Name>suffix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713de-e8cf-11d3-9764-00c04f186933" Id="107"><Name>suprafix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713df-e8cf-11d3-9764-00c04f186933" Id="108"><Name>circumfix</Name>
+</MoMorphType>
+<MoMorphType Guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c" Id="109"><Name>clitic</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e1-e8cf-11d3-9764-00c04f186933" Id="110"><Name>enclitic</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e2-e8cf-11d3-9764-00c04f186933" Id="111"><Name>proclitic</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e4-e8cf-11d3-9764-00c04f186933" Id="112"><Name>bound root</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e5-e8cf-11d3-9764-00c04f186933" Id="113"><Name>root</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e7-e8cf-11d3-9764-00c04f186933" Id="114"><Name>bound stem</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e8-e8cf-11d3-9764-00c04f186933" Id="115"><Name>stem</Name>
+</MoMorphType>
+<MoMorphType Guid="18d9b1c3-b5b6-4c07-b92c-2fe1d2281bd4" Id="116"><Name>infixing interfix</Name>
+</MoMorphType>
+<MoMorphType Guid="af6537b0-7175-4387-ba6a-36547d37fb13" Id="117"><Name>prefixing interfix</Name>
+</MoMorphType>
+<MoMorphType Guid="3433683d-08a9-4bae-ae53-2a7798f64068" Id="118"><Name>suffixing interfix</Name>
+</MoMorphType>
+<MoMorphType Guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f" Id="119"><Name>phrase</Name>
+</MoMorphType>
+<MoMorphType Guid="0cc8c35a-cee9-434d-be58-5d29130fba5b" Id="120"><Name>discontiguous phrase</Name>
+</MoMorphType>
+</MoMorphTypes>
+<Lexicon><Entries><LexEntry Id="17785"><LexemeForm dst="17788" MorphType="115"></LexemeForm>
+<Sense dst="17786" ord="0"/>
+<Sense dst="18574" ord="1"/>
+<MorphoSyntaxAnalysis dst="17787"/>
+</LexEntry>
+<LexEntry Id="17794"><LexemeForm dst="17797" MorphType="115"></LexemeForm>
+<Sense dst="17795" ord="0"/>
+<MorphoSyntaxAnalysis dst="17796"/>
+</LexEntry>
+<LexEntry Id="17810"><LexemeForm dst="17813" MorphType="115"></LexemeForm>
+<Sense dst="17811" ord="0"/>
+<Sense dst="18261" ord="1"/>
+<MorphoSyntaxAnalysis dst="17812"/>
+<MorphoSyntaxAnalysis dst="18262"/>
+</LexEntry>
+<LexEntry Id="17943"><AlternateForms dst="17951" ord="0"/>
+<LexemeForm dst="17946" MorphType="114"></LexemeForm>
+<Sense dst="17944" ord="0"/>
+<MorphoSyntaxAnalysis dst="18439"/>
+</LexEntry>
+<LexEntry Id="18091"><AlternateForms dst="18100" ord="0"/>
+<AlternateForms dst="18101" ord="1"/>
+<LexemeForm dst="18094" MorphType="106"></LexemeForm>
+<Sense dst="18092" ord="0"/>
+<Sense dst="19107" ord="1"/>
+<MorphoSyntaxAnalysis dst="18093"/>
+<MorphoSyntaxAnalysis dst="19108"/>
+</LexEntry>
+<LexEntry Id="18104"><AlternateForms dst="18948" ord="0"/>
+<AlternateForms dst="18115" ord="1"/>
+<AlternateForms dst="18114" ord="2"/>
+<AlternateForms dst="19026" ord="3"/>
+<AlternateForms dst="19384" ord="4"/>
+<LexemeForm dst="18107" MorphType="106"></LexemeForm>
+<Sense dst="18105" ord="0"/>
+<Sense dst="19084" ord="1"/>
+<MorphoSyntaxAnalysis dst="18106"/>
+<MorphoSyntaxAnalysis dst="19085"/>
+</LexEntry>
+<LexEntry Id="18117"><AlternateForms dst="18702" ord="0"/>
+<AlternateForms dst="18200" ord="1"/>
+<AlternateForms dst="18248" ord="2"/>
+<AlternateForms dst="18202" ord="3"/>
+<AlternateForms dst="18663" ord="4"/>
+<AlternateForms dst="19064" ord="5"/>
+<AlternateForms dst="19065" ord="6"/>
+<LexemeForm dst="18120" MorphType="106"></LexemeForm>
+<Sense dst="18118" ord="0"/>
+<Sense dst="19048" ord="1"/>
+<MorphoSyntaxAnalysis dst="18119"/>
+<MorphoSyntaxAnalysis dst="19049"/>
+</LexEntry>
+<LexEntry Id="18126"><AlternateForms dst="18208" ord="0"/>
+<AlternateForms dst="18209" ord="1"/>
+<AlternateForms dst="18210" ord="2"/>
+<AlternateForms dst="18211" ord="3"/>
+<LexemeForm dst="18129" MorphType="106"></LexemeForm>
+<Sense dst="18127" ord="0"/>
+<Sense dst="19070" ord="1"/>
+<MorphoSyntaxAnalysis dst="18128"/>
+<MorphoSyntaxAnalysis dst="19071"/>
+</LexEntry>
+<LexEntry Id="18135"><AlternateForms dst="18212" ord="0"/>
+<AlternateForms dst="18213" ord="1"/>
+<AlternateForms dst="18214" ord="2"/>
+<AlternateForms dst="19023" ord="3"/>
+<AlternateForms dst="18215" ord="4"/>
+<AlternateForms dst="19383" ord="5"/>
+<LexemeForm dst="18138" MorphType="106"></LexemeForm>
+<Sense dst="18136" ord="0"/>
+<Sense dst="19077" ord="1"/>
+<MorphoSyntaxAnalysis dst="18137"/>
+<MorphoSyntaxAnalysis dst="19078"/>
+</LexEntry>
+<LexEntry Id="18144"><AlternateForms dst="18203" ord="0"/>
+<AlternateForms dst="19022" ord="1"/>
+<AlternateForms dst="18204" ord="2"/>
+<AlternateForms dst="18205" ord="3"/>
+<LexemeForm dst="18147" MorphType="106"></LexemeForm>
+<Sense dst="18145" ord="0"/>
+<Sense dst="19091" ord="1"/>
+<MorphoSyntaxAnalysis dst="18146"/>
+<MorphoSyntaxAnalysis dst="19092"/>
+</LexEntry>
+<LexEntry Id="18153"><AlternateForms dst="18216" ord="0"/>
+<AlternateForms dst="18218" ord="1"/>
+<AlternateForms dst="18217" ord="2"/>
+<AlternateForms dst="19024" ord="3"/>
+<AlternateForms dst="18219" ord="4"/>
+<AlternateForms dst="19025" ord="5"/>
+<LexemeForm dst="18156" MorphType="106"></LexemeForm>
+<Sense dst="18154" ord="0"/>
+<Sense dst="19098" ord="1"/>
+<MorphoSyntaxAnalysis dst="18155"/>
+<MorphoSyntaxAnalysis dst="19099"/>
+</LexEntry>
+<LexEntry Id="18162"><AlternateForms dst="18226" ord="0"/>
+<AlternateForms dst="18228" ord="1"/>
+<AlternateForms dst="18227" ord="2"/>
+<AlternateForms dst="19027" ord="3"/>
+<AlternateForms dst="18229" ord="4"/>
+<AlternateForms dst="19028" ord="5"/>
+<LexemeForm dst="18165" MorphType="106"></LexemeForm>
+<Sense dst="18163" ord="0"/>
+<Sense dst="19114" ord="1"/>
+<MorphoSyntaxAnalysis dst="18164"/>
+<MorphoSyntaxAnalysis dst="19115"/>
+</LexEntry>
+<LexEntry Id="18166"><AlternateForms dst="18222" ord="0"/>
+<AlternateForms dst="18223" ord="1"/>
+<AlternateForms dst="19016" ord="2"/>
+<AlternateForms dst="18224" ord="3"/>
+<AlternateForms dst="18225" ord="4"/>
+<LexemeForm dst="18169" MorphType="106"></LexemeForm>
+<Sense dst="18167" ord="0"/>
+<Sense dst="19105" ord="1"/>
+<MorphoSyntaxAnalysis dst="18168"/>
+<MorphoSyntaxAnalysis dst="19106"/>
+</LexEntry>
+<LexEntry Id="18170"><AlternateForms dst="18231" ord="0"/>
+<AlternateForms dst="18233" ord="1"/>
+<LexemeForm dst="18173" MorphType="106"></LexemeForm>
+<Sense dst="18171" ord="0"/>
+<Sense dst="19116" ord="1"/>
+<MorphoSyntaxAnalysis dst="18172"/>
+<MorphoSyntaxAnalysis dst="19117"/>
+</LexEntry>
+<LexEntry Id="18174"><AlternateForms dst="19029" ord="0"/>
+<AlternateForms dst="18207" ord="1"/>
+<AlternateForms dst="19017" ord="2"/>
+<AlternateForms dst="19030" ord="3"/>
+<AlternateForms dst="19031" ord="4"/>
+<AlternateForms dst="19032" ord="5"/>
+<AlternateForms dst="19382" ord="6"/>
+<LexemeForm dst="18177" MorphType="106"></LexemeForm>
+<Sense dst="18175" ord="0"/>
+<Sense dst="19375" ord="1"/>
+<MorphoSyntaxAnalysis dst="18176"/>
+<MorphoSyntaxAnalysis dst="19376"/>
+</LexEntry>
+<LexEntry Id="18187"><AlternateForms dst="19033" ord="0"/>
+<AlternateForms dst="19034" ord="1"/>
+<AlternateForms dst="19035" ord="2"/>
+<AlternateForms dst="19036" ord="3"/>
+<LexemeForm dst="18190" MorphType="106"></LexemeForm>
+<Sense dst="18188" ord="0"/>
+<MorphoSyntaxAnalysis dst="18189"/>
+</LexEntry>
+<LexEntry Id="18196"><AlternateForms dst="19038" ord="0"/>
+<AlternateForms dst="19039" ord="1"/>
+<LexemeForm dst="18199" MorphType="106"></LexemeForm>
+<Sense dst="18197" ord="0"/>
+<MorphoSyntaxAnalysis dst="18198"/>
+</LexEntry>
+<LexEntry Id="18249"><AlternateForms dst="18419" ord="0"/>
+<LexemeForm dst="18252" MorphType="114"></LexemeForm>
+<Sense dst="18250" ord="0"/>
+<MorphoSyntaxAnalysis dst="18438"/>
+</LexEntry>
+<LexEntry Id="18267"><LexemeForm dst="18270" MorphType="115"></LexemeForm>
+<Sense dst="18268" ord="0"/>
+<MorphoSyntaxAnalysis dst="18544"/>
+</LexEntry>
+<LexEntry Id="18337"><LexemeForm dst="18340" MorphType="114"></LexemeForm>
+<Sense dst="18338" ord="0"/>
+<MorphoSyntaxAnalysis dst="18339"/>
+</LexEntry>
+<LexEntry Id="18342"><LexemeForm dst="18345" MorphType="106"></LexemeForm>
+<Sense dst="18343" ord="0"/>
+<MorphoSyntaxAnalysis dst="18344"/>
+</LexEntry>
+<LexEntry Id="18519"><LexemeForm dst="18522" MorphType="112"></LexemeForm>
+<Sense dst="18520" ord="0"/>
+<Sense dst="18534" ord="1"/>
+<MorphoSyntaxAnalysis dst="18528"/>
+</LexEntry>
+<LexEntry Id="18535"><LexemeForm dst="18538" MorphType="114"></LexemeForm>
+<Sense dst="18536" ord="0"/>
+<MorphoSyntaxAnalysis dst="18537"/>
+</LexEntry>
+<LexEntry Id="18579"><LexemeForm dst="18582" MorphType="112"></LexemeForm>
+<Sense dst="18580" ord="0"/>
+<MorphoSyntaxAnalysis dst="18581"/>
+</LexEntry>
+<LexEntry Id="18629"><LexemeForm dst="18632" MorphType="114"></LexemeForm>
+<Sense dst="18630" ord="0"/>
+<MorphoSyntaxAnalysis dst="18631"/>
+</LexEntry>
+<LexEntry Id="18637"><LexemeForm dst="18640" MorphType="114"></LexemeForm>
+<Sense dst="18638" ord="0"/>
+<MorphoSyntaxAnalysis dst="18639"/>
+</LexEntry>
+<LexEntry Id="18653"><LexemeForm dst="18656" MorphType="114"></LexemeForm>
+<Sense dst="18654" ord="0"/>
+<MorphoSyntaxAnalysis dst="18655"/>
+</LexEntry>
+<LexEntry Id="18709"><AlternateForms dst="18714" ord="0"/>
+<LexemeForm dst="18712" MorphType="114"></LexemeForm>
+<Sense dst="18710" ord="0"/>
+<MorphoSyntaxAnalysis dst="18713"/>
+</LexEntry>
+<LexEntry Id="19066"><LexemeForm dst="19069" MorphType="114"></LexemeForm>
+<Sense dst="19067" ord="0"/>
+<MorphoSyntaxAnalysis dst="19068"/>
+</LexEntry>
+<LexEntry Id="19118"><LexemeForm dst="19121" MorphType="114"></LexemeForm>
+<Sense dst="19119" ord="0"/>
+<MorphoSyntaxAnalysis dst="19120"/>
+</LexEntry>
+<LexEntry Id="19215"><AlternateForms dst="19219" ord="0"/>
+<LexemeForm dst="19218" MorphType="114"></LexemeForm>
+<Sense dst="19216" ord="0"/>
+<MorphoSyntaxAnalysis dst="19217"/>
+</LexEntry>
+<LexEntry Id="19276"><LexemeForm dst="19279" MorphType="114"></LexemeForm>
+<Sense dst="19277" ord="0"/>
+<MorphoSyntaxAnalysis dst="19278"/>
+</LexEntry>
+<LexEntry Id="19285"><AlternateForms dst="19289" ord="0"/>
+<LexemeForm dst="19288" MorphType="114"></LexemeForm>
+<Sense dst="19286" ord="0"/>
+<MorphoSyntaxAnalysis dst="19287"/>
+</LexEntry>
+<LexEntry Id="19305"><LexemeForm dst="19308" MorphType="115"></LexemeForm>
+<Sense dst="19306" ord="0"/>
+<MorphoSyntaxAnalysis dst="19307"/>
+</LexEntry>
+<LexEntry Id="19335"><LexemeForm dst="19338" MorphType="115"></LexemeForm>
+<Sense dst="19336" ord="0"/>
+<MorphoSyntaxAnalysis dst="19337"/>
+</LexEntry>
+<LexEntry Id="19343"><LexemeForm dst="19346" MorphType="114"></LexemeForm>
+<Sense dst="19344" ord="0"/>
+<MorphoSyntaxAnalysis dst="19345"/>
+</LexEntry>
+<LexEntry Id="19356"><LexemeForm dst="19359" MorphType="115"></LexemeForm>
+<Sense dst="19357" ord="0"/>
+<MorphoSyntaxAnalysis dst="19358"/>
+</LexEntry>
+<LexEntry Id="19385"><AlternateForms dst="19389" ord="0"/>
+<LexemeForm dst="19388" MorphType="114"></LexemeForm>
+<Sense dst="19386" ord="0"/>
+<MorphoSyntaxAnalysis dst="19387"/>
+</LexEntry>
+</Entries>
+<MorphoSyntaxAnalyses><MoStemMsa Id="17787" InflectionClass="0" PartOfSpeech="17784"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="17796" InflectionClass="0" PartOfSpeech="246"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="17812" InflectionClass="0" PartOfSpeech="17809"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18438" InflectionClass="19012" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18439" InflectionClass="19008" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18528" InflectionClass="19006" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18537" InflectionClass="19006" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18544" InflectionClass="0" PartOfSpeech="242"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18581" InflectionClass="18435" PartOfSpeech="18428"><InflectionFeatures><FsFeatStruc Id="18899" Type="0"><FsComplexValue Feature="17872" Id="18900"><FsFeatStruc Id="18901" Type="17871"><FsClosedValue Feature="18614" Id="18902" Value="18616"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18631" InflectionClass="19011" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18639" InflectionClass="19011" PartOfSpeech="18428"><InflectionFeatures><FsFeatStruc Id="18641" Type="0"><FsComplexValue Feature="17872" Id="18642"><FsFeatStruc Id="18643" Type="17871"><FsClosedValue Feature="18614" Id="18644" Value="18615"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18655" InflectionClass="19010" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18713" InflectionClass="19009" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19068" InflectionClass="19047" PartOfSpeech="18318"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19120" InflectionClass="19047" PartOfSpeech="18318"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19217" InflectionClass="19214" PartOfSpeech="18318"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19278" InflectionClass="19008" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19287" InflectionClass="19008" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19307" InflectionClass="19047" PartOfSpeech="18318"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19337" InflectionClass="0" PartOfSpeech="242"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19345" InflectionClass="19006" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19358" InflectionClass="19008" PartOfSpeech="18428"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18262" InflectionClass="0" PartOfSpeech="0"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="18339" InflectionClass="0" PartOfSpeech="246"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="19387" InflectionClass="19061" PartOfSpeech="18318"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoInflAffMsa Id="18344" PartOfSpeech="246"><InflectionFeatures><FsFeatStruc Id="18346" Type="18325"><FsClosedValue Feature="18326" Id="18347" Value="18328"></FsClosedValue>
+<FsClosedValue Feature="18334" Id="18348" Value="18335"></FsClosedValue>
+<FsClosedValue Feature="18329" Id="18349" Value="18331"></FsClosedValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19376" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19377" Type="17871"></FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19071" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19072" Type="17871"></FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19078" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19079" Type="17871"></FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19085" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19086" Type="17871"></FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19092" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19093" Type="17871"></FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19099" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19100" Type="17871"></FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19106" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19108" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19109" Type="17871"></FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19115" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19117" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="19049" PartOfSpeech="18318"><Slots dst="19059"/>
+<InflectionFeatures><FsFeatStruc Id="19055" Type="0"><FsClosedValue Feature="17873" Id="19056" Value="17874"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="19057" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18093" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18095" Type="17871"><FsComplexValue Feature="17872" Id="18096"><FsFeatStruc Id="18097" Type="17871"><FsClosedValue Feature="17873" Id="18098" Value="17906"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18099" Value="18024"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18106" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18108" Type="17871"><FsComplexValue Feature="17872" Id="18109"><FsFeatStruc Id="18110" Type="17871"><FsClosedValue Feature="17873" Id="18111" Value="17886"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18112" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18119" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18121" Type="17871"><FsComplexValue Feature="17872" Id="18122"><FsFeatStruc Id="18123" Type="17871"><FsClosedValue Feature="17873" Id="18124" Value="17874"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18125" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18128" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18130" Type="17871"><FsComplexValue Feature="17872" Id="18131"><FsFeatStruc Id="18132" Type="17871"><FsClosedValue Feature="17873" Id="18133" Value="17896"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18134" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18137" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18139" Type="17871"><FsComplexValue Feature="17872" Id="18140"><FsFeatStruc Id="18141" Type="17871"><FsClosedValue Feature="17873" Id="18142" Value="17906"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18143" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18146" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18148" Type="17871"><FsComplexValue Feature="17872" Id="18149"><FsFeatStruc Id="18150" Type="17871"><FsClosedValue Feature="17873" Id="18151" Value="17916"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18152" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18155" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18157" Type="17871"><FsComplexValue Feature="17872" Id="18158"><FsFeatStruc Id="18159" Type="17871"><FsClosedValue Feature="17873" Id="18160" Value="17874"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18161" Value="18024"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18164" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18168" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18172" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18176" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18178" Type="17871"><FsComplexValue Feature="17872" Id="18179"><FsFeatStruc Id="18180" Type="17871"><FsClosedValue Feature="17873" Id="18181" Value="17926"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18182" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18189" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures><FsFeatStruc Id="18191" Type="17871"><FsComplexValue Feature="17872" Id="18192"><FsFeatStruc Id="18193" Type="17871"><FsClosedValue Feature="17873" Id="18194" Value="17936"></FsClosedValue>
+<FsClosedValue Feature="17879" Id="18195" Value="17880"></FsClosedValue>
+</FsFeatStruc>
+</FsComplexValue>
+</FsFeatStruc>
+</InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="18198" PartOfSpeech="18428"><Slots dst="18430"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+</MorphoSyntaxAnalyses>
+<Senses><LexSense Id="17786"><Gloss>in</Gloss>
+</LexSense>
+<LexSense Id="17795"><Gloss>you (sg) are</Gloss>
+</LexSense>
+<LexSense Id="17811"><Gloss>and</Gloss>
+</LexSense>
+<LexSense Id="17944"><Gloss>father</Gloss>
+</LexSense>
+<LexSense Id="18092"><Gloss>dat.pl</Gloss>
+</LexSense>
+<LexSense Id="18105"><Gloss>acc.sg</Gloss>
+</LexSense>
+<LexSense Id="18118"><Gloss>nom.sg</Gloss>
+</LexSense>
+<LexSense Id="18127"><Gloss>gen.sg</Gloss>
+</LexSense>
+<LexSense Id="18136"><Gloss>dat.sg</Gloss>
+</LexSense>
+<LexSense Id="18145"><Gloss>abl.sg</Gloss>
+</LexSense>
+<LexSense Id="18154"><Gloss>nom.pl</Gloss>
+</LexSense>
+<LexSense Id="18163"><Gloss>acc.pl</Gloss>
+</LexSense>
+<LexSense Id="18167"><Gloss>gen.pl</Gloss>
+</LexSense>
+<LexSense Id="18171"><Gloss>abl.pl</Gloss>
+</LexSense>
+<LexSense Id="18175"><Gloss>voc.sg</Gloss>
+</LexSense>
+<LexSense Id="18188"><Gloss>loc.sg</Gloss>
+</LexSense>
+<LexSense Id="18197"><Gloss>loc.pl</Gloss>
+</LexSense>
+<LexSense Id="18250"><Gloss>name</Gloss>
+</LexSense>
+<LexSense Id="18261"><Gloss>also</Gloss>
+</LexSense>
+<LexSense Id="18268"><Gloss>just as</Gloss>
+</LexSense>
+<LexSense Id="18338"><Gloss>arrive</Gloss>
+</LexSense>
+<LexSense Id="18343"><Gloss>sbjv.act.prs</Gloss>
+</LexSense>
+<LexSense Id="18520"><Gloss>heaven</Gloss>
+</LexSense>
+<LexSense Id="18534"><Gloss>sky</Gloss>
+</LexSense>
+<LexSense Id="18536"><Gloss>kingdom</Gloss>
+</LexSense>
+<LexSense Id="18574"><Gloss>on</Gloss>
+</LexSense>
+<LexSense Id="18580"><Gloss>earth</Gloss>
+</LexSense>
+<LexSense Id="18630"><Gloss>master</Gloss>
+</LexSense>
+<LexSense Id="18638"><Gloss>sleep</Gloss>
+</LexSense>
+<LexSense Id="18654"><Gloss>boy</Gloss>
+</LexSense>
+<LexSense Id="18710"><Gloss>teacher</Gloss>
+</LexSense>
+<LexSense Id="19048"><Gloss>nom.sg</Gloss>
+</LexSense>
+<LexSense Id="19067"><Gloss>large</Gloss>
+</LexSense>
+<LexSense Id="19070"><Gloss>gen.sg</Gloss>
+</LexSense>
+<LexSense Id="19077"><Gloss>dat.sg</Gloss>
+</LexSense>
+<LexSense Id="19084"><Gloss>acc.sg</Gloss>
+</LexSense>
+<LexSense Id="19091"><Gloss>abl.sg</Gloss>
+</LexSense>
+<LexSense Id="19098"><Gloss>nom.pl</Gloss>
+</LexSense>
+<LexSense Id="19105"><Gloss>gen.pl</Gloss>
+</LexSense>
+<LexSense Id="19107"><Gloss>dat.pl</Gloss>
+</LexSense>
+<LexSense Id="19114"><Gloss>acc.pl</Gloss>
+</LexSense>
+<LexSense Id="19116"><Gloss>abl.pl</Gloss>
+</LexSense>
+<LexSense Id="19119"><Gloss>your</Gloss>
+</LexSense>
+<LexSense Id="19216"><Gloss>our</Gloss>
+</LexSense>
+<LexSense Id="19277"><Gloss>bread</Gloss>
+</LexSense>
+<LexSense Id="19286"><Gloss>will</Gloss>
+</LexSense>
+<LexSense Id="19306"><Gloss>daily</Gloss>
+</LexSense>
+<LexSense Id="19336"><Gloss>today</Gloss>
+</LexSense>
+<LexSense Id="19344"><Gloss>debt</Gloss>
+</LexSense>
+<LexSense Id="19357"><Gloss>debtor</Gloss>
+</LexSense>
+<LexSense Id="19375"><Gloss>voc.sg</Gloss>
+</LexSense>
+<LexSense Id="19386"><Gloss>sharp</Gloss>
+</LexSense>
+</Senses>
+<Allomorphs><MoAffixAllomorph Id="18094" IsAbstract="0" MorphType="106"><Form>is</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18100" IsAbstract="0" MorphType="106"><Form>ibus</Form>
+<InflectionClasses dst="18432"/>
+<InflectionClasses dst="18433"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18101" IsAbstract="0" MorphType="106"><Form>ebus</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18107" IsAbstract="0" MorphType="106"><Form>am</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18114" IsAbstract="0" MorphType="106"><Form>em</Form>
+<InflectionClasses dst="18431"/>
+<InflectionClasses dst="19008"/>
+<InflectionClasses dst="19014"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18115" IsAbstract="0" MorphType="106"><Form>^0</Form>
+<InflectionClasses dst="19012"/>
+<InflectionClasses dst="19015"/>
+<InflectionClasses dst="19063"/>
+<MsEnvFeatures><FsFeatStruc Id="18481" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18120" IsAbstract="0" MorphType="106"><Form>a</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18129" IsAbstract="0" MorphType="106"><Form>ae</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18138" IsAbstract="0" MorphType="106"><Form>ae</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18147" IsAbstract="0" MorphType="106"><Form>a</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18156" IsAbstract="0" MorphType="106"><Form>ae</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18165" IsAbstract="0" MorphType="106"><Form>as</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18169" IsAbstract="0" MorphType="106"><Form>arum</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18173" IsAbstract="0" MorphType="106"><Form>is</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18177" IsAbstract="0" MorphType="106"><Form>a</Form>
+<InflectionClasses dst="18435"/>
+<InflectionClasses dst="19061"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18190" IsAbstract="0" MorphType="106"><Form>ae</Form>
+<InflectionClasses dst="18435"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18199" IsAbstract="0" MorphType="106"><Form>is</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="18435"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18200" IsAbstract="0" MorphType="106"><Form>us</Form>
+<InflectionClasses dst="19011"/>
+<InflectionClasses dst="19018"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures><FsFeatStruc Id="18664" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18202" IsAbstract="0" MorphType="106"><Form>es</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18203" IsAbstract="0" MorphType="106"><Form>o</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18204" IsAbstract="0" MorphType="106"><Form>e</Form>
+<InflectionClasses dst="18431"/>
+<InflectionClasses dst="18433"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18205" IsAbstract="0" MorphType="106"><Form>u</Form>
+<InflectionClasses dst="18432"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18207" IsAbstract="0" MorphType="106"><Form>^0</Form>
+<InflectionClasses dst="18433"/>
+<InflectionClasses dst="19009"/>
+<InflectionClasses dst="19010"/>
+<InflectionClasses dst="19061"/>
+<InflectionClasses dst="19063"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18208" IsAbstract="0" MorphType="106"><Form>i</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18209" IsAbstract="0" MorphType="106"><Form>is</Form>
+<InflectionClasses dst="18433"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18210" IsAbstract="0" MorphType="106"><Form>us</Form>
+<InflectionClasses dst="18432"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18211" IsAbstract="0" MorphType="106"><Form>ei</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18212" IsAbstract="0" MorphType="106"><Form>o</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18213" IsAbstract="0" MorphType="106"><Form>i</Form>
+<InflectionClasses dst="18433"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18214" IsAbstract="0" MorphType="106"><Form>ui</Form>
+<InflectionClasses dst="19018"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18215" IsAbstract="0" MorphType="106"><Form>ei</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18216" IsAbstract="0" MorphType="106"><Form>i</Form>
+<InflectionClasses dst="19005"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures><FsFeatStruc Id="18680" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18217" IsAbstract="0" MorphType="106"><Form>es</Form>
+<InflectionClasses dst="18431"/>
+<InflectionClasses dst="19008"/>
+<InflectionClasses dst="19014"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18218" IsAbstract="0" MorphType="106"><Form>a</Form>
+<InflectionClasses dst="19006"/>
+<InflectionClasses dst="19012"/>
+<InflectionClasses dst="19047"/>
+<InflectionClasses dst="19374"/>
+<MsEnvFeatures><FsFeatStruc Id="18676" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18219" IsAbstract="0" MorphType="106"><Form>us</Form>
+<InflectionClasses dst="19018"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18222" IsAbstract="0" MorphType="106"><Form>orum</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18223" IsAbstract="0" MorphType="106"><Form>um</Form>
+<InflectionClasses dst="19007"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18224" IsAbstract="0" MorphType="106"><Form>uum</Form>
+<InflectionClasses dst="18432"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18225" IsAbstract="0" MorphType="106"><Form>erum</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18226" IsAbstract="0" MorphType="106"><Form>os</Form>
+<InflectionClasses dst="19005"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures><FsFeatStruc Id="18668" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18227" IsAbstract="0" MorphType="106"><Form>es</Form>
+<InflectionClasses dst="18431"/>
+<InflectionClasses dst="19008"/>
+<InflectionClasses dst="19014"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18228" IsAbstract="0" MorphType="106"><Form>a</Form>
+<InflectionClasses dst="19006"/>
+<InflectionClasses dst="19012"/>
+<InflectionClasses dst="19047"/>
+<InflectionClasses dst="19374"/>
+<MsEnvFeatures><FsFeatStruc Id="18672" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18229" IsAbstract="0" MorphType="106"><Form>us</Form>
+<InflectionClasses dst="19018"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18231" IsAbstract="0" MorphType="106"><Form>ibus</Form>
+<InflectionClasses dst="18432"/>
+<InflectionClasses dst="18433"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18233" IsAbstract="0" MorphType="106"><Form>ebus</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18248" IsAbstract="0" MorphType="106"><Form>um</Form>
+<InflectionClasses dst="19006"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures><FsFeatStruc Id="18622" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18948" IsAbstract="0" MorphType="106"><Form>um</Form>
+<InflectionClasses dst="18434"/>
+<InflectionClasses dst="19018"/>
+<InflectionClasses dst="19047"/>
+<MsEnvFeatures><FsFeatStruc Id="18952" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19016" IsAbstract="0" MorphType="106"><Form>ium</Form>
+<InflectionClasses dst="19013"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19017" IsAbstract="0" MorphType="106"><Form>um</Form>
+<InflectionClasses dst="19006"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19022" IsAbstract="0" MorphType="106"><Form>i</Form>
+<InflectionClasses dst="19015"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19023" IsAbstract="0" MorphType="106"><Form>u</Form>
+<InflectionClasses dst="19019"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19024" IsAbstract="0" MorphType="106"><Form>ia</Form>
+<InflectionClasses dst="19015"/>
+<InflectionClasses dst="19061"/>
+<InflectionClasses dst="19062"/>
+<InflectionClasses dst="19063"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19025" IsAbstract="0" MorphType="106"><Form>ua</Form>
+<InflectionClasses dst="19019"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19026" IsAbstract="0" MorphType="106"><Form>u</Form>
+<InflectionClasses dst="19019"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19027" IsAbstract="0" MorphType="106"><Form>ia</Form>
+<InflectionClasses dst="19015"/>
+<InflectionClasses dst="19060"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19028" IsAbstract="0" MorphType="106"><Form>ua</Form>
+<InflectionClasses dst="19019"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19029" IsAbstract="0" MorphType="106"><Form>e</Form>
+<InflectionClasses dst="19011"/>
+<InflectionClasses dst="19061"/>
+<InflectionClasses dst="19062"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19030" IsAbstract="0" MorphType="106"><Form>us</Form>
+<InflectionClasses dst="19018"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19031" IsAbstract="0" MorphType="106"><Form>u</Form>
+<InflectionClasses dst="19019"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19032" IsAbstract="0" MorphType="106"><Form>es</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19033" IsAbstract="0" MorphType="106"><Form>o</Form>
+<InflectionClasses dst="18434"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19034" IsAbstract="0" MorphType="106"><Form>i</Form>
+<InflectionClasses dst="18433"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19035" IsAbstract="0" MorphType="106"><Form>u</Form>
+<InflectionClasses dst="18432"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19036" IsAbstract="0" MorphType="106"><Form>e</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19038" IsAbstract="0" MorphType="106"><Form>ibus</Form>
+<InflectionClasses dst="18432"/>
+<InflectionClasses dst="18433"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19039" IsAbstract="0" MorphType="106"><Form>ebus</Form>
+<InflectionClasses dst="18431"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19064" IsAbstract="0" MorphType="106"><Form>is</Form>
+<InflectionClasses dst="19062"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19065" IsAbstract="0" MorphType="106"><Form>e</Form>
+<InflectionClasses dst="19061"/>
+<InflectionClasses dst="19062"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18345" IsAbstract="0" MorphType="106"><Form>at</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18663" IsAbstract="0" MorphType="106"><Form>u</Form>
+<InflectionClasses dst="19019"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="18702" IsAbstract="0" MorphType="106"><Form>^0</Form>
+<InflectionClasses dst="18433"/>
+<InflectionClasses dst="19009"/>
+<InflectionClasses dst="19010"/>
+<InflectionClasses dst="19061"/>
+<InflectionClasses dst="19063"/>
+<InflectionClasses dst="19214"/>
+<MsEnvFeatures><FsFeatStruc Id="18703" Type="0"></FsFeatStruc>
+</MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19382" IsAbstract="0" MorphType="106"><Form>is</Form>
+<InflectionClasses dst="19062"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19383" IsAbstract="0" MorphType="106"><Form>e</Form>
+<InflectionClasses dst="19062"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="19384" IsAbstract="0" MorphType="106"><Form>e</Form>
+<InflectionClasses dst="19061"/>
+<InflectionClasses dst="19062"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoStemAllomorph Id="19388" IsAbstract="0" MorphType="114" StemName="0"><Form>acr</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19389" IsAbstract="0" MorphType="114" StemName="0"><Form>acer</Form>
+<PhoneEnv dst="18941"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18712" IsAbstract="0" MorphType="114" StemName="0"><Form>magistr</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18714" IsAbstract="0" MorphType="114" StemName="0"><Form>magister</Form>
+<PhoneEnv dst="18941"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="17788" IsAbstract="0" MorphType="115" StemName="0"><Form>in</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="17797" IsAbstract="0" MorphType="115" StemName="0"><Form>es</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="17813" IsAbstract="0" MorphType="115" StemName="0"><Form>et</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="17946" IsAbstract="0" MorphType="114" StemName="0"><Form>patr</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="17951" IsAbstract="0" MorphType="115" StemName="0"><Form>pater</Form>
+<PhoneEnv dst="18941"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18419" IsAbstract="0" MorphType="115" StemName="0"><Form>nomen</Form>
+<PhoneEnv dst="18941"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18522" IsAbstract="0" MorphType="112" StemName="0"><Form>cael</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18538" IsAbstract="0" MorphType="114" StemName="0"><Form>regn</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18582" IsAbstract="0" MorphType="112" StemName="0"><Form>terr</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18632" IsAbstract="0" MorphType="114" StemName="0"><Form>domin</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18640" IsAbstract="0" MorphType="114" StemName="0"><Form>somn</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18656" IsAbstract="0" MorphType="114" StemName="0"><Form>puer</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19069" IsAbstract="0" MorphType="114" StemName="0"><Form>magn</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19121" IsAbstract="0" MorphType="114" StemName="0"><Form>tu</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19218" IsAbstract="0" MorphType="114" StemName="0"><Form>nostr</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19219" IsAbstract="0" MorphType="114" StemName="0"><Form>noster</Form>
+<PhoneEnv dst="18941"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19279" IsAbstract="0" MorphType="114" StemName="0"><Form>pan</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19288" IsAbstract="0" MorphType="114" StemName="0"><Form>voluntat</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19289" IsAbstract="0" MorphType="114" StemName="0"><Form>voluntas</Form>
+<PhoneEnv dst="18941"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19308" IsAbstract="0" MorphType="115" StemName="0"><Form>quotidian</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19338" IsAbstract="0" MorphType="115" StemName="0"><Form>hodie</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19346" IsAbstract="0" MorphType="114" StemName="0"><Form>debit</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="19359" IsAbstract="0" MorphType="115" StemName="0"><Form>debitor</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18252" IsAbstract="0" MorphType="114" StemName="0"><Form>nomin</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18270" IsAbstract="0" MorphType="115" StemName="0"><Form>sicut</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="18340" IsAbstract="0" MorphType="114" StemName="0"><Form>adveni</Form>
+</MoStemAllomorph>
+</Allomorphs>
+</Lexicon>
+<FeatureSystem Id="262"><Types><FsFeatStrucType Id="17871"><Abbreviation>nAgr</Abbreviation>
+<Features><Feature dst="17873" ord="0"/>
+<Feature dst="17879" ord="1"/>
+<Feature dst="18614" ord="2"/>
+</Features>
+</FsFeatStrucType>
+<FsFeatStrucType Id="18325"><Abbreviation>Infl</Abbreviation>
+<Features><Feature dst="18326" ord="0"/>
+<Feature dst="18329" ord="1"/>
+<Feature dst="18329" ord="2"/>
+<Feature dst="18329" ord="3"/>
+<Feature dst="18329" ord="4"/>
+<Feature dst="18334" ord="5"/>
+<Feature dst="18329" ord="6"/>
+</Features>
+</FsFeatStrucType>
+</Types>
+<Features><FsComplexFeature Id="17872"><Abbreviation>nagr</Abbreviation>
+<Type dst="17871"/></FsComplexFeature>
+<FsClosedFeature Id="17873"><Abbreviation>case</Abbreviation>
+<Values><FsSymFeatVal Id="17874"><Abbreviation>nom</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="17886"><Abbreviation>acc</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="17896"><Abbreviation>gen</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="17906"><Abbreviation>dat</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="17916"><Abbreviation>abl</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="17926"><Abbreviation>voc</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="17936"><Abbreviation>loc</Abbreviation>
+</FsSymFeatVal>
+</Values>
+</FsClosedFeature>
+<FsClosedFeature Id="17879"><Abbreviation>num</Abbreviation>
+<Values><FsSymFeatVal Id="17880"><Abbreviation>sg</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18024"><Abbreviation>pl</Abbreviation>
+</FsSymFeatVal>
+</Values>
+</FsClosedFeature>
+<FsClosedFeature Id="18326"><Abbreviation>mood</Abbreviation>
+<Values><FsSymFeatVal Id="18327"><Abbreviation>ind</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18328"><Abbreviation>sbjv</Abbreviation>
+</FsSymFeatVal>
+</Values>
+</FsClosedFeature>
+<FsClosedFeature Id="18329"><Abbreviation>ten</Abbreviation>
+<Values><FsSymFeatVal Id="18330"><Abbreviation>fut</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18331"><Abbreviation>prs</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18332"><Abbreviation>futprf</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18333"><Abbreviation>pstprf</Abbreviation>
+</FsSymFeatVal>
+</Values>
+</FsClosedFeature>
+<FsClosedFeature Id="18334"><Abbreviation>voice</Abbreviation>
+<Values><FsSymFeatVal Id="18335"><Abbreviation>act</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18336"><Abbreviation>pass</Abbreviation>
+</FsSymFeatVal>
+</Values>
+</FsClosedFeature>
+<FsClosedFeature Id="18614"><Abbreviation>gen</Abbreviation>
+<Values><FsSymFeatVal Id="18615"><Abbreviation>m</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18616"><Abbreviation>f</Abbreviation>
+</FsSymFeatVal>
+<FsSymFeatVal Id="18617"><Abbreviation>n</Abbreviation>
+</FsSymFeatVal>
+</Values>
+</FsClosedFeature>
+</Features>
+</FeatureSystem>
+<PhFeatureSystem Id="263"><Types></Types>
+<Features></Features>
+</PhFeatureSystem>
+</M3Dump>

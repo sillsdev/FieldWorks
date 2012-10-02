@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+	<bug id="LT-2602"/>
+	<bug id="LT-6000"/>
+
+<!--test Text tool shortcuts-->
+<!--to run wdShortcuts.xml immediately after this, word "contains" must deleted in words or lexicon view-->
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+	<var id="Mat" set="pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+	<var id="Plan" set="This text contains my plan for world domination."/>
+
+   <!--Go to Texts/Edit-->
+  <click select="menubar/view/texts-words/interlinear-texts"/>
+
+<model select="interlinear-texts[@role='view']">
+
+  <!--Move between tabs-->
+  <click select="text/analyze/tab"/>
+  <insert wait="1000">^{TAB}</insert><!-- tab to the tab on the right, Print View-->
+  <insert wait="500">^{TAB}</insert><!-- tab to the tab on the right, Text Chart-->
+  <insert wait="500">~</insert> <!-- blow away the info dialog -->
+  <insert wait="1000">^{TAB}</insert><!-- tab to the tab on the right, Info-->
+  <insert wait="500">^{TAB}</insert><!-- tab to the tab on the right,  baseline-->
+  <insert wait="500">^{TAB}</insert><!-- tab to the tab on the right , Gloss-->
+  <glimpse id="moveRight" select="text/gloss/labels/label/heading" prop="value" expect="Word"/>
+
+  <!--Move between tabs backward -->
+  <click select="text/baseline/tab"/>
+  <insert wait="1000">^+{TAB}</insert><!-- tab to the tab on the right, Info-->
+  <insert wait="500">^+{TAB}</insert><!-- tab to the tab on the right, Text Chart-->
+  <insert wait="500">~</insert> <!-- blow away the info dialog -->
+  <insert wait="1000">^+{TAB}</insert><!-- tab to the tab on the right, Print View-->
+  <insert wait="500">^+{TAB}</insert><!-- tab to the tab on the right,  Analyze-->
+  <insert wait="500">^+{TAB}</insert><!-- tab to the tab on the right , Gloss-->
+  <glimpse id="moveLeft" select="text/gloss/labels/label/heading" prop="value" expect="Word"/>
+
+  <!--New Text-->
+  <insert wait="1000">^t</insert>
+  <var id="row" set="2"/>
+  <click select="text/Title/data"/>
+  <insert wait="1000">Plans</insert>
+  <click select="text/baseline/tab"/>
+  <click select="text/baseline/empty"/>
+  <insert wait="1000">$Plan</insert>
+  <glimpse wait="1000" id="new" select="text/baseline/line" prop="value" expect="$Plan"/>
+
+   <!-- Make sure titles are sorted ascending -->
+   <insert wait="500">{F5}</insert>
+   <glimpse id="sort" select="text/Title/data" prop="value" expect="Plans" on-fail="skip"/>
+   <if><condition of="$sort" is="true"/>
+   <then><!-- click the heading Titles to change sort direction so My Green Mat is first -->
+	  <click select="texts/col/header" path="Title"/>
+   </then>
+   </if>
+   <click select="//toolbar/first-record"/>
+   <glimpse id="sort2" select="text/Title/data" prop="value" expect="My Green Mat"/>
+
+  <!--Move between texts-->
+  <insert wait="1000">%n</insert>
+  <glimpse id="moveDown" select="text/baseline/line"  prop="value" expect="$Plan"/>
+
+  <!--Move between texts-->
+  <insert wait="1000">%p</insert>
+  <glimpse id="moveUp" select="text/baseline/line"  prop="value" expect="$Mat"/>
+
+ <!--Interlinear and dialog shortcuts tested in abPres7.xml -->
+
+  <insert wait="1000">%n</insert>
+  <!--Literal translation-->
+  <click select="text/analyze/tab"/>
+  <var id="takeOver" set="I'm going to take over the world."/>
+  <insert wait="1000">^l</insert>
+  <insert wait="1000">$takeOver</insert>
+  <var id="ind" set="*"/>
+  <glimpse id="noLit" select="text/analyze/trans-line/label" path="/value:Lit. "/>
+  <glimpse id="noTakeOver" select="text/analyze/trans-line/text" prop="value" expect="$takeOver"/>
+
+  <click select="//toolbar/delete"/>
+  <insert wait="500">d</insert>
+
+  <click select="text/baseline/tab"/>
+  <click select="text/baseline/line"/>
+
+</model>
+
+<!--Delete word "contains" in Words view -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+  <var id="row" set="*"/>
+  <var id="col" set="1"/>
+  <click select="wordforms/record/col" path="/value:contains"/>
+  <click select="//toolbar/delete"/>
+  <insert wait="500">d</insert>
+  <glimpse id="contains" select="wordforms/record/col" path="/value:contains" on-pass="assert"/>
+</model>
+
+  </on-application>
+</accil>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="scawixlib" default="scawixlib.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	scawixlib.build - Builds the sca.wixlib
+	2005.11.16 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- scawixlib-specific properties -->
+  <property name="scawixlib.file.target" value="${dir.target.wix}\sca.wixlib" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="scawixlib.build" description="Peforms a full rebuild (clean then build)" depends="scawixlib.clean, scawixlib.inc" />
+
+  <!-- Clean -->
+  <target name="scawixlib.clean" description="Cleans the build">
+	<delete dir="${dir.build.scawixlib}" failonerror="false" if="${directory::exists(dir.build.scawixlib)}" />
+	<delete file="${scawixlib.file.target}" failonerror="false" if="${file::exists(scawixlib.file.target)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="scawixlib.inc" description="Performs an incremental build" depends="makeDirs">
+	<!-- Pull in the wix tools NAnt tasks -->
+	<loadtasks assembly="${file.nanttasks}" />
+	<mkdir dir="${dir.build.scawixlib}" />
+
+	<!-- Build the wixca.wixlib -->
+	<candle out="${dir.build.scawixlib}\" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <defines>
+		<define name="caerrwxi" value="${file.target.caerr.wxi}" />
+	  </defines>
+	  <sources basedir="${dir.src.ca.serverca}\scawixlib">
+		<include name="sca.wxs" />
+	  </sources>
+	</candle>
+	<lit out="${scawixlib.file.target}" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <sources basedir="${dir.build.scawixlib}">
+		<include name="*.wixobj" />
+	  </sources>
+	</lit>
+  </target>
+
+</project>

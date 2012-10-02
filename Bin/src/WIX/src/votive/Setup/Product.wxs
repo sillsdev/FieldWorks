@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+  Votive.wxs - WiX installer file for the Votive Visual Studio Package MSI.
+-->
+
+<?include Guids.wxi ?>
+<?include WixVer.wxi ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Product Id="????????-????-????-????-????????????" Name="WiX Toolset Visual Studio Package$(var.SpaceParenDebug)" Language="1033" Manufacturer="Microsoft Corporation" Version="$(var.WixVersion)" UpgradeCode="$(var.UpgradeCode)">
+
+	<Package Id="????????-????-????-????-????????????" Manufacturer="Microsoft Corporation" Description="Windows Installer XML Toolset Visual Studio Package$(var.SpaceParenDebug)" Comments="Windows Installer XML Toolset Visual Studio Package$(var.SpaceParenDebug)" Compressed="yes" InstallerVersion="200" Languages="1033" Keywords="Database, Installer" ShortNames="no" SummaryCodepage="1252" />
+
+	<!-- Major upgrade -->
+	<Upgrade Id="$(var.UpgradeCode)">
+	  <UpgradeVersion Minimum="$(var.WixVersion)" OnlyDetect="yes" Property="NEWERVERSIONDETECTED" />
+	  <UpgradeVersion Minimum="1.0.0.0" IncludeMinimum="yes" Maximum="$(var.WixVersion)" IncludeMaximum="no" Property="OLDERVERSIONBEINGUPGRADED" />
+	</Upgrade>
+
+	<Condition Message="An administrator must approve or install [ProductName].">Privileged</Condition>
+	<Condition Message="A later version of [ProductName] is already installed.">NOT NEWERVERSIONDETECTED</Condition>
+
+	<!-- Media -->
+	<Media Id="1" Cabinet="Votive.cab" EmbedCab="yes" />
+
+	<!-- Icons -->
+	<Icon Id="WixIcon" SourceFile="$(var.VotiveRoot)\Icons\ProjectFile.ico" />
+
+	<!-- Properties -->
+	<Property Id="ALLUSERS" Value="1" />
+	<Property Id="ARPHELPLINK" Value="http://sourceforge.net/support/getsupport.php?group_id=105970" />
+	<Property Id="ARPPRODUCTICON" Value="WixIcon" />
+	<Property Id="ARPURLINFOABOUT" Value="http://wix.sourceforge.net" />
+	<Property Id="ARPURLUPDATEINFO" Value="http://wix.sourceforge.net" />
+
+	<Feature Id="Feature_VS2003" Title="Visual Studio .NET 2003 integration" Description="Windows Installer XML Visual Studio Package for Visual Studio .NET 2003" AllowAdvertise="no" Display="expand" InstallDefault="local" Level="1" TypicalDefault="install">
+	  <Condition Level="0">NOT DEVENV_2003_COMP</Condition>
+	  <ComponentRef Id="VisualStudioPackage2003" />
+	  <ComponentGroupRef Id="VotiveCommon" />
+	</Feature>
+
+	<Feature Id="Feature_VS2005" Title="Visual Studio 2005 integration" Description="Windows Installer XML Visual Studio Package for Visual Studio 2005" AllowAdvertise="no" Display="expand" InstallDefault="local" Level="1" TypicalDefault="install">
+	  <Condition Level="0">NOT DEVENV_2005_COMP</Condition>
+	  <ComponentRef Id="VisualStudioPackage2005" />
+	  <ComponentGroupRef Id="VotiveCommon" />
+	</Feature>
+
+	<!-- Install Sequences -->
+	<InstallExecuteSequence>
+	  <RemoveExistingProducts After="InstallValidate" />
+	  <Custom Action="CA_ErrVsNotInstalled" Before="CostInitialize"><![CDATA[NOT DEVENV_2003_COMP AND NOT DEVENV_2005_COMP AND NOT Installed]]></Custom>
+
+	  <?if $(var.Flavor) = "debug" ?>
+	  <Custom Action="CA_DevEnv2005ExpSetup" After="InstallFinalize"><![CDATA[$VisualStudioPackage2005 > 1]]></Custom>
+	  <Custom Action="CA_DevEnv2003ExpSetup" After="InstallFinalize"><![CDATA[$VisualStudioPackage2003 > 1]]></Custom>
+	  <?else ?>
+	  <Custom Action="CA_DevEnv2003Setup" After="InstallFinalize"><![CDATA[$VisualStudioPackage2003 > 1]]></Custom>
+	  <Custom Action="CA_DevEnv2005Setup" After="InstallFinalize"><![CDATA[$VisualStudioPackage2005 > 1]]></Custom>
+	  <?endif ?>
+	</InstallExecuteSequence>
+
+	<InstallUISequence>
+	  <Custom Action="CA_ErrVsNotInstalled" Before="CostInitialize"><![CDATA[(DEVENV_2003_COMP = "" AND DEVENV_2005_COMP = "") AND NOT Installed]]></Custom>
+	</InstallUISequence>
+
+	<UIRef Id="WixUI_FeatureTree" />
+  </Product>
+</Wix>

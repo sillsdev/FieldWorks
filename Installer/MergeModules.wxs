@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="MergeModulesFragment">
+		<DirectoryRef Id="SIL">
+			<Merge Id="CC" Language="1033" SourceFile="Installer\externalencodingconverters\CC DLL.msm" DiskId="1"/>
+			<Merge Id="PerlEC" Language="1033" SourceFile="Installer\PerlEC.msm" DiskId="1"/>
+			<Merge Id="PythonEC" Language="1033" SourceFile="Installer\PythonEC.msm" DiskId="1"/>
+			<Merge Id="EncConverters_Core_GAC" Language="1033" SourceFile="Installer\EC_GAC_30.msm" DiskId="1"/>
+			<Merge Id="EcFolderACLs" Language="1033" SourceFile="Installer\EcFolderACLs.msm" DiskId="1"/>
+			<Merge Id="Set_Path_EC" Language="1033" SourceFile="Installer\SetPath.msm" DiskId="1"/>
+			<Merge Id="Managed_Install_Fix" Language="1033" SourceFile="Installer\Managed Install Fix.msm" DiskId="1"/>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="Installer\externalencodingconverters\TECkit DLLs.msm" DiskId="1"/>
+			<Merge Id="ICU_4_0" Language="1033" SourceFile="Installer\ICU040.msm" DiskId="1"/>
+	  <Merge Id="ICUECHelp" Language="1033" SourceFile="Installer\ICUECHelp.msm" DiskId="1"/>
+	</DirectoryRef>
+		<DirectoryRef Id="SystemFolder">
+			<Merge Id="ATL" Language="1033" SourceFile="Installer\ExternalMergeModules\Microsoft_VC90_ATL_x86.msm" DiskId="1"/>
+			<Merge Id="ATL_Policy" Language="1033" SourceFile="Installer\ExternalMergeModules\policy_9_0_Microsoft_VC90_ATL_x86.msm" DiskId="1"/>
+			<Merge Id="CRT" Language="1033" SourceFile="Installer\ExternalMergeModules\Microsoft_VC90_CRT_x86.msm" DiskId="1"/>
+			<Merge Id="CRT_Policy" Language="1033" SourceFile="Installer\ExternalMergeModules\policy_9_0_Microsoft_VC90_CRT_x86.msm" DiskId="1"/>
+			<Merge Id="MFC" Language="1033" SourceFile="Installer\ExternalMergeModules\Microsoft_VC90_MFC_x86.msm" DiskId="1"/>
+			<Merge Id="MFC_Policy" Language="1033" SourceFile="Installer\ExternalMergeModules\policy_9_0_Microsoft_VC90_MFC_x86.msm" DiskId="1"/>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

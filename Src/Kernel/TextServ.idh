@@ -1,0 +1,1468 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: TextServ.idh
+Responsibility: Jeff Gayle
+Last reviewed: 8/25/99
+
+	Defines Text Services interfaces.
+
+	REVIEW ShonK(JeffG): If we are going to make cross process calls we should marshal TsString
+	and	TsTextProps	by value.
+
+	ITsString and ITsTextProps are the two prominent interfaces defined here. There is a
+	factory and at least one builder for each of these objects.
+
+
+	TsTextProps objects hold integer valued and string valued text properties.
+	TsTextProps objects are immutable and are typically used in defining TsString objects.
+	TsTextProps objects are created from instances of TsPropsFactory or TsPropsBldr.
+	Each execution thread maintains a pool of TsTextProps objects which ensures that on any
+	particular thread, equality of TsTextProps is equivalent to COM object equality.
+
+	TsString objects hold one or more runs of text.  Each run has associated with it a
+	TsTextProps object.  Adjacent runs of text must have different TsTextProps objects.  An
+	empty string has a single empty run with an empty TsTextProps object.  Non-empty strings
+	have non-empty runs.  TsString objects are immutable.  TsString objects are created from
+	instances of TsStrFactory, TsStrBldr, or TsIncStrBldr.
+
+	For both TsTextProps and TsStrings, factories are used to create simple case objects.
+	Builders are used to create more complex instances of TsTextProps and TsString.
+	Factories also provide methods to deserialize objects and methods to obtain (initially
+	empty) builders.  TsTextProps and TsStrings objects provide methods to obtain builders
+	initialized with the current contents of the object.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+interface ITsString;
+interface ITsTextProps;
+interface ITsStrFactory;
+interface ITsPropsFactory;
+interface ITsStrBldr;
+interface ITsIncStrBldr;
+interface ITsPropsBldr;
+interface ITsMultiString;
+
+interface ILgWritingSystemFactory;
+
+/*----------------------------------------------------------------------------------------------
+	Note: In some of the interfaces that follow there are method names that end with "At" and
+	similar method names without the "At".  The distinction is as follows.  The "At" suffix
+	indicates that this methods operates on the	character position level.  The equivilent
+	method without the "At" suffix operates on the run level.
+----------------------------------------------------------------------------------------------*/
+
+
+cpp_quote("")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("const OLECHAR kchObject = 0xFFFC;")
+cpp_quote("#else // !defined(__cplusplus)")
+const OLECHAR kchObject = 0xFFFC;
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+
+
+/*----------------------------------------------------------------------------------------------
+	Text scalar-valued properties are composed of a prop type and a prop value and optionally
+	a variation.  The prop type determines the kind of property that is being specified and the
+	size of the associated data.  The associated data holds both the variation (if used --
+	typically in the low 4 bits of the data and containing a value from the FwTextPropVar enum)
+	and the value.  The variation specifies how the value is interpreted.  For example the font
+	size prop type might have a value of 50.  But is that 50 points, 50% of the current value,
+	or 50 what?  The variation specifies which.
+----------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------
+	Typical variation values. These aren't necessarily appropriate in all situations.
+	These must fit in 4 bits. ktpvNinch should not be used for anything.
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextPropVar
+{
+	ktpvDefault    = 0x0,	// no variation, or whatever
+	ktpvMilliPoint = 0x1,	// 1000ths of point.
+	ktpvRelative   = 0x2,	// Fraction of inherited value. Denominator is kdenTextPropRel.
+	ktpvEnum       = 0x3,	// Value taken from an enumeration.
+
+	ktpvNinch      = 0xF
+} FwTextPropVar;
+
+/*----------------------------------------------------------------------------------------------
+	Normalization forms. These are defined to match exactly the ICU UNormalizationMode
+	items.
+	Hungarian: nm.
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwNormalizationMode
+{
+	knmNone    = 1,	// not normalized
+	knmNFD = 2,	// Most decomposed form w/o loss of information.
+	knmNFKD   = 3,	// Maximal decomposition, plus substitution of very similar items.
+	knmNFC      = 4,	// Most compressed form w/o loss of info.
+	knmDefault = 4, // NFC is the default for most external media (clipboard, XML)
+	knmNFKC = 5, // Most composed, plus substitution of very similar items.
+	knmFCD = 6, // ??
+	knmNFSC = 7, // Non-standard modification of NFC which preserves parallel style information.
+		// NFSC is equivalent to performing NFD normalization, then performing all NFC
+		// compositions except where the characters that would be composed have different style
+		// information. (This is used in XML files that include style info.)
+	knmLim
+} FwNormalizationMode;
+
+/*----------------------------------------------------------------------------------------------
+	Text property types.  These encompass both scalar-valued and string-valued properties.
+	Hungarian: tpt
+
+	ENHANCE JohnT(SteveMc): Should this be TsTextPropType with Hungarian ttpt like the old days
+	of Cellar 2?
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextPropType
+{
+	// Value: writing system value and old writing system value
+	ktptWs = 1,
+
+	// Value: FwTextToggleVal enum  (variation = ktpvEnum?)
+	ktptItalic = 2,
+
+	// Value: FwTextToggleVal enum  (variation = ktpvEnum?)
+	ktptBold = 3,
+
+	// Value: FwSuperscriptVal enum  (variation = ktpvEnum?)
+	ktptSuperscript = 4,
+
+	// Value: FwUnderlineType enum  (variation = ktpvEnum?)
+	ktptUnderline = 5,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	// Value: integer
+	ktptFontSize = 6,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	// Value: integer
+	ktptOffset = 7,
+
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	ktptForeColor = 8,
+
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	ktptBackColor = 9,
+
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	ktptUnderColor = 10, // Color used for underlining.
+
+	/*------------------------------------------------------------------------------------------
+		Paragraph level properties. Some of these may occassionally be used at the character
+		level as well.
+	------------------------------------------------------------------------------------------*/
+
+	// Value: writing system value and old writing system value
+	ktptBaseWs = 16,
+
+	// Value: FwTextAlign enum
+	ktptAlign = 17,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	// Negative values indicate a hanging indent. Positive values indicate a first line
+	// indent.
+	ktptFirstIndent = 18,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	ktptLeadingIndent = 19,
+	ktptMarginLeading = 19,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	ktptTrailingIndent = 20,
+	ktptMarginTrailing = 20,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	ktptSpaceBefore = 21,
+	ktptMswMarginTop = 21, // See comments on ktptMarginTop below.
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	ktptSpaceAfter = 22,
+	ktptMarginBottom = 22,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint }
+	ktptTabDef = 23,
+
+	// Variation: FwTextPropVar enum { ktpvMilliPoint, ktpvRelative }
+	// Relative value is a proportion of the normal line height. Millipoint value indicates
+	// an exact line height.
+	ktptLineHeight = 24,
+
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	ktptParaColor = 25,
+
+	// Value: member of SpellOptions enumeration
+	ktptSpellCheck = 26,
+
+	// Variation: ktpvMilliPoint.
+	// This is an alternative version of ktptMswMarginTop, implemented to enable compatibility
+	// with CSS and Word. In Word, the separation between two paragraphs is the SUM of the bottom
+	// margin of the upper one and the top margin of the lower one. In CSS, it is the MAX.
+	// The CSS approach is much nicer for designing documents that resize well, but the Word
+	// approach is simpler for naive users.
+	// To keep both capabilities in the Views code, I've retained the CSS behavior (separation
+	// between paragraphs is the MAX of the ktptMarginBottom and ktptMarginTop settings for
+	// the relevant paragraphs), but also, the SUM of ktptMarginBottom and ktptMswMarginTop.
+	// Strictly (as it is possible for both settings to be given), the separation is
+	// max (ktptMarginBottom[t] + ktptMswMarginTop[b], ktptMarginTop[b]).
+	// In current FieldWorks paragraph dialogs, only the ktptMswMarginTop setting is used.
+	// However some view constructors use ktptMarginTop.
+	// (Note...the value is chosen to be well clear of scp constants like ktptUnderColor>>2|2
+	ktptMarginTop = 50,
+
+	/*------------------------------------------------------------------------------------------
+		String-valued properties.  These start in again at 1 since they occupy a different
+		namespace, so to speak.
+	------------------------------------------------------------------------------------------*/
+
+	ktptFontFamily = 1,
+	ktptCharStyle = 2,
+	ktptParaStyle = 3,
+	ktptTabList = 4,
+	ktptTags = 5, // prop holds sequence of 8-char items, each the memcpy-equivalent of a GUID
+	ktptObjData = 6, // prop holds data about an embedded object.
+		// (The first character indicates the nature of the data, see VwTextBoxes.cpp.)
+
+	/*------------------------------------------------------------------------------------------
+		Properties that originated in the views subsystem.  These are a mixture of integer and
+		string valued properties.
+	------------------------------------------------------------------------------------------*/
+	ktptRightToLeft = 128,		// int, ComBool variation
+	ktptDirectionDepth = 129,	// int, no variations
+	// Values to be used by old writing system to select variation of smart font.
+	ktptFontVariations = 130,	// string, giving variation names specific to font.
+	ktptNamedStyle = 133,		// string, replace only
+	ktptPadLeading = 134,
+	ktptPadTrailing = 135,
+	ktptPadTop = 136,
+	ktptPadBottom = 137,
+	// Keep these four in this order.
+	ktptBorderTop = 138,		// int, length
+	ktptBorderBottom = 139,	// int, length
+	ktptBorderLeading = 140,		// int, length
+	ktptBorderTrailing = 141,		// int, length
+	ktptBorderColor = 142,
+	// Bullets and Numbering
+	ktptBulNumScheme = 143,	// int
+	ktptBulNumStartAt = 144,	// int, 0, 1, 2 ...
+	ktptBulNumTxtBef = 145,	// string
+	ktptBulNumTxtAft = 146,	// string
+	ktptBulNumFontInfo = 147,	// string
+
+	// paragraph layout
+	ktptKeepWithNext = 148,	// int, ComBool variation
+	ktptKeepTogether = 149,	// int, ComBool variation.
+	ktptHyphenate = 150,		// int, ComBool variation, not yet supported
+	ktptMaxLines = 151,		// int, max # lines to display.
+
+	// overall table layout
+	ktptCellBorderWidth = 152, // int, length
+	ktptCellSpacing = 153,		// int, length
+	ktptCellPadding = 154,		// int, length
+
+	ktptEditable = 155, // uses TptEditable enum
+
+	ktptWsStyle = 156, // String, binary info about ws-dependent char styles
+
+	// trick values used for special purposes
+	ktptSetRowDefaults = 159,  // ComBool, absolute: applying one with this sets table defs.
+	// If line height is set to relative, then reading line height from the prop store
+	// yields 0, and this fake property (which can't be set directly) can be used to
+	// read the relative line height, as 10000ths.
+	ktptRelLineHeight = 160,
+	ktptTableRule = 161,		// int, enum, a VwRule
+
+	// paragraph layout
+	ktptWidowOrphanControl = 162,	// int, ComBool variation
+
+	// Fake string valued text property used for exporting from FieldWorks apps.
+	ktptFieldName = 9998,
+
+	// Fake integer valued text property used for exporting list items in a string.
+	// Value: FwTextToggleVal enum  (variation = ktpvEnum?)
+	ktptMarkItem = 9999
+
+} FwTextPropType;
+
+
+/*----------------------------------------------------------------------------------------------
+	This enumeration idetifies the types of editable fields.
+	It is used in the ktptEditable Text Property.
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum TptEditable
+ {
+	ktptNotEditable = 0,
+	ktptIsEditable,
+	ktptSemiEditable, // Used in type ahead edit boxs.
+} TptEditable;
+
+/*----------------------------------------------------------------------------------------------
+	This enumeration idetifies the ways a range of text can be spell-checked.
+	It is used in the ktptSpellCheck Text Property.
+	Enhance JohnT: may want other options, such as one applied to text in individual strings
+	that should not be further checked until edited, or one that excludes words in all caps
+	or MixedCaseIndentifiers, or one that causes text to be checked even though read-only.
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum SpellingModes
+ {
+	ksmMin = 0,
+	ksmNormalCheck = 0, // check normally, the default (read-only text is not checked)
+	ksmDoNotCheck, // do not check at all
+	ksmForceCheck, // Check even if read-only.
+	ksmLim,
+} SpellingModes;
+
+/*----------------------------------------------------------------------------------------------
+This enumeration specifies the subtypes of data that may be associated with embedded object
+characters (ORC, 0xfffc) using the property ktptObjData.
+Explicit numbers are listed for every item as a reminder that these values occur embedded
+in strings in existing data, and MUST not be changed (unless you implement a very tricky
+bit of data migration).
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwObjDataTypes
+{
+	kodtPictEven = 1, // Picture data suitable for OleLoadPicture; even #bytes
+	kodtPictOdd = 2, // Picture data suitable for OleLoadPicture; odd #bytes
+	// Next 8 characters give the GUID of a CmObject. A string obtained from this object
+	// using GetStrForGuid (typically its name in the first analysis writing system) is displayed.
+	// The string will be hot: when clicked, the system calls DoHotLinkAction on the view
+	// constructor that inserted the string containing the hot object.
+	// (Note: if this property is associated with a character other than 0xfffc, the character
+	// is displayed normally, but the hot link behavior still happens when clicked.)
+	// (Note 2: the 8 characters are those obtained by doing memcopy on a Windows machine
+	// from a standard GUID data structure.)
+	kodtNameGuidHot = 3,
+	// The following characters could either be a relative path (based on
+	// LangProject:ExtLinkRootDir) or an absolute path. The string will be hot: when
+	// clicked, the system reconstructs the absolute path if necessary, then calls
+	// ShellExecute to launch the file with the default program used for that file extension.
+	kodtExternalPathName = 4,
+	// This one is like kodtNameGuidHot (see above), but using it implies that the object
+	// linked to is conceptually 'owned' by the string. For example, it ought to be deleted
+	// if the link character is deleted, and a copy of the object ought to be made if the
+	// link character is copied.
+	// (Note: the enumeration would be neater with this one adjacent to kodtNameGuidHot, but
+	// existing values are in use in databases and would be tedious to migrate.)
+	kodtOwnNameGuidHot = 5,
+	// This one is used ONLY in the clipboard...code won't know what to do with it elsewhere.
+	// It signifies something that should be kodtOwnNameGuidHot or kodtGuidMoveableObjDisp,
+	// but in the clipboard we store a representation of the object (made using
+	// IVwRootSite::TextRepOfObj) as the balance of the property. Pasting
+	// (IVwSelection::ReplaceWithTsString) calls IVwRootSite::MakeObjFromText to get a real
+	// guid and the proper type of FwObjDataTypes to be used for the pasted object.
+	kodtEmbeddedObjectData = 6,
+	// This is a generated context-sensitive string. It is not a hot link. The next 8 characters
+	// give a GUID, which can be compared to a known set of GUIDs that have special meaning to
+	// a view contructor. This class of embedded object is being created to support special
+	// elements in page headers/footers, but there may eventually be other uses for them as well.
+	// Here is a list of global GUIDs; specific applications may have additional ones:
+	//
+	// First Reference on Page: 397F43AE-E2B2-4f20-928A-1DF193C07674
+	// Last Reference on Page: 85EE15C6-0799-46c6-8769-F9B3CE313AE2
+	// Page Number: 644DF48A-3B60-45f4-80C7-739BE6E56A96
+	// Total Page Count: E0EF9EDA-E4E2-4fcf-8720-5BC361BCE110
+	// Print Date: C4556A21-41A8-4675-A74D-59B2C1A7E2B8
+	// Division Name: 2277B85F-47BB-45c9-BC7A-7232E26E901C
+	// Publication Title: C8136D98-6957-43bd-BEA9-7DCE35200900
+	// Page Reference: 8978089A-8969-424e-AE54-B94C554F882D
+	//
+	kodtContextString = 7,
+	// This results in a call-back to the VC, with a new VwEnv, to create any display it
+	// wants of the object specified by the Guid (see IVwViewConstructor.DisplayEmbeddedObject).
+	// The display will typically occur immediately following the paragraph line that contains
+	// the ORC, which functions as an anchor, but may be moved down past following text to
+	// improve page breaking. Like kodtOwnNameGuidHot, this type of object is conceptually
+	// 'owned' by the string. So it ought to be deleted if the link character is
+	// deleted, and a copy of the object ought to be made if the link character is copied.
+	kodtGuidMoveableObjDisp = 8,
+} FwObjDataTypes;
+
+#define SCP1(id) ((id) << 2) | 0
+#define SCP2(id) ((id) << 2) | 1
+#define SCP4(id) ((id) << 2) | 2
+#define SCP8(id) ((id) << 2) | 3
+
+/*----------------------------------------------------------------------------------------------
+	Text scalar-valued properties. The low 2 bits of these values encode the base-2 log of the
+	size of the associated data (2^n bytes).
+
+	The data may (depending on the scp) encode different "variations". If so, typically the
+	low 4 bits of the data will contain a value in the TextPropVar enumeration.
+
+	It's OK to add new values to this enum, but don't change existing values. Doing so
+	invalidates existing persistent data.
+
+	Hungarian: scp
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextScalarProp
+{
+	/*------------------------------------------------------------------------------------------
+		Character level properties.
+	------------------------------------------------------------------------------------------*/
+
+	// Data: int
+	// Value: writing system value
+	kscpWs = SCP4(ktptWs),
+
+	// Data: 2 ints
+	// Value: writing system value and old writing system value
+	kscpWsAndOws = SCP8(ktptWs),
+
+	// Data: byte
+	// Value: FwTextToggleVal enum  (variation = ktpvEnum?)
+	kscpItalic = SCP1(ktptItalic),
+
+	// Data: byte
+	// Value: FwTextToggleVal enum  (variation = ktpvEnum?)
+	kscpBold = SCP1(ktptBold),
+
+	// Data: byte
+	// Value: FwSuperscriptVal enum  (variation = ktpvEnum?)
+	kscpSuperscript = SCP1(ktptSuperscript),
+
+	// Data: byte
+	// Value: FwUnderlineType enum  (variation = ktpvEnum?)
+	kscpUnderline = SCP1(ktptUnderline),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	// Value (28 bits): integer
+	kscpFontSize = SCP4(ktptFontSize),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	// Value (28 bits): integer
+	kscpOffset = SCP4(ktptOffset),
+
+	// Data: int
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	kscpForeColor = SCP4(ktptForeColor),
+
+	// Data: int
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	kscpBackColor = SCP4(ktptBackColor),
+
+	// Data: int
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	kscpUnderColor = SCP4(ktptUnderColor),
+
+	// Data: byte
+	// Value: FwSpellingMode enum  (variation = ktpvEnum)
+	kscpSpellCheck = SCP1(ktptSpellCheck),
+
+
+	/*------------------------------------------------------------------------------------------
+		Paragraph level properties. Some of these may occassionally be used at the character
+		level as well.
+	------------------------------------------------------------------------------------------*/
+
+	// Data: int
+	// Value: writing system value
+	kscpBaseWs = SCP4(ktptBaseWs),
+
+	// Data: 2 ints
+	// Value: writing system value and old writing system value
+	kscpBaseWsAndOws = SCP8(ktptBaseWs),
+
+	// Data: byte
+	// Value: FwTextAlign enum
+	kscpAlign = SCP1(ktptAlign),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	// Negative values indicate a hanging indent. Positive values indicate a first line
+	// indent.
+	kscpFirstIndent = SCP4(ktptFirstIndent),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	kscpLeadingIndent = SCP4(ktptLeadingIndent),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	kscpTrailingIndent = SCP4(ktptTrailingIndent),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	kscpSpaceBefore = SCP4(ktptSpaceBefore),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	kscpSpaceAfter = SCP4(ktptSpaceAfter),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint }
+	kscpTabDef = SCP4(ktptTabDef),
+
+	// Data: int
+	// Variation (4 bits): FwTextPropVar enum { ktpvMilliPoint, ktpvRelative }
+	// Relative value is a proportion of the normal line height. Millipoint value indicates
+	// an exact line height.
+	kscpLineHeight = SCP4(ktptLineHeight),
+
+	// Data: int
+	// Value: RGB value. If the high byte is non-zero, this is a special value,
+	//     eg, transparent. See the FwTextColor enum for special values.
+	kscpParaColor = SCP4(ktptParaColor),
+
+	// Data: byte
+	// Value: ComBool
+	kscpKeepWithNext = SCP1(ktptKeepWithNext),
+
+	// Data: byte
+	// Value: ComBool
+	kscpKeepTogether = SCP1(ktptKeepTogether),
+
+	// Data: byte
+	// Value: ComBool
+	kscpWidowOrphanControl = SCP1(ktptWidowOrphanControl),
+
+	// Fake integer valued text property used for exporting list items in a string.
+	// Value: FwTextToggleVal enum  (variation = ktpvEnum?)
+	kscpMarkItem = SCP1(ktptMarkItem)
+
+} FwTextScalarProp;
+
+
+/*----------------------------------------------------------------------------------------------
+	String valued properties.
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextStringProp
+{
+	kstpFontFamily = ktptFontFamily,
+	kstpCharStyle = ktptCharStyle,
+	kstpParaStyle = ktptParaStyle,
+	kstpTabList = ktptTabList,
+	kstpTags = ktptTags,
+	kstpObjData = ktptObjData,
+
+	kstpFontVariations = ktptFontVariations,
+	kstpNamedStyle = ktptNamedStyle,
+	kstpBulNumTxtBef = ktptBulNumTxtBef,
+	kstpBulNumTxtAft = ktptBulNumTxtAft,
+	kstpBulNumFontInfo = ktptBulNumFontInfo,
+	kstpWsStyle = ktptWsStyle,
+
+	// Fake string valued text property used for exporting.
+	 kstpFieldName = ktptFieldName
+
+} FwTextStringProp;
+
+
+/*----------------------------------------------------------------------------------------------
+	General text property constants.
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextPropConstants
+{
+	// Typical denominator for values specified with the ktpvRelative variation.
+	kdenTextPropRel = 10000,
+
+	// Number of low bits used for the variation.
+	kcbitTextPropVar = 4,
+
+	// Widely used for "no input no change", that is, some property is not specified.
+	// The value should not be a valid RGB color, nor a likely value for any other property.
+	knNinch = 0x80000000,
+	// Similar value, indicating that a property has conflicting values on differnt runs.
+	knConflicting = 0x80000001,
+} FwTextPropConstants;
+
+
+/*----------------------------------------------------------------------------------------------
+	This enumeration provides the possible values for italic, bold, etc.
+	Hungarian: ttv
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextToggleVal
+{
+	kttvOff = 0,
+	kttvForceOn = 1,
+	kttvInvert = 2,
+} FwTextToggleVal;
+
+
+/*----------------------------------------------------------------------------------------------
+	This enumeration provides the possible values for superscript.
+	Hungarian: ssv
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwSuperscriptVal
+{
+	kssvOff = 0,
+	kssvSuper = 1,
+	kssvSub = 2,
+} FwSuperscriptVal;
+
+
+/*----------------------------------------------------------------------------------------------
+	Provides some of the possible values for kscpFontColor and kscpBackColor.
+	Hungarian: clr
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextColor
+{
+	kclrWhite       = 0x00FFFFFF,
+	kclrBlack       = 0x00000000,
+	kclrRed         = 0x000000FF,
+	kclrGreen       = 0x0000FF00,
+	kclrBlue        = 0x00FF0000,
+	kclrYellow		= 0x0000FFFF,
+	kclrMagenta		= 0x00FF00FF,
+	kclrCyan		= 0x00FFFF00,
+
+	// Special values.
+	// Note: don't use 0x80000000 or 0x80000001 for anything. These are special values used
+	// internally to indicate no value (not specified) and conflicting values, respectively.
+	kclrReserved1 = 0x80000000,
+	kclrReserved2 = 0x80000001,
+
+	kclrTransparent = 0xC0000000,
+} FwTextColor;
+
+
+/*----------------------------------------------------------------------------------------------
+	Possible values for kscpUnderline.
+	Keep these "in order" so that the max of two unt values is the stronger form of underline.
+	ENHANCE JohnT: this requirement may conflict with not changing the assignments once we have
+	data...
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwUnderlineType
+{
+	kuntMin,
+
+	kuntNone = kuntMin,
+	kuntDotted,
+	kuntDashed,
+	kuntSingle,
+	kuntDouble,
+	kuntStrikethrough,
+	// ENHANCE JohnT: should we have a distinctly separate range for things like squiggle
+	// that don't go in a user menu?
+	kuntSquiggle, // squiggle underline for spelling errors
+
+	kuntLim, // keep this the last one
+} FwUnderlineType;
+
+
+/*----------------------------------------------------------------------------------------------
+	Possible values for kscpAlign.
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum FwTextAlign
+{
+	ktalMin,
+
+	ktalLeading = ktalMin,
+	ktalLeft,
+	ktalCenter,
+	ktalRight,
+	ktalTrailing,
+	ktalJustify,
+
+	ktalLim,
+} FwTextAlign;
+
+
+// Information for a run in a string.
+typedef struct TsRunInfo
+{
+	int ichMin;
+	int ichLim;
+	int irun; // The index of this run, zero based.
+} TsRunInfo;
+
+
+/*----------------------------------------------------------------------------------------------
+	TsString objects hold one or more runs of text.  Each run has associated with it a
+	TsTextProps object.  Adjacent runs of text must have different TsTextProps objects.
+	An empty string has a single empty run with an empty TsTextProps object.  Non-empty
+	strings have non-empty runs.  TsString objects are immutable.  TsString objects are
+	created from instances of TsStrFactory, TsStrBldr and TsIncStrBldr.
+	Hungarian: tss
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
+{
+	// Fetch the raw text.
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+	// Fetch the length in characters of the text.
+	[propget] HRESULT Length(
+		[out, retval] int * pcch);
+	// Fetch the number of runs.
+	[propget] HRESULT RunCount(
+		[out, retval] int * pcrun);
+
+	// Mapping between character indexes and run indexes.
+	// Fetch the run index for a particular character position.
+	// ich may be equal to the length of the string which is one more than the last valid
+	// character index, in which case, the last run will be used.
+	[propget] HRESULT RunAt(
+		[in] int ich,
+		[out, retval] int * pirun);
+	// Fetch the character position of the first character in a particular run.
+	[propget] HRESULT MinOfRun(
+		[in] int irun,
+		[out, retval] int * pichMin);
+	// Fetch the character position one past the last character in a particular run.
+	[propget] HRESULT LimOfRun(
+		[in] int irun,
+		[out, retval] int * pichLim);
+	// Fetch both Min and Lim of a run.
+	HRESULT GetBoundsOfRun(
+		[in] int irun,
+		[out] int * pichMin,
+		[out] int * pichLim);
+
+	// Run information.
+	// Fetch the run information at a given character position. ich must be a valid character
+	// postion.
+	HRESULT FetchRunInfoAt(
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+	// Fetch the run information for a particular run. irun must be a valid run index.
+	HRESULT FetchRunInfo(
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Fetching characters.
+	// Fetch the text for a particular run. irun must be a valid run index.
+	[propget] HRESULT RunText(
+		[in] int irun,
+		[out, retval] BSTR * pbstr);
+	// Fetch the characters from ichMin to ichLim. Return the string as a BSTR.
+	HRESULT GetChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, retval] BSTR * pbstr);
+	// Fetch characters into a caller supplied buffer from ichMin to ichLim. Return the string
+	// as a OLECHAR
+	[restricted, local] HRESULT FetchChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, size_is(ichLim - ichMin), string] OLECHAR * prgch);
+
+	// Locking text. These routines provide fast access to the raw characters of the TsString.
+	// The use of local prevents marshalling.
+	// Fetches a pointer to the raw characters and the number of characters.
+	[restricted, local] HRESULT LockText(
+		[out, string] const OLECHAR ** pprgch,
+		[out] int * pcch);
+	// Balances calls to LockText.
+	[restricted, local] HRESULT UnlockText(
+		[in, string] const OLECHAR * prgch);
+	// Fetches a constant pointer to the raw characters of a particular run.
+	[restricted, local] HRESULT LockRun(
+		[in] int irun,
+		[out, string] const OLECHAR ** pprgch,
+		[out] int * pcch);
+	// Balances calls to LockRun.
+	[restricted, local] HRESULT UnlockRun(
+		[in] int irun,
+		[in, string] const OLECHAR * prgch);
+
+	// Getting properties.
+	// Fetch the run properties at a particular character position.
+	[propget] HRESULT PropertiesAt(
+		[in] int ich,
+		[out, retval] ITsTextProps ** ppttp);
+	// Fetch the properties of a particular run.
+	[propget] HRESULT Properties(
+		[in] int irun,
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Builders.
+	// Fetches a string builder. The builder allows a copy of the string to be modified using
+	// a series of replace operations. There is no connection between the builder and the
+	// string. Data is copied to the builder.
+	HRESULT GetBldr(
+		[out, retval] ITsStrBldr ** pptsb);
+	// Fetches an incremental string builder. The builder allows a copy of the string to be
+	// modified using a series of append operations. There is no connection between the builder
+	// and the string. Data is copied to the builder.
+	HRESULT GetIncBldr(
+		[out, retval] ITsIncStrBldr ** pptisb);
+
+	// Serialization.
+	HRESULT GetFactoryClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+
+	// Equality
+	HRESULT Equals(
+		[in] ITsString * ptss,
+		[out, retval] ComBool * pfEqual);
+
+	// Write the string to the stream in standard FieldWorks XML format.  Indent the
+	// number of spaces given by cchIndent, which may be zero.
+	HRESULT WriteAsXml(
+		[in] IStream * pstrm,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] int cchIndent,
+		[in] int ws,
+		[in] ComBool fWriteObjData);
+
+	// Return whether the string is already in the specified normal form.
+	// Note that a string may be considered to be in NFC
+	// even though its text (the plain character sequence) is not.
+	// This is because we don't collapse otherwise collapsible pairs if they
+	// have different style properties.
+	[propget] HRESULT IsNormalizedForm(
+		[in] FwNormalizationMode nm,
+		[out, retval] ComBool * pfRet);
+
+	// Return an equivalent string in the specified normal form.
+	// This may be the same object as the recipient, if it is already in
+	// that normal form.
+	// Note that TsStrings normalized to NFC may not have text
+	// (the sequence of plain characters) that is so normalized.
+	// This is because we don't collapse otherwise collapsible pairs if they
+	// have different style properties.
+	[propget] HRESULT NormalizedForm(
+		[in] FwNormalizationMode nm,
+		[out, retval] ITsString ** pptssRet);
+
+	// Return an equivalent string in NFD.
+	// This may be the same object as the recipient, if it is already in
+	// that normal form.
+	//
+	// The values pointed to by the array of pointers to offsets to fix are each offsets into
+	// the string. The code attempts to adjust them to corresponding offsets in the output
+	// string. An exact correspondence is not always achieved; if the offset is in the middle
+	// of a diacritic sequence, it may be moved to the start of the following base character
+	// (or the end of the string).
+	[restricted, local] HRESULT NfdAndFixOffsets(
+		[out] ITsString ** pptssRet,
+		[in, size_is(cichOffsetsToFix)] int ** prgpichOffsetsToFix, // indirectly in/out
+		[in] int cichOffsetsToFix);
+
+	// Fetch the string from ichMin to ichLim. Return the string as a ITsString.
+	HRESULT GetSubstring(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, retval] ITsString ** pptssRet);
+
+	// Write the string to the stream in standard FieldWorks XML format.  Indent the
+	// number of spaces given by cchIndent, which may be zero.
+	HRESULT WriteAsXmlExtended(
+		[in] IStream * pstrm,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] int cchIndent,
+		[in] int ws,
+		[in] ComBool fWriteObjData,
+		[in] ComBool fUseRFC4646);
+};
+
+
+/*----------------------------------------------------------------------------------------------
+	ITsTextProps contains lists of Integer and String properties.  See the enumerations
+	described above for the Integer and String property values.  No two successive runs will
+	have the same text properties.  ITsTextProps are immutable.  A copy may be modified by
+	obtaining a builder object with a call to GetBldr.
+	Hungarian: ttp
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsTextProps, Unknown, 4FA0B99A-5A56-41A4-BE8B-B89BC62251A5)
+{
+
+	// Fetch the number of integer properties.
+	[propget] HRESULT IntPropCount(
+		[out, retval] int * pcv);
+	// Fetch the integer property at a particular index.  The variation is not always meaningful,
+	// but should be set to ktpvDefault when that is the case.
+	HRESULT GetIntProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] int * pnVar,
+		[out, retval] int * pnVal);
+	// Fetch the variation and value of an integer property.  If an invalid tpt value is
+	// passed, GetIntPropValues will return S_FALSE and *pnVar and *pnVal are set to -1.
+	HRESULT GetIntPropValues(
+		[in] int tpt,
+		[out] int * pnVar,
+		[out, retval] int * pnVal);
+
+	// Fetch the number of string properties.
+	[propget] HRESULT StrPropCount(
+		[out, retval] int * pcv);
+	// Fetch the string property at a particular index.
+	HRESULT GetStrProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out, retval] BSTR * pbstrVal);
+	// Fetch the value of a string property.  If an invalid tpt value is passed,
+	// GetStrPropValue will return S_FALSE and and *pbstrVal is set to NULL.
+	HRESULT GetStrPropValue(
+		[in] int tpt,
+		[out, retval] BSTR * pbstrVal);
+
+	// Creates a builder object from the text property object.  The builder contains a copy of
+	// the text properties object's internal data which can be modified through the methods
+	// provided by the builder. (Note that this modifies a copy of the data, not the original
+	// TsTextProps.)
+	HRESULT GetBldr(
+		[out, retval] ITsPropsBldr ** pptpb);
+
+	// Serialization.
+	HRESULT GetFactoryClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT Serialize(
+		[in] IStream * pstrm);
+	// If cbMax is not large enough, S_FALSE is returned and *pcb is set to the required size.
+	HRESULT SerializeRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcb);
+	// Serialize a set of text property objects as would be needed for a string object in
+	// the database. It is assumed that for any runs for which we want to use duplicated property
+	// information, the ITsTextProps themselves are redundant in rgpttp.
+	HRESULT SerializeRgPropsRgb(
+		[in] int cpttp,
+		[in] ITsTextProps ** rgpttp,
+		[in] int * rgich,
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcb);
+
+	// Write the text properties to the stream in standard FieldWorks XML format.  Indent the
+	// number of spaces given by cchIndent, which may be zero.
+	// Note that this is for standalone text property objects, not for those embedded inside
+	// strings: those are handled by the ITsString method itself.
+	HRESULT WriteAsXml(
+		[in] IStream * pstrm,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] int cchIndent);
+};
+
+
+/***********************************************************************************************
+	Factories.
+***********************************************************************************************/
+
+/*----------------------------------------------------------------------------------------------
+	The main purpose of ITsStrFactory is to provide the Deserialize method to the persistence
+	mechanism. It also provides a mechanism to get simple TsStrings and empty builders. Since
+	TsString objects are imutable, the method to retrieve one from a persistant store must be
+	provided by the factory.
+	Hungarian: tsf
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsStrFactory, Unknown, F1EF76E4-BE04-11d3-8D9A-005004DEFEC4)
+{
+	HRESULT DeserializeStringStreams(
+		[in] IStream * pstrmTxt,
+		[in] IStream * pstrmFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeString(
+		[in] BSTR bstrTxt,
+		[in] IStream * pstrmFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeStringRgb(
+		[in] BSTR bstrTxt,
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeStringRgch(
+		[in, size_is(*pcchTxt), string] const OLECHAR * prgchTxt,
+		[in, out] int * pcchTxt,
+		[in, size_is(*pcbFmt)] const BYTE * prgbFmt,
+		[in, out] int * pcbFmt,
+		[out, retval] ITsString ** pptss);
+
+	// Creates a simple ITsString from the BSTR with writing system. The default old writing system is
+	// assumed for this string. If ws is zero, the ws/ows stack is empty. If the string
+	// length is zero, properties are not set.
+	HRESULT MakeString(
+		[in] BSTR bstr,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+	// Creates a simple ITsString from the OLECHAR string with writing system. The default writing
+	// system is assumed for this string. If cch is zero, properties are not set.
+	[restricted] HRESULT MakeStringRgch(
+		[in, size_is(cch), string] const OLECHAR * prgch,
+		[in] int cch,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+	// Creates a simple ITsString from the OLECHAR string with the given properties.
+	// The string might be empty.
+	[restricted] HRESULT MakeStringWithPropsRgch(
+		[in, size_is(cch), string] const OLECHAR * prgch,
+		[in] int cch,
+		[in] ITsTextProps * pttp,
+		[out, retval] ITsString ** pptss);
+
+	// Builders.
+	// Creates an empty string builder object.
+	HRESULT GetBldr(
+		[out, retval] ITsStrBldr ** pptsb);
+
+	// Creates an empty incremental string builder object.
+	HRESULT GetIncBldr(
+		[out, retval] ITsIncStrBldr ** pptisb);
+
+	// Run information
+	// Fetch the number of runs in the given format prgch.
+	[propget] HRESULT RunCount(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[out, retval] int * pcrun);
+
+	// Fetch the run information at a given character position relative to the format prgch.
+	// ich must be a valid character postion.
+	HRESULT FetchRunInfoAt(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+	// Fetch the run information for a particular run in for format prgch. irun must be a valid
+	// run index.
+	HRESULT FetchRunInfo(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+	// Return an empty string in the specified writing system.
+	// These are typically cached so a new object does not have to be created every time.
+	HRESULT EmptyString(
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+};
+
+
+
+/*----------------------------------------------------------------------------------------------
+	The main purpose of ITsPropsFactory is to provide the Deserialize method to the persistence
+	mechanism.  It also provides a mechanism to create a property object and create an empty
+	property builder.
+	Hungarian: tpf
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsPropsFactory, Unknown, 8DCE56A6-CFF1-4402-95FE-2B574912B54E)
+{
+	HRESULT DeserializeProps(
+		[in] IStream * pstrm,
+		[out, retval] ITsTextProps ** ppttp);
+	HRESULT DeserializePropsRgb(
+		[in, size_is(*pcb)] const BYTE * prgb,
+		[in, out] int * pcb,
+		[out, retval] ITsTextProps ** ppttp);
+	// Create a set of TsTextProps from the string. DOES NOT create a separate object for
+	// runs that have duplicate properties; the return array will point to duplicate copies
+	// of the TsTextProps.
+	HRESULT DeserializeRgPropsRgb(
+		[in] int cpttpMax,
+		[in, size_is(*pcb)] const BYTE * prgb,
+		[in, out] int * pcb,
+		[out] int * pcpttpRet,
+		[out, size_is(cpttpMax)] ITsTextProps ** rgpttp,
+		[out, size_is(cpttpMax)] int * rgich);
+
+	// Creates a property object containing ws writing system, ows old writing system, and a character
+	// style (kstpCharStyle) value passed as a BSTR.  The ws value may be zero which means
+	// no writing system is specified.  bstrStyle may be NULL.  If ws is zero, ows must also be zero.
+	// An error will be returned otherwise.
+	HRESULT MakeProps(
+		[in] BSTR bstrStyle,
+		[in] int ws,
+		[in] int ows,
+		[out, retval] ITsTextProps ** ppttp);
+	// Creates a property object containing ws writing system, ows old writing system, and a character
+	// style (kstpCharStyle) value passed as a OLECHAR array.  The ws value may be zero which
+	// means no writing system is specified.  prgchStyle may be NULL.  If ws is zero, ows must also
+	// be zero.  An error will be returned otherwise.
+	[restricted] HRESULT MakePropsRgch(
+		[in, size_is(cch), string] const OLECHAR * prgchStyle,
+		[in] int cch,
+		[in] int ws,
+		[in] int ows,
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Creates an empty text property builder.
+	HRESULT GetPropsBldr(
+		[out, retval] ITsPropsBldr ** pptpb);
+};
+
+
+/***********************************************************************************************
+	Builders.
+***********************************************************************************************/
+
+/*----------------------------------------------------------------------------------------------
+	A ITsStrBldr object supports the modifcation of a string with associated encodings,
+	writing	systems and properties by replacing BSTRs, OLECHAR strings, ITsString objects,
+	ws/ows, properties and objects on the string contained in the builder, if any.
+	There are a number of methods that return information about the string runs and their
+	associated ws/ows and property values.
+	An ITsString object and be created by calling GetString.
+	Hungarian: tsb
+----------------------------------------------------------------------------------------------*/
+// REVIEW: ShonK, JeffG(JeffG): Should TsStrBldr derive off of TsStrBase?  and
+// Should Strbuilder(s) accept TsPropsBldrs
+DeclareInterface(TsStrBldr, Unknown, F1EF76E6-BE04-11d3-8D9A-005004DEFEC4)
+{
+	// With the exception of the Replace*, PushEcoding, GetString methods, all other methods are
+	// the same as the methods with the same names found on ITsString. Please refer to ITsString
+	// for documentation.
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+	[propget] HRESULT Length(
+		[out, retval] int * pcch);
+	[propget] HRESULT RunCount(
+		[out, retval] int * pcrun);
+
+	// Mapping between character indexes and run indexes.
+	[propget] HRESULT RunAt(
+		[in] int ich,
+		[out, retval] int * pirun);
+
+	HRESULT GetBoundsOfRun(
+		[in] int irun,
+		[out] int * pichMin,
+		[out] int * pichLim);
+	[restricted] HRESULT FetchRunInfoAt(
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+	[restricted] HRESULT FetchRunInfo(
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Fetching characters.
+	[propget] HRESULT RunText(
+		[in] int irun,
+		[out, retval] BSTR * pbstr);
+	HRESULT GetChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, retval] BSTR * pbstr);
+	[restricted, local] HRESULT FetchChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, size_is(ichLim - ichMin), string] OLECHAR * prgch);
+
+	// Getting properties.
+	[propget] HRESULT PropertiesAt(
+		[in] int ich,
+		[out, retval] ITsTextProps ** pttp);
+	[propget] HRESULT Properties(
+		[in] int irun,
+		[out, retval] ITsTextProps ** pttp);
+
+
+	// Methods to modify the current state.
+	// Replace characters from ichMin up to, but not including, ichLim with the text in bstrIns
+	// and the properties pttp. The Replace method an also perform an append by passing the lim
+	// of the string for both ichMin and ichLim. If bstrIns is NULL, the Replace method will
+	// delete the character range specified. If pttp is NULL, the properties found at ichMin
+	// will be assume in which case the new string will join the run at ichMin.
+	HRESULT Replace(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] BSTR bstrIns,
+		[in] ITsTextProps * pttp);
+	// Replace from ichMin up to, but not including, ichLim with the text and properties of
+	// ptssIns. If ptssIns is NULL, the ReplaceTsString method will delete the character range
+	// specifed.
+	HRESULT ReplaceTsString(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] ITsString * ptssIns);
+	// Replace characters from ichMin up to, but not including, ichLim with the text in prgchIns
+	// and the properties pttp. If cchIns is zero, the ReplaceRgch method will delete the
+	// character range specifed.
+	HRESULT ReplaceRgch(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in, size_is(cchIns), string] const OLECHAR * prgchIns,
+		[in] int cchIns,
+		[in] ITsTextProps * pttp);
+
+	// Set the properties for the range of characters.
+	HRESULT SetProperties(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] ITsTextProps * pttp);
+
+	// Set the integer prop values for the range of characters.  If nVar and nVal are both -1,
+	// the integer property is removed.
+	HRESULT SetIntPropValues(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+	// Set the string prop values for the range of characters.  If nVar is -1 and bstrVal is
+	// empty, the string property is removed.
+	HRESULT SetStrPropValue(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+	// Create an ITsString from the current state.
+	HRESULT GetString(
+		[out, retval] ITsString ** pptss);
+
+	HRESULT Clear(
+		);
+
+	// Serialization.
+	HRESULT GetBldrClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+};
+
+
+/*----------------------------------------------------------------------------------------------
+	ITsIncStrBldr supports the construction of a string with associated encodings, writing
+	systems and properties by appending BSTRs, OLECHAR strings, ITsString objects and objects on
+	the end of the string contained in the builder, if any.
+	The current writing system/ows and properties may be set with the appropiate methods. Calling any
+	of these methods will make the parameters passed the "current" values which will affect any
+	subsequent append operation.
+	An ITsString object and be created by calling GetString.
+	Hungarian: tisb
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsIncStrBldr, Unknown, F1EF76E7-BE04-11d3-8D9A-005004DEFEC4)
+{
+	// Fetch the raw text.
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+
+	// Methods to modify the current state.
+	// Append a BSTR to end of the string.
+	HRESULT Append(
+		[in] BSTR bstrIns);
+	// Append an ITsString to the end of the string.
+	HRESULT AppendTsString(
+		[in] ITsString * ptssIns);
+	// Append the OLECHAR string to the end of the string.
+	[restricted] HRESULT AppendRgch(
+		[in, size_is(cchIns), string] const OLECHAR * prgchIns,
+		[in] int cchIns);
+
+
+	// Set an integer property to be applied to any subsequent append operations.  The value of
+	// tpt is not checked for validity, but its value affects how nVar and nVal are interpreted.
+	// If nVar and nVal are -1, the integer property is deleted.
+	HRESULT SetIntPropValues(
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+	// Set a string property to be applied to any subsequent append operations.  The value of
+	// tpt is not checked for validity.  If nVar is -1 and bstrVal is empty, the string
+	// property is deleted.
+	HRESULT SetStrPropValue(
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+	// Create an ITsString object from the current state.
+	HRESULT GetString(
+		[out, retval] ITsString ** pptss);
+
+	HRESULT Clear(
+		);
+
+	// Serialization.
+	HRESULT GetIncBldrClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+
+};
+
+
+/*----------------------------------------------------------------------------------------------
+	An ITsPropsBldr object is used to create ITsTextProps objects.
+	Hungarian: tpb
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsPropsBldr, Unknown, F1EF76E8-BE04-11d3-8D9A-005004DEFEC4)
+{
+	// Fetch the number of integer properties.
+	[propget] HRESULT IntPropCount(
+		[out, retval] int * pcv);
+	// Fetch the integer property at a particular index.
+	HRESULT GetIntProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] int * pnVar,
+		[out] int * pnVal);
+	// Fetch the variation and value of an integer property.  If an invalid tpt value is passed,
+	// return S_FALSE and set both *pnVar and *pnVal to -1.
+	HRESULT GetIntPropValues(
+		[in] int tpt,
+		[out] int * pnVar,
+		[out] int * pnVal);
+
+	// Fetch the number of string properties.
+	[propget] HRESULT StrPropCount(
+		[out, retval] int * pcv);
+	// Fetch the string property at a particular index.
+	HRESULT GetStrProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] BSTR * pbstrVal);
+	// Fetch the value of a string property.  If an invalid tpt value is passed, return S_FALSE
+	// and set *pbstrVal to NULL.
+	HRESULT GetStrPropValue(
+		[in] int tpt,
+		[out] BSTR * pbstrVal);
+
+
+	// Set an integer property.  If nVar and nVal are -1, the integer property is deleted.
+	HRESULT SetIntPropValues(
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+	// Set a string property.  If bstrVal is empty, the string property is deleted.
+	HRESULT SetStrPropValue(
+		[in] int tpt,
+		[in] BSTR bstrVal);
+	// Set a string property.  If bstrVal is empty, the string property is deleted.
+	// Same as above, but in some cases easier to use from C#.
+	HRESULT SetStrPropValueRgch(
+		[in] int tpt,
+		[in, size_is(nValLength)] const byte* rgchVal,
+		[in] int nValLength);
+
+	// Create an ITsTextProps from the current state. The number of TextProps may be less then
+	// the number pushed or inserted do to the compression of like, adjacent values.
+	HRESULT GetTextProps(
+		[out, retval] ITsTextProps ** ppttp);
+};
+
+/*----------------------------------------------------------------------------------------------
+	ITsStringMuli is an interface for storing and retrieving writing system/TsString pairs in a
+	single property (MultiString). These are used for definitions, glosses, etc. in multiple
+	languages. The pairs are called alternatives, since they are alternate ways of saying the
+	same thing in different encodings. WritingSystems must be unique in a MultiString. (E.g.,
+	a TsStringMulti can	only have one English alternative.)
+	Hungarian: tms
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsMultiString, Unknown, DD409520-C212-11d3-9BB7-00400541F9E9)
+{
+	// Set *pctss to the number of string alternatives.
+	[propget] HRESULT StringCount(
+		[out, retval] int * pctss);
+
+	// Set *pptss to the string, and pws to the writing system of the alternative at
+	// index iws. If the MultiString is empty and iws is 0, pass an empty string and a zero
+	// writing system. Thus iws == 0 will always return the first string or an empty string.
+	// Other than the above exception, if TsStringMulti does not hold a string at the requested
+	// index, it returns E_INVALIDARG.
+	HRESULT GetStringFromIndex(
+		[in] int iws,
+		[out] int * pws,
+		[out, retval] ITsString ** pptss);
+
+	// Set *pptss to the string for alternative writing system ws. If the string does not already
+	// exist, an empty string is returned.
+	[propget] HRESULT String(
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+
+	// Store string ptss in the ws alternative. If a string already exists for ws,
+	// the original string will be replaced. If ptss is NULL, the alternative is deleted.
+	[propputref] HRESULT String(
+		[in] int ws,
+		[in] ITsString * ptss);
+};
+
+/*----------------------------------------------------------------------------------------------
+	ITsStreamWrapper Provides (mainly for C# benefit) access to StrAnsiStreams, and the ability
+	to read and write TsStrings in our standard XML representation.
+	Hungarian: stf
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(TsStreamWrapper, Unknown, 4516897E-314B-49d8-8378-F2E105C80009)
+{
+	// Get the stream object.
+	[propget] HRESULT Stream(
+		[out, retval] IStream ** ppstrm);
+	// Get the current contents of the stream, bytes zero-extended to make a BSTR.
+	[propget] HRESULT Contents(
+		[out, retval] BSTR * pbstr);
+	// Set the current contents of the stream, using the low byte of each char of the BSTR.
+	// Completely replaces any current stream contents, irrespective of current stream position.
+	// Stream position is reset to start ready for ReadTssFromXml.
+	[propput] HRESULT Contents(
+		[in] BSTR bstr);
+	// Call ptss->WriteAsXml(this.Stream, cchIndent, ws, fWriteObjData).
+	HRESULT WriteTssAsXml(
+		[in] ITsString * ptss,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] int cchIndent,
+		[in] int ws,
+		[in] ComBool fWriteObjData);
+	// Read a TsString representation from the input. This should be XML as produced by
+	// WriteXml (with ws = 0).
+	HRESULT ReadTssFromXml(
+		[in] ILgWritingSystemFactory * pwsf,
+		[out, retval] ITsString ** pptss);
+};
+
+/***********************************************************************************************
+	CoClass definitions.
+***********************************************************************************************/
+#ifndef NO_COCLASSES
+DeclareCoClass(TsStrFactory, F1EF76E9-BE04-11d3-8D9A-005004DEFEC4)
+{
+	interface ITsStrFactory;
+};
+
+
+DeclareCoClass(TsPropsFactory, F1EF76EA-BE04-11d3-8D9A-005004DEFEC4)
+{
+	interface ITsPropsFactory;
+};
+
+
+DeclareCoClass(TsStrBldr, F1EF76EB-BE04-11d3-8D9A-005004DEFEC4)
+{
+	interface ITsStrBldr;
+};
+
+
+DeclareCoClass(TsIncStrBldr, F1EF76EC-BE04-11d3-8D9A-005004DEFEC4)
+{
+	interface ITsIncStrBldr;
+};
+
+
+DeclareCoClass(TsPropsBldr, F1EF76ED-BE04-11d3-8D9A-005004DEFEC4)
+{
+	interface ITsPropsBldr;
+};
+
+DeclareCoClass(TsMultiString, 7A1B89C0-C2D6-11d3-9BB7-00400541F9E9)
+{
+	interface ITsMultiString;
+};
+
+DeclareCoClass(TsStreamWrapper, 60A7A639-3774-43e8-AE40-D911EC8E3A35)
+{
+	interface ITsStreamWrapper;
+};
+#endif // !NO_COCLASSES

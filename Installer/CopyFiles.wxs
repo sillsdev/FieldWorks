@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="CopyFilesFragment">
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="CopyLicenseTechReadme" Guid="608513C9-0BFD-4165-B27D-3F410E1BB897">
+				<CopyFile Id="CopyReadme" SourceName="ReadMe.rtf" DestinationName="ReadMe.rtf" SourceProperty="SourceDir" DestinationDirectory="INSTALLDIR" Delete="no" />
+				<RemoveFile Id="RemoveReadMe" Directory="INSTALLDIR" Name="ReadMe.rtf" On="uninstall" />
+				<CopyFile Id="CopyTechSupport" SourceName="TechSupport.txt" DestinationName="TECHSU~1.TXT" SourceProperty="SourceDir" DestinationDirectory="INSTALLDIR" Delete="no" DestinationLongName="TechSupport.txt" />
+				<RemoveFile Id="RemoveTechSupport" Directory="INSTALLDIR" Name="TECHSU~1.TXT" LongName="TechSupport.txt"  On="uninstall" />
+				<CopyFile Id="CopyLicense" SourceName="License.rtf" DestinationName="License.rtf" SourceProperty="SourceDir" DestinationDirectory="INSTALLDIR" Delete="no" />
+				<RemoveFile Id="RemoveLicense" Directory="INSTALLDIR" Name="License.rtf" On="uninstall" />
+			</Component>
+			<Component Id="CopyDnReadme" Guid="0F77ED6D-BB9D-40DD-B03B-0B5795BBC802">
+				<CopyFile Id="CopyDnReadme" SourceName="DNReadMe.rtf" DestinationName="DNReadMe.rtf" SourceProperty="SourceDir" DestinationDirectory="Data_Notebook" Delete="no" />
+				<RemoveFile Id="RemoveDnReadme" Directory="Data_Notebook" Name="DNReadMe.rtf" On="uninstall" />
+			</Component>
+			<Component Id="CopyTEReadMe" Guid="80D33B25-7869-438A-8B0A-2CAD9D80BF6B">
+				<CopyFile Id="CopyTEReadMe" SourceName="TEReadMe.rtf" DestinationName="TEReadMe.rtf" SourceProperty="SourceDir" DestinationDirectory="Translation_Editor" Delete="no" />
+				<RemoveFile Id="RemoveTEReadMe" Directory="Translation_Editor" Name="TEReadMe.rtf" On="uninstall" />
+			</Component>
+			<Component Id="CopyWPReadMe" Guid="95E6CE06-8E1B-4D92-823A-5D20ED0368EE">
+				<CopyFile Id="CopyWPReadMe" SourceName="WPReadMe.rtf" DestinationName="WPReadMe.rtf" SourceProperty="SourceDir" DestinationDirectory="WorldPad" Delete="no" />
+				<RemoveFile Id="RemoveWPReadMe" Directory="WorldPad" Name="WPReadMe.rtf" On="uninstall" />
+			</Component>
+			<Component Id="CopyFLExReadMe" Guid="21B5A257-7EA7-464C-90AB-7C862AB24EB1">
+				<CopyFile Id="CopyFLExReadMe" SourceName="FLExReadMe.rtf" DestinationName="FLEXRE~1.RTF" SourceProperty="SourceDir" DestinationDirectory="Language_Explorer" Delete="no" DestinationLongName="FLExReadMe.rtf" />
+				<RemoveFile Id="RemoveFLExReadMe" Directory="Language_Explorer" Name="FLEXRE~1.RTF" LongName="FLExReadMe.rtf" On="uninstall" />
+			</Component>
+			<Component Id="CopyFlexWhatsNew" Guid="5CCFAC51-465A-462B-A26C-5E42C17D4F02">
+				<CopyFile Id="CopyFlexWhatsNew" SourceName="WhatsNew.htm" DestinationName="WhatsNew.htm" SourceProperty="SourceDir" DestinationDirectory="Language_Explorer" Delete="no" />
+				<RemoveFile Id="RemoveFlexWhatsNew" Directory="Language_Explorer" Name="WhatsNew.htm" On="uninstall" />
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

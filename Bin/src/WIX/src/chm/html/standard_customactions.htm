@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Windows Installer XML Standard CustomActions</title>
+</head>
+<body>
+<h1>Windows Installer XML Standard CustomActions</h1>
+
+<p>
+The WiX toolset contains several CustomActions to handle configuring resources such as
+Internet Information Services web sites and virtual directories, SQL Server databases
+and scripts, user accounts, file shares, and more.  These CustomActions are provided in
+two separate .wixlibs:  sca.wixlib and wixca.wixlib.  The former contain "Server
+CustomActions" while the latter has more general installation CustomActions.  In the future,
+these .wixlib's may merge together but for now (for mostly historical reasons) they are separate.
+</p>
+
+<h2><a href='using_server_customactions.htm'>sca.wixlib - Server CustomActions</a></h2>
+<ul>
+<li>Internet Information Services (IIS) CustomAction - create and configure web sites, virtual directories, web applications, etc.</li>
+<li>SQL Server CustomAction - create databases and execute SQL scripts and statements.</li>
+<li>User CustomAction - create and configure new users.</li>
+<li>FileShare CustomAction - create and configure file shares (SMB).</li>
+<li><a href='perfmon.htm'>Performance Counter CustomAction</a> - install and uninstall performance counters.</li>
+</ul>
+
+<h2>wixca.wixlib - General CustomActions</h2>
+<ul>
+<li>Secure Objects CustomAction - secure (using ACLs) objects that standard LockPermission table cannot.  For further information see the Extended attribut in <a href='wix_xsd_permission.htm'>&lt;Permission/&gt;</a>.</li>
+<li>Service Configuration CustomAction - configure attributes of a Windows Service that the ServiceInstall table cannot.</li>
+<li><a href='qtexec.htm'>Quiet Execution CustomAction</a> - launch console executables without displaying a window.</li>
+<li>XmlFile CustomAction - allows you to configure XML files as part of your installation package.  For further information see <a href='wix_xsd_xmlfile.htm'>&lt;XmlFile/&gt;</a>.</li>
+</ul>
+
+<p>
+New CustomActions are always under development. Our goal is to one day have standard CustomActions
+for just about any need.  Feel free to open a <a href='http://sourceforge.net/tracker/?atid=642717&amp;group_id=105970&amp;func=browse'>Feature Request</a>
+if you have a CustomAction need.
+</p>
+
+</body>
+</html>

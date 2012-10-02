@@ -1,0 +1,35 @@
+<!-- TEScrNoteCategories.dtd -->
+<!-- IMPORTANT NOTE TO MAINTAINERS
+	*********************************************************************************************
+	ANY change to this DTD must be accompanied by the generation of a new DTDVer using guidgen.
+	The DTD version should be changed below, in TeScrNoteCategories.xml, and in
+	TeNoteCategoriesInitializer.cs. The TE program will only work with a category list having the
+	DTD version for which it was created. TE must be modified and recompiled to process a file
+	having an updated DTD. Field personnel who do not have the capability to rebuild the software
+	should not modify this file.
+	*********************************************************************************************
+-->
+<!ELEMENT TEScrNoteCategories (category+)>
+<!ATTLIST TEScrNoteCategories
+	date CDATA #REQUIRED
+	DTDver (97447BE8-A746-498a-91A1-11A27E93165F) #REQUIRED
+	version CDATA #REQUIRED
+>
+<!ELEMENT category (name+, abbreviation+, description*, category*, helpId?)>
+<!ELEMENT name (#PCDATA)>
+<!ATTLIST name
+	iculocale CDATA #REQUIRED
+>
+<!ELEMENT abbreviation (#PCDATA)>
+<!ATTLIST abbreviation
+	iculocale CDATA #REQUIRED
+>
+<!ELEMENT description (#PCDATA)>
+<!ATTLIST description
+	iculocale CDATA #REQUIRED
+>
+<!ELEMENT helpId EMPTY>
+<!ATTLIST helpId
+	category CDATA #IMPLIED
+	topic CDATA #IMPLIED
+>

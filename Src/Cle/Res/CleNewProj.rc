@@ -1,0 +1,78 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2001, SIL International. All rights reserved.
+
+File: CleNewProj.rc
+Responsibility: Steve McConnel
+Last reviewed: Not yet.
+
+Description:
+	FieldWorks List Editor specific File / New Language Project command dialog resources.
+----------------------------------------------------------------------------------------------*/
+#include "CleNewProjRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//  English (U.S.) resources
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"CleNewProjRes.h\0"
+END
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+
+
+/*----------------------------------------------------------------------------------------------
+	Empty List Dialog.
+----------------------------------------------------------------------------------------------*/
+kridEmptyList DIALOGEX 0, 0, 220, 102
+//STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+//EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Empty Topics List"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL     "",kridEmptyListIcon,"Static",SS_ICON,5,5,25,25
+	LTEXT       "This List does not contain any items yet.",
+				kridEmptyListHeader, 35,5,175,27
+	LTEXT       "",IDC_STATIC,5,35,210,1,SS_SUNKEN
+	LTEXT       "You would normally use the menu commands to insert a new list item or to import existing data, but to help you get started...",
+				IDC_STATIC, 5,40,210,18
+	LTEXT       "To insert a new list item, click here:", IDC_STATIC, 10,65, 134, 9
+	PUSHBUTTON  "In&sert",kctidEmptyLNewItem,145,62,70,16,WS_GROUP
+//    LTEXT       "To import existing data, click here:", IDC_STATIC, 10, 83, 134, 9
+//    PUSHBUTTON  "&Import...",kctidEmptyLImport,145,80,70,16,WS_GROUP
+	LTEXT       "To close Topics List Editor, click here:", IDC_STATIC, 10, 83, 134, 9
+	PUSHBUTTON  "E&xit",kctidCancel,145,80,70,16,WS_GROUP
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidEmptyListHeaderFmt "The %<0>s topics list does not contain any items yet."
+END
+
+#endif    // English (U.S.) resources
+////////////////////////////////////////////////////////////////////////////////////////////////

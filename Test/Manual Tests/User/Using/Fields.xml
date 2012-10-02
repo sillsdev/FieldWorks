@@ -1,0 +1,20 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="Using\Fields.xml">
+ <title tag="xmlfld">Bug Report Data</title>
+ <index>
+  <li>Bug: data</li>
+  <li>changing bug data</li>
+  <li>editing bug data</li>
+ </index>
+ <introduction>
+  <p>To edit data in a bug report copied from a bug pattern or created in some other way, follow the links below.</p>
+ </introduction>
+ <moduleGroup>
+  <li><link uri="Name.xml" type="module">Naming bugs</link></li>
+  <li><link uri="Category.xml" type="module">Categorizing bugs</link></li>
+  <li><link uri="Priority.xml" type="module">Choosing a priority level</link></li>
+  <li><link uri="Severity.xml" type="module">Choosing a severity level</link></li>
+  <li><link uri="Describe.xml" type="module">Describing bugs</link></li>
+  <li><link uri="Related.xml" type="module">How to link related bugs</link></li>
+ </moduleGroup>
+</overview>

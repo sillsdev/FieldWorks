@@ -1,0 +1,18 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: Cle.idh
+Responsibility: John Thomson
+Last reviewed: never
+
+	Type library info for the Choices List Editor application. Currently the only thing is that
+	it implements the IFwTool interface.
+----------------------------------------------------------------------------------------------*/
+
+#ifndef NO_COCLASSES
+DeclareCoClass(ChoicesListEditor, 5EA62D01-7A78-11d4-8078-0000C0FB81B5)
+{
+	interface IFwTool;
+};
+
+#endif // !NO_COCLASSES

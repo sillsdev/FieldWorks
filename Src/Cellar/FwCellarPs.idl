@@ -1,0 +1,17 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: FwCellarPs.idl
+Responsibility: Shon Katzenberger
+Last reviewed:
+
+	Main proxy / stub file for the Cellar typelib.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+import "FwKernelPs.idl";
+
+#include "Common.idh"
+
+#define NO_COCLASSES 1
+#include "Cellar.idh"

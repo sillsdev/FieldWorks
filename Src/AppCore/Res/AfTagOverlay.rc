@@ -1,0 +1,361 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "AfTagOverlayRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"AfTagOverlayRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsOptDlgOvr DIALOGEX 0, 0, 378, 188
+STYLE DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Over&lays:",IDC_STATIC,7,5,30,8
+	CONTROL         "List1",kctidOverlayList,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					LVS_SHAREIMAGELISTS | LVS_EDITLABELS |
+					LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP,7,17,111,129,
+					WS_EX_CLIENTEDGE
+	PUSHBUTTON      "&Add...",kctidOvrAdd,7,153,34,14
+	PUSHBUTTON      "&Copy",kctidOvrCopy,44,153,31,14
+	PUSHBUTTON      "&Delete...",kctidOvrDelete,78,153,40,14
+	GROUPBOX        "Overlay &settings",kctidSettingsLabel,124,4,250,163
+	EDITTEXT        kctidTagEdit,132,19,128,12,ES_AUTOHSCROLL
+	CONTROL         "List2",kctidTagList,"SysListView32",LVS_REPORT |
+					LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS |
+					LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP,132,34,128,
+					106,WS_EX_CLIENTEDGE
+	PUSHBUTTON      "Choose &Tags...",kctidTagChoose,159,145,73,16
+	GROUPBOX        "Tag Formatting",kstidOvrTagLabel,267,16,100,84
+	LTEXT           "&Foreground:",kstidOvrForeLabel,273,28,39,8
+	PUSHBUTTON      "",kctidTagFore,318,26,42,14
+	LTEXT           "&Background:",kstidOvrBackLabel,273,42,42,8
+	PUSHBUTTON      "",kctidTagBack,318,41,42,14
+	LTEXT           "Underline:",kstidOvrUnderLabel,273,56,33,8
+	LTEXT           "St&yle:",kstidOvrStyleLabel,294,69,18,8
+	COMBOBOX        kctidTagUnderStyle,318,67,42,79,CBS_DROPDOWNLIST |
+					CBS_OWNERDRAWFIXED | CBS_NOINTEGRALHEIGHT | WS_VSCROLL |
+					WS_TABSTOP
+	LTEXT           "C&olor:",kstidOvrColorLabel,294,84,19,8
+	PUSHBUTTON      "",kctidTagUnderColor,318,83,42,13
+	PUSHBUTTON      "Ad&vanced...",kctidTagAdvanced,281,145,73,16
+	LTEXT           "Click on an overlay, then click on the tags in that overlay to adjust their appearance.",
+					IDC_STATIC,7,174,274,8
+END
+
+kridNewOverlayDlg DIALOGEX 0, 0, 175, 194
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+	WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "New Overlay"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "&New overlay name:",IDC_STATIC,7,9,62,8
+	EDITTEXT        kctidEditName,73,7,96,12,ES_AUTOHSCROLL
+	LTEXT           "&Associated list (choose one):",IDC_STATIC,7,31,91,8
+	LTEXT           "",IDC_STATIC,7,25,162,2,SS_SUNKEN
+	CONTROL         "List1",kctidListName,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOCOLUMNHEADER |
+					WS_BORDER | WS_TABSTOP,7,42,162,107,WS_EX_CLIENTEDGE
+	CONTROL         "Include all items from this list",kctidOvrIncludeAll,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,7,152,110,10
+	LTEXT           "",IDC_STATIC,7,166,162,2,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",kctidOk,39,175,38,14
+	PUSHBUTTON      "Cancel",kctidCancel,85,174,38,14
+	PUSHBUTTON      "Help...",kctidHelp,129,174,40,14
+END
+
+kridAdvOverlayDlg DIALOGEX 0, 0, 251, 175
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Advanced Global Overlay Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Tag",IDC_STATIC,7,7,14,8
+	LTEXT           "",IDC_STATIC,24,10,220,1,SS_SUNKEN
+	LTEXT           "&Font:",IDC_STATIC,31,21,17,8
+	COMBOBOX        kctidFontCombo,50,19,124,80,CBS_DROPDOWN | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "&Size:",IDC_STATIC,184,21,16,8
+	COMBOBOX        kctidSizeCombo,203,19,41,81,CBS_DROPDOWN | WS_VSCROLL |
+					WS_TABSTOP
+	LTEXT           "Show",IDC_STATIC,7,35,19,8
+	LTEXT           "",IDC_STATIC,29,39,215,1,SS_SUNKEN
+	CONTROL         "&Opening label",kctidOpenTag,"Button",BS_AUTOCHECKBOX |
+					WS_TABSTOP,32,46,55,10
+	CONTROL         "Opening &bracket",kctidOpenBracket,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,115,46,69,10
+	CONTROL         "&Closing label",kctidCloseTag,"Button",BS_AUTOCHECKBOX |
+					WS_TABSTOP,32,58,51,10
+	CONTROL         "Closing b&racket",kctidCloseBracket,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,115,58,65,10
+	CONTROL         "&Labels show formatting",kctidShowFormat,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,32,70,100,10
+	LTEXT           "S&how up to this many labels at a boundary:",IDC_STATIC,31,
+					82,140,8
+	COMBOBOX        kctidTagsCombo,172,80,39,88,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Preview",IDC_STATIC,7,96,25,8
+	LTEXT           "",IDC_STATIC,36,99,208,1,SS_SUNKEN
+	LTEXT           "Preview",kctidOvrPreview,31,106,213,40
+	LTEXT           "",IDC_STATIC,7,148,237,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",kctidOk,7,154,50,14
+	PUSHBUTTON      "Cancel",kctidCancel,65,154,50,14
+	PUSHBUTTON      "Help...",kctidHelp,194,154,50,14
+END
+
+kridOverlayChsrDlg DIALOGEX 0, 0, 226, 273
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP |
+	WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Overlay"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "&Tag:",kctidOvrTagLabel,6,9,20,9
+	EDITTEXT        kctidEditTag,26,7,193,12,ES_AUTOHSCROLL
+	CONTROL         "Tree1",kctidOverlayTree,"SysTreeView32",TVS_HASLINES | TVS_HASBUTTONS |
+					TVS_SHOWSELALWAYS | TVS_TRACKSELECT | TVS_HASBUTTONS | TVS_LINESATROOT | NOT WS_VISIBLE |
+					WS_TABSTOP,6,22,213,208,WS_EX_CLIENTEDGE
+	PUSHBUTTON      ">>",kctidOverlayToggleHelp,207,245,15,12
+	CONTROL         "Tab1",kctidOverlayTab,"SysTabControl32",TCS_BOTTOM |
+					TCS_HOTTRACK | WS_TABSTOP,2,3,222,246
+	PUSHBUTTON      "&Options",kctidOverlayOptions,2,255,50,15
+	CONTROL         "",kctidHideExcludedTags,"Button",BS_AUTOCHECKBOX |
+					BS_PUSHLIKE | BS_ICON | WS_TABSTOP,59,255,16,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridTagBtnImages        BITMAP  DISCARDABLE     "../../AppCore/Res/TagOverlayButtons.bmp"
+kridTagStateImages      BITMAP  DISCARDABLE     "../../AppCore/Res/TagOverlayStates.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridTlsOptDlgOvr, DIALOG
+	BEGIN
+		VERTGUIDE, 132
+		VERTGUIDE, 260
+		BOTTOMMARGIN, 186
+		HORZGUIDE, 140
+		HORZGUIDE, 145
+		HORZGUIDE, 174
+	END
+
+	kridNewOverlayDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 172
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 171
+	END
+
+	kridAdvOverlayDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 244
+		VERTGUIDE, 32
+		VERTGUIDE, 115
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 168
+		HORZGUIDE, 25
+	END
+
+	kridOverlayDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 185
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 202
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+kridOverlayToolMenu MENU DISCARDABLE
+BEGIN
+	POPUP "Options"
+	BEGIN
+		MENUITEM "Show &Names",                    kcidOvlyDispName
+		MENUITEM "Show &Abbreviations",            kcidOvlyDispAbbrev
+		MENUITEM "Sho&w Abbreviations and Names",  kcidOvlyDispBoth
+		MENUITEM SEPARATOR
+		MENUITEM "Show &Recent Tags",              kcidOvlyShowRecent
+		MENUITEM SEPARATOR
+		MENUITEM "&Exclude Item from this Overlay", kcidOvlyExcludeTag
+		MENUITEM "Exclude Item and All &Subitems",  kcidOvlyExcludeSubtags
+		MENUITEM "&Include Item and All Subitems",  kcidOvlyIncludeSubtags
+		MENUITEM SEPARATOR
+		MENUITEM "Hi&de Excluded Items in Overlay", kcidOvlyHideExclude
+		MENUITEM SEPARATOR
+// TODO: Change this to kcidOptionsConfig
+		MENUITEM "&Configure Overlay...",          kcidOvlyConfigure
+		MENUITEM SEPARATOR
+		MENUITEM "&Help...",                       kcidOvlyHelp
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+// Context help for Overlays dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidOverlayList		"Lists available overlays."
+	kctidOvrAdd			"Adds a new blank overlay to the list. You must specify a choices list for the overlay in order to add it."
+	kctidOvrCopy			"Copies the selected overlay."
+	kctidOvrDelete			"Deletes the selected overlay."
+	kctidTagEdit			"Shows the name of the selected item in the list. Type the abbreviation of an item to locate and select it."
+	kctidTagList			"Shows the list items included in this overlay for use as tags and any custom colors or underline defined in the Tag box for this item."
+	kctidTagChoose			"Opens a dialog so you can select items from the list you want to include in, or exclude from, the overlay for use as tags."
+	kctidTagFore			"For the selected list item, specifies the font color for the tag and the tagged text."
+	kctidTagBack			"For the selected list item, specifies the background color for the tag and the tagged text."
+	kctidTagUnderStyle		"For the selected list item, specifies the underline style for the tag and the tagged text."
+	kctidTagUnderColor		"For the selected list item, specifies the underline color for the tag and the tagged text."
+	kctidTagAdvanced		"Opens a dialog so you can globally change what parts of tags appear in the display. For example, you can hide the tag brackets and specify how many labels to show when more than one tag is applied to the same text."
+END
+
+// Context help for New Overlay dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidEditName			"Allows you to name the new overlay."
+	kctidListName			"Shows available topics lists so you can  choose one to associate with the new overlay."
+	kctidOvrIncludeAll		"Allows you to set the beginning content of the new overlay. Includes/excludes all items in the list as tags."
+END
+
+// Context help for Advanced Overlay Settings dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidFontCombo			"Sets the font for the tag label."
+	kctidSizeCombo			"Sets the font size for the tag label."
+	kctidOpenTag			"Shows/hides the opening tag label."
+	kctidOpenBracket		"Shows/hides the opening tag bracket."
+	kctidCloseTag			"Shows/hides the closing tag label."
+	kctidCloseBracket		"Shows/hides the closing tag bracket."
+	kctidShowFormat			"Shows/hides color and underline formatting on the tag label."
+	kctidTagsCombo			"Specifies the maximum number of labels to display at a tag boundary when several tags share the common boundary."
+	kctidOvrPreview			"Displays a preview of the current tag settings."
+END
+
+// Context help for Overlay Toolwindow controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidEditTag			"Shows the current selection in the list. Type the abbreviation of an item to locate and select it."
+	kctidOverlayTree		"Shows the list items in the topics list associated with this overlay. Select a white box to apply the item to selected text as a tag. Items do not show tag colors. Gray boxes mark items excluded from the overlay."
+	kctidToolTagList		"Shows buttons for the list items in the topics list associated with this overlay. Click a button with a black or colored label to apply the item to selected text as a tag. Buttons show tag colors. Buttons with embossed labels mark items excluded from the overlay."
+	kctidOverlayTabList		"Displays the tags in this overlay as a list."
+	kctidOverlayTabPalette		"Displays the tags in this overlay as buttons."
+	kctidOverlayToggleHelp		">> opens a descriptive help pane on the right for the selected item. << closes the descriptive help pane."
+	kctidOverlayOptions		"Opens a menu so you can change the contents of the dialog or the appearance of the dialog contents."
+	kctidHideExcludedTags		"If pushed in, hides excluded items from the list and palette."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptOvr          "Overlays"
+	kstidNewOverlay         "New Overlay"
+	kstidDeleteOverlay      "Delete Overlay"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidOverlayOptions     "Overlay Options"
+	kstidNoOverlay          "No Overlays"
+	kstidNoOverlayHotKey    "&No Overlays"
+	kstidDeleteOverlayMsg   "This deletion is permanent and cannot be reversed with Undo.\nAre you sure you want to delete this overlay?"
+	kstidOvrRenEmptyMsg     "A Overlay must have a non-empty name"
+	kstidOvrRenOverlayMsg   "Each Overlay must have a unique name"
+	kstidTagList            "Tag List"
+	kstidTagPalette         "Palette"
+	kstidTagOverlay         "Overlay"
+	kstidOvlyMultipleSel    "[Multiple Selected Items]"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidOvrTagNone         "none"
+	kstidOvrTagAll          "all"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

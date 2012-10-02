@@ -1,0 +1,457 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:SILConvertersOptionsInstallerMM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_40E4892F4270536F7EF2AA8495246E58"
+		"OwnerKey" = "8:_C148F20429D643BEAD168FBAA02A5AB0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_40E4892F4270536F7EF2AA8495246E58"
+		"OwnerKey" = "8:_9E086C01F7E2B1E6E47C671627061E6A"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_76B77CC062C9B8B00FF68CFB1CB9D2E9"
+		"OwnerKey" = "8:_40E4892F4270536F7EF2AA8495246E58"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_9E086C01F7E2B1E6E47C671627061E6A"
+		"OwnerKey" = "8:_C148F20429D643BEAD168FBAA02A5AB0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_C148F20429D643BEAD168FBAA02A5AB0"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_CF18593689C1378B5A2B362296419709"
+		"OwnerKey" = "8:_9E086C01F7E2B1E6E47C671627061E6A"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_C148F20429D643BEAD168FBAA02A5AB0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_9E086C01F7E2B1E6E47C671627061E6A"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_40E4892F4270536F7EF2AA8495246E58"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\SILConvertersOptionsInstallerMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\SetupSCOptionsInstallerMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_40E4892F4270536F7EF2AA8495246E58"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_40E4892F4270536F7EF2AA8495246E58"
+					{
+					"Name" = "8:ECInterfaces.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:ECInterfaces.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_EBD0D4FD065E47039C9F68662DF753F5"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_76B77CC062C9B8B00FF68CFB1CB9D2E9"
+			{
+			"SourcePath" = "8:ECInterfaces.tlb"
+			"TargetName" = "8:ECInterfaces.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_EBD0D4FD065E47039C9F68662DF753F5"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9E086C01F7E2B1E6E47C671627061E6A"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_9E086C01F7E2B1E6E47C671627061E6A"
+					{
+					"Name" = "8:SilEncConverters30.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:SilEncConverters30.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_EBD0D4FD065E47039C9F68662DF753F5"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C148F20429D643BEAD168FBAA02A5AB0"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SetupSC, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_C148F20429D643BEAD168FBAA02A5AB0"
+					{
+					"Name" = "8:SetupSC.exe"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SetupSC.exe"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_EBD0D4FD065E47039C9F68662DF753F5"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CF18593689C1378B5A2B362296419709"
+			{
+			"SourcePath" = "8:SilEncConverters30.tlb"
+			"TargetName" = "8:SilEncConverters30.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_EBD0D4FD065E47039C9F68662DF753F5"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{1525181F-901A-416C-8A58-119130FE478E}:_27B28C4494994EF0890BC514AC270FC7"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_BBDC552923734844BF25DA5F7BFB2DEC"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_D5FBF3567DFC47F69F3D8030F85155B3"
+						"Folders"
+						{
+						}
+					}
+				}
+			}
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_EBD0D4FD065E47039C9F68662DF753F5"
+			{
+			"DefaultLocation" = "8:[CommonAppDataFolder]SIL\\SILConverters31"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:SetupSC30MergeModule.16FFAF4465884D50A8611466CF9FD472"
+		"Version" = "8:3.1.0.0"
+		"Title" = "8:SILConverters Options Installer"
+		"Subject" = "8:Installer for optional converters"
+		"Author" = "8:Bob Eaton"
+		"Keywords" = "8:SILConverters; Encoding Conversion; Transliteration; EncConverters"
+		"Comments" = "8:Merge module for the SILConverters options installer"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_03F2F1DFDE7846D09F7F72477DF51147"
+					{
+					"Name" = "8:SOFTWARE"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_76813B51024244DDA688C04EAA2C206E"
+							{
+							"Name" = "8:SIL"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_45B0A74E3B6C4C6A83CFD5DFD1E6201D"
+									{
+									"Name" = "8:SilEncConverters31"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_340B44BE132C4962A822E566B52B085F"
+											{
+											"Name" = "8:Installer"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+												}
+												"Values"
+												{
+													"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_2D2E12D6BB5A4EC29F74CD5585216DB7"
+													{
+													"Name" = "8:InstallerPath"
+													"Condition" = "8:"
+													"Transitive" = "11:FALSE"
+													"ValueTypes" = "3:1"
+													"Value" = "8:[CommonAppDataFolder]SIL\\SILConverters31"
+													}
+												}
+											}
+										}
+										"Values"
+										{
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_158A17EC22BA4672AD195185B0186188"
+			{
+			"Name" = "8:Launch Converter Options Installer (3.1)"
+			"Arguments" = "8:"
+			"Description" = "8:Start the Converter Installer to install specific converters (e.g. SIL IPA93<>UNICODE) into the system repository"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:32512"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_C148F20429D643BEAD168FBAA02A5AB0"
+			"Folder" = "8:_BBDC552923734844BF25DA5F7BFB2DEC"
+			"WorkingFolder" = "8:_EBD0D4FD065E47039C9F68662DF753F5"
+			"Icon" = "8:_C148F20429D643BEAD168FBAA02A5AB0"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

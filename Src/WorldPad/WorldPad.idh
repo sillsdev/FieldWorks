@@ -1,0 +1,23 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 2000, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: WorldPad.idh
+Responsibility: Sharon Correll
+Last reviewed: never
+
+Description:
+	Type library info for the WorldPad application. Currently the only thing is that
+	it implements the IFwTool interface.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+#ifndef NO_COCLASSES
+
+DeclareCoClass(WorldPad, 3AF1D861-7231-4416-AB64-7A6871EF1409)
+{
+	interface IFwTool;
+};
+
+#endif // !NO_COCLASSES

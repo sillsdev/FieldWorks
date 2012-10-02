@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Included projects for Translation Editor -->
+<project name="Localize FieldWorks" default="localize" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<target name="localize"
+		description="Localize all resx files"
+		depends="processLanguages"/>
+	<target name="copyResxFiles"
+		description="Copy resx files from src to localize/lang">
+		<copy todir="${dir.fwoutput}/resx">
+			<fileset basedir="${fwroot}/src">
+				<include name = "**/*.resx"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="processLanguages"
+		description="Main loop for processing all .po files">
+		<tstamp/>
+		<foreach item="File" property="poFile"
+				 unless="${property::exists('fw-build-error') or property::exists('fw-test-error')}">
+			<in>
+				<items>
+					<include name = "${fwroot}\localizations\messages.*.po"/>
+				</items>
+			</in>
+			<do>
+				<!--********* Start of a simple test over the po data -->
+				<!-- make sure the tmp output file doesn't currently exist - if so delete it -->
+				<delete file="${fwroot}\localizations\poMistakes.out" failonerror="false"/>
+				<!-- search through the po file for known issues and common errors -->
+				<!-- note the "& ver > null" at the end of the command line - I (EberhardB) added
+					this so that we don't get an irritating message that findstr failed if it
+					didn't find any errors -->
+				<exec program="cmd.exe"
+					commandline='/c findstr.exe/N "{o} {O} {l} {L} {i} {0{ {1{ }0} }1}" ${poFile} &amp; ver > null'
+					output="${fwroot}\localizations\poMistakes.out"
+					failonerror="false" verbose="${verbose}"/>
+				<!-- if we have created an output file from the above search ... -->
+				<if test="${file::exists(path::combine(fwroot, 'localizations\poMistakes.out'))}">
+					<echo message="--------------------------------------------------------------------"/>
+					<echo message="Found invalid strings (shown above) in the ${poFile} PO data - stopping build."/>
+					<delete file="${fwroot}\localizations\poMistakes.out" failonerror="false"/>
+					<echo message="--------------------------------------------------------------------"/>
+					<fail message="Bad strings were found in the ${poFile} PO file... Build stopped" />
+				</if>
+				<!--********* End of a simple test over the po data -->
+
+				<regex pattern="^.*\.(?'language'(\w|-)+)\.po$" input="${poFile}" />
+				<exec program="${fwroot}\bld\po2xml.bat"
+					commandline="${poFile} ${dir.fwoutput}\${language}.xml"/>
+				<call target="buildLocalizedDlls"/>
+				<!-- create the localized strings-xx.xml file as well -->
+				<echo message="${fwroot}\bin\LocaleStrings.exe --root ${fwroot} --store ${poFile}"/>
+				<exec program="${fwroot}\bin\LocaleStrings.exe"
+					commandline="--root ${fwroot} --store ${poFile}"/>
+			</do>
+		</foreach>
+		<tstamp/>
+	</target>
+	<target name="buildLocalizedDlls"
+		description="Executes all of the command files built for a language">
+		<mkdir dir="${dir.outputBase}\${language}"/>
+		<!-- Loop over all folders in src directory that contain .resx files -->
+		<foreach item="Folder" property="folder">
+			<in>
+				<items>
+					<include name="${fwroot}/src/**"/>
+				</items>
+			</in>
+			<do>
+				<resourcefileset id="ResxFiles">
+					<include name="${folder}/*.resx"/>
+				</resourcefileset>
+				<if test="${fileset::has-files('ResxFiles')}">
+					<echo message="Processing ${folder}"/>
+					<!-- Find the .csproj file -->
+					<fileset id="CsProjFiles">
+						<include name="${folder}/*.csproj"/>
+					</fileset>
+					<property name="csproj" value="${fileset::to-string('CsProjFiles', ', ')}"/>
+					<if test="${fileset::get-file-count('CsProjFiles') &gt; 1}">
+						<fail message="More than one .csproj file in directory ${folder} (${csproj})"/>
+					</if>
+					<if test="${fileset::get-file-count('CsProjFiles') &lt; 1}">
+						<fileset id="CsProjFiles">
+							<include name="${folder}/../*.csproj"/>
+						</fileset>
+						<property name="csproj" value="${fileset::to-string('CsProjFiles', ', ')}"/>
+						<if test="${fileset::get-file-count('CsProjFiles') &gt; 1}">
+							<fail message="More than one .csproj file in directory ${folder}/.. (${csproj})"/>
+						</if>
+						<if test="${fileset::get-file-count('CsProjFiles') &lt; 1}">
+							<echo message="No .csproj file in directory ${folder} and parent directory."/>
+						</if>
+					</if>
+					<if test="${fileset::get-file-count('CsProjFiles') &gt; 0}">
+						<!-- Need to get assembly name and root name space from .csproj file -->
+						<xmlpeek file="${csproj}" property="AssemblyName" nodeindex="0"
+								 xpath="ms:Project/ms:PropertyGroup/ms:AssemblyName">
+							<namespaces>
+								<namespace prefix="ms" uri="http://schemas.microsoft.com/developer/msbuild/2003" />
+							</namespaces>
+						</xmlpeek>
+						<xmlpeek file="${csproj}" property="RootNamespace" nodeindex="0"
+								 xpath="ms:Project/ms:PropertyGroup/ms:RootNamespace">
+							<namespaces>
+								<namespace prefix="ms" uri="http://schemas.microsoft.com/developer/msbuild/2003" />
+							</namespaces>
+						</xmlpeek>
+
+						<foreach item="File" property="resxFile">
+							<in>
+								<items refid="ResxFiles"/>
+							</in>
+							<do>
+								<echo message="Creating ${language} version of ${resxFile}" if="${verbose}"/>
+								<regex pattern="^.*src\\(?'partialDir'.+)\\(?'fileName'[^\\]+)\.[rR][eE][sS][xX]$" input="${resxFile}" />
+								<!-- Couldn't get the style task to work, the validating XML reader it uses rejects the .resx file -->
+								<exec program="java.exe"
+									commandline="-Xmx128m -jar ${fwroot}\bin\saxon\saxon.jar -o ${dir.fwoutput}\${language}\${partialDir}\${RootNamespace}.${fileName}.${language}.resx ${resxFile} LocalizeResx.xsl lang=${language}"/>
+								<!--<style style="LocalizeResx.xsl"
+									in="${resxFile}"
+									out="${fwroot}\output\${language}\${partialDir}\${fileName}.${language}.resx">
+									<parameters>
+										<parameter name="lang" value="${language}"/>
+									</parameters>
+								</style>-->
+							</do>
+						</foreach>
+
+						<cd dir="${folder}"/>
+						<resgenex todir="${dir.fwoutput}/${language}/${partialDir}" verbose="${verbose}"
+								basedir="${folder}">
+							<resources basedir="${dir.fwoutput}/${language}/${partialDir}">
+								<include name="*.resx"/>
+							</resources>
+							<assemblies>
+								<include name="${framework::get-framework-directory(nant.settings.currentframework)}/System.Drawing.dll"/>
+								<include name="${framework::get-framework-directory(nant.settings.currentframework)}/System.Windows.Forms.dll"/>
+							</assemblies>
+						</resgenex>
+						<alex output="${dir.outputBase}/${language}/${AssemblyName}.resources.dll"
+							target="lib" culture="${language}" verbose="${verbose}">
+							<sources basedir="${folder}">
+								<include name="${dir.fwoutput}/${language}/${partialDir}/*.resources"/>
+							</sources>
+						</alex>
+					</if>
+				</if>
+			</do>
+		</foreach>
+	</target>
+</project>

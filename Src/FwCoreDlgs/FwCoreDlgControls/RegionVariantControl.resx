@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_RegionAbbrev.HelpString" xml:space="preserve">
+	<value>Optional. Specifies a region to distinguish the writing system from other writing systems for the same language.</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_RegionAbbrev.Location" type="System.Drawing.Point, System.Drawing">
+	<value>206, 67</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_RegionAbbrev.MaxLength" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_RegionAbbrev.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_RegionAbbrev.Size" type="System.Drawing.Size, System.Drawing">
+	<value>166, 20</value>
+  </data>
+  <data name="m_RegionAbbrev.TabIndex" type="System.Int32, mscorlib">
+	<value>23</value>
+  </data>
+  <data name="&gt;&gt;m_RegionAbbrev.Name" xml:space="preserve">
+	<value>m_RegionAbbrev</value>
+  </data>
+  <data name="&gt;&gt;m_RegionAbbrev.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_RegionAbbrev.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_RegionAbbrev.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="lblVariantName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblVariantName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblVariantName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>9, 92</value>
+  </data>
+  <data name="lblVariantName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblVariantName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 13</value>
+  </data>
+  <data name="lblVariantName.TabIndex" type="System.Int32, mscorlib">
+	<value>28</value>
+  </data>
+  <data name="lblVariantName.Text" xml:space="preserve">
+	<value>Variant name:</value>
+  </data>
+  <data name="&gt;&gt;lblVariantName.Name" xml:space="preserve">
+	<value>lblVariantName</value>
+  </data>
+  <data name="&gt;&gt;lblVariantName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVariantName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblVariantName.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_VariantAbbrev.HelpString" xml:space="preserve">
+	<value>Optional. Specifies a variant to distinguish the writing system from other writing systems for the same language.</value>
+  </data>
+  <data name="m_VariantAbbrev.Location" type="System.Drawing.Point, System.Drawing">
+	<value>207, 110</value>
+  </data>
+  <data name="m_VariantAbbrev.MaxLength" type="System.Int32, mscorlib">
+	<value>30</value>
+  </data>
+  <data name="m_VariantAbbrev.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_VariantAbbrev.Size" type="System.Drawing.Size, System.Drawing">
+	<value>165, 20</value>
+  </data>
+  <data name="m_VariantAbbrev.TabIndex" type="System.Int32, mscorlib">
+	<value>25</value>
+  </data>
+  <data name="&gt;&gt;m_VariantAbbrev.Name" xml:space="preserve">
+	<value>m_VariantAbbrev</value>
+  </data>
+  <data name="&gt;&gt;m_VariantAbbrev.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_VariantAbbrev.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_VariantAbbrev.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="lblRegionAbbr.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblRegionAbbr.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblRegionAbbr.Location" type="System.Drawing.Point, System.Drawing">
+	<value>204, 49</value>
+  </data>
+  <data name="lblRegionAbbr.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblRegionAbbr.Size" type="System.Drawing.Size, System.Drawing">
+	<value>168, 13</value>
+  </data>
+  <data name="lblRegionAbbr.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="lblRegionAbbr.Text" xml:space="preserve">
+	<value>Region abbreviation (2 or 3 char.):</value>
+  </data>
+  <data name="&gt;&gt;lblRegionAbbr.Name" xml:space="preserve">
+	<value>lblRegionAbbr</value>
+  </data>
+  <data name="&gt;&gt;lblRegionAbbr.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRegionAbbr.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblRegionAbbr.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="lblVariantAbbrev.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblVariantAbbrev.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblVariantAbbrev.Location" type="System.Drawing.Point, System.Drawing">
+	<value>205, 92</value>
+  </data>
+  <data name="lblVariantAbbrev.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblVariantAbbrev.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 13</value>
+  </data>
+  <data name="lblVariantAbbrev.TabIndex" type="System.Int32, mscorlib">
+	<value>30</value>
+  </data>
+  <data name="lblVariantAbbrev.Text" xml:space="preserve">
+	<value>Variant abbreviation:</value>
+  </data>
+  <data name="&gt;&gt;lblVariantAbbrev.Name" xml:space="preserve">
+	<value>lblVariantAbbrev</value>
+  </data>
+  <data name="&gt;&gt;lblVariantAbbrev.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVariantAbbrev.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblVariantAbbrev.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="lblRegionName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblRegionName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblRegionName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 49</value>
+  </data>
+  <data name="lblRegionName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblRegionName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>73, 13</value>
+  </data>
+  <data name="lblRegionName.TabIndex" type="System.Int32, mscorlib">
+	<value>24</value>
+  </data>
+  <data name="lblRegionName.Text" xml:space="preserve">
+	<value>Region name:</value>
+  </data>
+  <data name="&gt;&gt;lblRegionName.Name" xml:space="preserve">
+	<value>lblRegionName</value>
+  </data>
+  <data name="&gt;&gt;lblRegionName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRegionName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblRegionName.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="m_RegionName.HelpString" xml:space="preserve">
+	<value>Optional. Specifies a region to distinguish the writing system from other writing systems for the same language.</value>
+  </data>
+  <data name="m_RegionName.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_RegionName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>10, 67</value>
+  </data>
+  <data name="m_RegionName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_RegionName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>184, 21</value>
+  </data>
+  <data name="m_RegionName.TabIndex" type="System.Int32, mscorlib">
+	<value>22</value>
+  </data>
+  <data name="&gt;&gt;m_RegionName.Name" xml:space="preserve">
+	<value>m_RegionName</value>
+  </data>
+  <data name="&gt;&gt;m_RegionName.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.22041, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_RegionName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_RegionName.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_VariantName.HelpString" xml:space="preserve">
+	<value>Optional. Specifies a variant to distinguish the writing system from other writing systems for the same language.</value>
+  </data>
+  <data name="m_VariantName.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_VariantName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 110</value>
+  </data>
+  <data name="m_VariantName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_VariantName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>184, 21</value>
+  </data>
+  <data name="m_VariantName.TabIndex" type="System.Int32, mscorlib">
+	<value>24</value>
+  </data>
+  <data name="&gt;&gt;m_VariantName.Name" xml:space="preserve">
+	<value>m_VariantName</value>
+  </data>
+  <data name="&gt;&gt;m_VariantName.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.22041, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_VariantName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_VariantName.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="lblScriptName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblScriptName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 4</value>
+  </data>
+  <data name="lblScriptName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>66, 13</value>
+  </data>
+  <data name="lblScriptName.TabIndex" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="lblScriptName.Text" xml:space="preserve">
+	<value>Script name:</value>
+  </data>
+  <data name="&gt;&gt;lblScriptName.Name" xml:space="preserve">
+	<value>lblScriptName</value>
+  </data>
+  <data name="&gt;&gt;lblScriptName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblScriptName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblScriptName.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="lblScriptAbbreviation.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblScriptAbbreviation.Location" type="System.Drawing.Point, System.Drawing">
+	<value>204, 5</value>
+  </data>
+  <data name="lblScriptAbbreviation.Size" type="System.Drawing.Size, System.Drawing">
+	<value>141, 13</value>
+  </data>
+  <data name="lblScriptAbbreviation.TabIndex" type="System.Int32, mscorlib">
+	<value>22</value>
+  </data>
+  <data name="lblScriptAbbreviation.Text" xml:space="preserve">
+	<value>Script Abbreviation (4 char.):</value>
+  </data>
+  <data name="&gt;&gt;lblScriptAbbreviation.Name" xml:space="preserve">
+	<value>lblScriptAbbreviation</value>
+  </data>
+  <data name="&gt;&gt;lblScriptAbbreviation.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblScriptAbbreviation.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblScriptAbbreviation.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_ScriptAbbrev.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_ScriptAbbrev.Location" type="System.Drawing.Point, System.Drawing">
+	<value>206, 22</value>
+  </data>
+  <data name="m_ScriptAbbrev.MaxLength" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_ScriptAbbrev.Size" type="System.Drawing.Size, System.Drawing">
+	<value>165, 20</value>
+  </data>
+  <data name="m_ScriptAbbrev.TabIndex" type="System.Int32, mscorlib">
+	<value>21</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptAbbrev.Name" xml:space="preserve">
+	<value>m_ScriptAbbrev</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptAbbrev.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptAbbrev.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptAbbrev.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_ScriptName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 22</value>
+  </data>
+  <data name="m_ScriptName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>183, 21</value>
+  </data>
+  <data name="m_ScriptName.TabIndex" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptName.Name" xml:space="preserve">
+	<value>m_ScriptName</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptName.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.22041, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_ScriptName.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>378, 140</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Name" xml:space="preserve">
+	<value>helpProvider1</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>RegionVariantControl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

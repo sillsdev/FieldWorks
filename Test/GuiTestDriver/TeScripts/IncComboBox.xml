@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+
+	<if>
+		<condition of="$Cb1stItem" is="TRUE"/>
+		<then>
+			<var id="Do Nothing" set="Do Nothing"/>
+		</then>
+		<else>
+			<if>
+				<condition of="$Cb2ndItem" is="TRUE"/>
+				<then>
+					<insert>{DOWN}</insert>
+				</then>
+				<else>
+					<if>
+						<condition of="$Cb3rdItem" is="TRUE"/>
+						<then>
+							<insert>{DOWN 2}</insert>
+						</then>
+						<else>
+							<if>
+								<condition of="$Cb4rthItem" is="TRUE"/>
+								<then>
+									<insert>{DOWN 3}</insert>
+								</then>
+								<else>
+									<if>
+										<condition of="$Cb5thItem" is="TRUE"/>
+										<then>
+											<insert>{DOWN 4}</insert>
+										</then>
+										<else>
+											<if>
+												<condition of="$Cb6thItem" is="TRUE"/>
+												<then>
+													<insert>{DOWN 5}</insert>
+												</then>
+												<else>
+													<if>
+														<condition of="$Cb7thItem" is="TRUE"/>
+														<then>
+															<insert>{DOWN 6}</insert>
+														</then>
+														<else>
+															<if>
+																<condition of="$Cb8thItem" is="TRUE"/>
+																<then>
+																	<insert>{DOWN 7}</insert>
+																</then>
+																<else>
+																	<if>
+																		<condition of="$Cb9thItem" is="TRUE"/>
+																		<then>
+																			<insert>{DOWN 8}</insert>
+																		</then>
+																	</if>
+																</else>
+															</if>
+														</else>
+													</if>
+												</else>
+											</if>
+										</else>
+									</if>
+								</else>
+							</if>
+						</else>
+					</if>
+				</else>
+			</if>
+		</else>
+	</if>
+
+</include>

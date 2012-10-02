@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--If any change is made in this file, you also need to modify enum and g_rgeti in fw\src\language\LangDef.cpp
+	and code in fw\src\WorldPad\WpXml.cpp. -->
+<!ELEMENT Abbr24 (AUni)*>
+<!ELEMENT AStr (Run)*>
+<!ATTLIST AStr
+	ws CDATA #REQUIRED
+>
+<!ELEMENT AUni (#PCDATA)>
+<!ATTLIST AUni
+	ws CDATA #REQUIRED
+>
+<!ELEMENT BaseLocale (#PCDATA)>
+<!ELEMENT Boolean EMPTY>
+<!ATTLIST Boolean
+	val (false | true) #REQUIRED
+>
+<!ELEMENT CharDef EMPTY>
+<!ATTLIST CharDef
+	code CDATA #REQUIRED
+	data CDATA #REQUIRED
+>
+<!ELEMENT CollationElements (#PCDATA)>
+<!ELEMENT Collations24 (LgCollation)*>
+<!ATTLIST Collations24
+	size CDATA #IMPLIED
+>
+<!ELEMENT DefaultMonospace24 (Uni)?>
+<!ELEMENT DefaultSansSerif24 (Uni)?>
+<!ELEMENT DefaultBodyFont24 (Uni)?>
+<!ELEMENT DefaultSerif24 (Uni)?>
+<!ELEMENT Description24 (AStr)*>
+<!ELEMENT EncodingConverter EMPTY>
+<!ATTLIST EncodingConverter
+	install CDATA #IMPLIED
+	file CDATA #IMPLIED
+>
+<!ELEMENT Font EMPTY>
+<!ATTLIST Font
+	file CDATA #REQUIRED
+>
+<!ELEMENT Fonts (Font)*>
+<!ELEMENT FontVariation24 (Uni)?>
+<!ELEMENT SansFontVariation24 (Uni)?>
+<!ELEMENT BodyFontFeatures24 (Uni)?>
+<!ELEMENT ICULocale24 (Uni)?>
+<!ELEMENT ValidChars24 (Uni)?>
+<!ELEMENT SpellCheckDictionary24 (Uni)?>
+<!ELEMENT IcuResourceName30 (Uni)?>
+<!ELEMENT IcuResourceText30 (Uni)?>
+<!ELEMENT ICURules30 (Uni)?>
+<!ELEMENT Integer EMPTY>
+<!ATTLIST Integer
+	val CDATA #REQUIRED
+	str CDATA #IMPLIED
+>
+<!ELEMENT Keyboard EMPTY>
+<!ATTLIST Keyboard
+	file CDATA #IMPLIED
+>
+<!ELEMENT KeyboardType24 (Uni)?>
+<!ELEMENT KeymanKeyboard24 (Uni)?>
+<!ELEMENT LanguageDefinition (LgWritingSystem | BaseLocale | NewLocale | EthnoCode | LocaleName | LocaleScript | LocaleCountry | LocaleVariant | LocaleWinLCID | CollationElements | LocaleResources | PuaDefinitions | Fonts | Keyboard | EncodingConverter)*>
+<!ATTLIST LanguageDefinition
+	xmlns:xsd CDATA #IMPLIED
+	xmlns:xsi CDATA #IMPLIED
+>
+<!ELEMENT LegacyMapping24 (Uni)?>
+<!ELEMENT LgCollation (IcuResourceName30 | IcuResourceText30 | ICURules30 | Name30 | WinCollation30 | WinLCID30)*>
+<!ATTLIST LgCollation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LgWritingSystem (Abbr24 | BodyFontFeatures24 | CapitalizationInfo24 | Collations24 | DefaultBodyFont24 | DefaultMonospace24 | DefaultSansSerif24 | DefaultSerif24 | Description24 | FontVariation24 | ICULocale24 | KeyboardType24 | KeymanKeyboard24 | LastModified24 | LegacyMapping24 | Locale24 | MatchedPairs24 | Name24 | PunctuationPatterns24 | QuotationMarks24 | RightToLeft24 | SansFontVariation24 | SpellCheckDictionary24 | ValidChars24)*>
+<!ATTLIST LgWritingSystem
+	id ID #IMPLIED
+	language CDATA #IMPLIED
+	type CDATA #IMPLIED
+>
+
+<!ELEMENT CapitalizationInfo24 (#PCDATA)>
+<!ELEMENT EthnoCode (#PCDATA)>
+<!ELEMENT LastModified24 (Time)?>
+<!ELEMENT Locale24 (Integer)?>
+<!ELEMENT LocaleCountry (#PCDATA)>
+<!ELEMENT LocaleName (#PCDATA)>
+<!ELEMENT LocaleResources (#PCDATA)>
+<!ELEMENT LocaleScript (#PCDATA)>
+<!ELEMENT LocaleVariant (#PCDATA)>
+<!ELEMENT LocaleWinLCID (#PCDATA)>
+<!ELEMENT MatchedPairs24 (Uni)?>
+<!ELEMENT Name24 (AUni)*>
+<!ELEMENT Name30 (AUni)*>
+<!ELEMENT NewLocale (#PCDATA)>
+<!ELEMENT PuaDefinitions (CharDef)*>
+<!ELEMENT PunctuationPatterns24 (Uni)?>
+<!ELEMENT QuotationMarks24 (Uni)?>
+<!ELEMENT RightToLeft24 (Boolean)?>
+<!ELEMENT Run (#PCDATA)>
+<!ATTLIST Run
+	type (chars | picture) #IMPLIED
+	backcolor CDATA #IMPLIED
+	bold (invert | off | on) #IMPLIED
+	ws CDATA #REQUIRED
+	wsBase CDATA #IMPLIED
+	externalLink CDATA #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit CDATA #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (invert | off | on) #IMPLIED
+	link CDATA #IMPLIED
+	namedStyle CDATA #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit CDATA #IMPLIED
+	superscript (sub | super) #IMPLIED
+	tabList CDATA #IMPLIED
+	tags IDREFS #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (dashed | dotted | double | none | single) #IMPLIED
+>
+<!ELEMENT Time EMPTY>
+<!ATTLIST Time
+	val CDATA #REQUIRED
+>
+<!ELEMENT Uni (#PCDATA)>
+<!ELEMENT WinCollation30 (Uni)?>
+<!ELEMENT WinLCID30 (Integer)?>

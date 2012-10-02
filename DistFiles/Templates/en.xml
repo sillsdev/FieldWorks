@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Do not specify DTD for LD files in the template directory. Doing so causes kstidUILangNotFound error on
+	first startup after installation due to DoesWsXMLExist failing to load the LD file since the DTD is not in the template directory! -->
+<LanguageDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LgWritingSystem>
+	<Locale24>
+	  <Integer val="1033" />
+	</Locale24>
+	<RightToLeft24>
+	  <Boolean val="false" />
+	</RightToLeft24>
+	<DefaultMonospace24>
+	  <Uni>Courier New</Uni>
+	</DefaultMonospace24>
+	<DefaultSansSerif24>
+	  <Uni>Arial</Uni>
+	</DefaultSansSerif24>
+	<DefaultBodyFont24>
+	  <Uni>Charis SIL</Uni>
+	</DefaultBodyFont24>
+	<DefaultSerif24>
+	  <Uni>Times New Roman</Uni>
+	</DefaultSerif24>
+	<FontVariation24 />
+	<SansFontVariation24 />
+	<BodyFontFeatures24>
+	  <Uni>1051=0</Uni>
+	</BodyFontFeatures24>
+	<ICULocale24>
+	  <Uni>en</Uni>
+	</ICULocale24>
+	<ValidChars24>
+	  <Uni>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ValidCharacters&gt;
+&lt;WordForming&gt;a￼A￼b￼B￼c￼C￼d￼D￼e￼E￼f￼F￼g￼G￼h￼H￼i￼I￼j￼J￼k￼K￼l￼L￼m￼M￼n￼N￼o￼O￼p￼P￼q￼Q￼r￼R￼s￼S￼t￼T￼u￼U￼v￼V￼w￼W￼x￼X￼y￼Y￼z￼Z￼-￼'&lt;/WordForming&gt;
+&lt;Numeric&gt;0￼1￼2￼3￼4￼5￼6￼7￼8￼9&lt;/Numeric&gt;
+&lt;Other&gt;U+0020￼–￼,￼;￼:￼!￼?￼.￼‘￼’￼"￼“￼”￼(￼)￼[￼]￼{￼}￼/￼&amp;amp;&lt;/Other&gt;
+&lt;/ValidCharacters&gt;</Uni>
+</ValidChars24>
+<MatchedPairs24>
+<Uni>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;MatchedPairs&gt;
+&lt;pair open="(" close=")" permitParaSpanning="false" /&gt;
+&lt;pair open="[" close="]" permitParaSpanning="true" /&gt;
+&lt;pair open="{" close="}" permitParaSpanning="false" /&gt;
+&lt;/MatchedPairs&gt;
+</Uni></MatchedPairs24>
+<PunctuationPatterns24>
+<Uni>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;PunctuationPatterns&gt;
+&lt;pattern value=", " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=". " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" “" context="WordInitial" valid="true" /&gt;
+&lt;pattern value="; " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=".” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="&amp;#x27;" context="WordMedial" valid="true" /&gt;
+&lt;pattern value=": " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="? " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" ‘" context="WordInitial" valid="true" /&gt;
+&lt;pattern value="–" context="WordMedial" valid="true" /&gt;
+&lt;pattern value="! " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="-" context="WordMedial" valid="true" /&gt;
+&lt;pattern value="?” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=",” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" (" context="WordInitial" valid="true" /&gt;
+&lt;pattern value=".’ " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="– " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" “ " context="Isolated" valid="false" /&gt;
+&lt;pattern value="!” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=") " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" ” " context="Isolated" valid="false" /&gt;
+&lt;pattern value="," context="WordMedial" valid="false" /&gt;
+&lt;pattern value=",’ " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" / " context="Isolated" valid="false" /&gt;
+&lt;pattern value=".”" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="?’ " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="&amp;#x27; " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=".) " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="); " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="!’ " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" ); " context="Isolated" valid="true" /&gt;
+&lt;pattern value=".’" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="), " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="/" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" . " context="Isolated" valid="false" /&gt;
+&lt;pattern value="). " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=";" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=" ; " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" ) " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" , " context="Isolated" valid="false" /&gt;
+&lt;pattern value="’? " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="’ " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" ’ " context="Isolated" valid="false" /&gt;
+&lt;pattern value="?" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=" ”" context="WordInitial" valid="false" /&gt;
+&lt;pattern value=" // " context="Isolated" valid="false" /&gt;
+&lt;pattern value=",”" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="’?” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="’" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="”; " context="WordFinal" valid="false" /&gt;
+&lt;pattern value=" ? " context="Isolated" valid="false" /&gt;
+&lt;pattern value="): " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="”–" context="WordMedial" valid="true" /&gt;
+&lt;pattern value="’–" context="WordMedial" valid="true" /&gt;
+&lt;pattern value=":" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="”? " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="’; " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="?”" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="”– " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=",’" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=" –" context="WordInitial" valid="true" /&gt;
+&lt;pattern value=" ’" context="WordInitial" valid="false" /&gt;
+&lt;pattern value="”" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="!”" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=" ). " context="Isolated" valid="false" /&gt;
+&lt;pattern value="?’" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=")– " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="–“" context="WordMedial" valid="true" /&gt;
+&lt;pattern value=" //" context="WordInitial" valid="false" /&gt;
+&lt;pattern value=" ! " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" – " context="Isolated" valid="false" /&gt;
+&lt;pattern value="., " context="WordFinal" valid="false" /&gt;
+&lt;pattern value="!" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="’– " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" : " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" ?” " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" ‘ " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" .” " context="Isolated" valid="false" /&gt;
+&lt;pattern value="?”– " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="....” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=".)" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=",, " context="WordFinal" valid="false" /&gt;
+&lt;pattern value=".”) " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="!’" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=" ), " context="Isolated" valid="true" /&gt;
+&lt;pattern value=" ," context="WordInitial" valid="false" /&gt;
+&lt;pattern value=" [" context="WordInitial" valid="true" /&gt;
+&lt;pattern value=".] " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" ( " context="Isolated" valid="true" /&gt;
+&lt;pattern value="!’: " context="WordFinal" valid="false" /&gt;
+&lt;pattern value="!– " context="WordFinal" valid="false" /&gt;
+&lt;pattern value=" )/ " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" “(" context="WordInitial" valid="false" /&gt;
+&lt;pattern value=")–" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=")" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="’!” " context="WordFinal" valid="false" /&gt;
+&lt;pattern value=")," context="WordMedial" valid="false" /&gt;
+&lt;pattern value="?”) " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" ." context="WordInitial" valid="false" /&gt;
+&lt;pattern value="–‘" context="WordMedial" valid="false" /&gt;
+&lt;pattern value="?”–" context="WordMedial" valid="true" /&gt;
+&lt;pattern value="?’– " context="WordFinal" valid="false" /&gt;
+&lt;pattern value="’. " context="WordFinal" valid="false" /&gt;
+&lt;pattern value="!”–" context="WordMedial" valid="false" /&gt;
+&lt;pattern value=" (“" context="WordInitial" valid="true" /&gt;
+&lt;pattern value="?– " context="WordFinal" valid="false" /&gt;
+&lt;pattern value="- " context="WordFinal" valid="false" /&gt;
+&lt;pattern value=" “. " context="Isolated" valid="false" /&gt;
+&lt;pattern value=" !’ " context="Isolated" valid="false" /&gt;
+&lt;pattern value="?) " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=".)” " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=" &amp;#x27;" context="WordInitial" valid="false" /&gt;
+&lt;pattern value="!”? " context="WordFinal" valid="false" /&gt;
+&lt;pattern value=".)– " context="WordFinal" valid="false" /&gt;
+&lt;pattern value="”), " context="WordFinal" valid="true" /&gt;
+&lt;pattern value="”: " context="WordFinal" valid="true" /&gt;
+&lt;pattern value=";) " context="WordFinal" valid="false" /&gt;
+&lt;/PunctuationPatterns&gt;
+</Uni>
+</PunctuationPatterns24>
+<CapitalizationInfo24 />
+<QuotationMarks24>
+<Uni>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;QuotationMarks LangUsedFrom="en" ContinuationType="RequireAll" ContinuationMark="Opening"&gt;
+&lt;Levels&gt;
+&lt;Pair Opening="“" Closing="”" /&gt;
+&lt;Pair Opening="‘" Closing="’" /&gt;
+&lt;/Levels&gt;
+&lt;/QuotationMarks&gt;
+</Uni>
+	</QuotationMarks24>
+	<SpellCheckDictionary24>
+	  <Uni>en</Uni>
+	</SpellCheckDictionary24>
+	<KeymanKeyboard24 />
+	<Name24>
+	  <AUni ws="en">English</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Eng</AUni>
+	</Abbr24>
+	<Collations24>
+	  <LgCollation>
+		<WinLCID30>
+		  <Integer val="1033" />
+		</WinLCID30>
+		<WinCollation30>
+		  <Uni>Latin1_General_CI_AI</Uni>
+		</WinCollation30>
+		<Name30>
+		  <AUni ws="en">Default Collation</AUni>
+		</Name30>
+		<ICURules30 />
+	  </LgCollation>
+	</Collations24>
+	<LegacyMapping24 />
+  </LgWritingSystem>
+  <EthnoCode>eng</EthnoCode>
+  <LocaleName>English</LocaleName>
+  <LocaleCountry />
+  <LocaleScript />
+  <LocaleVariant />
+  <Keyboard />
+  <EncodingConverter />
+</LanguageDefinition>

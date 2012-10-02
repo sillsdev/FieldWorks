@@ -1,0 +1,19 @@
+#ifdef CMCG_SQL_DEFNS
+$if(First)$
+#define kmid${Module} ${Mid}
+$endif$
+#define kclid${Class} ${Clid}
+$foreach$
+#define kflid${Class}_${PropName} ${PropFlid}
+$endfor$
+#endif // CMCG_SQL_DEFNS
+
+#ifdef CMCG_SQL_ENUM
+$if(First)$
+	kmid${Module} = ${Mid},
+$endif$
+	kclid${Class} = ${Clid},
+$foreach$
+	kflid${Class}_${PropName} = ${PropFlid},
+$endfor$
+#endif // CMCG_SQL_ENUM

@@ -1,0 +1,20 @@
+# control.txt
+# Map encodings to conversion table files
+Convert from ANSI to UTF-8
+DEFAULT	TableLookup "CP1252 to Unicode.tab"
+ASC_1		TableLookup "CP1252 to Unicode.tab"
+ENG		TableLookup "CP1252 to Unicode.tab"
+ENGi		TableLookup "IPA2Uni.tab"
+EGA		TableLookup "CP1252 to Unicode.tab"
+EGAi		TableLookup "IPA2Uni.tab"
+LTN			TableLookup "CP1252 to Unicode.tab"
+FRN		TableLookup "CP1252 to Unicode.tab"
+FRNi		TableLookup "IPA2Uni.tab"
+IPA			TableLookup "IPA2Uni.tab"
+IFK			TableLookup "CP1252 to Unicode.tab"
+IFKi			TableLookup "IPA2Uni.tab"
+SPN		TableLookup "CP1252 to Unicode.tab"
+SPNi		TableLookup "IPA2Uni.tab"
+GKO		TableLookup "Greek, Ancient Composite to Unicode.tab" Greek, Ancient
+GKOb		TableLookup "Greek, Ancient Basic to Unicode.tab"
+GKOi		TableLookup "IPA2Uni.tab"

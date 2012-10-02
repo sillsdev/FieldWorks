@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WpDoc>
+
+<Languages>
+  <LgEncoding id="CAP">
+	<WritingSystems6002>
+	<LgWritingSystem>
+	  <Description6003><Str>All-caps demo</Str></Description6003>
+	  <RightToLeft6003><Boolean val="false"/></RightToLeft6003>
+	  <RendererType6003><Uni>graphite</Uni></RendererType6003>
+	  <DefaultSerif6003><Uni>Std SILDoulos</Uni></DefaultSerif6003>
+	  <DefaultSansSerif6003><Uni>Std SILDoulos</Uni></DefaultSansSerif6003>
+	  <DefaultMonospace6003><Uni>Std SILDoulos</Uni></DefaultMonospace6003>
+	  <KeyboardType6003><Uni>standard</Uni></KeyboardType6003>
+	</LgWritingSystem>
+	</WritingSystems6002>
+  </LgEncoding>
+</Languages>
+
+<Styles>
+</Styles>
+
+<Body>
+  <StTxtPara>
+	<Contents1003>
+	  <Str><Prop enc="CAP" ws="0" fontsize="14000" fontsizeUnit="mpt"/>This sentence should display in all caps, even though the underlying data has lowercase letters.</Str>
+	</Contents1003>
+  </StTxtPara>
+</Body>
+
+</WpDoc>

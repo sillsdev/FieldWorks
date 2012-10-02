@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+  <!-- Tests "Find and Replace" function in Bulk Edit Entries -->
+  <!--  Assumes original Kalaba database-->
+  <!--  -->
+
+<accil on-fail="assert">
+
+ <!-- 1. Start Flex on Kalaba -->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Lexicon/Bulk Edit Entries -->
+	 <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+<!-- Set all combo boxes to "show all" -->
+	 <click select="toolbar/no-filters"/>
+
+<model select="bulk-edit-entries[@role='view']">
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter regular expression to find any Lexeme starting with a "t" and replace  with martians -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>+6</insert><!-- this is really a "^" shift 6-->
+	 <insert>t</insert>
+	 <insert>{TAB}</insert>
+	 <insert>martians</insert>
+	 <var id="frdMore" set="9:NAMELESS/60:NAMELESS[*]/9:Replace/9:NAMELESS"/>
+	 <glimpse id="moreBtn" path="$frdMore;/$more" on-fail="skip"/>
+	 <if><condition of="$moreBtn" is="true"/>
+	 <then><click path="$frdMore;/$more"/></then>
+	 </if>
+	 <var id="frdRegExp" set="$frdMore;[2]/9:Use regular expressions/44:Use regular expressions"/>
+	 <glimpse wait="1500" id="rEx" path="$frdRegExp" prop="checked" on-fail="skip"/>
+	 <if><condition of="$rEx" is="false"/>
+	 <then><click path="$frdRegExp"/></then>
+	 </if>
+	 <click path="$frdMore;/$ok"/>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+<!-- check for success -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">f</insert>
+	<insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <!--click path="$NL;20:RootSite/$Text"/-->
+	 <insert>+6</insert>
+	 <insert>martians</insert>
+  <var id="fltMatchRegExp" set="9:Match for regular expression/45:Match for regular expression"/>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+	<var id="row" set="4"/>
+	<var id="col" set="2"/>
+	<glimpse id="replace1" select="entries/record/col" prop="value" expect="martiansu"/>
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>+6</insert>
+	 <insert>martians</insert>
+	 <insert>{TAB}</insert>
+	 <insert>t</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" and check again -->
+	<click select="bulk-replace/apply"/>
+	<var id="row" set="4"/>
+	<glimpse id="replace2" select="entries/record/col" prop="value" expect="tu"/>
+
+<!-- reset combo box to show all -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">s</insert>
+	<insert wait="100">~</insert>
+
+
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter regular expression to find lexemes ending in k and replace the k with martians-->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>\k$</insert>
+	 <insert>{TAB}</insert>
+	 <insert>martians</insert>
+	 <click path="$frdMore;/$ok"/>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+
+<!-- check for success -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">f</insert>
+	<insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>\martians$</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+	<var id="row" set="4"/>
+	 <var id="col" set="2"/>
+	<glimpse id="replace3" select="entries/record/col" prop="value" expect="limartians"/>
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>\martians$</insert>
+	 <insert>{TAB}</insert>
+	 <insert>k</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" and check again -->
+	<click select="bulk-replace/apply"/>
+
+	<var id="row" set="4"/>
+	<glimpse id="replace4" select="entries/record/col" prop="value" expect="lik"/>
+
+<!-- reset combo box to show all -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">s</insert>
+	<insert wait="100">~</insert>
+
+
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter regular expression to find lexemes with a "v" in them and replace it with greenaliens -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>.+v</insert>
+	 <insert>{TAB}</insert>
+	 <insert>greenaliens</insert>
+	 <click path="$frdMore;/$ok"/>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+
+<!-- check for success -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">f</insert>
+	<insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>greenaliens</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+	<var id="row" set="1"/>
+	 <var id="col" set="2"/>
+	<glimpse id="replace5" select="entries/record/col" prop="value" expect="greenaliens"/>
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>greenaliens</insert>
+	 <insert>{TAB}</insert>
+	 <insert>CV</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" and check again -->
+	<click select="bulk-replace/apply"/>
+
+	<var id="row" set="1"/>
+	<glimpse id="replace6" select="entries/record/col" prop="value" expect="CV"/>
+
+<!-- reset combo box to show all -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">s</insert>
+	<insert wait="100">~</insert>
+
+
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter regular expression to find lexemes with some characters followed by "y" and replace them with it achiev -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>.{+}y</insert> <!-- escape the + so it reads ".+y" not ".Y" -->
+	 <insert>{TAB}</insert>
+	 <insert>achiev</insert>
+	 <click path="$frdMore;/$ok"/>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+
+<!-- check for success -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">f</insert>
+	<insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>achiev</insert>
+  <var id="fltAnyWhere" set="9:Anywhere/45:Anywhere"/>
+	 <click path="$fltAnyWhere"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+	<var id="row" set="1"/>
+	 <var id="col" set="2"/>
+	<glimpse id="replace7" select="entries/record/col" prop="value" expect="achieving form"/>
+	<!-- no second row -->
+	<var id="row" set="2"/>
+	<glimpse id="replace7b" select="entries/record/col" on-pass="assert"/>
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>achieving form</insert>
+	 <insert>{TAB}</insert>
+	 <insert>underlying form</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" and check again -->
+	<click select="bulk-replace/apply"/>
+
+	<var id="row" set="1"/>
+	<glimpse id="replace8" select="entries/record/col" prop="value" expect="underlying form"/>
+
+
+
+<!-- Go to Find and Replace dialog  to undo the last replacements-->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter regular expression to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>achiev</insert>
+	 <insert>{TAB}</insert>
+	 <insert>y</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+
+<!-- reset combo box to show all -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">s</insert>
+	<insert wait="100">~</insert>
+
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter regular expression to find lexemes with "k" in the interior and replace with thingamabob -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>{(}.{+}{)}{(}k{)}{(}.{+}{)}</insert>
+	 <insert>{TAB}</insert>
+	 <insert>thingamabob</insert>
+	 <!--click path="$frdMore;[2]/9:Use regular expressions/44:Use regular expressions"/--><!-- already set-->
+	<insert wait="1000">~</insert>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+
+<!-- check for success -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">f</insert>
+	<insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>thingamabob</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+	<var id="row" set="1"/>
+	 <var id="col" set="2"/>
+	<glimpse id="replace9" select="entries/record/col" prop="value" expect="thingamabob"/>
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>thingamabob</insert>
+	 <insert>{TAB}</insert>
+	 <insert>bako</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" and check again -->
+	<click select="bulk-replace/apply"/>
+
+	<var id="row" set="1"/>
+	<glimpse id="replace10" select="entries/record/col" prop="value" expect="bako"/>
+
+<!-- reset combo box to show all -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">s</insert>
+	<insert wait="100">~</insert>
+
+
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter regular expression to find "nt" or "tn" and replace with surrenderearthlings -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>{[}tn{]}{{}2{}}</insert>
+	 <insert>{TAB}</insert>
+	 <insert>surrenderearthlings</insert>
+	 <click path="$frdMore;/$ok"/>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+
+<!-- check for success -->
+	 <var id="col" set="1"/>
+	 <click select="entries/col/filter/text" />
+	<insert wait="1000">f</insert>
+	<insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>surrenderearthlings</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+	<var id="row" set="1"/>
+	 <var id="col" set="2"/>
+	<glimpse id="replace11" select="entries/record/col" prop="value" expect="variasurrenderearthlings"/>
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>variasurrenderearthlings</insert>
+	 <insert>{TAB}</insert>
+	 <insert>variant</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" and check again -->
+	<click select="bulk-replace/apply"/>
+
+	<var id="row" set="1"/>
+	<glimpse id="replace12" select="entries/record/col" prop="value" expect="variant"/>
+
+<!-- reset combo box to show all -->
+	 <click select="//toolbar/no-filters"/>
+<!-- get back to the List Choice tab -->
+	<click select="list-choice/tab"/>
+
+</model>
+
+  </on-application>
+</accil>

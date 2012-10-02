@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="scaexec" default="scaexec.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	scaexec.build - Builds scaexec.dll
+	2005.11.16 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- scaexec-specific properties -->
+  <property name="scaexec.file.targetPdb" value="${path::change-extension(file.target.scaexec, '.pdb')}" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="scaexec.build" description="Peforms a full rebuild (clean then build)" depends="scaexec.clean, scaexec.inc" />
+
+  <!-- Clean -->
+  <target name="scaexec.clean" description="Cleans the build">
+	<delete dir="${dir.build.scaexec}" failonerror="false" if="${directory::exists(dir.build.scaexec)}" />
+	<delete file="${file.target.scaexec}" failonerror="false" if="${file::exists(file.target.scaexec)}" />
+	<delete file="${scaexec.file.targetPdb}" failonerror="false" if="${file::exists(scaexec.file.targetPdb)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="scaexec.inc" description="Performs an incremental build" depends="makeDirs">
+	<fileset id="compileCpp.fileset.sources" basedir="${dir.src.ca.serverca}\scaexec">
+	  <include name="scacertexec.cpp" />
+	  <include name="scaexec.cpp" />
+	  <include name="scasmbexec.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.scaexec}" />
+	<property name="compileCpp.file.precomp.h" value="${dir.src.ca.serverca}\scaexec\precomp.h" />
+	<property name="compileCpp.additionalOptions" value="-I&quot;${dir.src.ca.wcautil}&quot;" />
+	<property name="compileCpp.file.rc" value="${dir.src.ca.serverca}\scaexec\scaexec.rc" />
+	<property name="makeNativeDll.file.target" value="${file.target.scaexec}" />
+	<property name="makeNativeDll.file.def" value="${dir.src.ca.serverca}\scaexec\scaexec.def" />
+	<property name="makeNativeDll.additionalLibs" value="" />
+	<foreach property="libFile" item="String" delim=";" in="${file.target.wcautil};${file.target.dutil};${dir.platformsdk.lib}\msi.lib;${dir.platformsdk.lib}\activeds.lib;${dir.platformsdk.lib}\adsiid.lib;${dir.platformsdk.lib}\crypt32.lib;${dir.platformsdk.lib}\netapi32.lib">
+	  <property name="makeNativeDll.additionalLibs" value="${makeNativeDll.additionalLibs} &quot;${libFile}&quot;" />
+	</foreach>
+
+	<!-- Make scaexec.dll -->
+	<call target="makeNativeDll" />
+  </target>
+
+</project>

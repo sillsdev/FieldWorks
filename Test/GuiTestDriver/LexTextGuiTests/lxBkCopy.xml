@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Configure Dictionary and Configure Interlinear -->
+<!--  Assumes original Kalaba database -->
+<!--  On switch to Bulk Edt Senses, assumes the focused tab will be List Choice -->
+<!--  Assumes Headword, Grammatical Category, Gloss and Definition are on -->
+
+<accil on-fail="assert">
+ <bug id="LT-6385"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to Lexicon/Bulk Edit Senses-->
+  <click select="menubar/view/lexicon/bulk-edit-senses"/>
+
+<model select="bulk-edit-senses[@role='view']">
+
+<!-- click the Bulk Copy tab-->
+  <click select="bulk-copy/tab"/>
+  <click select="//toolbar/no-filters"/>
+
+<!-- click Configure Columns button, uncheck Definition and check Reversals-->
+  <click select="senses/col/changer"/>
+  <insert wait="1000">d</insert>
+  <click select="senses/col/changer"/>
+  <insert wait="1000">r</insert>
+
+<!-- At this point we should have columns: Headword, Grammatical Category, Gloss and Reversals  -->
+
+<!-- Filter For Gloss "English gloss"-->
+  <var id="col" set="3"/>
+  <click select="senses/col/filter/text"/>
+  <insert>f</insert>
+  <insert>~</insert>
+  <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <!--click path="$NL;20:RootSite/$Text"/-->
+	 <insert wait="500">English gloss</insert>
+	 <click path="9:Whole item/45:Whole item"/>
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!-- Select Source Gloss-->
+  <click select="bulk-copy/source-field/text"/>
+  <insert wait="300">gg</insert>
+  <insert>~</insert>
+
+<!-- Select Target Field reversals-->
+  <click select="bulk-copy/change-to/text"/>
+  <insert wait="300">r</insert>
+  <insert>~</insert>
+
+	<var id="row" set="1"/>
+	<var id="col" set="4"/>
+  <glimpse wait="1000" id="Egloss" select="senses/record/col" prop="value" expect="English gloss"/>
+	<var id="col" set="5"/>
+  <glimpse wait="1000" id="NoRev" select="senses/record/col" prop="value" expect=""/>
+
+<!-- Bulk Copy-->
+  <click select="bulk-copy/apply"/>
+
+<!-- check Click Copy-->
+	<var id="col" set="5"/>
+  <glimpse wait="2000" id="check1" select="senses/record/col" prop="value" expect="English gloss"/>
+	<var id="col" set="4"/>
+  <glimpse id="check1a" select="senses/record/col" prop="value" expect="English gloss"/>
+
+	<var id="row" set="2"/>
+	<var id="col" set="5"/>
+  <glimpse id="check2" select="senses/record/col" prop="value" expect="English gloss"/>
+	<var id="col" set="4"/>
+  <glimpse id="check2a" select="senses/record/col" prop="value" expect="English gloss"/>
+
+ <!--click Bulk Replace tab-->
+ <click select="bulk-replace/tab"/>
+
+<!-- Select Target Field reversals-->
+  <click select="bulk-replace/target-field/text"/>
+  <insert>r</insert>
+  <insert>~</insert>
+
+  <!-- click Setup-->
+  <click select="bulk-replace/setup"/>
+
+  <on-dialog name="Find and Replace" title="Bulk Replace Setup">
+   <insert>English gloss</insert>
+   <insert>{TAB}</insert>
+   <insert>{END}</insert>
+   <insert>+{HOME}</insert>
+   <insert>{BKSP}</insert>
+   <insert>~</insert>
+  </on-dialog>
+
+  <!-- click Apply-->
+  <click select="bulk-replace/apply"/>
+
+	<var id="col" set="4"/>
+  <glimpse wait="1000" id="check3" select="senses/record/col" prop="value" expect="English gloss"/>
+	<var id="col" set="5"/>
+  <glimpse wait="1000" id="Empty3" select="senses/record/col" prop="value" expect=""/>
+
+	<var id="row" set="2"/>
+	<var id="col" set="4"/>
+  <glimpse wait="1000" id="check4" select="senses/record/col" prop="value" expect="English gloss"/>
+	<var id="col" set="5"/>
+  <glimpse wait="1000" id="Empty4" select="senses/record/col" prop="value" expect=""/>
+
+<!-- click Configure Columns button, check Definition, uncheck Reversals -->
+  <click select="senses/col/changer"/>
+  <insert>r</insert>
+  <click select="senses/col/changer"/>
+  <insert>d</insert>
+
+<!-- Show All Gloss "English gloss"-->
+  <var id="col" set="3"/>
+  <click select="senses/col/filter/text"/>
+  <insert>s</insert>
+  <insert>~</insert>
+
+  <!-- click List Choice tab : have to click else where first (-%-->
+  <click select="//toolbar/no-filters"/>
+  <click select="//toolbar/first-record"/>
+  <click select="list-choice/tab"/>
+
+</model>
+
+ </on-application>
+</accil>

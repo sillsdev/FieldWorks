@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Help-->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to Help/Language Explorer-->
+  <click select="menubar/help/language-explorer"/>
+
+<!-- Close Help-->
+  <on-dialog title="FieldWorks Language Explorer Help">
+   <click path="titlebar:NAMELESS/pushbutton:Close"/>
+  </on-dialog>
+
+<!-- Go to Help/About-->
+  <click select="menubar/help/about-language-explorer"/>
+
+<!-- Close about-->
+  <insert>~</insert>
+
+ </on-application>
+</accil>

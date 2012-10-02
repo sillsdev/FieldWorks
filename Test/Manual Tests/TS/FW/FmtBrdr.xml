@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fmtBrdr" num="2.6.5" abbr="fmbr" file="FW\FmtBrdr.xml">
+ <title tag="fmtBrdr">Format-Border Dialog Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The Format Border dialog allows the user to add, change or remove framing of selected paragraphs.</p>
+  </introduction>
+  <context>
+<p>Many border setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Format Border".</p>
+  </context>
+ <case id="fmbrAct" num="0" order="any">
+  <title tag="fmbrAct">Activation</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.0" link="Bug">While the cursor is in structured text, try to invoke the Format-Border menu item. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Border" type="doc">Definition of Format Menu.</link>
+   <r>Format-Border menu item should be enabled; selecting it should bring up the Format Border dialog.</r>
+   <p name="bug">Format Menu Border item not working</p>
+  </step>
+  <step name="0.1" link="Bug">Select the Format menu.
+   <r>Format-Border menu item should not be disabled if the cursor is in a structured text field.</r>
+   <p name="bug">Format Border Format Menu Border item not enabled for editable data</p>
+   <p name="bug">Format Border Format Menu Border item enabled for non-editable data</p>
+  </step>
+  <step name="0.2" link="Bug">Place the cursor in data of a field that can be edited. Invoke the Format-Border dialog, change controls and click OK.
+   <r>The changes should be made in the text selected or when typing in new text. The changes should persist in other views of the same data.</r>
+   <p name="bug">Format Border changes not applied</p>
+   <p name="bug">Format Border changes not saved</p>
+  </step>
+ </case>
+
+ <case id="fmbrDiac" num="1" order="any">
+  <title tag="fmbrDiac">Exercise dialog controls</title>
+  <context>
+<p>When the Format-Border Dialog is displayed</p>
+</context>
+  <step name="1.1" link="Bug">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Border/FormatBorder.html" type="doc">Format-Border Dialog specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons. The preview window should be pretty close.</r>
+   <p name="bug">Format Border dialog layout incorrect</p>
+  </step>
+  <step name="1.2">
+<link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Format Border" as the name of the dialog.</r>
+  </step>
+  <step name="1.3" link="Bug">
+<link uri="../StdCtrls/ColorPal.xml">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;o&gt; to test the Color combo box.
+   <r>The selected color and its name should be displayed in the box and the pallet should no longer be displayed. The Preview box should reflect the selection, if any borders are enabled.</r>
+   <p name="bug">Format Border color not previewed</p>
+  </step>
+  <step name="1.4" link="Bug">
+<link uri="../StdCtrls/ListBox.xml">List box and Combo box Tests</link> and use the shortcut &lt;Alt&gt;&lt;W&gt; to test the Width combo box.
+   <r>
+<ul>
+	<li>The default value is 1/2 point</li>
+	<li>The selected value should be displayed in the box and the list should no longer be displayed</li>
+	<li>The Preview box should reflect the selection, if any borders are enabled</li>
+   </ul>
+</r>
+   <p name="bug">Format Border line width not previewed</p>
+  </step>
+  <step name="1.5" link="Bug">
+<link uri="../StdCtrls/Button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;N&gt; to test the None check box.
+   <r>
+<ul>
+	<li>NONE of the check boxes around the Preview box should be displayed with a check in them</li>
+	<li>The Preview box should not display any lines</li>
+   </ul>
+</r>
+   <p name="bug">Format Border None not previewed</p>
+  </step>
+  <step name="1.6" link="Bug">
+<link uri="../StdCtrls/Button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;l&gt; to test the All check box.
+   <r>
+<ul>
+	<li>ALL of the check boxes around the Preview box should be displayed with a check in them</li>
+	<li>The Preview box should display all the border lines</li>
+   </ul>
+</r>
+   <p name="bug">Format Border All not previewed</p>
+  </step>
+ </case>
+
+ <case id="fmbrSide" num="2" order="any">
+  <title tag="fmbrSide">Exercise side controls</title>
+  <context>
+<p>When the Format-Border Dialog is displayed</p>
+</context>
+  <step name="2.1" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">Check box Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the Top check box control.
+   <r>When checked, a line appears across the top of the preview box. Otherwise, no line appears at the top.</r>
+   <p name="bug">Format Border Top not previewed correctly</p>
+  </step>
+  <step name="2.2" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">Check box Tests</link> and use the shortcut &lt;Alt&gt;&lt;e&gt; to test the Left check box control.
+   <r>When checked, a line appears down the left of the preview box. Otherwise, no line appears at the left.</r>
+   <p name="bug">Format Border Left not previewed correctly</p>
+  </step>
+  <step name="2.3" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">Check box Tests</link> and use the shortcut &lt;Alt&gt;&lt;R&gt; to test the Right check box control.
+   <r>When checked, a line appears down the right of the preview box. Otherwise, no line appears at the right.</r>
+   <p name="bug">Format Border Right not previewed correctly</p>
+  </step>
+  <step name="2.4" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">Check box Tests</link> and use the shortcut &lt;Alt&gt;&lt;B&gt; to test the Bottom check box control.
+   <r>When checked, a line appears across the bottom of the preview box. Otherwise, no line appears at the bottom.</r>
+   <p name="bug">Format Border Bottom not previewed correctly</p>
+  </step>
+ </case>
+
+ <case id="fmbrMan" num="3" order="any">
+  <title tag="fmbrSpa">Manually Exercise All or None controls</title>
+  <context>
+<p>When the Format-Border Dialog is displayed</p>
+</context>
+  <step name="3.1" link="Bug">Uncheck all Top / Bottom / Left / Right check boxes that are checked, by clicking on them.
+   <r>
+<ul>
+	<li>NO check mark is seen in any check box.</li>
+	<li>The Preview box shows no border lines.</li>
+	<li>The None box is highlighted.</li>
+   </ul>
+</r>
+   <p name="bug">Format Border check mark remains</p>
+   <p name="bug">Format Border unchecking leaves line in preview</p>
+   <p name="bug">Format Border None check box not highlighted</p>
+  </step>
+  <step name="3.2" link="Bug">Check all Top / Bottom / Left / Right check boxes that are unchecked, by clicking on them.
+   <r>
+<ul>
+	<li>Check marks are seen in every check box.</li>
+	<li>The Preview box shows four border lines.</li>
+	<li>The All box is highlighted.</li>
+   </ul>
+</r>
+   <p name="bug">Format Border can't mark all check boxes</p>
+   <p name="bug">Format Border line not shown in preview</p>
+   <p name="bug">Format Border All check box not highlighted</p>
+  </step>
+ </case>
+
+ <case id="fmbrEdit" num="4" order="any">
+  <title tag="fmbrEdit">Editing with Borders</title>
+  <context>
+<p>With some text, perhaps stradling paragraphs, selected as indicated below, and with the Format Border dialog visible</p>
+</context>
+  <step name="4.1" link="Bug">Create a border around a paragraph. Click in the paragraph and bring up the dialog again.
+   <r>The dialog should indicate the present border settings.</r>
+   <p name="bug">Format Border Preview of selection displays incorrectly</p>
+  </step>
+  <step name="4.2" link="Bug">Create a box border around a paragraph. Click in the middle of the paragraph and press &lt;Enter&gt;.
+   <r>Two paragraphs result inside one box.</r>
+   <p name="bug">Format Border split paragraph displays wrong</p>
+  </step>
+  <step name="4.3" link="Bug">Create a box border around a paragraph. Click in the middle of the paragraph and press &lt;Enter&gt;. Now, press backspace to rejoin the paragraphs.
+   <r>Two paragraphs should now be joined into one inside one box.</r>
+   <p name="bug">Format Border rejoined paragraphs display incorrectly</p>
+  </step>
+  <step name="4.4" link="Bug">Create borders around paragraphs with different settings.
+   <r>The different paragraph settings should not unduly affect the borders, but spacing specified around the paragraph should be included within the borders.</r>
+   <p name="bug">Format Border: borders of some paragraphs display incorrectly</p>
+  </step>
+ </case>
+
+ <update date="May-08-01" author="MikeL">Test created.</update>
+
+</test>

@@ -1,0 +1,57 @@
+﻿<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="EcActionsFragment">
+		<CustomAction Id="Set_WORD_DOT_FOLDER_for_CSC_Word_template" Return="check" Property="WORD_DOT_FOLDER.34B6C3D2C69942758689B50BD49ADEE6" Value="[WORD_DOT_FOLDER]" />
+		<CustomAction Id="Set_WORD_DOT_FOLDER_for_SpellFixer" Return="check" Property="WORD_DOT_FOLDER.52CAB578042E44829AF9352B8DFCE924" Value="[WORD_DOT_FOLDER]" />
+		<CustomAction Id="Set_WORD_DOT_FOLDER_for_Word_Doc_Template" Return="check" Property="WORD_DOT_FOLDER.9B273BB494FA4F7BA668CDD740E479BF" Value="[WORD_DOT_FOLDER]" />
+		<CustomAction Id="Set_WORD_DOT_FOLDER_via_Reg" Return="check" Property="WORD_DOT_FOLDER" Value="[WORD_DOT_FOLDER_REG]" />
+	<CustomAction Id="Set_WORD_DOT_FOLDER_via_startup_folder" Return="check" Property="WORD_DOT_FOLDER" Value="[WORD_DOT_STARTUP_FOLDER]" />
+	<CustomAction Id="Set_WORD_DOT_FOLDER_via_folder" Return="check" Property="WORD_DOT_FOLDER" Value="[WORD_DOT_FOLDER_FOLDER]" />
+		<CustomAction Id="Set_WordTemplateWarningText" Return="check" Property="WordTemplateWarningText" Value="Setup cannot find your Microsoft Word startup folder. Templates will be installed to [WORD_DOT_FOLDER.9B273BB494FA4F7BA668CDD740E479BF], from where you will need to move them to your Word Templates or Startup folder." />
+		<CustomAction Id="Set_OFFICE_PIA_FOUND" Return="check" Property="OFFICE_PIA_FOUND" Value="1" />
+		<CustomAction Id="Set_WORD_PIA_FOUND" Return="check" Property="WORD_PIA_FOUND" Value="1" />
+		<InstallUISequence>
+			<Custom Action="Set_WORD_DOT_FOLDER_via_Reg" After="AppSearch"><![CDATA[WORD_DOT_FOLDER_REG]]></Custom>
+	  <Custom Action="Set_WORD_DOT_FOLDER_via_startup_folder" After="Set_WORD_DOT_FOLDER_via_Reg"><![CDATA[WORD_DOT_STARTUP_FOLDER AND NOT WORD_DOT_FOLDER]]></Custom>
+	  <Custom Action="Set_WORD_DOT_FOLDER_via_folder" After="Set_WORD_DOT_FOLDER_via_startup_folder"><![CDATA[WORD_DOT_FOLDER_FOLDER AND NOT WORD_DOT_STARTUP_FOLDER AND NOT WORD_DOT_FOLDER]]></Custom>
+	  <Custom Action="Set_WORD_DOT_FOLDER_for_CSC_Word_template" After="RMCCPSearch"><![CDATA[WORD_DOT_FOLDER]]></Custom>
+			<Custom Action="Set_WORD_DOT_FOLDER_for_SpellFixer" After="Set_WORD_DOT_FOLDER_for_CSC_Word_template"><![CDATA[WORD_DOT_FOLDER]]></Custom>
+			<Custom Action="Set_WORD_DOT_FOLDER_for_Word_Doc_Template" After="Set_WORD_DOT_FOLDER_for_SpellFixer"><![CDATA[WORD_DOT_FOLDER]]></Custom>
+			<Custom Action="Set_WordTemplateWarningText" After="CostFinalize" />
+			<Custom Action="Set_OFFICE_PIA_FOUND" Before="ValidateProductID"><![CDATA[(COMPONENTEXISTS_WORD_03_PIA OR COMPONENTEXISTS_WORD_07_PIA) AND (COMPONENTEXISTS_EXCEL_03_PIA OR COMPONENTEXISTS_EXCEL_07_PIA) AND (ACCESS_2003_PIA_EXISTS OR ACCESS_2007_PIA_EXISTS) AND (PUBLISHER_2003_PIA_EXISTS OR PUBLISHER_2007_PIA_EXISTS)]]></Custom>
+			<Custom Action="Set_WORD_PIA_FOUND" Before="ValidateProductID"><![CDATA[COMPONENTEXISTS_WORD_03_PIA OR COMPONENTEXISTS_WORD_07_PIA]]></Custom>
+		</InstallUISequence>
+		<AdvertiseExecuteSequence>
+			<RegisterClassInfo />
+			<RegisterExtensionInfo />
+			<RegisterProgIdInfo />
+			<RegisterMIMEInfo />
+			<PublishComponents />
+		</AdvertiseExecuteSequence>
+		<InstallExecuteSequence>
+			<DuplicateFiles />
+			<IsolateComponents/>
+			<MigrateFeatureStates/>
+			<UnpublishComponents />
+			<MsiUnpublishAssemblies />
+			<UnregisterComPlus />
+			<SelfUnregModules />
+			<UnregisterTypeLibraries />
+			<UnregisterClassInfo />
+			<UnregisterExtensionInfo />
+			<UnregisterProgIdInfo />
+			<UnregisterMIMEInfo />
+			<UnregisterFonts/>
+			<RemoveDuplicateFiles />
+			<MoveFiles />
+			<RegisterClassInfo />
+			<RegisterExtensionInfo />
+			<RegisterProgIdInfo />
+			<RegisterMIMEInfo />
+			<RegisterTypeLibraries />
+			<SelfRegModules />
+			<RegisterComPlus />
+			<PublishComponents />
+		</InstallExecuteSequence>
+
+</Fragment>
+</Wix>

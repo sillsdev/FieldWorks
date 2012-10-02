@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>yalotetu</form>
+  <seq step="Try to build a Full analysis node on an uninflected Stem node.">
+	<full syncat="81" syncatAbbr="N" requiresInfl="+" inflected="-">
+	  <stem syncat="81" syncatAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph alloid="6088" morphname="6086" type="root" wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <alloform>yalo</alloform>
+		  <gloss>mat</gloss>
+		  <citationForm>yalo</citationForm>
+		  <stemMsa cat="81" catAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	</full>
+	<morph alloid="6207" morphname="6205" type="sfx" wordType="103">
+	  <shortName>-te (3PlPoss): te</shortName>
+	  <alloform>-te</alloform>
+	  <gloss>3PlPoss</gloss>
+	  <citationForm>te</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6202" morphname="6200" type="sfx" wordType="103">
+	  <shortName>-tu (2PlPoss): tu</shortName>
+	  <alloform>-tu</alloform>
+	  <gloss>2PlPoss</gloss>
+	  <citationForm>tu</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6276" morphname="6273" type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node.">
+	<full syncat="81" syncatAbbr="N" requiresInfl="-" inflected="+"><stem syncat="81" syncatAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+"><morph alloid="6088" morphname="6086" type="root" wordType="root"><shortName>yalo (mat): yalo</shortName><alloform>yalo</alloform><gloss>mat</gloss><citationForm>yalo</citationForm><stemMsa cat="81" catAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+" /></morph></stem><morph alloid="6207" morphname="6205" type="sfx" wordType="103"><shortName>-te (3PlPoss): te</shortName><alloform>-te</alloform><gloss>3PlPoss</gloss><citationForm>te</citationForm><inflClasses><inflClass hvo="99" abbr="I" /></inflClasses><inflectionClass id="99" abbr="I" /><inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" /></morph><morph alloid="6202" morphname="6200" type="sfx" wordType="103"><shortName>-tu (2PlPoss): tu</shortName><alloform>-tu</alloform><gloss>2PlPoss</gloss><citationForm>tu</citationForm><inflClasses><inflClass hvo="99" abbr="I" /></inflClasses><inflectionClass id="99" abbr="I" /><inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" /></morph></full>
+	<morph alloid="6276" morphname="6273" type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node.">
+	<full syncat="81" syncatAbbr="N" requiresInfl="-" inflected="+">
+	  <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (N) of the stem.</failure>
+	  <stem syncat="81" syncatAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph alloid="6088" morphname="6086" type="root" wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <alloform>yalo</alloform>
+		  <gloss>mat</gloss>
+		  <citationForm>yalo</citationForm>
+		  <stemMsa cat="81" catAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="6207" morphname="6205" type="sfx" wordType="103">
+	  <shortName>-te (3PlPoss): te</shortName>
+	  <alloform>-te</alloform>
+	  <gloss>3PlPoss</gloss>
+	  <citationForm>te</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6202" morphname="6200" type="sfx" wordType="103">
+	  <shortName>-tu (2PlPoss): tu</shortName>
+	  <alloform>-tu</alloform>
+	  <gloss>2PlPoss</gloss>
+	  <citationForm>tu</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6276" morphname="6273" type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node.">
+	<full syncat="81" syncatAbbr="N" requiresInfl="-" inflected="+">
+	  <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (N) of the stem.</failure>
+	  <stem syncat="81" syncatAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph alloid="6088" morphname="6086" type="root" wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <alloform>yalo</alloform>
+		  <gloss>mat</gloss>
+		  <citationForm>yalo</citationForm>
+		  <stemMsa cat="81" catAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="6207" morphname="6205" type="sfx" wordType="103">
+	  <shortName>-te (3PlPoss): te</shortName>
+	  <alloform>-te</alloform>
+	  <gloss>3PlPoss</gloss>
+	  <citationForm>te</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6202" morphname="6200" type="sfx" wordType="103">
+	  <shortName>-tu (2PlPoss): tu</shortName>
+	  <alloform>-tu</alloform>
+	  <gloss>2PlPoss</gloss>
+	  <citationForm>tu</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6276" morphname="6273" type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node.">
+	<full syncat="81" syncatAbbr="N" requiresInfl="-" inflected="+">
+	  <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (N) of the stem.</failure>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="81" syncatAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph alloid="6088" morphname="6086" type="root" wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <alloform>yalo</alloform>
+		  <gloss>mat</gloss>
+		  <citationForm>yalo</citationForm>
+		  <stemMsa cat="81" catAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="6207" morphname="6205" type="sfx" wordType="103">
+	  <shortName>-te (3PlPoss): te</shortName>
+	  <alloform>-te</alloform>
+	  <gloss>3PlPoss</gloss>
+	  <citationForm>te</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6202" morphname="6200" type="sfx" wordType="103">
+	  <shortName>-tu (2PlPoss): tu</shortName>
+	  <alloform>-tu</alloform>
+	  <gloss>2PlPoss</gloss>
+	  <citationForm>tu</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6276" morphname="6273" type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node.">
+	<full syncat="81" syncatAbbr="N" requiresInfl="-" inflected="+">
+	  <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (N) of the stem.</failure>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="81" syncatAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph alloid="6088" morphname="6086" type="root" wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <alloform>yalo</alloform>
+		  <gloss>mat</gloss>
+		  <citationForm>yalo</citationForm>
+		  <stemMsa cat="81" catAbbr="N" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph alloid="6207" morphname="6205" type="sfx" wordType="103">
+	  <shortName>-te (3PlPoss): te</shortName>
+	  <alloform>-te</alloform>
+	  <gloss>3PlPoss</gloss>
+	  <citationForm>te</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6202" morphname="6200" type="sfx" wordType="103">
+	  <shortName>-tu (2PlPoss): tu</shortName>
+	  <alloform>-tu</alloform>
+	  <gloss>2PlPoss</gloss>
+	  <citationForm>tu</citationForm>
+	  <inflClasses>
+		<inflClass hvo="99" abbr="I" />
+	  </inflClasses>
+	  <inflectionClass id="99" abbr="I" />
+	  <inflMsa cat="81" catAbbr="N" slot="103" slotAbbr="Possessor" slotOptional="true" />
+	</morph>
+	<morph alloid="6276" morphname="6273" type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+</word>

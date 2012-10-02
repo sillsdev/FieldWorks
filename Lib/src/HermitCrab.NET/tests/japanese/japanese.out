@@ -1,0 +1,357 @@
+(message (
+ <hc6508 fname C:\DATA\HC\MORPHER\TESTS\JAPANESE\JAPANESE.IN > ) )
+;$Id: japanese.in 1.3 1996/01/11 12:12:01 Mike_Maxwell Exp $
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\japanese\japsetup.in > ) )
+;$Id: japsetup.in 1.18 1997/11/24 17:15:57 Mike_Maxwell Exp $
+;Modified from PC-KIMMO's JAPANESE.RUL to load the startup info, incl. pfeature defs, char tables,
+; strata defs and rules, but not the dictionary (which will be loaded by the file calling this one,
+; since at this point the dict is too large for HC).
+; Japanese Verb Conjugation
+; Data from Problem Book in Phonology, by Halle & Clements, MIT
+; Press, 1983, p. 127.
+; S = alveopalatal sibilant (s-wedge)
+; T = alveolar affricate (ts)
+; & = alveopalatal affricate (c-wedge)
+; /u/ may not be round??
+; r is treated here as a glide phonologically, i.e. [-cons -voc]
+; (based on its behavior in common with /w/ in the assimilation rule;
+; and on its behavior in common with /y/ in the r and y deletion rule)
+(message (
+ <hc6510 lname Japanese > ) )
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Ff from Hyman "Phonology: Theory and Analysis", Holt, Rinehart and Winston, pg. 241-244
+;bilabial =     [-back -high -low +ant -cor]
+;alveolar =     [-back -high -low +ant +cor]
+;alveopalatal = [-back +high -low -ant +cor]
+;velar =        [+back +high -low -ant -cor]
+;glottal =      [-back -high +low -ant -cor]
+;Table1 has surface segments + boundary marker.  The latter appears only in the lexicon.
+(message (
+ <hc6501 table_name table1 > ) )
+;Now set the strata (just one):
+(message (
+ <hc6502 var_name '*strata*' > ) )
+;...and set their ctables (msg 6550):
+(message (
+ <hc6550 sname morphophonemic ctable_name table1 > ) )
+(message (
+ <hc6550 sname '*surface*' ctable_name table1 > ) )
+;...and the cyclicity of the morphophonemic stratum (msg 6552):
+(message (
+ <hc6552 sname morphophonemic > ) )
+;...and the order of the prules and mrules:
+(message (
+ <hc6555 sname morphophonemic > ) )
+(message (
+ <hc6556 sname morphophonemic > ) )
+;Load the natural classes:
+(message (
+ <hc6541 nat_class_name null > ) )
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6541 nat_class_name vowel > ) )
+(message (
+ <hc6541 nat_class_name nonvowel > ) )
+(message (
+ <hc6541 nat_class_name unround_vowel > ) )
+(message (
+ <hc6541 nat_class_name low_vowel > ) )
+(message (
+ <hc6541 nat_class_name nonlow_vowel > ) )
+(message (
+ <hc6541 nat_class_name voiced > ) )
+(message (
+ <hc6541 nat_class_name voiced_cons > ) )
+(message (
+ <hc6541 nat_class_name affricate > ) )
+(message (
+ <hc6541 nat_class_name nonvd_strident > ) )
+(message (
+ <hc6541 nat_class_name palatalized > ) )
+(message (
+ <hc6541 nat_class_name high_vowel > ) )
+(message (
+ <hc6541 nat_class_name bm > ) )
+(message (
+ <hc6541 nat_class_name n > ) )
+(message (
+ <hc6541 nat_class_name dt > ) )
+(message (
+ <hc6541 nat_class_name t > ) )
+(message (
+ <hc6541 nat_class_name s > ) )
+(message (
+ <hc6541 nat_class_name kg > ) )
+(message (
+ <hc6541 nat_class_name w > ) )
+(message (
+ <hc6541 nat_class_name ry > ) )
+(message (
+ <hc6541 nat_class_name rw > ) )
+(message (
+ <hc6541 nat_class_name i > ) )
+;-------------PHONOLOGICAL RULES
+;RULE "1 Consonant defaults"  Does not correspond to anything in HC
+;RULE "2 Vowel defaults"  Does not correspond to anything in HC
+; Truncation, A:0
+; according to Alam 1983 this rule deletes a, i, and e
+; LR: ne+anai  ne+itai  mi+anai  mi+itai
+; SR: ne00nai  ne00tai  mi00nai  mi00tai
+;RULE "10 A:0 correspondences"
+; A = a i
+; morpheme boundary is obligatory; counterfed by w-deletion (kaw+itai --> kaitai)
+;RULE "11 Truncation, A:0 <=> V +:0___"
+; [+voc -round] --> 0 / [+voc] + __
+(message (
+ <hc6505 rname vowel_deletion > ) )
+; r and y deletion
+; according to Alam 1983, this rule deletes r, s, and y
+; PC-KIMMO splits this into r-deletion and y-deletion; we combine them
+; LR: sin+ru  kas+ru  kaw+ru  kat+ru
+; SR: Sin00u  kas00u  ka000u  kaT00u
+; C:@ due to w:0 rule
+;RULE "13 Deletion, r:0 <=> C(+:0)___"
+; y-deletion
+; LR: ne+yoo  sin+yoo
+; SR: ne0yoo  Sin00oo
+; C:@ due to w:0 rule (this corresponds to ordering before w-deletion -MM)
+;RULE "16 y:0 <=> C: (+:0)__"
+;The HC rule only takes r and y --> 0; if the PC-KIMMO note above re s and y is correct,
+; the rule would be more complex (and probably several rules).  Ordered before t --> T (affrication),
+; because it feeds it (cf. kat+ru --> kaTu)
+; [-cons -voc +cor] --> 0 / [-voc] __
+(message (
+ <hc6505 rname r_deletion > ) )
+; w-deletion, w:0
+; LR: kaw+itai  kaw+yoo  kaw+ru
+; SR: ka00itai  ka000oo  ka000u
+; I = i u o
+;RULE "15 w:0 <=> ___(+:0)(C:0)I"
+; [-cons -voc +round] --> 0 / [+voc +low] __ [+voc -low]
+; The environ is my guess, based on the data (-MM)
+(message (
+ <hc6505 rname w_deletion > ) )
+; Voicing, t:d
+; LR: sin+ta  yom+ta  yob+ta  tug+0ta
+; SR: Sin0da  yon0da  yon0da  Tu00ida
+; M = b g m n
+;RULE "3 Voicing, t:d <=> M: (+:0)(0:i)___"
+; [-cont +coronal -del_rel] --> [+vd] / [+cons +vd] __
+; I assume this would also happen after other [+vd] Cs.  Must be ordered before epenthesis
+; (see tug+ta --> tuida ex above)
+(message (
+ <hc6505 rname td > ) )
+; Velar deletion, K:0
+; LR: wak+0ta  tug+0ta
+; SR: wa00ita  Tu00ida
+;RULE "7 K:0 correspondences"
+; K = k g
+;RULE "8 Velar deletion, K:0 <=> ___(+:0) 0:i t:"
+; In HC, we instead handle this as {k g} --> i / __ t, thereby combining it with PC-KIMMO's rule of
+; epenthesis for the k and g cases
+; (it's a very odd rule, but no odder than k --> 0 / __ 0:i t, with the 0:i being obligatory!)
+; [+cons +back] --> [-cons +voc +sonorant +vd -back +cont ] / __ [+cons +cor]
+; (an odd rule!)  Ordered after td (voicing).
+(message (
+ <hc6505 rname ki > ) )
+; Nasalization, B:n
+; LR: yom+ta  yob+ta
+; SR: yon0da  yon0da
+;RULE "4 B:n correspondences"
+; B = b m
+; @:d due to t:d rule
+;RULE "5 Nasalization, B:n <=> ___(+:0) :d"
+; [-cont +vd +ant -cor] --> [+cor +nasal +sonorant] / __ [+cons +cor]
+; May need to be restricted to [+cor +vd] (and ordered wrt voicing); check also wrt features
+; nasal, del_rel etc. in environ
+(message (
+ <hc6505 rname 'Bn' > ) )
+; Epenthesis, 0:i
+; LR: kas+0ta wak+0ta  tug+0ta
+; SR: kaS0ita wa00ita  Tu00ida
+; X = s k g
+;RULE "9 Epenthesis, 0:i <=> X(+:0)___t:"
+; In HC, we instead analyze this as 0 --> i / s__t; the {k g} __ t environ is instead treated as
+; k --> i / __+t (see rule ki).  Feeds palatalization.
+; 0 --> [+voc +high -back] / [+cons +strident -del_rel] __ [-cont +cor -vd]
+(message (
+ <hc6505 rname epenthesis > ) )
+; Affrication 1, t:&
+; LR: kat+itai
+; SR: ka&0itai
+;RULE "12 Affrication 1, t:& <=> ___(+:0)i"
+; Affication 2, t:T
+; LR: kat+ru  tug+yoo
+; SR: kaT00u  Tug00oo
+;RULE "14 t:T <=> ___(+:0 C)u"
+; These two rules are combined in HC as t --> T, and palatalization takes T --> &
+; (hence ordered before palatalization)
+; [-cont +cor -sonorant] --> [+del_rel] / __ [+voc +high]
+(message (
+ <hc6505 rname affrication > ) )
+; Palatalization, s:S
+; LR: kas+itai  kas+0ta  sin+yoo  sin+ta
+; SR: kaS0itai  kaS0ita  Sin00oo  Sin0da
+; @:i due to 0:i rule
+;RULE "6 Palatalization, s:S <=> ___(+:0):i"
+; [+strident -vd] --> [-ant] / __ [+voc +high -back]
+; Fed by affrication (hence we do NOT require the input to be [-del_rel])
+(message (
+ <hc6505 rname palatalization > ) )
+; Assimilation, R:t
+; LR: kar+ta  kaw+ta
+; SR: kat0ta  kat0ta
+;RULE "17 R:t correspondences"
+; R = r w
+;RULE "18 Assimilation, R:t <=> ___(+:0)t"
+; Note that we treat /r/ as a glide based on its shared behavior with /w/ in this rule
+; [-cons -voc +ant] --> [+cons -sonorant -vd +cor -cont -strident -high -back] / __ [-cont +cor]
+(message (
+ <hc6505 rname assimilation > ) )
+;-------------MORPHOLOGICAL RULES
+(message (
+ <hc6505 rname present > ) )
+(message (
+ <hc6505 rname negative > ) )
+(message (
+ <hc6505 rname volitional > ) )
+(message (
+ <hc6505 rname past > ) )
+(message (
+ <hc6505 rname inchoative > ) )
+;(trace_morpher_rule message (false true present))
+;(trace_morpher_rule message (true true negative))
+;(trace_morpher_rule message (true true volitional))
+;(trace_morpher_rule message (true true past))
+;(trace_morpher_rule message (true true inchoative))
+;Don't let errors stop us:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\japanese\japsetup.in > ) )
+(message (
+ <hc6515 n 11 fname c:\data\hc\morpher\tests\japanese\japanese.dic > ) )
+;ff. based on PC-KIMMO's JAPANESE.REC
+; present
+(message (word_analysis
+ <lex id 5 sh neru gl sleep -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh miru gl see -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh Sinu gl die -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 8 sh yomu gl read -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 9 sh yobu gl call -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 10 sh kaTu gl win -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh kasu gl lend -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh waku gl boil -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh Tugu gl pour -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 14 sh karu gl shear -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 15 sh kau gl buy -PRES pos 'V' mrs (present ) str '*surface*' > ) )
+; negative
+(message (word_analysis
+ <lex id 5 sh nenai gl sleep -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh minai gl see -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh Sinanai gl die -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 8 sh yomanai gl read -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 9 sh yobanai gl call -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 10 sh katanai gl win -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh kasanai gl lend -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh wakanai gl boil -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh Tuganai gl pour -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 14 sh karanai gl shear -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 15 sh kawanai gl buy -NEG pos 'V' mrs (negative ) str '*surface*' > ) )
+; volitional
+(message (word_analysis
+ <lex id 5 sh netai gl sleep -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh mitai gl see -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh Sinitai gl die -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 8 sh yomitai gl read -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 9 sh yobitai gl call -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 10 sh ka&itai gl win -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh kaSitai gl lend -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh wakitai gl boil -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh Tugitai gl pour -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 14 sh karitai gl shear -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 15 sh kaitai gl buy -VOL pos 'V' mrs (volitional ) str '*surface*' > ) )
+; past
+(message (word_analysis
+ <lex id 5 sh neta gl sleep -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh mita gl see -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh Sinda gl die -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+; Next word should be 2x ambig:
+(message (word_analysis
+ <lex id 8 sh yonda gl read -PAST pos 'V' mrs (past ) str '*surface*' >
+ <lex id 9 sh yonda gl call -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+; Next word should be 3x ambig:
+(message (word_analysis
+ <lex id 10 sh katta gl win -PAST pos 'V' mrs (past ) str '*surface*' >
+ <lex id 14 sh katta gl shear -PAST pos 'V' mrs (past ) str '*surface*' >
+ <lex id 15 sh katta gl buy -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh kaSita gl lend -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh waita gl boil -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh Tuida gl pour -PAST pos 'V' mrs (past ) str '*surface*' > ) )
+; inchoative
+(message (word_analysis
+ <lex id 5 sh neyoo gl sleep -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 6 sh miyoo gl see -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 7 sh Sinoo gl die -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 8 sh yomoo gl read -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 9 sh yoboo gl call -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 10 sh katoo gl win -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 11 sh kasoo gl lend -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 12 sh wakoo gl boil -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 13 sh Tugoo gl pour -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 14 sh karoo gl shear -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (word_analysis
+ <lex id 15 sh kaoo gl buy -INCH pos 'V' mrs (inchoative ) str '*surface*' > ) )
+(message (
+ <hc6521 fname C:\DATA\HC\MORPHER\TESTS\JAPANESE\JAPANESE.IN > ) )
+(message (
+ <hc6508 fname stdin > ) )
+(message (
+ <hc6522 fname standard out > ) )

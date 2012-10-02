@@ -1,0 +1,9 @@
+LIBRARY MigrateData
+
+EXPORTS
+	ExtMigrate  PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE
+	DllCanUnloadNow     PRIVATE
+	DllInstall			PRIVATE

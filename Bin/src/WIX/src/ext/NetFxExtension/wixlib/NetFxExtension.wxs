@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+
+	<!--
+		.NET Framework Locators
+
+		Documentation: http://msdn.microsoft.com/winfx/default.aspx?pull=/library/en-us/dnlong/html/netfx30.asp
+
+		To determine the latest version of the .NET Framework installed, use the standard MsiNetAssemblySupport property.
+	-->
+
+	<!-- set to 3321-3705 if the .NET Framework 1.0 is installed (not set otherwise) -->
+	<Fragment>
+		<Property Id="NETFRAMEWORK10">
+			<RegistrySearch Id="NetFramework10" Root="HKLM" Key="SOFTWARE\Microsoft\.NETFramework\policy\v1.0" Name="3705" Type="raw" />
+		</Property>
+	</Fragment>
+
+	<!-- set to #1 if the .NET Framework 1.1 is installed (not set otherwise) -->
+	<Fragment>
+		<Property Id="NETFRAMEWORK11">
+			<RegistrySearch Id="NetFramework11" Root="HKLM" Key="Software\Microsoft\NET Framework Setup\NDP\v1.1.4322" Name="Install" Type="raw" />
+		</Property>
+	</Fragment>
+
+	<!-- set to #1 if the .NET Framework 2.0 is installed (not set otherwise) -->
+	<Fragment>
+		<Property Id="NETFRAMEWORK20">
+			<RegistrySearch Id="NetFramework20" Root="HKLM" Key="Software\Microsoft\NET Framework Setup\NDP\v2.0.50727" Name="Install" Type="raw" />
+		</Property>
+	</Fragment>
+
+	<!-- set to #1 if the .NET Framework 3.0 is installed (not set otherwise) -->
+	<Fragment>
+		<Property Id="NETFRAMEWORK30">
+			<RegistrySearch Id="NetFramework30" Root="HKLM" Key="SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.0\Setup" Name="InstallSuccess" Type="raw" />
+		</Property>
+	</Fragment>
+
+	<!-- location of the .NET Framework 1.1 SDK installation root -->
+	<Fragment>
+		<Property Id="NETFRAMEWORK11SDKDIR">
+			<RegistrySearch Id="NetFramework11SDKDir" Root="HKLM" Key="Software\Microsoft\.NETFramework" Name="sdkInstallRootv1.1" Type="raw" />
+		</Property>
+	</Fragment>
+
+	<!-- location of the .NET Framework 2.0 SDK installation root -->
+	<Fragment>
+		<Property Id="NETFRAMEWORK20SDKDIR">
+			<RegistrySearch Id="NetFramework20SDKDir" Root="HKLM" Key="Software\Microsoft\.NETFramework" Name="sdkInstallRootv2.0" Type="raw" />
+		</Property>
+	</Fragment>
+
+	<!-- NetFx NativeImage Custom Action Definitions -->
+	<Fragment>
+		<Property Id="NetFxVersion" Value="v2.0.50727" />
+
+		<IgnoreModularization Name="NetFxScheduleNativeImage" Type="Action" />
+		<IgnoreModularization Name="NetFxExecuteNativeImage" Type="Action" />
+		<IgnoreModularization Name="NetFxExecuteNativeImageCommit" Type="Action" />
+
+		<CustomAction Id="NetFxScheduleNativeImage" BinaryKey="NetFxCA" DllEntry="SchedNetFx" Execute="immediate" Return="check" />
+		<CustomAction Id="NetFxExecuteNativeImageInstall" BinaryKey="NetFxCA" DllEntry="ExecNetFx" Execute="deferred" Impersonate="no" Return="check" />
+		<CustomAction Id="NetFxExecuteNativeImageCommitInstall" BinaryKey="NetFxCA" DllEntry="ExecNetFx" Execute="commit" Impersonate="no" Return="check" />
+		<CustomAction Id="NetFxExecuteNativeImageUninstall" BinaryKey="NetFxCA" DllEntry="ExecNetFx" Execute="deferred" Impersonate="no" Return="ignore" />
+		<CustomAction Id="NetFxExecuteNativeImageCommitUninstall" BinaryKey="NetFxCA" DllEntry="ExecNetFx" Execute="commit" Impersonate="no" Return="ignore" />
+
+		<InstallExecuteSequence>
+			<Custom Action="NetFxScheduleNativeImage" Before="InstallFiles"/>
+			<Custom Action="NetFxExecuteNativeImageCommitUninstall" After="MsiPublishAssemblies">DISABLEROLLBACK &lt;&gt; 1</Custom>
+			<Custom Action="NetFxExecuteNativeImageUninstall" After="NetFxExecuteNativeImageCommitUninstall">DISABLEROLLBACK = 1</Custom>
+			<Custom Action="NetFxExecuteNativeImageCommitInstall" After="NetFxExecuteNativeImageUninstall">DISABLEROLLBACK &lt;&gt; 1</Custom>
+			<Custom Action="NetFxExecuteNativeImageInstall" After="NetFxExecuteNativeImageCommitInstall">DISABLEROLLBACK = 1</Custom>
+		</InstallExecuteSequence>
+	</Fragment>
+
+	<!-- NetFx Custom Action DLL Definitions -->
+	<Fragment>
+		<Binary Id="NetFxCA" SourceFile="netfxca.dll" />
+	</Fragment>
+
+</Wix>

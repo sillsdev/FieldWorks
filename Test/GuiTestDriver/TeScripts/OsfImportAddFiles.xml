@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALVI OTHERSF IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<var id="Scripture" select="tests/test[@case='$TestCase;']/@Scripture"/>
+		<var id="BackTranslation" select="tests/test[@case='$TestCase;']/@back-trans"/>
+		<var id="TranslationNotes" select="tests/test[@case='$TestCase;']/@notes"/>
+
+		<!-- Import Standard Format Setup -->
+		<on-dialog title="Standard Format Import Setup" until="10000">
+			<click path="$Next"/>
+			<click path="9:Other Standard Format (for example, Shoebox and Toolbox)/45:Other Standard Format (for example, Shoebox and Toolbox)"/>
+			<click path="$Next"/>
+			<insert>{TAB 5}</insert>
+			<insert>{ENTER}</insert>
+
+			<on-dialog title="Add Standard Format File" until="10000">
+				<if>
+					<condition of="$Scripture" is="Scripture Malvi (MUPS1)"/>
+					<then>
+						<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPS1\*.txt</insert>
+					</then>
+					<else>
+						<if>
+							<condition of="$Scripture" is="Scripture Malvi (MUPS2)"/>
+							<then>
+								<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPS2\*.txt</insert>
+							</then>
+							<else>
+								<if>
+									<condition of="$Scripture" is="Scripture Malvi (MUPS3)"/>
+									<then>
+										<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPS3\*.txt</insert>
+									</then>
+									<else>
+										<if>
+											<condition of="$Scripture" is="Scripture Malvi (MUPS4)"/>
+											<then>
+												<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPS4\*.txt</insert>
+											</then>
+										</if>
+									</else>
+								</if>
+							</else>
+						</if>
+					</else>
+				</if>
+				<insert>{ENTER}</insert>
+				<!--<on-dialog title="Bogus Dialog" until="2000" on-fail="skip"/>-->
+				<insert>{TAB 7}</insert>
+				<insert>^a</insert>
+				<click path="$Open"/>
+				<insert>{TAB 2}</insert>
+			</on-dialog>
+
+			<if>
+				<condition of="$BackTranslation" is="(none)"/>
+				<then>
+					<!-- There is no 'Back Trans. Folder' data to test against -->
+					<var id="Do Nothing" set="Do Nothing"/>
+				</then>
+				<else>
+					<click path="9:List of Standard Format Files[2]/9:NAMELESS/37:Back Translation"/>
+					<insert>{TAB 3}</insert>
+					<insert>{ENTER}</insert>
+					<on-dialog title="Add Standard Format File" until="10000">
+						<if>
+							<condition of="$BackTranslation" is="MUPB1"/>
+							<then>
+								<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPB1\*.txt</insert>
+							</then>
+							<else>
+								<if>
+									<condition of="$BackTranslation" is="MUPB2"/>
+									<then>
+										<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPB2\*.txt</insert>
+									</then>
+								</if>
+							</else>
+						</if>
+						<insert>{ENTER}</insert>
+						<insert>{TAB 7}</insert>
+						<insert>^a</insert>
+						<click path="$Open"/>
+						<insert>{TAB 2}</insert>
+					</on-dialog>
+				</else>
+			</if>
+
+			<if>
+				<condition of="$TranslationNotes" is="(none)"/>
+				<then>
+					<!-- There is no 'Trans. Notes Folder' data to test against -->
+					<var id="Do Nothing" set="Do Nothing"/>
+				</then>
+				<else>
+					<click path="9:List of Standard Format Files[2]/9:NAMELESS/37:Annotations"/>
+					<insert>{TAB 3}</insert>
+					<insert>{ENTER}</insert>
+					<on-dialog title="Add Standard Format File" until="10000">
+						<if>
+							<condition of="$TranslationNotes" is="Malvi Notes (MUPN1)"/>
+							<then>
+								<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPN1\*.txt</insert>
+							</then>
+							<else>
+								<if>
+									<condition of="$TranslationNotes" is="Malvi Notes (MUPN2)"/>
+									<then>
+										<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportOtherSF\MUPN2\*.txt</insert>
+									</then>
+								</if>
+							</else>
+						</if>
+						<insert>{ENTER}</insert>
+						<insert>{TAB 7}</insert>
+						<insert>^a</insert>
+						<click path="$Open"/>
+						<insert>{TAB 3}</insert>
+					</on-dialog>
+				</else>
+			</if>
+
+			<!--Select the "Next" button -->
+			<insert>{ENTER}</insert>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

@@ -1,0 +1,1249 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: Render.idh
+Responsibility: John Thomson
+Last reviewed: Not yet.
+
+Description:
+	Interface definition for rendering engine and related stuff.
+	This gets imported into the LanguageTlb IDL file; it does not generate
+	a stand-alone Tlb, mainly because it has mutual dependencies with the Engine stuff.
+	TextServ and Graphics Tlb's must be imported before this.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+// This file will be processed by the MIDL tool as part of LanguageTlb.idl.
+// Indentation is as if all this were embedded in a library declaration.
+
+	//:>****************************************************************************************
+	//:>		forward declarations for interfaces defined later in LanguageTlb
+	//:>****************************************************************************************
+	interface ILgInputMethodEditor;
+	interface ILgLineBreakEngine;
+	interface IVwGraphics;
+	interface ILgWritingSystemFactory;
+	interface IJustifyingRenderer;
+
+	// Types of line break, used by the rendering engines.
+	typedef [v1_enum] enum LgLineBreak {
+
+		klbNoBreak = 0,			// (the segment is not broken at all; the whole run fit);
+		klbWsBreak = 10,
+		klbWordBreak = 15,		// (a break at a word boundary: a normal, natural place to break);
+		klbGoodBreak = 19,		// (not necessarily known to be a word break but still pretty good);
+		klbHyphenBreak = 20,	// (break a word at a known valid hyphenation point, or comparable;
+		klbLetterBreak = 30,	// (break between letters, but not at a word or normal hyphenation point),
+		klbClipBreak = 40		// (had to clip even first letter, worst possible break)
+	} LgLineBreak;  // Hungarian: lbrk
+
+//	typedef [v1_enum] enum LgLineBreak {
+//
+//		klbNoBreak,			// (the segment is not broken at all; the whole run fit);
+//		klbWordBreak,		// (a break at a word boundary: a normal, natural place to break);
+//		klbHyphenBreak,		// (break a word at a known valid hyphenation point, or comparable;
+//		klbLetterBreak,		// (break between letters, but not at a word or normal hyphenation point),
+//		klbClipBreak		// (had to clip even first letter, worst possible break)
+//	} LgLineBreak;  // Hungarian: lbrk
+
+
+	// Values produced by the GetLineBreakStatus algorithm (may be combined).
+	// Unicode properties may be used (for most languages) to determine where word and letter
+	// breaks may be put (as defined under ${LgLineBreak}). There is no general way to
+	// tell where hyphens may be put, so we don't handle that in GetLineBreakStatus.
+	typedef [v1_enum] enum LgLineBreakStatus
+	{
+		kflbsBrk = 0x1,		// Break (i.e. "word break") after corresponding character is valid.
+		kflbsSpace = 0x2,	// Corresponding character is a space (strictly, has Zs general
+							// character property). Exception: space immediately before CM
+							// (combining mark) is not indicated as being a space.
+		kflbsBrkL = 0x4		// Only "letter break" is allowed after the corresponding character.
+	} LgLineBreakStatus;	// Hungarian lbs
+
+	typedef [v1_enum] enum LgIPDrawMode			// hungarian: dm
+	{
+		kdmNormal,			// normal I-beam
+		kdmSplitPrimary,	// primary half of a split insertion point
+		kdmSplitSecondary	// secondary half of a split insertion point
+	} LgIPDrawMode;
+
+	typedef [v1_enum] enum LgIpValidResult		// hungarian: ipvr
+	{
+		kipvrOK,		// IP here is valid
+		kipvrBad,		// IP here no good
+		kipvrUnknown	// This seg can't decide, ask the next
+	} LgIpValidResult;
+
+	typedef [v1_enum] enum LgTrailingWsHandling		// hungarian: twsh
+	{
+		ktwshAll,		// allow trailing white-space (normal case)
+		ktwshNoWs,		// disallow trailing white-space
+		ktwshOnlyWs,	// allow nothing but white-space in the segment
+	} LgTrailingWsHandling;
+
+	typedef [v1_enum] enum LgUtfForm
+	{
+		kutf8,
+		kutf16,
+		kutf32
+	} LgUtfForm;
+
+	// Typedefs logically part of the Vw subsystem, but defined here to keep dependencies from
+	// being circular.
+
+	typedef [v1_enum] enum VwGenericFontNames
+	{
+		kvgfnCustom,			// not a generic font
+		kvgfnSerif,
+		kvgfnSansSerif,
+		kvgfnMonospace
+	} VwGenericFontNames;
+
+	typedef [v1_enum] enum VwFontStyle {
+		kfsNormal,
+		kfsItalic,
+		kfsOblique
+	} VwFontStyle;
+
+	typedef [v1_enum] enum VwTextUnderline {
+		ktuNoUnderline,
+		ktuSingleUnderline
+	} VwTextUnderline;
+
+	// Properties passed to renderer to tell it how to draw text.
+
+	// An HFONT is typically produced by combining the four font properties specified
+	// into a LOGFONT with lfWidth, lfOrientation, lfEscapement set to zero,
+	// lfUnderline set to false, (Client handles underlining; we want several types)
+	// lfStrikeOut set to false,
+	// lfCharSet set to DEFAULT_CHARSET,
+	// lfOutPrecision set to OUT_TT_ONLY_PRECIS
+	// lfClipPrecision set to CLIP_DEFAULT_PRECIS,
+	// lfQuality set to DEFAULT_QUALITY, and
+	// lfPitchAndFamily set to DEFAULT_PITCH | FF_DONTCARE
+
+	// szFaceName may be an actual font family name, or one of the names <serif>,
+	// <sans-serif>, <monospace>, in which case the renderer must provide an appropriate
+	// interpretation. The magic names must match exactly (including case) and must include
+	// the angle brackets.
+
+	// The dympHeight value is usually modified by the WS before making an HFONT if
+	// superscript or subscript is specified;
+	// other properties may be modified as desired by the old writing system, by default or as
+	// a result of interpreting a old writing system style. For example, the WS may know of a
+	// minimum useful height for a particular font, and enforce this.
+
+	// ENHANCE JohnT: do we need a mechanism like that used in views to allow a list of font
+	// names to be passed? Seems the client could handle working out which of a list of
+	// named fonts is available--unless we need to try multiple ones to cover a code point
+	// range.
+	// ENHANCE JohnT: should we somehow make sure that each thread has only one instance of
+	// a chrp with given values, so we can use the pointer to it as a key to look up an
+	// HFONT?
+	typedef struct
+	{
+		COLORREF clrFore;
+		COLORREF clrBack;
+		COLORREF clrUnder;		// Underline color.
+		int dympOffset;		// Baseline offset (+ve = raise) added to effect of super/subscript
+		int ws;
+		byte fWsRtl;		// true if writing system is right-to-left
+		int nDirDepth;		// number of levels of direction change, para to this run
+		int ssv;			// indicates superscript, subscript or normal.
+		int unt;			// FwUnderlineType.
+		// Remaining properties are the interesting ones for a LOGFONT
+		// Warning: these must be kept together at the end of the struct.
+		// Note that this assumes the client resolves ws-dependent names like Serif,
+		// and also deals with finding the first available font in a list. This array
+		// has room for only one font name.
+		int ttvBold;
+		int ttvItalic;
+		int dympHeight; // normal font size. Superscript or subscript will usually reduce.
+		OLECHAR szFaceName[32];
+		OLECHAR szFontVar[64];
+	} LgCharRenderProps;	// Hungarian: chrp
+
+	//	Script direction codes
+	typedef enum ScriptDirCode
+	{
+		kfsdcNone			= 0,
+		kfsdcHorizLtr		= 1,	// horizontal left-to-right
+		kfsdcHorizRtl		= 2,	// horizontal right-to-left
+		kfsdcVertFromLeft	= 4,	// vertical from left
+		kfsdcVertFromRight	= 8,	// vertical from right
+
+	} ScriptDirCode;	// Hungarian: sdc
+
+	// Glyph attributes for justification
+	typedef enum JustGlyphAttr
+	{
+		kjgatStretch = 1,
+		kjgatShrink,
+		kjgatWeight,
+		kjgatStep,
+		kjgatChunk,
+		kjgatWidth,
+		kjgatBreak,
+		// pseudo-attributes for handling steps:
+		kjgatStretchInSteps,
+		kjgatWidthInSteps,
+		// also metrics:
+		kjgatAdvWidth,
+		kjgatAdvHeight,
+		kjgatBbLeft,
+		kjgatBbRight,
+		kjgatBbTop,
+		kjgatBbBottom,
+
+	} JustGlyphAttr;	// Hungarian: jgat
+
+	// A placeholder till we figure out what is needed.
+	// But it is used in some application framework code already.
+	// Where will we put things like borders, that could be applied to strings within
+	// a para, or the para as a whole?
+	typedef struct
+	{
+	//	int tal; // Alignment.
+	//	int dxmpFirstIndent;
+	//	int dxmpLeadingIndent;
+	//	int dxmpTrailingIndent;
+	//	int dxmpTabDef;
+	//	int relLine;
+	//	int dympExtraLine;
+	//	int relBefore;
+	//	int dympExtraBefore;
+	//	int relAfter;
+	//	int dympExtraAfter;
+	//	COLORREF clrBack;
+		ScriptDirCode sdcPara;		// basic Paragraph directionality.
+		ScriptDirCode sdcOuter;		// basic document/field/?? directionality.
+	} LgParaRenderProps;	// Hungarian: parp
+
+	/*------------------------------------------------------------------------------------------
+		Interface for a simple approach to initializing a class by passing it a raw data buffer.
+		Primarily for classes intended to be instantiated via an IClassInitMoniker object.
+		ENHANCE JohnT: Does this definition belong somewhere else?
+		Hungarian: simi
+	------------------------------------------------------------------------------------------*/
+	DeclareInterface(SimpleInit, Unknown, FC1C0D0D-0483-11d3-8078-0000C0FB81B5)
+	{
+		[restricted] HRESULT InitNew(
+			[in, size_is(cb)] const BYTE * prgb,
+			[in] int cb);
+
+		// Return the initialization data previously passed in.
+		[propget, restricted] HRESULT InitializationData(
+			[out, retval] BSTR * pbstr);
+	};
+
+
+	/*******************************************************************************************
+		Interface IVwGraphics
+		Used to actually draw and measure things. It encapsulates an hDC, allowing only those
+		operations we consider useful and safe; for example, it does not offer methods that
+		cannot be used with Unicode characters on Win-9X.
+
+		VwGraphics does not force any particular coordinate system on its clients.
+	*******************************************************************************************/
+	DeclareInterface(VwGraphics, Unknown, 441BEF71-892D-4101-A72E-AEF309B3B664)
+	{
+		// Invert the rectangle by performing a logical NOT operation on the color values for
+		// each pixel in the rectangle's interior.
+		HRESULT InvertRect(
+			[in] int xLeft,
+			[in] int yTop,
+			[in] int xRight,
+			[in] int yBottom);
+		// Foreground color used for lines, text
+		[propput] HRESULT ForeColor(
+			[in] int clr);   // RGB color value
+		// Background color used for shape interior, text background
+		[propput] HRESULT BackColor(
+			[in] int clr);   // RGB color value or kclrTransparent
+		// draw a filled rectangle. Current properties set control border, fill, etc.
+		HRESULT DrawRectangle(
+			[in] int xLeft,
+			[in] int yTop,
+			[in] int xRight,
+			[in] int yBottom);
+		// Draw a horizontal line that may be dotted or dashed.
+		// Consider first the behavior if *pdxStart is 0.
+		// If cdx is 0 or, equivalently, cdx is 1 and *prgdx is MAXINT, it draws a regular line
+		// line DrawLine from (xLeft, y) to (xRight, y).
+		// If there are multiple dx values, the line is dashed. A segment of length prgdx[0] is
+		// first drawn, then a gap of length prgdx[1] is left, then a segment of length prgdx[2],
+		// and so forth until the specified width is reached (the last segment, if drawn, is
+		// truncated to the specified length).
+		// If all values in prgdx are used up, we start again at prgdx[0]. An odd number of segments
+		// means that on and off alternate; thus, for example, a single width may be used to create
+		// a dashed line with equal gaps and dashes.
+		// The function then sets *pdxStart to the distance from xRight to the start of the last
+		// place where prgdx[0] was drawn (not where it was skipped, if there is an odd number).
+		// If *pdxStart is not initially zero, it gives a distance to skip through prgdx before
+		// starting. The normal use is to pass the value returned from a previous call, which
+		// can be used to draw several adjacent segments and have them seem continuous. You can also
+		// leave a gap in a dashed line by adding its width to pdxStart.
+		// (Another good way to use pdxStart is to set it to xLeft. This causes all patterns
+		// to be aligned, as if they were segments of one continuous pattern from the left margin.)
+		HRESULT DrawHorzLine(
+			[in] int xLeft,
+			[in] int xRight,
+			[in] int y,
+			[in] int dyHeight,
+			[in] int cdx,
+			[in, size_is(cdx)] int * prgdx,
+			[in, out] int * pdxStart);
+		HRESULT DrawLine(
+			[in] int xLeft,
+			[in] int yTop,
+			[in] int xRight,
+			[in] int yBottom);
+		HRESULT DrawText(
+			[in] int x,
+			[in] int y,
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[in] int xStretch); // make the string this much wider than natural
+		HRESULT DrawTextExt(
+			[in] int x,
+			[in] int y,
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgchw,
+			[in] UINT uOptions,
+			[in] const RECT * prect,
+			[in] int * prgdx);
+		HRESULT GetTextExtent(
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[out] int * px,
+			[out] int * py);
+		// Get the width of the text up to a certain char position,
+		// assuming the entire string was drawn with the given stretch.
+		HRESULT GetTextLeadWidth(
+			[in] int cch,
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[in] int ich,
+			[in] int xStretch,
+			[out, retval] int * px);
+		HRESULT GetClipRect(
+			[out] int * pxLeft,
+			[out] int * pyTop,
+			[out] int * pxRight,
+			[out] int * pyBottom);
+		//	The number of logical units corresponding to the font's em-square
+		HRESULT GetFontEmSquare(
+			[out, retval] int * pxyFontEmSquare);
+		HRESULT GetGlyphMetrics(
+			[in] int chw,
+			[out] int * psBoundingWidth,
+			[out] int * pyBoundingHeight,
+			[out] int * pxBoundingX,
+			[out] int * pyBoundingY,
+			[out] int * pxAdvanceX,
+			[out] int * pyAdvanceY);
+		// Return TrueType table data from font file selected in the dc.
+		HRESULT GetFontData(
+			[in] int nTableId,
+			[out] int * pcbTableSz,
+			[out, retval] BSTR * pbstrTableData);
+		HRESULT GetFontDataRgch(
+			[in] int nTableId,
+			[out] int * pcbTableSz,
+			[out, size_is(cchMax)] OLECHAR * prgch,
+			[in] int cchMax);
+		HRESULT XYFromGlyphPoint(
+			[in] int chw,
+			[in] int nPoint,
+			[out] int * pxRet,
+			[out] int * pyRet);
+		[propget] HRESULT FontAscent(
+			[out, retval] int * py);
+		[propget] HRESULT FontDescent(
+			[out, retval] int * pyRet);
+		[propget] HRESULT FontCharProperties(
+			[out, retval] LgCharRenderProps * pchrp);
+		// This interface is typically subclassed, as here in VwGraphicsWin32,
+		// with a method that provides it with a device context or analogous
+		// drawing environment. A call to ReleaseDC tells the VwGraphics that
+		// it must no longer use that graphics environment. Typically most
+		// calls will fail while no DC is available to work with.
+		HRESULT ReleaseDC();
+		// Get the resolution of the device in logical units per inch.
+		// Defaults to the actual resolution, but may be set to
+		// something else (e.g., to produce zoom)
+		[propget] HRESULT XUnitsPerInch(
+			[out, retval] int * pxInch);
+		// Sets the resolution of the device in logical units per inch.
+		[propput] HRESULT XUnitsPerInch(
+			[in] int xInch);
+		// Get the resolution of the device in logical units per inch.
+		// Defaults to the actual resolution, but may be set to
+		// something else (e.g., to produce zoom)
+		[propget] HRESULT YUnitsPerInch(
+			[out, retval] int * pyInch);
+		// Sets the resolution of the device in logical units per inch.
+		[propput] HRESULT YUnitsPerInch(
+			[in] int yInch);
+
+		// Gets the ratio of the superscript height to the normal height of the font
+		// currently selected into the DC
+		HRESULT GetSuperscriptHeightRatio(
+			[out] int * piNumerator,
+			[out] int * piDenominator);
+		// Gets the ratio of the distance the superscript baseline is raised to the
+		// normal height of the font currently selected into the DC
+		HRESULT GetSuperscriptYOffsetRatio(
+			[out] int * piNumerator,
+			[out] int * piDenominator);
+
+		// Gets the ratio of the subscript height to the normal height of the font
+		// currently selected into the DC
+		HRESULT GetSubscriptHeightRatio(
+			[out] int * piNumerator,
+			[out] int * piDenominator);
+		// Gets the ratio of the distance the subscript baseline is lowered to the
+		// normal height of the font currently selected into the DC
+		HRESULT GetSubscriptYOffsetRatio(
+			[out] int * piNumerator,
+			[out] int * piDenominator);
+
+		// Set up to draw text using the properties specified.
+		// super/subscript are ignored, as is baseline adjust; client is
+		// presumed to have handled them. Sets colors and HFONT.
+		HRESULT SetupGraphics(
+		// should be [in, ref] perhaps?
+			[in, out] LgCharRenderProps * pchrp);
+		// Invoke a new clipping rectangle; the previous clipping state can be
+		// restored using PopClipRect.
+		HRESULT PushClipRect(
+			[in] RECT rcClip);
+		HRESULT PopClipRect();
+
+		// Draw a filled polygon. Current properties set control border, fill, etc.
+		HRESULT DrawPolygon(
+			[in] int cvpnt,
+			[in, size_is(cvpnt)] POINT prgvpnt[]);
+		// Render an IPicture using its Render method
+		HRESULT RenderPicture(
+		  [in] IPicture * ppic, // The picture to render
+		  [in] long x,  //Horizontal position of image in hdc
+		  [in] long y,  //Vertical position of image in hdc
+		  [in] long cx, //Horizontal dimension of destination rectangle
+		  [in] long cy, //Vertical dimension of destination rectangle
+		  [in] OLE_XPOS_HIMETRIC xSrc, //Horizontal offset in source picture
+		  [in] OLE_YPOS_HIMETRIC ySrc, //Vertical offset in source picture
+		  [in] OLE_XSIZE_HIMETRIC cxSrc, //Amount to copy horizontally in source picture
+		  [in] OLE_YSIZE_HIMETRIC cySrc, //Amount to copy vertically in source picture
+		  [in] LPCRECT prcWBounds); //Pointer to position of destination for a metafile hdc
+		// Make an IPicture object from binary data.
+		// This is currently implemented using OleLoadPicture, which is able to load binary
+		// data from any of the following:
+		// Bitmaps (*.bmp); GIF Files (*.gif); JPEG Files (*.jpg); Icons (*.ico);
+		// Enhanced Metafiles (*.emf); Windows Metafiles (*.wmf)
+		// Of these JPEG, gif, and bmp are probably the most important, in that order.
+		// For Mac support, we may decide to reduce the set.
+		// The file type is automatically detected from the data.
+		HRESULT MakePicture(
+			[in, size_is(cbData)] byte * pbData,
+			[in] int cbData,
+			[out, retval] IPicture ** pppic);
+		// ENHANCE: circles, arcs, whatever
+		// Retrieve the Chrp passed to SetupGraphics
+	};
+
+	/*------------------------------------------------------------------------------------------
+		Interface IVwGraphicsWin32
+		Subclasses the IVwGraphics interface to provide Win-32-specific initialization. For other
+		platforms, VwGraphics will need to be implemented with another initialization interface.
+	------------------------------------------------------------------------------------------*/
+	DeclareInterface(VwGraphicsWin32, VwGraphics, 8E6828A3-8681-4822-B76D-6C4A25CAECE6)
+	{
+		// Provide a device context on which to actually draw or measure.
+		// Note: it is permissible to initialize a VwGraphics repeatedly, with different DCs.
+		// Just call ReleaseDC when it ought to disconnect from the current one.
+		HRESULT Initialize(
+			[in] HDC hdc);
+		// Recover the last hDC passed to Initialize.
+		HRESULT GetDeviceContext(
+			[out, retval] HDC * phdc);
+		// Set a separate DC to be used for measuring operations (generally whatever is not
+		// supported in case the output DC is a metafile).
+		HRESULT SetMeasureDc(
+			[in] HDC hdc);
+		// Set a clip rectangle, if it is not workable to read it from the HDC (e.g., because
+		// it is a metafile).
+		HRESULT SetClipRect(
+			[in] RECT * prcClip);
+	};
+
+
+	//:>****************************************************************************************
+	//:>		CoClass definitions.
+	//:>****************************************************************************************
+	#ifndef NO_COCLASSES
+	DeclareCoClass(VwGraphicsWin32, D9F93A03-8F8F-4e1d-B001-F373C7651B66)
+	{
+		interface IVwGraphicsWin32;
+	};
+	#endif // !NO_COCLASSES
+
+
+	/*------------------------------------------------------------------------------------------
+		Interface IVwTextSource
+	------------------------------------------------------------------------------------------*/
+	DeclareInterface(VwTextSource, Unknown, F58BD432-3B5B-41e2-BBBC-35A70D9813FE)
+	{
+		// Get the specified range of chars. Note that there is no guarantee that all
+		// of these characters are in a particular old writing system.
+		HRESULT Fetch(
+			[in] int ichMin,
+			[in] int ichLim,
+			[out, size_is(ichLim - ichMin)] OLECHAR * prgchBuf);
+		[propget] HRESULT Length(
+			[out, retval] int * pcch);
+		// Get all of the chars from the TxtSrc, eliminating owned ORC characters. Owned
+		// ORCs are special since they represent objects which are logically "owned" by
+		// the text. Therefore, when searching, they should be ignored for the purpose
+		// of identifying a match. Currently, owned ORCs include footnotes and embedded
+		// pictures. Use LengthSearch to get the count of characters to set the buffer size.
+		HRESULT FetchSearch(
+			[in] int ichMin,
+			[in] int ichLim,
+			[out, size_is(ichLim - ichMin)] OLECHAR * prgchBuf);
+		// Like the Length property, but owned ORC characters will not be counted
+		[propget] HRESULT LengthSearch(
+			[out, retval] int * pcch);
+		// Get the actual text properties of the character at ich.
+		// Also obtain a range of characters guaranteed to have the same properties.
+		// Note that it is possible that more than this range of characters have the
+		// same properties. Ideally, the server would figure out how many characters
+		// really have all the same properties; however, the caller should be prepared
+		// to cope with a less smart client that just answers the length of a run, even
+		// if the next run does not differ in any way of interest to rendering.
+		// The range will always be non-empty, except that if the text source is empty,
+		// 0 may be passed as ich and will obtain char props for an empty range.
+		HRESULT GetCharProps(
+			[in] int ich,
+			[out] LgCharRenderProps * pchrp,
+			[out] int * pichMin,
+			[out] int * pichLim);
+		// Similarly get paragraph level properties and the range for which they apply.
+		HRESULT GetParaProps(
+			[in] int ich,
+			[out] LgParaRenderProps * pchrp,
+			[out] int * pichMin,
+			[out] int * pichLim);
+		// This gets a string property. Some old writing systems may support using extra props
+		// as a way to vary appearance in ways unique to a particular old writing system,
+		// such as showing or hiding Greek breathings.
+		// It is possible we will eventually handle having the WS look for specified props.
+		// It is possible we will define a property in which we make available to the WS
+		// information like the reason for italics ('emphasized'; 'foreign LG'; 'book title').
+		// Renderers should be prepared not to get anything, or to get values not meaningful
+		// to them (intended for some other renderer).
+		// The property in question is string-valued and applies to arbitrary char runs.
+		HRESULT GetCharStringProp(
+			[in] int ich,
+			[in] int nId, // which particular property we want (ENHANCE JohnT: which enumeration?)
+			[out] BSTR * pbstr,
+			[out] int * pichMin,
+			[out] int * pichLim);
+		// Similar, but a property that is constrained to have the same value for all chars
+		// in a paragraph. Some ids may possibly allow both para and char level values.
+		HRESULT GetParaStringProp(
+			[in] int ich,
+			[in] int nId, // which particular property we want (ENHANCE JohnT: which enumeration?)
+			[out] BSTR * pbstr,
+			[out] int * pichMin,
+			[out] int * pichLim);
+		// Get a TsString representing a range of the text of the input.
+		// This is not fully implemented by all text sources, especially if the range spans
+		// multiple strings. It is not required for rendering, but only for find/replace operations.
+		HRESULT GetSubString(
+			[in] int ichMin,
+			[in] int ichLim,
+			[out, retval] ITsString ** pptss);
+		// Return a writing system factory to use to interpret the writing system information.
+		HRESULT GetWsFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+		// Convert a logical to a search position.
+		// This is not required for rendering, but only for find/replace operations.
+		HRESULT LogToSearch(
+			[in] int ichlog,
+			[out, retval] int * pichSearch);
+		// Convert a search to a logical position.
+		// This is not required for rendering, but only for find/replace operations.
+		// @param fAssocPrev If an ichSearch position is specified that lands exactly on
+		// an omitted ORC, if this is true, then the position that is returned will be the
+		// ich position previous to the ORC, otherwise it will be the position that is after
+		// the ORC.
+		HRESULT SearchToLog(
+			[in] int ichSearch,
+			[in] ComBool fAssocPrev,
+			[out, retval] int * pichLog);
+		// convert a logical position to a render position
+		HRESULT LogToRen(
+			[in] int ichLog,
+			[out, retval] int * pichRen);
+		// Convert a render position to a logical position
+		HRESULT RenToLog(
+			[in] int ichRen,
+			[out, retval] int * pichLog);
+		// convert a search position to a render position
+		// @param fAssocPrev If an ichSearch position is specified that lands exactly on
+		// an omitted ORC, if this is true, then the position that is returned will be the
+		// ich position previous to the ORC, otherwise it will be the position that is after
+		// the ORC.
+		HRESULT SearchToRen(
+			[in] int ichSearch,
+			[in] ComBool fAssocPrev,
+			[out, retval] int * pichRen);
+		// Convert a render position to a search position
+		HRESULT RenToSearch(
+			[in] int ichRen,
+			[out, retval] int * pichSearch);
+	};
+
+
+	/*******************************************************************************************
+		Interface IVwJustifier
+		Interface to an object that knows how to make decisions about justification.
+	*******************************************************************************************/
+	DeclareInterface(VwJustifier, Unknown, BAC7725F-1D26-42b2-8E9D-8B9175782CC7)
+	{
+		// Interact with the Graphite engine to adjust the widths of glyphs to achieve
+		// justification.
+		// Returns S_FALSE if we can't achieve the desired width.
+		HRESULT AdjustGlyphWidths(
+			[in] IJustifyingRenderer * pjren,
+			[in] int iGlyphMin,
+			[in] int iGlyphLim,
+			[in] float dxCurrentWidth,
+			[in] float dxDesiredWidth);
+
+		// Determine how much shrinking is possible for low-end justification.
+//		HRESULT SuggestShrinkAndBreak(
+//			[in] IJustifyingRenderer * pjren,
+//			[in] int iGlyphMin,
+//			[in] int iGlyphLim,
+//			[in] float dxsWidth,
+//			[in] LgLineBreak lbPref,
+//			[in] LgLineBreak lbMax,
+//			[out] float * pdxShrink,
+//			[out] LgLineBreak * plbToTry);
+	};
+
+	#ifndef NO_COCLASSES
+	DeclareCoClass(VwJustifier, B424D26F-6B8C-43c2-9DD4-C4A822764472)
+	{
+		interface IVwJustifier;
+	};
+	#endif
+
+	/*******************************************************************************************
+		Interface ILgSegment
+		// text segments constructed by the engine
+		// these implement much of its functionality
+
+		// Segments support the possibility that the device context (VwGraphics) used to create
+		// them has different resolution, zoom factor, and exact text measurements than the
+		// one used to draw. Accordingly, routines responsible for actual drawing are given
+		// two rectangles, rcSrc and rdDst, which allow an appropriate transformation.
+		// The segment is internally laid out as if its top left corner were (0,0), and with
+		// any other measurements based on the device context used to create it and lay it
+		// out (referred to as source coordinates).
+		// To map a point from this to where it should actually be drawn, in the coordinate
+		// system of the VwGraphics where drawing will take place, we do the following:
+		// - subtract rcSrc.Origin
+		// - multiply by rcDst.{width, height}, divide by rcSrc.{width, height}
+		// - add rcDst.Origin
+		// The middle effect scales a point from one coordinate system to another.
+		// The height and width of the rectangles are the "logical units per inch" values
+		// in the appropriate direction for the layout DC (rcSrc) and drawing DC (rcDst).
+
+		// Typically, rcSrc.Origin combines two values: the position of the segment in
+		// the document, relative to some origin, and any effect of scrolling
+		// in moving that origin away from the top left of the window.
+
+		// rcDst.Origin is often (0,0), but it may be useful if the position of a segment
+		// needs to be adjusted by some distance measured in the drawing DC. For example,
+		// to concatenate two segments, we use the width of one (in the drawing DC) to
+		// position the other, so that discrepancies between text measurements in the
+		// layout and drawing DC do not cause ugly overlaps or gaps.
+
+		// Calling a routine which takes rcSrc and rcDest arguments will not affect any
+		// measurement caching within the segment.
+		// Calling any other routine which takes a VwGraphics may cause measurements to
+		// be computed and cached as if the VwGraphics passed is the source one, or may
+		// make use of measurements previously cached. Therefore, it is necessary to call
+		// Recompute() between any two such calls, if the VwGraphics objects passed are
+		// not compatible.
+
+		// Every method takes an argument, ichBase. The idea is that a segment represents
+		// a range of characters from the IVwTextSource originally passed to the renderer
+		// that created it. It is possible to go on using the segment even though the
+		// TextSource has changed, and even though characters may have been added or deleted
+		// before this segment, provided
+		//	(1) The characters of interest to this segment have not changed
+		//	(2) Preceding context information has not changed.
+		// The preceding context is the values of pdichLimSeg, pbPrevSegDat and pdichContext
+		// returned from the creation of the preceding segment.
+		// Characters of interest are those from the positions indicated by pdichContext
+		// returned from creating the previous segment to the value returned by LimContext
+		// for this one. These characters are considered not to have changed if, for each
+		// index in the range of interest relative to ichBase, we get the same character
+		// from the text source as we did for the original TextSource and ichMin used to
+		// create the segment. For example, if we originally made a segment starting at
+		// char 25, and the previous segment indicated (pdichContext = -2) an interest
+		// in the previous 2 characters, and this segment's limit of interest is character
+		// 46 (indicated by LimInterest returning 21), then if we insert three characters
+		// at position 20 in the source, we now pass 28 as ichBase, and the current text
+		// source has the same characters from 26 to 49 as the original had from 23 to 46.
+		// We can keep using this segment.
+		//
+		// Hungarian: lseg
+	*******************************************************************************************/
+	DeclareInterface(LgSegment, Unknown, B4593007-7164-4b8e-B5C7-401CDFBC079D)
+	{
+		// Draw the segment and compute its width in destination coords.
+		HRESULT DrawText(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[out] int * dxdWidth);
+
+		// Measurements and other properties. These may be cached. If wanting measurements
+		// with a different device context than when the segment was created or than when
+		// last calling ANY measurement routine, Recompute() must be called.
+		HRESULT Recompute(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg);
+		[propget] HRESULT Width(   // to advance
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * px);
+		[propget] HRESULT RightOverhang( // width text right of draw point + width
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * px);
+		[propget] HRESULT LeftOverhang( // width text left of draw point, value >= 0
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * px);
+		[propget] HRESULT Height(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * py);
+		[propget] HRESULT Ascent(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int * py);
+		HRESULT Extent(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out] int* px, // same as Width
+			[out] int* py);	 // same as Height
+		// Compute the rectangle in destination coords which contains all the pixels
+		// drawn by this segment. This should be a sufficient rectangle to invalidate
+		// if this segment is about to be discarded and replaced by another.
+		HRESULT BoundingRect(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[out, retval] RECT * prcBounds);
+		// Compute the width the segment would occupy if drawn with the specified
+		// parameters. Don't update cached width.
+		HRESULT GetActualWidth(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[out] int * dxdWidth);
+		// How much the visible part of the segment exceeds the height.
+		[propget] HRESULT AscentOverhang(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int *py);
+		[propget] HRESULT DescentOverhang(	// value >= 0
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] int *py);
+
+		// Return true if this segment is right-to-left.
+		[propget] HRESULT RightToLeft(
+			[in] int ichBase,
+			[out, retval] ComBool * pfResult);
+		// Return the depth of embedding of direction changes. Also indicate if the segment
+		// has weak directionality and can change direction depending on its context.
+		[propget] HRESULT DirectionDepth(
+			[in] int ichBase,
+			[out] int * pnDepth,
+			[out,retval] ComBool * pfWeak);
+		// Change the directionality of the segment. Return E_UNEXPECTED if the segment does
+		// not have weak directionality and therefore cannot be changed.
+		HRESULT SetDirectionDepth(
+			[in] int ichwBase,
+			[in] int nNewDepth);
+
+		// Get the cookies which identify the old writing system of the segment.
+		[propget] HRESULT WritingSystem(
+			[in] int ichBase,
+			[out,retval] int * pws);
+		// The logical range of characters covered by the segment. This value should be exact
+		// at a old writing system or string boundary, but may be somewhat fuzzy at a line-break,
+		// since characters may be re-ordered across such boundaries. The renderer is free to
+		// apply any definition it likes of where a line-break occurs. This should always be
+		// the same value obtained from the renderer as pdichLimSeg.
+		[propget] HRESULT Lim(
+			[in] int ichBase,
+			[out, retval] int * pdich);
+		// Indicates the last character of interest to this segment. The meaning of this is
+		// that no behavior of this segment will be affected if characters beyond that change.
+		// This does not necessarily mean that a different line break could not have been
+		// obtained by the renderer if characters beyond that change, just that a segment with
+		// the boundaries of this one would not behave differently.
+		[propget] HRESULT LimInterest(
+			[in] int ichBase,
+			[out, retval] int * pdich);
+
+		// modifying the segment
+		[propput] HRESULT EndLine( // true if nothing logically follows segment on line
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] ComBool fNewVal);
+		[propput] HRESULT StartLine( // true if nothing logically precedes segment on line
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] ComBool fNewVal);
+		[propget] HRESULT StartBreakWeight(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] LgLineBreak * plb);
+		[propget] HRESULT EndBreakWeight(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[out, retval] LgLineBreak * plb);
+		[propget] HRESULT Stretch( // added to width on request to do justification.
+			[in] int ichBase,
+			[out, retval] int * pxs);
+		[propput] HRESULT Stretch(
+			[in] int ichBase,
+			[in] int xs);
+
+		// Test whether IP at specified position is valid.
+		// If position is not in this segment, and there are following segments, may
+		// answer kipvrUnknown; client should then try subsequent segments.
+		// Note: This routine gives the finest possible granularity (where IPs can be
+		// rendered). Particular input methods may not support all the positions that
+		// the renderer says are valid. Compare ILgInputMethodEditor>>IsValidInsertionPoint.
+		// Clients should generally check both.
+		HRESULT IsValidInsertionPoint(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] int ich,
+			[out, retval] LgIpValidResult * pipvr);
+		HRESULT DoBoundariesCoincide(    // ask whether two boundaries coincide
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] ComBool fBoundaryEnd,   // asking about the logical end boundary?
+			[in] ComBool fBoundaryRight, // asking about the physical right boundary?
+			[out, retval] ComBool * pfResult);
+		HRESULT DrawInsertionPoint(		//send to all segments.
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,		// as for DrawText
+			[in] RECT rcDst,
+			[in] int ich,				// must be valid
+			[in] ComBool fAssocPrev,		// primary associated with preceding character?
+			[in] ComBool fOn,				// turning on or off? Caller should alternate, on first.
+			[in] LgIPDrawMode dm);
+		HRESULT PositionsOfIP(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,		// as for DrawText
+			[in] RECT rcDst,
+			[in] int ich,
+			[in] ComBool fAssocPrev,		// primary associated with preceding character?
+			[in] LgIPDrawMode dm,
+			[out] RECT * rectPrimary,	// source coords
+			[out] RECT * rectSecondary, // source coords; invalid if I-beam drawn
+			[out] ComBool * pfPrimaryHere, // set true if this segment renders the primary IP
+			[out] ComBool * pfSecHere); // set true if this segment renders the secondary IP;
+										// false if rectSecondary is invalid.
+		HRESULT DrawRange(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,		// as for DrawText
+			[in] RECT rcDst,
+			[in] int ichMin,			// must be valid
+			[in] int ichLim,
+			[in] int ydTop,			// of area to highlight if whole line height;
+			[in] int ydBottom,		// includes half of inter-line spacing.
+			[in] ComBool bOn,
+			[in] ComBool fIsLastLineOfSelection, // false if more lines follow in the selection
+			[out, retval] RECT * rsBounds);	// source coords; used to return the result
+		HRESULT PositionOfRange(
+			[in] int ichBase,
+			[in] IVwGraphics* pvg,
+			[in] RECT rcSrc,		// as for DrawText
+			[in] RECT rcDst,
+			[in] int ichMin,
+			[in] int ichim,
+			[in] int ydTop,			// of area to highlight if whole line height;
+			[in] int ydBottom,		// includes half of inter-line spacing.
+			[in] ComBool fIsLastLineOfSelection, // false if more lines follow in the selection
+			[out] RECT * rsBounds,	// source coords; used to return the result
+			[out, retval] ComBool * pfAnythingToDraw); //true if any part of range drawn by segment
+		HRESULT PointToChar(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,		// as for DrawText
+			[in] RECT rcDst,
+			[in] POINT ptdClickPosition,	// dest coords
+			[out] int * pich,
+			[out] ComBool * pfAssocPrev);	// true if click was logically before indicated position
+		HRESULT ArrowKeyPosition(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in,out] int * pich,
+			[in, out] ComBool * pfAssocPrev,	// primary associated with preceding character?
+			[in] ComBool fRight,		// direction of desired movement (physical)
+			[in] ComBool fMovingIn,		// to this segment; if so, initial pich meaningless
+			[out] ComBool * pfResult);	// if false, try next segment or string
+		HRESULT ExtendSelectionPosition(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in, out] int * pich,
+			[in] ComBool fAssocPrevMatch,	// T if we need a certain orientation of the result;
+											// F if *pich=0 and moving within the same segment
+			[in] ComBool fAssocPrevNeeded,	// orientation needed
+			[in] int ichAnchor,			// -1 if anchor is in a different segment
+			[in] ComBool fRight,		// direction of desired movement
+			[in] ComBool fMovingIn,		// to this segment? If so, initial pich meaningless
+			[out] ComBool * pfRet);		// if false, try next seg or string
+
+		// Used to find where underlines should be drawn.
+		// As usual, if cxdMax is zero, it just answers the number of slots needed
+		// to return the information.
+		// ENHANCE Johnt: should it also give a top position?
+		HRESULT GetCharPlacement(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] int ichMin,
+			[in] int ichLim,
+			[in] RECT rcSrc,		// as for DrawText
+			[in] RECT rcDst,
+			// true if white space should not be underlined. Some renderers may ignore this.
+			[in] ComBool fSkipSpace,
+			[in] int cxdMax , // number of ranges allowed
+			[out] int * pcxd, // number of ranges made
+			// Each set of values gives left, right, and top of a place where an underline
+			// could be drawn. The top may overlap descenders, but should not overlap
+			// the baseline. To follow Word, normal and superscript segments put top about
+			// a pixel below the normal baseline, subscripts put it below the baseline
+			// of the subscript.
+			// Underline segments are in logical order.
+			[out, size_is(cxdMax )] int * prgxdLefts,
+			[out, size_is(cxdMax )] int * prgxdRights,
+			[out, size_is(cxdMax )] int * prgydUnderTops);
+
+		// This method is used for something like a font testing program.
+		// Review (SharonC): should it be in a separate interface?
+//		HRESULT GetGlyphsAndPositions(
+//			[in] int ichBase,
+//			[in] IVwGraphics * pvg,
+//			[in] RECT rcSrc,		// as for DrawText
+//			[in] RECT rcDst,
+//			[in] int cchMax,
+//			[out] int * pcchRet,
+//			[out, size_is(cchMax)] OLECHAR * prgchGlyphs,
+//			[out, size_is(cchMax)] int * prgxd,
+//			[out, size_is(cchMax)] int * prgyd);
+
+		// This method is intended for debugging only. Eventually we can get rid of it, but
+		// it seems like it is useful to keep around for a while.
+//		HRESULT GetCharData(
+//			[in] int ichBase,
+//			[in] int cchMax,
+//			[out, size_is(cchMax)] OLECHAR * prgch,
+//			[out] int * pcchRet);
+		// Should do exactly the same as DrawText would do if all background
+		// colors were transparent. That is, no background is ever painted.
+		HRESULT DrawTextNoBackground(
+			[in] int ichBase,
+			[in] IVwGraphics * pvg,
+			[in] RECT rcSrc,
+			[in] RECT rcDst,
+			[out] int * dxdWidth);
+	};
+
+	// Used to indicate how a segment (made by FindBreakPoint) ended.
+	typedef [v1_enum] enum
+	{
+		// No more segments are needed, everything in [ichMin, ichLim) fit.
+		kestNoMore,
+		// We filled the line and need to put the rest of the text on another.
+		kestMoreLines,
+		// We found a hard break, e.g., a tab or return. Depending on which
+		// character it is, something more may or may not go on this line.
+		// pdichLimSeg indicates the location of the hard break character.
+		kestHardBreak,
+		// We ended this segment for some reason (e.g., change of chrp) at a point
+		// that is not a valid line break. Client must either fit another segment
+		// on this line, or replace this segment with one that breaks sooner.
+		kestBadBreak,
+		// We ended this segment for some reason (e.g., change of chrp) at a point
+		// that is a valid line break; however, there may be room for more stuff
+		// on the line.
+		kestOkayBreak,
+		// We ended the segment because we hit the end of the writing system,
+		// or for some other reason (e.g., change of font) the subsequent
+		// characters need to be handled by a different renderer;
+		// the caller is responsible to determine if this is in fact a valid break,
+		// and whether there is room to put more stuff on the line.
+		kestWsBreak,
+		// We filled the line and need to put the rest of the text on another,
+		// but we didn't include the trailing white-space in this segment; it needs
+		// its own segment that will go on the same line.
+		kestMoreWhtsp,
+		// Nothing fit so the segment is invalid. Only used within Graphite.
+		kestNothingFit
+
+	} LgEndSegmentType; // Hungarian est
+
+
+	/*******************************************************************************************
+		Interface IRenderEngine
+		// rendering engine: constructs segments and does a few other
+		// segment-independent functions.
+		// Hungarian: reneng
+	*******************************************************************************************/
+	DeclareInterface(RenderEngine, Unknown, 2685D1CF-AE02-471d-B644-43C3BFD3A264)
+	{
+		// Initialize the engine. This must be called before any oher methods of the interface.
+		// How the data is used is implementation dependent. The UniscribeRenderer does not
+		// use it at all. The Graphite renderer uses font name, bold, and italic settings
+		// to initialize itself with the proper font tables. For Graphite, bstrData contains
+		// (optionally) default settings for any font features.
+		HRESULT InitRenderer(
+			[in] IVwGraphics * pvg,
+			[in] BSTR bstrData);
+		// Return an indication of whether the font is valid for the renderer.
+		// S_OK means it is valid, E_FAIL means the font was not available,
+		// E_UNEXPECTED means the font could not be used to initialize the renderer in the
+		// expected way (eg, the Graphite tables could not be found).
+		// Assumes InitNew() has already been called to set the font name.
+		HRESULT FontIsValid();
+
+		// Give the maximum length of information that this renderer might want to pass
+		// from one segment to another in SimpleBreakPoint>>pbNextSegDat.
+		// An absolute maximum of 256 is imposed; this routine must not return a larger number.
+		// OBSOLETE - currently not called by anything but test code.
+		[propget] HRESULT SegDatMaxLength(
+			[out, retval] int * cb);
+
+		// Make a segment.
+		HRESULT FindBreakPoint(
+			[in] IVwGraphics * pvg,
+			[in] IVwTextSource * pts,
+			[in] IVwJustifier * pvjus,
+			// start making the segment at ichMin
+			[in] int ichMin,
+			// Client guarantees that at least [0, ichLimText) characters are available from
+			// the IVwTextSource, but only ichMin is guaranteed to be in the correct WS.
+			// The renderer must not include characters from other writing systems in its
+			// segments, but may look at them (e.g., to help figure line breaks).
+			// The renderer should not include hard break characters in its segments.
+			[in] int ichLim,
+			// When backtracking, indicates where to start looking for a valid breakpoint;
+			// when not backtracking, should be equal to ichLim.
+			[in] int ichLimBacktrack,
+			// If this flag is false, assume it is OK to make a segment ending just before
+			// ichLim.
+			// If it is true, assume the text source has at least one more character at
+			// ichLim, and end the segment at ichLim only if that is a valid break point.
+			[in] ComBool fNeedFinalBreak,
+			[in] ComBool fStartLine,			// seg is logically first on line?
+			[in] int dxMaxWidth,				// whatever coords pvg is using
+			[in] LgLineBreak lbPref,			// try for longest seg of this weight
+			[in] LgLineBreak lbMax,				// max if no preferred break possible
+			[in] LgTrailingWsHandling twsh,		// how we are handling trailing white-space
+			[in] ComBool fParaRightToLeft,		// overall paragraph direction
+
+			[out] ILgSegment ** ppsegRet,		// segment produced, or null if nothing fits
+			[out] int * pdichLimSeg,			// offset to last char of segment, first of next if any
+			[out] int * pdxWidth,				// of new segment, if any
+			[out] LgEndSegmentType * pest,		// what caused the segment to end?
+			[in] ILgSegment * psegPrev);		// for obtaining context
+
+		// ENHANCE JohnT: we may need more entry points to handle smart (TeX-style) para
+		// layout with attempts to optimize line breaks over the whole para.
+
+		// Return the supported script directions; usually there is only one.
+		[propget] HRESULT ScriptDirection(
+			[out, retval] int * pgrfsdc);
+
+		// Return the CLSID of the implementation class.
+		[propget] HRESULT ClassId(
+			[out, retval] GUID * pguid);
+
+		// Get the language writing system factory in use for this rendering engine.
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+		// Set the language writing system factory to use with this rendering engine.
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+	};
+
+	#ifndef NO_COCLASSES
+	DeclareCoClass(RomRenderEngine, ECB3CBB1-BD20-4d85-85B4-E2ABA245933B)
+	{
+		interface IRenderEngine;
+	};
+	DeclareCoClass(UniscribeEngine, B13AAFCD-F82C-4e9e-B414-5F8EBBE48773)
+	{
+		interface IRenderEngine;
+	};
+	DeclareCoClass(FwGrEngine, 171E329C-7473-413c-959A-A8963297DA9C)
+	{
+		interface IRenderEngine;
+	};
+	#endif // !NO_COCLASSES
+
+
+	/*******************************************************************************************
+		Interface IRenderingFeatures
+		// supported by rendering engines that allow the app to specify rendering features
+		// (font variations).
+		// Hungarian: rfeat
+	*******************************************************************************************/
+	DeclareInterface(RenderingFeatures, Unknown, 0A439F99-7BF2-4e11-A871-8AFAEB2B7D53)
+	{
+		// Return the number of features supported.
+//		[propget] HRESULT NumberOfFeatures(
+//			[out, retval] int * pc);
+
+		// Return a list of the feature IDs. If cMax is zero, returns the number of features
+		// supported in pcfid.
+		HRESULT GetFeatureIDs(
+			[in] int cMax,                         // space available in the buffer
+			[out, size_is(cMax)] int * prgFids,    // buffer of IDs
+			[out] int * pcfid);			           // how many returned
+
+		// Return the UI label for the feature.
+		HRESULT GetFeatureLabel(
+			[in] int fid,
+			[in] int nLanguage,
+			[out] BSTR * pbstrLabel);
+
+		// Return a list of recognized values for the given feature. If cfvalMax is zero,
+		// returns the number of values in pcfval.
+		HRESULT GetFeatureValues(
+			[in] int fid,
+			[in] int cfvalMax,                          // space available in the buffer
+			[out, size_is(cfvalMax)] int * prgfval,     // list of values
+			[out] int * pcfval,                         // how many returned
+			[out] int * pfvalDefault);                  // default value
+
+		// Return the UI label for the given feature value.
+		HRESULT GetFeatureValueLabel(
+			[in] int fid,
+			[in] int fval,
+			[in] int nLanguage,
+			[out] BSTR * pbstrLabel);
+	};
+
+	/*******************************************************************************************
+		Interface IJustifyingRenderer
+		// Supported by rendering engines that interact with IVwJustifiers to accomplish
+		// justification.
+		// These methods return E_FAIL if the engine is not in a valid state to return
+		// the information.
+		// Hungarian: jren
+	*******************************************************************************************/
+	DeclareInterface(JustifyingRenderer, Unknown, D7364EF2-43C0-4440-872A-336A4647B9A3)
+	{
+		// Returns E_INVALIDARG if the attribute is not one that can be read.
+		HRESULT GetGlyphAttributeFloat(
+			[in] int iGlyph,				// glyph index
+			[in] int kjgatId,				// attribute ID
+			[in] int nLevel,				// justification level
+			[out] float * pValueRet);		// attribute value
+		HRESULT GetGlyphAttributeInt(
+			[in] int iGlyph,				// glyph index
+			[in] int kjgatId,				// attribute ID
+			[in] int nLevel,				// justification level
+			[out] int * pValueRet);			// attribute value
+
+		// Returns E_INVALIDARG if the attribute is not one that can be set.
+		HRESULT SetGlyphAttributeFloat(
+			[in] int iGlyph,				// glyph index
+			[in] int kjgatId,				// attribute ID
+			[in] int nLevel,				// justification level
+			[in] float value);				// attribute value
+		HRESULT SetGlyphAttributeInt(
+			[in] int iGlyph,				// glyph index
+			[in] int kjgatId,				// attribute ID
+			[in] int nLevel,				// justification level
+			[in] int value);				// attribute value
+	};
+
+
+	#ifndef NO_COCLASSES
+	DeclareCoClass(FwGraphiteProcess, CFB22792-6473-4017-815C-83DF93FF43BE)
+	{
+		interface IJustifyingRenderer;
+	};
+	#endif // !NO_COCLASSES
+
+
+#if 0 // tentative ideas for a general-purpose line layout component.
+	/*******************************************************************************************
+		Interface ILineLayout
+		Lays out a line of text by creating one or more segments.
+		// Hungarian: ll
+	*******************************************************************************************/
+	DeclareInterface(LineLayout, Unknown, AEAFEF41-EF89-11d3-8078-0000C0FB81B5)
+	{
+		HRESULT MakeSegments(
+			[in] IVwGraphics * pvg,
+			[in] IVwTextSource * pts,
+			// start making the segments at ichMin; may use text up to at most ichLim
+			[in] int ichMin,
+			[in] int ichLim,
+			[in] int dxMaxWidth,				// whatever coords pvg is using
+			[in] LgLineBreak lbPref,			// try for longest seg of this weight
+			[in] LgLineBreak lbMax,				// max if no preferred break possible
+			[in] int csegMax,
+			[out, size_is(csegMax)] ILgSegment ** prgpseg,
+			[out] int * pdichLimSeg,	// offset to last char of last segment, first of next ln
+			// These arguments allow context information to be passed from one segment
+			// to another. For the first segment in a given old writing system, we pass
+			// cbPrev 0. If we need more than one segment and the creation of the next
+			// will need information about this one, it is returned in pbNextSegDat,
+			// and passed in when creating the following segment in pbPrevSegDat.
+			// Caller must pass a buffer of size at least equal to the value returned
+			// by SegDatMaxLength. Server should pad pbNextSegDat with zeros when not all
+			// bytes are needed. Pointer may be null if count is zero.
+			[in] int cbPrev,
+			[in, size_is(cbPrev)] byte * pbPrevSegDat,
+			[in] int cbNextMax,
+			[out, size_is(cbNextMax)] byte * pbNextSegDat,
+			// This indicates, for the following segment, if one is needed, the index of
+			// the first character of interest to it. Edits before this character will not
+			// affect how the next segment behaves, as desribed in the header comment
+			// for ILgSegment.
+			[out] int * pdichContext); // <= 0, offset to first char of interest to next seg.
+	};
+
+	#ifndef NO_COCLASSES
+	DeclareCoClass(LineLayout, C0900BA1-EF89-11d3-8078-0000C0FB81B5)
+	{
+		interface IRenderEngine;
+	};
+	#endif // !NO_COCLASSES
+#endif

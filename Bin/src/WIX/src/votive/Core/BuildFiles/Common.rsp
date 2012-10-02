@@ -1,0 +1,14 @@
+# Command-line options for re-compiling the Votive.dll
+# so that we can get the Win32 resource file into the
+# assembly.
+
+# This is the common stuff to both debug and release.
+
+/target:library
+/define:TRACE
+/warnaserror+
+/warn:4
+/checked+
+/resource:SolutionExplorerIcons.bmp,Microsoft.Tools.WindowsInstallerXml.VisualStudio.SolutionExplorerIcons.bmp
+/r:..\..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.OLE.Interop.dll
+/r:..\..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.Shell.Interop.dll

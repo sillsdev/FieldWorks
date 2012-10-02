@@ -1,0 +1,1005 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="m_btnAdd.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnAdd.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_btnAdd.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 352</value>
+  </data>
+  <data name="m_btnAdd.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnAdd.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_btnAdd.Text" xml:space="preserve">
+	<value>&amp;Add</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.Name" xml:space="preserve">
+	<value>m_btnAdd</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.Parent" xml:space="preserve">
+	<value>m_grpBoxEdit</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <metadata name="m_btnModify.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_btnModify.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnModify.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnModify.Location" type="System.Drawing.Point, System.Drawing">
+	<value>91, 352</value>
+  </data>
+  <data name="m_btnModify.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnModify.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_btnModify.Text" xml:space="preserve">
+	<value>&amp;Modify</value>
+  </data>
+  <data name="&gt;&gt;m_btnModify.Name" xml:space="preserve">
+	<value>m_btnModify</value>
+  </data>
+  <data name="&gt;&gt;m_btnModify.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnModify.Parent" xml:space="preserve">
+	<value>m_grpBoxEdit</value>
+  </data>
+  <data name="&gt;&gt;m_btnModify.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="m_btnOk.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_btnOk.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
+	<value>19, 408</value>
+  </data>
+  <data name="m_btnOk.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnOk.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_btnOk.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.Name" xml:space="preserve">
+	<value>m_btnOk</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnOk.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="m_btnCancel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>99, 408</value>
+  </data>
+  <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
+	<value>m_btnCancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <metadata name="m_btnHelp.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>179, 408</value>
+  </data>
+  <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_btnHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+	<value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <metadata name="m_lblDescription.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblDescription.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 344</value>
+  </data>
+  <data name="m_lblDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>64, 16</value>
+  </data>
+  <data name="m_lblDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_lblDescription.Text" xml:space="preserve">
+	<value>Description:</value>
+  </data>
+  <data name="&gt;&gt;m_lblDescription.Name" xml:space="preserve">
+	<value>m_lblDescription</value>
+  </data>
+  <data name="&gt;&gt;m_lblDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblDescription.Parent" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;m_lblDescription.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="tabControl1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="m_tpFirst.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="m_pnlFirstPage.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_pnlFirstTop.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_pnlFirstTop.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 56</value>
+  </data>
+  <data name="m_pnlFirstTop.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstTop.Name" xml:space="preserve">
+	<value>m_pnlFirstTop</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstTop.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstTop.Parent" xml:space="preserve">
+	<value>m_pnlFirstPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstTop.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopCenter</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.Location" type="System.Drawing.Point, System.Drawing">
+	<value>48, 112</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 40</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.Text" xml:space="preserve">
+	<value>&amp;Same as Odd</value>
+  </data>
+  <data name="m_chkFirstSameAsOdd.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;m_chkFirstSameAsOdd.Name" xml:space="preserve">
+	<value>m_chkFirstSameAsOdd</value>
+  </data>
+  <data name="&gt;&gt;m_chkFirstSameAsOdd.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkFirstSameAsOdd.Parent" xml:space="preserve">
+	<value>m_pnlFirstPage</value>
+  </data>
+  <data name="&gt;&gt;m_chkFirstSameAsOdd.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_pnlFirstBottom.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 200</value>
+  </data>
+  <data name="m_pnlFirstBottom.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 56</value>
+  </data>
+  <data name="m_pnlFirstBottom.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstBottom.Name" xml:space="preserve">
+	<value>m_pnlFirstBottom</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstBottom.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstBottom.Parent" xml:space="preserve">
+	<value>m_pnlFirstPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstBottom.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_pnlFirstPage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>96, 8</value>
+  </data>
+  <data name="m_pnlFirstPage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 256</value>
+  </data>
+  <data name="m_pnlFirstPage.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstPage.Name" xml:space="preserve">
+	<value>m_pnlFirstPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstPage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstPage.Parent" xml:space="preserve">
+	<value>m_tpFirst</value>
+  </data>
+  <data name="&gt;&gt;m_pnlFirstPage.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="m_lblFirstPage.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_lblFirstPage.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="m_lblFirstPage.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblFirstPage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>152, 272</value>
+  </data>
+  <data name="m_lblFirstPage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>96, 24</value>
+  </data>
+  <data name="m_lblFirstPage.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_lblFirstPage.Text" xml:space="preserve">
+	<value>First Page</value>
+  </data>
+  <data name="&gt;&gt;m_lblFirstPage.Name" xml:space="preserve">
+	<value>m_lblFirstPage</value>
+  </data>
+  <data name="&gt;&gt;m_lblFirstPage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblFirstPage.Parent" xml:space="preserve">
+	<value>m_tpFirst</value>
+  </data>
+  <data name="&gt;&gt;m_lblFirstPage.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="panel2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>101, 13</value>
+  </data>
+  <data name="panel2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 256</value>
+  </data>
+  <data name="panel2.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;panel2.Name" xml:space="preserve">
+	<value>panel2</value>
+  </data>
+  <data name="&gt;&gt;panel2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel2.Parent" xml:space="preserve">
+	<value>m_tpFirst</value>
+  </data>
+  <data name="&gt;&gt;panel2.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_tpFirst.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpFirst.Size" type="System.Drawing.Size, System.Drawing">
+	<value>424, 302</value>
+  </data>
+  <data name="m_tpFirst.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_tpFirst.Text" xml:space="preserve">
+	<value>First Page</value>
+  </data>
+  <data name="&gt;&gt;m_tpFirst.Name" xml:space="preserve">
+	<value>m_tpFirst</value>
+  </data>
+  <data name="&gt;&gt;m_tpFirst.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpFirst.Parent" xml:space="preserve">
+	<value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tpFirst.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="m_tpOddEven.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_pnlEvenTop.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_pnlEvenTop.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 56</value>
+  </data>
+  <data name="m_pnlEvenTop.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenTop.Name" xml:space="preserve">
+	<value>m_pnlEvenTop</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenTop.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenTop.Parent" xml:space="preserve">
+	<value>m_pnlEvenPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenTop.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopCenter</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.Location" type="System.Drawing.Point, System.Drawing">
+	<value>40, 112</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.Size" type="System.Drawing.Size, System.Drawing">
+	<value>120, 40</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.Text" xml:space="preserve">
+	<value>&amp;Same as Odd</value>
+  </data>
+  <data name="m_chkEvenSameAsOdd.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;m_chkEvenSameAsOdd.Name" xml:space="preserve">
+	<value>m_chkEvenSameAsOdd</value>
+  </data>
+  <data name="&gt;&gt;m_chkEvenSameAsOdd.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkEvenSameAsOdd.Parent" xml:space="preserve">
+	<value>m_pnlEvenPage</value>
+  </data>
+  <data name="&gt;&gt;m_chkEvenSameAsOdd.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_pnlEvenBottom.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 200</value>
+  </data>
+  <data name="m_pnlEvenBottom.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 56</value>
+  </data>
+  <data name="m_pnlEvenBottom.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenBottom.Name" xml:space="preserve">
+	<value>m_pnlEvenBottom</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenBottom.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenBottom.Parent" xml:space="preserve">
+	<value>m_pnlEvenPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenBottom.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_pnlEvenPage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="m_pnlEvenPage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 256</value>
+  </data>
+  <data name="m_pnlEvenPage.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenPage.Name" xml:space="preserve">
+	<value>m_pnlEvenPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenPage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenPage.Parent" xml:space="preserve">
+	<value>m_tpOddEven</value>
+  </data>
+  <data name="&gt;&gt;m_pnlEvenPage.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_pnlOddBottom.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 200</value>
+  </data>
+  <data name="m_pnlOddBottom.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 56</value>
+  </data>
+  <data name="m_pnlOddBottom.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddBottom.Name" xml:space="preserve">
+	<value>m_pnlOddBottom</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddBottom.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddBottom.Parent" xml:space="preserve">
+	<value>m_pnlOddPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddBottom.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_pnlOddTop.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_pnlOddTop.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 56</value>
+  </data>
+  <data name="m_pnlOddTop.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddTop.Name" xml:space="preserve">
+	<value>m_pnlOddTop</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddTop.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddTop.Parent" xml:space="preserve">
+	<value>m_pnlOddPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddTop.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_pnlOddPage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>216, 8</value>
+  </data>
+  <data name="m_pnlOddPage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 256</value>
+  </data>
+  <data name="m_pnlOddPage.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddPage.Name" xml:space="preserve">
+	<value>m_pnlOddPage</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddPage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddPage.Parent" xml:space="preserve">
+	<value>m_tpOddEven</value>
+  </data>
+  <data name="&gt;&gt;m_pnlOddPage.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_lblOddPage.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="m_lblOddPage.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblOddPage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>272, 272</value>
+  </data>
+  <data name="m_lblOddPage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>96, 24</value>
+  </data>
+  <data name="m_lblOddPage.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_lblOddPage.Text" xml:space="preserve">
+	<value>Odd Page</value>
+  </data>
+  <data name="&gt;&gt;m_lblOddPage.Name" xml:space="preserve">
+	<value>m_lblOddPage</value>
+  </data>
+  <data name="&gt;&gt;m_lblOddPage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblOddPage.Parent" xml:space="preserve">
+	<value>m_tpOddEven</value>
+  </data>
+  <data name="&gt;&gt;m_lblOddPage.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_lblEvenPage.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="m_lblEvenPage.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_lblEvenPage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>56, 272</value>
+  </data>
+  <data name="m_lblEvenPage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 24</value>
+  </data>
+  <data name="m_lblEvenPage.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_lblEvenPage.Text" xml:space="preserve">
+	<value>Even Page</value>
+  </data>
+  <data name="&gt;&gt;m_lblEvenPage.Name" xml:space="preserve">
+	<value>m_lblEvenPage</value>
+  </data>
+  <data name="&gt;&gt;m_lblEvenPage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblEvenPage.Parent" xml:space="preserve">
+	<value>m_tpOddEven</value>
+  </data>
+  <data name="&gt;&gt;m_lblEvenPage.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <metadata name="panel3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="panel3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 13</value>
+  </data>
+  <data name="panel3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 256</value>
+  </data>
+  <data name="panel3.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;panel3.Name" xml:space="preserve">
+	<value>panel3</value>
+  </data>
+  <data name="&gt;&gt;panel3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel3.Parent" xml:space="preserve">
+	<value>m_tpOddEven</value>
+  </data>
+  <data name="&gt;&gt;panel3.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="panel4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>221, 13</value>
+  </data>
+  <data name="panel4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>200, 256</value>
+  </data>
+  <data name="panel4.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;panel4.Name" xml:space="preserve">
+	<value>panel4</value>
+  </data>
+  <data name="&gt;&gt;panel4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel4.Parent" xml:space="preserve">
+	<value>m_tpOddEven</value>
+  </data>
+  <data name="&gt;&gt;panel4.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_tpOddEven.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="m_tpOddEven.Size" type="System.Drawing.Size, System.Drawing">
+	<value>424, 302</value>
+  </data>
+  <data name="m_tpOddEven.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_tpOddEven.Text" xml:space="preserve">
+	<value>Odd / Even Pages</value>
+  </data>
+  <data name="&gt;&gt;m_tpOddEven.Name" xml:space="preserve">
+	<value>m_tpOddEven</value>
+  </data>
+  <data name="&gt;&gt;m_tpOddEven.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpOddEven.Parent" xml:space="preserve">
+	<value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tpOddEven.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tabControl1.ItemSize" type="System.Drawing.Size, System.Drawing">
+	<value>59, 18</value>
+  </data>
+  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>432, 328</value>
+  </data>
+  <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Name" xml:space="preserve">
+	<value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="m_grpBoxEdit.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_btnDelete.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="m_btnDelete.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_btnDelete.Location" type="System.Drawing.Point, System.Drawing">
+	<value>171, 352</value>
+  </data>
+  <data name="m_btnDelete.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_btnDelete.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_btnDelete.Text" xml:space="preserve">
+	<value>&amp;Delete</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.Name" xml:space="preserve">
+	<value>m_btnDelete</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.Parent" xml:space="preserve">
+	<value>m_grpBoxEdit</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_lstBoxName.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="m_lstBoxName.IntegralHeight" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_lstBoxName.ItemHeight" type="System.Int32, mscorlib">
+	<value>16</value>
+  </data>
+  <data name="m_lstBoxName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 16</value>
+  </data>
+  <data name="m_lstBoxName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>240, 328</value>
+  </data>
+  <data name="m_lstBoxName.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_lstBoxName.Name" xml:space="preserve">
+	<value>m_lstBoxName</value>
+  </data>
+  <data name="&gt;&gt;m_lstBoxName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lstBoxName.Parent" xml:space="preserve">
+	<value>m_grpBoxEdit</value>
+  </data>
+  <data name="&gt;&gt;m_lstBoxName.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_grpBoxEdit.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="m_grpBoxEdit.Size" type="System.Drawing.Size, System.Drawing">
+	<value>256, 384</value>
+  </data>
+  <data name="m_grpBoxEdit.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_grpBoxEdit.Text" xml:space="preserve">
+	<value>Name:</value>
+  </data>
+  <data name="&gt;&gt;m_grpBoxEdit.Name" xml:space="preserve">
+	<value>m_grpBoxEdit</value>
+  </data>
+  <data name="&gt;&gt;m_grpBoxEdit.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_grpBoxEdit.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_grpBoxEdit.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="lineControl1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lineControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Left</value>
+  </data>
+  <data name="lineControl1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="lineControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="lineControl1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>1, 440</value>
+  </data>
+  <data name="lineControl1.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;lineControl1.Name" xml:space="preserve">
+	<value>lineControl1</value>
+  </data>
+  <data name="&gt;&gt;lineControl1.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lineControl1.Parent" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;lineControl1.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_txtBoxDescription.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="m_txtBoxDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 360</value>
+  </data>
+  <data name="m_txtBoxDescription.Multiline" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_txtBoxDescription.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+	<value>Vertical</value>
+  </data>
+  <data name="m_txtBoxDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>432, 72</value>
+  </data>
+  <data name="m_txtBoxDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_txtBoxDescription.Name" xml:space="preserve">
+	<value>m_txtBoxDescription</value>
+  </data>
+  <data name="&gt;&gt;m_txtBoxDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_txtBoxDescription.Parent" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;m_txtBoxDescription.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Right</value>
+  </data>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>272, 0</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>450, 440</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+	<value>panel1</value>
+  </data>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>722, 440</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+	<value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Header / Footer Setup</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>HeaderFooterSetupDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+<!-- This is a demo of the Beep and Sound instructions -->
+<!-- The frequency is in Hz and the Duration is in mil sec. -->
+
+<beep/>
+
+<sound wait="1000" frequency="100" duration="10"/>
+<sound frequency="200" duration="10"/>
+<sound frequency="300" duration="10"/>
+<sound frequency="400" duration="10"/>
+<sound frequency="500" duration="10"/>
+<sound frequency="600" duration="10"/>
+<sound frequency="700" duration="10"/>
+<sound frequency="800" duration="10"/>
+<sound frequency="900" duration="10"/>
+<sound frequency="1000" duration="10"/>
+<sound frequency="2000" duration="10"/>
+<sound frequency="3000" duration="10"/>
+<sound frequency="4000" duration="10"/>
+<sound frequency="5000" duration="10"/>
+<sound frequency="6000" duration="10"/>
+<sound frequency="7000" duration="10"/>
+<sound frequency="8000" duration="10"/>
+
+</accil>

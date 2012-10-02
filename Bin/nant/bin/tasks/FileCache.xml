@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>FileCache</name>
+	</assembly>
+	<members>
+		<member name="T:SIL.FieldWorks.Tools.Properties.Settings">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.CacheManager">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CacheManager.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:CacheManager"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CacheManager.Dispose(System.Boolean)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Executes in two distinct scenarios.
+			1. If disposing is true, the method has been called directly
+			or indirectly by a user's code via the Dispose method.
+			Both managed and unmanaged resources can be disposed.
+			2. If disposing is false, the method has been called by the
+			runtime from inside the finalizer and you should not reference (access)
+			other managed objects, as they already have been garbage collected.
+			Only unmanaged resources can be disposed.
+			</summary>
+			<param name="disposing">if set to <c>true</c> this method is called from the
+			Dispose() method, if set to <c>false</c> it's called from finalizer.</param>
+			<remarks>
+			If any exceptions are thrown, that is fine.
+			If the method is being done in a finalizer, it will be ignored.
+			If it is thrown by client code calling Dispose,
+			it needs to be handled by fixing the bug.
+			If subclasses override this method, they should call the base implementation.
+			</remarks>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CacheManager.IsCached(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines whether the specified files are cached.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<returns>
+				<c>true</c> if the specified files have changed, otherwise, <c>false</c>.
+			</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CacheManager.GetCachedFiles(System.String)">
+			-------------------------------------------------------------------------------------
+			<summary>
+			Gets a cached file.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<returns>
+			The filenames of the cached files, or <c>null</c> if file is not cached.
+			</returns>
+			-------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CacheManager.CacheFile(System.String,System.String[])">
+			-------------------------------------------------------------------------------------
+			<summary>
+			Caches the output file that is the output of the given input files with parameter.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<param name="outFileNames">The output file names.</param>
+			-------------------------------------------------------------------------------------
+		</member>
+	</members>
+</doc>

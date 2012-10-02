@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="pcasched" default="pcasched.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	pcasched.build - Builds pcasched.dll
+	2005.12.09 fregro Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- pcasched-specific properties -->
+  <property name="pcasched.file.targetPdb" value="${path::change-extension(file.target.pcasched, '.pdb')}" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="pcasched.build" description="Peforms a full rebuild (clean then build)" depends="pcasched.clean, pcasched.inc" />
+
+  <!-- Clean -->
+  <target name="pcasched.clean" description="Cleans the build">
+	<delete dir="${dir.build.pcasched}" failonerror="false" if="${directory::exists(dir.build.pcasched)}" />
+	<delete file="${file.target.pcaexec}" failonerror="false" if="${file::exists(file.target.pcaexec)}" />
+	<delete file="${pcasched.file.targetPdb}" failonerror="false" if="${file::exists(pcasched.file.targetPdb)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="pcasched.inc" description="Performs an incremental build" depends="makeDirs">
+	<fileset id="compileCpp.fileset.sources" basedir="${dir.src.ca.pubca}\pcasched">
+	  <include name="cpiapprolesched.cpp" />
+	  <include name="cpiappsched.cpp" />
+	  <include name="cpiasmsched.cpp" />
+	  <include name="cpipartrolesched.cpp" />
+	  <include name="cpipartsched.cpp" />
+	  <include name="cpisubssched.cpp" />
+	  <include name="cpiutilsched.cpp" />
+	  <include name="mqisched.cpp" />
+	  <include name="pcautilsched.cpp" />
+	  <include name="pcasched.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.pcasched}" />
+	<property name="compileCpp.file.precomp.h" value="${dir.src.ca.pubca}\pcasched\precomp.h" />
+	<property name="compileCpp.additionalOptions" value="-I&quot;${dir.src.ca.wcautil}&quot; -I&quot;${dir.src.ca.pubca}\inc&quot;" />
+	<property name="compileCpp.file.rc" value="${dir.src.ca.pubca}\pcasched\pcasched.rc" />
+	<property name="makeNativeDll.file.target" value="${file.target.pcasched}" />
+	<property name="makeNativeDll.file.def" value="${dir.src.ca.pubca}\pcasched\pcasched.def" />
+	<property name="makeNativeDll.additionalLibs" value='"${file.target.wcautil}" "${file.target.dutil}" "${dir.platformsdk.lib}\msi.lib" "${dir.platformsdk.lib}\uuid.lib"' />
+
+	<!-- Make pcasched.dll -->
+	<call target="makeNativeDll" />
+  </target>
+
+</project>

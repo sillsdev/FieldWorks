@@ -1,0 +1,121 @@
+MagicDrawUML "5.0"
+(RTManager
+	(RTManagerOptions
+		SPACES_COUNT 8
+		CODE_GENERATION_REVERSE_OPTION 0
+		DELETED_ELEMENT_GENERATION_OPTION 0
+		USE_CLASSPATH_FOR_JAVA_REVERSE TRUE
+		LAUNCH_WIZARD FALSE
+		MERGE_AFTER_REVERSE FALSE
+		CREATE_ATTRIBUTES TRUE
+		DEFAULT_WORKING_DIRECTORY "C:\\Program Files\\MagicDraw UML 4.51"
+		DEFAULT_LANGUAGE "Java"
+		(JavaLanguageOptions
+			mGenEmptyDoc FALSE
+			mBracketInNewLine TRUE
+			mAddSpaces TRUE
+			mCommentStyle 0
+			mUseJavaDoc FALSE
+			(DocumentationTagManager
+				(CLASSIFIER
+					(DocumentationTagProperty
+						mName "DESCRIPTION"
+						mGenerate "true"
+					)
+				)
+				(OPERARTION
+					(DocumentationTagProperty
+						mName "DESCRIPTION"
+						mGenerate "true"
+					)
+					(DocumentationTagProperty
+						mName "@param"
+						mGenerate "true"
+					)
+					(DocumentationTagProperty
+						mName "@return"
+						mGenerate "true"
+					)
+					(DocumentationTagProperty
+						mName "@throws"
+						mGenerate "true"
+					)
+				)
+				(ATTRIBUTE
+					(DocumentationTagProperty
+						mName "DESCRIPTION"
+						mGenerate "true"
+					)
+				)
+			)
+			mUseClassPath TRUE
+			mClassPath "C:\\Program Files\\MagicDraw UML 4.0\\lib\\patch.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\activation.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\bsf.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\bsfengines.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\jaxp.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\jhall.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\log4j.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\mail.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\parser.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\xalan.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\xerces.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\md.jar;C:\\Program Files\\MagicDraw UML 4.0\\lib\\resources.jar;C:\\Program Files\\MagicDraw UML 4.0\\bin\\lax.jar;"
+		)
+		COLLECT_IMPORTS_ON_DEMAND TRUE
+		(CppLanguageOptions
+			mGenEmptyDoc FALSE
+			mBracketInNewLine TRUE
+			mAddSpaces TRUE
+			mCommentStyle 0
+			mUseJavaDoc FALSE
+			mCommentsStyle 0
+			mDocumentationOption FALSE
+			mUseIncludePath FALSE
+			mUseMacros FALSE
+			mIncludePath ""
+		)
+		(IDLLanguageOptions
+			mTranslationLang "IDL"
+			mGenEmptyDoc FALSE
+			mBracketInNewLine TRUE
+			mAddSpaces TRUE
+			mCommentStyle 0
+			mUseJavaDoc FALSE
+			(DocumentationTagManager
+				(CLASSIFIER
+					(DocumentationTagProperty
+						mName "DESCRIPTION"
+						mGenerate "true"
+					)
+				)
+				(OPERARTION
+					(DocumentationTagProperty
+						mName "DESCRIPTION"
+						mGenerate "true"
+					)
+					(DocumentationTagProperty
+						mName "@param"
+						mGenerate "true"
+					)
+					(DocumentationTagProperty
+						mName "@return"
+						mGenerate "true"
+					)
+					(DocumentationTagProperty
+						mName "@throws"
+						mGenerate "true"
+					)
+				)
+				(ATTRIBUTE
+					(DocumentationTagProperty
+						mName "DESCRIPTION"
+						mGenerate "true"
+					)
+				)
+			)
+		)
+		(DDLLanguageOptions
+			mGenerateDocumentation TRUE
+			mGenEmptyDoc FALSE
+			mBracketInNewLine TRUE
+			mAddSpaces TRUE
+			mCommentStyle 0
+			mUseJavaDoc FALSE
+		)
+		DEFAULT_WORKING_DIRECTORY "C:\\Program Files\\MagicDraw UML 4.51"
+	)
+	(RTProjectGroupObject
+		mID "ID000000004869"
+		mName "Code engineering sets"
+	)
+)

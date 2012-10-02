@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" xmlns="urn:schemas-microsoft-com:asm.v1">
+	<assemblyIdentity name="ScriptureObjects.dll.fragment" type="win32" />
+	<file name="ScriptureObjects.dll" asmv2:size="335942">
+		<typelib tlbid="{834609a0-b1e8-11d2-97e6-0020182be646}" version="1.0" helpdir="" resourceid="0" flags="HASDISKIMAGE" />
+		<comClass clsid="{37a896e2-d56f-11d2-a1ce-00c0dfec0b1a}" threadingModel="Apartment" tlbid="{834609a0-b1e8-11d2-97e6-0020182be646}" progid="ScriptureObjects.SCReferenceCollection.1" />
+		<comClass clsid="{f916a2f1-d58c-11d2-a1ce-00c0dfec0b1a}" threadingModel="Apartment" tlbid="{834609a0-b1e8-11d2-97e6-0020182be646}" progid="ScriptureObjects.SCReference.1" />
+		<comClass clsid="{27420fb0-cbc3-11d4-8909-00c0dfec0b1a}" threadingModel="Apartment" tlbid="{834609a0-b1e8-11d2-97e6-0020182be646}" progid="Dummy2.SCTag.1" />
+		<comClass clsid="{20aa6891-f664-11d2-a1d7-00c0dfec0b1a}" threadingModel="Apartment" tlbid="{834609a0-b1e8-11d2-97e6-0020182be646}" progid="ScriptureObjects.SCTextSegment.1" />
+		<comClass clsid="{20aa6893-f664-11d2-a1d7-00c0dfec0b1a}" threadingModel="Apartment" tlbid="{834609a0-b1e8-11d2-97e6-0020182be646}" progid="ScriptureObjects.SCTextEnum.1" />
+		<comClass clsid="{20aa6895-f664-11d2-a1d7-00c0dfec0b1a}" threadingModel="Apartment" tlbid="{834609a0-b1e8-11d2-97e6-0020182be646}" progid="ScriptureObjects.SCScriptureText.1" />
+	</file>
+</assembly>

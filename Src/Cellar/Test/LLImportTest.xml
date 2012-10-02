@@ -1,0 +1,1247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LangProject SYSTEM "FwDatabase.dtd">
+<LangProject>
+<Texts6001>
+<Text>
+<DateCreated5><Time val="2006-01-17 09:48:36.380"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:48:36.380"/></DateModified5>
+<Name5>
+<AUni ws="en">Test One</AUni>
+</Name5>
+<Description5>
+<AStr ws="en">
+<Run ws="en">This is the first test text.</Run>
+</AStr>
+</Description5>
+<Contents5054>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I80431FC410A5499DA2CDD342C8C86BA0">
+<Contents16>
+<Str>
+<Run ws="en"></Run>
+<Run ws="utp">This is a test.  This is only a test.  Do you like my test?</Run>
+</Str>
+</Contents16>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Contents5054>
+</Text>
+<Text>
+<DateCreated5><Time val="2006-01-17 09:58:51.460"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:58:51.460"/></DateModified5>
+<Name5>
+<AUni ws="en">Test Two</AUni>
+<AUni ws="xyzz">Estay ooTway</AUni>
+</Name5>
+<Description5>
+<AStr ws="en">
+<Run ws="en">This is the second test text.</Run>
+</AStr>
+</Description5>
+<Contents5054>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IFD27C002B557427999F010B8995B92D6">
+<Contents16>
+<Str>
+<Run ws="utp">These are tests, and only tests.</Run>
+</Str>
+</Contents16>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Contents5054>
+</Text>
+</Texts6001>
+<WordformInventory6001>
+<WordformInventory>
+<Wordforms5063>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">This</AUni>
+</Form5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">is</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="V" name="Verb"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I8D620EDB4B07494F9DEB1F9472817510">
+<Form5060>
+<AUni ws="en">to.be</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="ICFA2553A6F62424A99ADD083F57D77F7"/></Morph5112>
+<Msa5112><Link target="I4EE98F431745455C8DC74C77F14E489D"/></Msa5112>
+<Sense5112><Link target="IBE3514AFA6A84131898B581C3FFA07E5"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">a</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="Indef Art" name="Indefinite article"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I8385DB84D32B4DB4B653A7CAB95F6C9E">
+<Form5060>
+<AUni ws="en">A</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I79E4FDEDBC644548ACA3CFEF5BFDBFFD"/></Morph5112>
+<Msa5112><Link target="I935C4F81EF634326BECCD62C0E560BDC"/></Msa5112>
+<Sense5112><Link target="I55F35C55FB9248B99A0C8C7BD39C7F4F"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">test</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="N" name="Noun"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I77639AFA9EE44C8583DE345C2B6D6E71">
+<Form5060>
+<AUni ws="en">TST</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="ID52C5D998AA74A6F9361A83513F52C85"/></Morph5112>
+<Msa5112><Link target="I42E6D5292D384DEEB68934F476ADABA0"/></Msa5112>
+<Sense5112><Link target="I3EAC5D70597A41DF99568214FB833280"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform id="ICBE3A161905D4F5299955C23A3A295E0">
+<Form5062>
+<AUni ws="utp">only</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="Adv" name="Adverb"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I82ECB818D65340FEAFEBC9005BE7C118">
+<Form5060>
+<AUni ws="en">merely</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I3011B3AB9B7B4A50907A91CE3458333B"/></Morph5112>
+<Msa5112><Link target="I824EAA5829414A56ADAD05A06FFADBF8"/></Msa5112>
+<Sense5112><Link target="I2841C769A20C4EF6BE291ED20EC57C92"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">Do</AUni>
+</Form5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">you</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="Pro" name="Pronoun"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I4B1228D5C566420DA66F4188A97B7E48">
+<Form5060>
+<AUni ws="en">2PL</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I2B9AD74D5DE5438BAE4CB4D7D64E1E92"/></Morph5112>
+<Msa5112><Link target="IA2AEA4DE3A4F4363BB1DEF835B44786C"/></Msa5112>
+<Sense5112><Link target="I2C599D8C5BAA441C9B9D7A22C910266B"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">like</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="V" name="Verb"/></Category5059>
+<Meanings5059>
+<WfiGloss id="IDD030FEC503D41CAAA103E3287102335">
+<Form5060>
+<AUni ws="en">to.like</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I83966E2757FC4566880B0D41F1250184"/></Morph5112>
+<Msa5112><Link target="I02558410BA3B4FB2B51489EDFC310778"/></Msa5112>
+<Sense5112><Link target="I613D76E2E63F4B6FA9CBA2A59BCE9E5B"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">my</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="Pro" name="Pronoun"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I70ACEC9E56D74BA783B4668664FBEA46">
+<Form5060>
+<AUni ws="en">1SGPoss</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I35ACA20D01714BB9808DB40E59C63867"/></Morph5112>
+<Msa5112><Link target="I1B3C95399D2D442EAEA032F9490AE30E"/></Msa5112>
+<Sense5112><Link target="IB888DEA7530A4CC282BF40EDE066A9E6"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">this</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="Pro" name="Pronoun"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I4C19CE7B67254F6FA5DCCA0C0EB8A5BA">
+<Form5060>
+<AUni ws="en">Dis</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="IB067093490FA4F80AF40B423A973186E"/></Morph5112>
+<Msa5112><Link target="IEB1FAF746BFB40E59E23C1A5675DA437"/></Msa5112>
+<Sense5112><Link target="IAE13F36D355A4A1F830912460EF027DB"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">do</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="V" name="Verb"/></Category5059>
+<Meanings5059>
+<WfiGloss id="IDE3E6FBF380741F7940D34FA74EB55F4">
+<Form5060>
+<AUni ws="en">to.do</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="IF17C1DFC46B140D98221E755195A6A78"/></Morph5112>
+<Msa5112><Link target="I800271101F9E41149102CF4864AC5A7E"/></Msa5112>
+<Sense5112><Link target="I5418029721B84B65B7629B053DE99620"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">These</AUni>
+</Form5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">are</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="V" name="Verb"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I0CF8208BCFF84F02953550DDCA50A55E">
+<Form5060>
+<AUni ws="en">to.be</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I8625EE5C500F45509C6E9D5FB1A5A419"/></Morph5112>
+<Msa5112><Link target="I4EE98F431745455C8DC74C77F14E489D"/></Msa5112>
+<Sense5112><Link target="IBE3514AFA6A84131898B581C3FFA07E5"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">tests</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="N" name="Noun"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I8E5C7AB250204F1DA3BD079BCBA9C2D6">
+<Form5060>
+<AUni ws="en">TST</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="ID52C5D998AA74A6F9361A83513F52C85"/></Morph5112>
+<Msa5112><Link target="I42E6D5292D384DEEB68934F476ADABA0"/></Msa5112>
+<Sense5112><Link target="I3EAC5D70597A41DF99568214FB833280"/></Sense5112>
+</WfiMorphBundle>
+<WfiMorphBundle>
+<Morph5112><Link target="I918349B7D1C84C3C952B3783FD989170"/></Morph5112>
+<Msa5112><Link target="I30F8CA24A516433A9D05432B8CC883A9"/></Msa5112>
+<Sense5112><Link target="I09D0E45838904374AA5924F0FBE7851C"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">and</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="Conn" name="Connective"/></Category5059>
+<Meanings5059>
+<WfiGloss id="I4E7A5A9AB1D24D50ABE7A7749ED80C4A">
+<Form5060>
+<AUni ws="en">AND</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I9D7E78A42801402896D5AE717F1C1C00"/></Morph5112>
+<Msa5112><Link target="IA9CAAD4DE28D4D8383555AA802D01527"/></Msa5112>
+<Sense5112><Link target="I00F3148CBB1F4B769CF87E7AD490A0EB"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+<WfiWordform>
+<Form5062>
+<AUni ws="utp">these</AUni>
+</Form5062>
+<Analyses5062>
+<WfiAnalysis>
+<Category5059><Link ws="en" abbr="Pro" name="Pronoun"/></Category5059>
+<Meanings5059>
+<WfiGloss id="IF99D4BCBC276451EA55595049AF63D5A">
+<Form5060>
+<AUni ws="en">Dese</AUni>
+</Form5060>
+</WfiGloss>
+</Meanings5059>
+<MorphBundles5059>
+<WfiMorphBundle>
+<Morph5112><Link target="I3E2306CD29FE46119F4B05B5A8DE2D83"/></Morph5112>
+<Msa5112><Link target="I324276D174224C7084447D3D6EC8EE52"/></Msa5112>
+<Sense5112><Link target="IEB2067B920B24BD5BE9F394A7B3F22E1"/></Sense5112>
+</WfiMorphBundle>
+</MorphBundles5059>
+</WfiAnalysis>
+</Analyses5062>
+</WfiWordform>
+</Wordforms5063>
+</WordformInventory>
+</WordformInventory6001>
+<LexDb6001>
+<LexDb>
+<Entries5005>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:49:58.627"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:49:58.627"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I42E6D5292D384DEEB68934F476ADABA0">
+<PartOfSpeech5001><Link ws="en" abbr="N" name="Noun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I3EAC5D70597A41DF99568214FB833280">
+<MorphoSyntaxAnalysis5016><Link target="I42E6D5292D384DEEB68934F476ADABA0"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">TST</AUni>
+</Gloss5016>
+<ReversalEntries5016>
+<Link target="I999004450E7A4BF99BAA630AFB50E992" ws="en" form="quiz"/>
+<Link target="IEF11BFCD3FC546FF929FF2C46D910694" ws="en" form="trial"/>
+<Link target="I69B375C959764804A42EFCD8FB4F61D9" ws="en" form="examination"/>
+</ReversalEntries5016>
+<Pictures5016>
+<CmPicture>
+<PictureFile48><Link path="C:\FW\Src\Cellar\Test\UnitTestPenguin.JPG"/></PictureFile48>
+<Caption48>
+<AStr ws="en"><Run ws="en">penguin picture test</Run></AStr>
+<AStr ws="utp"><Run ws="utp">xpenguin xpicture xtest</Run></AStr>
+</Caption48>
+</CmPicture>
+</Pictures5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="ID52C5D998AA74A6F9361A83513F52C85">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">test</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:51:20.140"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:51:20.140"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="IA2AEA4DE3A4F4363BB1DEF835B44786C">
+<PartOfSpeech5001><Link ws="en" abbr="Pro" name="Pronoun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I2C599D8C5BAA441C9B9D7A22C910266B">
+<MorphoSyntaxAnalysis5016><Link target="IA2AEA4DE3A4F4363BB1DEF835B44786C"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">2PL</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I2B9AD74D5DE5438BAE4CB4D7D64E1E92">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">you</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:52:52.217"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:52:52.217"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I1B3C95399D2D442EAEA032F9490AE30E">
+<PartOfSpeech5001><Link ws="en" abbr="Pro" name="Pronoun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="IB888DEA7530A4CC282BF40EDE066A9E6">
+<MorphoSyntaxAnalysis5016><Link target="I1B3C95399D2D442EAEA032F9490AE30E"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">1SGPoss</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I35ACA20D01714BB9808DB40E59C63867">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">my</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:53:31.810"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:53:31.810"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I935C4F81EF634326BECCD62C0E560BDC">
+<PartOfSpeech5001><Link ws="en" abbr="Indef Art" name="Indefinite article"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I55F35C55FB9248B99A0C8C7BD39C7F4F">
+<MorphoSyntaxAnalysis5016><Link target="I935C4F81EF634326BECCD62C0E560BDC"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">A</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I79E4FDEDBC644548ACA3CFEF5BFDBFFD">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">a</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:54:01.480"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:54:01.480"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="IEB1FAF746BFB40E59E23C1A5675DA437">
+<PartOfSpeech5001><Link ws="en" abbr="Pro" name="Pronoun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="IAE13F36D355A4A1F830912460EF027DB">
+<MorphoSyntaxAnalysis5016><Link target="IEB1FAF746BFB40E59E23C1A5675DA437"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">Dis</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="IB067093490FA4F80AF40B423A973186E">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">this</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:54:41.183"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:54:41.183"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I4EE98F431745455C8DC74C77F14E489D">
+<PartOfSpeech5001><Link ws="en" abbr="V" name="Verb"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="IBE3514AFA6A84131898B581C3FFA07E5">
+<MorphoSyntaxAnalysis5016><Link target="I4EE98F431745455C8DC74C77F14E489D"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">to.be</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="ICFA2553A6F62424A99ADD083F57D77F7">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">is</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+<AlternateForms5002>
+<MoStemAllomorph id="I8625EE5C500F45509C6E9D5FB1A5A419">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">are</AUni>
+</Form5035>
+</MoStemAllomorph>
+</AlternateForms5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:55:22.463"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:55:22.463"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I824EAA5829414A56ADAD05A06FFADBF8">
+<PartOfSpeech5001><Link ws="en" abbr="Adv" name="Adverb"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I2841C769A20C4EF6BE291ED20EC57C92">
+<MorphoSyntaxAnalysis5016><Link target="I824EAA5829414A56ADAD05A06FFADBF8"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">merely</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I3011B3AB9B7B4A50907A91CE3458333B">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">only</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:55:52.480"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:55:52.480"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I02558410BA3B4FB2B51489EDFC310778">
+<PartOfSpeech5001><Link ws="en" abbr="V" name="Verb"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I613D76E2E63F4B6FA9CBA2A59BCE9E5B">
+<MorphoSyntaxAnalysis5016><Link target="I02558410BA3B4FB2B51489EDFC310778"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">to.like</AUni>
+</Gloss5016>
+<ReversalEntries5016>
+<Link target="I5B7631C20F6B4E6095B5E688CFC1F457" ws="en" form="desire"/>
+<Link target="I0941118C4B7A4281801BA1D7FB044255" ws="en" form="love"/>
+<Link target="I2BCC6AFF51D34B2F8B2B4F5A3E190ECF" ws="en" form="enjoy"/>
+</ReversalEntries5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I83966E2757FC4566880B0D41F1250184">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">like</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 09:56:13.930"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 09:56:13.930"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I800271101F9E41149102CF4864AC5A7E">
+<PartOfSpeech5001><Link ws="en" abbr="V" name="Verb"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I5418029721B84B65B7629B053DE99620">
+<MorphoSyntaxAnalysis5016><Link target="I800271101F9E41149102CF4864AC5A7E"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">to.do</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="IF17C1DFC46B140D98221E755195A6A78">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">do</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 10:00:36.630"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 10:00:36.630"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoInflClass id="I30F8CA24A516433A9D05432B8CC883A9">
+<PartOfSpeech5038><Link ws="en" abbr="N" name="Noun"/></PartOfSpeech5038>
+</MoInflClass>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I09D0E45838904374AA5924F0FBE7851C">
+<MorphoSyntaxAnalysis5016><Link target="I30F8CA24A516433A9D05432B8CC883A9"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">PL</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoAffixAllomorph id="I918349B7D1C84C3C952B3783FD989170">
+<MorphType5035><Link target="ID7F713DD-E8CF-11D3-9764-00C04F186933" ws="en" abbr="sfx" name="suffix"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">s</AUni>
+</Form5035>
+</MoAffixAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 10:02:02.317"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 10:02:02.317"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="IA9CAAD4DE28D4D8383555AA802D01527">
+<PartOfSpeech5001><Link ws="en" abbr="Conn" name="Connective"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I00F3148CBB1F4B769CF87E7AD490A0EB">
+<MorphoSyntaxAnalysis5016><Link target="IA9CAAD4DE28D4D8383555AA802D01527"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">AND</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I9D7E78A42801402896D5AE717F1C1C00">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">and</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry>
+<DateCreated5002><Time val="2006-01-17 10:04:21.860"/></DateCreated5002>
+<DateModified5002><Time val="2006-01-17 10:04:21.860"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I324276D174224C7084447D3D6EC8EE52">
+<PartOfSpeech5001><Link ws="en" abbr="Pro" name="Pronoun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="IEB2067B920B24BD5BE9F394A7B3F22E1">
+<MorphoSyntaxAnalysis5016><Link target="I324276D174224C7084447D3D6EC8EE52"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">Dese</AUni>
+</Gloss5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I3E2306CD29FE46119F4B05B5A8DE2D83">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">these</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+</Entries5005>
+<ReversalIndexes5005>
+<ReversalIndex>
+<DateCreated5><Time val="2006-01-17 09:45:27.740"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:27.740"/></DateModified5>
+<WritingSystem5052><Link ws="en"/></WritingSystem5052>
+<Name5>
+<AUni ws="en">English</AUni>
+</Name5>
+<PartsOfSpeech5052>
+<CmPossibilityList>
+<DateCreated5><Time val="2006-01-17 09:45:27.773"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:27.773"/></DateModified5>
+<ItemClsid8><Integer val="5049"/></ItemClsid8>
+<Possibilities8>
+<PartOfSpeech id="RevEntryNoun">
+<Name7>
+<AUni ws="en">Noun</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">N</AUni>
+</Abbreviation7>
+<CatalogSourceId5049><Uni>RENoun</Uni></CatalogSourceId5049>
+</PartOfSpeech>
+<PartOfSpeech id="RevEntryVerb">
+<Name7>
+<AUni ws="en">Verb</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">V</AUni>
+</Abbreviation7>
+<CatalogSourceId5049><Uni>REVerb</Uni></CatalogSourceId5049>
+</PartOfSpeech>
+</Possibilities8>
+</CmPossibilityList>
+</PartsOfSpeech5052>
+<Entries5052>
+<ReversalIndexEntry id="I999004450E7A4BF99BAA630AFB50E992">
+<ReversalForm5053><AUni ws="en">quiz</AUni></ReversalForm5053>
+<PartOfSpeech5053><Link target="RevEntryNoun"/></PartOfSpeech5053>
+</ReversalIndexEntry>
+<ReversalIndexEntry id="IEF11BFCD3FC546FF929FF2C46D910694">
+<ReversalForm5053><AUni ws="en">trial</AUni></ReversalForm5053>
+<PartOfSpeech5053><Link target="RevEntryNoun"/></PartOfSpeech5053>
+</ReversalIndexEntry>
+<ReversalIndexEntry id="I69B375C959764804A42EFCD8FB4F61D9">
+<ReversalForm5053><AUni ws="en">examination</AUni></ReversalForm5053>
+<PartOfSpeech5053><Link target="RevEntryNoun"/></PartOfSpeech5053>
+</ReversalIndexEntry>
+<ReversalIndexEntry id="I5B7631C20F6B4E6095B5E688CFC1F457">
+<ReversalForm5053><AUni ws="en">desire</AUni></ReversalForm5053>
+<PartOfSpeech5053><Link target="RevEntryVerb"/></PartOfSpeech5053>
+</ReversalIndexEntry>
+<ReversalIndexEntry id="I0941118C4B7A4281801BA1D7FB044255">
+<ReversalForm5053><AUni ws="en">love</AUni></ReversalForm5053>
+<PartOfSpeech5053><Link target="RevEntryVerb"/></PartOfSpeech5053>
+</ReversalIndexEntry>
+<ReversalIndexEntry id="I2BCC6AFF51D34B2F8B2B4F5A3E190ECF">
+<ReversalForm5053><AUni ws="en">enjoy</AUni></ReversalForm5053>
+<PartOfSpeech5053><Link target="RevEntryVerb"/></PartOfSpeech5053>
+</ReversalIndexEntry>
+</Entries5052>
+</ReversalIndex>
+</ReversalIndexes5005>
+</LexDb>
+</LexDb6001>
+<Annotations6001>
+<CmBaseAnnotation id="I0B1CA4EC88694D5092DF4D9E71E73D48">
+<DateCreated34><Time val="2006-01-17 09:49:13.330"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.330"/></DateModified34>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="17"/></EndOffset37>
+<AnnotationType34><Link target="IB63F0702-32F7-4ABB-B005-C1D2265636AD" ws="en" abbr="TxtSeg" name="Text Segment"/></AnnotationType34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.377"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.377"/></DateModified34>
+<AnnotationType34><Link target="I9AC9637A-56B9-4F05-A0E1-4243FBFB57DB" ws="en" abbr="FT" name="Free Translation"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">Dis is test</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I0B1CA4EC88694D5092DF4D9E71E73D48"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmBaseAnnotation id="I995EAF3E67704090988BA0A4C9450456">
+<DateCreated34><Time val="2006-01-17 09:49:13.457"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.457"/></DateModified34>
+<BeginOffset37><Integer val="17"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="39"/></EndOffset37>
+<AnnotationType34><Link target="IB63F0702-32F7-4ABB-B005-C1D2265636AD" ws="en" abbr="TxtSeg" name="Text Segment"/></AnnotationType34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.457"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.457"/></DateModified34>
+<AnnotationType34><Link target="I9AC9637A-56B9-4F05-A0E1-4243FBFB57DB" ws="en" abbr="FT" name="Free Translation"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">Dis is test only</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I995EAF3E67704090988BA0A4C9450456"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmBaseAnnotation id="I48F165E3299D49339F66CFC074996D4D">
+<DateCreated34><Time val="2006-01-17 09:49:13.487"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.487"/></DateModified34>
+<BeginOffset37><Integer val="39"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="59"/></EndOffset37>
+<AnnotationType34><Link target="IB63F0702-32F7-4ABB-B005-C1D2265636AD" ws="en" abbr="TxtSeg" name="Text Segment"/></AnnotationType34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.503"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.503"/></DateModified34>
+<AnnotationType34><Link target="I9AC9637A-56B9-4F05-A0E1-4243FBFB57DB" ws="en" abbr="FT" name="Free Translation"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">Like You My Test Question</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I48F165E3299D49339F66CFC074996D4D"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.563"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.563"/></DateModified34>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="4"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I4C19CE7B67254F6FA5DCCA0C0EB8A5BA"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.610"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.610"/></DateModified34>
+<BeginOffset37><Integer val="5"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="7"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I8D620EDB4B07494F9DEB1F9472817510"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.660"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.660"/></DateModified34>
+<BeginOffset37><Integer val="8"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="9"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I8385DB84D32B4DB4B653A7CAB95F6C9E"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.707"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.707"/></DateModified34>
+<BeginOffset37><Integer val="10"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="14"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I77639AFA9EE44C8583DE345C2B6D6E71"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.737"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.737"/></DateModified34>
+<BeginOffset37><Integer val="14"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="15"/></EndOffset37>
+<AnnotationType34><Link target="ICFECB1FE-037A-452D-A35B-59E06D15F4DF" ws="en" abbr="pic" name="Punctuation In Context"/></AnnotationType34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.770"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.770"/></DateModified34>
+<BeginOffset37><Integer val="17"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="21"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I4C19CE7B67254F6FA5DCCA0C0EB8A5BA"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.800"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.800"/></DateModified34>
+<BeginOffset37><Integer val="22"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="24"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I8D620EDB4B07494F9DEB1F9472817510"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.847"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.847"/></DateModified34>
+<BeginOffset37><Integer val="25"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="29"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I82ECB818D65340FEAFEBC9005BE7C118"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.877"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.877"/></DateModified34>
+<BeginOffset37><Integer val="30"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="31"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I8385DB84D32B4DB4B653A7CAB95F6C9E"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.910"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.910"/></DateModified34>
+<BeginOffset37><Integer val="32"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="36"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I77639AFA9EE44C8583DE345C2B6D6E71"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.940"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.940"/></DateModified34>
+<BeginOffset37><Integer val="36"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="37"/></EndOffset37>
+<AnnotationType34><Link target="ICFECB1FE-037A-452D-A35B-59E06D15F4DF" ws="en" abbr="pic" name="Punctuation In Context"/></AnnotationType34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:13.987"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:13.987"/></DateModified34>
+<BeginOffset37><Integer val="39"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="41"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="IDE3E6FBF380741F7940D34FA74EB55F4"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:14.020"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:14.020"/></DateModified34>
+<BeginOffset37><Integer val="42"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="45"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I4B1228D5C566420DA66F4188A97B7E48"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:14.063"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:14.063"/></DateModified34>
+<BeginOffset37><Integer val="46"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="50"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="IDD030FEC503D41CAAA103E3287102335"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:14.110"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:14.110"/></DateModified34>
+<BeginOffset37><Integer val="51"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="53"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I70ACEC9E56D74BA783B4668664FBEA46"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:14.143"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:14.143"/></DateModified34>
+<BeginOffset37><Integer val="54"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="58"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I77639AFA9EE44C8583DE345C2B6D6E71"/></InstanceOf34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:14.173"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:14.173"/></DateModified34>
+<BeginOffset37><Integer val="58"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="59"/></EndOffset37>
+<AnnotationType34><Link target="ICFECB1FE-037A-452D-A35B-59E06D15F4DF" ws="en" abbr="pic" name="Punctuation In Context"/></AnnotationType34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+<EndObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:49:14.237"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:49:14.237"/></DateModified34>
+<CompDetails34><Uni>86623</Uni></CompDetails34>
+<AnnotationType34><Link target="I20CF6C1C-9389-4380-91F5-DFA057003D51" ws="en" abbr="pt" name="Process Time"/></AnnotationType34>
+<BeginObject37><Link target="I80431FC410A5499DA2CDD342C8C86BA0"/></BeginObject37>
+</CmBaseAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:50:35.783"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:50:35.783"/></DateModified34>
+<AnnotationType34><Link target="IB0B1BB21-724D-470A-BE94-3D9A436008B8" ws="en" abbr="LT" name="Literal Translation"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">You Like Test My Question</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I48F165E3299D49339F66CFC074996D4D"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:56:32.603"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:56:32.603"/></DateModified34>
+<AnnotationType34><Link target="IB0B1BB21-724D-470A-BE94-3D9A436008B8" ws="en" abbr="LT" name="Literal Translation"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">Dis is test a</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I0B1CA4EC88694D5092DF4D9E71E73D48"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:56:47.277"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:56:47.277"/></DateModified34>
+<AnnotationType34><Link target="I7FFC4EAB-856A-43CC-BC11-0DB55738C15B" ws="en" abbr="Nt" name="Note"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="utp"></Run>
+<Run ws="en">This note is rather meaningless with regard to the glossed sentence.</Run>
+<Run ws="utp"></Run>
+<Run ws="en"></Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I0B1CA4EC88694D5092DF4D9E71E73D48"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:57:37.370"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:57:37.370"/></DateModified34>
+<AnnotationType34><Link target="I7FFC4EAB-856A-43CC-BC11-0DB55738C15B" ws="en" abbr="Nt" name="Note"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">This is another worthless note.</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I995EAF3E67704090988BA0A4C9450456"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:57:50.960"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:57:50.960"/></DateModified34>
+<AnnotationType34><Link target="IB0B1BB21-724D-470A-BE94-3D9A436008B8" ws="en" abbr="LT" name="Literal Translation"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">Dis is test only a</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I995EAF3E67704090988BA0A4C9450456"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:58:08.070"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:58:08.070"/></DateModified34>
+<AnnotationType34><Link target="I7FFC4EAB-856A-43CC-BC11-0DB55738C15B" ws="en" abbr="Nt" name="Note"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">Yet another note not worth noting.</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="I48F165E3299D49339F66CFC074996D4D"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:58:52.990"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:58:52.990"/></DateModified34>
+<CompDetails34><Uni>87749</Uni></CompDetails34>
+<AnnotationType34><Link target="I20CF6C1C-9389-4380-91F5-DFA057003D51" ws="en" abbr="pt" name="Process Time"/></AnnotationType34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation id="IE8B53ECB074C4181A23D5149B794E48D">
+<DateCreated34><Time val="2006-01-17 09:59:48.337"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.337"/></DateModified34>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="32"/></EndOffset37>
+<AnnotationType34><Link target="IB63F0702-32F7-4ABB-B005-C1D2265636AD" ws="en" abbr="TxtSeg" name="Text Segment"/></AnnotationType34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmIndirectAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.350"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.350"/></DateModified34>
+<AnnotationType34><Link target="I9AC9637A-56B9-4F05-A0E1-4243FBFB57DB" ws="en" abbr="FT" name="Free Translation"/></AnnotationType34>
+<Comment34>
+<AStr ws="en">
+<Run ws="en">Dese be tests only</Run>
+</AStr>
+</Comment34>
+<AppliesTo36>
+<Link target="IE8B53ECB074C4181A23D5149B794E48D"/>
+</AppliesTo36>
+</CmIndirectAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.397"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.397"/></DateModified34>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="5"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="IF99D4BCBC276451EA55595049AF63D5A"/></InstanceOf34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.443"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.443"/></DateModified34>
+<BeginOffset37><Integer val="6"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="9"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I0CF8208BCFF84F02953550DDCA50A55E"/></InstanceOf34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.477"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.477"/></DateModified34>
+<BeginOffset37><Integer val="10"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="15"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I8E5C7AB250204F1DA3BD079BCBA9C2D6"/></InstanceOf34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.523"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.523"/></DateModified34>
+<BeginOffset37><Integer val="15"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="16"/></EndOffset37>
+<AnnotationType34><Link target="ICFECB1FE-037A-452D-A35B-59E06D15F4DF" ws="en" abbr="pic" name="Punctuation In Context"/></AnnotationType34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.553"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.553"/></DateModified34>
+<BeginOffset37><Integer val="17"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="20"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I4E7A5A9AB1D24D50ABE7A7749ED80C4A"/></InstanceOf34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.587"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.587"/></DateModified34>
+<BeginOffset37><Integer val="21"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="25"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="ICBE3A161905D4F5299955C23A3A295E0"/></InstanceOf34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.617"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.617"/></DateModified34>
+<BeginOffset37><Integer val="26"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="31"/></EndOffset37>
+<AnnotationType34><Link target="IEB92E50F-BA96-4D1D-B632-057B5C274132" ws="en" abbr="wfic" name="Wordform In Context"/></AnnotationType34>
+<InstanceOf34><Link target="I8E5C7AB250204F1DA3BD079BCBA9C2D6"/></InstanceOf34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+<CmBaseAnnotation>
+<DateCreated34><Time val="2006-01-17 09:59:48.647"/></DateCreated34>
+<DateModified34><Time val="2006-01-17 09:59:48.647"/></DateModified34>
+<BeginOffset37><Integer val="31"/></BeginOffset37>
+<Flid37><Integer val="16002"/></Flid37>
+<EndOffset37><Integer val="32"/></EndOffset37>
+<AnnotationType34><Link target="ICFECB1FE-037A-452D-A35B-59E06D15F4DF" ws="en" abbr="pic" name="Punctuation In Context"/></AnnotationType34>
+<BeginObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></BeginObject37>
+<EndObject37><Link target="IFD27C002B557427999F010B8995B92D6"/></EndObject37>
+</CmBaseAnnotation>
+</Annotations6001>
+</LangProject>

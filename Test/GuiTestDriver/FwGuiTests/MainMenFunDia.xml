@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <click wait="3000" path="tray:Views" />
+  <click wait="1000" path="menu:File/menu:New Language Project..." />
+  <on-dialog title="New FieldWorks Project">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:File/menu:Open	Ctrl+O" />
+  <on-dialog title="Open Project">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:File/menu:Print...	Ctrl+P" />
+  <on-dialog title="Print">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:File/menu:Import/menu:Standard Format..." />
+  <on-dialog title="Standard Format Import Setup">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:File/menu:Export..." />
+  <on-dialog title="Export">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:File/menu:Archive Scripture..." />
+  <on-dialog title="ArchiveDraftDialog">
+   <!-- the focus is in a text box, so it seems it can't find the buttons-->
+   <insert wait="1000">{ENTER}</insert>
+  </on-dialog>
+  <click wait="1000" path="menu:File/menu:Properties/menu:Project Properties..." />
+  <on-dialog title="Project Properties">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:File/menu:Properties/menu:Scripture Properties..." />
+  <on-dialog title="Scripture Properties">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:Edit/menu:Find...	Ctrl+F" />
+  <on-dialog title="Find and Replace">
+   <click wait="1000" path="button:Close" />
+  </on-dialog>
+  <click wait="1000" path="menu:Edit/menu:Replace...	Ctrl+H" />
+  <on-dialog title="Find and Replace">
+   <click wait="1000" path="button:Close" />
+  </on-dialog>
+  <!--click path="view:Draft"/-->
+  <!-- this select-text doesn't work - the focus doesn't switch to the view -->
+  <select-text wait="3000" id="clip" path="view:Draft" loc="b:0/s:0/p:0" at="0" run="5" />
+  <!--click wait="1000" path="menu:Insert/menu:Footnote..." />
+  <on-dialog title="Insert Footnote">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog-->
+  <click wait="1000" path="menu:Insert/menu:Note..." />
+  <on-dialog title="Insert Note">
+   <!-- the focus is in a text box, so it seems it can't find the buttons-->
+   <insert wait="1000">{ENTER}</insert>
+   <!--click wait="1000" path="button:Cancel" /-->
+  </on-dialog>
+  <click wait="1000" path="menu:Format/menu:Style..." />
+  <on-dialog title="Style">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:Tools/menu:User Properties..." />
+  <on-dialog title="User Properties">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:Tools/menu:Options..." />
+  <on-dialog title="Options">
+   <click wait="1000" path="button:Cancel" />
+  </on-dialog>
+  <click wait="1000" path="menu:Help/menu:Translation Editor...	F1" />
+  <on-dialog title="FieldWorks Translation Editor Help">
+   <click wait="1000" path="button:Close" />
+  </on-dialog>
+  <click wait="1000" path="menu:Help/menu:About Translation Editor..." />
+  <on-dialog title="About SIL FieldWorks Trnslation Editor">
+   <click wait="3000" path="button:Close" />
+  </on-dialog>
+  </on-application>
+</accil>

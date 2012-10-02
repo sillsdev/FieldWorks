@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 5 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<on-dialog title="Unable to Import Back Translation" until="1000" on-fail="skip">
+			<click path="$OK"/>
+		</on-dialog>
+
+		<!--<glimpse path="9:Unable to Import Back Translation/18:Unable to Import Back Translation/9:OK/43:OK" on-pass="assert">
+			Error - "Unable to Import Back Translation"
+		</glimpse>-->
+
+	</on-application>
+</accil>

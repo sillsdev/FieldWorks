@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Include for make all C++ code of FieldWorks -->
+<!--
+	This include file contains all the targets that used to be in mkall.bat
+	We had to replace mkall.bat because in order to run C# test directly with
+	the project to which they belong, we have to build TestLangProj as soon
+	as possible.
+
+	Eventually this file should go away when the C++ files will be built
+	by NAnt.
+-->
+<project name="mkall" default="mkall" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd" >
+	<!-- -->
+	<!-- generic targets -->
+	<target name="mkall" description="Make all of FieldWorks">
+		<tstamp/>
+		<call target="mkall-internal" failonerror="false" cascade="false"/>
+		<tstamp/>
+		<if test="${fw-mkall-internal-error and (not property::exists('fw-build-error'))}">
+			<property name="fw-build-error" value="********* mkall failed ********"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mkall-internal" description="Make all of FieldWorks - don't call directly">
+		<!-- set ${fw-mkall-internal-error} to true and at the end to false. If batch file fails,
+			${fw-mkall-internal-error} will remain true, so we know if anything happened -->
+		<property name="fw-mkall-internal-error" value="true"/>
+		<call target="mkall-internal-core" cascade="false"/>
+		<property name="fw-mkall-internal-error" value="false"/>
+	</target>
+	<!-- ,FwModelBrowser,FwObjectBrowser -->
+	<target name="mkall-internal-core" description="Make all of FieldWorks - don't call directly"
+		depends="independentTargets,
+		InstallLanguage,
+		mkGenLib,mkfwk,mkdba,mkcel,mklg,mkvw,register-So,
+		cmNewLangProj,FwCoreDlgs,Widgets,RunAddConverter,
+		mkAfLib,mkWidgLib,mkmig,mkDbSvcs,mkComFWDlgs,
+		mknb,mkCle,mkgrc,mkgre,mkwp,XceedZipDll,EncConvertersDlls,mktsth,mktstw,mkall-tst,
+		allTe,allATests,WordWorks,CopyDlls,CacheLight">
+		<!-- [NewUndo] Restore the TestLangProj database to initial build state. -->
+		<call target="restoreTLP" if="${doTest}" cascade="false"/>
+	</target>
+	<!-- -->
+	<target name="mkall-errorhandling" description="Call mkall, but handles errors">
+		<call target="mkall-internal" failonerror="false" cascade="false"/>
+		<if test="${fw-mkall-internal-error}">
+			<if test="${property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="${fw-build-error}; mkall (${config}) failed"/>
+			</if>
+			<if test="${not property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="mkall (${config}) failed"/>
+			</if>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mkall-localize" description="both mkall and localize"
+		depends="mkall,localize">
+		<echo message="Finished 'mkall-localize' target."/>
+	</target>
+	<!-- -->
+	<target name="mkall-localize-errorhandling" description="both mkall-errorhandling and localize"
+		depends="mkall-errorhandling,localize">
+		<echo message="Finished 'mkall-localize-errorhandling' target."/>
+	</target>
+	<!-- -->
+	<target name="independentTargets" description="All targets listed in the 'depends' attribute should not depend on any other FW code."
+		depends="mkdp,Utils,FwResources,ZipUtils,PhonEnvValidator,Design,icudlls,GAFAWSAnalysis,
+		SidebarLibrary,CommandBar,TestManager">
+		<echo message="Finished 'independentTargets' target."/>
+	</target>
+	<!--
+		C++ tests are compiled always with debug turned on,
+		so there's no reason to run them in release builds.
+	-->
+	<target name="mkall-tst"
+		depends="mkGenLib-tst,mkAfLib-tst,mkcel-tst,mkfwk-tst,mklg-tst,
+		mkvw-tst,mkdba-tst,mkComFWDlgs-tst,mkDbSvcs-tst,mkmig-tst,mkCle-tst,mksql-tst"/>
+	<!-- -->
+	<!-- special targets -->
+	<target name="XceedZipDll" description="Register the Xceed Zip DLL">
+		<!-- NB: Only one of these will be run. -->
+		<comregisterex file="${fwroot}\DistFiles\XceedZip.dll" failonerror="false" unless="${clean}"/>
+		<comregisterex file="${fwroot}\DistFiles\XceedZip.dll" failonerror="false" unregister="true" if="${clean}"/>
+	</target>
+	<!-- This was added because the automatic reference copy process when building a
+		project ends up with different read/write permissions on copied files on different
+		machines. The build machine failed because it was copying two files and the
+		first was read-only, so it didn't copy the second. So to get around this intermittent
+		problem we can add files to this target to copy files early on. -->
+	<!-- Some machines fail to automatic copy some of these dlls without being listed here. -->
+	<target name="CopyDlls" description="Copy Dlls to output directory">
+		<copy todir="${dir.outputBase}">
+			<fileset>
+				<include name="${fwroot}\bin\Interop.MSXML2.dll"/>
+				<include name="${fwroot}\bin\Interop.SHDocVw.dll"/>
+				<include name="${fwroot}\bin\AxInterop.SHDocVw.dll"/>
+				<include name="${fwroot}\bin\MsHtmHstInterop.dll"/>
+				<include name="${fwroot}\DistFiles\Commons.Xml.Relaxng.dll"/>
+				<include name="${fwroot}\Lib\${config}\ScrChecksInterfaces.dll"/>
+				<include name="${fwroot}\DistFiles\FormLanguageSwitch.dll"/>
+				<!-- The next one is required to avoid crashes on dev machine when exporting LIFT -->
+				<include name="${fwroot}\DistFiles\LinqBridge.dll"/>
+
+				<!-- This group are all needed for the Paratext control that allows us to display
+				USFM resources. For our own code, ScriptureObjects.dll doesn't need to
+				be copied, because we register it, but Nathan's code finds it another way.-->
+				<include name="${fwroot}\DistFiles\FormattedEditor.dll"/>
+				<include name="${fwroot}\DistFiles\HelpSystem.dll"/>
+				<include name="${fwroot}\DistFiles\HtmlEditor.dll"/>
+				<include name="${fwroot}\DistFiles\LanguageEngine.dll"/>
+				<include name="${fwroot}\DistFiles\log4net.dll"/>
+				<include name="${fwroot}\DistFiles\NetLoc.dll"/>
+				<include name="${fwroot}\DistFiles\ParatextShared.dll"/>
+				<include name="${fwroot}\DistFiles\ScriptureObjects.dll"/>
+				<include name="${fwroot}\DistFiles\ScriptureTextFile.dll"/>
+				<include name="${fwroot}\DistFiles\Utilities.dll"/>
+				<include name="${fwroot}\DistFiles\wrtXML.dll"/>
+				<include name="${fwroot}\DistFiles\XceedZip.dll"/>
+				<include name="${fwroot}\DistFiles\Interop.SCRIPTUREOBJECTSLib.dll"/>
+				<include name="${fwroot}\DistFiles\Interop.LANGUAGEENGINELib.dll"/>
+				<include name="${fwroot}\DistFiles\Interop.SCRIPTURETEXTFILELib.dll"/>
+			</fileset>
+		</copy>
+		<attrib readonly="false">
+			<fileset basedir="${dir.outputBase}">
+				<include name="Interop.MSXML2.dll"/>
+				<include name="Interop.SHDocVw.dll"/>
+				<include name="AxInterop.SHDocVw.dll"/>
+				<include name="MsHtmHstInterop.dll"/>
+				<include name="Commons.Xml.Relaxng.dll"/>
+				<include name="ScrChecksInterfaces.dll"/>
+				<include name="FormLanguageSwitch.dll"/>
+				<include name="LinqBridge.dll"/>
+				<!-- This group are all needed for the Paratext control that allows us to display
+				USFM resources. For our own code, ScriptureObjects.dll doesn't need to
+				be copied, because we register it, but Nathan's code finds it another way.-->
+				<include name="FormattedEditor.dll"/>
+				<include name="HelpSystem.dll"/>
+				<include name="HtmlEditor.dll"/>
+				<include name="LanguageEngine.dll"/>
+				<include name="log4net.dll"/>
+				<include name="NetLoc.dll"/>
+				<include name="ParatextShared.dll"/>
+				<include name="ScriptureObjects.dll"/>
+				<include name="ScriptureTextFile.dll"/>
+				<include name="Utilities.dll"/>
+				<include name="wrtXML.dll"/>
+				<include name="XceedZip.dll"/>
+				<include name="Interop.SCRIPTUREOBJECTSLib.dll"/>
+				<include name="Interop.LANGUAGEENGINELib.dll"/>
+				<include name="Interop.SCRIPTURETEXTFILELib.dll"/>
+			</fileset>
+		</attrib>
+	</target>
+	<target name="EncConvertersDlls" description="Copy and Register the EncodingConverters files">
+		<copy todir="${dir.outputBase}">
+			<fileset basedir="${fwroot}\Lib\${config}\">
+				<include name="SilEncConverters30.dll"/>
+				<include name="SilEncConverters30.pdb"/>
+				<include name="ECInterfaces.dll"/>
+				<include name="ECInterfaces.pdb"/>
+			</fileset>
+		</copy>
+		<!-- I (KZ) switched to an external call to regsvr32 because comregisterex was doing strange things.
+			When registering with regsvr32 we call u_init in CIcuECModule which locks cnvalias.icu. Then
+			we call u_cleanup in DllRegisterServer which releases the lock, and finally CIcuECModule which
+			currently does not call u_cleanup. When using comregisterex, we call u_init, then CIcuECModule
+			destructor, then another u_init, then u_cleanup in DllRegisterServer, but at this point cnvalias.icu
+			is still locked, apparently because the first u_init was called on a different thread that isn't released
+			until nant stops. This breaks the build process because we can't call IcuData to reset the ICU
+			directory prior to checking or building installers. The error can be seen by running a temporary
+			nant target: <target name="testLockedIcu" depends="EncConvertersDlls"><call target="IcuData"
+			cascade="true"/></target> Note that this is not an issue if we have u_cleanup in the
+			CIcuECModule destructor, but this apparently causes other problems. -->
+		<!-- NB: Only one of these will be run. -->
+		<!--comregisterex file="${fwroot}\Lib\${config}\IcuEC40a.dll" failonerror="false" unless="${clean}"/-->
+		<!--comregisterex file="/s/u ${fwroot}\Lib\${config}\IcuEC40a.dll" failonerror="false" unregister="true" if="${clean}"/-->
+		<property name="args" value="" if="${user::is-admin()}"/>
+		<property name="args" value="/c" unless="${user::is-admin()}"/>
+		<property name="dir" value="${config}" if="${user::is-admin()}"/>
+		<property name="dir" value="release" unless="${user::is-admin()}"/>
+		<choose>
+			<when test="${user::is-admin()}">
+				<regasm unregister="${clean}" codebase="true" verbose="${verbose}" failonerror="false">
+					<fileset>
+						<include name="${dir.outputBase}\SilEncConverters30.dll"/>
+						<include name="${fwroot}\Lib\${dir}\AIGuesserEC.dll"/>
+					</fileset>
+				</regasm>
+				<exec program="regsvr32.exe" commandline="/s ${fwroot}\Lib\Release\IcuEC40a.dll" failonerror="false" unless="${clean}" verbose="true"/>
+				<exec program="regsvr32.exe" commandline="/u /s ${fwroot}\Lib\Release\IcuEC40a.dll" failonerror="false" if="${clean}"/>
+			</when>
+			<otherwise>
+				<regasm assembly="${dir.outputBase}\SilEncConverters30.dll"
+						regfile="${dir.outputBase}\SilEncConverters30.reg" unregister="false" failonerror="false"/>
+				<importregistry regfile="${dir.outputBase}\SilEncConverters30.reg"
+								unregister="false" peruser="true" failonerror="false"/>
+				<delete file="${dir.outputBase}\SilEncConverters30.reg" failonerror="false"/>
+				<regasm assembly="${fwroot}\Lib\${dir}\AIGuesserEC.dll"
+						regfile="${dir.outputBase}\AIGuesserEC.reg" unregister="false" failonerror="false"/>
+				<importregistry regfile="${dir.outputBase}\AIGuesserEC.reg"
+								unregister="false" peruser="true" failonerror="false"/>
+				<delete file="${dir.outputBase}\AIGuesserEC.reg" failonerror="false"/>
+				<!-- IcuEC40a.dll tries to put some files under HKLM so we can't use regsvrex.exe -->
+				<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
+					  commandline="regsvr32.exe /u /s ${fwroot}\Lib\${dir}\IcuEC40a.dll"
+					  failonerror="false" if="${clean}"/>
+				<if test="${not clean}">
+					<checksum algorithm="MD5">
+						<fileset>
+							<include name="${fwroot}\Lib\${dir}\IcuEC40a.dll"/>
+						</fileset>
+					</checksum>
+					<property name="IcuEcDidntChange" value="false"/>
+					<filescached property="IcuEcDidntChange" handleproperty="handle" if="${usefilecache}">
+						<files>
+							<include name="${fwroot}\Lib\${dir}\IcuEC40a.dll.MD5"/>
+						</files>
+					</filescached>
+					<!-- If IcuEC40a didn't change then we have nothing to do. Otherwise we register with admin privileges -->
+					<if test="${not IcuEcDidntChange}">
+						<echo message="Register IcuEC40a.dll file with admin privileges"/>
+						<exec program="${nant::get-base-directory()}/tasks/elevator.exe"
+							  commandline="regsvr32.exe /s ${fwroot}\Lib\${dir}\IcuEC40a.dll" failonerror="false"/>
+						<cachenewfiles handle="handle" if="${usefilecache}">
+							<output>
+								<include name="${fwroot}\Lib\${dir}\IcuEC40a.dll.MD5"/>
+							</output>
+						</cachenewfiles>
+					</if>
+				</if>
+			</otherwise>
+		</choose>
+	</target>
+	<target name="copy-nmockDll" description="Copy the nmock files. This gets around something bizarre that breaks the build machine. remakefw ends up copying the dll, but mkall doesn't even though both use buildtest.">
+		<copy todir="${dir.outputBase}">
+			<fileset basedir="${fwroot}\bin\nmock\">
+				<include name="nmock.*"/>
+			</fileset>
+		</copy>
+	</target>
+	<!-- -->
+	<!-- projects common to C++ and C# -->
+	<target name="mkdp" description="DebugProcs">
+		<call target="mkdp-nodep" cascade="false"/>
+	</target>
+	<target name="mkdp-nodep" description="DebugProcs">
+		<if test="${not bld-release}">
+			<property name="batch-file" value="mkdp"/>
+			<call target="call-batch"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mkGenLib" description="GenericLib"
+		depends="mkdp">
+		<call target="mkGenLib-nodep" cascade="false"/>
+	</target>
+	<target name="mkGenLib-nodep" description="GenericLib">
+		<property name="output-is-lib" value="true"/>
+		<property name="batch-file" value="mkGenLib"/>
+		<call target="call-batch"/>
+		<property name="output-is-lib" value="false"/>
+	</target>
+	<!-- -->
+	<target name="icudlls">
+		<if test="${showTargetsRunInReport}">
+			<property name="appTargName" value="icudlls"/>
+			<call target="appendTargetName"/>
+		</if>
+		<!-- Only one of these two will be done. -->
+		<call target="copy-icudlls" unless="${clean}" cascade="false"/>
+		<call target="clean-icudlls" if="${clean}" cascade="false"/>
+	</target>
+	<!-- -->
+	<target name="copy-icudlls" description="Copy ICU dlls to an accessible place">
+		<copy todir="${dir.outputBase}">
+			<fileset basedir="${fwroot}\Lib\${config}\">
+				<include name="icu*.dll"/>
+				<include name="icu*.pdb"/>
+			</fileset>
+		</copy>
+		<copy todir="${dir.outputBase}">
+			<fileset basedir="${fwroot}\Lib\">
+				<include name="icu*.dll"/>
+			</fileset>
+		</copy>
+		<choose>
+			<when test="${user::is-admin()}">
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\RootCodeDir" value="${fwroot}\distfiles" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\RootDataDir" value="${fwroot}\distfiles" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\Icu40DataDir" value="${fwroot}\distfiles\Icu40\icudt40l" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\Icu40Dir" value="${fwroot}\distfiles\Icu40" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters31\RootDir" value="${fwroot}\lib\release\" />
+				<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters31\PluginDir" value="${fwroot}\lib\release\Plugins" />
+			</when>
+			<otherwise>
+				<readregistry property="rootCodeDir" hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\RootCodeDir" failonerror="false"/>
+				<readregistry property="rootDataDir" hive="LocalMachine" key="SOFTWARE\SIL\FieldWorks\RootDataDir" failonerror="false"/>
+				<readregistry property="icu40DataDir" hive="LocalMachine" key="SOFTWARE\SIL\Icu40DataDir" failonerror="false"/>
+				<readregistry property="icu40Dir" hive="LocalMachine" key="SOFTWARE\SIL\Icu40Dir" failonerror="false"/>
+				<readregistry property="ecRootDir" hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters31\RootDir" failonerror="false"/>
+				<property name="updateRegistry" value="${not property::exists('rootCodeDir') or not property::exists('rootDataDir') or not property::exists('icu40DataDir') or not property::exists('icu40Dir') or not property::exists('ecRootDir')}"/>
+				<property name="updateRegistry" value="${rootCodeDir != fwroot + '\distfiles' or rootDataDir != fwroot + '\distfiles' or icu40DataDir != fwroot + '\distfiles\Icu40\icudt40l' or icu40Dir != fwroot + '\distfiles\Icu40' or ecRootDir != fwroot + '\lib\release'}"
+						  unless="${updateRegistry}"/>
+
+				<if test="${updateRegistry}">
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL\FieldWorks /v RootCodeDir /d "${fwroot}\distfiles" /f'
+						  file="${dir.outputBase}\updateRegistry.cmd" append="false"/>
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL\FieldWorks /v RootDataDir /d "${fwroot}\distfiles" /f'
+						  file="${dir.outputBase}\updateRegistry.cmd" append="true"/>
+
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL /v Icu40DataDir /d "${fwroot}\distfiles\Icu40\icudt40l" /f'
+						  file="${dir.outputBase}\updateRegistry.cmd" append="true"/>
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL /v Icu40Dir /d "${fwroot}\distfiles\Icu40" /f'
+						  file="${dir.outputBase}\updateRegistry.cmd" append="true"/>
+
+					<echo message='reg.exe add HKLM\SOFTWARE\SIL\SilEncConverters31 /v RootDir /d "${fwroot}\lib\release" /f'
+						  file="${dir.outputBase}\updateRegistry.cmd" append="true"/>
+
+					<property name="cmdFileContent" value=""/>
+					<loadfile file="${dir.outputBase}\updateRegistry.cmd" property="cmdFileContent" if="${verbose}"/>
+					<echo message="Content of batch file ${dir.outputBase}\updateRegistry.cmd:" if="${verbose}"/>
+					<echo message="${cmdFileContent}" if="${verbose}"/>
+					<echo message="" if="${verbose}"/>
+
+					<echo message="Writing settings to registry"/>
+					<exec program="${nant::get-base-directory()}\tasks\elevator.exe"
+						  commandline='"${dir.outputBase}\updateRegistry.cmd"'/>
+				</if>
+			</otherwise>
+		</choose>
+	</target>
+	<!-- -->
+	<target name="clean-icudlls" description="Delete copied ICU dlls">
+		<delete failonerror="false">
+			<fileset basedir="${dir.outputBase}\">
+				<include name="icu*.dll"/>
+				<include name="icu*.pdb"/>
+			</fileset>
+		</delete>
+	</target>
+	<!-- -->
+	<target name="mkfwk" description="FwKernel" depends="mkGenLib">
+		<call target="mkfwk-nodep" cascade="false"/>
+	</target>
+	<target name="mkfwk-nodep" description="FwKernel">
+		<if test="${not clean}">
+			<property name="batch-file" value="mkfwk"/>
+			<call target="call-batch"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mkdba" description="DbAccess" depends="mkfwk">
+		<call target="mkdba-nodep" cascade="false"/>
+	</target>
+	<target name="mkdba-nodep" description="DbAccess">
+		<if test="${not clean}">
+			<property name="batch-file" value="mkdba"/>
+			<call target="call-batch"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mkmig" description="MigrateData"
+		depends="mkGenLib,mkAfLib,mkWidgLib">
+		<call target="mkmig-nodep" cascade="false"/>
+	</target>
+	<target name="mkmig-nodep" description="MigrateData">
+		<property name="batch-file" value="mkmig"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<target name="mkcel" description="FwCellar" depends="mkfwk">
+		<call target="mkcel-nodep" cascade="false"/>
+	</target>
+	<target name="mkcel-nodep" description="FwCellar">
+		<property name="batch-file" value="mkcel"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<target name="mklg" description="Language" depends="mkdba,mkcel">
+		<call target="mklg-nodep" cascade="false"/>
+	</target>
+	<target name="mklg-nodep" description="Language">
+		<if test="${not clean}">
+			<property name="batch-file" value="mklg"/>
+			<call target="call-batch"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mkvw" description="Views" depends="mklg">
+		<call target="mkvw-nodep" cascade="false"/>
+	</target>
+	<target name="mkvw-nodep" description="Views">
+		<if test="${not clean}">
+			<property name="batch-file" value="mkvw"/>
+			<call target="call-batch"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="register-So" description="Register ScriptureOjects and ECOjects files"
+		depends="">
+		<property name="dir.PTSOBase" value="${fwroot}\DistFiles"/>
+		<choose>
+			<when test="${user::is-admin()}">
+				<!-- register the Paratext ScriptureObjects.dll -->
+				<echo message="Register the Paratext ScriptureObject.dll File in: ${dir.PTSOBase}"/>
+				<exec program="regsvr32.exe" commandline="/s ${dir.PTSOBase}\ScriptureObjects.dll"/>
+			</when>
+			<otherwise>
+				<checksum algorithm="MD5">
+					<fileset>
+						<include name="${dir.PTSOBase}\ScriptureObjects.dll"/>
+					</fileset>
+				</checksum>
+				<property name="SODidntChange" value="false"/>
+				<filescached property="SODidntChange" handleproperty="handle" if="${usefilecache}">
+					<files>
+						<include name="${dir.PTSOBase}\ScriptureObjects.dll.MD5"/>
+					</files>
+				</filescached>
+				<!-- If ScriptureObjects didn't change then we have nothing to do. Otherwise we register with admin privileges -->
+				<if test="${not SODidntChange}">
+					<echo message="Register the Paratext ScriptureObject.dll File in: ${dir.PTSOBase} with admin privileges"/>
+					<exec program="${nant::get-base-directory()}\tasks\elevator.exe" commandline="regsvr32.exe /s ${dir.PTSOBase}\ScriptureObjects.dll"/>
+					<cachenewfiles handle="handle" if="${usefilecache}">
+						<output>
+							<include name="${dir.PTSOBase}\ScriptureObjects.dll.MD5"/>
+						</output>
+					</cachenewfiles>
+				</if>
+			</otherwise>
+		</choose>
+	</target>
+	<!-- -->
+	<!-- We NEED to build some type libraries very early on without compiling the entire DLL
+		they represent due to circular build dependencies.  Life is simpler if we go ahead and
+		build the Interop DLLs as well at this time.
+	<target name="mkall-tlb" description="Build Type Libraries"
+		depends="mkecob-tlb"/>-->
+	<!-- -->
+	<!-- Libraries -->
+	<target name="mkAfLib" description="Library"
+		depends="mkfwk,mkcel,mkvw,cmNewLangProj,FwCoreDlgs">
+		<call target="mkAfLib-nodep" cascade="false"/>
+	</target>
+	<target name="mkAfLib-nodep" description="Appcore Library">
+		<property name="output-is-lib" value="true"/>
+		<property name="batch-file" value="mkAfLib"/>
+		<call target="call-batch"/>
+		<property name="output-is-lib" value="false"/>
+	</target>
+	<!-- -->
+	<target name="mkWidgLib" description="Widget Library" depends="mkvw,cmNewLangProj,FwCoreDlgs">
+		<call target="mkWidgLib-nodep" cascade="false"/>
+	</target>
+	<target name="mkWidgLib-nodep" description="Widget Library">
+		<property name="output-is-lib" value="true"/>
+		<property name="batch-file" value="mkWidgLib"/>
+		<call target="call-batch"/>
+		<property name="output-is-lib" value="false"/>
+	</target>
+	<!-- -->
+	<!-- DLLs -->
+	<target name="mkDbSvcs" description="DbServices (backup etc)" depends="mkGenLib,mkAfLib,mkWidgLib">
+		<call target="mkDbSvcs-nodep" cascade="false"/>
+	</target>
+	<target name="mkDbSvcs-nodep" description="DbServices (backup etc)">
+		<property name="batch-file" value="mkDbSvcs"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<target name="mkComFWDlgs" description="Common C++ dialogs" depends="mkGenLib,mkAfLib,mkWidgLib,mkDbSvcs">
+		<call target="mkComFWDlgs-nodep" cascade="false"/>
+	</target>
+	<target name="mkComFWDlgs-nodep" description="Common C++ dialogs">
+		<if test="${not clean}">
+			<property name="batch-file" value="mkComFWDlgs"/>
+			<call target="call-batch"/>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mknb" description="Notebook"
+		depends="mkdp,mkGenLib,icudlls,mkfwk,mkdba,mkcel,mklg,mkvw,register-So,cmNewLangProj,
+		FwCoreDlgs,mkAfLib,mkWidgLib,mkmig,mkDbSvcs,mkComFWDlgs,
+		mkAfLib,mkWidgLib,CSharpLinker">
+		<call target="mknb-nodep" cascade="false"/>
+	</target>
+	<target name="mknb-nodep" description="Notebook">
+		<property name="batch-file" value="mknb"/>
+		<call target="call-batch"/>
+		<!-- Create a manifest file - add the dependency for Common Controls v6. -->
+		<regfree executable="${dir.outputBase}/FwNotebook.exe">
+			<asis basedir="${fwroot}/Src/Notebk">
+				<include name="InclCommonControls.fragment.manifest"/>
+			</asis>
+		</regfree>
+	</target>
+	<!-- -->
+	<target name="mkCle" description="Cle"
+		depends="mkdp,mkGenLib,icudlls,mkfwk,mkdba,mkcel,mklg,mkvw,register-So,cmNewLangProj,
+		FwCoreDlgs,mkAfLib,mkWidgLib,mkmig,mkDbSvcs,mkComFWDlgs,
+		mkAfLib,mkWidgLib">
+		<call target="mkCle-nodep" cascade="false"/>
+	</target>
+	<target name="mkCle-nodep" description="Cle">
+		<if test="${not clean}">
+			<property name="batch-file" value="mkCle"/>
+			<call target="call-batch"/>
+			<!-- Create a manifest file - add the dependency for Common Controls v6. -->
+			<regfree executable="${dir.outputBase}/FwListEditor.exe">
+				<asis basedir="${fwroot}/Src/Cle">
+					<include name="InclCommonControls.fragment.manifest"/>
+				</asis>
+			</regfree>
+		</if>
+	</target>
+	<!-- -->
+	<target name="mkgrc" description="Graphite compiler" depends="mkGenLib,mkfwk">
+		<call target="mkgrc-nodep" cascade="false"/>
+	</target>
+	<target name="mkgrc-nodep" description="Graphite compiler">
+		<property name="batch-file" value="mkgrc"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<target name="mkgre" description="Graphite engine" depends="mkGenLib,mkfwk,mkvw">
+		<call target="mkgre-nodep" cascade="false"/>
+	</target>
+	<target name="mkgre-nodep" description="Graphite engine">
+		<property name="batch-file" value="mkgre"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<target name="mkwp" description="WorldPad" depends="mkGenLib,mkfwk,mkvw,cmNewLangProj,FwCoreDlgs,mkAfLib,mkWidgLib">
+		<call target="mkwp-nodep" cascade="false"/>
+	</target>
+	<target name="mkwp-nodep" description="WorldPad">
+		<property name="batch-file" value="mkwp"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<!-- Tests -->
+	<target name="mktsth" description="Tests" depends="mkGenLib">
+		<call target="mktsth-nodep" cascade="false"/>
+	</target>
+	<target name="mktsth-nodep" description="Tests">
+		<property name="batch-file" value="mktsth"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<target name="mktstw" description="Tests" depends="mkGenLib,mkAfLib,mkWidgLib">
+		<call target="mktstw-nodep" cascade="false"/>
+	</target>
+	<target name="mktstw-nodep" description="Tests">
+		<property name="batch-file" value="mktstw"/>
+		<call target="call-batch"/>
+	</target>
+	<!-- -->
+	<target name="mkGenLib-tst" description="Tests"
+		depends="mkGenLib">
+		<call target="mkGenLib-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkGenLib-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkGenLib-tst"/>
+		<property name="test-exe" value="GenericLib"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkAfLib-tst" description="Tests"
+		depends="mkAfLib">
+		<call target="mkAfLib-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkAfLib-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkAfLib-tst"/>
+		<property name="test-exe" value="AfLib"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkcel-tst" description="Tests"
+		depends="mkcel">
+		<call target="mkcel-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkcel-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkcel-tst"/>
+		<property name="test-exe" value="FwCellar"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkfwk-tst" description="Tests"
+		depends="mkfwk,InstallLanguage">
+		<call target="mkfwk-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkfwk-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkfwk-tst"/>
+		<property name="test-exe" value="FwKernel"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mklg-tst" description="Tests"
+		depends="mklg,InstallLanguage">
+		<call target="mklg-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mklg-tst-nodep" description="Tests">
+		<property name="batch-file" value="mklg-tst"/>
+		<property name="test-exe" value="Language"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkvw-tst" description="Tests"
+		depends="mkvw">
+		<call target="mkvw-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkvw-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkvw-tst"/>
+		<property name="test-exe" value="Views"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkdba-tst" description="Tests"
+		depends="mkdba">
+		<call target="mkdba-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkdba-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkdba-tst"/>
+		<property name="test-exe" value="DbAccess"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkComFWDlgs-tst" description="Tests"
+				depends="mkComFWDlgs">
+		<call target="mkComFWDlgs-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkComFWDlgs-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkComFWDlgs-tst"/>
+		<property name="test-exe" value="CmnFwDlgs"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<!-- Don't include restoreTLP as dependency as it may attempt to restore it before being built
+		as when we build without tests from the build machine -->
+	<target name="mkDbSvcs-tst" description="Tests" depends="mkDbSvcs">
+		<call target="mkDbSvcs-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkDbSvcs-tst-nodep" description="Tests">
+		<call target="restoreTLP"/>
+		<property name="batch-file" value="mkDbSvcs-tst"/>
+		<property name="test-exe" value="DbServices"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkmig-tst" description="Tests"
+		depends="mkmig,InstallLanguage">
+		<call target="mkmig-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkmig-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkmig-tst"/>
+		<property name="test-exe" value="MigrateData"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mkCle-tst" description="Tests"
+		depends="mkCle">
+		<call target="mkCle-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mkCle-tst-nodep" description="Tests">
+		<property name="batch-file" value="mkCle-tst"/>
+		<property name="test-exe" value="Cle"/>
+		<call target="run-cpptest" unless="${bld-release}"/>
+	</target>
+	<!-- -->
+	<target name="mksql-tst" description="Tests">
+		<call target="mksql-tst-nodep" if="${doTest}" cascade="false"/>
+	</target>
+	<target name="mksql-tst-nodep" description="Tests">
+		<call target="mksql-tst-internal" cascade="false"/>
+		<if test="${fw-test-core-error}">
+			<if test="${property::exists('fw-test-error')}">
+				<property name="fw-test-error" value="${fw-test-error};mksql-tst" />
+			</if>
+			<if test="${not property::exists('fw-test-error')}">
+				<property name="fw-test-error" value="mksql-tst" />
+			</if>
+			<echo message="********* At least one test for mksql-tst failed ********" />
+		</if>
+	</target>
+	<target name="mksql-tst-internal" description="Runs SQL tests. mksql-tst.bat doesn't exit with error, so we can't use that">
+		<property name="fw-test-core-error" value="true" />
+		<property name="SQLErrorfile.present" value="false"/>
+		<property name="batch-working-dir" value="${fwroot}\Test\tsqlunit"/>
+		<uptodate property="SqlUpToDate">
+			<sourcefiles>
+				<include name="${fwroot}\src\**\Test\ut_*.sql"/>
+			</sourcefiles>
+			<targetfiles>
+				<include name="${batch-working-dir}\sqltestsok.txt"/>
+			</targetfiles>
+		</uptodate>
+		<if test="${not SqlUpToDate}">
+			<exec program="${fwroot}\Test\Python23\python" commandline="fw_sqlunit.py" workingdir="${batch-working-dir}"/>
+			<property name="SQLErrorfile.present" value="${file::exists(batch-working-dir + '\error.txt')}"/>
+			<delete file="${batch-working-dir}\error.txt" if="${SQLErrorfile.present}" />
+			<delete file="${batch-working-dir}\sqltestsok.txt" failonerror="false" if="${SQLErrorfile.present}"/>
+			<touch file="${batch-working-dir}\sqltestsok.txt" unless="${SQLErrorfile.present}"/>
+		</if>
+		<property name="fw-test-core-error" value="${SQLErrorfile.present}" />
+		<call target="UnloadSqlExtend"/>
+	</target>
+	<!-- -->
+	<!-- ************************************************************************************ -->
+	<!-- Do not add anything below this line -->
+	<!-- Additional helper targets -->
+	<target name="run-cpptest" description="Builds and runs a C++ test">
+		<call target="run-cpptest-internal" failonerror="false"/>
+		<if test="${fw-test-core-error}">
+			<if test="${property::exists('fw-test-error')}">
+				<property name="fw-test-error" value="${fw-test-error};${batch-file}" />
+			</if>
+			<if test="${not property::exists('fw-test-error')}">
+				<property name="fw-test-error" value="${batch-file}" />
+			</if>
+			<echo message="********* At least one test for ${batch-file} failed ********" />
+		</if>
+	</target>
+	<!-- -->
+	<target name="run-cpptest-internal" description="Run the tests. Shouldn't be called directly">
+		<!--Set ${{fw-test-core-error}} to true and at the end to false. If batch file fails,
+					${{fw-test-core-error}} will remain true, so we know if anything happened-->
+		<property name="fw-test-core-error" value="true" />
+		<uptodate property="done">
+			<sourcefiles>
+				<include name="${dir.fwoutput}\${config}\test${test-exe}.exe"/>
+				<include name="${dir.fwoutput}\${config}\${test-exe}.dll"/>
+			</sourcefiles>
+			<targetfiles>
+				<include name="${dir.fwoutput}\${config}\test${test-exe}-results.txt"/>
+			</targetfiles>
+		</uptodate>
+		<if test="${not done or forcetests or property::exists('noCompare')}">
+			<if test="${not property::exists('batch-working-dir')}">
+				<property name="batch-working-dir" value="${fwroot}\bin"/>
+			</if>
+			<exec program="cmd.exe" commandline="/c ${fwroot}\bin\testWrapper.cmd ${batch-file}.bat"
+				workingdir="${batch-working-dir}"/>
+			<if test="${not property::exists('noCompare')}">
+				<exec program="cmd.exe" commandline="/c echo ${batch-file} succeeded."
+					output="${dir.fwoutput}\${config}\test${test-exe}-results.txt"/>
+			</if>
+		</if>
+		<property name="fw-test-core-error" value="false" />
+	</target>
+	<!-- -->
+	<target name="call-batch" description="Calls a batch file">
+		<tstamp/>
+		<call target="call-batch-internal" failonerror="false"/>
+		<if test="${fw-call-batch-error}">
+			<if test="${not property::exists('fw-build-error')}">
+				<property name="fw-build-error" value="********* ${batch-file}.bat failed ********"/>
+				<fail message="${fw-build-error}"/>
+			</if>
+		</if>
+	</target>
+	<!-- -->
+	<target name="call-batch-internal" description="Calls a batch file">
+		<!-- set ${fw-build-core-error} to true and at the end to false. If batch file fails,
+			${fw-build-core-error} will remain true, so we know if anything happened -->
+		<property name="fw-call-batch-error" value="true"/>
+		<property name="extra-params" value=""/>
+		<if test="${property::exists('cpp-extra-params')}">
+			<property name="extra-params" value="${cpp-extra-params}"/>
+		</if>
+		<property name="_output-dir" value="${dir.fwoutput}"/>
+		<property name="_output-dir" value="${dir.fwoutputlib}" if="${output-is-lib}"/>
+		<if test="${not property::exists('batch-working-dir')}">
+			<property name="batch-working-dir" value="${fwroot}\bin"/>
+		</if>
+		<if test="${showTargetsRunInReport}">
+			<property name="appTargName" value="${batch-file}"/>
+			<call target="appendTargetName"/>
+		</if>
+		<!-- if we're running as a limited user (Vista with UAC enabled) we have to register the DLL in HKCU -->
+		<setenv name="REGSVR_OPTS" value="/n /i:user" unless="${user::is-admin()}"/>
+		<setenv name="ISLUA" value="1" unless="${user::is-admin()}"/>
+		<exec program="cmd.exe" commandline="/c ${fwroot}\bin\wrapper.cmd ${_output-dir}\${config} ${dir.fwoutput}\Common ${dir.fwobj} ${batch-file}.bat ${build-type} ${build-action} ${extra-params}"
+			workingdir="${batch-working-dir}" verbose="${verbose}"/>
+		<property name="fw-call-batch-error" value="false"/>
+	</target>
+</project>

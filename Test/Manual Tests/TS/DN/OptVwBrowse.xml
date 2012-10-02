@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlvbr" num="2.7.9.1.3" abbr="tlvbr" file="DN\OptVwBrowse.xml">
+
+ <title tag="tlvbr">Tools-Options-Views-Browse View Tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+	<p>The controls for customizing Browse view are accessed through the views tab in the Tools-Options Dialog.</p>
+  </introduction>
+
+  <context>
+	<p>The specs for these tests are based on the following link: </p>
+	<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html#TheBrowseTab" type="doc">The Browse View tab</link>
+</p>
+	<p>Use "Tools-Options-Views-Browse" in bug reports.</p>
+  </context>
+
+
+
+<!--write new cases-->
+
+
+<case id="tlvbrApp" num="1" order="any">
+  <title tag="tlvbrApp">Basic appearance and display</title>
+  <context>
+<p>In Data Notebook</p>
+</context>
+
+  <step name="1.1" link="Bug">Select Tools-Options-Views. Select the Browse view in the left pane. Compare the overall appearance of the Views tab with <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html#TheBrowseTab" type="doc">the specifications</link>.
+ <r>
+<ul>
+<li>The Views Tab dialog must conform to the specs in appearance</li>
+<li>It displays the default factory and user added views in the Views pane</li>
+<li>The correct order and settings of the Fields is specified in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html#TheBrowseTab" type="doc">The Browse View tab</link>
+</li>
+</ul>
+</r>
+  <p name="bug">Tools-Options-Views-Browse appearance is incorrect</p>
+  </step>
+  <step name="1.2" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;A&gt; to test the Add button.
+ <r>
+<ul>
+<li>A drop-down menu is displayed, with menu items for each of type of view (e.g., Data Entry, Browse, Document, etc.) that can be added.</li>
+<li>Selecting a view type puts a view holder in the views pane.</li>
+<li>Report errors with the first title words "Tools-Options-Views-Browse Add"</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Views-Browse Add button drop-down list problem</p>
+<p name="bug">Tools-Options-Views-Browse Add selection problem.</p>
+  </step>
+  <step name="1.3" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;C&gt; to test the Copy button.
+ <r>
+<ul>
+<li>A copy of the selected view is created</li>
+<li>The new view is named "Copy of X", where X is the previous copy of the view</li>
+<li>When a copy is made, it shows up in the list control and is selected</li>
+<li>Report errors with the first title words "Tools-Options-Views-Browse Copy"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Copy button fails to create copy</p>
+ <p name="bug">Tools-Options-Views-Browse Copy has wrong title</p>
+ <p name="bug">Tools-Options-Views-Browse Copy is not selected</p>
+  </step>
+  <step name="1.4" link="Bug">When a view has been added or copied, change the name by clicking over the name to get an edit box.
+ <r>
+<ul>
+<li>The user can't change the name of a default factory view</li>
+<li>The user can change an added or copied view name</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Able to rename factory view</p>
+ <p name="bug">Tools-Options-Views-Browse Unable to rename user defined view</p>
+  </step>
+  <step name="1.5" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;D&gt; to test the Delete button.
+ <r>
+<ul>
+<li>If a factory view is selected, the delete button is disabled</li>
+<li>Otherwise, the selected view is removed from the system</li>
+<li>A warning dialog with <i>Delete</i>, <i>Cancel</i> and <i>Help</i> buttons is displayed, asking, <i>Are you sure you want to delete this view?</i>
+</li>
+<li>Report errors with the first title words "Tools-Options-Views-Browse Delete"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Delete button enabled with factory view</p>
+ <p name="bug">Tools-Options-Views-Browse Delete button does not remove selection</p>
+ <p name="bug">Tools-Options-Views-Browse Delete dialog not displayed</p>
+  </step>
+  <step name="1.6" link="Bug">When present, slide the slider bar up and down in the Views box.
+ <r>The list should scroll as expected.</r>
+ <p name="bug">Tools-Options-Views-Browse Slider bar problem</p>
+  </step>
+
+</case>
+
+<case id="tlvbrChn" num="2" order="any">
+
+  <title tag="tlvbrChn">Changing settings</title>
+  <context>
+<p>While the Views tab is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Select a field from the Hidden Fields list box and click Show &gt;&gt; or press &lt;Alt&gt;&lt;S&gt;.
+<r>
+<ul>
+<li>The selected field is removed from the Hidden Fields list box</li>
+   <li>The field is added above the current selection in the Displayed Fields list box</li>
+   <li>If there is no current selection, it should be added to the top</li>
+   <li>If OK is pressed, the field is now displayed in Browse view.</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Show button not working correctly</p>
+</step>
+
+<step name="2.2" link="Bug">Select a field from the Displayed Fields list box and click Hide &lt;&lt; or press &lt;Alt&gt;&lt;H&gt;.
+<r>
+<ul>
+<li>The selected field is removed from the Displayed Fields list box</li>
+   <li>The field is added to the Hidden Fields list box and put in alphabetical order</li>
+   <li>If OK is pressed, the field is no longer displayed in Browse view.</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Hide button not working correctly</p>
+</step>
+
+
+
+  <step name="2.3" link="Bug">Select a field in Displayed Fields and click Move Up or press &lt;Alt&gt;&lt;U&gt;.
+ <r>
+<ul>
+<li>The field moves up one place</li>
+<li>The displaced field moves down</li>
+<li>In the Browse view the column order of the fields reflects these changes</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Move Up bungled in field list</p>
+ <p name="bug">Tools-Options-Views-Browse Move Up has unexpected effect in Browse view</p>
+  </step>
+
+<step name="2.4" link="Bug">Select a field in Displayed Fields and click Move Down or press &lt;Alt&gt;&lt;N&gt;.
+ <r>
+<ul>
+<li>The field moves down one place</li>
+<li>The displaced field moves up</li>
+<li>In the Browse view the column order of the fields reflects these changes</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Move Down bungled in field list</p>
+ <p name="bug">Tools-Options-Views-Browse Move Down has unexpected effect in DE view</p>
+  </step>
+
+  <step name="2.5" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;M&gt; to test the Modify button.
+ <r>
+<ul>
+<li>Brings up a settings dialog for each field</li>
+<li>Settings Dialogs correspond to the selected field type</li>
+<li>Report errors with the first title words "Tools-Options-Views-Browse Modify"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-Browse Modify settings dialog not launched</p>
+ <p name="bug">Tools-Options-Views-Browse Modify settings dialog same for all field types</p>
+  </step>
+
+
+<step name="2.6" link="Bug">Double-click on a field in the list.
+<r>The Modify Field Settings dialog for Text fields is displayed</r>
+<p name="bug">Tools-Options-Views-Browse no Modify action via double click</p>
+</step>
+
+
+<step name="2.7" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;I&gt; to test the Ignore Hierarchy check box.
+<r>This causes the view to "flatten" the hierarchy so that subentries and main entries are treated the same. This option turns off the ability to expand or collapse hierarchy since this would be meaningless in a flattened view. (Thus it hides the column containing the expand/collapse plus/minus icons.) The default is that this is not checked</r>
+<p name="bug">Tools-Options-Views-Browse Ignore Hierarchy check box not working</p>
+</step>
+
+<step name="2.8" link="Bug">Use the <link uri="../StdCtrls/RadioBtn.xml">Radio Button Tests</link> to test the All lines (shortcut &lt;Alt&gt;&lt;L&gt;) and Show Only (shortcut &lt;Alt&gt;&lt;W&gt;) radio controls.
+<r>
+<ul>
+<li>The Browse View should use the selected setting to display each entry (or subentry).</li>
+   <li>If All is selected, the Browse view should use as many lines as necessary.</li>
+   <li>Otherwise, the Browse view should use up to the number of lines specified.</li>
+   <li>The default value is five lines.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Views-Browse Lines per entry radio settings not working</p>
+</step>
+
+<step name="2.9" link="Bug">Use the <link uri="../StdCtrls/SpinCtrl.xml">Spin Control Tests</link> and <link uri="../StdCtrls/TextBox.xml">Text Box Tests</link> to test the adjusting of the number of lines to show.
+<r>
+<ul>
+<li>The range for the number of lines to show is 1 to 100</li>
+   <li>The Browse View should display up to but no more than the number of specified lines.</li>
+   <li>If All lines is selected, the text box and spin control to adjust the number of lines should be disabled.</li>
+</ul> </r>
+<p name="bug">Tools-Options-Views-Browse spin control for number of lines not working</p>
+<p name="bug">Tools-Options-Views-Browse number of lines text box not working correctly</p>
+<p name="bug">Tools-Options-Views-Browse number of lines setting not displayed properly in Browse view</p>
+</step>
+</case>
+
+<case id="tlvbrMtfs" num="3" order="any">
+  <title tag="tlvbrMtfs">Modify Text Field Settings</title>
+  <context>
+<p>When the Modify Field Settings dialog for text fields is displayed</p>
+</context>
+
+<step name="3.1" link="Bug">Compare the overall appearance of the Modify Text Field Settings dialog with <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html#TheBrowseTab" type="doc">the specifications</link>.
+ <r>The dialog must conform to the specs in appearance. Report any errors with the words "Tools-Options-Views-Browse" in the title of the report.</r>
+  <p name="bug">Tools-Options-Views-Browse Modify Text Field Settings appearance is incorrect</p>
+  </step>
+
+
+  <step name="3.2" link="Bug">Use <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test the basic functionality of the Modify Text Field Settings dialog.
+  <r>Report any errors with the words "Tools-Options-Views-Browse" in the report</r>
+ <p name="bug">Tools-Options-Views-Browse Modify Text Field dialog not working</p>
+  </step>
+
+  <step name="3.3" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo Box Test</link> to test the Character style combo box (shortcut &lt;Alt&gt;&lt;C&gt;). Select a value for one of the text fields and click OK.
+  <r>
+<ul>
+<li>The Combo box shows a list of all the possible character styles that can be applied.</li>
+	 <li>The setting is applied to the text when the Browse view is displayed.</li>
+</ul>
+</r>
+  <p name="bug">Tools-Options-Views-Browse Character style combo box not working</p>
+  </step>
+
+  <step name="3.4" link="Bug">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Modify Styles button (shortcut &lt;Alt&gt;&lt;D&gt;).
+  <r>
+<ul>
+<li>The Style dialog is opened</li>
+	  <li>If a character style was selected in the Modify settings combo box, it is selected in the Style dialog.</li>
+	  <li>If a new character style is selected in the Style dialog, when Apply is pressed it will be the new style in the Modify settings combo box.</li>
+   </ul>
+  </r>
+  <p name="bug">Tools-Options-Views-Browse Modify Styles button not working</p>
+  <p name="bug">Tools-Options-Views-Browse Styles dialog not updating Modify dialog correctly</p>
+  </step>
+
+</case>
+
+<case id="tlvbrMrfs" num="4" order="any">
+  <title tag="tlvbrMrfs">Modify Reference Field Settings</title>
+  <context>
+<p>When the Modify Field Settings dialog for reference fields is displayed</p>
+</context>
+
+  <step name="4.1" link="Bug">Compare the overall appearance of the Modify Reference Field Settings dialog with <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html#TheBrowseTab" type="doc">the specifications</link>.
+ <r>The dialog must conform to the specs in appearance. Report any errors with the words "Tools-Options-Views-Browse" in the title of the report.</r>
+  <p name="bug">Tools-Options-Views-Browse Modify Reference Field Settings appearance is incorrect</p>
+  </step>
+
+  <step name="4.2" link="Bug">Use <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test the basic functionality of the Modify Reference Field Settings dialog.
+  <r>Report any errors with the words "Tools-Options-Views-Browse" in the report</r>
+  <p name="bug">Tools-Options-Views-Browse Modify Reference Field dialog not working</p>
+  </step>
+
+  <step name="4.3" link="Bug">   Use the <link uri="../StdCtrls/ListBox.xml">List/Combo Box Test</link> to test the Character style combo box (shortcut &lt;Alt&gt;&lt;C&gt;). Select a value for one of the text fields and click OK.
+  <r>
+<ul>
+<li>The Combo box shows a list of all the possible character styles that can be applied.</li>
+	 <li>The setting is applied to the text when the Browse view is displayed.</li>
+</ul>
+</r>
+  <p name="bug">Tools-Options-Views-Browse Character style combo box not working</p>
+  </step>
+
+  <step name="4.4" link="Bug">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Modify Styles button (shortcut   &lt;Alt&gt;&lt;D&gt;).
+  <r>
+<ul>
+<li>The Style dialog is opened</li>
+	  <li>If a character style was selected in the Modify settings combo box, it is selected in the Style dialog.</li>
+	  <li>If a new character style is selected in the Style dialog, when Apply is pressed it will be the new style in the Modify settings combo box.</li>
+   </ul>
+  </r>
+  <p name="bug">Tools-Options-Views-Browse Modify Styles button not working</p>
+  <p name="bug">Tools-Options-Views-Browse Styles dialog not updating Modify dialog correctly</p>
+  </step>
+
+  <step name="4.5" link="Bug">Use <link uri="../StdCtrls/CheckBox.xml">Check Box Tests</link> to test the Show Abbreviation, Show Name, and Show Hierarchy check boxes.
+  <r>
+<ul>
+<li>Either Name or Abbreviation must be checked at all times.</li>
+		 <li>When a box is checked or unchecked, the Preview box to the right should be updated.</li>
+		 <li>The Browse view should be displayed according to the new settings.</li>
+</ul>
+</r>
+  <p name="bug">Tools-Options-Views-Browse Show check boxes not working</p>
+  <p name="bug">Tools-Options-Views-Browse Show Name and Abbreviation both allowed to be unchecked</p>
+  </step>
+
+</case>
+
+
+
+ <update date="Jun-18-02" author="RussD">Test script created.</update>
+
+</test>

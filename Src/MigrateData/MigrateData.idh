@@ -1,0 +1,67 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: MigrateData.idh
+Responsibility: Alistair Imrie
+Last reviewed: never
+
+	Defines "MigrateData" interface used in upgrading data from an older to a newer version of
+	FieldWorks.
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+/***********************************************************************************************
+	Interface MigrateData
+
+	This interface enables a database to be upgraded from one version to another.
+
+	@b{Notes}
+	None.
+
+	@h3{Restrictions}
+	None.
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+
+	@h3{How to obtain an instance}
+	Use the CreateCommand method on the OleDbEncap object.
+
+	@h3{Hungarian: md}
+***********************************************************************************************/
+DeclareInterface(MigrateData, Unknown, 7BF2BC32-A603-4ba1-AC1F-B59D9F5FED8B)
+{
+	// Alters a database to the desired version.
+	// It MUST be a database on the current computer in the standard FW data directory
+	// (that is, \Data under the current FWROOT).
+	// It MUST not be in use in any way. (Release any IOleDbEncap pointers before calling.)
+	//
+	// If migration fails, then a temporary backup that Migrate makes will be restored, in case
+	// the database was wrecked.
+	// @param bstrDbName The database name.
+	// @param nDestVersion Required version number.
+	HRESULT Migrate(
+		[in] BSTR bstrDbName,
+		[in] int nDestVersion,
+		[in] IStream* pfist);
+};
+
+
+
+/***********************************************************************************************
+	CoClass definitions.
+***********************************************************************************************/
+
+#ifndef NO_COCLASSES
+
+DeclareCoClass(MigrateData, 461989B4-CA92-4eab-8CAD-ADB28C3B4D10)
+{
+	interface IMigrateData;
+};
+
+#endif // !NO_COCLASSES

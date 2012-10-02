@@ -1,0 +1,21 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Starting\InstallApp.xml">
+ <title tag="sttIslApp">How to install a FieldWorks application</title>
+ <index>
+  <li>FW application installation</li>
+  <li>install a FW application</li>
+ </index>
+ <prerequisites>
+  <p>Before you can install a FieldWorks application, you will need to:</p>
+  <ul>
+   <li>Download the FieldWorks application from the <link uri="..\Starting\dldApp.xml" type="module">SIL Intranet</link>.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps to install a FieldWorks application:</p>
+  <step>Double click the "setup.exe" file you downloaded. It is a self-extracting compressed file.</step>
+  <step>Let the installation program lead you through the installation. You will need to choose a location for the program.<p>A subfolder of the "Program Files" system folder is recommended, the installation program will create it for you.</p></step>
+  <step>If this is the first time you have installed a FieldWorks application, install the MSDE server software if prompted (this may install automatically). Most FieldWorks software requires it. Presently, WorldPad does not.</step>
+  <step>To launch the FieldWorks application, double click the application icon that the installation program put on your desktop.</step>
+ </steps>
+</task>

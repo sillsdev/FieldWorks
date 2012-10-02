@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+   <!-- Open Sena 3, then time reopening the Thai database to Lexicon Edit -->
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+	<on-application run = "yes" args = "-db $projectName" close = "no" on-fail = "assert">
+
+	   <click log="all" select="menubar/file/open"/>
+	   <model select="open-project">
+		 <on-dialog title="Open Project">
+		   <var id="projPath" select="choose/list" add="Thai"/>
+		   <click path="$projPath"/>
+		   <click select="open"/>
+		 </on-dialog>
+	   </model>
+
+	   <var id="FlexSig" set=" - FieldWorks Language Explorer"/>
+
+	   <do-once until="60000" waiting-for="Thai$FlexSig">
+		 <on-dialog until="500" title="Twiddle Thumbs" on-fail="skip">
+			<insert>~</insert> <!-- you never know -->
+		 </on-dialog>
+		</do-once>
+
+	</on-application>
+
+	<var id="projectName" set="Thai"/>
+	<sound frequency = "700" duration = "500"/>
+	<monitor-time log="time" expect="999999999" desc="Thai db, Reopen">
+	   <on-application args="-db $projectName" run="yes" close="no" on-fail="assert">
+		 <var id="sbLxEdit" select="sidebar/list" add="Lexicon Edit"/>
+		 <glimpse id="lxEditLabel" path="$sbLxEdit" prop="selected"/>
+	   </on-application>
+	</monitor-time>
+
+</accil>

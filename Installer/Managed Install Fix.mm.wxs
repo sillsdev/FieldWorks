@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Module Id="InstallUtil_config_file" Guid="4A8C8BD1-6242-4D60-952F-F04A5A1DDFA7" Language="0" Version="1.0">
+		<Package Id="????????-????-????-????-????????????" Keywords="MergeModule, MSI, InstallUtil, Config" Description="Managed Installer Fix" Manufacturer="SIL International" Comments="Provides the .config file needed to run managed installs relying on Microsoft's InstallUtilLib.dll." InstallerVersion="110" Platforms="Intel" Languages="0" Compressed="yes" SummaryCodepage="1252" />
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="INSTALLDIR" Name="APPLIC~1" LongName="Application">
+				<Component Id="InstallUtilLib.dll.config" Guid="F3C5869C-217A-480B-BB92-BD62AC62EEC4">
+					<File Id="InstallUtilLib.dll.config" Name="INSTAL~1.CON" LongName="InstallUtilLib.dll.config" Source="Installer\InstallUtilLib.dll.config" KeyPath="yes" />
+				</Component>
+			</Directory>
+		</Directory>
+		<IgnoreModularization Type="Property" Name="VSDFxConfigFile"/>
+		<CustomAction Id="Set_VSDFxConfigFile" Return="check" Property="VSDFxConfigFile" Value="[#InstallUtilLib.dll.config]" />
+		<InstallExecuteSequence>
+			<Custom Action="Set_VSDFxConfigFile" After="InstallInitialize" />
+		</InstallExecuteSequence>
+	</Module>
+</Wix>

@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="EcFeaturesFragment">
+		<Feature Id="Always" Title="Always" Display="hidden" Level="1" AllowAdvertise="no">
+			<ComponentRef Id="RemoveFile" />
+			<MergeRef Id="ScHelp"/>
+	  <MergeRef Id="EcFolderACLs"/>
+	</Feature>
+		<Feature Id="SILConverters_client_apps" Title="SIL Converters' client applications" Description="Expand this node to select or deselect individual client applications" Level="3" AllowAdvertise="no">
+			<Feature Id="Bulk_SFM_Converter" Title="Bulk SFM Converter" Description="The Bulk SFM Converter allows you to convert one or more SFM documents (e.g. Toolbox lexicon or text files) using a converter in the system repository (TECkit, CC, etc)." Level="3" AllowAdvertise="no">
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="SFM_Converter"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="MFC"/>
+				<MergeRef Id="MFC_Policy"/>
+				<MergeRef Id="CRT"/>
+				<MergeRef Id="CRT_Policy"/>
+			</Feature>
+			<Feature Id="Clipboard_EncConverter" Title="Clipboard Encoding Converter " Description="The Clipboard EncConverter allows you to convert data on the clipboard with one of the converters in the system repository (e.g. TECkit, CC, etc)." Display="expand" Level="3" AllowAdvertise="no">
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="Clipboard_EncConverter"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="MFC"/>
+				<MergeRef Id="MFC_Policy"/>
+				<MergeRef Id="CRT"/>
+				<MergeRef Id="CRT_Policy"/>
+			</Feature>
+			<Feature Id="XML_Data_Converter" Title="XML Data Converter" Description="An XML document editor which allows you to convert XML data attributes and elements using a converter from the system repository." Level="3" AllowAdvertise="no">
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="XmlConverters"/>
+				<MergeRef Id="MFC"/>
+				<MergeRef Id="MFC_Policy"/>
+				<MergeRef Id="CRT"/>
+				<MergeRef Id="CRT_Policy"/>
+			</Feature>
+			<Feature Id="Word_DOTs" Title="Word DOTs" Description="Expand this node to select or deselect individual document templates for Microsoft Word" Level="3" AllowAdvertise="no">
+				<Feature Id="DataConversion" Title="Data Conversion Macro" Description="Install this component to use SIL Converters in Microsoft Word." Display="expand" Level="3" AllowAdvertise="no">
+					<MergeRef Id="Managed_Install_Fix"/>
+					<MergeRef Id="DcmDot"/>
+					<MergeRef Id="EncConverters_Core_GAC"/>
+					<MergeRef Id="SetPath"/>
+					<MergeRef Id="MFC"/>
+					<MergeRef Id="MFC_Policy"/>
+					<MergeRef Id="CRT"/>
+					<MergeRef Id="CRT_Policy"/>
+					<MergeRef Id="MS_KB908002_Fix"/>
+				</Feature>
+				<Feature Id="SpellFixer" Title="Spelling Fixer" Description="An SIL Converters client application for fixing spelling errors in Microsoft Word." Level="3" AllowAdvertise="no">
+					<MergeRef Id="Managed_Install_Fix"/>
+					<MergeRef Id="EncConverters_Core_GAC"/>
+					<MergeRef Id="SpellFixerEc"/>
+					<MergeRef Id="SetPath"/>
+					<MergeRef Id="MFC"/>
+					<MergeRef Id="MFC_Policy"/>
+					<MergeRef Id="CRT"/>
+					<MergeRef Id="CRT_Policy"/>
+					<MergeRef Id="MS_KB908002_Fix"/>
+				</Feature>
+				<Feature Id="ConsistencySpellingChecker" Title="Consistency Spelling Checker" Description="A Microsoft Word document template that provides utilities for checking the consistency of spelling for any language." Display="expand" Level="3" AllowAdvertise="no">
+					<MergeRef Id="Managed_Install_Fix"/>
+					<MergeRef Id="CscDot"/>
+					<MergeRef Id="EncConverters_Core_GAC"/>
+					<MergeRef Id="SetPath"/>
+					<MergeRef Id="MFC"/>
+					<MergeRef Id="MFC_Policy"/>
+					<MergeRef Id="CRT"/>
+					<MergeRef Id="CRT_Policy"/>
+					<MergeRef Id="Jump2TbxMergeModule"/>
+					<MergeRef Id="MS_KB908002_Fix"/>
+				</Feature>
+			</Feature>
+			<Feature Id="Bulk_Word_Document_Converter" Title="Bulk Word Document Converter" Description="The Bulk Word document converter allows you to convert one or more Word documents using a converter in the system repository. Requires Word 2003 or 2007." Display="expand" Level="4" AllowAdvertise="no">
+				<Condition Level="3"><![CDATA[COMPONENTEXISTS_WORD_03_PIA OR COMPONENTEXISTS_WORD_07_PIA]]></Condition>
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="SILConvertersForWord"/>
+			</Feature>
+			<Feature Id="SILConverters_for_Office" Title="SILConverters for Office" Description="Provides SILConverter support in Publisher, Excel, and Access (as well as a few developer helps in Word). Requires Office 2003 or 2007." Level="0" AllowAdvertise="no">
+				<Condition Level="3"><![CDATA[(COMPONENTEXISTS_WORD_03_PIA OR COMPONENTEXISTS_WORD_07_PIA) OR (COMPONENTEXISTS_EXCEL_03_PIA OR COMPONENTEXISTS_EXCEL_07_PIA) OR (ACCESS_2003_PIA_EXISTS OR ACCESS_2007_PIA_EXISTS) OR (PUBLISHER_2003_PIA_EXISTS OR PUBLISHER_2007_PIA_EXISTS)]]></Condition>
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="SCOffice"/>
+				<MergeRef Id="ICU"/>
+		<MergeRef Id="ICUECHelp"/>
+			</Feature>
+			<Feature Id="Discourse_Chart_Builder" Title="Discourse Chart Builder" Description="The Discourse Chart Builder is a tool to help you prepare discourse analysis charts to study discourse features of vernacular language texts. It depends on AdaptIt for glossing." Display="expand" Level="3" AllowAdvertise="no">
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="DChartHelper"/>
+			</Feature>
+			<Feature Id="Adapt_It_to_Unicode_Converter" Title="Adapt It to Unicode Converter" Description="Utility to convert legacy Adapt It projects to Unicode." Display="expand" Level="4" AllowAdvertise="no">
+				<Condition Level="3"><![CDATA[SIL_ADAPTIT_LEGACY_FOUND AND NOT REMOVE]]></Condition>
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="AdaptIt2Unicode"/>
+			</Feature>
+		</Feature>
+		<Feature Id="Transduction_Engines" Title="Transduction Engines" Description="Expand this node to select or deselect individual transduction engines" Level="3" AllowAdvertise="no">
+			<Feature Id="TECkit_DLLs" Title="TECkit" Description="Contains the TECkit conversion and compiling engines (DLLs). Select this component if you intend to use TECkit for encoding conversion or other transduction processing." Display="expand" Level="3" AllowAdvertise="no">
+				<MergeRef Id="TECkit_DLLs"/>
+				<MergeRef Id="SetPath"/>
+			</Feature>
+			<Feature Id="CC" Title="Consistent Changes (CC)" Description="Contains the Consistent Changes DLL (Cc32.dll). Select this component if you intend to use CC for text transduction processes." Display="expand" Level="3" AllowAdvertise="no">
+				<MergeRef Id="CC_DLL"/>
+				<MergeRef Id="SetPath"/>
+			</Feature>
+			<Feature Id="ICU_4.0" Title="International Components for Unicode 4.0" Description="Contains the ICU program files for text transliteration, encoding conversion, and collation." Level="3" AllowAdvertise="no">
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="MFC"/>
+				<MergeRef Id="MFC_Policy"/>
+				<MergeRef Id="CRT"/>
+				<MergeRef Id="CRT_Policy"/>
+				<MergeRef Id="ICU"/>
+		<MergeRef Id="ICUECHelp"/>
+	  </Feature>
+			<Feature Id="Perl_5.10.1" Title="Perl Expressions 5.10.1" Description="Perl plug-in to use Perl expressions for text transduction. Requires a separately-installed Perl v5.10.1 distribution (tested with ActiveState (R) ActivePerl v5.10.1.1006)" Display="expand" Level="4" AllowAdvertise="no">
+				<Condition Level="3"><![CDATA[SIL_PERL_FOUND AND NOT REMOVE]]></Condition>
+				<MergeRef Id="PerlEC"/>
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="MFC"/>
+				<MergeRef Id="MFC_Policy"/>
+				<MergeRef Id="CRT"/>
+				<MergeRef Id="CRT_Policy"/>
+			</Feature>
+			<Feature Id="Python_2.5" Title="Python Script Functions 2.5" Description="Python plug-in to use Python functions for text transduction. Requires a separately-installed distribution of Python v2.5.x (tested with ActivePython (R) v2.5.4.4)" Level="4" AllowAdvertise="no">
+				<Condition Level="3"><![CDATA[SIL_PYTHON_FOUND AND NOT REMOVE]]></Condition>
+				<MergeRef Id="PythonEC"/>
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="MFC"/>
+				<MergeRef Id="MFC_Policy"/>
+				<MergeRef Id="CRT"/>
+				<MergeRef Id="CRT_Policy"/>
+			</Feature>
+			<Feature Id="Adapt_It" Title="Adapt It" Description="Contains AdaptIt knowledge base-related transducers (i.e. the Lookup converter and the target word guesser)." Display="expand" Level="4" AllowAdvertise="no">
+				<Condition Level="3"><![CDATA[(SIL_ADAPTIT_LEGACY_FOUND OR SIL_ADAPTIT_UNICODE_FOUND) AND NOT REMOVE]]></Condition>
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="AIGuesser"/>
+			</Feature>
+		</Feature>
+		<Feature Id="Maps_and_Tables" Title="Maps and Tables" Description="Select sub-items to place individual converter sets on your machine. Note: a utility will run after installation, with which you can install the converters in the system repository." Level="3" AllowAdvertise="no">
+			<MergeRef Id="Managed_Install_Fix"/>
+			<MergeRef Id="SetupSCOptionsInstaller"/>
+			<MergeRef Id="EncConverters_Core_GAC"/>
+			<MergeRef Id="MFC"/>
+			<MergeRef Id="MFC_Policy"/>
+			<MergeRef Id="CRT"/>
+			<MergeRef Id="CRT_Policy"/>
+			<Feature Id="BasicConverters" Title="Basic Converters" Description="Converters used in SIL (e.g. SIL IPA 93&lt;&gt;UNICODE, UTF8&lt;&gt;UTF16, null, Windows-SymbolEncodedFont, etc)" Level="3" AllowAdvertise="no">
+				<MergeRef Id="BasicConverters"/>
+			</Feature>
+			<Feature Id="ICUTransliterators" Title="ICU Transliterators" Description="ICU Transliterators to Latin (e.g. &quot;Devanagari to Latin&quot;, &quot;Greek to Latin&quot;, &quot;Hebrew to Latin&quot;, etc)" Display="expand" Level="3" AllowAdvertise="no">
+				<MergeRef Id="ICUTransliterators"/>
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="ICU"/>
+		<MergeRef Id="ICUECHelp"/>
+	  </Feature>
+			<Feature Id="FindPhone2IPA" Title="FindPhone to IPA converters" Description="Converters related to FindPhone encoding." Level="4" AllowAdvertise="no">
+				<MergeRef Id="FindPhone2IPA"/>
+			</Feature>
+			<Feature Id="SAGIndic" Title="SAG (Indic)" Description="Entity-specific converters for SAG (e.g. Annapurna&lt;&gt;UNICODE)" Display="expand" Level="4" AllowAdvertise="no">
+				<MergeRef Id="SAGIndic"/>
+			</Feature>
+			<Feature Id="Cameroon" Title="Cameroon" Description="Entity-specific converters for Cameroon (e.g. Cameroon&lt;&gt;UNICODE)" Level="4" AllowAdvertise="no">
+				<MergeRef Id="Cameroon"/>
+			</Feature>
+			<Feature Id="Central_Africa_converters" Title="Central Africa converters" Description="The Central Africa converters package provides encoding converters for the angb4 font and MarcelNgbaka encoding." Display="expand" Level="4" AllowAdvertise="no">
+				<MergeRef Id="Central_Africa"/>
+			</Feature>
+			<Feature Id="East_Africa_converters" Title="East Africa converters" Description="The East Africa converters package provides encoding converters for the Bantu Und and Times African fonts." Level="4" AllowAdvertise="no">
+				<MergeRef Id="East_Africa"/>
+			</Feature>
+			<Feature Id="West_Africa_Converters" Title="West Africa Converters" Description="The West Africa converters package provides encoding converters for numerous West African language encodings (e.g. Mali Standard and Ghana fonts)." Display="expand" Level="4" AllowAdvertise="no">
+				<MergeRef Id="TECkit_DLLs"/>
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="West_Africa"/>
+			</Feature>
+			<Feature Id="Eastern_Congo_Group" Title="Eastern Congo Group" Description="Area-specific converters for Eastern Congo Group" Level="4" AllowAdvertise="no">
+				<MergeRef Id="Eastern_Congo_Group"/>
+				<MergeRef Id="TECkit_DLLs"/>
+				<MergeRef Id="SetPath"/>
+			</Feature>
+			<Feature Id="NLCI_India" Title="NLCI (India)" Description="NLCI's TECkit Unicode encoding converters for Legacy Indic encodings (WinScript, CDAC, ISFOC)" Display="expand" Level="4" AllowAdvertise="no">
+				<MergeRef Id="NLCI_India"/>
+				<MergeRef Id="TECkit_DLLs"/>
+				<MergeRef Id="SetPath"/>
+			</Feature>
+			<Feature Id="Hebrew" Title="Hebrew" Description="Converters related to SIL Hebrew encodings." Level="4" AllowAdvertise="no">
+				<MergeRef Id="Hebrew"/>
+			</Feature>
+			<Feature Id="Indic_converters" Title="Indic converters" Description="The Indic converters package provides several additional Indic-specific TECkit maps for KrutiDev (10/11/290), Shusha, Kantipur and Preeti fonts." Display="expand" Level="4" AllowAdvertise="no">
+				<MergeRef Id="IndicConverters"/>
+			</Feature>
+			<Feature Id="Papua_New_Guinea_converters" Title="Papua New Guinea converters" Description="The Papua New Guinea converters package provides an PNG-specific converters for PNG SILDoulos, PNG SILCharis, etc, fonts." Level="4" AllowAdvertise="no">
+				<MergeRef Id="PNG"/>
+			</Feature>
+		</Feature>
+		<Feature Id="TECkit" Title="Additional TECkit applications" Description="Contains the program files for developing and using TECkit map files for encoding conversion and other text processing applications." Level="4" AllowAdvertise="no">
+			<Feature Id="TECkitMapUEditor" Title="TECkit Map Unicode Editor" Description="The TECkit Map Unicode Editor assists in the development of encoding conversion and transliteration TECkit maps." Level="4" AllowAdvertise="no">
+				<MergeRef Id="Managed_Install_Fix"/>
+				<MergeRef Id="EncConverters_Core_GAC"/>
+				<MergeRef Id="TECkit_DLLs"/>
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="TECkitMapUEditor"/>
+				<MergeRef Id="MFC"/>
+				<MergeRef Id="MFC_Policy"/>
+				<MergeRef Id="CRT"/>
+				<MergeRef Id="CRT_Policy"/>
+			</Feature>
+			<Feature Id="TECkit_Documents" Title="TECkit Documents" Description="Contains the documentation for the TECkit mapping table syntax and instructions on using the executables from the TECkit Exes package." Level="4" AllowAdvertise="no">
+				<MergeRef Id="TECkit_DOCs"/>
+			</Feature>
+			<Feature Id="TECkit_EXEs" Title="TECkit Utilities" Description="Contains the executables from the TECkit package (i.e. DropTEC.exe, SFConv.exe, TECkit Mapping Editor.exe, TECkit_Compile.exe, and TxtConv.exe)." Display="expand" Level="4" AllowAdvertise="no">
+				<MergeRef Id="TECkit_DLLs"/>
+				<MergeRef Id="SetPath"/>
+				<MergeRef Id="TECkit_EXEs"/>
+			</Feature>
+		</Feature>
+	</Fragment>
+</Wix>

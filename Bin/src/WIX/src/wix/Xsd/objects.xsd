@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'
+	targetNamespace='http://schemas.microsoft.com/wix/2003/04/objects'
+			  xmlns='http://schemas.microsoft.com/wix/2003/04/objects'>
+	<xs:annotation>
+		<xs:documentation>
+			Copyright (c) Microsoft Corporation.  All rights reserved.
+
+			The use and distribution terms for this software are covered by the
+			Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+			which can be found in the file CPL.TXT at the root of this distribution.
+			By using this software in any fashion, you are agreeing to be bound by
+			the terms of this license.
+
+			You must not remove this notice, or any other, from this software.
+
+			Schema for describing Windows Installer Xml Object files (.wixobj).
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name='wixObject'>
+		<xs:complexType>
+			<xs:sequence minOccurs='0' maxOccurs="unbounded">
+				<xs:element ref='section'/>
+			</xs:sequence>
+			<xs:attribute name='src' type='xs:string' use='required'>
+				<xs:annotation>
+					<xs:documentation>Original source file compiled to create this object file</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name='version' type='xs:string' use='required'>
+				<xs:annotation>
+					<xs:documentation>Version of WiX used to create this object file</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='section'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='reference' minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref='complexReference' minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref='featureBacklink' minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref='ignoreModularization' minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref='table' minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name='id' type='xs:string'>
+				<xs:annotation>
+					<xs:documentation>Identifier for section (optional for Fragments)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name='type' type='SectionType' use='required'>
+				<xs:annotation>
+					<xs:documentation>Type of section</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name='codepage' type='xs:integer' use='optional'>
+				<xs:annotation>
+					<xs:documentation>Codepage for output file, only valid on entry sections.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='reference'>
+		<xs:complexType>
+			<xs:attribute name='table' type='TableNameType' use='required'>
+				<xs:annotation>
+					<xs:documentation>Table referenced symbol should be found in</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name='symbol' type='xs:string' use='required'>
+				<xs:annotation>
+					<xs:documentation>Symbol identifier references</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='complexReference'>
+		<xs:complexType>
+			<xs:attribute name='parentType' type='ComplexReferenceSourceType' use='required'/>
+			<xs:attribute name='parent' type='xs:string' use='required'/>
+			<xs:attribute name='parentLanguage' type='xs:string'/>
+			<xs:attribute name='childType' type='ComplexReferenceTargetType' use='required'/>
+			<xs:attribute name='child' type='xs:string' use='required'/>
+			<xs:attribute name='childLanguage' type='xs:integer'>
+				<xs:annotation>
+					<xs:documentation>Deprecated.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name='primary' type='ObjectsYesNoType'/>
+			<xs:attribute name='merge' type='ObjectsYesNoType'/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='featureBacklink'>
+		<xs:complexType>
+			<xs:attribute name='type' type='TableNameType' use='required'/>
+			<xs:attribute name='targetSymbol' type='xs:string' use='required'/>
+			<xs:attribute name='component' type='xs:string' use='required'/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='ignoreModularization'>
+		<xs:complexType>
+			<xs:attribute name='name' type='xs:string' use='required'/>
+			<xs:attribute name='type' type='xs:string' use='required'/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='table'>
+		<xs:complexType>
+			<xs:sequence minOccurs='0' maxOccurs="unbounded">
+				<xs:element ref='tuple'/>
+			</xs:sequence>
+			<xs:attribute name='name' type='TableNameType' use='required'>
+				<xs:annotation>
+					<xs:documentation>Name of table in Windows Installer database</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='tuple'>
+		<xs:annotation>
+			<xs:documentation>Row in a table</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence maxOccurs="32">
+				<xs:element ref='field'/>
+			</xs:sequence>
+			<xs:attribute name='sectionId' type='xs:string'/>
+			<xs:attribute name='sourceLineNumber' type='xs:string'/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='field' type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Data for a particular field in a tuple</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+	<xs:simpleType name='SectionType'>
+		<xs:restriction base='xs:NMTOKEN'>
+			<xs:enumeration value='fragment'/>
+			<xs:enumeration value='module'/>
+			<xs:enumeration value='product'/>
+			<xs:enumeration value='patchCreation'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='ComplexReferenceSourceType'>
+		<xs:restriction base='xs:NMTOKEN'>
+			<xs:enumeration value='componentGroup'/>
+			<xs:enumeration value='feature'/>
+			<xs:enumeration value='module'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='ComplexReferenceTargetType'>
+		<xs:restriction base='xs:NMTOKEN'>
+			<xs:enumeration value='component'/>
+			<xs:enumeration value='componentGroup'/>
+			<xs:enumeration value='feature'/>
+			<xs:enumeration value='fragment'/>
+			<xs:enumeration value='module'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='TableNameType'>
+		<xs:restriction base='xs:string'>
+			<xs:minLength value='1'/>
+			<xs:maxLength value='64'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ObjectsYesNoType">
+		<xs:restriction base='xs:NMTOKEN'>
+			<xs:enumeration value="no"/>
+			<xs:enumeration value="yes"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

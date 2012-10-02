@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="style.css" type="text/css" rel="stylesheet" />
+<title>Visual Studio Package (votive)</title>
+</head>
+<body>
+<h1>Visual Studio Package (Votive)</h1>
+<p>
+Votive is the code name for the WiX Visual Studio package that allows you to easily create WiX projects, edit WiX files using IntelliSense, and
+compile/link your project.
+</p>
+<h2>Installation</h2>
+<p>
+To install the package you must run Votive.msi, which comes bundled with the WiX binaries and gets built as part of the WiX source.
+</p>
+<p>
+If you have the VSIP SDK installed, you can build the the debug version of Votive.msi, which will install Votive into the Experimental Hive of Visual Studio.
+This will allow your retail version of Visual Studio to continue to work as before (see the "Developing for Votive" topic for an explanation of the
+experimental hive).
+</p>
+<H2>Developing for Votive</H2>
+<p>
+If you want to contribute code to the Votive project or debug Votive, you must download and install the VSIP SDK, available at <a href="http://www.vsipdev.com/downloads/"
+target="_blank">http:&#47;/www.vsipdev.com/downloads/</a>. You will need the VSIP SDK 2003 and the VSIP SDK 2003 Extras, installed in that order. The SDK is fairly
+non-invasive and will create an "Experimental Hive" in the registry that will keep your retail version of Visual Studio 2003 unaffected.
+</p>
+<p>
+To start debugging Votive, set your breakpoints then just hit "F5" in the Wix.sln for Visual Studio. The custom build actions in the Votive project will set up
+and register Votive on the experimental hive, so running the Votive.msi is not required, nor suggested.
+</p>
+<h2>Getting Started</h2>
+<p>
+Rob Mensching has written an excellent <a href="http://msdn.microsoft.com/smartclient/default.aspx?pull=/library/en-us/dnwingen/html/wixsetup.asp" target="_blank"
+title="http://msdn.microsoft.com/smartclient/default.aspx?pull=/library/en-us/dnwingen/html/wixsetup.asp">MSDN article</a> on using Votive to get started in WiX.
+</p>
+
+</body>
+</html>

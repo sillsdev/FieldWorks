@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <!--The following components are the help files for the ICU transducers' configuration dialog
+			box and are maintained (mostly) by SEC. It is possible that these will want to retain the
+			same GUIDs from version to version of ICU (since the help files likely won't change much),
+			so they are being moved out of the main ICU merge module wix script. However, this merge
+			module totally depends on that other merge module (id=SILICU40) or this won't do anything.
+		  -->
+  <Module Id="SILICUECHELP40" Guid="3DAFE62A-D816-4d02-BDB5-8645ECE89BE4" Language="0" Version="4.0">
+		<Package Id="????????-????-????-????-????????????" Keywords="MergeModule, MSI, ICU EncConverters Help Files" Description="SIL's ICU 4.0 EncConverter Help Installation" Comments="Common installer module for SIL's version 4.0 of ICU (for EncConverters components--requires ICU040.msm also)" Manufacturer="SIL International" InstallerVersion="110" Platforms="Intel" Languages="0" Compressed="yes" SummaryCodepage="1252"/>
+	<Directory Id="TARGETDIR" Name="SourceDir">
+	  <Directory Id="CommonFilesFolder" Name="Common">
+		<Directory Id="SIL" Name="SIL">
+		  <Directory Id="Help" Name="Help">
+						<Component Id="IcuRegex" Guid="786CA242-4204-46B7-86D5-93ED456710B5">
+							<File Id="IcuRegex" Name="ICUREG~1.HTM" LongName="ICU Regular Expression Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box.htm"/>
+						</Component>
+						<Component Id="IcuTranslit" Guid="024219A1-29EB-4D20-BB9A-DB9E3C3F1743">
+							<File Id="IcuTranslit" Name="ICUTRA~1.HTM" LongName="ICU Transliterators Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box.htm"/>
+						</Component>
+						<Component Id="ICU_Converters_Plugin_About_box.htm" Guid="963A2D88-6CFE-4C91-8830-CD6F8A3872E8">
+							<File Id="ICU_Converters_Plugin_About_box.htm" Name="ICUCON~1.HTM" LongName="ICU Converters Plug-in About box.htm" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box.htm"/>
+						</Component>
+						<Directory Id="ICUConvPlug" Name="ICUCON~1" LongName="ICU Converters Plug-in About box_files">
+							<Component Id="image008.jpg" Guid="C3970194-5CAF-44A9-B59E-F7AD6CF3F84D">
+								<File Id="image008.jpg" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box_files\image008.jpg"/>
+							</Component>
+							<Component Id="image001.png" Guid="F166A049-8724-4EA5-80F0-12B55A48F4BF">
+								<File Id="image001.png" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box_files\image001.png"/>
+							</Component>
+							<Component Id="image003.png" Guid="C2DA1740-EDCF-49E2-8E62-C07AB42C476B">
+								<File Id="image003.png" Name="image003.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box_files\image003.png"/>
+							</Component>
+							<Component Id="image007.png" Guid="1C4C6530-7E4F-411E-BF80-F3AC653219A6">
+								<File Id="image007.png" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box_files\image007.png"/>
+							</Component>
+							<Component Id="image002.jpg" Guid="448BEBF5-5EE0-4474-B92C-CD3B3B22442F">
+								<File Id="image002.jpg" Name="image002.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box_files\image002.jpg"/>
+							</Component>
+							<Component Id="image004.jpg" Guid="DFF6B368-EF7B-405E-BC57-F25CA8D3B821">
+								<File Id="image004.jpg" Name="image004.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box_files\image004.jpg"/>
+							</Component>
+							<Component Id="filelist.xml" Guid="E6812F05-9BD4-4DBF-BD33-86E99A7B1A5E">
+								<File Id="filelist.xml" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Converters Plug-in About box_files\filelist.xml"/>
+							</Component>
+						</Directory>
+						<Directory Id="IcuRegexPlug" Name="ICUREG~1" LongName="ICU Regular Expression Plug-in About box_files">
+							<Component Id="image001.png2" Guid="7CC9F931-00BD-4435-9CFF-6F4ECE8E4E0F">
+								<File Id="image001.png2" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image001.png"/>
+							</Component>
+							<Component Id="image003.png3" Guid="83E883B5-CC93-4D96-98E7-4E70B4DF9EE6">
+								<File Id="image003.png3" Name="image003.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image003.png"/>
+							</Component>
+							<Component Id="image007.png4" Guid="B99B56F3-F6A1-45DD-88D6-17F68B9F3F1E">
+								<File Id="image007.png4" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image007.png"/>
+							</Component>
+							<Component Id="image010.jpg" Guid="9298901A-FC9D-435C-8232-8127F4D5D394">
+								<File Id="image010.jpg" Name="image010.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image010.jpg"/>
+							</Component>
+							<Component Id="image009.png" Guid="FA750475-9D17-4D00-9749-49DC0DCA061D">
+								<File Id="image009.png" Name="image009.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image009.png"/>
+							</Component>
+							<Component Id="image004.jpg5" Guid="162D6DE0-DEA3-421C-8268-9A9D46FE95D9">
+								<File Id="image004.jpg5" Name="image004.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image004.jpg"/>
+							</Component>
+							<Component Id="image005.jpg" Guid="4CA81998-23D3-4781-B6B9-BD655387B2D2">
+								<File Id="image005.jpg" Name="image005.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image005.jpg"/>
+							</Component>
+							<Component Id="filelist.xml6" Guid="461FD904-6AB9-41DC-AF23-77B2B42407B0">
+								<File Id="filelist.xml6" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\filelist.xml"/>
+							</Component>
+							<Component Id="image008.jpg7" Guid="EC22F5DD-CDF8-4CA1-A974-5FAB67FF0EA7">
+								<File Id="image008.jpg7" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Regular Expression Plug-in About box_files\image008.jpg"/>
+							</Component>
+						</Directory>
+						<Directory Id="ICUTranslitPlug" Name="ICUTRA~1" LongName="ICU Transliterators Plug-in About box_files">
+							<Component Id="image005.png" Guid="047DAC88-FA5E-4F1D-B3D2-9082E9B425BD">
+								<File Id="image005.png" Name="image005.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box_files\image005.png"/>
+							</Component>
+							<Component Id="image007.png8" Guid="792AEC54-BB6F-41C9-A95B-7831467ED598">
+								<File Id="image007.png8" Name="image007.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box_files\image007.png"/>
+							</Component>
+							<Component Id="image002.jpg9" Guid="2BA3A539-86F3-4FB6-AD40-B27DC887BDD6">
+								<File Id="image002.jpg9" Name="image002.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box_files\image002.jpg"/>
+							</Component>
+							<Component Id="filelist.xml10" Guid="7E5BC241-DE80-44EE-A97D-C92CA6EE3736">
+								<File Id="filelist.xml10" Name="filelist.xml" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box_files\filelist.xml"/>
+							</Component>
+							<Component Id="image006.jpg" Guid="AE177D23-BC43-4A32-9C00-073D89B29436">
+								<File Id="image006.jpg" Name="image006.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box_files\image006.jpg"/>
+							</Component>
+							<Component Id="image008.jpg11" Guid="6FDA1252-B704-4206-89C6-4E0D3D9263BE">
+								<File Id="image008.jpg11" Name="image008.jpg" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box_files\image008.jpg"/>
+							</Component>
+							<Component Id="image001.png12" Guid="E22250EC-9715-4778-813A-D25D05F13478">
+								<File Id="image001.png12" Name="image001.png" ReadOnly="yes" KeyPath="yes" Source="Lib\${Config}\Help\ICU Transliterators Plug-in About box_files\image001.png"/>
+							</Component>
+						</Directory>
+					</Directory>
+		  <!--End of ICU Help files-->
+				</Directory>
+			</Directory>
+			<Directory Id="ProgramMenuFolder" Name="Program">
+				<Directory Id="SIL_Converters" Name="SILCON~1" LongName="SIL Converters">
+					<Directory Id="SILConvHelp" Name="Help">
+						<Component Id="HelpShortcuts" Guid="1EA5CB2D-D255-4CAD-8538-971E59BE87E6" KeyPath="yes">
+							<Shortcut Id="ICUTranlitHelp" Directory="SILConvHelp" Name="ICUTRA~1" LongName="ICU Transliterators Help" Target="[#IcuTranslit]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+							<Shortcut Id="ICUConvHelp" Directory="SILConvHelp" Name="ICUCON~1" LongName="ICU Converters Help" Target="[#ICU_Converters_Plugin_About_box.htm]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+							<Shortcut Id="ICURegexHelp" Directory="SILConvHelp" Name="ICUREG~1" LongName="ICU Regular Expression Help" Target="[#IcuRegex]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Module>
+</Wix>

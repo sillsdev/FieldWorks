@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="RegistryFragment">
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="RegHyperLinks" Guid="0DC85CDD-05D7-44d7-8039-C0A123C50479">
+				<Registry Id="RegHyperLinksProtocol" Root="HKCR" Key="silfw" Name="URL Protocol" KeyPath="yes" />
+				<Registry Id="RegHyperLinksCmd" Root="HKCR" Key="silfw\shell\open\command" Type="string" Value='"[#FieldWorksLink.exe]" %1' />
+				<Registry Id="RegHyperLinksSilfw" Root="HKCR" Key="silfw" Type="string" Value="URL:SILFW Protocol" />
+			</Component>
+			<Component Id="RegCoreBuildDate" Guid="61A4A221-9E41-4E82-86F0-6D08C8E07ECB">
+				<Registry Id="RegCoreBuildDate" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\CoreInstallation" Type="string" KeyPath="yes" Value="[BUILD_DATE]" />
+			</Component>
+			<Component Id="RegDnCore" Guid="41476424-7574-447C-A7D0-C197D06CE4D4">
+				<Registry Id="RegDnCore" Root="HKLM" Key="Software\SIL\FieldWorks\CoreInstallation" Type="string" KeyPath="yes" Value="Data Notebook" Name="DN" />
+			</Component>
+			<Component Id="RegFlexCore" Guid="CC6C7335-F3DE-4DEB-97B1-3CF5CF370AA4">
+				<Registry Id="RegFlexCore" Root="HKLM" Key="Software\SIL\FieldWorks\CoreInstallation" Type="string" KeyPath="yes" Value="Lexical and Text Tools" Name="FLEX" />
+			</Component>
+			<Component Id="RegTeCore" Guid="8B4EF603-4357-4528-B2D8-7BD060C7ACDD">
+				<Registry Id="RegTeCore" Root="HKLM" Key="Software\SIL\FieldWorks\CoreInstallation" Type="string" KeyPath="yes" Value="Translation Editor" Name="TE" />
+			</Component>
+			<Component Id="RegTleCore" Guid="2DE8F3A8-B092-485F-A61C-0FD44C522641">
+				<Registry Id="RegTleCore" Root="HKLM" Key="Software\SIL\FieldWorks\CoreInstallation" Type="string" KeyPath="yes" Value="Topics List Editor" Name="TLE" />
+			</Component>
+			<Component Id="RegWpCore" Guid="3FDA4B12-A0E0-4A7D-A92D-AE1717605650">
+				<Registry Id="RegWpCore" Root="HKLM" Key="Software\SIL\FieldWorks\CoreInstallation" Type="string" KeyPath="yes" Value="WorldPad" Name="WP" />
+			</Component>
+			<Component Id="UnregFlex" Guid="9B1725D8-3E86-4E36-99CD-691694BE20A6">
+				<Registry Id="UnregFlex" Root="HKCU" Key="Software\Microsoft\Windows\ShellNoRoam\MUICache" Name="[#Flex.exe]" Action="remove" />
+			</Component>
+			<Component Id="RegLangPack" Guid="16598679-2160-4D31-BD95-A5340B4CF303">
+				<Registry Id="RegLangPack" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\LanguagePack" Type="integer" KeyPath="yes" Value="2" Name="Surrogate" />
+			</Component>
+			<Component Id="RegRootCodeDir" Guid="9BA5D882-A4B7-48F2-8842-8923A09FF7EC">
+				<Registry Id="RegRootCodeDir" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks" Type="string" Value="[INSTALLDIR]" Name="RootCodeDir" />
+			</Component>
+			<Component Id="RegRootDataDir" Guid="617F6C5B-EF6B-467B-A5E8-D6B8C14AB699">
+				<Registry Id="RegRootDataDir" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks" Type="string" Value="[AppDataSilFw]" Name="RootDataDir" />
+			</Component>
+			<Component Id="RegInitIcu" Guid="14F7AAAE-DF1D-42B5-8FB2-A68102F785E8">
+				<Registry Id="RegInitIcu" Root="HKLM" Key="SOFTWARE\SIL" Type="integer" Value="1" Name="InitIcu" />
+			</Component>
+			<Component Id="RegDbmtDb" Guid="67B45810-4888-4418-A967-FB0D2B84FB33">
+				<Registry Id="RegDbmtDb" Root="HKCU" Key="Software\Darrell Zook\dbmt\Databases" Type="string" KeyPath="yes" Value="Sena 3" Name=".\silfw" />
+			</Component>
+			<Component Id="RegDbmtServCt" Guid="CDB607A8-C6A6-4915-AB63-0E1596EDEA56">
+				<Registry Id="RegDbmtServCt" Root="HKCU" Key="Software\Darrell Zook\dbmt\LastServers" Type="integer" Value="10" Name="Count" />
+			</Component>
+			<Component Id="RegDbmtServer" Guid="E2094F61-191B-494D-BE31-F81F09F9F80B">
+				<Registry Id="RegDbmtServer" Root="HKCU" Key="Software\Darrell Zook\dbmt\LastServers" Type="string" Value=".\SILFW" Name="Server0" />
+			</Component>
+			<Component Id="RegInitSQL" Guid="CABC7469-7D82-40BC-A313-E0DC2A1A1B1B">
+				<Registry Id="RegInitSQL" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks" Type="integer" KeyPath="yes" Value="1" Name="InitMSDE" />
+			</Component>
+			<Component Id="RegDbDir" Guid="30989AA8-3BE8-48B0-BDDE-609C2C43D59C">
+				<Registry Id="RegDbDir" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks" Type="string" Value="[Data]" Name="DbDir" />
+			</Component>
+			<Component Id="RegLangUseLog" Guid="BA0C1F6D-D6B1-4C56-BD48-DBFE9EDCBC33">
+				<Registry Id="RegLangUseLog" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks" Type="string" KeyPath="yes" Value="N" Name="InstallLanguageUseLog" />
+			</Component>
+			<Component Id="RegLangUseLogFile" Guid="170B68B1-EBC2-401B-8911-ED85F988E304">
+				<Registry Id="RegLangUseLogFile" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks" Type="string" Value="[AppDataSilFw]Languages\InstallLanguage.log" Name="InstallLanguageLog" />
+			</Component>
+			<Component Id="RegScrChecks" Permanent="yes" Guid="E247921C-F51D-4f68-AA53-EF68599E2DF5">
+				<Condition><![CDATA[NOT SCR_CHECKS_REG_FOUND]]></Condition>
+				<Registry Id="RegScrChecks" Root="HKLM" Key="SOFTWARE\ScrChecks\1.0\Settings_Directory" Type="string" Value="C:\My Paratext Projects" />
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

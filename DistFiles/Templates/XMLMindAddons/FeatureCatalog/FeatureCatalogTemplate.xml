@@ -1,0 +1,3218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FeatureCatalog PUBLIC "-//XMLmind//DTD FeatureCatalog//EN"
+"file:///%SystemDrive%/Documents and Settings/%USERNAME%/Application Data/XMLmind/XMLEditor/addon/FeatureCatalog/FeatureCatalog.dtd">
+<!-- XMLMind XML Editor template file for Feature Catalog -->
+<FeatureCatalog afterSeparator="." complexNameFirst="yes" complexNameSeparator=":">
+<!--FieldWorks Language Explorer Feature Catalog content.-->
+<item id="tadjective" type="group" status="visible" posid="Adjective">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>adjective-related</Name>
+<Abbreviation>adjective</Abbreviation>
+<Description>Morphosyntactic features that are generally associated with adjectives and adjective phrases.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="fDeg" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>degree</Name>
+<Abbreviation>Deg</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vPositive" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>positive</Name>
+<Abbreviation>Positive</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vComp" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>comparative</Name>
+<Abbreviation>Comp</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSup" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>superlative</Name>
+<Abbreviation>Sup</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="cAdjAgr" type="complex" embed="tCommonAgr tCaseAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>adjective  agreement</Name>
+<Abbreviation>AdjAgr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="tarticle" type="group" status="visible" posid="Determiner">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>article-related</Name>
+<Abbreviation>article</Abbreviation>
+<Description>Morphosyntactic features that are generally associated with articles or determiners.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="cArtAgr" type="complex" embed="tCommonAgr tCaseAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>article agreement</Name>
+<Abbreviation>ArAgr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="fArtSubtype" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>subtype</Name>
+<Abbreviation>ArtSubtype</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vArtDem" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>demonstrative</Name>
+<Abbreviation>ArtDem</Abbreviation>
+<Description>A demonstrative article or determiner is a demonstrative that appears with a head noun in a noun phrase.  For example, the word that in the sentence I like that book. </Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+</item>
+<item id="tpronoun" type="group" status="visible" posid="Pronoun">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>pronoun-related</Name>
+<Abbreviation>pronoun</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="cProAgr" type="complex" embed="tPersonAgr tCommonAgr tCaseAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>pronoun agreement</Name>
+<Abbreviation>ProAgr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="fProSubtype" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>subtype</Name>
+<Abbreviation>ProSubtype</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vPoss" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>possessive</Name>
+<Abbreviation>Poss</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDem" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>demonstrative</Name>
+<Abbreviation>Dem</Abbreviation>
+<Description>A demonstrative pronoun is a demonstrative that stands alone in a noun phrase.  For example, the word that in the sentence I like that. </Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRefl" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>reflexive</Name>
+<Abbreviation>Refl</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRecip" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>reciprocal</Name>
+<Abbreviation>Recip</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+</item>
+<item id="tnoun" type="group" status="visible" posid="Noun">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>noun-related</Name>
+<Abbreviation>noun</Abbreviation>
+<Description>Morphosyntactic features that are generally associated with nouns and noun phrases.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="cNounAgr" type="complex" embed="tCommonAgr tCaseAgr " carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>noun agreement</Name>
+<Abbreviation>NounAgr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="fdefiniteness" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>definiteness</Name>
+<Abbreviation>definiteness</Abbreviation>
+<Description>Definiteness is a category concerned with the grammaticalization of identifiability and nonidentifiability of referents on the part of a speaker or addressee.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vDefIdent" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>definite identifiability</Name>
+<Abbreviation>DefIdent</Abbreviation>
+<Description>Definite identifiability is a kind of definiteness which indicates that an expression's referent(s) is in some way identifiable to both speaker and addressee.The referent is identifiable because of a shared knowledge or situation, including a previous mention of the referent.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:53</Citation>
+<Citation>Anderson, Stephen 1985:179</Citation>
+<Citation>Lyons 1968:276</Citation>
+<Citation>Mish et al. 1990:334</Citation>
+<Citation>Hawkins 1978:202</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vGenTerm" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>generic term</Name>
+<Abbreviation>GenTerm</Abbreviation>
+<Description>A generic term is a noun or noun phrase that refers to (1) a whole class, or (2) any member of a class as a representative of its class.</Description>
+<Citations>
+<Citation>Crystal 1985:136</Citation>
+<Citation>Mish et al. 1990:510</Citation>
+<Citation>Hawkins 1978:214-215</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vIndef" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>indefiniteness</Name>
+<Abbreviation>Indef</Abbreviation>
+<Description>Indefiniteness is a kind of definiteness indicating that the referent(s) of an expression are not presumed to be identifiable. The referent is not identifiable because of a lack of shared knowledge or situation, including no previous mention of the referent.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:98</Citation>
+<Citation>Crystal 1980:263</Citation>
+<Citation>Lyons 1968:276</Citation>
+<Citation>Mish et al. 1990:612</Citation>
+<Citation>Hawkins 1978:202</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNonSpec" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>nonspecificity</Name>
+<Abbreviation>NonSpec</Abbreviation>
+<Description>Nonspecificity is a kind of definiteness, expressed by an interpretation of or grammatical marking on a noun or noun phrase, indicating that the speaker presumably does not know the identity of the referent(s).</Description>
+<Citations>
+<Citation>Anderson, Stephen 1985:179</Citation>
+<Citation>Hawkins 1978:203-204</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSpec" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>specificity</Name>
+<Abbreviation>Spec</Abbreviation>
+<Description>Specificity is a kind of definiteness, expressed by the interpretation of or grammatical marking on a noun or noun phrase, indicating that the speaker presumably knows the identity of the referent(s).</Description>
+<Citations>
+<Citation>Anderson, Stephen 1985:179</Citation>
+<Citation>Hawkins 1978:203-204</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fSemanticRole" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>semantic role</Name>
+<Abbreviation>SemanticRole</Abbreviation>
+<Description>A semantic role is the underlying relationship that a participant has with the main verb in a clause.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vAccomp" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>accompaniment</Name>
+<Abbreviation>Accomp</Abbreviation>
+<Description>Accompaniment is the semantic role of a thing  that participates in close association with an agent, causer, or affected in an event.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAgt" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>agent</Name>
+<Abbreviation>Agt</Abbreviation>
+<Description>Agent is the semantic role of a person or thing who is the doer of an event.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBenefic" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>beneficiary</Name>
+<Abbreviation>Benefic</Abbreviation>
+<Description>A beneficiary is the semantic role of a referent which is advantaged or disadvantaged by an event.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vCauser" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>causer</Name>
+<Abbreviation>Causer</Abbreviation>
+<Description>Causer is the semantic role of the referent which instigates an event rather than actually doing it.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vCounterAgt" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>counter-agent</Name>
+<Abbreviation>CounterAgt</Abbreviation>
+<Description>A counteragent is the semantic role of a force or resistance against which an action is carried out.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDatRole" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>dative</Name>
+<Abbreviation>DatRole</Abbreviation>
+<Description>Dative is the semantic role of a referent that is conscious of being affected by the state or action identified by the verb.Also known as:  Recipient</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vExp" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>experiencer</Name>
+<Abbreviation>Exp</Abbreviation>
+<Description>Experiencer is the semantic role of an entity (or referent) which the effect of an action.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vFact" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>factitive</Name>
+<Abbreviation>Fact</Abbreviation>
+<Description>Factitive is the semantic role of an referent that results from the action or state identified by a verb.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vGoal" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>goal</Name>
+<Abbreviation>Goal</Abbreviation>
+<Description>Goal is the semantic role of</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vInstRole" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>instrument</Name>
+<Abbreviation>InstRole</Abbreviation>
+<Description>Instrument is the semantic role of an inanimate thing that an agent uses to implement an event. It is the stimulus or immediate physical cause of an event.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vLocRole" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>locative</Name>
+<Abbreviation>LocRole</Abbreviation>
+<Description>Locative is a semantic role which identifies the location or spatial orientation of a state or action. A locative semantic role does not imply motion to, from, or across the location.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vManner" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>manner</Name>
+<Abbreviation>Manner</Abbreviation>
+<Description>Manner is a semantic role that notes how the action, experience, or process of an event is carried out.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vMeas" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>measure</Name>
+<Abbreviation>Meas</Abbreviation>
+<Description>Measure is a semantic role which notes the quantification of an event.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPath" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>path</Name>
+<Abbreviation>Path</Abbreviation>
+<Description>Path is the semantic role describing the locale(s) transversed in motion or propulsion predications.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPat" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>patient</Name>
+<Abbreviation>Pat</Abbreviation>
+<Description>Patient is a semantic role that is usually the surface object of the verb in a sentence.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRange" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>range</Name>
+<Abbreviation>Range</Abbreviation>
+<Description>Range is the semantic role of the entity that completes, is a product of, or further specifies an event.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vResult" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>result</Name>
+<Abbreviation>Result</Abbreviation>
+<Description>A result is a semantic role that refers to that which is produced by an event. This role is usually encoded as the surface object of a sentence.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSrc" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>source</Name>
+<Abbreviation>Src</Abbreviation>
+<Description>Source is the semantic role of the following referents:</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vTime" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>time</Name>
+<Abbreviation>Time</Abbreviation>
+<Description>Time is the semantic role of the temporal placement of an event.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="cPossessorAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>possessor agreement</Name>
+<Abbreviation>PossAgr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="tverb" type="group" status="visible" posid="Verb">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>verb-related</Name>
+<Abbreviation>verb</Abbreviation>
+<Description>Morphosyntactic features that are generally associated with verbs and verb phrases.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="faspect" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>aspect</Name>
+<Abbreviation>aspect</Abbreviation>
+<Description>Aspect is a grammatical category associated with verbs that expresses a temporal view of the event or state expressed by the verb.</Description>
+<Citations>
+<Citation>Lyons 1977b:705</Citation>
+<Citation>Chung and Timberlake 1985:213</Citation>
+<Citation>Talmy 1985:77</Citation>
+<Citation>Elson and Pickett 1988:26-27</Citation>
+<Citation>Comrie 1976a:3</Citation>
+<Citation>Quirk, et al. 1985:188</Citation>
+<Citation>Hartmann and Stork 1972:20</Citation>
+<Citation>Crystal 1987:415</Citation>
+<Citation>Mish et al. 1990:108</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="xAor" type="xref" target="vPerfv">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>aorist aspect</Name>
+<Abbreviation>Aor</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAtelic" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>atelic aspect</Name>
+<Abbreviation>Atelic</Abbreviation>
+<Description>A term used in the grammatical analysis of aspect, to refer to an event where the activity has no clear terminal point. They contrast with telic verbs.</Description>
+<Citations>
+<Citation>Crystal 1997:33</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAtten" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>attenuative aspect</Name>
+<Abbreviation>Atten</Abbreviation>
+<Description>A term sometimes used in grammar and semantics, referring to a reduced quality or quantity of the state or activity expressed by the verb ('a little', 'less'). In some languages (e.g., Hungarian) the contrast is a formal part of the aspect system.</Description>
+<Citations>
+<Citation>Crystal 1997:33</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vCess" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>cessative aspect</Name>
+<Abbreviation>Cess</Abbreviation>
+<Description>Cessative aspect is aspect that expresses the cessation of an event or state.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:37</Citation>
+<Citation>Nida 1949:168</Citation>
+<Citation>Elson and Pickett 1988:28</Citation>
+<Citation>Anderson, Judi Lynn 1989:12</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="xCompl" type="xref" target="vTelic">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>completive aspect</Name>
+<Abbreviation>Compl</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vCont" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>continuous aspect</Name>
+<Abbreviation>Cont</Abbreviation>
+<Description>Continuous aspect is an imperfective aspect that expresses an ongoing, but not habitual, occurrence of the state or event expressed by the verb.</Description>
+<Citations>
+<Citation>Comrie 1976a:12,26</Citation>
+<Citation>Dahl 1985:94</Citation>
+<Citation>Bills, Vallejo, and Troike 1969:21</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDist" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>distributive aspect</Name>
+<Abbreviation>Dist</Abbreviation>
+<Description>Distributive aspect is an iterative aspect which expresses that an event is applied to members of a group one after another. These members are typically the referents named by (1) the subject of an intransitive verb, or (2) the object of a transitive verb.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:59</Citation>
+<Citation>Comrie 1985a:344</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDur" type="xref" target="vCont">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>durative aspect</Name>
+<Abbreviation>Dur</Abbreviation>
+<Description>Used in grammatical analysis of aspect, to refer to an event involving a period of time (cf. 'continuous', 'progressive'); it contrasts with 'non-durative' or 'punctual'.</Description>
+<Citations>
+<Citation>Crystal 1997:128</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vFreq" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>frequentative aspect</Name>
+<Abbreviation>Freq</Abbreviation>
+<Description>Used in the grammatical classification of verbs to refer to the expression of repeated action. In some languages (e.g. Russian) the class may be marked morphologically, but in English the meaning is normally expressed through adverbials of frequency, e.g. again, regularly, often.</Description>
+<Citations>
+<Citation>Crystal 1997:159</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vHab" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>habitual aspect</Name>
+<Abbreviation>Hab</Abbreviation>
+<Description>Habitual aspect is an imperfective aspect that expresses the occurrence of an event or state as characteristic of a period of time.</Description>
+<Citations>
+<Citation>Comrie 1976a:27-28</Citation>
+<Citation>Dahl 1985:97</Citation>
+<Citation>Hartmann and Stork 1972:21</Citation>
+<Citation>Crystal 1987:422</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vImpfv" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>imperfective aspect</Name>
+<Abbreviation>Impfv</Abbreviation>
+<Description>Imperfective aspect is an aspect that expresses an event or state, with respect to its internal structure, instead of expressing it as a simple whole.</Description>
+<Citations>
+<Citation>Ducrot and Todorov 1979:307</Citation>
+<Citation>Pei and Gaynor 1954:97</Citation>
+<Citation>Comrie 1976a:24-25,41-42</Citation>
+<Citation>Crystal 1985:153</Citation>
+<Citation>Mish et al. 1990:604</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="xIncep" type="xref" target="vInchoa">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>inceptive aspect</Name>
+<Abbreviation>Incep</Abbreviation>
+<Description>Used to refer to a type of aspectual relationship in which the beginning of an action is specified. Same as 'inchoative'.</Description>
+<Citations>
+<Citation>Crystal 1997:192</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vInchoa" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>inchoative aspect</Name>
+<Abbreviation>Inchoa</Abbreviation>
+<Description>Inchoative aspect is an aspect that expresses the beginning of an event or state.</Description>
+<Citations>
+<Citation>Crystal 1980:34,181</Citation>
+<Citation>Pei and Gaynor 1954:98</Citation>
+<Citation>Nida 1949:168</Citation>
+<Citation>Bybee 1985:147-148</Citation>
+<Citation>Mish et al. 1990:608-609</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vIter" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>iterative aspect</Name>
+<Abbreviation>Iter</Abbreviation>
+<Description>Iterative aspect is an aspect that expresses the repetition of an event or state.</Description>
+<Citations>
+<Citation>Comrie 1985a:343</Citation>
+<Citation>Mish et al. 1990:643</Citation>
+<Citation>Crystal 1985:167</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPerfv" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>perfective aspect</Name>
+<Abbreviation>Perfv</Abbreviation>
+<Description>Perfective aspect is an aspect that expresses a temporal view of an event or state as a simple whole, apart from the consideration of the internal structure of the time in which it occurs.</Description>
+<Citations>
+<Citation>Comrie 1976a:12,18-19</Citation>
+<Citation>Ducrot and Todorov 1979:307</Citation>
+<Citation>Pei and Gaynor 1954:164</Citation>
+<Citation>Hartmann and Stork 1972:20</Citation>
+<Citation>Bybee 1985:142</Citation>
+<Citation>Elson and Pickett 1988:28</Citation>
+<Citation>Crystal 1985:224</Citation>
+<Citation>Mish et al. 1990:872</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vProg" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>progressive aspect</Name>
+<Abbreviation>Prog</Abbreviation>
+<Description>Progressive aspect is a continuous aspect that expresses processes, not states.</Description>
+<Citations>
+<Citation>Richards, Platt, and Weber 1985:231</Citation>
+<Citation>Chung and Timberlake 1985:215</Citation>
+<Citation>Comrie 1976a:12,33-36</Citation>
+<Citation>Crystal 1987:428</Citation>
+<Citation>Mish et al. 1990:940</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="xPunct" type="xref" target="vPerfv">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>punctual aspect</Name>
+<Abbreviation>Punct</Abbreviation>
+<Description>Used in analysis of aspect to refer to a momentary event, thought of as having no temporal duration; it thus contrasts with durative or continuous events, where a period of time is involved.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="xStv" type="xref" target="vPerfv">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>stative</Name>
+<Abbreviation>Stv</Abbreviation>
+<Description></Description>
+<Citations>
+<Citation>Crystal 1997:361-2</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vTelic" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>telic aspect</Name>
+<Abbreviation>Telic</Abbreviation>
+<Description>A term used in grammatical analysis of aspect, to refer to an event where the activity has a clear terminal point. These verbs contrast with atelic verbs. </Description>
+<Citations>
+<Citation>Crystal 1997:348</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fmood" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>mood and modality</Name>
+<Abbreviation>mood</Abbreviation>
+<Description>Mood is one of a set of distinctive forms that are used to signal modality. Modality is a facet of illocutionary force, signaled by grammatical devices (that is, moods), that expresses (1) the illocutionary point or general intent of a speaker, or (2) a speaker's degree of commitment to the expressed proposition's believability, obligatoriness, desirability, or reality.</Description>
+<Citations>
+<Citation>Chung and Timberlake 1985:241</Citation>
+<Citation>Givón 1984:272</Citation>
+<Citation>Palmer 1986:14-15,26</Citation>
+<Citation>Bybee 1985:169</Citation>
+<Citation>Quirk, et al. 1985:219</Citation>
+<Citation>Crystal 1985:198</Citation>
+<Citation>Hartmann and Stork 1972:142,144</Citation>
+<Citation>Richards, Platt, and Weber 1985:183</Citation>
+<Citation>Mish et al. 1990:762,770</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vAleth" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>alethic modality</Name>
+<Abbreviation>Aleth</Abbreviation>
+<Description>Alethic modality is modality that connotes the speaker's estimation of the logical necessity or possibility of the proposition expressed by his utterance.</Description>
+<Citations>
+<Citation>Crystal 1985:12</Citation>
+<Citation>Palmer 1986:10-11</Citation>
+<Citation>Lyons 1977b:788-791</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAssump" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>assumptive mood</Name>
+<Abbreviation>Assump</Abbreviation>
+<Description>Assumptive mood is an epistemic mode that signals the speaker's belief that his statement is based on facts about what is usually the case in such circumstances.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAudit" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>auditory evidential</Name>
+<Abbreviation>Audit</Abbreviation>
+<Description>An auditory evidential is a nonvisual evidential that signals that the speaker's evidence for the truth of his statement is based on what he has heard.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vCommis" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>commissive modality</Name>
+<Abbreviation>Commis</Abbreviation>
+<Description>Commissive modality is a deontic modality that connotes the speaker's expressed commitment, as a promise or threat, to bring about the proposition expressed by the utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDecl" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>declarative mood</Name>
+<Abbreviation>Decl</Abbreviation>
+<Description>Declarative mood is an epistemic mood that signals that the proposition expressed by a speaker's utterance is offered as an unqualified statement of fact.</Description>
+<Citations>
+<Citation>Palmer 1986:26-27</Citation>
+<Citation>Sadock and Zwicky 1985:165-166</Citation>
+<Citation>Hartmann and Stork 1972:144</Citation>
+<Citation>Crystal 1980:85</Citation>
+<Citation>Palmer 1986:70,83</Citation>
+<Citation>Pei and Gaynor 1954:99</Citation>
+<Citation>Crystal 1980:183</Citation>
+<Citation>Mish et al. 1990:613</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDeduct" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>deductive mood</Name>
+<Abbreviation>Deduct</Abbreviation>
+<Description>Deductive mood is an epistemic mood that signals that the speaker judges from other facts that the proposition expressed by his utterance is probably true.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDelib" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>deliberative mood</Name>
+<Abbreviation>Delib</Abbreviation>
+<Description>Deliberative mood is a directive mood which signals the speaker's request for instruction from the addressee as to whether to do the proposition expressed in the utterance.</Description>
+<Citations>
+<Citation>Palmer 1986:107-108</Citation>
+<Citation>Bliese 1981:146</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDeon" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>deontic modality</Name>
+<Abbreviation>Deon</Abbreviation>
+<Description>Deontic modality is modality that connotes the speaker's (1) degree of requirement of, (2) desire for, or (3) commitment to the realization of the proposition expressed by the utterance.</Description>
+<Citations>
+<Citation>Crystal 1985:88</Citation>
+<Citation>Chung and Timberlake 1985:246-247</Citation>
+<Citation>Palmer 1986:10-11,15,96-97,115</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDirectiv" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>directive modality</Name>
+<Abbreviation>Directiv</Abbreviation>
+<Description>Directive modality is a deontic modality that connotes the speaker's degree of requirement of conformity to the proposition expressed by an utterance.</Description>
+<Citations>
+<Citation>Palmer 1986:97-98</Citation>
+<Citation>Crystal 1980:95</Citation>
+<Citation>Quirk, et al. 1985:78</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDubit" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>dubitative mood</Name>
+<Abbreviation>Dubit</Abbreviation>
+<Description>Dubitative mood is an epistemic mood which signals a speaker's reservation about the accuracy of his or her statement.</Description>
+<Citations>
+<Citation>Nida 1949:169</Citation>
+<Citation>Bybee 1985:179</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vEpis" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>epistemic modality</Name>
+<Abbreviation>Epis</Abbreviation>
+<Description>Epistemic modality is a modality that connotes how much certainty or evidence a speaker has for the proposition expressed by his or her utterance.</Description>
+<Citations>
+<Citation>Crystal 1985:110</Citation>
+<Citation>Chung and Timberlake 1985:242</Citation>
+<Citation>Bybee 1985:165-166</Citation>
+<Citation>Palmer 1986:10-11,5</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vEvi" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>evidentiality modality</Name>
+<Abbreviation>Evi</Abbreviation>
+<Description>Evidentiality is an epistemic modality that connotes the speaker's assessment of the evidence for his or her statement. An evidential is a form, such as a verbal affix, that is a grammatical expression of evidentiality.</Description>
+<Citations>
+<Citation>Bybee 1985:184</Citation>
+<Citation>Palmer 1986:66-67</Citation>
+<Citation>Givón 1984:307-308</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vHypo" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>hypothetical mood</Name>
+<Abbreviation>Hypo</Abbreviation>
+<Description>Hypothetical mood is an epistemic mood that signals that the speaker evaluates a proposition as counterfactual, but otherwise possible.</Description>
+<Citations>
+<Citation>Noonan 1985:95</Citation>
+<Citation>Chung and Timberlake 1985:243</Citation>
+<Citation>Boas and Deloria 1941:112</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vImmImpv" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>immediate imperative mood</Name>
+<Abbreviation>ImmImpv</Abbreviation>
+<Description>Immediate imperative mood is an imperative mood that signals that the command or request is to be carried out right away.</Description>
+<Citations>
+<Citation>Sadock and Zwicky 1985:178</Citation>
+<Citation>Schachter and Otanes 1972:403</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vImpv" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>imperative mood</Name>
+<Abbreviation>Impv</Abbreviation>
+<Description>Imperative mood is mood that signals directive modality, especially in commands. Its use may be extended to signal permission.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:108</Citation>
+<Citation>Chung and Timberlake 1985:247</Citation>
+<Citation>Bybee 1985:171</Citation>
+<Citation>Palmer 1986:29,97,108,111</Citation>
+<Citation>Mish et al. 1990:603</Citation>
+<Citation>Crystal 1980:153</Citation>
+<Citation>Quirk, et al. 1985:78,803</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vImprec" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>imprecative mood</Name>
+<Abbreviation>Imprec</Abbreviation>
+<Description>Imprecative mood is a volitive mood that signals the speaker's wish that an unfavorable proposition will come about.</Description>
+<Citations>
+<Citation>Lewis, G.L. 1967:115, cited by Sadock and Zwicky 1985:163</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vInterog" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>interrogative mood</Name>
+<Abbreviation>Interog</Abbreviation>
+<Description>An interrogative mood is an epistemic mood that signals that the speaker wishes to elicit information concerning the content of his or her utterance from the addressee.</Description>
+<Citations>
+<Citation>Nida 1949:168</Citation>
+<Citation>Palmer 1986:30-31</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="virrealis" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>irrealis modality</Name>
+<Abbreviation>irrealis</Abbreviation>
+<Description>Irrealis modality is a modality that connotes that the proposition with which it is associated is nonactual or nonfactual.</Description>
+<Citations>
+<Citation>Noonan 1985:96</Citation>
+<Citation>Chung and Timberlake 1985:241</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vJudg" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>judgment modality</Name>
+<Abbreviation>Judg</Abbreviation>
+<Description>Judgment modality is an epistemic modality that connotes the speaker's (1) strength of inference, or (2) degree of confidence in the reality of the proposition expressed by his or her utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vJuss" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>jussive mood</Name>
+<Abbreviation>Juss</Abbreviation>
+<Description>Jussive mood is a directive mood that signals a speaker's (1) command, (2) permission, or (3) agreement that the proposition expressed by his or her utterance be brought about.</Description>
+<Citations>
+<Citation>Chung and Timberlake 1985:247</Citation>
+<Citation>Mish et al. 1990:655</Citation>
+<Citation>Pei and Gaynor 1954:110</Citation>
+<Citation>Palmer 1986:10,24,39-40,96,110,113</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNec" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>necessity modality</Name>
+<Abbreviation>Nec</Abbreviation>
+<Description>Necessity is a degree of contingency in modality that (1) in alethic modality connotes logical requirement, (2) in deontic modality connotes obligation, and (3) in epistemic modality connotes certainty.</Description>
+<Citations>
+<Citation>Chung and Timberlake 1985:242,246</Citation>
+<Citation>Lyons 1977b:791</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNonvis" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>nonvisual evidential</Name>
+<Abbreviation>Nonvis</Abbreviation>
+<Description>A nonvisual evidential is a sensory evidential that signals that the speaker's evidence for the truth of his or her statement is derived from a sense other than sight.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vOblig" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>obligative mood</Name>
+<Abbreviation>Oblig</Abbreviation>
+<Description>Obligative mood is a directive mood that signals the speaker's estimation of the necessity that the proposition expressed in his or her utterance be brought about.</Description>
+<Citations>
+<Citation>Nida 1949:169</Citation>
+<Citation>Chung and Timberlake 1985:247</Citation>
+<Citation>Palmer 1986:98</Citation>
+<Citation>Sharma 1982:189-190</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vOpt" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>optative mood</Name>
+<Abbreviation>Opt</Abbreviation>
+<Description>Optative mood is a volitive mood that signals wishing or hoping.</Description>
+<Citations>
+<Citation>Chung and Timberlake 1985:247</Citation>
+<Citation>Nida 1949:168</Citation>
+<Citation>Pei and Gaynor 1954:54,154-155</Citation>
+<Citation>Bybee 1985:166</Citation>
+<Citation>Mish et al. 1990:828</Citation>
+<Citation>Quirk, et al. 1985:839</Citation>
+<Citation>Palmer 1986:116-118</Citation>
+<Citation>Crystal 1985:90</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPermis" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>permissive mood</Name>
+<Abbreviation>Permis</Abbreviation>
+<Description>Permissive mood is a directive mood that signals the speaker's act of giving permission.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:165</Citation>
+<Citation>Chung and Timberlake 1985:247</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPossbl" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>possibility modality</Name>
+<Abbreviation>Possbl</Abbreviation>
+<Description>Possibility is a degree of contingency in modality that (1) in alethic modality connotes logical possibility, (2) in deontic modality connotes permission, and (3) in epistemic modality connotes uncertainty or speculation.</Description>
+<Citations>
+<Citation>Chung and Timberlake 1985:242,246</Citation>
+<Citation>Lyons 1977b:791</Citation>
+<Citation>Crystal 1985:12</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPrec" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>precative mood</Name>
+<Abbreviation>Prec</Abbreviation>
+<Description>Precative mood is a directive mood that signals that the utterance is a request.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:173</Citation>
+<Citation>Palmer 1986:10</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vProhib" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>prohibitive mood</Name>
+<Abbreviation>Prohib</Abbreviation>
+<Description>Prohibitive mood is a directive mood that signals a prohibition. It is distinguished by (1) the use of a negated imperative sentence that employs a negative marker distinct from that used in declarative sentences, or (2) a verb form different from that of the imperative. </Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:176,228</Citation>
+<Citation>Bybee 1985:173</Citation>
+<Citation>Hartmann and Stork 1972:185</Citation>
+<Citation>Sadock and Zwicky 1985:175-176</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vQuot" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>quotative evidential</Name>
+<Abbreviation>Quot</Abbreviation>
+<Description>A quotative evidential is an evidential that signals that someone else is the source of the statement made.</Description>
+<Citations>
+<Citation>Chung and Timberlake 1985:244</Citation>
+<Citation>Nida 1949:169</Citation>
+<Citation>Palmer 1986:7,71</Citation>
+<Citation>Dahl 1985:150-151</Citation>
+<Citation>Faust 1973</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vReal" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>realis modality</Name>
+<Abbreviation>Real</Abbreviation>
+<Description>Realis modality is a modality that connotes the factuality of a proposition.</Description>
+<Citations>
+<Citation>Noonan 1985:96</Citation>
+<Citation>Chung and Timberlake 1985:241</Citation>
+<Citation>Pei and Gaynor 1954:99</Citation>
+<Citation>Crystal 1980:183</Citation>
+<Citation>Mish et al. 1990:613</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSensor" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>sensory evidential</Name>
+<Abbreviation>Sensor</Abbreviation>
+<Description>A sensory evidential is an evidential signaling that the speaker's evidence for the truth of his or her statement is derived from the speaker's own sensory experience.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSpecu" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>speculative mood</Name>
+<Abbreviation>Specu</Abbreviation>
+<Description>Speculative mood is an epistemic mood that signals that the speaker judges from certain facts that the proposition expressed by his or her utterance is possibly true.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSubjnct" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>subjunctive mood</Name>
+<Abbreviation>Subjnct</Abbreviation>
+<Description>mood is a mood that typically signals irrealis meanings, such as (1) potentiality, (2) uncertainty, (3) prediction, (4) obligation, and (5) desire. It most typically occurs in a subordinate clause, but may occur outside of one.</Description>
+<Citations>
+<Citation>Nida 1949:169</Citation>
+<Citation>Pei and Gaynor 1954:205</Citation>
+<Citation>Bybee 1985:186</Citation>
+<Citation>Crystal 1980:338</Citation>
+<Citation>Hartmann and Stork 1972:224</Citation>
+<Citation>Lyons 1977b:817,848</Citation>
+<Citation>Mish et al. 1990:1174</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vVis" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>visual evidential</Name>
+<Abbreviation>Vis</Abbreviation>
+<Description>A visual evidential is a sensory evidential signaling that the speaker's evidence for the truth of his or her statement is derived from the speaker's own sight.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vVolit" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>volitive modality</Name>
+<Abbreviation>Volit</Abbreviation>
+<Description>Volitive modality is a deontic modality that expresses the speaker's attitude of hope, wish, or fear concerning the proposition expressed by the utterance.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:229</Citation>
+<Citation>Palmer 1986:116-117</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="gAgreement" type="group">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>agreement</Name>
+<Abbreviation></Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="cSubjAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>subject agreement</Name>
+<Abbreviation>SUBJ</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="cObjAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>object agreement</Name>
+<Abbreviation>OBJ</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="cErgAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>ergative agreement</Name>
+<Abbreviation>ERG</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="cAbsAgr" type="complex" embed="tPersonAgr tCommonAgr" carry="no">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>absolutive agreement</Name>
+<Abbreviation>ABS</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fpolarity" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>polarity</Name>
+<Abbreviation>polarity</Abbreviation>
+<Description>Polarity is a grammatical category that distinguishes affirmative and negative.</Description>
+<Citations>
+<Citation>Schachter 1985:10</Citation>
+<Citation>Talmy 1985:131</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vPlus" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>affirmative</Name>
+<Abbreviation>Plus</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vMinus" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>negative</Name>
+<Abbreviation>Minus</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fswitchRef" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>switch reference</Name>
+<Abbreviation>switchRef</Abbreviation>
+<Description>Switch reference is a grammatical category with the following features: It signals the identity or nonidentity of the referent of an argument of one clause, usually its subject, with an argument of another clause, which is likewise usually the subject.  Switch reference functions to avoid ambiguity of reference; for example, it may distinguish between two referents that are third person and that, thus, may not be otherwise distinguished on the verb.  It relates clauses, usually adjacent, that may be subordinate or coordinate to one another.  It is expressed: (1) usually by inflectional affixes on the verb, (2) sometimes by the same affixes that express subject-verb agreement within the clause, and (3) rarely by a morpheme independent of the verb.</Description>
+<Citations>
+<Citation>Haiman and Munro 1983:ix-xiii</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vDiffSubjMrkr" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>different subject marker</Name>
+<Abbreviation>DiffSubjMrkr</Abbreviation>
+<Description>A different subject marker is a marker in the verb morphology of a clause which indicates that the subject of the clause is not the same as the subject of some other clause. The other clause is maybe a following clause, the final clause in a clause chain, or the main clause in a sentence.</Description>
+<Citations>
+<Citation>Thompson and Longacre 1985:187,201</Citation>
+<Citation>Longacre 1985:264</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSameSubjMrkr" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>same subject marker</Name>
+<Abbreviation>SameSubjMrkr</Abbreviation>
+<Description>A same subject marker is a distinction in the verb morphology of a clause that indicates that the subject is identical to the subject of another clause, such as one of the following: A following clause, the final clause in a clause  chain, or the main clause in a sentence.</Description>
+<Citations>
+<Citation>Thompson and Longacre 1985:187,201</Citation>
+<Citation>Longacre 1985:254</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="ftense" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>tense</Name>
+<Abbreviation>tense</Abbreviation>
+<Description>Tense is a grammatical category, typically marked on the verb, that deictically refers to the time of the event or state denoted by the verb in relation to some other temporal reference point.</Description>
+<Citations>
+<Citation>Crystal 1980:352-353</Citation>
+<Citation>Givón 1984:272</Citation>
+<Citation>Hartmann and Stork 1972:235</Citation>
+<Citation>Nida 1949:167</Citation>
+<Citation>Comrie 1985b:9</Citation>
+<Citation>Mish et al. 1990:1216</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="gTense" type="group">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>absolute tense</Name>
+<Abbreviation></Abbreviation>
+<Description>Absolute tense is a tense that refers to a time in relation to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vCloseFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>close future tense</Name>
+<Abbreviation>CloseFut</Abbreviation>
+<Description>Close future tense is a tense that refers to a time shortly after the moment of utterance.</Description>
+<Citations>
+<Citation>Dahl 1985:121</Citation>
+<Citation>Comrie 1985b:94</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>future tense </Name>
+<Abbreviation>Fut</Abbreviation>
+<Description>Future tense is an absolute tense that refers to a time after the moment of utterance.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:92</Citation>
+<Citation>Mish et al. 1990:500</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vHestPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>hesternal past tense</Name>
+<Abbreviation>HestPst</Abbreviation>
+<Description>Hesternal past tense is a past tense that refers to a time that is located somewhere in the span beginning with the period defined culturally as "yesterday" and extends back through some period that is considered nonremote.</Description>
+<Citations>
+<Citation>Comrie 1985b:87-88</Citation>
+<Citation>Dahl 1985:126</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vHodFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>hodiernal future tense</Name>
+<Abbreviation>HodFut</Abbreviation>
+<Description>Hodiernal future tense is a future tense that refers to a time that is located after the moment of utterance within the span culturally defined as "today."</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vHodPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>hodiernal past tense</Name>
+<Abbreviation>HodPst</Abbreviation>
+<Description>Hodiernal past tense is a past tense that refers to a time as located before the moment of utterance within the span culturally defined as "today."</Description>
+<Citations>
+<Citation>Comrie 1985b:87</Citation>
+<Citation>Dahl 1985:125-126</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vImmPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>immediate past tense</Name>
+<Abbreviation>ImmPst</Abbreviation>
+<Description>Immediate past tense is past tense that refers to a time considered very recent in relation to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNonFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>nonfuture tense</Name>
+<Abbreviation>NonFut</Abbreviation>
+<Description>Nonfuture tense is an absolute tense that (1) refers to a time at or before the moment of utterance, and (2) contrasts with a future tense.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNonPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>nonpast tense</Name>
+<Abbreviation>NonPst</Abbreviation>
+<Description>Nonpast tense is an absolute tense that (1) refers to a time at or after the moment of utterance, and (2) contrasts with a past tense.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:153</Citation>
+<Citation>Comrie 1985b:48-49</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNonRecPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>nonrecent past tense</Name>
+<Abbreviation>NonRecPst</Abbreviation>
+<Description>Nonrecent past tense is a past tense that refers to a time before the range of a contrasting recent past tense.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNonRemPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>nonremote past tense</Name>
+<Abbreviation>NonRemPst</Abbreviation>
+<Description>Nonremote past tense is a past tense that refers to a time considered not more than a few days ago, in contrast to a remote past tense.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNotYet" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>not-yet tense</Name>
+<Abbreviation>NotYet</Abbreviation>
+<Description>Not-yet tense is an absolute tense that refers to times at and before the moment of  utterance in asserting the present and past nonoccurrence of an event or state. It tends to imply that the event or state is expected to occur in the future. This tense corresponds to the meaning of the English not yet.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>past tense </Name>
+<Abbreviation>Pst</Abbreviation>
+<Description>Past tense is an absolute tense that refers to a time before the moment of utterance.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:166</Citation>
+<Citation>Pei and Gaynor 1954:162</Citation>
+<Citation>Mish et al. 1990:861</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPostHodFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>post-hodiernal future tense</Name>
+<Abbreviation>PostHodFut</Abbreviation>
+<Description>Post-hodiernal future tense is a future tense that refers to a time, in relation to the moment of utterance, after the span that is culturally defined as "today."</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPredFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>predictive future tense</Name>
+<Abbreviation>PredFut</Abbreviation>
+<Description>Predictive future tense is a future tense, used in predictions, that does not express intention.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPreHestPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>prehesternal past tense</Name>
+<Abbreviation>PreHestPst</Abbreviation>
+<Description>Prehesternal past tense is a past tense that refers to a time in some span before that of an opposing hesternal past tense.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPreHodPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>prehodiernal past tense</Name>
+<Abbreviation>PreHodPst</Abbreviation>
+<Description>Prehodiernal past tense is a past tense that refers to a time in some span before that of a contrasting hodiernal past tense.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPres" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>present tense</Name>
+<Abbreviation>Pres</Abbreviation>
+<Description>Present tense is an absolute tense that refers to the moment of utterance. It often refers to events or states that do not merely coincide with the moment of utterance, such as those that are (1) continuous, (2) habitual, or (3) lawlike.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:183</Citation>
+<Citation>Comrie 1985b:36-40</Citation>
+<Citation>Mish et al. 1990:930</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPret" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>preterit</Name>
+<Abbreviation>Pret</Abbreviation>
+<Description>A preterit, in traditional terminology, is a simple past tense not marked for aspect or modality.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:184</Citation>
+<Citation>Crystal 1987:428</Citation>
+<Citation>Mish et al. 1990:932</Citation>
+<Citation>Richards, Platt, and Weber 1985:209</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRecPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>recent past tense</Name>
+<Abbreviation>RecPst</Abbreviation>
+<Description>Recent past tense is a past tense that refers to a time, culturally and situationally defined, within the span ranging from yesterday to a week or a few months previous.</Description>
+<Citations>
+<Citation>Comrie 1985b:87</Citation>
+<Citation>Dahl 1985:121-122</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRemFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>remote future tense</Name>
+<Abbreviation>RemFut</Abbreviation>
+<Description>Remote future is a future tense that refers to a time that is considered relatively distant. It is characteristically after the span of time culturally defined as "tomorrow."</Description>
+<Citations>
+<Citation>Dahl 1985:121</Citation>
+<Citation>Comrie 1985b:94</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRemPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>remote past tense</Name>
+<Abbreviation>RemPst</Abbreviation>
+<Description>Remote past tense is a past tense that refers to a time considered more than a few days ago.</Description>
+<Citations>
+<Citation>Dahl 1985:121</Citation>
+<Citation>Comrie 1985b:88</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vStill" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>still tense</Name>
+<Abbreviation>Still</Abbreviation>
+<Description>Still tense is an absolute tense carrying the presupposition that an event or state held before the moment of utterance.In positive declarative clauses, still tense asserts that the event or state holds at the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="gAbsoluteRelativeTense" type="group">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>absolute-relative tense</Name>
+<Abbreviation></Abbreviation>
+<Description>Absolute-relative tense is a tense (1) that refers to a time in relation to a temporal reference point that, in turn, is referred to in relation to the moment of utterance, (2) in which the time and the reference point are not identical, and (3) the reference point and the moment of utterance are not identical. </Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vFutPerf" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>future perfect tense</Name>
+<Abbreviation>FutPerf</Abbreviation>
+<Description>Future perfect tense is an absolute-relative tense that refers to a time located before a contextually determined temporal reference point that must be located in the future relative to the moment of utterance.</Description>
+<Citations>
+<Citation>Comrie 1985b:69-71</Citation>
+<Citation>Mish et al. 1990:501</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vFutInFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>future-in-future tense</Name>
+<Abbreviation>FutInFut</Abbreviation>
+<Description>Future-in-future tense is an absolute-relative tense that refers to a time located in the future, relative to a temporal reference point that itself is located in the future relative to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vFutInPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>future-in-past tense</Name>
+<Abbreviation>FutInPst</Abbreviation>
+<Description>Future-in-past tense is an absolute-relative tense that refers to a time located in the future, relative to a contextually determined temporal reference point that itself must be located in the past relative to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vFutPerfInPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>future-perfect-in-past tense</Name>
+<Abbreviation>FutPerfInPst</Abbreviation>
+<Description>Future-perfect-in-past tense is an absolute-relative tense that involves three points in time in the past. The tense refers to a time that is in the future, relative to another point in the past, but is in the past relative to a point in its future. All these points in time are in the past relative to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPstPerf" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>past perfect tense</Name>
+<Abbreviation>PstPerf</Abbreviation>
+<Description>Past perfect tense is an absolute-relative tense that refers to a time in the past relative to a reference point, which itself is in the past relative to the moment of utterance.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:162,170</Citation>
+<Citation>Mish et al. 1990:861</Citation>
+<Citation>Comrie 1985b:65-66</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="gRelativeTense" type="group">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>relative tense</Name>
+<Abbreviation></Abbreviation>
+<Description>Relative tense is a tense that refers to a time in relation to a contextually determined temporal reference point, regardless of the latter's temporal relation to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vRelFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>relative future tense</Name>
+<Abbreviation>RelFut</Abbreviation>
+<Description>Relative future tense is a relative tense that refers to a time located after a contextually determined temporal reference point, regardless of the latter's relation to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRelNonFut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>relative nonfuture tense</Name>
+<Abbreviation>RelNonFut</Abbreviation>
+<Description>Relative nonfuture tense is a relative tense that refers to a time simultaneous to, or before, a contextually determined temporal reference point, regardless of the latter's relation to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRelNonPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>relative nonpast tense</Name>
+<Abbreviation>RelNonPst</Abbreviation>
+<Description>Relative nonpast tense is a relative tense that refers to a time simultaneous to, or after, a contextually determined temporal reference point, regardless of the latter's relation to the moment of utterance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRelPst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>relative past tense</Name>
+<Abbreviation>RelPst</Abbreviation>
+<Description>Relative past tense is a relative tense that refers to a time located before that of a contextually determined temporal reference point.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vRelPres" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>relative present tense</Name>
+<Abbreviation>RelPres</Abbreviation>
+<Description>Relative present tense is a relative tense that refers to a time that is simultaneous with some contextually determined temporal reference point.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+</item>
+<item id="ftransitivity" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>transitivity</Name>
+<Abbreviation>transitivity</Abbreviation>
+<Description>Transitivity is the number of objects a verb requires or takes in a given instance.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vDiTrans" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>ditransitivity</Name>
+<Abbreviation>DiTrans</Abbreviation>
+<Description>Ditransitivity is a term which describes a verb or clause which takes two objects.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vInTrans" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>intransitivity</Name>
+<Abbreviation>InTrans</Abbreviation>
+<Description>Intransitivity is a term that describes a verb or clause that is unable to take a direct object.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vTrans" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>transitive verb</Name>
+<Abbreviation>Trans</Abbreviation>
+<Description>A transitive verb is a verb that takes a direct object.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fvoice" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>voice </Name>
+<Abbreviation>voice</Abbreviation>
+<Description>Voice is a grammatical category that expresses the semantic functions attributed to the referents of a clause. It indicates whether the subject is an (1) actor, (2) patient, or (3) recipient. </Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:228-229</Citation>
+<Citation>Hartmann and Stork 1972:251-252</Citation>
+<Citation>Nida 1949:168</Citation>
+<Citation>Elson and Pickett 1988:31</Citation>
+<Citation>Bybee 1985:20-21</Citation>
+<Citation>Quirk, et al. 1985:159</Citation>
+<Citation>Crystal 1985:329</Citation>
+<Citation>Mish et al. 1990:1320</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vAct" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>active voice</Name>
+<Abbreviation>Act</Abbreviation>
+<Description>Active voice is a voice that indicates a subject has the semantic function of actor.</Description>
+<Citations>
+<Citation>Crystal 1980:12</Citation>
+<Citation></Citation>
+<Citation>Hartmann and Stork 1972:251-252</Citation>
+<Citation>Nida 1949:168</Citation>
+<Citation>Mish et al. 1990:54</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAntiPass" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>antipassive voice</Name>
+<Abbreviation>AntiPass</Abbreviation>
+<Description>Antipassive voice is a voice in an ergative-absolutive language in which (1) a noun phrase that normally has ergative case instead has absolutive case, (2) a noun phrase that normally has absolutive case is marked as an oblique or an indirect object, and (3) the salience of the normally absolutive noun phrase is, according to some analysts, decreased.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vImpersPass" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>impersonal passive</Name>
+<Abbreviation>ImpersPass</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vMedPass" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>mediopassive voice</Name>
+<Abbreviation>MedPass</Abbreviation>
+<Description>Mediopassive voice is a passive voice in which (1) the verb has stative meaning, and (2) the actor is not expressed.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vMid" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>middle voice</Name>
+<Abbreviation>Mid</Abbreviation>
+<Description>Middle voice is a voice that indicates that the subject is the actor and acts (1) upon himself or herself reflexively, or (2) for his or her own benefit. In the case of plural subjects, the actors may, perhaps, act upon each other.</Description>
+<Citations>
+<Citation>Elson and Pickett 1988:31</Citation>
+<Citation>Bybee 1985:20-21</Citation>
+<Citation>Pei and Gaynor 1954:137</Citation>
+<Citation>Hartmann and Stork 1972:252</Citation>
+<Citation>Nida 1949:168</Citation>
+<Citation>Mish et al. 1990:752</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPass" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>passive voice </Name>
+<Abbreviation>Pass</Abbreviation>
+<Description>Passive voice is a voice that indicates that the subject is the patient or recipient of the action denoted by the verb.</Description>
+<Citations>
+<Citation>Crystal 1980:259</Citation>
+<Citation>Pei and Gaynor 1954:161</Citation>
+<Citation>Hartmann and Stork 1972:252</Citation>
+<Citation>Nida 1949:1689</Citation>
+<Citation>Mish et al. 1990:860</Citation>
+<Citation>Crystal 1985:222</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPersPass" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>personal passive</Name>
+<Abbreviation>PersPass</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSynthPass" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>synthetic passive voice</Name>
+<Abbreviation>SynthPass</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="ffocus" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>voice/focus in Philippine-type languages</Name>
+<Abbreviation>focus</Abbreviation>
+<Description>Philippine-type languages (e.g. Tagalog and Cebuano as well as some in Malaysia) have a voice or focus system in which the verb selects the semantic role of the grammatical subject.  The verb has an affix which says what the semantic role of the subject is.</Description>
+<Citations>
+<Citation>Brown and Miller 1999:408</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vAF" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>actor voice/focus</Name>
+<Abbreviation>AF</Abbreviation>
+<Description>The subject has the semantic role of actor.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vGF" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>goal voice/focus</Name>
+<Abbreviation>GF</Abbreviation>
+<Description>The subject has the semantic role of goal or recipient.  It is sometimes also referred to as dative voice.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vIF" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>instrumental voice/focus</Name>
+<Abbreviation>IF</Abbreviation>
+<Description>The subject has the semantic role of instrument.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPF" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>patient voice/focus</Name>
+<Abbreviation>PF</Abbreviation>
+<Description>The subject has the semantic role of patient.  It is sometimes also referred to as object voice.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+</item>
+<item id="tCaseAgr" type="fsType" status="hidden">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>case agreement</Name>
+<Abbreviation>CaseAgr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="fcase" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>case</Name>
+<Abbreviation>case</Abbreviation>
+<Description>Case is a grammatical category determined by the syntactic or semantic function of a noun or pronoun.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:35</Citation>
+<Citation>Crystal 1980:53-54</Citation>
+<Citation>Anderson, Stephen 1985:179-180</Citation>
+<Citation>Andrews, Avery 1985:71-72</Citation>
+<Citation>Mish et al. 1990:211</Citation>
+<Citation>Kuno 1973:4-5</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vAbl" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> ablative case</Name>
+<Abbreviation>Abl</Abbreviation>
+<Description>Ablative case is a case that expresses a variety of meanings including instrument, cause, location, source, and time.</Description>
+<Citations>
+<Citation>Crystal 1980:7</Citation>
+<Citation>Hartmann and Stork 1972:1</Citation>
+<Citation>Pei and Gaynor 1954:3</Citation>
+<Citation>Lyons 1968:299</Citation>
+<Citation>Mish et al.</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAbs" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> absolutive case</Name>
+<Abbreviation>Abs</Abbreviation>
+<Description>Absolutive case is the case of nouns in ergative-absolutive languages that would generally be the subjects of intransitive verbs or the objects of transitive verbs in the translational equivalents of nominative-accusative languages such as English.</Description>
+<Citations>
+<Citation>Anderson, Stephen 1985:181</Citation>
+<Citation>Crystal 1985:1</Citation>
+<Citation>Andrews, Avery 1985:138</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAcc" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> accusative case</Name>
+<Abbreviation>Acc</Abbreviation>
+<Description>Accusative case is the case in nominative-accusative languages that marks certain syntactic functions, usually direct objects.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:3,156</Citation>
+<Citation>Crystal 1980:11,246</Citation>
+<Citation>Andrews, Avery 1985:75</Citation>
+<Citation>Anderson, Stephen 1985:181</Citation>
+<Citation>Mish et al. 1990:50</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vAll" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> allative case</Name>
+<Abbreviation>All</Abbreviation>
+<Description>Allative case is a case that expresses motion to or toward the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:6,9,216</Citation>
+<Citation>Lyons 1968:299</Citation>
+<Citation>Crystal 1985:12-13</Citation>
+<Citation>Gove, et al. 1966:55,2359</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBen" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> benefactive case</Name>
+<Abbreviation>Ben</Abbreviation>
+<Description>Benefactive case is a case that expresses that the referent of the noun it marks receives the benefit of the situation expressed by the clause.</Description>
+<Citations>
+<Citation>Crystal 1980:43</Citation>
+<Citation>Gove, et al. 1966:203</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDat" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> dative case</Name>
+<Abbreviation>Dat</Abbreviation>
+<Description>Dative case is a case that marks any of the following: (1) Indirect objects (for languages in which they are held to exist); (2) Nouns having the role of (a) recipient (as of things given), (b) beneficiary of an action, or (c) possessor of an item.</Description>
+<Citations>
+<Citation>Crystal 1980:102</Citation>
+<Citation>Gove, et al. 1966:577</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vErg" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> ergative case</Name>
+<Abbreviation>Erg</Abbreviation>
+<Description>Ergative case is the case of nouns in ergative-absolutive languages that would generally be the subjects of transitive verbs in the translation equivalents of nominative-accusative languages such as English.</Description>
+<Citations>
+<Citation>Crystal 1980:134</Citation>
+<Citation>Hartmann and Stork 1972:78</Citation>
+<Citation>Pei and Gaynor 1954:67</Citation>
+<Citation>Andrews, Avery 1985:138</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vGen" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> genitive case</Name>
+<Abbreviation>Gen</Abbreviation>
+<Description>Genitive case is a case in which the referent of the marked noun is the possessor of the referent of another noun.</Description>
+<Citations>
+<Citation>Crystal 1980:161</Citation>
+<Citation>Hartmann and Stork 1972:94-95,180</Citation>
+<Citation>Pei and Gaynor 1954:82,172</Citation>
+<Citation>Anderson, Stephen 1985:185</Citation>
+<Citation>Mish et al. 1990:511</Citation>
+<Citation>Fleming 1988:10</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vIll" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> illative case</Name>
+<Abbreviation>Ill</Abbreviation>
+<Description>Illative case is a case that expresses motion into or direction toward the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Lyons 1968:299</Citation>
+<Citation>Gove, et al. 1966:1126</Citation>
+<Citation>Crystal 1985:152</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vInst" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> instrumental case</Name>
+<Abbreviation>Inst</Abbreviation>
+<Description>Instrumental case is a case indicating that the referent of the noun it marks is the means of the accomplishment of the action expressed by the clause.</Description>
+<Citations>
+<Citation>Crystal 1980:187</Citation>
+<Citation>Hartmann and Stork 1972:114</Citation>
+<Citation>Mish et al. 1990:627</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vLoc" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> locative case</Name>
+<Abbreviation>Loc</Abbreviation>
+<Description>Locative case is a case that expresses location at the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Crystal 1980:214-215</Citation>
+<Citation>Mish et al. 1990:701</Citation>
+<Citation>Lyons 1968:299</Citation>
+<Citation>Crystal 1985:7</Citation>
+<Citation>Gove, et al. 1966:25</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNom" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> nominative case</Name>
+<Abbreviation>Nom</Abbreviation>
+<Description>Nominative case is the case that identifies clause subjects in nominative-accusative languages. Nouns used in isolation have this case.</Description>
+<Citations>
+<Citation>Crystal 1980:242</Citation>
+<Citation>Pei and Gaynor 1954:147</Citation>
+<Citation>Mish et al. 1990:801</Citation>
+<Citation>Hartmann and Stork 1972:224</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vVoc" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name> vocative case</Name>
+<Abbreviation>Voc</Abbreviation>
+<Description>Vocative case is a case that marks a noun whose referent is being addressed.</Description>
+<Citations>
+<Citation>Crystal 1980:377</Citation>
+<Citation>Hartmann and Stork 1972:251</Citation>
+<Citation>Pei and Gaynor 1954:228</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="glessCommonCasesGroup" type="group">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>less common cases</Name>
+<Abbreviation>lessCommonCasesGroup</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vAbess" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>abessive case</Name>
+<Abbreviation>Abess</Abbreviation>
+<Description>Abessive case is a case that expresses the lack or absence of the referent of the noun it marks. It has the meaning of the English preposition without.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:3,35</Citation>
+<Citation>Gove, et al. 1966:3</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vCausCase" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>causative case</Name>
+<Abbreviation>CausCase</Abbreviation>
+<Description>Causative case is a case which expresses that the referent of the noun it marks is the cause of the situation expressed by the clause.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:36</Citation>
+<Citation>Andrews, Avery 1985:95</Citation>
+<Citation>Gove, et al. 1966:356</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vComit" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>comitative case</Name>
+<Abbreviation>Comit</Abbreviation>
+<Description>Comitative case is a case expressing accompaniment. It carries the meaning "with" or "accompanied by."</Description>
+<Citations>
+<Citation>Anderson, Stephen 1985:186</Citation>
+<Citation>Pei and Gaynor 1954:42</Citation>
+<Citation>Dixon, R. 1972:12</Citation>
+<Citation>Gove, et al. 1966:455</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDel" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>delative case</Name>
+<Abbreviation>Del</Abbreviation>
+<Description>Delative case is a case which expresses motion downward from the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:53</Citation>
+<Citation>Gove, et al. 1966:595</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vElat" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>elative case</Name>
+<Abbreviation>Elat</Abbreviation>
+<Description>Elative case is a case expressing motion out of or away from the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Lyons 1968:299</Citation>
+<Citation>Pei and Gaynor 1954:64</Citation>
+<Citation>Crystal 1985:106</Citation>
+<Citation>Gove, et al. 1966:730</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vEqua" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>equative case</Name>
+<Abbreviation>Equa</Abbreviation>
+<Description>Equative case is a case that expresses likeness or identity to the referent of the noun it marks. It can have meaning, such as English "as," "like," and "in the capacity of."</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vEss" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>essive case</Name>
+<Abbreviation>Ess</Abbreviation>
+<Description>Essive case is a case that expresses the temporary state of the referent specified by a noun. The case has the meaning of (1) while, and (2) in the capacity of.</Description>
+<Citations>
+<Citation>Lyons 1968:299,301</Citation>
+<Citation>Gove, et al. 1966:778</Citation>
+<Citation>Crystal 1985:112</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vIness" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>inessive case</Name>
+<Abbreviation>Iness</Abbreviation>
+<Description>Inessive case is a case that expresses a location within the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Lyons 1968:299</Citation>
+<Citation>Gove, et al. 1966:1156</Citation>
+<Citation>Crystal 1985:156</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vLat" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>lative case</Name>
+<Abbreviation>Lat</Abbreviation>
+<Description>Lative case is a case that expresses motion (1) up to the location of, or (2) as far as the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:121, Gove, et al. 1966:1277</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vParti" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>partitive case</Name>
+<Abbreviation>Parti</Abbreviation>
+<Description>Partitive case is a case that expresses the partial nature of the referent of the noun it marks, as opposed to expressing the whole unit or class of which the referent is a part.  This case may be found in items such as the following: (1) Existential clauses, (2) Nouns that are accompanied by numerals or units of measure, or (3) Predications of material from which something is made.  It often has a meaning similar to the English word "some."</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:161</Citation>
+<Citation>Richards, Platt, and Weber 1985:208</Citation>
+<Citation>Quirk, et al. 1985:249</Citation>
+<Citation>Gove, et al. 1966:1648</Citation>
+<Citation>Sebeok 1946:12-14</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vProlat" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>prolative case</Name>
+<Abbreviation>Prolat</Abbreviation>
+<Description>Prolative case is a case that expresses motion along or by the referent of the noun it marks.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:176-177</Citation>
+<Citation>Sebeok 1946:7,14</Citation>
+<Citation>Merlan 1982:57-59,79</Citation>
+<Citation>Andrews, Avery 1985:92-93</Citation>
+<Citation>Gove, et al. 1966:1683</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vSuperEss" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>superessive case</Name>
+<Abbreviation>SuperEss</Abbreviation>
+<Description>Superessive case is a case that expresses location on the referent of the noun it marks. It has the meaning of "on" or "upon."</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:207</Citation>
+<Citation>Gove, et al. 1966:2293</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vTranslat" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>translative case</Name>
+<Abbreviation>Translat</Abbreviation>
+<Description>Translative case is a case indicating that the referent of the noun, or the quality of the adjective, that it marks is the result of a process of change.</Description>
+<Citations>
+<Citation>Lyons 1968:299-301</Citation>
+<Citation>Gove, et al. 1966:813,2429</Citation>
+<Citation>Sebeok 1946:17</Citation>
+<Citation>Hakulinen 1961:70</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+</item>
+</item>
+<item id="tPersonAgr" type="fsType" status="hidden">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>person agreement</Name>
+<Abbreviation>Agr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="fPers" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>person</Name>
+<Abbreviation>Pers</Abbreviation>
+<Description>Person deixis is deictic reference to the participant role of a referent, such as the speaker, the addressee, and referents which are neither speaker nor addressee.</Description>
+<Citations>
+<Citation>Levinson 1983:62</Citation>
+<Citation>Crystal 1980:263</Citation>
+<Citation>Hartmann and Stork 1972:168</Citation>
+<Citation>Mish et al. 1990:877</Citation>
+</Citations>
+</Language>
+</Languages>
+<item afterSeparator="" id="v1" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>first person</Name>
+<Abbreviation>1</Abbreviation>
+<Description>First person deixis is deictic reference that refers to the speaker, or both the speaker and referents grouped with the speaker.</Description>
+<Citations>
+<Citation>Crystal 1980:263</Citation>
+<Citation>Hartmann and Stork 1972:168</Citation>
+<Citation>Mish et al. 1990:466</Citation>
+<Citation>Levinson 1983:62</Citation>
+<Citation>Fleming 1988:322</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item afterSeparator="" id="v1Ex" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>first person exclusive</Name>
+<Abbreviation>1Ex</Abbreviation>
+<Description>Exclusive first person deixis is deixis that refers to a group not including the addressee(s).</Description>
+<Citations>
+<Citation>Crystal 1980:182</Citation>
+<Citation>Pei and Gaynor 1954:69</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item afterSeparator="" id="v1Incl" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>first person inclusive</Name>
+<Abbreviation>1Incl</Abbreviation>
+<Description>Inclusive first person deixis is deixis that refers to a group including the addressee(s).</Description>
+<Citations>
+<Citation>Crystal 1980:182</Citation>
+<Citation>Pei and Gaynor 1954:98</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item afterSeparator="" id="v2" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>second person</Name>
+<Abbreviation>2</Abbreviation>
+<Description>Second person deixis is deictic reference to a person or persons identified as addressee.</Description>
+<Citations>
+<Citation>Crystal 1980:263</Citation>
+<Citation>Hartmann and Stork 1972:168</Citation>
+<Citation>Mish et al. 1990:1060</Citation>
+<Citation>Levinson 1983:62</Citation>
+<Citation>Fleming 1988:322</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item afterSeparator="" id="v3" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>third person</Name>
+<Abbreviation>3</Abbreviation>
+<Description>Third person deixis is deictic reference to a referent(s) not identified as the speaker or addressee.</Description>
+<Citations>
+<Citation>Crystal 1980:263</Citation>
+<Citation>Hartmann and Stork 1972:168</Citation>
+<Citation>Mish et al. 1990:1227</Citation>
+<Citation>Levinson 1983:62</Citation>
+<Citation>Anderson and Keenan 1985:261-262</Citation>
+<Citation>Fleming 1988:322</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item afterSeparator="" id="v3Obv" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>obviative person</Name>
+<Abbreviation>3Obv</Abbreviation>
+<Description>Obviative person deixis is third person deixis that distinguishes a less important  referent in the present stage of the discourse from a referent that is more important.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item afterSeparator="" id="v3Prox" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>proximate person</Name>
+<Abbreviation>3Prox</Abbreviation>
+<Description>Proximate person deixis is a third person deixis that distinguishes a referent that is more important at the present stage of the discourse from a referent that is less important.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+</item>
+<item id="tCommonAgr" type="fsType" status="hidden">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>common agreement</Name>
+<Abbreviation>Agr</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="fgender" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>gender</Name>
+<Abbreviation>Gen</Abbreviation>
+<Description>Grammatical gender is a noun class system, composed of two or three classes, whose nouns that have human male and female referents tend to be in separate classes.  Other nouns that are classified in the same way in the language may not be classed by any correlation with natural sex distinctions.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:93</Citation>
+<Citation>Foley and Van Valin 1984:325</Citation>
+<Citation>Mish et al. 1990:510</Citation>
+<Citation>Crystal 1985:133</Citation>
+<Citation>Dixon, R. 1968:105</Citation>
+<Citation>Quirk, et al. 1985:314</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vMasc" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>masculine gender</Name>
+<Abbreviation>Masc</Abbreviation>
+<Description>Masculine gender is a grammatical gender that (1) marks nouns having human or animal male referents, and (2) often marks nouns having referents that do not have distinctions of sex.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:93</Citation>
+<Citation>Mish et al. 1990:730</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vFem" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>feminine gender</Name>
+<Abbreviation>Fem</Abbreviation>
+<Description>Feminine gender is a grammatical gender that (1) marks nouns that have human or animal female referents, and (2) often marks nouns that have referents that do not carry distinctions of sex.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:93</Citation>
+<Citation>Mish et al. 1990:456</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vNeut" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>neuter gender</Name>
+<Abbreviation>Neut</Abbreviation>
+<Description>Neuter gender is a grammatical gender that (1) includes those nouns having referents which do not have distinctions of sex, and (2) often includes some which do have a natural sex distinction.</Description>
+<Citations>
+<Citation>Hartmann and Stork 1972:93</Citation>
+<Citation>Mish et al. 1990:795</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fNum" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>number</Name>
+<Abbreviation>Num</Abbreviation>
+<Description>Number is a grammatical category of nouns, pronouns, and verb agreement that expresses count distinctions (such as "one" or "more than one"). The count distinctions typically, but not always, correspond to the actual count of the referents of the marked noun or pronoun.</Description>
+<Citations>
+<Citation>Crystal 1980:245</Citation>
+<Citation>Hartmann and Stork 1972:155</Citation>
+<Citation>Mish et al. 1990:811</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vSg" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>singular number</Name>
+<Abbreviation>Sg</Abbreviation>
+<Description>Singular number is number that refers to one member of a designated class.</Description>
+<Citations>
+<Citation>Crystal 1980:245</Citation>
+<Citation>Hartmann and Stork 1972:210</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPl" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>plural number</Name>
+<Abbreviation>Pl</Abbreviation>
+<Description>Plural number is number that expresses reference to a quantity greater than that expressed by the largest specific number category in a language, such as "more than one" in English, and "more than two" in some other languages.</Description>
+<Citations>
+<Citation>Crystal 1980:245</Citation>
+<Citation>Hartmann and Stork 1972:178</Citation>
+<Citation>Crystal 1987:428</Citation>
+<Citation>Mish et al. 1990:906</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vDual" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>dual number</Name>
+<Abbreviation>Dual</Abbreviation>
+<Description>Dual number is number which refers to two members of the class identified by the noun.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vTrial" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>trial number</Name>
+<Abbreviation>Trial</Abbreviation>
+<Description>A trial number is a number that refers to three members of the designated class.</Description>
+<Citations>
+<Citation>Pei and Gaynor 1954:220</Citation>
+<Citation>Gove, et al. 1966:2439</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vPaucal" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>paucal number</Name>
+<Abbreviation>Paucal</Abbreviation>
+<Description>few</Description>
+<Citations>
+<Citation>Crystal 1997:265</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fclass" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>noun class</Name>
+<Abbreviation>class</Abbreviation>
+<Description>A noun class system is a grammatical system that some languages use to overtly categorize nouns. Noun classes (1) are often based, at least in part, on characteristics (such as gender, animacy, shape) of the referents of some of the nouns in each class, and (2) are distinguished (a) by an affix on the noun or by a clitic or word in the noun phrase, and (b) by agreement affixes on noun phrase constituents and on the verb.</Description>
+<Citations>
+<Citation>Dixon, R. 1968:105</Citation>
+<Citation>Dixon, R. 1986:105-111</Citation>
+</Citations>
+</Language>
+</Languages>
+<item id="vAnim" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>animate class</Name>
+<Abbreviation>Anim</Abbreviation>
+<Description>An animate class is a category of nouns having human or animal referents.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vHum" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>human class</Name>
+<Abbreviation>Hum</Abbreviation>
+<Description>A human class is a noun class that has human referents.</Description>
+<Citations>
+<Citation>Lyons 1968:286-288</Citation>
+<Citation>Andrews, Avery 1985:77</Citation>
+<Citation>Bolinger 1968:114-115</Citation>
+</Citations>
+</Language>
+</Languages>
+</item>
+<item id="vInanim" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>inanimate class</Name>
+<Abbreviation>Inanim</Abbreviation>
+<Description>An inanimate class is a category of nouns that do not have human or animal referents.</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+<item id="fBantuClass" type="feature">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Bantu noun class</Name>
+<Abbreviation>class</Abbreviation>
+<Description>Noun classes for Bantu languages</Description>
+<Citations></Citations>
+</Language>
+</Languages>
+<item id="vBantuClass1" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 1</Name>
+<Abbreviation>NC1</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass2" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 2</Name>
+<Abbreviation>NC2</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass3" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 3</Name>
+<Abbreviation>NC3</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass4" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 4</Name>
+<Abbreviation>NC4</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass5" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 5</Name>
+<Abbreviation>NC5</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass6" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 6</Name>
+<Abbreviation>NC6</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass7" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 7</Name>
+<Abbreviation>NC7</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass8" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 8</Name>
+<Abbreviation>NC8</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass9" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 9</Name>
+<Abbreviation>NC9</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass10" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 10</Name>
+<Abbreviation>NC10</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass11" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 11</Name>
+<Abbreviation>NC11</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass12" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 12</Name>
+<Abbreviation>NC12</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass13" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 13</Name>
+<Abbreviation>NC13</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass14" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 14</Name>
+<Abbreviation>NC14</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass15" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 15</Name>
+<Abbreviation>NC15</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass16" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 16</Name>
+<Abbreviation>NC16</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass17" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 17</Name>
+<Abbreviation>NC17</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass18" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 18</Name>
+<Abbreviation>NC18</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass19" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 19</Name>
+<Abbreviation>NC19</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass20" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 20</Name>
+<Abbreviation>NC20</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass21" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 21</Name>
+<Abbreviation>NC21</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass22" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 22</Name>
+<Abbreviation>NC22</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass23" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 23</Name>
+<Abbreviation>NC23</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+<item id="vBantuClass24" type="value">
+<Languages>
+<Language>
+<LangCode>en</LangCode>
+<Name>Noun class 24</Name>
+<Abbreviation>NC24</Abbreviation>
+<Description></Description>
+<Citations></Citations>
+</Language>
+</Languages>
+</item>
+</item>
+</item>
+</FeatureCatalog>

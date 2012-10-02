@@ -1,0 +1,160 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "MiscDlgsRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"MiscDlgsRes.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridChsrMergDlg DIALOGEX 0, 0, 223, 238
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Merge Topic List Item"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+	CONTROL         "Tree1",kctidMergeTree,"SysTreeView32",TVS_HASBUTTONS |
+					TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS |
+					TVS_TRACKSELECT,5,28,213,184,WS_EX_CLIENTEDGE
+	LTEXT           "text",kctidChsrMergLabel,5,6,212,22
+	PUSHBUTTON      "&Merge",kctidOk,55,217,50,15
+	PUSHBUTTON      "Cancel",kctidCancel,111,217,50,15
+	PUSHBUTTON      "Help...",kctidHelp,165,217,50,15
+END
+
+kridMssngDtDlg DIALOGEX 0, 0, 246, 50
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Missing Data"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+	LTEXT           "text",kstidEncouragedMsg,9,5,186,21
+	PUSHBUTTON      "&Yes",kctidMssngDtYes,20,29,50,15
+	PUSHBUTTON      "&No",kctidMssngDtNo,72,29,50,15
+	PUSHBUTTON      "No to &All",kctidMssngDtNoToAll,124,29,50,15
+	PUSHBUTTON      "Help",kctidHelp,176,29,50,15
+END
+
+kridDeleteDlg DIALOGEX 0, 0, 190, 66
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Delete"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+	GROUPBOX        "Delete",IDC_STATIC,7,3,106,51
+	CONTROL         "Selected Text",kctidDelDlgSelTxt,"Button",
+					BS_AUTORADIOBUTTON,19,17,73,12
+	CONTROL         "Object",kctidDelDlgObj,"Button",BS_AUTORADIOBUTTON,20,
+					33,66,12
+	PUSHBUTTON      "OK",kctidOk,130,9,50,15
+	PUSHBUTTON      "Cancel",kctidCancel,130,27,50,15
+	PUSHBUTTON      "Help",kctidHelp,130,45,50,15
+END
+
+kridDeleteObjDlg DIALOGEX 0, 0, 294, 125
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Delete Object"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+	CONTROL			"", kctidDelAndChgStylesIcon, "Static", SS_ICON, 8,8,32,32
+	LTEXT           "WARNING:",IDC_STATIC,40,6,179,9
+	LTEXT           "You are about to delete:",IDC_STATIC,40,20,179,8
+	EDITTEXT        kctidDelObjBox,50,34,278,14,ES_AUTOHSCROLL | ES_READONLY |
+					NOT WS_BORDER
+	LTEXT           "Static",kctidDelObjTxt,40,50,278,54
+	PUSHBUTTON      "&Delete",kctidOk,65,104,50,15
+	DEFPUSHBUTTON   "&Cancel",kctidCancel,120,104,50,15
+	PUSHBUTTON      "&Help...",kctidHelp,175,104,50,15
+END
+
+kridConfirmDeleteDlg DIALOGEX 0, 0, 246, 70
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Confirm Delete"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+	ICON          "",kridConfirmDeleteIcon,10,5,21,20
+	LTEXT         "This deletion is permanent and cannot be reversed with Undo. Are you sure you want to delete this view?",
+				  kcidConfirmDeleteMsg,37,9,200,27
+	PUSHBUTTON    "&Delete",kctidOk,43,47,50,15
+	DEFPUSHBUTTON "&Cancel",kctidCancel,99,47,50,15
+	PUSHBUTTON    "&Help...",kctidHelp,153,47,50,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	kstidChsrMergText       "Select the item you wish to merge\n ""%s"" into:"
+END
+
+STRINGTABLE
+BEGIN
+	kstidDelObjTxt          "This will also delete the following:\n    %d %s\n    %d References from other places\n\nDo you want to delete this %s?"
+	kstidDelObjDel          "Delete "
+	kstidConfirmDeleteMsg   "This deletion is permanent and cannot be reversed with Undo. Are you sure you want to delete this view?"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

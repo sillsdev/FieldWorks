@@ -1,0 +1,118 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: MigrateData.rc
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+
+Description:
+	Resources for Data Upgrade system
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+#include "resource.h"
+#include "..\AppCore\Res\AfAppRes.h"
+#include "..\..\AppCore\Res\AfProgressDlg.rc"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version: bldinc.h holds the current version number and it is created by executing
+// bin\mkverrsc.exe from within the bin\mk*.bat file. The major and minor version
+// numbers are hard-coded in mk*.bat.
+#include "..\..\..\Output\Common\bldinc.h"
+VS_VERSION_INFO VERSIONINFO
+// NOTE: These defines are in bldinc.h.
+// BUILDLVL comes from %BUILD_LEVEL% and defaults to 9 for developer machines, but
+// is set to lower numbers by the build machine.
+ FILEVERSION MAJOR_VERSION,MINOR_VERSION,YEAR,DAY_MONTH_BUILDLVL
+// NOTE: PRODUCTVERSION should be adjusted for each new milestone of the Fieldworks suite
+//  of applications.
+ PRODUCTVERSION MAJOR_VERSION,0,0,MINOR_VERSION
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904b0"
+		BEGIN
+			VALUE "Comments", "\0"
+			VALUE "CompanyName", "SIL International\0"
+			VALUE "FileDescription", "Fieldworks Database Upgrader\0"
+			VALUE "FileVersion", STR_PRODUCT // Uses FILEVERSION.
+			VALUE "InternalName", "MigrateData\0"
+			VALUE "LegalCopyright", COPYRIGHT
+			VALUE "LegalTrademarks", "\0"
+			VALUE "OriginalFilename", "MigrateData.dll\0"
+			VALUE "PrivateBuild", "\0"
+			VALUE "ProductName", "SIL FieldWorks\0"
+			VALUE "ProductVersion", "0,0,0,6\0"
+			VALUE "SpecialBuild", "\0"
+		END
+	END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1200
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidMgdError			"Data Migration Error"
+	kstidMgdUsage			"Migrate expects two parameters: <database-name> <final-version-number>\nYou supplied ""%<0>s""."
+	kstidMgdExtError		"Data migration from database ""%<0>s"" version %<1>d to version %<2>d has failed."
+	kstidMgdExtError2		"Data migration from database ""%<0>s"" to version %<1>d has failed."
+	kstidMgdInitError		"Migrate could not initialize database ""%<0>s"" on server ""%<1>s""."
+	kstidMgdParamHighError	"Migrate cannot go up to version %<0>d. The highest version possible is %<1>d."
+	kstidMgdQodcError		"Migrate could not get a command interface for the database."
+	kstidMgdVersionError	"Migrate could not determine the current version of the database."
+	kstidMgdBackupError		"Migrate cannot make a temporary backup of the database."
+	kstidMgdTooNewError		"Migrate cannot convert database ""%<0>s"" to version %<1>d - it is already at version %<2>d."
+	kstidMgdFileError		"Migrate cannot locate the required SQL file ""%<0>s""."
+	kstidMgdFileOpenError	"Migrate cannot open the required SQL file ""%<0>s""."
+	kstidMgdSqlError		"There was an error in the Migration SQL file ""%<0>s""."
+	kstidMgdRestoreError	"Migrate cannot restore the temporary backup of the database. It is stored in file ""%<0>s""."
+	kstidMgdTagError		"Error converting the overlay tags."
+	kstidFixCmOverlayTagPhaseOne    "Phase One: Fixing overlay tags in monolingual strings"
+	kstidFixCmOverlayTagPhaseTwo    "Phase One: Fixing overlay tags in multilingual strings"
+	kstidMgdIncrementalError		"Data migration from database version %<1>d to version %<2>d not found.  Highest version has failed."
+	kstidMgdMissingIncrementalFile	"The current database version is %<0>d.  The current application version is %<1>d.  No update path available after version %<2>d."
+	kstidMgdErr201To204Gap	"The database version number is %<0>d. Versions 200001 through 200004 cannot be updated."
+
+	kstidMigratingTitle     "Updating Database"
+	kstidMigrateBackup      "Backing up the existing database"
+	kstidMigrateM5toV1      "Updating database from M5 to Version 1.0"
+	kstidMigrateV1toV15     "Updating database from Version 1.0 to Version 1.5"
+	kstidMigrateV15toV2     "Updating database from Version 1.5 to Version 2.0"
+	kstidMigrateV2toV200006 "Updating database from Version 200000 to Version 200006"
+	kstidMigrateInstLangs   "Installing language data from the updated database"
+	kstidMigrateIncremental "Updating database from Version %<0>d to Version %<1>d."
+
+	kstidMgdLoadingLexDb			"Loading default lexical database data"
+	kstidMgdLoadingPartsOfSpeech    "Loading default parts of speech"
+	kstidMgdLoadingTranslationTags  "Loading default translation types"
+	kstidMgdLoadingPhonologicalData "Loading default phonological data"
+	kstidMgdLoadingAnnotationDefns  "Loading default annotation definitions"
+	kstidMgdLoadingSemanticDomains  "Loading default semantic domains"
+	kstidMigrationSucceededFmt      "Updating %<0>s succeeded"
+	kstidMigrationFailedFmt         "Updating %<0>s failed"
+	kstidMgdFailed                  "Updating %<0>s from version %<1>d to %<2>d failed, leaving it at version %<3>d."
+	kstidMigrateIncrementalXml "Updating list (%s %s) for version %s.  (This may take several minutes.)"
+
+// The following id/string is duplicated in AfApp.rc
+	kstidCannotGetMasterDb	"Cannot connect to the master database!"
+END

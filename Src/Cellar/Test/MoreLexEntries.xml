@@ -1,0 +1,123 @@
+<LexDb>
+<Entries5005>
+<LexEntry id="I867D6964-C5E2-49C7-8748-7FADBA778EF7">
+<DateCreated5002><Time val="2006-02-22 17:41:21.667"/></DateCreated5002>
+<DateModified5002><Time val="2006-02-22 17:45:50.427"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="ICE594C12-C399-48A9-ADC9-D41AE4D21333">
+<PartOfSpeech5001><Link target="I8A67AD92-C7BA-432A-A921-CCD058FAF769" ws="en" abbr="N" name="Noun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="I1ED831E1-21DB-46BC-9111-646801B85CE4">
+<MorphoSyntaxAnalysis5016><Link target="ICE594C12-C399-48A9-ADC9-D41AE4D21333"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">ufo</AUni>
+</Gloss5016>
+<SemanticDomains5016>
+<Link target="I61A83439-7ABD-433A-AA11-82B92B6D8CC4" ws="en" abbr="1.1.1" name="Objects in the sky"/>
+<Link target="I63781E49-4FAE-4FAD-A4BE-0F254CB8D7DC" ws="en" abbr="X" name="UFO"/>
+</SemanticDomains5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="IBC368C5C-35CA-41F3-9B22-0B705D36F9A7">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">cigaroid</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry id="I62AE42A2-F55C-4F05-82E7-875656CC7BF5">
+<DateCreated5002><Time val="2006-02-22 17:42:14.857"/></DateCreated5002>
+<DateModified5002><Time val="2006-02-22 17:43:25.657"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I46093C02-485F-4B24-B3C2-7FA0EDDB91D2">
+<PartOfSpeech5001><Link target="I8A67AD92-C7BA-432A-A921-CCD058FAF769" ws="en" abbr="N" name="Noun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="IB42DFCF6-701F-4ED9-BAF4-99631D7A9ACE">
+<MorphoSyntaxAnalysis5016><Link target="I46093C02-485F-4B24-B3C2-7FA0EDDB91D2"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">oil</AUni>
+</Gloss5016>
+<SemanticDomains5016>
+<Link target="IBE065ABB-AE65-4CC8-940D-D0181BEEE04F" ws="en" abbr="Y" name="Liquids"/>
+</SemanticDomains5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="IE3B3C346-06A5-41A8-AEC5-F4C87C2BFD43">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">petroleum</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry id="I3052ABD0-2E8A-4488-B17D-2BF0869AE722">
+<DateCreated5002><Time val="2006-02-22 17:43:25.513"/></DateCreated5002>
+<DateModified5002><Time val="2006-02-22 17:44:43.300"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="I747E2AAB-4175-4784-AA49-2524A83EC093">
+<PartOfSpeech5001><Link target="I8A67AD92-C7BA-432A-A921-CCD058FAF769" ws="en" abbr="N" name="Noun"/></PartOfSpeech5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="IDCE5680A-ABB6-4A27-8FC1-95E65935C111">
+<MorphoSyntaxAnalysis5016><Link target="I747E2AAB-4175-4784-AA49-2524A83EC093"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">trees</AUni>
+</Gloss5016>
+<SemanticDomains5016>
+<Link target="IAA57936D-F8A9-4603-8C3D-27ABCCD13531" ws="en" abbr="1.7" name="Nature, environment"/>
+<Link target="I2BD48BD1-D8D5-4A5E-A883-D63D8E8652AA" ws="en" abbr="Z" name="wilderness"/>
+</SemanticDomains5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I5D4081CD-C85B-464B-9076-7260EDD99FE2">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">forest</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+<LexEntry id="I98169C06-9387-44EC-84A4-4E73D5873CF2">
+<DateCreated5002><Time val="2006-02-22 17:45:50.207"/></DateCreated5002>
+<DateModified5002><Time val="2006-02-22 17:46:19.507"/></DateModified5002>
+<MorphoSyntaxAnalyses5002>
+<MoStemMsa id="IEA3F54D6-C484-4695-A238-8B61523D2086">
+<PartOfSpeech5001><Link target="I8A67AD92-C7BA-432A-A921-CCD058FAF769" ws="en" abbr="N" name="Noun"/></PartOfSpeech5001>
+<MsFeatures5001>
+<FsFeatStruc id="I3BE2BFFF-493F-43EF-B283-CB84599743FA">
+</FsFeatStruc>
+</MsFeatures5001>
+</MoStemMsa>
+</MorphoSyntaxAnalyses5002>
+<Senses5002>
+<LexSense id="IDF90F946-33A0-491E-B8EE-8CE6B60C4243">
+<MorphoSyntaxAnalysis5016><Link target="IEA3F54D6-C484-4695-A238-8B61523D2086"/></MorphoSyntaxAnalysis5016>
+<Gloss5016>
+<AUni ws="en">world</AUni>
+</Gloss5016>
+<SemanticDomains5016>
+<Link target="IA0D073DF-D413-4DFD-9BA1-C3C68F126D90" ws="en" abbr="1.1.1.4" name="Planet"/>
+<Link target="IB47D2604-8B23-41E9-9158-01526DD83894" ws="en" abbr="1.2" name="World"/>
+</SemanticDomains5016>
+</LexSense>
+</Senses5002>
+<LexemeForm5002>
+<MoStemAllomorph id="I5D2B324F-5F47-47AE-BE6C-5D9A2E1E6948">
+<MorphType5035><Link target="ID7F713E8-E8CF-11D3-9764-00C04F186933" ws="en" abbr="ubd stem" name="stem"/></MorphType5035>
+<Form5035>
+<AUni ws="utp">Earth</AUni>
+</Form5035>
+</MoStemAllomorph>
+</LexemeForm5002>
+</LexEntry>
+</Entries5005>
+</LexDb>

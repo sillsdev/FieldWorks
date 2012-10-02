@@ -1,0 +1,30 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2002, SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: DbServicesTlb.idl
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+Description:
+	Interface descriptions for the DbServices dll. See DbServices.idh for a fuller description.
+----------------------------------------------------------------------------------------------*/
+
+/***********************************************************************************************
+	Include files
+***********************************************************************************************/
+import "oaidl.idl";
+import "ocidl.idl";
+#include "Common.idh" // DeclareInterface and similar
+
+DeclareLibrary(FwDbServices, 2.0, "FieldWorks Database Services 2.0 Type Library",
+	03BAB68B-6C7F-42ff-8438-B6D523CB79B9)
+{
+	importlib("FwKernelTlb.tlb");
+
+	#include "BackupDelegates.idh"
+	#include "DbBackup.idh"
+	#include "DbDisconnect.idh"
+	#include "RemoteWarn.idh"
+};

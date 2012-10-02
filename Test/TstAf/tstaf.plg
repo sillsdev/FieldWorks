@@ -1,0 +1,28 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: tstaf - Win32 Debug--------------------
+</h3>
+
+=== Performing i Debug on E:\FW\Test\TstAf\TstAf.mak. ===
+
+E:\fw\test\tstaf>nmake /nologo  /f E:\FW\Test\TstAf\TstAf.mak
+Compiling E:\FW\Test\TstAf\TstAf.cpp
+ cl.exe /nologo @C:\WINDOWS\TEMP\nma73619.
+TstAf.cpp
+Linking E:\FW\Output\Debug\TstAf.exe
+ link.exe  /out:"E:\FW\Output\Debug\TstAf.exe" /machine:IX86 /incremental:no /map:E:\FW\Obj\Debug\TstAf\TstAf.map /nod:dbguuid.lib /subsystem:windows /NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT /LIBPATH:"E:\FW\Lib\Debug" /LIBPATH:"E:\FW\Lib" /debug /pdb:"E:\FW\Output\Debug\TstAf.pdb" @E:\FW\Obj\Debug\TstAf\TstAf.txt
+Microsoft (R) Incremental Linker Version 6.00.8447
+Copyright (C) Microsoft Corp 1992-1998. All rights reserved.
+
+E:\FW\Obj\Debug\TstAf\TstAf.res E:\FW\Obj\Debug\TstAf\autopch\TstAf.obj E:\FW\Obj\Debug\TstAf\autopch\Debug.obj E:\FW\Obj\Debug\TstAf\autopch\ModuleEntry.obj E:\FW\Obj\Debug\TstAf\autopch\GenericFactory.obj E:\FW\Obj\Debug\TstAf\autopch\Util.obj E:\FW\Obj\Debug\TstAf\autopch\UtilString.obj E:\FW\Obj\Debug\TstAf\autopch\UtilTime.obj E:\FW\Obj\Debug\TstAf\autopch\UtilXml.obj E:\FW\Obj\Debug\TstAf\autopch\ComVector.obj E:\FW\Obj\Debug\TstAf\autopch\HashMap.obj E:\FW\Obj\Debug\TstAf\autopch\FileStrm.obj E:\FW\Obj\Debug\TstAf\autopch\ResourceStrm.obj E:\FW\Obj\Debug\TstAf\autopch\AfApp.obj DebugProcs.lib uuid.lib advapi32.lib kernel32.lib ole32.lib oleaut32.lib gdi32.lib E:\FW\Lib\Debug\DebugProcs.lib uuid.lib advapi32.lib kernel32.lib ole32.lib oleaut32.lib gdi32.lib comctl32.lib comdlg32.lib shell32.lib
+
+
+
+<h3>Results</h3>
+tstaf.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

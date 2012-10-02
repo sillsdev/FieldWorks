@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?-->
+
+<accil>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+   <!-- Sort and time the Thai database in Lexicon Edit by column head: Lexeme Form, Glosses, Grammatical Info. then Headword -->
+
+	<var id="projectName" set="Thai"/>
+	<sound frequency = "500" duration = "500"/>
+	<on-application run = "ok" args = "-db $projectName" close = "no" on-fail = "assert">
+	   <!-- verify that the view is Lexicon Edit -->
+	   <var id="sbLxEdit" select="sidebar/list" add="Lexicon Edit"/>
+	   <glimpse id="lxEditLabel" path="$sbLxEdit" prop="selected"/>
+
+	   <var id="firstRec" select="toolbar/first-record"/>
+	   <model select="lexicon-edit[@role='view']/entries/col/header">
+		  <monitor-time expect="999999999" desc="Thai db Lex Edit, Sort Lexeme Form">
+			 <click path="$guiPath;Lexeme Form"/>
+			 <click path="$firstRec"/>
+		  </monitor-time>
+		  <monitor-time expect="999999999" desc="Thai db Lex Edit, Sort Glosses">
+			 <click path="$guiPath;Glosses"/>
+			 <click path="$firstRec"/>
+		  </monitor-time>
+		  <monitor-time expect="999999999" desc="Thai db Lex Edit, Sort Grammatical Info. (Full)">
+			 <click path="$guiPath;Grammatical Info. (Full)"/>
+			 <click path="$firstRec"/>
+		  </monitor-time>
+		  <monitor-time expect="999999999" desc="Thai db Lex Edit, Sort Headword">
+			 <click path="$guiPath;Headword"/>
+			 <click path="$firstRec"/>
+		  </monitor-time>
+	   </model>
+
+	</on-application>
+
+</accil>

@@ -1,0 +1,165 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "FmtBulNumDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"FmtBulNumDlgRes.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridFmtBulNumDlg DIALOGEX 0, 0, 248, 176
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Preview",IDC_STATIC,134,7,59,9
+	GROUPBOX        "",IDC_STATIC,18,24,106,26
+	GROUPBOX        "",IDC_STATIC,18,60,106,71
+	CONTROL         "&None",kctidFbnRbNotAList,"Button",BS_AUTORADIOBUTTON |
+					WS_TABSTOP,7,7,33,10
+	CONTROL         "B&ullet",kctidFbnRbBullet,"Button",BS_AUTORADIOBUTTON |
+					WS_TABSTOP,7,23,35,10
+	CONTROL         "Numbe&r",kctidFbnRbNumber,"Button",BS_AUTORADIOBUTTON |
+					WS_TABSTOP,7,59,43,10
+	CONTROL         "Unsp&ecified",kctidFbnRbUnspecified,"Button",
+					BS_AUTORADIOBUTTON | WS_TABSTOP,7,159,53,10
+	LTEXT           "Sc&heme:",kctidFbnBulSch,23,35,47,8
+	COMBOBOX        kctidFbnCbBullet,70,33,48,96,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Sche&me:",kctidFbnNumSch,23,71,47,8
+	COMBOBOX        kctidFbnCbNumber,70,69,48,73,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	CONTROL         "S&tart at:",kctidFbnCxStartAt,"Button",BS_AUTOCHECKBOX |
+					WS_TABSTOP,23,86,47,11
+	EDITTEXT        kctidFbnEdStartAt,70,84,48,12,ES_AUTOHSCROLL
+	CONTROL         "Spin1",kctidFbnSpStartAt,"msctls_updown32",
+					UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,114,84,11,
+					12
+	LTEXT           "Text &before:",kctidFbnNumTB,23,101,47,8
+	EDITTEXT        kctidFbnEdTxtBef,70,99,48,12,ES_AUTOHSCROLL
+	LTEXT           "Te&xt after:",kctidFbnNumTA,23,116,47,8
+	EDITTEXT        kctidFbnEdTxtAft,70,114,48,12,ES_AUTOHSCROLL
+	PUSHBUTTON      "Bullet and Number &Font...",kctidFbnPbFont,17,136,107,
+					14
+	LTEXT           "Preview",IDC_STATIC,134,7,59,9
+	CONTROL         "",kctidFbnPreview,"Button",BS_OWNERDRAW,133,18,108,132
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+	kridFmtBulNumDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 241
+		VERTGUIDE, 23
+		VERTGUIDE, 70
+		VERTGUIDE, 118
+		VERTGUIDE, 124
+		BOTTOMMARGIN, 169
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	kctidFbnRbNotAList      "Removes list formatting from the paragraph."
+	kctidFbnRbBullet        "Formats the paragraph as a bulleted list."
+	kctidFbnRbNumber        "Formats the paragraph as a numbered list."
+	kctidFbnCbBullet        "Specifies a bullet style for your list paragraph."
+	kctidFbnCbNumber        "Specifies a numbering scheme for your numbered paragraph."
+	kctidFbnSAMsg           "The Start At value must be between %<0>d and %<1>d for this format."
+	kctidFbnSATitle         "Start At Too Large"
+	kctidFbnTxtBATitle      "Text Too Long"
+	kctidFbnTxtBAMsg        "This field is limited to at most %<0>d characters."
+END
+
+STRINGTABLE
+BEGIN
+	kctidFbnEdStartAt       "Specifies the number for this list paragraph. (Leave as 1 for automatic numbering.)"
+	kctidFbnCxStartAt       "Sets the paragraph to the specified number and renumbers following items."
+	kctidFbnSpStartAt       "Increases or decreases the starting number for the list. (Leave as 1 for automatic numbering.)"
+	kctidFbnEdTxtBef        "Specifies text to appear before the list number such as #."
+	kctidFbnEdTxtAft        "Specifies text to appear after the list number such as period or colon."
+	kctidFbnPbFont          "Specifies a font and color for the list number."
+	kctidFbnPreview         "Shows how your list will look with the selected options."
+	kctidFbnRbUnspecified   "When selected, has effect of removing any bullets and numbering attributes from this style and allowing the underlying paragraph style to control these attributes, if any. Contrasts with the None option that sets this style to not have bullets or numbering attributes."
+END
+
+STRINGTABLE
+BEGIN
+	kstidNumbered			"Numbered"
+	kstidBulleted			"Bulleted"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="votive" default="votive.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	votive.build - Builds the votive project (votive.dll).
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- votive-specific properties -->
+  <property name="votive.file.res.target" value="${dir.build.votive}\votive.res" readonly="true" />
+  <property name="votive.file.resui.target" value="${dir.build.votive}\votiveui.res" readonly="true" />
+  <property name="votive.file.ctc.source" value="${dir.src.votive}\Satellite\MenuCommands.ctc" readonly="true" />
+  <property name="votive.file.cto.target" value="${dir.build.votive}\MenuCommands.cto" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="votive.build" description="Peforms a full rebuild (clean then build)" depends="votive.clean, votive.inc" />
+
+  <!-- Clean -->
+  <target name="votive.clean" description="Cleans the build">
+	<!--
+	TODO JRock: Once we have all managed resources and we don't need to create the ResourceId.cs file anymore
+	(which sconce creates), then we can just remove the entire directory instead of selective files.
+	-->
+	<delete failonerror="false">
+	  <fileset basedir="${dir.build.votive}">
+		<include name="votive.res" />
+		<include name="votiveui.res" />
+		<include name="MenuCommands.cto" />
+	  </fileset>
+	</delete>
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="Microsoft.VisualStudio.Designer.Interfaces.dll" />
+		<include name="Microsoft.VisualStudio.OLE.Interop.dll" />
+		<include name="Microsoft.VisualStudio.Shell.Interop.dll" />
+		<include name="votive.dll" />
+		<include name="votive.pdb" />
+	  </fileset>
+	</delete>
+	<delete dir="${dir.target.wix}\1033" failonerror="false" if="${directory::exists(path::combine(dir.target.wix, '1033'))}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="votive.inc" description="Performs an incremental build" depends="makeDirs, votive.inc.dll, votive.inc.setup" />
+
+  <!-- votive.inc.dll -->
+  <target name="votive.inc.dll" description="Performs an incremental build of votive.dll" depends="createKeyFile">
+	<if test="${vsip.installed}">
+	  <!-- Copy the Visual Studio interop DLLs to the target directory -->
+	  <copy todir="${dir.target.wix}">
+		<fileset basedir="${dir.vsip.interopassemblies}">
+		  <include name="Microsoft.VisualStudio.OLE.Interop.dll" />
+		  <include name="Microsoft.VisualStudio.Shell.Interop.dll" />
+		</fileset>
+	  </copy>
+	  <copy todir="${dir.target.wix}">
+		<fileset basedir="${framework::get-sdk-directory(framework::get-runtime-framework())}">
+		  <include name="Microsoft.VisualStudio.Designer.Interfaces.dll" />
+		</fileset>
+	  </copy>
+
+	  <!-- Compile the votive.rc file -->
+	  <rc rcfile="${dir.src.votive}\Core\votive.rc" langid="0" output="${votive.file.res.target}" options="${rc.standardOptions} ${cl.standardIncludes}" />
+
+	  <!-- Build votive.dll -->
+	  <csc
+		target="library"
+		output="${dir.target.wix}\votive.dll"
+		debug="${csc.debug}"
+		optimize="${ship}"
+		define="${csc.defines};TRACE"
+		warnaserror="true"
+		warninglevel="4"
+		checked="true"
+	  >
+		<sources basedir="${dir.src.votive}\Core">
+		  <include name="${file.wixver}" />
+		  <include name="${file.wixkey}" />
+		  <include name="AssemblyInfo.cs" />
+		  <include name="CandleSettings.cs" />
+		  <include name="LightSettings.cs" />
+		  <include name="WixBuildableProjectConfiguration.cs" />
+		  <include name="WixBuildSettings.cs" />
+		  <include name="WixFileNode.cs" />
+		  <include name="WixGeneralPropertyPage.cs" />
+		  <include name="WixHierarchyImages.cs" />
+		  <include name="WixlibReferenceFileNode.cs" />
+		  <include name="WixlibReferenceFolderNode.cs" />
+		  <include name="WixLocalizedCategoryAttribute.cs" />
+		  <include name="WixLocalizedDescriptionAttribute.cs" />
+		  <include name="WixLocalizedDisplayNameAttribute.cs" />
+		  <include name="WixManagedResourceManager.cs" />
+		  <include name="WixPackage.cs" />
+		  <include name="WixPackageContext.cs" />
+		  <include name="WixPackageSettings.cs" />
+		  <include name="WixProject.cs" />
+		  <include name="WixProjectConfiguration.cs" />
+		  <include name="WixProjectFactory.cs" />
+		  <include name="WixProjectNode.cs" />
+		  <include name="WixProjectSerializer.cs" />
+		  <include name="WixStrings.cs" />
+		</sources>
+		<references basedir="${dir.target.wix}">
+		  <include name="Microsoft.VisualStudio.Designer.Interfaces.dll" />
+		  <include name="Microsoft.VisualStudio.OLE.Interop.dll" />
+		  <include name="Microsoft.VisualStudio.Shell.Interop.dll" />
+		  <include name="sconce.dll" />
+		</references>
+		<resources basedir="${dir.src.votive}\Core" prefix="Microsoft.Tools.WindowsInstallerXml.VisualStudio">
+		  <include name="SolutionExplorerIcons.bmp" />
+		  <include name="Strings.resx" />
+		</resources>
+		<arg value="-win32res:&quot;${votive.file.res.target}&quot;" />
+	  </csc>
+
+	  <!-- Compile the satellite DLL's menu commands -->
+	  <!--
+		There is an error in the ctc.exe program in that you can't pass a directory with spaces in it
+		via the -I argument. Dumb! So, the way we can get around this is to temporarily copy the header
+		files that we need to a subdirectory which we can then reference without spaces.
+	  -->
+	  <property name="votive.vsipinctemp" value="VSIP_INC_TEMP" readonly="true" />
+	  <property name="votive.dir.vsipinctemp" value="${path::get-directory-name(votive.file.ctc.source)}\${votive.vsipinctemp}" readonly="true" />
+	  <copy todir="${votive.dir.vsipinctemp}">
+		<fileset basedir="${dir.vsip.inc}">
+		  <include name="**" />
+		</fileset>
+	  </copy>
+	  <exec program="${tool.ctc}" workingdir="${path::get-directory-name(votive.file.ctc.source)}" unless="${file::up-to-date(votive.file.ctc.source, votive.file.cto.target)}">
+		<arg value="-nologo" />
+		<arg path="${votive.file.ctc.source}" />
+		<arg path="${votive.file.cto.target}" />
+		<arg value="-Ccl" />
+		<arg value="-I${votive.vsipinctemp}" />
+		<arg value="-I${votive.vsipinctemp}\office10" />
+	  </exec>
+	  <delete dir="${votive.dir.vsipinctemp}" includeemptydirs="true" />
+
+	  <!-- Compile the votiveui.rc file -->
+	  <rc rcfile="${dir.src.votive}\Satellite\1033\votiveui.rc" langid="409" output="${votive.file.resui.target}" options="${rc.standardOptions} ${cl.standardIncludes} /i &quot;${dir.build.votive}&quot;" />
+
+	  <!-- Build the satellite DLL (votiveui.dll) -->
+	  <mkdir dir="${dir.target.wix}\1033" />
+	  <link output="${dir.target.wix}\1033\votiveui.dll">
+		<sources>
+		  <include name="${votive.file.resui.target}" />
+		</sources>
+		<arg value="/noentry" />
+		<arg value="/dll" />
+		<arg value="/machine:${platform}" />
+	  </link>
+	</if>
+  </target>
+
+  <!-- votive.inc.setup -->
+  <target name="votive.inc.setup" description="Performs an incremental build of votive.msi" depends="votive.inc.dll">
+	<if test="${vsip.installed}">
+	  <!-- Pull in the wix tools NAnt tasks -->
+	  <loadtasks assembly="${file.nanttasks}" />
+
+	  <!-- Build the votive.msi -->
+	  <candle out="${dir.build.votive}\" exedir="${dir.target.wix}" warningsaserrors="true">
+		<defines>
+		  <define name="Flavor" value="${flavor}" />
+		  <define name="TargetDir" value="${dir.target.wix}" />
+		  <define name="VotiveRoot" value="${dir.src.votive}" />
+		  <define name="VotiveTemplatesRoot" value="${dir.src.votive}\Templates" />
+		</defines>
+		<sources basedir="${dir.src.votive}\Setup">
+		  <include name="Product.wxs" />
+		  <include name="Votive.wxs" />
+		  <include name="VSDetect.wxs" />
+		</sources>
+		<includedirs>
+		  <include name="${dir.wixroot}\inc" />
+		</includedirs>
+	  </candle>
+	  <light out="${dir.target.wix}\votive.msi" locfile="${dir.target.wix}\WixUI_en-us.wxl" exedir="${dir.target.wix}" warningsaserrors="true">
+		<sources basedir="${dir.build.votive}">
+		  <include name="Product.wixobj" />
+		  <include name="Votive.wixobj" />
+		  <include name="VSDetect.wixobj" />
+		  <include name="${dir.target.wix}\wixui.wixlib" />
+		</sources>
+	  </light>
+	</if>
+  </target>
+
+</project>

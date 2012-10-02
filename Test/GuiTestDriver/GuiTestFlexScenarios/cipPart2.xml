@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Conceptual Intro to Parsing test -->
+<!-- Sections 2.1.2.1 and 2.1.2.2  Part 2 to 5 -->
+<!-- Adds a Nahuatl Noun Category and subcategory Possessed Nahuatl Noun with a template -->
+<!-- Adds interlinear text to Inflection Examples and fully parses it -->
+
+<accil on-fail="assert">
+
+  <bug id="LT-6477"/>
+
+ <var id="projectName" set="CIPTest"/>
+
+<!--  -->
+<on-application args="-db $projectName" title="$projectName$FlexSig" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncGrammar.xml"/>
+		 <include from="IncLexicon.xml"/>
+		 <include from="IncTexts.xml"/>
+		 <include from="IncWords.xml"/>
+
+  <var id="Possessor" set="$grmCeHeader;/$Text;/value:rexp#Possessor-"/>
+
+<!-- 2.	Go to Grammar / Category Edit -->
+   <click path="$menuGRAMMAR;menu:Category Edit"/>
+<!-- a.	Click on Noun -->
+  <click path="$RecTree;/36:Noun"/>
+<!-- b.	Change Name to "Noun Nahuatl" -->
+  <click path="$gmCeName"/>
+  <insert>^{END}+{HOME}</insert> <!-- select what's there -->
+  <insert>Noun Nahuatl</insert>
+<!-- c.	Change Abbreviation to "NNah" -->
+  <click path="$gmCeAbbr"/>
+  <insert>^{END}+{HOME}</insert> <!-- select what's there -->
+  <insert>NNah</insert>
+
+<!-- d.	Insert Subcategory: it might be down a page or two -->
+  <var id="CeSubCats" set="$grmCeEDIT;9:summary[*]/$sp;2/9:Slice_unknown/20:Root/$Text;/value:Subcategories"/>
+  <glimpse id="findSubCats" path="$CeSubCats" on-fail="skip"/>
+  <if><condition of="$findSubCats" is="false"/>
+	<then>
+	  <click path="$grmCeEDIT;43:Page down"/>
+	  <glimpse id="findSubCats2" path="$CeSubCats" on-fail="skip"/>
+	  <if><condition of="$findSubCats2" is="false"/>
+		<then>
+		  <click path="$grmCeEDIT;43:Page down"/>
+		</then>
+	  </if>
+	</then>
+  </if>
+  <click side="right" path="$CeSubCats"/>
+  <insert>{DOWN}~</insert>
+
+<!-- i.	Click on the link to create a custom category -->
+  <on-dialog title="Add from Catalog">
+	 <click path="$grmCeCustCat"/>
+  </on-dialog>
+
+<!-- ii.	Name is Possessed Nahuatl Noun -->
+  <click path="$gmCeName"/>
+  <insert>Possessed Nahuatl Noun</insert>
+<!-- iii.	Abbreviation is NNahPoss -->
+  <click path="$gmCeAbbr"/>
+  <insert>NNahPoss</insert>
+
+<!-- iv.	Create affix template: -->
+  <click side="right" path="$gmCeAfxTmpl"/>
+  <insert>{DOWN}~</insert>
+<!-- 1.	Name: Nahuatl Possessed Noun -->
+  <click path="$gmCeField;Template Name"/>
+  <insert >Nahuatl Possessed Noun</insert>
+
+<!-- 2.	Insert an obligatory slot before the Stem and rename it to  "Possessor" -->
+  <insert wait="500">{TAB}</insert>
+  <click side="right" path="$grmCeHeader;/$Text;/42:String/value:rexp#STEM"/>
+	  <insert>~</insert>
+
+  <on-dialog title="Choose Slot">
+	 <insert wait="500">{TAB}</insert>
+	 <click path="$addObSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+  <click dx="20" path="$grmCeHeader;/$Text"/><!--;/value:Type slot name here-"/-->
+  <insert>^{END}+{HOME}</insert>
+  <insert>Possessor</insert>
+
+<!-- a.	Add inflectional morpheme to Possessor -->
+  <click side="right" path="$Possessor"/>
+	  <insert>~</insert>
+<!-- b.	Create new inflectional affix -->
+
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- c.	Lexeme form: no- -->
+	<insert>no</insert>
+<!-- d.	Gloss: 1SgPoss -->
+	<click path="$neGloss"/>
+	<insert>1SgPoss</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- e.	Repeat a-b for each of these: -->
+
+<!-- i.	Form: mo- / 2SgPoss -->
+  <click side="right" path="$Possessor"/>
+	  <insert>~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>mo</insert>
+	<click path="$neGloss"/>
+	<insert>2SgPoss</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- ii.	Form: i-/ 3gPoss -->
+  <click side="right" path="$Possessor"/>
+	  <insert>~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>i</insert>
+	<click path="$neGloss"/>
+	<insert>3SgPoss</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- iii.	Form: to- / 1PlPoss -->
+  <click side="right" path="$Possessor"/>
+	  <insert>~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>to</insert>
+	<click path="$neGloss"/>
+	<insert>1PlPoss</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- iv.	Form: amo- / 2PlPoss -->
+  <click side="right" path="$Possessor"/>
+	  <insert>~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>amo</insert>
+	<click path="$neGloss"/>
+	<insert>2PlPoss</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- v.	Form: in- / 3PlPoss -->
+  <click side="right" path="$Possessor"/>
+	  <insert>~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+	<insert>in</insert>
+	<click path="$neGloss"/>
+	<insert>3PlPoss</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 3.	Insert an optional slot after the stem and rename it to "Number" -->
+  <click side="right" path="$grmCeHeader;[2]/$Text;/value:rexp#STEM"/>
+	  <insert>{DOWN}</insert>
+	  <insert>~</insert>
+  <on-dialog title="Choose Slot">
+	 <click path="$addOpSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+  <click wait="1000" dx="50" path="$grmCeHeader;[3]/$Text"/>
+  <insert>{END}+{HOME}</insert>
+  <insert>Number</insert>
+
+<!-- a.	Add inflectional morpheme to Number -->
+  <click side="right" path="$grmCeHeader;[3]/$Text;/value:rexp#Number"/>
+	  <insert>~</insert>
+<!-- b.	Create new inflectional affix -->
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+<!-- c.	Lexeme form: -van -->
+	<insert>van</insert>
+<!-- d.	Gloss: Plural -->
+	<click path="$neGloss"/>
+	<insert>Plural</insert>
+	<click path="$create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 3.	Go to Lexicon / Lexicon Edit  -->
+  <click path="$vwLexEdit"/>
+<!-- a.	Create a new entry: kal / stem / house/ category of Possessed Nahuatl Noun -->
+  <click path="$insEntry"/>
+  <on-dialog title="New Entry">
+	<insert>kal</insert>
+	<click path="$neGloss"/>
+	<insert>house</insert>
+	<insert wait="200">%y</insert><!-- category -->
+	<insert wait="200">n{RIGHT}</insert><!-- Nahuatl Noun -->
+	<insert wait="200">p~</insert><!-- Possessed Nahuatl Noun -->
+	<click path="$create"/>
+  </on-dialog>
+
+<!-- 4.	Go to Texts / Edit -->
+  <click path="$menuTEXTS;menu:Interlinear Texts"/>
+<!-- a.	Make Eng title be "Inflection Examples" -->
+  <click path="$txtTitle"/>
+  <insert>Inflection Examples</insert>
+<!-- b.	In the Baseline, type the following two lines: -->
+  <click path="$txtBaseline"/>
+  <click path="$txtBLInput"/>
+<!-- i.	nokal mokal ikal tokal amokal inkal -->
+  <insert>nokal mokal ikal tokal amokal inkal</insert>
+  <insert>~</insert>
+<!-- ii.	nokalvan mokalvan ikalvan tokalvan amokalvan inkalvan -->
+  <insert>nokalvan mokalvan ikalvan tokalvan amokalvan inkalvan</insert>
+<!-- c.	Click on the Interlinearize tab -->
+  <click path="$txtInterlinear"/>
+<!-- d.	Start the Parser  -->
+  <click path="$menuPARSER;menu:Start Parser"/>
+<!-- e.	When the parser is idle, ideally, the text would be refreshed, but it currently is not, so refresh. -->
+  <insert wait="20000">{HOME}</insert><!-- need to wait for the parser to work -->
+  <!--click path="$refresh"/-->
+<!-- f.	Ideally, it would show the parser's predictions, but it looks like it does not.  Sigh.  If one goes out of the Texts tool and then back, then maybe it will show them.          IS THIS STILL TRUE??-->
+
+<!-- 5.	Go to Words / Analyses -->
+  <click path="$menuTEXTS;menu:Word Analyses"/>
+	<click path="$refresh"/>
+	<click path="$menuPARSER;menu:Start Parser"/>
+	<insert wait="10000">{ESC}</insert><!-- esc does nothing, so it's just waiting -->
+
+<!-- a.	In the browse pane, -->
+<!-- i.	Have it not show the Word Glosses. -->
+  <insert wait="5000">{ESC}</insert><!-- wait for the view to paint -->
+  <click path="$wrdFormColChanger"/>
+  <insert wait="500">w</insert><!-- remove Word Gloss column -->
+<!-- ii.	Also have it show the Predicted Analyses. -->
+  <click path="$wrdFormColChanger"/>
+  <insert wait="500">p</insert><!-- add Predicted Analyses column -->
+<!-- b.	Every form should have a 1 in both the Number in Corpus and Predicted Analyses. -->
+<click path="$wrdFormRec;[1]/$Col;[1]"/>
+<do-once until="999999">
+  <glimpse id="1" path="$wrdFormRec;[1]/$Col;[2]/$Text" prop="value" expect="1"/>
+</do-once>
+<do-once until="999999">
+  <glimpse id="2" path="$wrdFormRec;[1]/$Col;[3]/$Text" prop="value" expect="1"/>
+</do-once>
+<glimpse id="3" path="$wrdFormRec;[2]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="4" path="$wrdFormRec;[2]/$Col;[3]/$Text" prop="value" expect="1"/>
+<glimpse id="5" path="$wrdFormRec;[3]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="6" path="$wrdFormRec;[3]/$Col;[3]/$Text" prop="value" expect="1"/>
+<glimpse id="7" path="$wrdFormRec;[4]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="8" path="$wrdFormRec;[4]/$Col;[3]/$Text" prop="value" expect="1"/>
+<glimpse id="9" path="$wrdFormRec;[12]/$Col;[2]/$Text" prop="value" expect="1"/>
+<glimpse id="10" path="$wrdFormRec;[12]/$Col;[3]/$Text" prop="value" expect="1"/>
+
+ </on-application>
+
+</accil>

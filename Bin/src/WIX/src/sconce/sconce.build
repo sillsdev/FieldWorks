@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="sconce" default="sconce.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	sconce.build - Builds the sconce project (sconce.dll).
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- Sconce-specific properties -->
+  <!-- TODO JRock: Remove this once all of the strings get moved over to the managed resources -->
+  <property name="sconce.file.resourceHeader" value="${dir.src.votive}\Satellite\Resource.h" readonly="true" />
+  <property name="sconce.file.resourceId.source" value="${dir.src.sconce}\ResourceId.cs.pp" readonly="true" />
+  <property name="sconce.file.resourceId.target" value="${dir.build.votive}\ResourceId.cs" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="sconce.build" description="Peforms a full rebuild (clean then build)" depends="sconce.clean, sconce.inc" />
+
+  <!-- Clean -->
+  <target name="sconce.clean" description="Cleans the build">
+	<delete file="${sconce.file.resourceId.target}" failonerror="false" if="${file::exists(sconce.file.resourceId.target)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="Microsoft.VisualStudio.Designer.Interfaces.dll" />
+		<include name="Microsoft.VisualStudio.OLE.Interop.dll" />
+		<include name="Microsoft.VisualStudio.Shell.Interop.dll" />
+		<include name="sconce.dll" />
+		<include name="sconce.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="sconce.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<if test="${vsip.installed}">
+	  <!-- Copy the Visual Studio interop DLLs to the target directory -->
+	  <copy todir="${dir.target.wix}">
+		<fileset basedir="${dir.vsip.interopassemblies}">
+		  <include name="Microsoft.VisualStudio.OLE.Interop.dll" />
+		  <include name="Microsoft.VisualStudio.Shell.Interop.dll" />
+		</fileset>
+	  </copy>
+	  <copy todir="${dir.target.wix}">
+		<fileset basedir="${framework::get-sdk-directory(framework::get-runtime-framework())}">
+		  <include name="Microsoft.VisualStudio.Designer.Interfaces.dll" />
+		</fileset>
+	  </copy>
+
+	  <!-- This builds the Resource.cs file from the Satellite's Resource.h file -->
+	  <uptodate property="sconce.resourceIdFileUpToDate">
+		<sourcefiles>
+		  <include name="${sconce.file.resourceHeader}" />
+		  <include name="${sconce.file.resourceId.source}" />
+		</sourcefiles>
+		<targetfiles>
+		  <include name="${sconce.file.resourceId.target}" />
+		</targetfiles>
+	  </uptodate>
+	  <exec program="${tool.residgen}" workingdir="${dir.src.sconce}" unless="${sconce.resourceIdFileUpToDate}">
+		<arg value="-nologo" />
+		<!-- Source .h file -->
+		<arg path="${sconce.file.resourceHeader}" />
+		<!-- Source .cs file -->
+		<arg value="${sconce.file.resourceId.source}" />
+		<!-- Destination .cs file -->
+		<arg value="${sconce.file.resourceId.target}" />
+	  </exec>
+
+	  <!-- Build sconce.dll -->
+	  <csc
+		target="library"
+		output="${dir.target.wix}\sconce.dll"
+		debug="${csc.debug}"
+		optimize="${ship}"
+		define="${csc.defines};TRACE"
+		warnaserror="true"
+		warninglevel="4"
+		checked="true"
+	  >
+	  <nowarn>
+		<!-- Missing XML comment for publicly visible type or member 'x' -->
+		<warning number="1591" />
+	  </nowarn>
+		<sources basedir="${dir.src.sconce}">
+		  <include name="${file.wixver}" />
+		  <include name="${file.wixkey}" />
+		  <include name="AddFileDialogType.cs" />
+		  <include name="AssemblyInfo.cs" />
+		  <include name="BuildableProjectConfiguration.cs" />
+		  <include name="BuildAction.cs" />
+		  <include name="BuildOperation.cs" />
+		  <include name="BuildSettings.cs" />
+		  <include name="CloneableCollection.cs" />
+		  <include name="CommandStatus.cs" />
+		  <include name="ConfigurationProvider.cs" />
+		  <include name="DirtyableObject.cs" />
+		  <include name="DisplayNameAttribute.cs" />
+		  <include name="DocumentInfo.cs" />
+		  <include name="ErrorUtility.cs" />
+		  <include name="EventListenerCollection.cs" />
+		  <include name="FileChangeNotificationSuspender.cs" />
+		  <include name="FileNode.cs" />
+		  <include name="FileNodeProperties.cs" />
+		  <include name="FolderFirstComparer.cs" />
+		  <include name="FolderNode.cs" />
+		  <include name="FolderNodeProperties.cs" />
+		  <include name="GeneralPropertyPage.cs" />
+		  <include name="Hierarchy.cs" />
+		  <include name="HierarchyImages.cs" />
+		  <include name="IDirtyable.cs" />
+		  <include name="LaunchPad.cs" />
+		  <include name="LocalizedCategoryAttribute.cs" />
+		  <include name="LocalizedDescriptionAttribute.cs" />
+		  <include name="LocalizedDisplayNameAttribute.cs" />
+		  <include name="ManagedResourceManager.cs" />
+		  <include name="NativeMethods.cs" />
+		  <include name="NativeResourceManager.cs" />
+		  <include name="Node.cs" />
+		  <include name="NodeCollection.cs" />
+		  <include name="NodeProperties.cs" />
+		  <include name="Package.cs" />
+		  <include name="PackageContext.cs" />
+		  <include name="PackageSettings.cs" />
+		  <include name="PackageUtility.cs" />
+		  <include name="Project.cs" />
+		  <include name="ProjectConfiguration.cs" />
+		  <include name="ProjectConfigurationCollection.cs" />
+		  <include name="ProjectDocumentsTracker.cs" />
+		  <include name="ProjectFactory.cs" />
+		  <include name="ProjectFileXmlWriter.cs" />
+		  <include name="ProjectNode.cs" />
+		  <include name="ProjectNodeProperties.cs" />
+		  <include name="ProjectSerializer.cs" />
+		  <include name="PropertyGridPropertyDescriptor.cs" />
+		  <include name="PropertyGridTypeDescriptor.cs" />
+		  <include name="PropertyPage.cs" />
+		  <include name="PropertyPageSettings.cs" />
+		  <include name="ReferenceFileNode.cs" />
+		  <include name="ReferenceFileNodeCollection.cs" />
+		  <include name="ReferenceFileNodeProperties.cs" />
+		  <include name="ReferenceFolderNode.cs" />
+		  <include name="RunningDocumentTable.cs" />
+		  <include name="SconceStrings.cs" />
+		  <include name="ServiceProvider.cs" />
+		  <include name="SortedCollection.cs" />
+		  <include name="String.cs" />
+		  <include name="TextNode.cs" />
+		  <include name="Tracer.cs" />
+		  <include name="VirtualFolderNode.cs" />
+		  <include name="VsBuildStatusEventListenerCollection.cs" />
+		  <include name="VsCfgProviderEventListenerCollection.cs" />
+		  <include name="VsCommand.cs" />
+		  <include name="VsCommand2K.cs" />
+		  <include name="VsGuids.cs" />
+		  <include name="VsHelperMethods.cs" />
+		  <include name="VsHierarchyEventListenerCollection.cs" />
+		  <include name="VsLogicalView.cs" />
+		  <include name="VsMenus.cs" />
+		  <include name="VsMessageBoxResult.cs" />
+		  <include name="VsOpenFileDialogFlags.cs" />
+		  <include name="XmlHelperMethods.cs" />
+		  <include name="${sconce.file.resourceId.target}" />
+		</sources>
+		<references basedir="${dir.target.wix}">
+		  <include name="Microsoft.VisualStudio.Designer.Interfaces.dll" />
+		  <include name="Microsoft.VisualStudio.OLE.Interop.dll" />
+		  <include name="Microsoft.VisualStudio.Shell.Interop.dll" />
+		</references>
+		<resources failonempty="true" basedir="${dir.src.sconce}" prefix="Microsoft.Tools.WindowsInstallerXml.VisualStudioInfrastructure">
+		  <include name="SolutionExplorerIcons.bmp" />
+		  <include name="Strings.resx" />
+		</resources>
+	  </csc>
+	</if>
+  </target>
+
+</project>

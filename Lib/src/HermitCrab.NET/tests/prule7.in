@@ -1,0 +1,42 @@
+;Rules that have a feature (not necessarily with same value) in common between their LHS and RHS
+;First load the nat classes (msg 6541):
+(load_nat_class message <nat_class name vowel       features (cons - voc +)>)
+(load_nat_class message <nat_class name vd_lab_fric features (poa labiodental vd + strident + cont +)>)
+(morpher_set message (*quit_on_error* false))
+;ff rule is based loosely on Finnish weakening:
+; p --> v / V __ V (but /b/ doesn't change)
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq (<seg rep p ctable table1>)
+		  subrules (<psub out_pseq (<simp_cntxt class vd_lab_fric>)
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>)>
+						  right_environ <ptemp pseq (<simp_cntxt class vowel>)>
+					>
+				   )
+  >
+)
+;Trace it (msg m6535):
+(trace_morpher_rule message (true true rule1))
+(morph_and_lookup_word pretty_print buvu)
+
+;Same rule, but use a "seg" on RHS, instead of a natural class:
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq (<seg rep p ctable table1>)
+		  subrules (<psub out_pseq (<seg rep v ctable table1>)
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>)>
+						  right_environ <ptemp pseq (<simp_cntxt class vowel>)>
+					>
+				   )
+  >
+)
+(morph_and_lookup_word pretty_print buvu)
+
+(morpher_set message (*quit_on_error* true))
+
+(remove_morpher_rule message rule1)
+;...and the natural classes:
+(remove_nat_class message vowel)
+(remove_nat_class message vd_lab_fric)

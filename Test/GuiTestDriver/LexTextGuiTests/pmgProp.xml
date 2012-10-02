@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+  <!-- Tests Project Properties dialog box -->
+  <!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- 2. Go to File/Project Management/Project Properties-->
+  <click select="menubar/file/project-management/fieldworks-project-properties"/>
+
+  <var id="newText" set="This is a top secret project which will automatically delete itself five seconds after it is read."/>
+
+	<model select="fw-project-properties[@role='dialog']">
+<!-- Change Description-->
+   <on-dialog title="FieldWorks Project Properties">
+	<click select="general/tab"/>
+	<glimpse id="check1" select="general/project-name/text" prop="value" expect="Kalaba"/>
+	<glimpse id="projDesc" select="general/description/text" prop="value" on-fail="skip"/>
+	<click select="general/description/text"/>
+	<insert>^{END}+^{HOME}</insert><!-- select all the text -->
+	<insert>$newText</insert>
+	<click select="writing-systems/tab"/>
+	<glimpse id="check2" select="writing-systems/vernacular-ws/list" path="Kalaba" prop="checked" />
+	<glimpse id="check3" select="writing-systems/analysis-ws/list" path="English" prop="checked" />
+	<click select="external-links/tab"/>
+	<glimpse id="check4" select="external-links/el-reference/text" prop="value" expect=""/>
+	<click select="general/tab"/>
+	<glimpse id="check5" select="general/description/text" prop="value" expect="$newText"/>
+
+	<click select="ok"/>
+   </on-dialog>
+	</model>
+
+<!-- Go to File/Project Management/Project Properties-->
+  <click select="menubar/file/project-management/fieldworks-project-properties"/>
+
+	<model select="fw-project-properties[@role='dialog']">
+<!-- Check and Restore Description-->
+   <on-dialog title="FieldWorks Project Properties">
+	<click select="general/tab"/>
+	<glimpse id="projDesc2" select="general/description/text" prop="value" expect="$newText"/>
+	<click select="general/description/text"/>
+	<insert>^{END}+^{HOME}</insert><!-- select all the text -->
+	<insert>$projDesc.value</insert>
+	<glimpse id="checkDesc" select="general/description/text" prop="value" expect="$projDesc.value"/>
+	<click select="ok"/>
+   </on-dialog>
+   </model>
+
+ <!-- still have to get the cursor off the delete button or the next test fails -->
+	<var id="ind" set="*"/>
+	<click select="lexicon-edit[@role='view']/entry/slice/lexeme-form/data"/>
+
+ </on-application>
+</accil>

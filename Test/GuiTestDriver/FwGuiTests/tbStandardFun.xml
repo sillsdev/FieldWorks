@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <click path="toolbar:General toolbar/button:Print (Ctrl+P)"/>
+  <on-dialog title="Print">
+   <click wait="1000" path="button:Close"/>
+  </on-dialog>
+  <select-text id="before" path="view:Draft" loc="b:1/s:0/p:1" at="25" run="39" />
+  <insert>*</insert>
+  <click wait="2000" path="toolbar:General toolbar/split:Undo (Ctrl+Z)"/>
+  <click path="toolbar:General toolbar/split:Redo (Ctrl+Y)"/>
+  <click wait="2000" path="toolbar:General toolbar/split:Undo (Ctrl+Z)"/>
+ </on-application>
+</accil>

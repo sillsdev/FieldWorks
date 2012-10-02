@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	Wix error/verbose/warning messages.
+-->
+<Messages Namespace="Microsoft.Tools.WindowsInstallerXml" Resources="Data.Messages" xmlns="http://schemas.microsoft.com/genmsgs/2004/07/messages">
+	<Class Name="PcaErrors" ContainerName="PcaError" BaseContainerName="WixError" LevelType="ErrorLevel" StartNumber="5000">
+		<Message Id="UnexpectedAttributeWithOtherValue" Level="Normal">
+			<Instance>The {0}/@{1} attribute cannot coexist with the {2} attribute's value of '{3}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherValue" />
+			</Instance>
+			<Instance>The {0}/@{1} attribute's value, '{2}', cannot coexist with the {3} attribute's value of '{4}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="value" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherValue" />
+			</Instance>
+		</Message>
+		<Message Id="UnexpectedAttributeWithoutOtherValue" Level="Normal">
+			<Instance>The {0}/@{1} cannot be provided unless the {2} attribute is provided with a value of '{3}'.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+				<Parameter Type="System.String" Name="otherAttributeName" />
+				<Parameter Type="System.String" Name="otherValue" />
+			</Instance>
+		</Message>
+		<Message Id="RequiredAttributeUnderComponent" Level="Normal">
+			<Instance>The {0}/@{1} attribute must be provided when {0} element is nested under a component.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName" />
+			</Instance>
+		</Message>
+		<Message Id="RequiredAttribute" Level="Normal">
+			<Instance>A {0} element must have either a {1} attribute or a {2} attribute, or both set.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+			</Instance>
+		</Message>
+		<Message Id="RequiredAttributeNotUnderComponent" Level="Normal">
+			<Instance>A {0} element not nested under a component must have either a {1} attribute or a {2} attribute, or both set.
+				<Parameter Type="System.String" Name="elementName" />
+				<Parameter Type="System.String" Name="attributeName1" />
+				<Parameter Type="System.String" Name="attributeName2" />
+			</Instance>
+		</Message>
+	</Class>
+	<Class Name="PcaWarnings" ContainerName="PcaWarning" BaseContainerName="WixWarning" LevelType="WarningLevel" StartNumber="5100">
+		<Message Id="MissingComponents" Level="Major">
+			<Instance>The ComPlusAssembly element has a Type attribute with a value of 'native', but the element does not contain any ComPlusComponent elements. All components contained in a native assembly must be listed, or they will not be correctly removed during uninstall.</Instance>
+		</Message>
+	</Class>
+	<Class Name="PcaVerboses" ContainerName="PcaVerbose" BaseContainerName="WixVerbose" LevelType="VerboseLevel" StartNumber="5500">
+	</Class>
+</Messages>

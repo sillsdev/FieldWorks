@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <?include $(var.caerrwxi)?>
+
+  <!-- WiX Custom Action Definitions -->
+
+  <Fragment>
+	<IgnoreModularization Name="SchedSecureObjects" Type="Action" />
+	<IgnoreModularization Name="ExecSecureObjects" Type="Action" />
+
+	<UI>
+	  <Error Id="$(var.msierrSecureObjectsFailedCreateSD)">Failed to create security descriptor for [3]\[4], system error: [2]</Error>
+	  <Error Id="$(var.msierrSecureObjectsFailedSet)">Failed to set security descriptor on object [3], system error: [2]</Error>
+	  <Error Id="$(var.msierrSecureObjectsUnknownType)">Unknown Object Type [3], system error: [2]</Error>
+	</UI>
+
+	<CustomAction Id="SchedSecureObjects" BinaryKey="WixCA" DllEntry="SchedSecureObjects" Execute="immediate" Return="check" />
+	<CustomAction Id="ExecSecureObjects" BinaryKey="WixCA" DllEntry="ExecSecureObjects" Execute="deferred" Impersonate="no" Return="check" />
+
+	<InstallExecuteSequence>
+	  <!-- Condition this so it runs on install and MMode, but not uninstall -->
+	  <Custom Action="SchedSecureObjects" After="InstallServices">NOT REMOVE~="ALL"</Custom>
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment>
+	<IgnoreModularization Name="SchedServiceConfig" Type="Action" />
+	<IgnoreModularization Name="ExecServiceConfig" Type="Action" />
+	<IgnoreModularization Name="ExecServiceConfigRollback" Type="Action" />
+
+	<UI>
+	  <!-- Put Service Config Error Messages here if we ever make any -->
+	</UI>
+
+	<CustomAction Id="SchedServiceConfig" BinaryKey="WixCA" DllEntry="SchedServiceConfig" Execute="immediate" Return="check" />
+	<CustomAction Id="ExecServiceConfig" BinaryKey="WixCA" DllEntry="ExecServiceConfig" Execute="deferred" Impersonate="no" Return="check" />
+	<CustomAction Id="ExecServiceConfigRollback" BinaryKey="WixCA" DllEntry="ExecServiceConfig" Execute="rollback" Impersonate="no" Return="check" />
+
+	<InstallExecuteSequence>
+	  <!-- Condition this so it runs on install and MMode, but not uninstall -->
+	  <Custom Action="SchedServiceConfig" After="InstallServices">NOT REMOVE~="ALL"</Custom>
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment>
+	<IgnoreModularization Name="SchedXmlFile" Type="Action" />
+	<IgnoreModularization Name="ExecXmlFile" Type="Action" />
+	<IgnoreModularization Name="ExecXmlFileRollback" Type="Action" />
+
+	<UI>
+	  <Error Id="$(var.msierrXmlFileFailedRead)">There was a failure while configuring XML files.</Error>
+	  <Error Id="$(var.msierrXmlFileFailedOpen)">Failed to open XML file [3], system error: [2]</Error>
+	  <Error Id="$(var.msierrXmlFileFailedSelect)">Failed to find node: [3] in XML file: [4], system error: [2]</Error>
+	  <Error Id="$(var.msierrXmlFileFailedSave)">Failed to save changes to XML file [3], system error: [2]</Error>
+	</UI>
+
+	<CustomAction Id="SchedXmlFile" BinaryKey="WixCA" DllEntry="SchedXmlFile" Execute="immediate" Return="check" />
+	<CustomAction Id="ExecXmlFile" BinaryKey="WixCA" DllEntry="ExecXmlFile" Execute="deferred" Impersonate="no" Return="check" />
+	<CustomAction Id="ExecXmlFileRollback" BinaryKey="WixCA" DllEntry="ExecXmlFileRollback" Execute="rollback" Impersonate="no" Return="check" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="SchedXmlFile" After="InstallFiles" />
+	</InstallExecuteSequence>
+  </Fragment>
+
+  <Fragment Id="PrintEulaAction">
+	<CustomAction Id="PrintEula" BinaryKey="WixCA" DllEntry="PrintEula" Return="ignore" Execute="immediate" />
+  </Fragment>
+
+  <!-- WiX Custom Action DLL Definitions -->
+
+  <Fragment>
+	<Binary Id="WixCA" SourceFile="wixca.dll" />
+  </Fragment>
+</Wix>

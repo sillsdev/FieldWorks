@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 5 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<var id="Scripture" select="tests/test[@case='$TestCase;']/@Scripture"/>
+		<var id="BackTranslation" select="tests/test[@case='$TestCase;']/@back-trans"/>
+		<var id="TranslationNotes" select="tests/test[@case='$TestCase;']/@notes"/>
+
+		<!--<include from="IncImportVariables.xml"/>-->
+
+		<!-- Import Standard Format Setup -->
+		<on-dialog title="Standard Format Import Setup" until="10000">
+			<click path="$Next"/>
+			<click path="9:Individual Paratext Data Files/45:Individual Paratext Data Files"/>
+			<click path="$Next"/>
+			<insert>{TAB 5}</insert>
+			<insert>{ENTER}</insert>
+
+			<on-dialog title="Add Standard Format File" until="10000">
+				<if>
+					<condition of="$Scripture" is="MLYS1"/>
+					<then>
+						<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYS1\*.ptx</insert>
+					</then>
+					<else>
+						<if>
+							<condition of="$Scripture" is="MLYS2"/>
+							<then>
+								<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYS2\*.ptx</insert>
+							</then>
+							<else>
+								<if>
+									<condition of="$Scripture" is="MLYS3"/>
+									<then>
+										<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYS3\*.ptx</insert>
+									</then>
+									<else>
+										<if>
+											<condition of="$Scripture" is="MLYS4"/>
+											<then>
+												<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYS4\*.ptx</insert>
+											</then>
+										</if>
+									</else>
+								</if>
+							</else>
+						</if>
+					</else>
+				</if>
+				<insert>{ENTER}</insert>
+				<!--<on-dialog title="Bogus Dialog" until="2000" on-fail="skip"/>-->
+				<insert>{TAB 7}</insert>
+				<insert>^a</insert>
+				<click path="$Open"/>
+				<insert>{TAB 2}</insert>
+			</on-dialog>
+
+			<if>
+				<condition of="$BackTranslation" is="(none)"/>
+				<then>
+					<!-- There is no 'Back Trans. Folder' data to test against -->
+					<var id="Do Nothing" set="Do Nothing"/>
+				</then>
+				<else>
+					<click path="9:List of Standard Format Files[2]/9:NAMELESS/37:Back Translation"/>
+					<insert>{TAB 3}</insert>
+					<insert>{ENTER}</insert>
+					<on-dialog title="Add Standard Format File" until="10000">
+						<if>
+							<condition of="$BackTranslation" is="MLYB1"/>
+							<then>
+								<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYB1\*.ptx</insert>
+							</then>
+							<else>
+								<if>
+									<condition of="$BackTranslation" is="MLYB2"/>
+									<then>
+										<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYB2\*.ptx</insert>
+									</then>
+								</if>
+							</else>
+						</if>
+						<insert>{ENTER}</insert>
+						<insert>{TAB 7}</insert>
+						<insert>^a</insert>
+						<click path="$Open"/>
+						<insert>{TAB 2}</insert>
+					</on-dialog>
+				</else>
+			</if>
+
+			<if>
+				<condition of="$TranslationNotes" is="(none)"/>
+				<then>
+					<!-- There is no 'Trans. Notes Folder' data to test against -->
+					<var id="Do Nothing" set="Do Nothing"/>
+				</then>
+				<else>
+					<click path="9:List of Standard Format Files[2]/9:NAMELESS/37:Annotations"/>
+					<insert>{TAB 3}</insert>
+					<insert>{ENTER}</insert>
+					<on-dialog title="Add Standard Format File" until="10000">
+						<if>
+							<condition of="$TranslationNotes" is="MLYN1"/>
+							<then>
+								<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYN1\*.ptx</insert>
+							</then>
+							<else>
+								<if>
+									<condition of="$TranslationNotes" is="MLYN2"/>
+									<then>
+										<insert>C:\fw\Test\GuiTestDriver\TeTestImport\ImportParatext5\MLYN2\*.ptx</insert>
+									</then>
+								</if>
+							</else>
+						</if>
+						<insert>{ENTER}</insert>
+						<insert>{TAB 7}</insert>
+						<insert>^a</insert>
+						<click path="$Open"/>
+						<insert>{TAB 3}</insert>
+					</on-dialog>
+				</else>
+			</if>
+
+			<!--Select the "Next" button -->
+			<insert>{ENTER}</insert>
+
+			<!--<insert>{TAB 5}</insert>-->
+		</on-dialog>
+
+	</on-application>
+
+</accil>

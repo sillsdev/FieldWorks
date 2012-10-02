@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tool label="Analyses" value="Analyses" icon="BrowseView">
+	<control assemblyPath="xCore.dll" class="XCore.MultiPane">
+		<parameters id="WordsAndAnalysesMultiPane" vertical="false">
+			<control assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView">
+				<parameters id="wordList" clerk = "words" filterBar="true" editable="false">
+					<columns>
+						<column label="Form" width="60%">
+							<para>
+								<properties>
+									<bold value="off" />
+								</properties>
+								<stringalt class="WfiWordform" field="Form" ws="vernacular" />
+							</para>
+						</column>
+						<column label="Predicted Analyses" width="20%">
+							<int class="WfiWordform" field="PredictedAnalyses" />
+						</column>
+					</columns>
+					<fragments />
+					<virtuals>
+						<virtual modelclass="WfiWordform" virtualfield="PredictedAnalyses" assemblyPath="FDO.dll"
+							class="SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler" property="ParseCount">
+							<parameters fdoclass="SIL.FieldWorks.FDO.Ling.WfiWordform" />
+						</virtual>
+					</virtuals>
+				</parameters>
+			</control>
+			<control assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView">
+				<parameters id="wordAnalysisList" editable="false" clerk="wfiAnalysesOfSelectedWordform" filterBar="false">
+					<columns>
+						<column label="User Opinion" width="10%">
+							<iconInt class="WfiAnalysis" field="ApprovedAnalysis" min="0" max="2" frag="okBadUnknownPics" />
+						</column>
+						<column label="Parser Opinion" width="10%">
+							<iconInt class="WfiAnalysis" field="CurrentParserAnalysis" min="0" max="2" frag="okBadUnknownPics" />
+						</column>
+						<column label="Analysis" width="80%">
+							<objectOfRowUsingViewConstructor assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinVc" selector="100008" />
+						</column>
+					</columns>
+					<fragments>
+						<picturevalues name="okBadUnknownPics">
+							<icon assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.ResourceHelper" staticproperty="BlueQuestionMark" />
+							<icon assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.ResourceHelper" staticproperty="GreenCheck" />
+							<icon assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.ResourceHelper" staticproperty="RedX" />
+						</picturevalues>
+					</fragments>
+					<virtuals>
+						<virtual modelclass="WfiAnalysis" virtualfield="ApprovedAnalysis" assemblyPath="FDO.dll"
+							class="SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler" property="ApprovalStatusIcon">
+							<parameters fdoclass="SIL.FieldWorks.FDO.Ling.WfiAnalysis" />
+						</virtual>
+						<virtual modelclass="WfiAnalysis" virtualfield="CurrentParserAnalysis" assemblyPath="FDO.dll"
+							class="SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler" property="ParserStatusIcon"
+							editable="false" readonly="true">
+							<parameters fdoclass="SIL.FieldWorks.FDO.Ling.WfiAnalysis" />
+						</virtual>
+					</virtuals>
+				</parameters>
+			</control>
+			<!--
+						<control assemblyPath="xCore.dll" class="XCore.ImageContent">
+							<parameters imagePath="foo.jpg"/>
+						</control>
+	-->
+		</parameters>
+	</control>
+</tool>

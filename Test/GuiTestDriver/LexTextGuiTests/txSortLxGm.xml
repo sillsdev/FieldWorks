@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+  <bug id="LT-2693"/>
+  <bug id="LT-5089"/>
+
+<!--test sort Grammar, lexical, texts data-->
+<!--assumes all data shown (all Show All options selected)-->
+
+	<var id="projectName" set="Kalaba"/>
+	<sound frequency = "500" duration = "500"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <!--Go to Grammar/Categories Browse-->
+  <click select="menubar/view/grammar/categories-browse"/>
+
+  <model select="category-browse[@role='view']">
+
+  <!--Test sort function-->
+	<click select="categories/col/header" path="Name"/>
+	<click select="//toolbar/first-record"/>
+
+	<var id="row" set="1"/>
+	<var id="col" set="1"/>
+	<glimpse id ="adj" select="categories/record/col" prop="value" expect="adjective" on-fail="skip"/>
+	<if><condition of="$adj" is="false"/>
+	<then>
+	  <click select="categories/col/header" path="Name"/>
+	  <click select="//toolbar/first-record"/>
+	</then>
+	</if>
+
+	<click select="categories/scroll/up"/> <!-- first-record doesn't go there, so page up once -->
+	<glimpse id ="NotAdj" select="categories/record/col" prop="value" expect="adjective"/>
+	<click select="categories/col/header" path="Name"/>
+	<click select="//toolbar/first-record"/>
+	<glimpse id ="NotVoiceMarker" select="categories/record/col" prop="value" expect="voice marker"/>
+	<click select="categories/col/header" path="Name"/>
+	<click select="//toolbar/first-record"/>
+
+  </model>
+
+  <!--Go to Lexicon/Browse-->
+  <click select="menubar/view/lexicon/browse"/>
+
+  <model select="browse[@role='view']">
+
+  <!--Test sort function-->
+	<click select="entries/col/header" path="HeadWord"/>
+	<click select="//toolbar/first-record"/>
+	<var id="row" set="1"/>
+	<var id="col" set="1"/>
+	<click select="entries/record/col"/>
+	<glimpse id ="bi" select="entries/record/col" prop="value" expect="-bi" on-fail="skip"/>
+	<if><condition of="$bi" is="false"/>
+	<then>
+	  <click select="entries/col/header" path="HeadWord"/>
+	  <click select="//toolbar/first-record"/>
+	  <click select="entries/record/col"/>
+	</then>
+	</if>
+	<glimpse id ="NotBi" select="entries/record/col" prop="value" expect="-bi"/>
+	<click select="entries/col/header" path="HeadWord"/>
+	<click select="//toolbar/first-record"/>
+	<click select="entries/record/col"/>
+	<glimpse id ="NotZtestsub" select="entries/record/col" prop="value" expect="ztestsub"/>
+	<click select="entries/col/header" path="HeadWord"/>
+	<click select="//toolbar/first-record"/>
+	<click select="entries/record/col"/>
+
+  </model>
+
+  <!--Go to Texts/Edit-->
+  <click select="menubar/view/texts-words/interlinear-texts"/>
+
+  <model select="interlinear-texts[@role='view']">
+
+  <!--new entry-->
+	<click select="//toolbar/new-text"/>
+	<insert>{F5}</insert><!-- refresh -->
+
+  <!--Test sort function-->
+	<click select="texts/col/header" path="Title"/>
+	<click select="//toolbar/first-record"/>
+	<click select="texts/record/col"/>
+	<glimpse id ="empty" select="texts/record/col" prop="value" expect="" on-fail="skip"/>
+	<if><condition of="$empty" is="false"/>
+	<then>
+	  <click select="texts/col/header" path="Title"/>
+	  <click select="//toolbar/first-record"/>
+	  <click select="texts/record/col"/>
+	</then>
+	</if>
+	<glimpse id ="NotEmpty" select="texts/record/col" prop="value" expect=""/>
+	<click select="texts/col/header" path="Title"/>
+	<click select="//toolbar/first-record"/>
+	<click select="texts/record/col"/>
+	<glimpse id ="NotMGM" select="texts/record/col" prop="value" expect="My Green Mat"/>
+	<click select="texts/col/header" path="Title"/>
+	<click select="//toolbar/first-record"/>
+	<click select="texts/record/col"/>
+
+  <!-- delete the empty text -->
+	<click select="//toolbar/delete"/>
+	<insert>d</insert>
+
+   <!-- still have to get the cursor off the delete button or the next test fails -->
+	<var id="row" set="2"/>
+   <click select="text/Title/data"/>
+   <glimpse wait="1000" select="text/Title/data" prop="value" expect="My Green Mat"/>
+
+  </model>
+
+ </on-application>
+</accil>

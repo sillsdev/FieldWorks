@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+  <!-- LT-2693 -->
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+  <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+ <!-- 2. Switch to Grammar/Category Browse -->
+	<click select="menubar/view/grammar/categories-browse"/>
+
+ <!-- 3. Sort by Infl Classes -->
+	<click select="category-browse[@role='view']/categories/col/header" path="Inflection Classes"/>
+
+ <!-- 4. Switch to Categories -->
+	<click select="menubar/view/grammar/category-edit"/>
+
+ <!-- 5. Undo column selection -->
+	<click select="menubar/view/grammar/categories-browse"/>
+	<click select="category-browse[@role='view']/categories/col/header" path="Name"/>
+
+  </on-application>
+</accil>

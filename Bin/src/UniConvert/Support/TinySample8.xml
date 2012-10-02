@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FwDatabase SYSTEM "FwDatabase.dtd">
+<FwDatabase>
+<LangProject id="I87045E0C36A3B5">
+<Name1>
+<AUni ws="ENG">FRN-French</AUni>
+</Name1>
+<FieldWorkLocation6001>
+<AUni ws="ENG">English (&lt;a'a`&lt;w'o'çô…)</AUni>
+<AUni ws="GKO">Greek composite (&lt;a'a`&lt;w'o'όὥὰἅ)</AUni>
+<AUni ws="GKOb">Greek basic (ἅὰὥόçô…)</AUni>
+<AUni ws="FRNi">French IPA (&lt;a'a`&lt;w'o'ɥ̌ɒ𐿿)</AUni>
+</FieldWorkLocation6001>
+<TranslationTags6001>
+<CmPossibilityList>
+<Description5>
+<AStr ws="ENG"><Run bold="on" ws="ENG">English (&lt;a'a`&lt;w'o'çô…)</Run>
+  <Run enc = "FRNi">French IPA (&lt;a'a`&lt;w'o'ɥ̌ɒ𐿿)</Run>
+	<Run ws="SPN" italic="on">Spanish</Run><Run ws="SPN"> (&lt;a'a`&lt;w'o'çô…)</Run>
+	  <Run ws="GKOb">Greek basic (ἅὰὥόçô…)</Run>
+		<Run ws="GKO">Greek composite (&lt;a'a`&lt;w'o'όὥὰἅ)</Run>
+		<Run ws="GKOb">Greek basic (ἅὰὥόçô…)</Run>
+	  <Run ws="SPN">Spanish (&lt;a'a`&lt;w'o'çô…)</Run>
+	<Run ws="GKO">Greek composite (&lt;a'a`&lt;w'o'όὥὰἅ)</Run>
+	  <Run ws="ENG">English (&lt;a'a`&lt;w'o'çô…)</Run>
+	  <Run ws="GKO">Greek composite (&lt;a'a`&lt;w'o'όὥὰἅ)</Run>
+	<Run enc = "FRNi">French IPA (&lt;a'a`&lt;w'o'ɥ̌ɒ𐿿)</Run>
+  <Run ws="ENG">English (&lt;a'a`&lt;w'o'çô…</Run><Run bold="on" ws="ENG">&lt;a'a`&lt;w'o'çô…</Run>
+  <Run ws="ENG" fontsize="1200">&lt;a'a`&lt;w'o'çô…)</Run>
+</AStr>
+<AStr ws="FRNi"><Run ws="FRNi">Test without Prop: French IPA (&lt;a'a`&lt;w'o'ɥ̌ɒ𐿿)</Run></AStr>
+</Description5>
+</CmPossibilityList>
+</TranslationTags6001>
+<Styles6001>
+<StStyle>
+<Name17>
+<Uni>Unicode English (&lt;a'a`&lt;w'o'çô…)</Uni>
+</Name17>
+</StStyle>
+</Styles6001>
+</LangProject>
+<LgEncoding>
+<Name6002>
+<Str><Run bold="on" ws="ENG">English (&lt;a'a`&lt;w'o'çô…)</Run>
+  <Run enc = "FRNi">French IPA (&lt;a'a`&lt;w'o'ɥ̌ɒ𐿿)</Run></Str>
+</Name6002>
+</LgEncoding>
+</FwDatabase>

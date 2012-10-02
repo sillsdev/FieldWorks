@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+<!-- Add and then delete a Natural Class (based on modified Demo J )-->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+
+<!-- 3.	Add a Natural Class "nasal".-->
+<!-- a.	Go to Grammar / Natural Classes.-->
+  <click select="menubar/view/grammar/natural-classes"/>
+
+<!-- b.	Click on Insert menu item / Natural Class.-->
+  <click select="toolbar/new-natural-class" />
+
+<model select="natural-classes[@role='view']">
+
+<!-- c.	In the Name slice, type "nasal"-->
+  <var id="ind" set="*"/>
+  <var id="row" set="1"/>
+  <click select="edit/slice/name/data"/>
+  <insert>nasal</insert>
+
+<!-- d.	In the Description slice, type "All nasal consonants."-->
+  <var id="ind" set="*"/>
+  <click select="edit/slice/description/data"/>
+  <insert>All nasal consonants.</insert>
+
+<!-- e.	In the Abbreviation slice, type "nasal"-->
+  <var id="ind" set="*"/>
+  <click select="edit/slice/abbreviation/data"/>
+  <insert>nasal</insert>
+
+<!-- f.	Click on the chooser in the Segments slice.-->
+  <var id="ind" set="*"/>
+  <var id="col" set="1"/>
+  <click dx="50" select="edit/slice/phonemes/label"/>
+  <insert>{TAB}~</insert>
+
+<!-- 1.	Select "m", then "n", then the eng.-->
+  <var id="PhoneRow" set="$NL;9:XCoreUserControl/$NL;20:RootSite/24:Table"/>
+  <on-dialog title="Choose Phonemes">
+   <click path="$NL;9:XCoreUserControl/$nl;[2]/43:Page down"/>
+   <click path="$NL;9:XCoreUserControl/$nl;[2]/43:Page down"/>
+   <click path="$NL;9:XCoreUserControl/$nl;[2]/43:Page down"/>
+   <click path="$PhoneRow;[*ind]/$Col;[2]/$Text;/value:m"/>
+   <click path="$PhoneRow;[$ind;]/$Col;/40:Picture"/>
+   <click path="$PhoneRow;[*ind]/$Col;[2]/$Text;/value:n"/>
+   <click path="$PhoneRow;[$ind;]/$Col;/40:Picture"/>
+   <!--click path="$NL;chkbox:?"/--><!-- eng? -->
+   <insert>{DOWN}</insert>
+   <var id="ind" set="1"/>
+   <click path="$PhoneRow;[$ind;]/$Col;/40:Picture"/>
+   <click path="$ok"/>
+  </on-dialog>
+
+</model>
+
+<!-- 4.	Environments-->
+<!-- c.	Go to Lexicon / Lexicon Edit.-->
+  <click select="menubar/view/lexicon/lexicon-edit"/>
+
+<!-- 1.	Insert major entry-->
+  <click select="toolbar/new-entry" />
+
+<!-- 2.	In the Form field, type "-an"-->
+  <on-dialog title="New Entry">
+   <insert>-an</insert>
+
+<!-- 3.	In the Gloss field, type "Fut" (for future)-->
+   <click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert>Fut</insert>
+
+<!-- 4.	Click on "Inflectional Affix"-->
+   <bug id="LT-6315" desc="New Entry alt+T (Affix Type) not working"/>
+   <!--insert>%T</insert-->
+   <click path="$NL;9:Category Info./20:Category Info./9:Not Sure/20:RootSite/$Text"/>
+   <insert>{DOWN}~</insert>
+
+<!-- 5.	Open the chooser for Category-->
+   <insert>%y</insert>
+
+<!-- a.	Open up verb.-->
+   <insert>v</insert>
+   <insert wait="500">~</insert>
+
+<!-- b.	Open the chooser for Fills Slot: - Select "Tense"-->
+   <click path="$NL;9:Category Info./20:Category Info./9:Fills Slot:[2]/20:RootSite/$Text"/>
+   <insert wait="500">t</insert>
+   <insert wait="500">~</insert>
+
+<!-- 6.	Click on Create-->
+   <click path="button:Create"/>
+  </on-dialog>
+
+<model select="lexicon-edit[@role='view']">
+
+<!-- d.	Let's add the /a/ allomorph: -->
+<!-- 1.	Right click on Allomorphs-->
+  <var id="ind" set="*"/>
+  <click side="right" select="entry/slice/alternate-forms" />
+
+<!-- 2.	Select "Insert Affix Allomorph"-->
+  <insert>{DOWN}</insert>
+  <insert wait="500">~</insert>
+
+<!-- 3.	Type "a" in the Affix Allomorph slice-->
+   <var id="ind" set="*"/>
+   <var id="fld" set="Affix Allomorph"/>
+   <var id="row" set="1"/>
+   <click select="entry/slice/string-field/text"/>
+   <insert wait="100">a</insert>
+
+<!-- 4.	Select "suffix" for the morph type -->
+<!-- This is done automatically now -->
+   <glimpse id="suffix" select="entry/slice/morph-type/data" prop="value" expect="suffix"/>
+
+<!-- 5.	In the environment slice, type "/ [nasal] _"-->
+   <click select="entry/slice/environments/text" />
+   <insert wait="500">/ [nasal] _</insert>
+   <!-- click to make it stick -->
+   <var id="ind" set="*"/>
+   <click select="entry/slice/string-field/text"/>
+
+</model>
+
+<!-- 8.	Also use environment chooser.-->
+<!-- 9.	Back to Lexicon / Lexicon Edit, "-an" entry.-->
+  <click select="menubar/view/lexicon/lexicon-edit"/>
+
+<!-- 13.	Go to Grammar / Environments-->
+  <click select="menubar/view/grammar/environments"/>
+   <insert>{F5}</insert>
+
+<model select="environments[@role='view']">
+
+<!-- b.	For the nasal one, type "after a nose job?" in the Name field.-->
+   <var id="row" set="*"/>
+   <var id="col" set="3"/>
+  <click select="browse/record/col" path="/value:// [nasal] _"/>
+
+  <var id="ind" set="*"/>
+  <click select="edit/slice/name/data"/>
+  <insert>+{END}after a nose job?</insert>
+  <!--insert>{F5}</insert-->
+
+</model>
+
+<!-- XX.	DELETE the Natural Class "nasal"-->
+<!-- a.	Go to Grammar / Natural Classes.-->
+   <click select="menubar/view/grammar/natural-classes"/>
+
+<model select="natural-classes[@role='view']">
+
+   <var id="row" set="*"/>
+   <var id="col" set="1"/>
+  <click select="browse/record/col" path="/value:nasal"/>
+
+</model>
+
+  <click select="toolbar/delete"/>
+  <insert>{DOWN}</insert>
+  <insert>{ENTER}</insert>
+
+<!-- "nasal" should now be deleted, It should still be in the entry but with a red underline-->
+
+<!-- c.	Go to Lexicon / Lexicon Edit.-->
+  <click select="menubar/view/lexicon/lexicon-edit"/>
+
+  <click select="toolbar/find-lexical-entry"/> <!-- Leaving the pointer here causes the ah to change to this control and causes the next test to fail on the first click -->
+   <on-dialog title="Find Lexical Entry">
+	 <insert wait="1000">an</insert>
+	 <insert wait="500">{TAB 3}</insert>
+	 <click path="$goto"/>
+   </on-dialog>
+
+  <click select="toolbar/delete"/>
+ <insert wait="500">d</insert>
+
+<model select="lexicon-edit[@role='view']">
+
+   <var id="ind" set="*"/>
+   <click select="entry/slice/lexeme-form/data"/> <!-- This click is nessecary so the next test can run -->
+
+</model>
+
+ </on-application>
+</accil>

@@ -1,0 +1,557 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "FwFilterRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"FwFilterRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsOptDlgFltr DIALOGEX 0, 0, 378, 188
+STYLE DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "&Filters:",IDC_STATIC,7,5,21,8
+	CONTROL         "List1",kctidFilterList,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					LVS_SHAREIMAGELISTS | LVS_EDITLABELS |
+					LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP,7,
+					17,111,129,WS_EX_CLIENTEDGE
+	PUSHBUTTON      "&Add",kctidAddFilter,7,153,34,14
+	PUSHBUTTON      "&Copy",kctidCopyFilter,44,153,31,14
+	PUSHBUTTON      "&Delete...",kctidDeleteFilter,78,153,40,14
+	GROUPBOX        "Criteria ",kctidFilterCriteria,124,4,250,163
+	LTEXT           "Click on a filter, then specify its criteria.",
+					IDC_STATIC,7,174,231,8
+END
+
+kridFilterSimpleDlg DIALOGEX 0, 0, 239, 51
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+// Some of these label lengths need to be fixed, but it's too late for version 1.0! - SteveMc
+BEGIN
+	LTEXT           "Co&ndition:",kctidConditionLabel,4,4,32,8
+	COMBOBOX        kctidCondition,3,14,84,200,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "&Text string:",kctidTextLabel,90,4,36,8,NOT WS_VISIBLE | WS_DISABLED
+	EDITTEXT        kctidFilterText,90,14,146,14,ES_AUTOHSCROLL | NOT WS_VISIBLE | WS_DISABLED
+	LTEXT           "&Number:",kctidNumberLabel,90,4,146,8,NOT WS_VISIBLE | WS_DISABLED
+	EDITTEXT        kctidFilterNumber,90,14,146,13,ES_AUTOHSCROLL | NOT WS_VISIBLE | WS_DISABLED
+	LTEXT           "I&tem:",kctidRefLabel,90,4,16,8,NOT WS_VISIBLE | WS_DISABLED
+	EDITTEXT        kctidFilterRef,90,14,131,13,ES_AUTOHSCROLL | NOT WS_VISIBLE | WS_DISABLED
+	LTEXT           "Item:",kctidEnumLabel,90,4,50,8,NOT WS_VISIBLE | WS_DISABLED
+	COMBOBOX        kctidFilterEnum,90,14,131,200,
+					CBS_DROPDOWNLIST | NOT WS_VISIBLE | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Sc&ope:",kctidScopeLabel,90,4,24,8,NOT WS_VISIBLE | WS_DISABLED
+	COMBOBOX        kctidFilterScope,90,14,62,200,
+					CBS_DROPDOWNLIST | NOT WS_VISIBLE | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Da&te:",kctidDateLabel,154,4,18,8,NOT WS_VISIBLE | WS_DISABLED
+	EDITTEXT        kctidFilterDate,154,14,67,13,ES_AUTOHSCROLL | NOT WS_VISIBLE | WS_DISABLED
+	PUSHBUTTON      "...",kctidFilterChooseItem,224,14,12,12,NOT WS_VISIBLE | WS_DISABLED
+	PUSHBUTTON      "...",kctidFilterChooseDate,224,14,12,12,NOT WS_VISIBLE | WS_DISABLED
+	CONTROL         "&Match case",kctidFilterMatchCase,"Button",
+					BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_GROUP | WS_TABSTOP,
+					3,37,50,10
+	CONTROL         "Match d&iacritics",kctidFilterMatchDiac,"Button",
+					BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,58,37,65,10
+	PUSHBUTTON      "&Special",kctidFilterSpecial,146,34,44,14,
+					NOT WS_VISIBLE | WS_DISABLED | WS_GROUP
+	PUSHBUTTON      "F&ormat",kctidFilterFormat,194,34,42,14,NOT WS_VISIBLE | WS_DISABLED
+	CONTROL         "&Include subitems",kctidFilterSubitems,"Button",
+					BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,167,36,69,10
+END
+
+kridFilterFullDlg DIALOGEX 0, 0, 239, 148
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Field:",kctidFilterField,7,2,18,8
+	LTEXT           "C&riteria:",kctidFilterCriteria,1,13,24,8
+	PUSHBUTTON      "&Expand Table...",kctidExpand,2,133,60,14,NOT
+					WS_VISIBLE | WS_GROUP
+	CHECKBOX        "Show &tips",kctidShowTips,94,136,47,10,WS_GROUP
+	CHECKBOX        "Show the Criteria &Builder",kctidShowBuilder,146,136,90,
+					10
+END
+
+kridFilterSimpleShellDlg DIALOGEX 0, 0, 239, 148
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "",kctidFltrFieldLabel,4,2,18,10
+	PUSHBUTTON      "",kctidField,4,12,97,14,WS_GROUP
+	LTEXT           "Prompt",IDC_STATIC,4,104,23,8
+	LTEXT           "",IDC_STATIC,32,107,202,1,SS_SUNKEN
+	CONTROL         "As&k for criteria each time this filter is run.",
+					kctidCriteria,"Button",BS_AUTOCHECKBOX | WS_GROUP |
+					WS_TABSTOP,4,115,141,10
+	LTEXT           "&Prompt message:",kctidPromptLabel,16,128,55,8
+	EDITTEXT        kctidPrompt,74,127,160,13,ES_AUTOHSCROLL | WS_GROUP
+END
+
+kridFilterBuilderShellDlg DIALOG DISCARDABLE  0, 0, 327, 85
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Criteria Builder"
+FONT 8, "MS Sans Serif"
+BEGIN
+	GROUPBOX        "Criteria ",kctidFilterCriteria,7,7,254,71
+	DEFPUSHBUTTON   "&Insert",kctidInsert,272,7,48,14,WS_GROUP
+	CONTROL         "&And",kctidAnd,"Button",BS_AUTORADIOBUTTON | WS_GROUP |
+					WS_TABSTOP,272,24,29,10
+	CONTROL         "&Or",kctidOr,"Button",BS_AUTORADIOBUTTON,272,34,23,10
+	PUSHBUTTON      "Help...",kctidHelp,272,64,48,14,WS_GROUP
+END
+
+kridFilterPromptDlg DIALOGEX 0, 0, 225, 60
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Filter Prompt"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "",kctidPrompt,7,7,211,9
+	EDITTEXT        kctidFilterText,7,20,211,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
+	EDITTEXT        kctidFilterNumber,7,20,211,13,ES_AUTOHSCROLL | NOT WS_VISIBLE
+	EDITTEXT        kctidFilterRef,7,20,196,13,ES_AUTOHSCROLL | NOT WS_VISIBLE
+	COMBOBOX        kctidFilterEnum,7,20,211,200,
+					CBS_DROPDOWNLIST | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	COMBOBOX        kctidFilterScope,7,20,80,200,
+					CBS_DROPDOWNLIST | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	EDITTEXT        kctidFilterDate,89,20,114,13,ES_AUTOHSCROLL | NOT WS_VISIBLE
+	PUSHBUTTON      "...",kctidFilterChooseItem,206,20,12,12,NOT WS_VISIBLE
+	PUSHBUTTON      "...",kctidFilterChooseDate,206,20,12,12,NOT WS_VISIBLE
+	DEFPUSHBUTTON   "OK",kctidOk,60,39,50,14,WS_GROUP
+	PUSHBUTTON      "Cancel",kctidCancel,114,39,50,14
+	PUSHBUTTON      "Help...",kctidHelp,168,39,50,14
+END
+
+kridFilterFullShellDlg DIALOGEX 0, 0, 344, 169
+STYLE DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	DEFPUSHBUTTON   "Close",kctidOk,28,84,50,14,WS_GROUP
+	PUSHBUTTON      "Help...",kctidHelp,84,85,50,14
+	GROUPBOX        "Criteria ",kctidFilterCriteria,7,7,254,70
+END
+
+kridFilterNoMatchDlg DIALOGEX 0, 0, 180, 89
+STYLE DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "No entries match the current filter.",kcidFltrNoEntries,
+					19,7,153,8
+	LTEXT           "Now you should either...",IDC_STATIC,19,23,77,8
+	LTEXT           "",IDC_STATIC,7,18,165,1,SS_SUNKEN
+	PUSHBUTTON      "&Turn off the filter",kridFltrTurnOff,52,36,75,14,
+					WS_GROUP
+	PUSHBUTTON      "&Modify the filter...",kridFltrModifyFilter,52,52,75,14
+	PUSHBUTTON      "&Use another filter",kridFltrSelectNew,52,68,75,14
+END
+
+kridFilterTips DIALOGEX 0, 0, 277, 97
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Advanced Filter Tips"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	GROUPBOX        "",IDC_STATIC,4,0,269,95
+	LTEXT           "Steps:",IDC_STATIC,9,8,261,8
+	LTEXT           "Tips:",IDC_STATIC,9,48,261,8
+	LTEXT           "-  Click ""Choose a field"" and select an entry type and field from the menu.",
+					IDC_STATIC,10,16,261,8
+	LTEXT           "-  Enter filter criteria beneath the field.",IDC_STATIC,
+					10,24,261,8
+	LTEXT           "-  Add additional fields as needed by clicking ""Choose a field"" in the last column.",
+					IDC_STATIC,10,32,261,8
+	LTEXT           "-  For an entry to satisfy this filter, it must meet ALL the criteria in a single row.",
+					IDC_STATIC,10,56,261,8
+	LTEXT           "-  The cells in a row are read like a sentence, with an ""and"" between each cell.",
+					IDC_STATIC,10,64,261,8
+	LTEXT           "-  The cells in a column relate to each other in an ""or"" or ""also"" relationship.",
+					IDC_STATIC,10,72,261,8
+	LTEXT           "-  Empty cells in the table are ignored.",IDC_STATIC,10,
+					80,261,8
+END
+
+kridFilterTurnOffDlg DIALOG DISCARDABLE  0, 0, 220, 80
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Turn Off Filter?"
+FONT 8, "MS Sans Serif"
+BEGIN
+	ICON            "",kctidFltrInfoIcon,7,7,21,20
+	LTEXT           "A filter is currently on.  In order to insert a new entry, the filter needs to be turned off.",
+					kcidFltrTurnOffInfo, 40,13,170,20
+	LTEXT           "Do you want to turn off the filter and insert the new entry now?",
+					kcidFltrTurnOffQuestion, 40,35,171,20
+	PUSHBUTTON      "Insert", kctidOk, 40,60,50,14, WS_GROUP
+	PUSHBUTTON      "Cancel", kctidCancel, 95,60,50,14
+END
+
+kridFilterErrorMsgDlg DIALOG DISCARDABLE  0, 0, 280, 60
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Filter Error"
+FONT 8, "MS Sans Serif"
+BEGIN
+	ICON            "",kctidFltrInfoIcon,7,7,21,20
+	LTEXT           "This is a carefully tailored error message.",
+					kcidFltrErrorMsg, 40,13,230,20
+	PUSHBUTTON      "OK", kctidOk, 78,40,60,14, WS_GROUP
+	PUSHBUTTON      "&Help...", kctidHelp, 142,40,60,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridFilterButtonImages  BITMAP  DISCARDABLE     "../../AppCore/Res/FilterButtons.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridTlsOptDlgFltr, DIALOG
+	BEGIN
+		HORZGUIDE, 167
+	END
+
+	kridFilterSimpleDlg, DIALOG
+	BEGIN
+		VERTGUIDE, 90
+		VERTGUIDE, 154
+		VERTGUIDE, 221
+		VERTGUIDE, 236
+		HORZGUIDE, 14
+	END
+
+	kridFilterBuilderShellDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 320
+		VERTGUIDE, 272
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 78
+	END
+
+	kridFilterPromptDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 218
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 53
+	END
+
+	kridFilterFullShellDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 337
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 162
+	END
+
+	kridFilterNoMatchDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 172
+		VERTGUIDE, 19
+		VERTGUIDE, 52
+		VERTGUIDE, 127
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 82
+	END
+
+	kridFilterTips, DIALOG
+	BEGIN
+		LEFTMARGIN, 4
+		RIGHTMARGIN, 273
+		TOPMARGIN, 4
+		BOTTOMMARGIN, 93
+	END
+
+	kridFilterTurnOffDlg, DIALOG
+	BEGIN
+		BOTTOMMARGIN, 61
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+kridFltrPopups MENU DISCARDABLE
+BEGIN
+	POPUP "Special"
+	BEGIN
+		MENUITEM "DUMMY1",                      kcidFltrSpcExpand
+	END
+	POPUP "Format"
+	BEGIN
+		POPUP "Writing System"
+		BEGIN
+			MENUITEM "DUMMY2",                  kcidExpFindFmtWs
+		END
+		MENUITEM "Font...",                     kcidFltrFmtFont
+		MENUITEM "Style...",                    kcidFltrFmtStyle
+		MENUITEM SEPARATOR
+		MENUITEM "No format",                   kcidFltrFmtNone
+	END
+	POPUP "FilterContext"
+	BEGIN
+		MENUITEM "Cu&t",                        kcidEditCut
+		MENUITEM "&Copy",                       kcidEditCopy
+		MENUITEM "&Paste",                      kcidEditPaste
+		MENUITEM SEPARATOR
+		POPUP "&Special"
+		BEGIN
+			MENUITEM "DUMMY3",                  kcidFltrSpcExpand
+		END
+/*        POPUP "&Format"
+		BEGIN
+			MENUITEM "Language",                1
+			MENUITEM "Font...",                 kcidFltrFmtFont
+			MENUITEM "Style...",                kcidFltrFmtStyle
+			MENUITEM SEPARATOR
+			MENUITEM "No format",               kcidFltrFmtNone
+		END*/
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidFilterList         "Shows available filters. Icons distinguish between basic and advanced filter types."
+	kctidAddFilter          "Adds a new item to the filters list of the type you specify."
+	kctidCopyFilter         "Makes a copy of the selected item and adds it to the filters list."
+	kctidDeleteFilter       "Deletes the selected filter."
+	kctidPrompt             "Allows you to enter a few words to remind you of what input is needed by the generalized filter. The entry type, field, and condition are inserted by default."
+	kctidCondition          "Specifies a condition for the filter."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidShowTips           "Shows filter setup instructions and tips in a pop-up window."
+	kctidExpand             "Opens the table in a separate sizeable window in case you are confused by the table overflowing the dialog."
+	kctidShowBuilder        "Opens the Criteria Builder to help you define the filter criteria for each field."
+	kctidField              "Specifies the entry type and field for the filter."
+	kctidCriteria           "Generalizes this filter so it prompts you for new criteria every time you use it."
+	kctidAnd                "In a single box of the filter table, identifies an additional required condition."
+	kctidOr                 "In a single box of the filter table, identifies an additional optional condition."
+	kstidTlsOptFltr         "Filters"
+	kstidDeleteFilter       "Delete Filter"
+	kctidFilterSpecial      "Inserts special characters and wildcards in the [Text string] box."
+	kctidFilterFormat       "Adds format criteria to the text string."
+	kctidFilterMatchCase    "Constrains the filter to match the case of characters in the search string."
+	kctidFilterMatchDiac    "Constrains the filter to match the diacritics of characters in the search string."
+	kctidFilterText         "Specifies text for the filter."
+	kctidFilterNumber       "Specifies a number for the filter."
+	kwidFltrTableHeader     "Headers in this row identify the fields where the advanced filter will attempt to match criteria."
+	kwidFltrTable           "Cells in the table show criteria that the filter is attempting to match.  Cells in a column represent ""or"" conditions in a single field.  Cells in a row represent ""and"" conditions in more than one field."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidFilterRef          "Specifies a category or tag for the filter (a list selection)."
+	kctidFilterDate         "Specifies a date for the filter. You must type with the format dd mm yy."
+	kctidFilterScope        "Specifies a temporal point of reference for a date filter (a list selection)."
+	kctidFilterChooseItem   "Specifies a category for the filter (a list selection)."
+	kctidFilterChooseDate   "Opens a dialog for date selection."
+	kctidFilterSubitems     "With hierarchical lists, extends the match criteria to any item in the tree under the one specified."
+	kcidAddSimpleFilter     "Basic Filter"
+	kcidAddFullFilter       "Advanced Filter"
+	kstidFltrEmpty          "Empty"
+	kstidFltrNotEmpty       "Not empty"
+	kstidFltrContains       "Contains"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFltrAnd            "And"
+	kstidFltrOr             "Or"
+	kstidFltrChooseField    "Ch&oose a field"
+	kstidFltrChooseFieldNHK "Choose a field"
+	kstidFltrRemoveField    "&Remove field..."
+	kstidFltrDelFieldMsg    "Do you want to remove the current field from this filter?"
+	kstidFltrFullBldrTitle  "Expanded Advanced Filter Table"
+	kridFltrTurnOff         "Disables the current filter."
+	kridFltrModifyFilter    "Opens the Filters tab of the Options dialog so you can modify the filter."
+	kridFltrSelectNew       "Opens the Filters list so you can select another filter."
+	kctidInsert             "Accepts the filter criteria and enters it in the active box. Another box  opens below it."
+	kstidFltrDefaultPrompt          "The %<0>s field %<1>s the following %<2>s%<3>s:"
+	kstidFltrDefaultBooleanPrompt   "The %<0>s field has the following value: "
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFilterDate         "date"
+	kstidFilterText         "text"
+	kstidFilterReference    "reference"
+	kstidFilterTag          "tag"
+	kstidFilterNumber       "number"
+	kstidFilterBoolean      "Boolean"
+	kstidFltrNewSimple      "New Basic Filter"
+	kstidFltrNewFull        "New Advanced Filter"
+	kstidFltrDelFilterMsg   "This deletion is permanent and cannot be reversed with Undo.\r\nAre you sure you want to delete this filter?"
+	kstidFltrRenFilterMsg   "Each filter must have a unique name."
+	kstidFltrRenEmptyMsg    "A filter must have a non-empty name."
+	kstidNoFilterHotKey     "&No Filter"
+	kctidFltrFieldLabel     "Fi&eld:"
+	kstidFilterEnum         "enum"
+	kstidFilterDateTtl      "Filter Date"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFltrDoesNotContain "Does not contain"
+	kstidFltrMatches        "Matches"
+	kstidFltrDoesNotMatch   "Does not match"
+	kstidFltrEqualTo        "Equal to"
+	kstidFltrNotEqualTo     "Not equal to"
+	kstidFltrGreaterThan    "Greater than"
+	kstidFltrLessThan       "Less than"
+	kstidFltrGreaterThanEqual "Greater than or equal to"
+	kstidFltrLessThanEqual  "Less than or equal to"
+	kstidFltrOn             "On"
+	kstidFltrNotOn          "Not on"
+	kstidFltrAfter          "After"
+	kstidFltrBefore         "Before"
+	kstidFltrOnAfter        "On or after"
+	kstidFltrOnBefore       "On or before"
+	kstidFltrYes            "Yes"
+	kstidFltrNo             "No"
+	kstidFltrAndSubitems    " (and subitems)"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFltrExactDate      "Exact date"
+#ifdef VERSION2FILTER
+	kstidFltrMonth          "Month"
+#endif /*VERSION2FILTER*/
+	kstidFltrMonthYear      "Month and Year"
+	kstidFltrYear           "Year"
+#ifdef VERSION2FILTER
+	kstidFltrDay            "Day"
+#endif /*VERSION2FILTER*/
+	kstidFltrToday          "Today"
+	kstidFltrLastWeek       "Last week"
+	kstidFltrLastMonth      "Last month"
+	kstidFltrLastYear       "Last year"
+#ifdef VERSION2FILTER
+	kstidFltrLast7Days      "Last 7 days"
+	kstidFltrLast30Days     "Last 30 days"
+	kstidFltrLast365Days    "Last 365 days"
+#endif /*VERSION2FILTER*/
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFltrError               "Filter Error"
+	kstidFltrImproper            "The selected filter is not constructed properly.  This is a programming error,\r\nnot a mistake by the user."
+	kstidFltrImproperAdv         "The selected filter is not constructed properly.  This may be an error in the\r\ndefinition of the advanced filter, or a programming error.  Please check the\r\nfilter definition carefully before reporting a program bug."
+	kstidFltrDateProb            "Either the date format cannot be recognized, or there is a mismatch between the Scope: ""%<0>s"" and the Date: ""%<1>s""."
+	kstidFltrBadBigStringCompare "Invalid comparison for large text data. (This should never happen.)"
+	kstidFltrInvalidWildPattern  "An invalid wildcard variable name was found in the filter: [%<0>s]."
+	kstidFltrDateProbCap         "Filter Date Problem"
+	kstidFltrCannotCreate        "Cannot Create Filter"
+	kstidFltrCannotEmptyList     "The chosen list appears to be empty: you cannot filter on nonexistent values!"
+	kstidFltrUndefinedFilter     "The filter ""%<0>s"" is not yet defined.\r\nClick on OK to continue without this filter, or\r\nclick on Cancel to first finish defining this filter."
+	kstidFltrUndefinedFilters    "Some filters (%<0>s) are not yet defined.\r\nClick on OK to continue without these filters, or\r\nclick on Cancel to first finish defining the filters."
+	kstidFltrOrSortError         "Filter Or Sort Error"
+	kstidFltrOrSortImproper      "The combined filter and sort method is not constructed properly.\r\nThis is a programming error, not a mistake by the user."
+	kstidFltrOrSortImproperAdv   "The combined filter and sort method is not constructed properly.  This may be\r\nan error in the definition of the the advanced filter, or a programming error.\r\nPlease check the filter definition carefully before reporting a program bug."
+	kstidFltrNumberCap           "Filter Number Problem"
+	kstidFltrNumberError         "Please enter a number on which to filter."
+	kstidFltrMaxIntMsg           "Numbers must be between -2147483648 and 2147483647."
+	kstidStBar_NoFilterMatch     "Nothing matches the current filter."
+	kstidStBar_ApplyingFilter    "Filtering according to %<0>s ..."
+	kstidStBar_RemovingFilter    "Removing the filter ..."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFltrPersonMenuLabel    "Person"
+	kstidFltrAnyRoleMenuLabel   "Any Role"
+	kstidFltrNoRoleMenuLabel    "Unspecified Role"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

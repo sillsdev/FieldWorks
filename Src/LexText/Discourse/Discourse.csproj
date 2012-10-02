@@ -1,0 +1,172 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{28F1B78C-204A-41AF-8BDE-FECAD6559AAD}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks.Discourse</RootNamespace>
+	<AssemblyName>Discourse</AssemblyName>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+	<FileUpgradeFlags />
+	<OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<DocumentationFile>
+	</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=5.1.0.19828, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces, Version=5.1.0.19833, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO, Version=5.1.0.30401, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework, Version=5.3.0.16580, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwControls, Version=5.3.0.20377, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwResources, Version=5.1.0.19834, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils, Version=5.3.0.23781, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ICSharpCode.SharpZipLib, Version=0.5.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
+	</Reference>
+	<Reference Include="ITextDll, Version=5.1.0.26424, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite, Version=5.1.0.19970, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="SimpleRootSite, Version=5.1.0.19925, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+	<Reference Include="Utils, Version=5.1.0.19835, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="xCore, Version=5.3.0.22181, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="xCoreInterfaces, Version=5.1.0.19889, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLUtils, Version=5.1.0.19858, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="xWorks, Version=5.3.0.23093, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AdvancedMTDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="AdvancedMTDialog.designer.cs">
+	  <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ChartLocation.cs" />
+	<Compile Include="ConstChartBody.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ConstituentChart.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ConstituentChart.Designer.cs">
+	  <DependentUpon>ConstituentChart.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DiscourseDbOps.cs" />
+	<Compile Include="ConstituentChartLogic.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="DiscourseExportDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="DiscourseExporter.cs" />
+	<Compile Include="InterlinRibbon.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="MaxStringWidthForChartColumn.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="DiscourseStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>DiscourseStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="SelectClausesDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="SelectClausesDialog.Designer.cs">
+	  <DependentUpon>SelectClausesDialog.cs</DependentUpon>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="AdvancedMTDialog.resx">
+	  <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DiscourseStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>DiscourseStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="SelectClausesDialog.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>SelectClausesDialog.cs</DependentUpon>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

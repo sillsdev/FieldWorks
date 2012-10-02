@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="wixcop" default="wixcop.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	wixcop.build - Builds the WixCop project (WixCop.exe).
+	2005.09.25 johnls Created
+  </description>
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="wixcop.build" description="Peforms a full rebuild (clean then build)" depends="wixcop.clean, wixcop.inc" />
+
+  <!-- Clean -->
+  <target name="wixcop.clean" description="Cleans the build">
+	<delete dir="${dir.build.wixcop}" failonerror="false" if="${directory::exists(dir.build.wixcop)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="WixCop.exe" />
+		<include name="WixCop.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="wixcop.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\WixCop.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.wixcop}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="Inspector.cs" />
+		<include name="LineInfoAttribute.cs" />
+		<include name="LineInfoCData.cs" />
+		<include name="LineInfoComment.cs" />
+		<include name="LineInfoDeclaration.cs" />
+		<include name="LineInfoDocument.cs" />
+		<include name="LineInfoDocumentType.cs" />
+		<include name="LineInfoElement.cs" />
+		<include name="LineInfoEntityReference.cs" />
+		<include name="LineInfoProcessingInstruction.cs" />
+		<include name="LineInfoSignificantWhitespace.cs" />
+		<include name="LineInfoText.cs" />
+		<include name="LineInfoWhitespace.cs" />
+		<include name="WixCop.cs" />
+	  </sources>
+	</csc>
+  </target>
+
+</project>

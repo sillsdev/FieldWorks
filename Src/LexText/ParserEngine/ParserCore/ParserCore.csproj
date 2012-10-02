@@ -1,0 +1,202 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{116BE16A-B3A0-408C-A5CD-25BCBBDBE327}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>ParserCore</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.WordWorks.Parser</RootNamespace>
+	<RunPostBuildEvent>Always</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\..\output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces, Version=5.1.0.21154, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils, Version=5.5.0.29918, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="FxtDLL">
+	  <Name>FxtDLL</Name>
+	  <HintPath>..\..\..\..\Output\Debug\FxtDLL.dll</HintPath>
+	</Reference>
+	<Reference Include="GAFAWSAnalysis">
+	  <Name>GAFAWSAnalysis</Name>
+	  <HintPath>..\..\..\..\Output\Debug\GAFAWSAnalysis.dll</HintPath>
+	</Reference>
+	<Reference Include="HermitCrab, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Lib\debug\HermitCrab.dll</HintPath>
+	</Reference>
+	<Reference Include="Patr100Interop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\..\Output\Debug\Patr100Interop.dll</HintPath>
+	</Reference>
+	<Reference Include="Reporting">
+	  <Name>Reporting</Name>
+	  <HintPath>..\..\..\..\Output\Debug\Reporting.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="XAmpleCOMWrapperInterop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\XAmpleCOMWrapperInterop.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLUtils">
+	  <Name>XMLUtils</Name>
+	  <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="CrcStream.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DummyParser.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="HCWorker.cs" />
+	<Compile Include="M3ModelRetriever.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="M3ToHCTransformer.cs" />
+	<Compile Include="M3ToXAmpleTransformer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ParseFiler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ParserCoreStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>ParserCoreStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="Scheduler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TaskReport.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TimeStamp.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WordformQueue.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Worker.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XAmpleWorker.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="ParserCoreStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>ParserCoreStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

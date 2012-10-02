@@ -1,0 +1,836 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidNewToolTip" xml:space="preserve">
+	<value>New Fieldworks Project</value>
+	<comment>Tooltip for the New Project toolbar/menu item</comment>
+  </data>
+  <data name="kstidOpenToolTip" xml:space="preserve">
+	<value>Open Project</value>
+	<comment>Tool tip for Open Project toolbar/menu item</comment>
+  </data>
+  <data name="kstidCloseToolTip" xml:space="preserve">
+	<value>Close Window</value>
+	<comment>Tooltip for Close menu item</comment>
+  </data>
+  <data name="kstidSaveToolTip" xml:space="preserve">
+	<value>Save</value>
+	<comment>Tool tip for Save toolbar button</comment>
+  </data>
+  <data name="kstidProjManagementToolTip" xml:space="preserve">
+	<value>Project Management</value>
+	<comment>Tooltip for Project management toolbar/menu item</comment>
+  </data>
+  <data name="kstidPageSetupToolTip" xml:space="preserve">
+	<value>Page Setup</value>
+	<comment>Tooltip for Page setup toolbar/menu item</comment>
+  </data>
+  <data name="kstidPrintToolTip" xml:space="preserve">
+	<value>Print</value>
+	<comment>Tool tip for Print toolbar/menu item</comment>
+  </data>
+  <data name="kstidExitToolTip" xml:space="preserve">
+	<value>Exit Application</value>
+	<comment>Tool tip for exit toolbar/menu item</comment>
+  </data>
+  <data name="kstidCutToolTip" xml:space="preserve">
+	<value>Cut</value>
+	<comment>Tool tip for Cut toolbar/menu item</comment>
+  </data>
+  <data name="kstidCopyToolTip" xml:space="preserve">
+	<value>Copy</value>
+	<comment>Tool tip for Copy toolbar button</comment>
+  </data>
+  <data name="kstidPasteToolTip" xml:space="preserve">
+	<value>Paste</value>
+	<comment>Tool tip for Paste toolbar/menu item</comment>
+  </data>
+  <data name="kstidUndoToolTip" xml:space="preserve">
+	<value>Undo</value>
+	<comment>Tool tip for Undo toolbar/menu item</comment>
+  </data>
+  <data name="kstidRedoToolTip" xml:space="preserve">
+	<value>Redo</value>
+	<comment>Tool tip for Redo toolbar/menu item</comment>
+  </data>
+  <data name="kstidSelectAllToolTip" xml:space="preserve">
+	<value>Select All Text</value>
+	<comment>Tool tip for select all menu item</comment>
+  </data>
+  <data name="kstidFindToolTip" xml:space="preserve">
+	<value>Find Occurrence of Specified Text</value>
+	<comment>Tool tip for find menu item</comment>
+  </data>
+  <data name="kstidFindNextToolTip" xml:space="preserve">
+	<value>Find Next Occurrence of Specified Text</value>
+	<comment>Tool tip for find next menu item</comment>
+  </data>
+  <data name="kstidFindPrevToolTip" xml:space="preserve">
+	<value>Find Previous Occurrence of Specified Text</value>
+	<comment>Tool tip for find previous menu item</comment>
+  </data>
+  <data name="kstidReplaceToolTip" xml:space="preserve">
+	<value>Find and Replace Specified Text</value>
+	<comment>Tool tip for find/replace menu item</comment>
+  </data>
+  <data name="kstidProjPropertiesToolTip" xml:space="preserve">
+	<value>FieldWorks Project Properties</value>
+	<comment>Tool tip for fieldworks project properties toolbar/menu item</comment>
+  </data>
+  <data name="kstidBackupRestoreToolTip" xml:space="preserve">
+	<value>Rename FieldWorks Project</value>
+	<comment>Tool tip for backup/restore toolbar/menu item</comment>
+  </data>
+  <data name="kstidRenameToolTip" xml:space="preserve">
+	<value>Rename FieldWorks Project</value>
+	<comment>Tool tip for rename toolbar/menu item</comment>
+  </data>
+  <data name="kstidDeleteProjToolTip" xml:space="preserve">
+	<value>Delete FieldWorks Project</value>
+	<comment>Tool tip for delete project toolbar/menu item</comment>
+  </data>
+  <data name="kstidCreateShortcutToolTip" xml:space="preserve">
+	<value>Create shortcut on desktop for this project</value>
+	<comment>Tool tip for create shortcut on desktop toolbar/menu item</comment>
+  </data>
+  <data name="kstidParaStyleToolTip" xml:space="preserve">
+	<value>Paragraph Style</value>
+	<comment>Tool tip for Paragraph Styles Combo on toolbar</comment>
+  </data>
+  <data name="kstidCharStyleToolTip" xml:space="preserve">
+	<value>Character Style</value>
+	<comment>Tool tip for Character Styles Combo on toolbar</comment>
+  </data>
+  <data name="kstidDeleteToolTip" xml:space="preserve">
+	<value>Delete Selected Text</value>
+	<comment>Tool tip for Delete menu item</comment>
+  </data>
+  <data name="kstidStatusBarToolTip" xml:space="preserve">
+	<value>Shows/Hide Status Bar</value>
+	<comment>Tool tip for Status Bar menu item</comment>
+  </data>
+  <data name="kstidSideBarToolTip" xml:space="preserve">
+	<value>Shows/Hide Side Bar</value>
+	<comment>Tool tip for Side Bar menu item</comment>
+  </data>
+  <data name="kstidZoomToolTip" xml:space="preserve">
+	<value>Zoom</value>
+	<comment>Tool tip for Zoom Combo on toolbar</comment>
+  </data>
+  <data name="kstidFullWindowToolTip" xml:space="preserve">
+	<value>Full Window</value>
+	<comment>Tool tip for full window menu item</comment>
+  </data>
+  <data name="kstidWSTooltip" xml:space="preserve">
+	<value>Writing System</value>
+	<comment>Tooltip text for the writing system selector combo box on the toolbar</comment>
+  </data>
+  <data name="kstidStyleToolTip" xml:space="preserve">
+	<value>Styles</value>
+	<comment>Tool tip for Styles toolbar/menu item</comment>
+  </data>
+  <data name="kstidApplyStyleToolTip" xml:space="preserve">
+	<value>Apply Style</value>
+	<comment>Tool tip for Apply Style toolbar/menu item</comment>
+  </data>
+  <data name="kstidRemoveCharStyleToolTip" xml:space="preserve">
+	<value>Remove Character Style</value>
+	<comment>Tool tip for Reset Character toolbar/menu item</comment>
+  </data>
+  <data name="kstidResetParaStyleToolTip" xml:space="preserve">
+	<value>Reset Paragraph Style</value>
+	<comment>Tool tip for Reset Paragraph toolbar/menu item</comment>
+  </data>
+  <data name="kstidBoldToolTip" xml:space="preserve">
+	<value>Bold</value>
+	<comment>Tool tip for Bold toolbar button</comment>
+  </data>
+  <data name="kstidItalicToolTip" xml:space="preserve">
+	<value>Italic</value>
+	<comment>Tool tip for Italic toolbar button</comment>
+  </data>
+  <data name="kstidLeftAlignToolTip" xml:space="preserve">
+	<value>Align Left</value>
+	<comment>Tool tip for Left Align toolbar button</comment>
+  </data>
+  <data name="kstidRightAlignToolTip" xml:space="preserve">
+	<value>Align Right</value>
+	<comment>Tool tip for Right Align toolbar button</comment>
+  </data>
+  <data name="kstidCenterToolTip" xml:space="preserve">
+	<value>Center</value>
+	<comment>Tool tip for Center toolbar button</comment>
+  </data>
+  <data name="kstidNumberedListItemToolTip" xml:space="preserve">
+	<value>Numbering</value>
+	<comment>Tool tip for Numbering toolbar button</comment>
+  </data>
+  <data name="kstidBulletedListItemToolTip" xml:space="preserve">
+	<value>Bullets</value>
+	<comment>Tool tip for Bullets toolbar button</comment>
+  </data>
+  <data name="kstidDecreaseIndentToolTip" xml:space="preserve">
+	<value>Decrease Indent</value>
+	<comment>Tool tip for Decrease Indent toolbar button</comment>
+  </data>
+  <data name="kstidIncreaseIndentToolTip" xml:space="preserve">
+	<value>Increase Indent</value>
+	<comment>Tool tip for Increase Indent toolbar button</comment>
+  </data>
+  <data name="kstidBordersToolTip" xml:space="preserve">
+	<value>Borders</value>
+	<comment>Tool tip for Borders toolbar button</comment>
+  </data>
+  <data name="kstidBackgroundColorToolTip" xml:space="preserve">
+	<value>Background Color</value>
+	<comment>Tool tip for Background Color toolbar button</comment>
+  </data>
+  <data name="kstidFontColorToolTip" xml:space="preserve">
+	<value>Font Color</value>
+	<comment>Tool tip for Font Color toolbar button</comment>
+  </data>
+  <data name="kstidBordersSurroundToolTip" xml:space="preserve">
+	<value>Borders all Around</value>
+	<comment>Tool tip for format/borders surrounding border tooltip</comment>
+  </data>
+  <data name="kstidBordersTopToolTip" xml:space="preserve">
+	<value>Top Border</value>
+	<comment>Tool tip for format/borders top border tooltip</comment>
+  </data>
+  <data name="kstidBordersBottomToolTip" xml:space="preserve">
+	<value>Bottom Border</value>
+	<comment>Tool tip for format/borders bottom border tooltip</comment>
+  </data>
+  <data name="kstidBordersLeftToolTip" xml:space="preserve">
+	<value>Left Border</value>
+	<comment>Tool tip for format/borders left border tooltip</comment>
+  </data>
+  <data name="kstidBordersRightToolTip" xml:space="preserve">
+	<value>Right Border</value>
+	<comment>Tool tip for format/borders right border tooltip</comment>
+  </data>
+  <data name="kstidBordersNoneToolTip" xml:space="preserve">
+	<value>No Borders</value>
+	<comment>Tool tip for format/borders right border tooltip</comment>
+  </data>
+  <data name="kstidNewWindowToolTip" xml:space="preserve">
+	<value>Open a New Window</value>
+	<comment>Tool tip for new window toolbar button</comment>
+  </data>
+  <data name="kstidUserPropertiesItemName" xml:space="preserve">
+	<value>&amp;User Properties...</value>
+	<comment>Text tip for user properties menu item</comment>
+  </data>
+  <data name="kstidUserPropertiesToolTip" xml:space="preserve">
+	<value>User Properties</value>
+	<comment>Tool tip for user properties menu item</comment>
+  </data>
+  <data name="kstidCascadeToolTip" xml:space="preserve">
+	<value>Cascade Open Windows</value>
+	<comment>Tool tip for cascade toolbar/menu item</comment>
+  </data>
+  <data name="kstidTileToolTip" xml:space="preserve">
+	<value>Arrange Open Windows to be Stacked</value>
+	<comment>Tool tip for tile toolbar/menu item</comment>
+  </data>
+  <data name="kstidTileSideBySideToolTip" xml:space="preserve">
+	<value>Arrange Open Windows to be Side-By-Side</value>
+	<comment>Tool tip for side-by-side toolbar/menu item</comment>
+  </data>
+  <data name="kstidHowDoIToolTip" xml:space="preserve">
+	<value>How Do I?</value>
+	<comment>Tool tip for the how do I toolbar/menu item</comment>
+  </data>
+  <data name="kstidTrainingToolTip" xml:space="preserve">
+	<value>Training</value>
+	<comment>Tool tip for training toolbar/menu item</comment>
+  </data>
+  <data name="kstidFileItemName" xml:space="preserve">
+	<value>&amp;File</value>
+	<comment>This is the text for the File menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidEditItemName" xml:space="preserve">
+	<value>&amp;Edit</value>
+	<comment>This is the text for the Edit menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidViewItemName" xml:space="preserve">
+	<value>&amp;View</value>
+	<comment>This is the text for the View menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidFormatItemName" xml:space="preserve">
+	<value>F&amp;ormat</value>
+	<comment>This is the text for the Format menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidToolsItemName" xml:space="preserve">
+	<value>&amp;Tools</value>
+	<comment>This is the text for the Tools menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidWindowItemName" xml:space="preserve">
+	<value>&amp;Window</value>
+	<comment>This is the text for the Window menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidHelpItemName" xml:space="preserve">
+	<value>&amp;Help</value>
+	<comment>This is the text for the Help menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidNewItemName" xml:space="preserve">
+	<value>&amp;New Fieldworks Project...</value>
+	<comment>Text for the new option on the file menu</comment>
+  </data>
+  <data name="kstidOpenItemName" xml:space="preserve">
+	<value>&amp;Open...</value>
+	<comment>Text for Open Project menu item</comment>
+  </data>
+  <data name="kstidCloseItemName" xml:space="preserve">
+	<value>&amp;Close</value>
+	<comment>Text for Close menu item</comment>
+  </data>
+  <data name="kstidSaveItemName" xml:space="preserve">
+	<value>&amp;Save</value>
+	<comment>Text for Save toolbar button</comment>
+  </data>
+  <data name="kstidProjManagementItemName" xml:space="preserve">
+	<value>Project &amp;Management</value>
+	<comment>Text for menu and toolbar item</comment>
+  </data>
+  <data name="kstidPageSetupItemName" xml:space="preserve">
+	<value>P&amp;age Setup...</value>
+	<comment>Text for menu and toolbar item</comment>
+  </data>
+  <data name="kstidPrintItemName" xml:space="preserve">
+	<value>&amp;Print...</value>
+	<comment>Text for Print toolbar button</comment>
+  </data>
+  <data name="kstidExitItemName" xml:space="preserve">
+	<value>E&amp;xit</value>
+	<comment>This is the text for the exit option on the file menu.</comment>
+  </data>
+  <data name="kstidProjPropertiesItemName" xml:space="preserve">
+	<value>Field&amp;Works Project Properties...</value>
+	<comment>This is the text for the proj. properties option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidBackupRestoreItemName" xml:space="preserve">
+	<value>&amp;Backup and Restore...</value>
+	<comment>This is the text for the backup/restore option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidRenameItemName" xml:space="preserve">
+	<value>&amp;Rename ...</value>
+	<comment>This is the text for the rename project option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidDeleteProjItemName" xml:space="preserve">
+	<value>&amp;Delete FieldWorks Project...</value>
+	<comment>This is the text for the delete project option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidCreateShortcutItemName" xml:space="preserve">
+	<value>&amp;Create Shortcut on Desktop</value>
+	<comment>This is the text for the create shortcut on desktop option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidUndoItemName" xml:space="preserve">
+	<value>&amp;Undo</value>
+	<comment>Text for Undo toolbar button</comment>
+  </data>
+  <data name="kstidRedoItemName" xml:space="preserve">
+	<value>&amp;Redo</value>
+	<comment>Text for Redo toolbar button</comment>
+  </data>
+  <data name="kstidCutItemName" xml:space="preserve">
+	<value>Cu&amp;t</value>
+	<comment>Text for Cut toolbar button</comment>
+  </data>
+  <data name="kstidCopyItemName" xml:space="preserve">
+	<value>&amp;Copy</value>
+	<comment>Text for Copy toolbar button</comment>
+  </data>
+  <data name="kstidPasteItemName" xml:space="preserve">
+	<value>&amp;Paste</value>
+	<comment>Text for Paste toolbar button</comment>
+  </data>
+  <data name="kstidSelectAllItemName" xml:space="preserve">
+	<value>Select A&amp;ll</value>
+	<comment>This is the text for the select all option on the edit menu.</comment>
+  </data>
+  <data name="kstidFindItemName" xml:space="preserve">
+	<value>&amp;Find...</value>
+	<comment>This is the text for the find option on the edit menu.</comment>
+  </data>
+  <data name="kstidFindNextItemName" xml:space="preserve">
+	<value>Find Ne&amp;xt</value>
+	<comment>This is the text for the next match option on the edit menu.</comment>
+  </data>
+  <data name="kstidFindPrevItemName" xml:space="preserve">
+	<value>Find Pre&amp;vious</value>
+	<comment>This is the text for the prev match option on the edit menu.</comment>
+  </data>
+  <data name="kstidReplaceItemName" xml:space="preserve">
+	<value>R&amp;eplace...</value>
+	<comment>This is the text for the replace option on the edit menu.</comment>
+  </data>
+  <data name="kstidDeleteItemName" xml:space="preserve">
+	<value>&amp;Delete</value>
+	<comment>This is the text for the delete option on the edit menu.</comment>
+  </data>
+  <data name="kstidFullWindowItemName" xml:space="preserve">
+	<value>F&amp;ull Window</value>
+	<comment>This is the text for the full window item on the view menu.</comment>
+  </data>
+  <data name="kstidStatusBarItemName" xml:space="preserve">
+	<value>St&amp;atus Bar</value>
+	<comment>This is the text for the status bar on the view menu.</comment>
+  </data>
+  <data name="kstidSideBarItemName" xml:space="preserve">
+	<value>S&amp;ide Bar</value>
+	<comment>This is the text for the side bar on the view menu.</comment>
+  </data>
+  <data name="kstidToolBarsItemName" xml:space="preserve">
+	<value>&amp;Toolbars</value>
+	<comment>This is the text for the toolbar bar on the view menu.</comment>
+  </data>
+  <data name="kstidCustomizeToolBarsItemName" xml:space="preserve">
+	<value>&amp;Customize...</value>
+	<comment>This is the text for the customize item at the bottom of the toolbar bar menu item.</comment>
+  </data>
+  <data name="kstidStyleItemName" xml:space="preserve">
+	<value>&amp;Styles...</value>
+	<comment>This is the text for the styles menu on the format menu.</comment>
+  </data>
+  <data name="kstidApplyStyleItemName" xml:space="preserve">
+	<value>Appl&amp;y Style...</value>
+	<comment>This is the text for the Apply Style menu on the format menu.</comment>
+  </data>
+  <data name="kstidRemoveCharStyleItemName" xml:space="preserve">
+	<value>Remove &amp;Character Style</value>
+	<comment>This is the text for the remove character style menu on the format menu.</comment>
+  </data>
+  <data name="kstidResetParaStyleItemName" xml:space="preserve">
+	<value>Reset P&amp;aragraph Style</value>
+	<comment>This is the text for the reset paragraphe style menu on the format menu.</comment>
+  </data>
+  <data name="kstidBoldItemName" xml:space="preserve">
+	<value>Bold</value>
+	<comment>Text for Bold toolbar button</comment>
+  </data>
+  <data name="kstidItalicItemName" xml:space="preserve">
+	<value>Italic</value>
+	<comment>Text for Italic toolbar button</comment>
+  </data>
+  <data name="kstidLeftAlignItemName" xml:space="preserve">
+	<value>Align Left</value>
+	<comment>Text for Left Align toolbar button</comment>
+  </data>
+  <data name="kstidRightAlignItemName" xml:space="preserve">
+	<value>Align Right</value>
+	<comment>Text for Right Align toolbar button</comment>
+  </data>
+  <data name="kstidCenterItemName" xml:space="preserve">
+	<value>Center</value>
+	<comment>Text for Center toolbar button</comment>
+  </data>
+  <data name="kstidNumberedListItemItemName" xml:space="preserve">
+	<value>Numbering</value>
+	<comment>Text for Numbering toolbar button</comment>
+  </data>
+  <data name="kstidBulletedListItemItemName" xml:space="preserve">
+	<value>Bullets</value>
+	<comment>Text for Bullets toolbar button</comment>
+  </data>
+  <data name="kstidDecreaseIndentItemName" xml:space="preserve">
+	<value>Decrease Indent</value>
+	<comment>Text for Decrease Indent toolbar button</comment>
+  </data>
+  <data name="kstidIncreaseIndentItemName" xml:space="preserve">
+	<value>Increase Indent</value>
+	<comment>Text for Increase Indent toolbar button</comment>
+  </data>
+  <data name="kstidBordersItemName" xml:space="preserve">
+	<value>Borders</value>
+	<comment>Text for Borders toolbar button</comment>
+  </data>
+  <data name="kstidBackgroundColorItemName" xml:space="preserve">
+	<value>Background Color</value>
+	<comment>Text for Background Color toolbar button</comment>
+  </data>
+  <data name="kstidFontColorItemName" xml:space="preserve">
+	<value>Font Color</value>
+	<comment>Text for Font Color toolbar button</comment>
+  </data>
+  <data name="kstidParaStyleItemName" xml:space="preserve">
+	<value>Paragraph Style</value>
+	<comment>Text for Paragraph Styles combobox on toolbar</comment>
+  </data>
+  <data name="kstidCharStyleItemName" xml:space="preserve">
+	<value>Character Style</value>
+	<comment>Text for Character Styles combobox on toolbar</comment>
+  </data>
+  <data name="kstidWritingSystemItemName" xml:space="preserve">
+	<value>Writing System</value>
+	<comment>Item name for the writing system combobox control on the toolbar</comment>
+  </data>
+  <data name="kstidZoomItemName" xml:space="preserve">
+	<value>Zoom</value>
+	<comment>Text for Zoom Combo on toolbar</comment>
+  </data>
+  <data name="kstidBordersSurroundItemName" xml:space="preserve">
+	<value>Borders all Around</value>
+	<comment>Text for format/borders surrounding border tooltip</comment>
+  </data>
+  <data name="kstidBordersTopItemName" xml:space="preserve">
+	<value>Top Border</value>
+	<comment>Text for format/borders top border tooltip</comment>
+  </data>
+  <data name="kstidBordersBottomItemName" xml:space="preserve">
+	<value>Bottom Border</value>
+	<comment>Text for format/borders bottom border tooltip</comment>
+  </data>
+  <data name="kstidBordersLeftItemName" xml:space="preserve">
+	<value>Left Border</value>
+	<comment>Text for format/borders left border tooltip</comment>
+  </data>
+  <data name="kstidBordersRightItemName" xml:space="preserve">
+	<value>Right Border</value>
+	<comment>Text for format/borders right border tooltip</comment>
+  </data>
+  <data name="kstidBordersNoneItemName" xml:space="preserve">
+	<value>No Borders</value>
+	<comment>Text for format/borders right border tooltip</comment>
+  </data>
+  <data name="kstidNewWindowItemName" xml:space="preserve">
+	<value>&amp;New Window</value>
+	<comment>This is the text for the new window menu on the windows menu.</comment>
+  </data>
+  <data name="kstidCascadeItemName" xml:space="preserve">
+	<value>&amp;Cascade</value>
+	<comment>This is the text for the cascade menu on the windows menu.</comment>
+  </data>
+  <data name="kstidTileItemName" xml:space="preserve">
+	<value>&amp;Tile</value>
+	<comment>This is the text for the tile top to bottom (i.e. stacked) menu on the windows menu.</comment>
+  </data>
+  <data name="kstidTileSideBySideItemName" xml:space="preserve">
+	<value>Tile Side-&amp;By-Side</value>
+	<comment>This is the text for the tile, side-by-side menu on the windows menu.</comment>
+  </data>
+  <data name="kstidHowDoIItemName" xml:space="preserve">
+	<value>&amp;How Do I...</value>
+	<comment>Text for How Do I item on help menu</comment>
+  </data>
+  <data name="kstidTrainingItemName" xml:space="preserve">
+	<value>&amp;Training</value>
+	<comment>Text for Training item on help menu</comment>
+  </data>
+  <data name="kstidTutorialItemName" xml:space="preserve">
+	<value>Tutorials</value>
+	<comment>Text for Tutorial item on help menu</comment>
+  </data>
+  <data name="kstidMoreWindowsItemName" xml:space="preserve">
+	<value>&amp;More Windows...</value>
+	<comment>Text for the more windows menu item</comment>
+  </data>
+  <data name="kstidStandardToolBarText" xml:space="preserve">
+	<value>Standard</value>
+	<comment>This is the name of the standard toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidFormatToolBarText" xml:space="preserve">
+	<value>Formatting</value>
+	<comment>This is the name of the format toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidDirectFormattingToolBarText" xml:space="preserve">
+	<value>Direct Formatting</value>
+	<comment>This is the name of the direct formatting toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidFileCategory" xml:space="preserve">
+	<value>File</value>
+	<comment>This is the file category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidEditCategory" xml:space="preserve">
+	<value>Edit</value>
+	<comment>This is the edit category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidFormatCategory" xml:space="preserve">
+	<value>Format</value>
+	<comment>This is the format category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidViewCategory" xml:space="preserve">
+	<value>View</value>
+	<comment>This is the view category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidToolsCategory" xml:space="preserve">
+	<value>Tools</value>
+	<comment>This is the tools category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidWindowCategory" xml:space="preserve">
+	<value>Window</value>
+	<comment>This is the window category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidHelpCategory" xml:space="preserve">
+	<value>Help</value>
+	<comment>This is the help category for toolbar/menu items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidDefaultStatusBarMsg" xml:space="preserve">
+	<value>For help, press F1.</value>
+	<comment>This is the message displayed in a main window's status bar when there is no other meaningful message to display.</comment>
+  </data>
+  <data name="kstidNewMsg" xml:space="preserve">
+	<value>Creates a new language project.</value>
+	<comment>This is the status bar message for the new language project menu option.</comment>
+  </data>
+  <data name="kstidOpenMsg" xml:space="preserve">
+	<value>Opens another language project.</value>
+	<comment>This is the status bar message for the open menu option.</comment>
+  </data>
+  <data name="kstidCloseMsg" xml:space="preserve">
+	<value>Close this window</value>
+	<comment>This is the status bar message for the close menu option.</comment>
+  </data>
+  <data name="kstidSaveMsg" xml:space="preserve">
+	<value>Saves changes.</value>
+	<comment>This is the status bar message for the save menu option.</comment>
+  </data>
+  <data name="kstidProjectPropertiesMsg" xml:space="preserve">
+	<value>Modify properties of a FieldWorks project.</value>
+	<comment>This is the status bar message for the Fieldworks project properties menu option.</comment>
+  </data>
+  <data name="kstidBackupRestoreMsg" xml:space="preserve">
+	<value>Backup or restore a FieldWorks project.</value>
+	<comment>This is the status bar message for the backup and restore menu option.</comment>
+  </data>
+  <data name="kstidRenameMsg" xml:space="preserve">
+	<value>Rename a FieldWorks project.</value>
+	<comment>This is the status bar message for the rename project menu option.</comment>
+  </data>
+  <data name="kstidDeleteProjMsg" xml:space="preserve">
+	<value>Delete a FieldWorks project.</value>
+	<comment>This is the status bar message for the delete project menu option.</comment>
+  </data>
+  <data name="kstidPageSetupMsg" xml:space="preserve">
+	<value>Page Setup for Printing.</value>
+	<comment>This is the status bar message for the page setup menu option.</comment>
+  </data>
+  <data name="kstidPrintMsg" xml:space="preserve">
+	<value>Prints current view.</value>
+	<comment>This is the status bar message for the print menu option.</comment>
+  </data>
+  <data name="kstidExitMsg" xml:space="preserve">
+	<value>Exits this application.</value>
+	<comment>This is the status bar message for the exit menu option.</comment>
+  </data>
+  <data name="kstidUndoMsg" xml:space="preserve">
+	<value>Undoes the most recent change.</value>
+	<comment>This is the status bar message for the undo menu option.</comment>
+  </data>
+  <data name="kstidRedoMsg" xml:space="preserve">
+	<value>Redo the most recent undone change.</value>
+	<comment>This is the status bar message for the redo menu option.</comment>
+  </data>
+  <data name="kstidCutMsg" xml:space="preserve">
+	<value>Cut text and put it on the clipboard.</value>
+	<comment>This is the status bar message for the cut menu option.</comment>
+  </data>
+  <data name="kstidCopyMsg" xml:space="preserve">
+	<value>Copy text to the clipboard.</value>
+	<comment>This is the status bar message for the copy menu option.</comment>
+  </data>
+  <data name="kstidPasteMsg" xml:space="preserve">
+	<value>Paste text from the clipboard.</value>
+	<comment>This is the status bar message for the paste menu option.</comment>
+  </data>
+  <data name="kstidSelectAllMsg" xml:space="preserve">
+	<value>Select all of the text.</value>
+	<comment>This is the status bar message for the select all menu option.</comment>
+  </data>
+  <data name="kstidFindMsg" xml:space="preserve">
+	<value>Opens the Find dialog</value>
+	<comment>This is the status bar message for the find menu option.</comment>
+  </data>
+  <data name="kstidFindNextMsg" xml:space="preserve">
+	<value>Find next.</value>
+	<comment>This is the status bar message for the find next menu option.</comment>
+  </data>
+  <data name="kstidFindPrevMsg" xml:space="preserve">
+	<value>Find previous.</value>
+	<comment>This is the status bar message for the find previous menu option.</comment>
+  </data>
+  <data name="kstidReplaceMsg" xml:space="preserve">
+	<value>Opens the replace dialog.</value>
+	<comment>This is the status bar message for the find and replace menu option.</comment>
+  </data>
+  <data name="kstidDeleteMsg" xml:space="preserve">
+	<value>Delete the selection.</value>
+	<comment>This is the status bar message for the delete selection menu option.</comment>
+  </data>
+  <data name="kstidStatusBarMsg" xml:space="preserve">
+	<value>Show or hide the Status bar.</value>
+	<comment>This is the status bar message for the view status bar menu option.</comment>
+  </data>
+  <data name="kstidSideBarMsg" xml:space="preserve">
+	<value>Show or hide the Side bar.</value>
+	<comment>This is the status bar message for the view side bar menu option.</comment>
+  </data>
+  <data name="kstidStyleMsg" xml:space="preserve">
+	<value>Open a dialog to add, delete, or change styles.</value>
+	<comment>This is the status bar message for the styles menu option.</comment>
+  </data>
+  <data name="kstidRemoveCharStyleMsg" xml:space="preserve">
+	<value>Remove the character style formatting from the current selection.</value>
+	<comment>This is the status bar message for the remove character style formatting menu option.</comment>
+  </data>
+  <data name="kstidRemoveParaStyleMsg" xml:space="preserve">
+	<value>Reset the style of the current paragraph to the default paragraph style.</value>
+	<comment>This is the status bar message for the reset paragraph style formatting menu option.</comment>
+  </data>
+  <data name="kstidUserPropertiesMsg" xml:space="preserve">
+	<value>Modify users and access levels.</value>
+	<comment>This is the status bar message for the user properties menu option.</comment>
+  </data>
+  <data name="kstidNewWindowMsg" xml:space="preserve">
+	<value>Opens another identical second window containing the same data.</value>
+	<comment>This is the status bar message for the new window menu option.</comment>
+  </data>
+  <data name="kstidCascadeMsg" xml:space="preserve">
+	<value>Arranges open windows to be cascade from top left to bottom right.</value>
+	<comment>This is the status bar message for the window cascade menu option.</comment>
+  </data>
+  <data name="kstidTileMsg" xml:space="preserve">
+	<value>Arranges open windows to be equal heights, displayed one on top of the other</value>
+	<comment>This is the status bar message for the tile, stacked menu option.</comment>
+  </data>
+  <data name="kstidTileSideBySideMsg" xml:space="preserve">
+	<value>Arranges open windows to be of equal widths, displayed side-by-side</value>
+	<comment>This is the status bar message for the tile, side-by-side menu option.</comment>
+  </data>
+  <data name="kstidWindowListItemFormatter" xml:space="preserve">
+	<value>{0} ({1})</value>
+	<comment>This is the format for the window list in the window menu {0} is info bar text and {1} is the project name.</comment>
+  </data>
+  <data name="kstidAddToDict" xml:space="preserve">
+	<value>Add to Spelling Dictionary</value>
+	<comment>Text for adding word to dictionary on the context menu.</comment>
+  </data>
+  <data name="kstidAddToDictToolTip" xml:space="preserve">
+	<value>Add Word to Spelling Dictionary</value>
+	<comment>Tool tip for adding word to dictionary.</comment>
+  </data>
+  <data name="kstidChangeMultiOccurrences" xml:space="preserve">
+	<value>Change Multiple Occurrences...</value>
+	<comment>Text for changing multiple occurrences of a word on the context menu.</comment>
+  </data>
+  <data name="kstidChangeMultiOccurrencesToolTip" xml:space="preserve">
+	<value>Change Multiple Occurrences of Word</value>
+	<comment>Tool tip for changing multiple occurrences of a word.</comment>
+  </data>
+</root>

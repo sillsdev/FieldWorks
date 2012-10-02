@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="Global NAnt build properties" default="global.makedirs" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	global.include - Contains global properties for the NAnt builds.
+	2005.10.12 jrock Created
+  </description>
+
+  <!-- Include the global directory properties -->
+  <include buildfile="directories.include" unless="${property::exists('directories.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- C/C++ compiler properties -->
+  <!--
+	-FC = Put full path to source file in debug information
+	-GF = Read only string pooling.  All string literals into .rdata and combined.
+	-GS = Buffers security check
+	-Gy = Enables function-level linking
+	-Gz = Uses the __stdcall calling convention
+	-RTC1 = Runtime error checking for stack frame and uninitialized variables (same as -GZ)
+	-O1 = Optimizes for small code
+	-Od = Disables optimization
+	-Oi = Generates intrinsic functions
+	-W3 = Warning level 3
+	-Zi = Generates complete debugging information
+	-Zl = Removes default library name from .obj file
+  -->
+  <property name="cl.defines" value="-DWINVER=0x0500 -DDEVL=1 -D_WINNT -DWINNT=1 -D_NT1X_=100 -DCONDITION_HANDLING=1 -D_MT=1 -DNT_UP=1 -DSTD_CALL" />
+  <property name="cl.standardOptions" value="-FC -GF -GS -Gy -Gz -RTC1 -W3 -Z7 -Zl -Zp8" />
+  <if test="${x86}">
+	<property name="cl.defines" value="${cl.defines} -DWIN32 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -D_X86_ -Di386=1 -D_X86_=1" />
+  </if>
+  <if test="${debug}">
+	<property name="cl.defines" value="${cl.defines} -DDEBUG -D_DEBUG -DDBG=1 -DFPO=0" />
+	<property name="cl.standardOptions" value="${cl.standardOptions} -Od" />
+  </if>
+  <if test="${ship}">
+	<property name="cl.defines" value="${cl.defines} -DNDEBUG -DSHIP -DDBG=0 -DFPO=1" />
+	<property name="cl.standardOptions" value="${cl.standardOptions} -cbstring -Oi" />
+  </if>
+  <property name="cl.standardOptions" value="${cl.standardOptions} ${cl.defines}" />
+
+  <!-- C/C++ standard include directories -->
+  <!--
+	What we really want to do is to have these in a <dirset> and then use that. However, there
+	is either a bug in NAnt or bad design because NAnt ignores the order of the elements specified
+	in the XML and orders them alphabetically according to directory name. This is bad because
+	we can't specify the order in which the include directories will be searched. So instead
+	we'll just build a big string.
+  -->
+  <property name="cl.standardIncludes" value="" />
+  <foreach property="incDir" item="String" delim=";" in="${dir.platformsdk.inc};${dir.crt.inc};${dir.vc8.inc};${dir.dutil.inc}">
+	<property name="cl.standardIncludes" value="${cl.standardIncludes} /I &quot;${incDir}&quot;"/>
+  </foreach>
+
+  <!-- C/C++ lib and linker properties -->
+  <!--
+	-debug        = Creates debugging information (pdb file)
+	-debugtype:cv =
+	-incremental  = Controls incremental linking
+	-merge        = Combines sections
+	-nodefaultlib = Ignores all (or specified) default libraries when resolving external references
+	-opt:ref      = Eliminates functions and/or data that are never referenced
+	-opt:win98    = Aligns sections on 4K boundary to improve load time
+	-release      = Sets the Checksum in the .exe header
+  -->
+  <property name="link.standardOptions" value="-debug -incremental:no -nodefaultlib" />
+  <property name="lib.standardOptions" value="-nodefaultlib"/>
+  <if test="${x86}">
+	<property name="link.standardOptions" value="${link.standardOptions} -machine:x86" />
+	<property name="lib.standardOptions" value="${lib.standardOptions} -machine:x86" />
+  </if>
+  <if test="${debug}">
+	<property name="link.standardOptions" value="${link.standardOptions} -opt:noref" />
+  </if>
+  <if test="${ship}">
+	<property name="link.standardOptions" value="${link.standardOptions} -opt:ref -opt:win98 -release -merge:.bootdata=.data -merge:msoconst=.text -merge:.rdata=.text -merge:.orpc=.text" />
+  </if>
+
+  <!--
+	JRock: What I'd really like to do is use these in a <sources refid=this> and then have
+	all of the other files <included> that need to be linked. I'm not sure if it's a bug in
+	NAnt or just bad design, but if you use refid in the <sources> element, then it ignores
+	everything else and just uses the files defined in the refid. The next best design is
+	to have the property link.standardLibs which is passed in via the <link options> attribute.
+  -->
+  <property name="link.standardLibs" value="" />
+  <foreach property="libFile" item="String" delim=" " in="advapi32.lib bufferoverflowU.lib kernel32.lib oleaut32.lib ole32.lib uuid.lib user32.lib version.lib">
+	<property name="link.standardLibs" value="${link.standardLibs} &quot;${dir.platformsdk.lib}\${libFile}&quot;" />
+  </foreach>
+  <!--
+	JRock: We're statically linking the C runtime library for two reasons:
+	1) We are using the /GS flag which is the new security cookie buffer overrun checks. When
+	   we use that flag, we need to link with the bufferoverflowU.lib when using the 7.0 C runtime
+	   libraries, which is what NAnt will use by default if the PlatformSDK is installed. That library
+	   is only in the 7.0 version and not in the 6.0 version, which brings us to our next point.
+	2) Our custom action DLLs cannot have a dependency on MSVCRT 7.0 because we can't install that
+	   MSM before our custom actions need to run. We have to use 6.0 which comes with the OS.
+
+	This makes our DLLs about twice the size, but they're still relatively small (around 100-132K).
+	In this case security trumps file size.
+  -->
+  <if test="${debug}">
+	<property name="link.standardLibs" value="${link.standardLibs} &quot;${dir.vc8.lib}\libcmtd.lib&quot;" />
+  </if>
+  <if test="${ship}">
+	<property name="link.standardLibs" value="${link.standardLibs} &quot;${dir.vc8.lib}\libcmt.lib&quot;" />
+  </if>
+
+  <!-- Common linker properties for DLLs and EXEs -->
+  <property name="link.dll" value="${link.standardOptions} -dll -subsystem:windows ${link.standardLibs}" />
+  <property name="link.exe" value="${link.standardOptions} -entry:wmainCRTStartup -subsystem:windows ${link.standardLibs}" />
+
+  <!-- RC properties -->
+  <property name="rc.standardOptions" value="" />
+
+  <!-- C# properties -->
+  <if test="${debug}">
+	<property name="csc.debug" value="Full" readonly="true" />
+	<property name="csc.defines" value="DEBUG" />
+  </if>
+  <if test="${ship}">
+	<property name="csc.debug" value="PdbOnly" readonly="true" />
+	<property name="csc.defines" value="" />
+  </if>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- makeDirs -->
+  <target name="global.makeDirs" description="Makes the required top-level directories">
+	<mkdir dir="${dir.buildroot}" />
+	<mkdir dir="${dir.logroot}" />
+	<mkdir dir="${dir.targetroot}" />
+  </target>
+
+  <!--
+	checkRequiredArgs and clearArgs
+	===============================
+	Arguments:
+	  args  A comma-delimited list of arguments to check or clear.
+  -->
+  <property name="args" value="" />
+  <target name="checkRequiredArgs" description="Makes sure that all of the arguments in the list are defined and have a non-blank value.">
+	<foreach property="requiredArg" item="String" delim="," in="${args}">
+	  <do>
+		<!-- Trim any spaces from the argument (property) name -->
+		<property name="requiredArg" value="${string::trim(requiredArg)}" />
+		<if test="${not property::exists(requiredArg) or string::trim(property::get-value(requiredArg)) == ''}">
+		  <fail message="${requiredArg} not defined or is empty." />
+		</if>
+	  </do>
+	</foreach>
+  </target>
+  <target name="clearArgs" description="Clears the values of a list of arguments in preparation for another call">
+	<foreach property="arg" item="String" delim="," in="${args}">
+	  <do>
+		<if test="${string::get-length(string::trim(arg)) > 0}">
+		  <property name="${string::trim(arg)}" value="" />
+		</if>
+	  </do>
+	</foreach>
+  </target>
+
+  <!--
+	compileCpp
+	==========
+	Arguments:
+	  compileCpp.dir.build          Required - The directory where .obj and other temporary files are built
+	  compileCpp.file.precomp.h     Optional - If supplied, the absolute path to the precomp.h file to use for the precompiled header
+	  compileCpp.file.rc            Optional - If supplied, the source .rc file to compile
+	  compileCpp.additionalOptions  Optional - Additional options to pass to the cl.exe compiler
+	  compileCpp.preserveArgs       Optional - If true, then the arguments won't be cleared on completion of the target
+  -->
+  <property name="compileCpp.requiredArgs" value="compileCpp.dir.build" />
+  <property name="compileCpp.optionalArgs" value="compileCpp.file.precomp.h, compileCpp.file.rc, compileCpp.additionalOptions, compileCpp.preserveArgs" />
+  <target name="compileCpp" description="Compiles a C++ project by correctly using a precompiled header (if supplied)">
+	<!-- Check the required arguments -->
+	<property name="args" value="${compileCpp.requiredArgs}" />
+	<call target="checkRequiredArgs" />
+
+	<!-- Set the default values for the optional parameters -->
+	<if test="${not property::exists('compileCpp.additionalOptions')}">
+	  <property name="compileCpp.additionalOptions" value="" />
+	</if>
+	<if test="${not property::exists('compileCpp.preserveArgs')}">
+	  <property name="compileCpp.preserveArgs" value="false" />
+	</if>
+
+	<!-- Create the build directory if necessary -->
+	<mkdir dir="${compileCpp.dir.build}" />
+
+	<!-- See if we need to use a precompiled header -->
+	<if test="${property::exists('compileCpp.file.precomp.h') and string::get-length(compileCpp.file.precomp.h) > 0}">
+	  <!-- Local variables -->
+	  <property name="compileCpp.file.precomp.cpp" value="${compileCpp.dir.build}\precomp.cpp" />
+
+	  <!-- Create a dummy .cpp file that just includes the precompiled header -->
+	  <if test="${not file::exists(compileCpp.file.precomp.cpp)}">
+		<echo file="${compileCpp.file.precomp.cpp}" message="#include &quot;${compileCpp.file.precomp.h}&quot;" />
+	  </if>
+	  <!-- Create the precompiled header -->
+	  <cl
+		outputdir="${compileCpp.dir.build}"
+		pchfile="precomp.pch"
+		pchmode="Create"
+		pchthroughfile="${compileCpp.file.precomp.h}"
+		options="${cl.standardOptions} -YlprecompDefine ${cl.standardIncludes} ${compileCpp.additionalOptions}"
+	  >
+		<sources>
+		  <include name="${compileCpp.file.precomp.cpp}" />
+		</sources>
+	  </cl>
+	</if>
+
+	<!-- Compile the .rc file if there is one -->
+	<if test="${property::exists('compileCpp.file.rc') and string::trim(compileCpp.file.rc) != ''}">
+	  <rc rcfile="${compileCpp.file.rc}" langid="0" output="${compileCpp.dir.build}\${path::get-file-name-without-extension(compileCpp.file.rc)}.res" options="${rc.standardOptions} ${cl.standardIncludes}" />
+	</if>
+
+	<!-- Compile the cpp files into the obj files -->
+	<cl
+	  outputdir="${compileCpp.dir.build}"
+	  pchfile="precomp.pch"
+	  pchmode="Use"
+	  pchthroughfile="precomp.h"
+	  options="${cl.standardOptions} ${cl.standardIncludes} ${compileCpp.additionalOptions}"
+	>
+	  <sources refid="compileCpp.fileset.sources" />
+	</cl>
+
+	<!-- Clear the variables for the next call -->
+	<if test="${property::exists(compileCpp.preserveArgs) and compileCpp.preserveArgs}">
+	  <property name="args" value="${compileCpp.requiredArgs}, ${compileCpp.optionalArgs}" />
+	  <call target="clearArgs" />
+	</if>
+  </target>
+
+  <!--
+	makeNativeLib
+	=============
+	Arguments:
+	  All of the arguments from compileCpp plus
+	  makeNativeLib.file.target      Required - The destination .lib file
+  -->
+  <property name="makeNativeLib.requiredArgs" value="makeNativeLib.file.target" />
+  <property name="makeNativeLib.optionalArgs" value="" />
+  <target name="makeNativeLib" description="Makes a native .lib file">
+	<!-- Check the required arguments -->
+	<property name="args" value="${makeNativeLib.requiredArgs}" />
+	<call target="checkRequiredArgs" />
+
+	<!-- Compile the source files -->
+	<property name="compileCpp.preserveArgs" value="true" />
+	<call target="compileCpp" />
+
+	<!-- Create the target directory if necessary -->
+	<mkdir dir="${path::get-directory-name(makeNativeLib.file.target)}" />
+
+	<!-- Link into a static library (.lib) file -->
+	<uptodate property="libuptodate">
+	  <sourcefiles>
+		<include name="${compileCpp.dir.build}\*.obj" />
+	  </sourcefiles>
+	  <targetfiles>
+		<include name="${makeNativeLib.file.target}" />
+		<include name="${path::change-extension(makeNativeLib.file.target, '.exp')}" />
+	  </targetfiles>
+	</uptodate>
+	<lib output="${makeNativeLib.file.target}" options="${lib.standardOptions}" unless="${libuptodate}">
+	  <sources>
+		<include name="${compileCpp.dir.build}\*.obj" />
+	  </sources>
+	</lib>
+
+	<!-- Clear the variables for the next call -->
+	<property name="args" value="${compileCpp.requiredArgs}, ${compileCpp.optionalArgs}, ${makeNativeLib.requiredArgs}, ${makeNativeLib.optionalArgs}" />
+	<call target="clearArgs" />
+  </target>
+
+  <!--
+	makeNativeDll
+	=============
+	Arguments:
+	  All of the arguments from compileCpp plus
+	  makeNativeDll.file.target      Required - The destination .dll file
+	  makeNativeDll.file.def         Required - The source .def file
+	  makeNativeDll.additionalLibs   Optional - A list of additional .lib files to link in
+  -->
+  <property name="makeNativeDll.requiredArgs" value="makeNativeDll.file.target, makeNativeDll.file.def" />
+  <property name="makeNativeDll.optionalArgs" value="" />
+  <target name="makeNativeDll" description="Makes a native DLL">
+	<!-- Check the required arguments -->
+	<property name="args" value="${makeNativeDll.requiredArgs}" />
+	<call target="checkRequiredArgs" />
+
+	<!-- Set the default values for the optional parameters -->
+	<if test="${not property::exists('makeNativeDll.additionalLibs')}">
+	  <property name="makeNativeDll.additionalLibs" value="" />
+	</if>
+
+	<!-- Compile the source files. -->
+	<property name="compileCpp.preserveArgs" value="true" />
+	<call target="compileCpp" />
+
+	<!-- Create the target directory if necessary -->
+	<mkdir dir="${path::get-directory-name(makeNativeDll.file.target)}" />
+
+	<!-- Link into a .dll file -->
+	<link output="${makeNativeDll.file.target}" options="${link.dll} -def:&quot;${makeNativeDll.file.def}&quot; ${makeNativeDll.additionalLibs}">
+	  <sources>
+		<include name="${compileCpp.dir.build}\*.obj" />
+		<include name="${compileCpp.dir.build}\*.res" />
+	  </sources>
+	</link>
+
+	<!-- Clear the variables for the next call -->
+	<property name="args" value="${compileCpp.requiredArgs}, ${compileCpp.optionalArgs}, ${makeNativeDll.requiredArgs}, ${makeNativeDll.optionalArgs}" />
+	<call target="clearArgs" />
+  </target>
+
+  <!--
+	makeNativeExe
+	=============
+	Arguments:
+	  All of the arguments from compileCpp plus
+	  makeNativeExe.file.target      Required - The destination .exe file
+	  makeNativeExe.additionalLibs   Optional - A list of additional .lib files to link in
+  -->
+  <property name="makeNativeExe.requiredArgs" value="makeNativeExe.file.target" />
+  <property name="makeNativeExe.optionalArgs" value="" />
+  <target name="makeNativeExe" description="Makes a native executable file (.exe)">
+	<!-- Check the required arguments -->
+	<property name="args" value="${makeNativeExe.requiredArgs}" />
+	<call target="checkRequiredArgs" />
+
+	<!-- Set the default values for the optional parameters -->
+	<if test="${not property::exists('makeNativeExe.additionalLibs')}">
+	  <property name="makeNativeExe.additionalLibs" value="" />
+	</if>
+
+	<!-- Compile the source files. -->
+	<property name="compileCpp.preserveArgs" value="true" />
+	<call target="compileCpp" />
+
+	<!-- Create the target directory if necessary -->
+	<mkdir dir="${path::get-directory-name(makeNativeExe.file.target)}" />
+
+	<!-- Link into a .dll file -->
+	<link output="${makeNativeExe.file.target}" options="${link.exe} ${makeNativeExe.additionalLibs}">
+	  <sources>
+		<include name="${compileCpp.dir.build}\*.obj" />
+		<include name="${compileCpp.dir.build}\*.res" />
+	  </sources>
+	</link>
+
+	<!-- Clear the variables for the next call -->
+	<property name="args" value="${compileCpp.requiredArgs}, ${compileCpp.optionalArgs}, ${makeNativeExe.requiredArgs}, ${makeNativeExe.optionalArgs}" />
+	<call target="clearArgs" />
+  </target>
+
+  <!-- This prevents this file from being included more than once (by convention, not by syntax) -->
+  <property name="global.properties.defined" value="true" readonly="true" />
+
+</project>

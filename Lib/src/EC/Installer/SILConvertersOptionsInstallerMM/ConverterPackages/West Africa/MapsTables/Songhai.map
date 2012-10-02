@@ -1,0 +1,41 @@
+EncodingName            "SIL-Songhai-2006"
+DescriptiveName         "SIL Songhai Mali fonts to Unicode"
+Version                 "1"
+Contact                 "mailto:Doug_Higby@sil.org"
+RegistrationAuthority   "SIL International"
+RegistrationName        "SIL-Songhai-2006"
+
+;RHSflags (ExpectsNFD)
+
+pass ( Byte_Unicode )
+
+ByteDefault		'?'
+UniDefault		replacement_character
+ByteClass [CTL] = (   0x00 .. 0x1f   )
+UniClass  [CTL] = ( U+0000 .. U+001f )
+ByteClass [SevenBit] = ( 0x20 .. 0x5D 0x5F ..  0x7f )
+UniClass [SevenBit] = ( U+0020  .. U+005D U+005F ..  U+007f )
+ByteClass [AllElse] = ( 0x80 .. 0x80 0x8B .. 0x90 0x9B .. 0x9E 0xA0 0xA4 .. 0xD0 0xD2 .. 0xD6 0xD8 .. 0xDC 0xE0 .. 0xF0 0xF2 .. 0xF7 0xF9 .. 0xFC )
+UniClass [AllElse] = ( U+0080 .. U+0080 U+008B .. U+0090 U+009B .. U+009E U+00A0 U+00A4 .. U+00D0 U+00D2 .. U+00D6 U+00D8 .. U+00DC U+00E0 .. U+00F0 U+00F2 .. U+00F7 U+00F9 .. U+00FC )
+
+
+[CTL]  		<>	[CTL]
+[SevenBit]	<>	[SevenBit]
+[AllElse]   <>  [AllElse]
+
+0x8A    <>  LATIN_CAPITAL_LETTER_S_WITH_CARON
+0x9A    <>  LATIN_SMALL_LETTER_S_WITH_CARON
+0x9F    <>  LATIN_CAPITAL_LETTER_U COMBINING_TILDE
+0xA1    <>  LATIN_CAPITAL_LETTER_E COMBINING_TILDE
+0xA2    <>  LATIN_CAPITAL_LETTER_I COMBINING_TILDE
+0xA3    <>  LATIN_SMALL_LETTER_SHARP_S
+0xD1    <>  LATIN_CAPITAL_LETTER_N_WITH_LEFT_HOOK
+0xD7    <>  LATIN_SMALL_LETTER_E COMBINING_TILDE
+0xDD    <>  LATIN_CAPITAL_LETTER_Z_WITH_CARON
+0xDE    <>  LATIN_SMALL_LETTER_I COMBINING_TILDE
+0xDF    <>  LATIN_SMALL_LETTER_Z_WITH_CARON
+0xF1    <>  LATIN_SMALL_LETTER_N_WITH_LEFT_HOOK
+0xF8    <>  LATIN_SMALL_LETTER_U COMBINING_TILDE
+0xFD    <>  LATIN_SMALL_LETTER_EZH
+0xFE    <>  LATIN_CAPITAL_LETTER_ENG
+0xFF    <>  LATIN_SMALL_LETTER_ENG

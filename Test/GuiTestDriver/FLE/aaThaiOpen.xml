@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+   <!-- Restore the Thai database, then time openning it to Lexicon Edit -->
+	<var id="OpenProject" set="Thai"/>
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+	<on-application run = "ok" args = "-db $projectName" close = "no" on-fail = "assert">
+
+   <click log="all" select="menubar/file/project-management/backup-and-restore"/>
+   <model select="backup-and-restore/restore">
+   <on-dialog title="Backup and Restore">
+	 <click select="tab"/>
+	 <!--insert wait="500">%R</insert--><!-- Restore from: -->
+	 <click select="restore-from/text"/>
+	 <insert wait="500">C:\GuiTestDriver</insert>
+	 <click id="rft" select="restore-from/text"/> <!-- 1st time only to bind to control, otherwise it will revert -->
+	 <click wait="no" repeat="2" path="$rft.path"/>
+	 <insert wait="500">%P</insert><!-- Project -->
+	 <click select="project/drop"/>
+	 <insert wait="300">^{END}</insert><!-- Scroll down to the bottom of the list -->
+	 <click wait="1000" select="project/list" path="$OpenProject"/>
+	 <insert wait="300">%V</insert> <!-- go to Version -->
+	 <insert wait="300">^{END}</insert><!-- Scroll down to the bottom of the list -->
+	 <insert wait="300">%S</insert>
+	 <do-once until="5000" on-fail="skip">
+		<on-dialog until="500" title="Restore Options" on-fail="skip">
+		  <insert wait="300">{DOWN}~</insert>
+		</on-dialog>
+		<on-dialog until="500" title="FieldWorks Backup System" on-fail="skip">
+			<click path="18:FieldWorks Backup System/9:OK/43:OK"/>
+		</on-dialog>
+	 </do-once>
+   </on-dialog>
+   </model>
+
+  <var id="FlexSig" set=" - FieldWorks Language Explorer"/>
+
+   <do-once until="999999999" waiting-for="$OpenProject;$FlexSig">
+	  <on-dialog until="1000" title="Twiddle Thumbs" on-fail="skip">
+		  <insert wait="300">~</insert> <!-- you never know -->
+	  </on-dialog>
+   </do-once>
+
+ </on-application>
+
+ <sound frequency = "700" duration = "500"/>
+ <monitor-time expect="999999999" desc="Thai db, Open">
+   <on-application args="-db $OpenProject" run="yes" close="no" on-fail="assert">
+	 <glimpse wait="10000" select="sidebar/list" path="Lexicon Edit" prop="selected"/>
+   </on-application>
+ </monitor-time>
+
+</accil>

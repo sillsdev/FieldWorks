@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="DebugFragment">
+		<DirectoryRef Id="INSTALLDIR">
+			<Component Id="DebugProcs.dll" Guid="E4AA641D-CDE9-44A8-98DA-794574460648">
+				<File Id="DebugProcs.dll" Name="DEBUGP~1.DLL" LongName="DebugProcs.dll" ReadOnly="yes" Source="..\Output\Debug\DebugProcs.dll" DiskId="1"/>
+			</Component>
+			<Component Id="DebugProcs.pdb" Guid="230C881D-F33F-4F85-BF8A-A2169BAC4E65">
+				<File Id="DebugProcs.pdb" Name="DEBUGP~1.PDB" LongName="DebugProcs.pdb" ReadOnly="yes" Source="..\Output\Debug\DebugProcs.pdb" DiskId="1"/>
+			</Component>
+			<Component Id="icuin36d.dll" Guid="480FA006-D3F2-408D-8FCB-603363E9D6A0">
+				<File Id="icuin36d.dll" Name="icuin36d.dll" ReadOnly="yes" Source="..\DistFiles\icuin36d.dll" DiskId="1"/>
+			</Component>
+			<Component Id="icuuc36d.dll" Guid="07B714C6-4B29-4420-B725-63B6FFCB11C9">
+				<File Id="icuuc36d.dll" Name="icuuc36d.dll" ReadOnly="yes" Source="..\DistFiles\icuuc36d.dll" DiskId="1"/>
+			</Component>
+		</DirectoryRef>
+
+		<FeatureRef Id="DN">
+			<ComponentRef Id="DebugProcs.dll"/>
+			<ComponentRef Id="DebugProcs.pdb"/>
+			<ComponentRef Id="icuin36d.dll"/>
+			<ComponentRef Id="icuuc36d.dll"/>
+		</FeatureRef>
+		<FeatureRef Id="FLEX">
+			<ComponentRef Id="DebugProcs.dll"/>
+			<ComponentRef Id="DebugProcs.pdb"/>
+			<ComponentRef Id="icuin36d.dll"/>
+			<ComponentRef Id="icuuc36d.dll"/>
+		</FeatureRef>
+		<FeatureRef Id="TE">
+			<ComponentRef Id="DebugProcs.dll"/>
+			<ComponentRef Id="DebugProcs.pdb"/>
+			<ComponentRef Id="icuin36d.dll"/>
+			<ComponentRef Id="icuuc36d.dll"/>
+		</FeatureRef>
+		<FeatureRef Id="TLE">
+			<ComponentRef Id="DebugProcs.dll"/>
+			<ComponentRef Id="DebugProcs.pdb"/>
+			<ComponentRef Id="icuin36d.dll"/>
+			<ComponentRef Id="icuuc36d.dll"/>
+		</FeatureRef>
+		<FeatureRef Id="WP">
+			<ComponentRef Id="DebugProcs.dll"/>
+			<ComponentRef Id="DebugProcs.pdb"/>
+			<ComponentRef Id="icuin36d.dll"/>
+			<ComponentRef Id="icuuc36d.dll"/>
+		</FeatureRef>
+	</Fragment>
+</Wix>

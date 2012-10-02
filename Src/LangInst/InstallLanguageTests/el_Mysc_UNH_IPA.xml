@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LgWritingSystem id="el_Mysc_UNH_IPA" language="el" type="ISO-639-1">
+	<Name24>
+<!-- The display values of el and IPA should be ignored -->
+	  <AUni ws="en">Greek (MyScript, UnheardOf, IPA)</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Gre</AUni>
+	</Abbr24>
+	<Locale24>
+	  <Integer val="1032"/>
+	</Locale24>
+	<RightToLeft24>
+	  <Boolean val="false"/>
+	</RightToLeft24>
+	<DefaultSerif24>
+	  <Uni>Times New Roman</Uni>
+	</DefaultSerif24>
+	<DefaultSansSerif24>
+	  <Uni>Arial</Uni>
+	</DefaultSansSerif24>
+	<ICULocale24>
+	  <Uni>el_Mysc_UNH_IPA</Uni>
+	</ICULocale24>
+	<KeyboardType24>
+	  <Uni>standard</Uni>
+	</KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30>
+		  <Integer val="1032"/>
+		</WinLCID30>
+		<WinCollation30>
+		  <Uni>Latin1_General_CI_AI</Uni>
+		</WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <EthnoCode>GRK</EthnoCode>
+<!-- The display values of el and IPA should be ignored -->
+  <LocaleName>GreekThisShouldNotBeUsed</LocaleName>
+  <LocaleScript>MyScript</LocaleScript>
+  <LocaleCountry>UnheardOf</LocaleCountry>
+<!-- The display values of el and IPA should be ignored -->
+  <LocaleVariant>IPA</LocaleVariant>
+  <Keyboard/>
+  <EncodingConverter/>
+</LanguageDefinition>

@@ -1,0 +1,115 @@
+
+\ca W Prt Linker
+\cr W W
+
+
+\maxnull 1
+\maxprops 255
+\maxp 5
+\maxi 1
+\maxs 5
+\maxr 3
+\maxn 0
+\mp Proclitic Enclitic
+\mp RootPOS0 RootPOSd7f7150d-e8cf-11d3-9764-00c04f186933 RootPOSd7f7150e-e8cf-11d3-9764-00c04f186933 RootPOSd7f7150f-e8cf-11d3-9764-00c04f186933 RootPOSd7f71510-e8cf-11d3-9764-00c04f186933 RootPOSd7f71511-e8cf-11d3-9764-00c04f186933 RootPOSd7f71512-e8cf-11d3-9764-00c04f186933 RootPOSd7f71513-e8cf-11d3-9764-00c04f186933 RootPOSd7f71514-e8cf-11d3-9764-00c04f186933 RootPOSd7f71515-e8cf-11d3-9764-00c04f186933 RootPOSd7f71516-e8cf-11d3-9764-00c04f186933 RootPOSd7f71517-e8cf-11d3-9764-00c04f186933 RootPOSd7f71518-e8cf-11d3-9764-00c04f186933 RootPOSd7f71519-e8cf-11d3-9764-00c04f186933 RootPOSd7f7151a-e8cf-11d3-9764-00c04f186933 RootPOSd7f7151b-e8cf-11d3-9764-00c04f186933 RootPOSd7f7151c-e8cf-11d3-9764-00c04f186933 RootPOSd7f7151d-e8cf-11d3-9764-00c04f186933 RootPOSd7f7151e-e8cf-11d3-9764-00c04f186933 RootPOSd7f7151f-e8cf-11d3-9764-00c04f186933 RootPOSd7f71520-e8cf-11d3-9764-00c04f186933 RootPOSd7f71521-e8cf-11d3-9764-00c04f186933 RootPOSd7f71522-e8cf-11d3-9764-00c04f186933 RootPOSd7f71523-e8cf-11d3-9764-00c04f186933 RootPOSd7f71524-e8cf-11d3-9764-00c04f186933 RootPOSd7f71525-e8cf-11d3-9764-00c04f186933 RootPOSd7f71526-e8cf-11d3-9764-00c04f186933 RootPOSd7f71527-e8cf-11d3-9764-00c04f186933 RootPOSd7f71528-e8cf-11d3-9764-00c04f186933 RootPOSd7f71529-e8cf-11d3-9764-00c04f186933 RootPOSd7f7152a-e8cf-11d3-9764-00c04f186933 RootPOSd7f7152b-e8cf-11d3-9764-00c04f186933 RootPOSd7f7152c-e8cf-11d3-9764-00c04f186933 RootPOSd7f7152d-e8cf-11d3-9764-00c04f186933 RootPOSd7f7152e-e8cf-11d3-9764-00c04f186933 RootPOSd7f7152f-e8cf-11d3-9764-00c04f186933 RootPOSd7f71530-e8cf-11d3-9764-00c04f186933 RootPOSd7f71531-e8cf-11d3-9764-00c04f186933 RootPOSd7f71532-e8cf-11d3-9764-00c04f186933 RootPOSd7f71533-e8cf-11d3-9764-00c04f186933 RootPOSd7f71534-e8cf-11d3-9764-00c04f186933 RootPOSd7f71535-e8cf-11d3-9764-00c04f186933 RootPOSd7f71536-e8cf-11d3-9764-00c04f186933 RootPOSd7f71537-e8cf-11d3-9764-00c04f186933 RootPOSd7f71538-e8cf-11d3-9764-00c04f186933 RootPOSd7f71539-e8cf-11d3-9764-00c04f186933 RootPOSd7f7153a-e8cf-11d3-9764-00c04f186933 RootPOSd7f7153b-e8cf-11d3-9764-00c04f186933 RootPOSd7f7153c-e8cf-11d3-9764-00c04f186933 RootPOSd7f7153e-e8cf-11d3-9764-00c04f186933 RootPOSd7f7153f-e8cf-11d3-9764-00c04f186933 RootPOSd7f71540-e8cf-11d3-9764-00c04f186933 RootPOSd7f71541-e8cf-11d3-9764-00c04f186933 RootPOSd7f71542-e8cf-11d3-9764-00c04f186933 RootPOSd7f71543-e8cf-11d3-9764-00c04f186933 RootPOSd7f7153d-e8cf-11d3-9764-00c04f186933 ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a ToInflClass1bd0464c-7c79-48c3-a9cf-7760c3a81f5e ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de ToInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772
+\ap Bound  MSEnvPOSd7f7150d-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7150e-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7150f-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71510-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71511-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71512-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71513-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71514-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71515-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71516-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71517-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71518-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71519-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7151a-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7151b-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7151c-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7151d-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7151e-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7151f-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71520-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71521-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71522-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71523-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71524-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71525-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71526-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71527-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71528-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71529-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7152a-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7152b-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7152c-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7152d-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7152e-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7152f-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71530-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71531-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71532-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71533-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71534-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71535-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71536-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71537-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71538-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71539-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7153a-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7153b-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7153c-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7153e-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7153f-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71540-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71541-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71542-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f71543-e8cf-11d3-9764-00c04f186933 MSEnvPOSd7f7153d-e8cf-11d3-9764-00c04f186933 InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a ICA39b3605b-9384-48da-b16e-f9a4b5ff659a InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a ICA441be6a9-e5d5-43c4-bd89-ab335f80e46a InflClass1bd0464c-7c79-48c3-a9cf-7760c3a81f5e ICA1bd0464c-7c79-48c3-a9cf-7760c3a81f5e InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de ICA8a0a8938-a569-4e3f-9adf-8c933a3e26de InflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772 ICAd64cbd78-3277-44b5-9ec3-6a6b0b38f772 ICA441be6a9-e5d5-43c4-bd89-ab335f80e46aICA1bd0464c-7c79-48c3-a9cf-7760c3a81f5e
+\mcc 069aee8f-8b79-4f8f-afb5-2c433ec4a9e1 +/ 8c98c459-33a4-41ad-9f06-217348bb18e5 ...  ~_
+\mcc 069aee8f-8b79-4f8f-afb5-2c433ec4a9e1 +/  ~_  ... 8c98c459-33a4-41ad-9f06-217348bb18e5
+\mcc 1af70026-0364-402d-9937-246ca89cfdab +/ 99b44a20-3fc6-43d7-9271-bffb30c2d66c ...  ~_
+\mcc 1af70026-0364-402d-9937-246ca89cfdab +/  ~_  ... 99b44a20-3fc6-43d7-9271-bffb30c2d66c
+\mcc d4ec9b02-9a91-418f-ac42-9a79438b88e2 +/ e4f26931-0e18-42a6-b898-8dc0d3746276 ...  ~_
+\mcc d4ec9b02-9a91-418f-ac42-9a79438b88e2 +/  ~_  ... e4f26931-0e18-42a6-b898-8dc0d3746276
+\mcc 3c2b9e2f-405c-4416-bae8-e50b95fb3b6d +/ cf730e86-e5a8-4405-956e-e66417e51d68 ...  ~_
+\mcc 3c2b9e2f-405c-4416-bae8-e50b95fb3b6d +/  ~_  ... cf730e86-e5a8-4405-956e-e66417e51d68
+\mcc bfd7f99b-bc6d-4926-acee-0c1583c9170c +/ f17bfe28-abef-40c8-b747-0367ac06c620 ...  ~_
+\mcc b656833a-b8e9-44a2-992a-5462d49fe67b +/  ~_  fa8d0d01-a92a-444d-be4d-f890aad342fa
+\mcc bfd7f99b-bc6d-4926-acee-0c1583c9170c +/ fa8d0d01-a92a-444d-be4d-f890aad342fa  ~_
+\mcc f17bfe28-abef-40c8-b747-0367ac06c620 +/  ~_  ... bfd7f99b-bc6d-4926-acee-0c1583c9170c
+\ancc 3cbec368-e525-45b3-afd6-ff295b7ac96d / b2c43ab8-8597-4d00-9994-075f619c7436 ... _
+\ancc 3cbec368-e525-45b3-afd6-ff295b7ac96d / _ ... b2c43ab8-8597-4d00-9994-075f619c7436
+\ancc b2c43ab8-8597-4d00-9994-075f619c7436 / 5e15569e-b60b-430c-8777-785eecc6ab80 ... _
+\ancc f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7 / _ ... b2c43ab8-8597-4d00-9994-075f619c7436
+\ancc 5e15569e-b60b-430c-8777-785eecc6ab80 / f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7 _
+\ancc de88c8da-ca64-4951-bb34-faa101a1f01b / _ b2c43ab8-8597-4d00-9994-075f619c7436
+\ancc b2c43ab8-8597-4d00-9994-075f619c7436 / 37442f21-a4d5-4f8e-a59b-8b1b3b16019c ... _
+\ancc 5d2239fb-c480-4316-affe-5fe7bcebdc6a / _ ... b2c43ab8-8597-4d00-9994-075f619c7436
+\scl 43c9ba97-2883-4f95-aa5d-ef9309e85025 | V
+
+ i e a o u
+\scl a1f47fd7-6c56-419b-9370-17e1c899fec2 | C
+
+ p b t d k g f v s z x m n ŋ l r w y
+\scl a27edaa2-622e-4a0d-9a13-df381910e509 | +cor,+vd
+
+ d z l r y
+\pt SEC_ST
+\pt OrderPfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+
+\pt Category (left tocategory is current fromcategory)
+\it SEC_ST
+\it OrderIfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\it Category
+\nt InterfixType_ST
+	 NOT (    (left    type is interfixprefix)
+		  AND (current type is interfixsuffix)
+		 )
+\rt SEC_ST
+\co only proclitics can occur left of a particle
+\rt RootCategory_ST
+  IF (current tocategory is Prt)
+THEN (left property is Proclitic)
+
+\st SEC_ST
+\st OrderSfx_ST
+(    (left orderclassmin < current orderclassmin)
+AND (left orderclassmax < current orderclassmax) )
+OR ((current orderclass = 1) AND (left orderclass = 1))
+OR ((current orderclass = 32000) AND (left orderclass = 32000))
+OR ((current orderclassmin = 1) AND (current orderclassmax = 31999))
+OR ((left orderclassmin = 1) AND (left orderclassmax = 31999))
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\st SuffixCategory_ST
+   (left tocategory is current fromcategory)
+OR
+   | only enclitics can go on particles
+   (  IF (left tocategory is Prt)
+	THEN (current property is Enclitic)
+   )
+\ft OrderFinal_FT
+IF   (    (current orderclass = 0)
+	  AND (FOR_SOME_LEFT  (LEFT  orderclass ~= 0))
+	  AND (FOR_SOME_RIGHT (RIGHT orderclass ~= 0))
+	 )
+THEN (   (LEFT orderclass <= RIGHT orderclass)
+	  OR (    (LEFT  orderclass = -1)
+		  AND (RIGHT orderclass ~= -32000)
+		  )
+	  OR (    (RIGHT orderclass = 1)
+		  AND (LEFT  orderclass ~= 32000)
+		  )
+	 )
+\ft BoundStemOrRoot_FT
+IF   (current property is Bound)
+THEN (NOT (    (current type is initial)
+		   AND (current type is final))
+	 )
+\ft MCC_FT
+
+\patr TreeStyle none
+\patr ShowGlosses Off
+\patr ShowFeatures On

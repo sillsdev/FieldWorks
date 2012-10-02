@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="filesave" num="2.1.4" abbr="flsv" file="FW\FileSave.xml">
+ <title tag="filesave">File-Save Tests</title>
+ <index>
+  <li>test</li>
+ </index>
+
+  <introduction>
+   <p>Issues the save command, which saves any pending changes to the
+database. Saving happens automatically during the course
+of editing. For example, when the user hits the Data-Next comand to move from one record to another, the record is saved prior to moving off of it. Saving is also automatic when the application is closed. The reason the Save command is even provided is because the user may be performing a long edit in a long record, and wish to save periodically.</p>
+  </introduction>
+
+  <context>
+<p>The menu item is always enabled regardless of whether changes have been made or not.</p>
+<p> See spec at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Save" type="doc">File-Save</link>.
+</p>
+  </context>
+
+ <case id="flsvBehav" num="1.0" order="any">
+  <title tag="flsvBehav">Save Behavior</title>
+  <context>
+<p>Running application</p>
+</context>
+
+  <step name="1.1" link="Bug">
+	Inspect Save button status in application.
+	<r>The File-Save menu item and the Save toolbar button are enabled (they always are).</r>
+	<p name="bug">File Save item not enabled</p>
+  </step>
+
+  <step name="1.2" link="Bug">
+	Make some changes. Close the application.
+	<r>
+	 <ul>
+	  <li>Changes are automatically saved when exiting.</li>
+	  <li>Changes are also saved when moving to other records.</li>
+	  <li>Verify changes are saved.</li>
+	 </ul>
+	</r>
+	<p name="bug">File Save changes not saved in Data Notebook exit</p>
+  </step>
+
+  <step name="1.3" link="Bug">
+	Make some changes. Save. Then close the application.
+	<r>
+	 <ul>
+	  <li>The behaior appears the same as in step 1.2 because there are no dialogs associated with save or exit.</li>
+	  <li>Changes should persist if application is opened again.</li>
+	 </ul>
+	</r>
+	<p name="bug">File Save changes not saved in Data Notebook exit</p>
+  </step>
+ </case>
+
+ <update date="Feb-01-01" author="JanetW">Added tests for browse and document views.</update>
+ <update date="Apr-17-01" author="RickM">Put into XML format</update>
+ <update date="May-10-01" author="JanetW">Generalized for FW</update>
+ <update date="Aug-31-01" author="LarsH">Added tests for Save As and other
+ WorldPad behavior</update>
+ <update date="Jun-03-02" author="RussD">Changed to conform to specs (save is always enabled).</update>
+ <update date="Sep-18-02" author="MikeL">Completed updates to M6 and separeted general FW cases and those for specific apps.</update>
+
+</test>

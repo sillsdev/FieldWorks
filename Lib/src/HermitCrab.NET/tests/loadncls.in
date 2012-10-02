@@ -1,0 +1,21 @@
+;Test loading of natural classes.  Error 6039 is exercised in RULELOAD.IN,
+; before *pfeatures* is set.
+;Load a natural class (msg 6541):
+(load_nat_class message <nat_class name test_cons features (cons + poa velar)>)
+;Show it:
+(show_nat_class pretty_print test_cons)
+;Now revise the class (msg 6540):
+(load_nat_class message <nat_class name test_cons features (cons + poa bilabial)>)
+;Show it again, to ensure it changed:
+(show_nat_class pretty_print test_cons)
+;Now remove it (msg 6542):
+(remove_nat_class message test_cons)
+;Try to show it (error msg 6041):
+(show_nat_class pretty_print test_cons)
+;Try to remove it again (error msg 6041 again):
+(remove_nat_class message test_cons)
+;Try to load a nat class with a nonexistent feature name (error msg 6014):
+(load_nat_class message <nat_class name test_cons features (cons + nonesuch velar)>)
+;Try to load a nat class with a nonexistent feature value
+; (error msg 6014 again):
+(load_nat_class message <nat_class name test_cons features (cons foo poa velar)>)

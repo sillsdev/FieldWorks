@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simian", "Simian\Simian.csproj", "{DB36D454-B92D-4248-9E5B-20114F76E66A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AccessibilityHelperBase", "..\..\AcceptanceTests\AccessibilityHelper\AccessibilityHelper.vcproj", "{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimianTests", "SimianTests\SimianTests.csproj", "{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 3
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Simian\\Simian.csproj
+		SccLocalPath1 = Simian
+		SccProjectUniqueName2 = ..\\..\\AcceptanceTests\\AccessibilityHelper\\AccessibilityHelper.vcproj
+		SccLocalPath2 = ..\\..\\AcceptanceTests\\AccessibilityHelper
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DB36D454-B92D-4248-9E5B-20114F76E66A}.Release|Win32.ActiveCfg = Release|Any CPU
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Debug|Win32.ActiveCfg = Debug|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Debug|Win32.Build.0 = Debug|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Release|Any CPU.ActiveCfg = Release|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Release|Win32.ActiveCfg = Release|Win32
+		{35F908AF-7CD6-436A-A9FC-B079B9DD2A36}.Release|Win32.Build.0 = Release|Win32
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4CC8E498-6B4D-46EA-9A79-F2A931EAEC6E}.Release|Win32.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

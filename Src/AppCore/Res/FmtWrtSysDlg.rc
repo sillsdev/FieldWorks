@@ -1,0 +1,105 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: FmtWrtSys.rc
+Responsibility: Steve McConnel
+Last reviewed: Not yet.
+
+Description:
+	FieldWorks Notebook specific Format / Writing System command dialog resources.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+#include "..\..\AppCore\Res\FmtWrtSysRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//  English (U.S.) resources
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"..\\..\\AppCore\\Res\\FmtWrtSysRes.h\0"
+END
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridFmtWrtSysDlg DIALOG DISCARDABLE  0, 0, 170, 156
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Writing System"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Choose a writing system:",IDC_STATIC,7,5,101,8
+	LISTBOX         kctidFmtWritingSystems,7,15,156,116,WS_VSCROLL | WS_TABSTOP
+	DEFPUSHBUTTON   "Apply",kctidOk,7,136,46,14
+	PUSHBUTTON      "Cancel",kctidCancel,62,136,46,14
+	PUSHBUTTON      "Help",kctidHelp,117,136,46,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidFmtWritingSystems   "Displays all writing systems defined for this language project. Select the one you want to use."
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridFmtWrtSysDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 108
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 150
+		HORZGUIDE, 15
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

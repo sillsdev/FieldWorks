@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="FieldWorks-xml" default="zip">
+	<target name="zip">
+		<zip zipfile="FieldWorks.xml.zip" ziplevel="9">
+			<fileset basedir=".\"> <!-- need backslash at end of basedir because of bug in ZipTask -->
+				<includes name="FieldWorks.xml"/>
+			</fileset>
+		</zip>
+	</target>
+</project>

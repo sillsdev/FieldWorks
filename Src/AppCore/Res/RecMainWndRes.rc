@@ -1,0 +1,181 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "RecMainWndRes.h" //
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+
+//----------------------------------------------------------------------------------------------
+// FieldWorks Developers, NOTE: ANY STRINGS THAT WILL APPEAR IN THE UI NEED TO BE REVIEWED BY
+// PM. PLEASE ADD A TODO NOTE IF YOU ADD ANY SUCH STRINGS."
+//----------------------------------------------------------------------------------------------
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+#endif    // APSTUDIO_INVOKED
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridAfVBarSmall       BITMAP  DISCARDABLE     "AfViewBarImages_small.bmp"
+kridAfVBarLarge       BITMAP  DISCARDABLE     "AfViewBarImages_large.bmp"
+kridTBarStd           BITMAP  DISCARDABLE     "ToolbarRecStandard.bmp"
+kridTBarData          BITMAP  DISCARDABLE     "ToolbarData.bmp"
+kridTBarView          BITMAP  DISCARDABLE     "ToolbarView.bmp"
+kridTBarWnd           BITMAP  DISCARDABLE     "ToolbarRecWindow.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+kridTBarWnd TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      kcidWndNew
+	SEPARATOR
+	BUTTON      kcidWndCascad
+	BUTTON      kcidWndTile
+	BUTTON      kcidWndSideBy
+	SEPARATOR
+	BUTTON      kcidWndSplit
+END
+
+kridTBarView TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	SEPARATOR   // Token content to satisfy the compiler.
+END
+
+kridTBarData TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      kcidDataFirst
+	BUTTON      kcidDataPrev
+	BUTTON      kcidDataNext
+	BUTTON      kcidDataLast
+	SEPARATOR
+	BUTTON      kcidEditSrchQuick
+	SEPARATOR
+	BUTTON      kcidEditSrch
+	BUTTON      kcidEditPrevMatch
+	BUTTON      kcidEditNextMatch
+	BUTTON      kcidEditRepl
+	SEPARATOR
+//    BUTTON      kcidDataHist
+//    BUTTON      kcidDataFav
+END
+
+kridTBarStd TOOLBAR MOVEABLE PURE  16, 15
+BEGIN
+	BUTTON      kcidFileOpen
+	BUTTON      kcidFileSave
+	BUTTON      kcidFilePrint
+//    BUTTON      kcidFilePrintPrevw
+	SEPARATOR
+	BUTTON      kcidEditCut
+	BUTTON      kcidEditCopy
+	BUTTON      kcidEditPaste
+	SEPARATOR
+	BUTTON      kcidEditUndo
+	BUTTON      kcidEditRedo
+	SEPARATOR
+	BUTTON      kcidHelpWhatsThis
+END
+
+kridAfVBarSmall TOOLBAR DISCARDABLE  16, 16
+BEGIN
+	BUTTON      kcidVBarDataEntry
+	BUTTON      kcidVBarDocument
+	BUTTON      kcidVBarBrowse
+END
+
+kridAfVBarLarge TOOLBAR DISCARDABLE  32, 32
+BEGIN
+	BUTTON      kcidVBarDataEntry
+	BUTTON      kcidVBarDocument
+	BUTTON      kcidVBarBrowse
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE // Data menu
+BEGIN
+	kcidDataFirst               "Goes to first entry in the set.\nFirst Entry\nGoes to first entry in the set of entries.\n"
+	kcidDataPrev                "Goes to the previous entry in the set.\nPrevious Entry\nGoes to the previous entry in the set of entries.\n"
+	kcidDataNext                "Goes to the next entry in the set.\nNext Entry\nGoes to the next entry in the set of entries.\n"
+	kcidDataLast                "Goes to the last entry in the set.\nLast Entry\nGoes to the last entry in the set of entries.\n"
+END
+
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSpaces0					""
+	kstidSpaces1					" "
+	kstidSpaces3					"   "
+	kstidSpaces6					"      "
+	kstidListSeparator				", "
+	kstidBlockEnd					"."
+	kstidColon						": "
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTBarData          "&Data"
+	kstidTBarTools         "&Tools"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidStBar_WhatsThisHelp			"Status bar identified the title and creation date of the selected entry as well as its sequence number and the total number of entries.  Also indicates whether or not the entries are affected by a custom sort method or filter.  If sorted, identifies the sorted item in the selected entry."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidStBar_CreatingDataEntryView    "Creating the data entry view ..."
+	kstidStBar_CreatingDocumentView     "Creating the document view ..."
+	kstidStBar_CreatingBrowseView       "Creating the browse view ..."
+	kstidStBar_CreatingUnknownView      "Unknown view to load ..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

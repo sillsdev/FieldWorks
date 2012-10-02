@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests assign/change analysis status-->
+<!--  Assumes original Kalaba database-->
+<!-- nihimbilira has 2  user approved analyses -->
+
+<accil on-fail="assert">
+
+   <bug id="LT-8226" desc="Marlin - Words/Analysis change to Approved and Crash" />
+
+	<var id="projectName" set="Kalaba"/>
+	<sound frequency = "500" duration = "500"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Words/Analyses-->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+  <model select="word-analysis[@role='view']">
+
+<!--filter for "nihimbilira" in wordforms list-->
+  <var id="col" set="1"/> <!-- sets Form column for filter and record -->
+  <click select="wordforms/col/filter/text"/>
+   <insert>f~</insert>
+
+   <on-dialog title="Filter for items containing..." name="SimpleMatchDlg">
+	<insert>nihimbilira</insert>
+	<click path="$ok"/>
+   </on-dialog>
+
+<!-- select "nihimbilira" in wordforms list-->
+  <var id="row" set="1"/> <!-- sets row for records -->
+  <click wait="2000" select="wordforms/record/col"/>
+
+<!--set status "unknown" for user approved analysis 1 (both are user approved) -->
+  <var id="ind" set="3"/> <!-- sets index for summary slice -->
+  <glimpse wait="500" id="checkAnalysis" select="analyses/analysis-seq/label" prop="value" expect="Analysis 1"/>
+  <click side="right" select="analyses/analysis-seq/label"/>
+   <insert wait="100">{DOWN 3}</insert>
+   <insert wait="100">{RIGHT}</insert>
+   <insert wait="100">{UP 2}~</insert>
+
+  <var id="ind" set="*ind"/> <!-- assign index to $ind for summary slice Analysis Candidate 1 -->
+  <glimpse id="checkCandidate" select="analyses/analysis-seq/label" path="/value:Analysis Candidate 1" prop="value" expect="Analysis Candidate 1"/>
+
+<!--reset status "user approved" for analysis 1-->
+  <click side="right" select="analyses/analysis-seq/label"/> <!-- $ind set in previous glimpse -->
+   <insert wait="100">{DOWN}</insert>
+   <insert wait="100">{RIGHT}</insert>
+   <insert wait="100">{UP}{DOWN}~</insert>
+  <var id="ind" set="3"/> <!-- sets index for summary slice -->
+  <glimpse wait="500" id="checkRestored" select="analyses/analysis-seq/label" prop="value" expect="Analysis 1"/>
+
+ <click select="//toolbar/no-filters"/>
+ <click select="wordforms/record/col"/>
+
+  </model>
+
+ </on-application>
+</accil>

@@ -1,0 +1,6 @@
+#define	IDD_DIALOG_STATUS		1
+#define IDR_MAIN_ICON			2
+#define IDC_EDIT_STATUS			3
+#define IDS_QUIT_TITLE			4
+#define IDS_QUIT_MSG			5
+#define IDM_USERMSG_QUIT		WM_USER + 1234

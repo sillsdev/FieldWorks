@@ -1,0 +1,19 @@
+; wixca.def : declares the module parameters for the wixca.dll
+
+LIBRARY      "wixca"
+
+EXPORTS
+; secureobjects.cpp
+	SchedSecureObjects
+	ExecSecureObjects
+; serviceconfig.cpp
+	SchedServiceConfig
+	ExecServiceConfig
+; qtexecca.cpp
+	CAQuietExec
+; printeula.cpp
+	PrintEula
+; xmlfile.cpp
+	SchedXmlFile
+	ExecXmlFile
+	ExecXmlFileRollback

@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="light" default="light.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	light.build - Builds the light project (light.exe).
+	2005.09.12 johnls Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- light-specific properties -->
+  <property name="light.file.res.target" value="${dir.build.light}\light.res" readonly="true" />
+  <property name="light.file.mergemod.source" value="${tool.mergemod.dll}" readonly="true" />
+  <property name="light.file.mergemod.target" value="${dir.target.wix}\mergemod.dll" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="light.build" description="Peforms a full rebuild (clean then build)" depends="light.clean, light.inc" />
+
+  <!-- Clean -->
+  <target name="light.clean" description="Cleans the build">
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="light.exe" />
+		<include name="light.exe.manifest" />
+		<include name="light.pdb" />
+		<include name="mergemod.dll" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="light.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the light.exe.config -->
+	<copy todir="${dir.target.wix}">
+	  <fileset basedir="${dir.src.light}">
+		<include name="light.exe.config" />
+	  </fileset>
+	</copy>
+
+	<!-- Copy the mergemod.dll to the target directory -->
+	<copy file="${light.file.mergemod.source}" tofile="${light.file.mergemod.target}" unless="${file::up-to-date(light.file.mergemod.source, light.file.mergemod.target)}" />
+
+	<!-- Compile the light.rc file -->
+	<rc rcfile="${dir.src.light}\light.rc" langid="0" output="${light.file.res.target}" options="${rc.standardOptions} ${cl.standardIncludes}" />
+
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\light.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.light}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="light.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <arg value="-win32res:&quot;${light.file.res.target}&quot;" />
+	</csc>
+  </target>
+
+</project>

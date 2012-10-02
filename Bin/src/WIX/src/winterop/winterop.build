@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="winterop" default="winterop.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	winterop.build - Builds the WiX Interop dll (winterop.dll).
+	2005.09.12 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- winterop-specific properties -->
+  <property name="winterop.file.target" value="${dir.target.wix}\winterop.dll" readonly="true" />
+  <property name="winterop.file.targetpdb" value="${dir.target.wix}\winterop.pdb" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="winterop.build" description="Peforms a full rebuild (clean then build)" depends="winterop.clean, winterop.inc" />
+
+  <!-- Clean -->
+  <target name="winterop.clean" description="Cleans the build">
+	<delete dir="${dir.build.winterop}" failonerror="false" if="${directory::exists(dir.build.winterop)}" />
+	<delete file="${winterop.file.target}" failonerror="false" if="${file::exists(winterop.file.target)}" />
+	<delete file="${winterop.file.targetpdb}" failonerror="false" if="${file::exists(winterop.file.targetpdb)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="winterop.inc" description="Performs an incremental build" depends="makeDirs">
+	<fileset id="compileCpp.fileset.sources" basedir="${dir.src.winterop}">
+	  <include name="winterop.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.winterop}" />
+	<property name="compileCpp.file.precomp.h" value="${dir.src.winterop}\precomp.h" />
+	<property name="compileCpp.file.rc" value="${dir.src.winterop}\winterop.rc" />
+	<property name="makeNativeDll.file.target" value="${winterop.file.target}" />
+	<property name="makeNativeDll.file.def" value="${dir.src.winterop}\winterop.def" />
+	<property name="makeNativeDll.additionalLibs" value="" />
+	<foreach property="libFile" item="String" delim=";" in="${file.target.dutil};${dir.platformsdk.lib}\fci.lib">
+	  <property name="makeNativeDll.additionalLibs" value="${makeNativeDll.additionalLibs} &quot;${libFile}&quot;" />
+	</foreach>
+
+	<!-- Make scasched.dll -->
+	<call target="makeNativeDll" />
+  </target>
+
+</project>

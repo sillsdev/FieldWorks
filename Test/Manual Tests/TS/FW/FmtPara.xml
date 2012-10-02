@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fmtpara" num="2.6.3" abbr="fmpa" file="FW\FmtPara.xml">
+ <title tag="fmtpara">Format-Paragraph Dialog Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The Format Paragraph dialog allows the user to change the characteristics of selected paragraphs.</p>
+  </introduction>
+  <context>
+<p>Many paragraph setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Format Paragraph".</p>
+  </context>
+ <case id="fmpaAct" num="0" order="any">
+  <title tag="fmpaAct">Activation</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.0" link="Bug">While in Data Entry view, with cursor in structured text, try to invoke the Format-Paragraph menu item. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Paragraph" type="doc">Definition of Format Menu.</link>
+   <r>Format-Paragraph menu item should be enabled; selecting it should bring up the Format Paragraph dialog.</r>
+   <p name="bug">Format Menu Paragraph item not working</p>
+  </step>
+  <step name="0.1" link="Bug">While in any other view, or with the cursor elsewhere, select the Format menu.
+   <r>Format-Paragraph menu item should not be disabled if the cursor is in a field that can be edited in Data Entry.</r>
+   <p name="bug">Format Paragraph Format Menu Paragraph item not enabled for editable data</p>
+   <p name="bug">Format Paragraph Format Menu Paragraph item enabled for non-editable data</p>
+  </step>
+  <step name="0.2" link="Bug">While in any other view, place the cursor in data of a field that can be edited in Data Entry. Invoke the Format-Paragraph dialog, change controls and click OK.
+   <r>The changes should be made in the text selected or when typing in new text. The changes should persist in other views of the same data.</r>
+   <p name="bug">Format Paragraph changes not applied</p>
+   <p name="bug">Format Paragraph changes not saved</p>
+  </step>
+
+ </case>
+ <case id="fmpaDiac" num="1" order="any">
+  <title tag="fmpaDiac">Exercise dialog controls</title>
+  <context>
+<p>When the Format-Paragraph Dialog is displayed</p>
+</context>
+  <step name="1.1" link="Bug">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Paragraph/FormatParagraph.html" type="doc">Format-Paragraph Dialog specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons. The preview window should be pretty close.</r>
+   <p name="bug">Format Paragraph dialog layout incorrect</p>
+  </step>
+  <step name="1.2">
+<link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Format Paragraph" as the name of the dialog.</r>
+  </step>
+  <step name="1.3">
+<link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;g&gt; to test the Alignment combo box.
+   <r>List items are Left, Center and Right. Report any failures as suggested using "Format Paragraph Alignment combo box" as the name of the control.</r>
+  </step>
+  <step name="1.4">
+<link uri="../StdCtrls/ColorPal.xml" type="module">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;k&gt; to test the Background Color combo box.
+   <r>The selected color and its name appear in the text box. Report any failures as suggested using "Format Paragraph background color combo box" as the name of the control.</r>
+  </step>
+
+ </case>
+ <case id="fmpaInd" num="2" order="any">
+  <title tag="fmpaInd">Exercise Indentation controls</title>
+  <context>
+<p>When the Format-Paragraph Dialog is displayed</p>
+</context>
+  <step name="2.1">
+<link uri="../StdCtrls/SpinCtrl.xml" type="module">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;L&gt; to test the Indentation Left combo-spin control.
+   <r>The spin control works in increments of 0.1 inches. A negative number is not permitted. The default is 0". Report any failures as suggested using "Format Paragraph Indentation Left combo-spin" as the name of the control.</r>
+  </step>
+  <step name="2.2">
+<link uri="../StdCtrls/SpinCtrl.xml" type="module">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;R&gt; to test the Indentation Right combo-spin control.
+   <r>The spin control works in increments of 0.1 inches. A negative number is not permitted. The default is 0". Report any failures as suggested using "Format Paragraph Indentation Right combo-spin" as the name of the control.</r>
+  </step>
+  <step name="2.3">
+<link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;i&gt; to test the Indentation Special combo box.
+   <r>List items are (none), First Line and Hanging. Report any failures as suggested using "Format Paragraph Indentation Special combo box" as the name of the control.</r>
+  </step>
+  <step name="2.4">
+<link uri="../StdCtrls/SpinCtrl.xml" type="module">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;y&gt; to test the Indentation Special By combo-spin control.
+   <r>The spin control works in increments of 0.1 inches. A negative number is not permitted. The default is 0". Report any failures as suggested using "Format Paragraph Indentation Special By combo-spin" as the name of the control.</r>
+   <p name="Notes">This is enabled when the Format Paragraph Indentation Special combo box value is not (none). Clicking in the text box does not enable the spin control. Spinning down past 0.0 is not allowed.</p>
+  </step>
+
+ </case>
+
+ <case id="fmpaSpa" num="3" order="any">
+  <title tag="fmpaSpa">Exercise Spacing controls</title>
+  <context>
+<p>When the Format-Paragraph Dialog is displayed</p>
+</context>
+  <step name="3.1">
+<link uri="../StdCtrls/SpinCtrl.xml" type="module">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;B&gt; to test the Spacing Before combo-spin control.
+   <r>The spin control works in increments of 6 points. A negative number is not permitted. The default is 0". Report any failures as suggested using "Format Paragraph Spacing Before combo-spin" as the name of the control.</r>
+  </step>
+  <step name="3.2">
+<link uri="../StdCtrls/SpinCtrl.xml" type="module">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;e&gt; to test the Spacing After combo-spin control.
+   <r>The spin control works in increments of 6 points. A negative number is not permitted. The default is 0". Report any failures as suggested using "Format Paragraph Spacing After combo-spin" as the name of the control.</r>
+  </step>
+  <step name="3.3">
+<link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;n&gt; to test the Spacing Line spacing combo box.
+   <r>List items are Single, 1.5 Lines, Double, At Least and Exactly. Report any failures as suggested using "Format Paragraph Spacing Line spacing combo box" as the name of the control.</r>
+  </step>
+  <step name="3.4">
+<link uri="../StdCtrls/SpinCtrl.xml" type="module">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;t&gt; to test the Spacing Line spacing At combo-spin control.
+   <r>The spin control works in increments of 1 point. A negative number is not permitted. The default is 12". Report any failures as suggested using "Format Paragraph Spacing Line spacing At combo-spin" as the name of the control.</r>
+   <p name="Notes">This is enabled when the Format Paragraph Spacing Line spacing combo box value is At Least or Exactly. Clicking in the text box does not enable the spin control. Spinning down past 0.0 is not allowed.</p>
+  </step>
+
+ </case>
+
+ <case id="fmpaPrw" num="4" order="any">
+  <title tag="fmpaPrw">Preview window</title>
+  <context>
+<p>With some text, perhaps stradling paragraphs, selected as indicated below, and with the Format Paragraph dialog visible</p>
+</context>
+
+   <p name="Notes">There is currently no spec for how the preview should work. This needs to be filled out ... depending on how the programmer implements it? and in comparison with MS Word.</p>
+
+  <step name="4.1" link="Bug">With some "plain" text selected, try various combinations of all the controls.
+   <r>The preview should show "greeked" lines (the bar lines in the preview window) , in the format indicated by the current state of the dialog controls.</r>
+   <p name="bug">Format Paragraph Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+  <step name="4.2" link="Bug">With some uniformly formatted (e.g. all centered) text selected, try various combinations of all the controls.
+   <r>The preview should show "greeked" lines, in the format indicated by the current state of the dialog controls. Any attributes common to all of the affected paragraphs should be reflected in the preview, e.g. if all the paragraphs were already centered, the preview should be too.</r>
+   <p name="bug">Format Paragraph Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+  <step name="4.3" link="Bug">With some heterogeneously formatted (e.g. partly centered, indented and spaced) paragraphs selected, try various combinations of all the controls.
+   <r>The preview should show "greeked" lines, in the format indicated by the current state of the dialog controls. Any attributes common to all of the selected text should be reflected in the preview.</r>
+   <p name="bug">Format Paragraph Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+  <step name="4.4" link="Bug">With no text selected, try various combinations of all the controls.
+   <r>The preview should show "greeked" lines in the format indicated by the current state of the dialog controls.</r>
+   <p name="bug">Format Paragraph Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+
+ </case>
+
+ <case id="fmpaSe" num="5" order="any">
+  <title tag="fmpaSe">Format Paragraph side effects</title>
+  <context>
+<p>When the Format Paragraph Dialog is displayed</p>
+</context>
+  <step name="5.1" link="Bug">Exercise the Alignment, Background, Indentation and Spacing on selected paragraphs with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>Selected paragraphs are affected accordingly, resembling the form of the preview.</r>
+   <p name="bug">Format Paragraph control sequence causes problem</p>
+  </step>
+  <step name="5.2" link="Bug">Exercise the Alignment, Background, Indentation and Spacing on selected paragraphs with different settings. Exit the application, restart it and verify that the settings persist by bringing up the Format Paragraph dialog again.
+   <r>Selected paragraphs are affected accordingly. The settings persist after leaving and re-entering the application.</r>
+   <p name="bug">Format Paragraph &lt;attribute&gt; does not persist</p>
+  </step>
+
+ </case>
+
+ <update date="Jan-05-01" author="MikeL">Test created.</update>
+
+</test>

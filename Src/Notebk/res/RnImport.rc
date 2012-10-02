@@ -1,0 +1,913 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2001, SIL International. All rights reserved.
+
+File: RnImport.rc
+Responsibility: Steve McConnel
+Last reviewed: Not yet.
+
+Description:
+	FieldWorks Data Notebook specific File / Import command dialog resources.
+----------------------------------------------------------------------------------------------*/
+#include "RnImportRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//  English (U.S.) resources
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"RnImportRes.h\0"
+END
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+/***********************************************************************************************
+	Bitmaps
+***********************************************************************************************/
+
+kridImportSFWizOverviewPicture      BITMAP  DISCARDABLE     "ImportSFWizPic1.bmp"
+kridImportSFWizSettingsPicture      BITMAP  DISCARDABLE     "ImportSFWizPic2.bmp"
+kridImportSFWizSfmDbPicture         BITMAP  DISCARDABLE     "ImportSFWizPic3.bmp"
+kridImportSFWizRecMarkerPicture     BITMAP  DISCARDABLE     "ImportSFWizPic4.bmp"
+kridImportSFWizFldMappingsPicture   BITMAP  DISCARDABLE     "ImportSFWizPic5.bmp"
+kridImportSFWizChrMappingsPicture   BITMAP  DISCARDABLE     "ImportSFWizPic6.bmp"
+kridImportSFWizEncodeConvPicture    BITMAP  DISCARDABLE     "ImportSFWizPic7.bmp"
+kridImportSFWizSaveSetPicture       BITMAP  DISCARDABLE     "ImportSFWizPic8.bmp"
+kridImportSFWizFinalPicture         BITMAP  DISCARDABLE     "ImportSFWizPic9.bmp"
+
+
+/***********************************************************************************************
+	Dialogs
+***********************************************************************************************/
+
+/*kridImportDlg DIALOGEX 0, 0, 279, 151*/
+/*STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU*/
+/*EXSTYLE WS_EX_CONTEXTHELP*/
+/*CAPTION "Import"*/
+/*FONT 8, "MS Sans Serif"*/
+/*BEGIN*/
+/*    LTEXT       "File Name:",IDC_STATIC,7,7,43,8*/
+/*    EDITTEXT    kctidImportFilename,50,7,167,14,ES_AUTOHSCROLL*/
+/*    PUSHBUTTON  "Browse",kctidImportBrowse,222,7,50,14*/
+/*    GROUPBOX    "File Type",IDC_STATIC,7,28,265,41*/
+/*    CONTROL     "XML (eXtensible Markup Language)",*/
+/*                kctidImportXMLData,"Button", BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,*/
+/*                9,40,261,10*/
+/*    CONTROL     "Shoebox Standard Format",*/
+/*                kctidImportShoeboxData,"Button", BS_AUTORADIOBUTTON | WS_TABSTOP,*/
+/*                9,54,261,10*/
+/*    GROUPBOX    "Data Destination",IDC_STATIC,7,77,265,43*/
+/*    CONTROL     "Add this data to this notebook",*/
+/*                kctidImportAppend,"Button", BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,*/
+/*                9,90,261,10*/
+/*    CONTROL     "Replace this notebook with this new data.",*/
+/*                kctidImportReplace,"Button", BS_AUTORADIOBUTTON | WS_TABSTOP,*/
+/*                9,106,261,10*/
+/*    DEFPUSHBUTTON   "OK",kctidOk,112,130,50,14*/
+/*    PUSHBUTTON  "Cancel",kctidCancel,167,130,50,14*/
+/*    PUSHBUTTON  "Help...",kctidHelp,222,130,50,14*/
+/*END*/
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Overview Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizOverviewDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         kridImportSFWizOverviewPicture,kridImportSFWizOverviewPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Overview",kcidImportWizOverviewHdr,105,4,210,16
+	LTEXT           "This procedure will guide you through the process of importing Standard Format data into the notebook of the current FW Project.",
+					IDC_STATIC,105,24,268,16
+	LTEXT           "You can control how much detail you wish to deal with.  You may start by specifying a few fields to import in order to get a quick look at how the FieldWorks Data Notebook works, and then come back later and specify more and more fields.  This Import",
+					IDC_STATIC,105,56,268,24
+	LTEXT           "Procedure is designed to allow you to refine the process iteratively until you are finally satisfied with the result.",
+					IDC_STATIC,105,80,268,16
+	LTEXT           "To begin the import process, click Next.",IDC_STATIC,105,112,268,8
+	RTEXT           "Step 1 of 10",kcidImportWizOverviewStep,323,171,50,8
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Save/Retrieve Settings Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizSettingsDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         kridImportSFWizSettingsPicture,kridImportSFWizSettingsPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Optional Step: Saving Settings",kcidImportWizSettingsHdr,105,4,268,16
+	LTEXT           "You will be entering numerous settings as you configure this import process.  If you would like to use predefined settings, rather than starting from scratch, choose from the list below.",
+					IDC_STATIC,105,24,268,24
+	RTEXT           "Get settings from:",IDC_STATIC,105,56,80,8
+	COMBOBOX        kctidImportWizSettingsFrom,189,54,186,70,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "If you would like to save the settings you are about to enter (so you can use them again later) then enter a name for them here.",
+					IDC_STATIC,105,80,268,16
+	RTEXT           "Save settings to:",IDC_STATIC,105,104,80,8
+	COMBOBOX        kctidImportWizSettingsTo,189,102,186,70,
+					CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+	RTEXT           "Step 2 of 10",kcidImportWizSettingsStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportWizSettingsClean     "<Clean Slate>"
+	kstidImportWizSettingsDefault   "Shoebox Anthropology Guide"
+	kstidImportWizSettingsDefMod    "Shoebox Anthropology Guide (modified)"
+	kstidImportWizSettingsDefModFmt "Shoebox Anthropology Guide (modified %<0>d)"
+	kstidImportWizSettingsNew       "(new settings name)"
+	kctidImportWizSettingsFrom      "Source of predefined settings or you can choose Clean Slate and start from scratch."
+	kctidImportWizSettingsTo        "You can enter a name for your settings so you can use them again."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Select SFM Database File Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizSfmDbDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         kridImportSFWizSfmDbPicture,kridImportSFWizSfmDbPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Choose Standard Format Database File", kcidImportWizSfmDbHdr,105,4,268,16
+	LTEXT           "What Standard Format file do you wish to import into this notebook?",
+					IDC_STATIC,105,24,268,8
+	RTEXT           "&Database filename:",IDC_STATIC,105,40,80,8
+	EDITTEXT        kctidImportWizSfmDbFile,189,38,132,12,ES_AUTOHSCROLL
+	PUSHBUTTON      "B&rowse...",kctidImportWizSfmDbBrowse,325,37,50,14
+	LTEXT           "FieldWorks has determined that this is a Shoebox for Windows database.  What is the Project File for this database?  (If you do not supply a project file, import can continue, but you will need to supply some information that would otherwise be",
+					kctidImportWizSfmDbProjText1,105,72,268,24, NOT WS_VISIBLE
+	LTEXT           "obtained from the project settings.)",
+					kctidImportWizSfmDbProjText2,105,96,268,8, NOT WS_VISIBLE
+	RTEXT           "&Project filename:",
+					kctidImportWizSfmDbProjText3,105,112,80,8, NOT WS_VISIBLE
+	EDITTEXT        kctidImportWizSfmDbProjFile,189,110,132,12,ES_AUTOHSCROLL | NOT WS_VISIBLE
+	PUSHBUTTON      "Br&owse...",kctidImportWizSfmDbProjBrowse,325,109,50,14, NOT WS_VISIBLE
+	RTEXT           "Step 3 of 10",kcidImportWizSfmDbStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidImportWizSfmDbFile     "Enter the name of the Standard Format file that you want to import."
+	kctidImportWizSfmDbProjFile "Enter the Project File for this database, if a Shoebox database."
+	kstidImportWizSfmDbNotShoebox "%<0>s is not a Shoebox database file, but appears to be a Standard Format database."
+	kstidImportWizSfmDbNotStdFmt "Warning, File %<0>s does not appear to be a Standard Format database!"
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Specify Record Marker Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizRecMarkerDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         kridImportSFWizRecMarkerPicture,kridImportSFWizRecMarkerPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Record Marker",kcidImportWizRecMarkerHdr,105,4,268,16
+	LTEXT           "The Record Marker is used in a Standard Format database file to mark the beginning of each record (or entry).",
+					IDC_STATIC,105,24,268,16
+	LTEXT           "FieldWorks has attempted to determine the Record Marker for this database.  If this is not the correct marker, please enter it here.",
+					IDC_STATIC,105,56,268,16
+	RTEXT           "Record Marker:  \\",IDC_STATIC,105,80,82,8
+	COMBOBOX        kctidImportWizRecMarkerCode,187,78,64,96,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "It may be helpful for you to view the file you are importing to help you answer this and other questions.",
+					IDC_STATIC,105,102,190,16
+	PUSHBUTTON      "&View File...",kctidImportWizRecMarkerView,305,104,60,14
+	RTEXT           "Step 4 of 10",kcidImportWizRecMarkerStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidImportWizRecMarkerCode "Selects the Record Marker for the database."
+	kctidImportWizRecMarkerView "Opens the database you have selected in WordPad."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Specify Record Types and Hierarchy Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizRecTypesDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         kridImportSFWizRecMarkerPicture,kridImportSFWizRecMarkerPicture,"Static",
+					SS_BITMAP,0,0,100,181
+	LTEXT           "Record Types and Hierarchy",kcidImportWizRecTypesHdr,105,4,268,16
+	LTEXT           "The Data Notebook supports several different types of records, and hierarchical embedding of those records.  (Your database may not have either feature, in which case you may safely skip this step.)",
+					IDC_STATIC,105,24,268,24
+	LTEXT           "You need to map your database into the Data Notebook's structure.  For example, a mapping of ""\\Inf"" onto ""Event (level 2)"" indicates that the importer should start a new subevent whenever it encounters a \\Inf field.  (Refer to Help for more details.)",
+					IDC_STATIC,105,56,268,24
+	LTEXT           "If this field exists in the Standard Format record...",
+					IDC_STATIC,107,88,86,16
+	LTEXT           "...Interpret it as starting this type of Data Notebook entry.",
+					IDC_STATIC,193,88,129,16
+	CONTROL         "List1",kcidImportWizRecTypesList,"SysListView32",
+					LVS_NOCOLUMNHEADER | LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS |
+					WS_BORDER | WS_TABSTOP, 105,106,215,68
+	PUSHBUTTON      "&Add...",kctidImportWizRecTypesAdd,325,106,50,14
+	PUSHBUTTON      "&Modify...",kctidImportWizRecTypesModify,325,122,50,14
+	PUSHBUTTON      "&Delete",kctidImportWizRecTypesDelete,325,138,50,14
+	RTEXT           "Step 5 of 10",kcidImportWizRecTypesStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportWizRecTypesEvent         "Event"
+	kstidImportWizRecTypesHypo          "Analysis"
+	kstidImportWizRecTypesEventLev      "Event (level %<0>d)"
+	kstidImportWizRecTypesHypoLev       "Analysis (level %<0>d)"
+	kstidImportWizRecTypesCannotDelFmt  "You cannot delete the Record Marker (\\%<0>s) type."
+	kstidImportWizRecTypesLevelOneFmt   "The Record Marker (\\%<0>s) must map to a top-level record type."
+	kstidImportWizRecTypesDelFmt        "Do you want to delete the record type mapping for %<0>s?"
+	kstidImportWizRecTypesAlreadyFmt    "That field marker (\\%<0>s) already maps onto a record type: Modify that item if you want to change that mapping."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Define Content (Field) Mappings Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizFldMappingsDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         kridImportSFWizFldMappingsPicture,kridImportSFWizFldMappingsPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Content Mapping",kcidImportWizFldMappingsHdr,105,4,268,16
+	LTEXT           "For each marker in your database, indicate its destination in the current FieldWorks notebook by selecting a row and then clicking on the Modify button.  (You will want to verify any educated guesses that FieldWorks may have made.)",
+					IDC_STATIC,105,24,268,24
+	PUSHBUTTON      "&Modify...",kctidImportWizFldMapModify,335,72,40,14
+	PUSHBUTTON      "&Discard",kctidImportWizFldMapDiscard,335,88,40,14
+	CONTROL         "List1",kcidImportWizFldMappingsList,"SysListView32",
+					LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
+					105,56,225,117
+	RTEXT           "Step 6 of 10",kcidImportWizFldMappingsStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportFldMapDelFmt            "Do you want to delete the mapping from %<0>s to ""%<1>s""?"
+	kstidImportWizFldMappingAlreadyFmt "That field marker (\\%<0>s) already maps onto a notebook destination.  Modify that item if you want to change that mapping."
+	kstidImportWizFldMappingDiscard    "(Discard)"
+	kstidImportWizFldMapMarker         "Marker"
+	kstidImportWizFldMapDescription    "Description"
+	kstidImportWizFldMapDestination    "Notebook Destination"
+
+	kctidImportWizFldMapModify         "Opens a dialog so you can modify the destination or import settings of the selected field."
+	kctidImportWizFldMapDiscard        "Discards the selected field on import."
+	kcidImportWizFldMappingsList       "This pane lists the fields found in the Standard Format database file."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Define Character Property Mappings Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizChrMappingsDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         kridImportSFWizChrMappingsPicture,kridImportSFWizChrMappingsPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Character mapping",kcidImportWizChrMappingsHdr,105,4,268,16
+	LTEXT           "Indicate any markup you have used in your data to identify character styles, writing systems, or direct formatting.",
+					IDC_STATIC,105,24,268,16
+	PUSHBUTTON      "&Add...",kctidImportWizChrMapAdd,325,50,50,14
+	PUSHBUTTON      "&Modify...",kctidImportWizChrMapModify,325,66,50,14
+	PUSHBUTTON      "&Delete",kctidImportWizChrMapDelete,325,82,50,14
+	CONTROL         "List1",kcidImportWizChrMappingsList,"SysListView32",
+					LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
+					105,50,216,124
+	RTEXT           "Step 7 of 10",kcidImportWizChrMappingsStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportWizChrMapBeginMkr        "Begins"
+	kstidImportWizChrMapEndMkr          "Ends"
+	kstidImportWizChrMapDestin          "Notebook Destination"
+	kstidImportWizChrMapDirFmtBold      "Bold"
+	kstidImportWizChrMapDirFmtItalic    "Italic"
+	kstidImportWizChrMapWrtSystemFmt    "Writing system: %<0>s"
+	kstidImportWizChrMapStyleFmt        "Character style: %<0>s"
+	kstidImportWizChrMapIgnored         "(Ignored, erased during import)"
+	kstidImportWizChrMapAlreadyFmt      "A character mapping is already defined for ""%<0>S"".  Modify that item if you want to change that mapping."
+	kstidImportWizChrMapMissingFmt      "Both the beginning (""%<0>S"") and ending (""%<1>S"") markers must be defined."
+	kstidImportWizChrMapDelFmt          "Do you want to delete the character mapping of ""%<0>S...%<1>S""?"
+	kcidImportWizChrMappingsList    "This pane lists the mappings for Shoebox in-line formatting."
+	kctidImportWizChrMapAdd         "The Add button opens the Character Mapping dialog to add a new mapping."
+	kctidImportWizChrMapModify      "The Modify button opens the Character Mapping dialog to modify the selected mapping."
+	kctidImportWizChrMapDelete      "The Delete button removes the selected mapping."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Encoding Conversions page
+----------------------------------------------------------------------------------------------*/
+kridImportWizEncodeConvDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL         kridImportSFWizEncodeConvPicture,kridImportSFWizEncodeConvPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Encoding Conversion",kcidImportWizEncodeConvHdr,105,4,268,16
+	LTEXT           "The following writing systems have been specified for this FieldWorks Project.",
+					IDC_STATIC,105,20,268,16
+	LTEXT           "Please specify an encoding converter for each writing system.",
+					IDC_STATIC,105,36,268,8
+	PUSHBUTTON      "&Modify...",kctidImportWizEncodeConvModify,325,66,50,14
+	// Reenable this pushbutton when we figure out how to implement it reasonably.
+	//PUSHBUTTON      "Preview...",kctidImportWizEncodeConvPreview,325,140,50,14
+	CONTROL         "List1",kcidImportWizEncodeConvList,"SysListView32",
+					LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
+					105,50,216,124
+
+	RTEXT           "Step 8 of 10",kcidImportWizEncodeConvStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportEncConvWrtSys  "Writing system"
+	kstidImportEncConvFont    "Font"
+	kstidImportEncConvConvrtr "Converter"
+	kstidImportEncConvDesc    "Description"
+	kctidImportWizEncodeConvModify    "Change the converter or font to use with the given writing system."
+	//kctidImportWizEncodeConvPreview   "Displays a short sample of before and after converted text."
+	kstidImportWizUnknownEncodingConv   "(UNSPECIFIED)"
+	kstidImportWizNoEncodingConvDesc    "No description available"
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Save Settings (and Destination) Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizSaveSetDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL         kridImportSFWizSaveSetPicture,kridImportSFWizSaveSetPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Add or Replace notebook Entries",kcidImportWizSaveSetHdr,105,4,268,16
+	LTEXT           "Your final decision is whether or not to replace any existing contents of the %<0>s notebook.",
+					kctidImportWizSaveSetFinalDecision,105,24,268,16
+	CONTROL        "&Overwrite all existing data in the notebook.",
+					kctidImportWizSaveSetOverwrite,"Button",
+					BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,105,48,270,10
+	CONTROL         "&Add (the notebook will contain both old and newly imported data).",
+					kctidImportWizSaveSetAppend,"Button",
+					BS_AUTORADIOBUTTON | WS_TABSTOP,105,64,270,10
+//    CONTROL        "&Merge with the existing data.  (Note this option is available only if your data was exported from FieldWorks and therefore has valid \\_guid fields in it.)",
+//                    kctidImportWizSaveSetMerge,"Button",
+//                    BS_AUTORADIOBUTTON | BS_TOP | BS_MULTILINE | WS_TABSTOP,105,80,270,20
+	RTEXT           "Step 9 of 10",kcidImportWizSaveSetStep,323,171,50,8
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidImportWizSaveSetOverwrite    "When selected, you will replace all the entries in the notebook with the imported data."
+	kctidImportWizSaveSetAppend       "When selected, you will add all the imported data to the existing entries in the notebook."
+	kctidImportWizSaveSetMerge        "When selected, you will merge the imported data with existing data in the notebook."
+	kctidImportWizSaveSetDecision     "Your final decision is whether or not to replace any existing contents of the %<0>s notebook."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data Wizard - Final (Destination) Page
+----------------------------------------------------------------------------------------------*/
+kridImportWizFinalDlg DIALOGEX 0, 0, 380, 181
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL         kridImportSFWizFinalPicture,kridImportSFWizFinalPicture,
+					"Static",SS_BITMAP,0,0,100,181
+	LTEXT           "Ready to Import Standard Format Data",
+					kcidImportWizFinalHdr,105,4,268,16
+	LTEXT           "Congratulations, you're done!  Your import settings have been saved.",
+					IDC_STATIC,105,24,268,16
+	LTEXT           "Click on the Finish button when you are ready to begin importing.",
+					IDC_STATIC,105,50,268,16
+	RTEXT           "Step 10 of 10",kcidImportWizFinalStep,323,171,50,8
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - Popup Dialog for Wizard Record Types / Hierarchy Page
+----------------------------------------------------------------------------------------------*/
+kridImportRecTypeDlg DIALOGEX 0, 0, 320, 50
+STYLE  DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Define Record Type (Hierarchy)"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	RTEXT           "Field Marker: ",IDC_STATIC,10,8,50,8
+	COMBOBOX        kctidImportFldMarker,62,6,64,96,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	RTEXT           "Field Type (Level): ",IDC_STATIC,130,8,50,8
+	COMBOBOX        kctidImportRecType,182,6,120,96,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	DEFPUSHBUTTON   "OK",kctidOk,155,30,50,14,WS_GROUP
+	PUSHBUTTON      "Cancel",kctidCancel,209,30,50,14
+	PUSHBUTTON      "Help...",kctidHelp,263,30,50,14
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - Popup Dialog for Wizard Content (Field) Mapping Page
+----------------------------------------------------------------------------------------------*/
+kridImportFldMappingDlg DIALOGEX 0, 0, 410, 320
+STYLE  DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Import Content Mapping Settings"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Destination in the current notebook: ",IDC_STATIC,182,8,180,8
+	COMBOBOX        kctidImportFldDest,182,20,130,200,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	// Uncomment this when we're ready to add this functionality.
+	//PUSHBUTTON      "&Add...",kctidImportFieldAdd,320,19,50,14
+	GROUPBOX        "\\so Data", kcidImportDataLabel, 3,6,175,288
+	LTEXT           "The \\so field appears ...",kcidImportDataSummary,7,20,163,20
+	CONTROL         "List1",kctidImportFldContentList,"SysListView32",
+					LVS_NOCOLUMNHEADER | LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS |
+					WS_VSCROLL | WS_BORDER | WS_TABSTOP, 7,44,166,244
+	GROUPBOX        "Topics List field import options",kcidImportFldOptionLabel,177,46,231,248
+	DEFPUSHBUTTON   "OK",kctidOk,245,300,50,14,WS_GROUP
+	PUSHBUTTON      "Cancel",kctidCancel,299,300,50,14
+	PUSHBUTTON      "Help...",kctidHelp,353,300,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportDataLabelFmt             "Field Contents in \\%<0>s"
+	kstidImportDataSummaryFmt           "The \\%<0>s field appears %<1>d times in your data, with the following %<2>d unique lines:"
+	kstidImportListRefFldOptionLabel    "List reference field import options"
+	kstidImportTextFldOptionLabel       "Text field import options"
+	kstidImportStringFldOptionLabel     "String field import options"
+	kstidImportDateFldOptionLabel       "Date field import options"
+	kstidImportTimeFldOptionLabel       "Date/Time field import options"
+	kstidImportLinkFldOptionLabel       "Link field import options"
+	kstidImportGenDateFldOptionLabel    "General date field import options"
+	kstidImportIntegerFldOptionLabel    "Integer field import options"
+	kstidImportDiscardedOptionLabel     "Discarded data import options"
+	kctidImportFldDest          "Lists all the fields in the notebook so you can choose the destination for the selected marker, and then choose specific settings for that destination."
+
+	kctidImportFldContentList           "This pane lists all unique occurrences of the selected field in the Standard Format database file."
+	//kctidImportFieldAdd                 "Define a new custom field for importing."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - embedded topics list subdialog for Content (Field) Mapping dialog box
+----------------------------------------------------------------------------------------------*/
+kridImportTopicsListFldOptionSubDlg DIALOGEX 0, 0, 229, 233
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CHECKBOX        "Delimiters indicating multiple items on a line: ",
+					kctidImportTLFDelimMultiEnb,5,8,170,10,WS_GROUP
+	EDITTEXT        kctidImportTLFDelimMulti,180,6,44,13,ES_AUTOHSCROLL
+	CHECKBOX        "Delimiters indicating subitems: ",
+					kctidImportTLFDelimSubEnb,5,23,170,10,WS_GROUP
+	EDITTEXT        kctidImportTLFDelimSub,180,21,44,13,ES_AUTOHSCROLL
+	CHECKBOX        "Only consider text between",
+					kctidImportTLFBetweenEnb,5,38,110,10,WS_GROUP
+	EDITTEXT        kctidImportTLFBetweenAfter,116,36,44,13,ES_AUTOHSCROLL
+	CTEXT           "and",IDC_STATIC,160,38,20,13
+	EDITTEXT        kctidImportTLFBetweenBefore,180,36,44,13,ES_AUTOHSCROLL
+	CHECKBOX        "Only consider text before",
+					kctidImportTLFOnlyBeforeEnb,5,53,110,10,WS_GROUP
+	EDITTEXT        kctidImportTLFOnlyBefore,116,51,44,13,ES_AUTOHSCROLL
+	CHECKBOX        "Throw away everything not already in the topics list.",
+					kctidImportTLFDiscardNewEnb,5,68,220,10,WS_GROUP
+	LTEXT           "Text changes:",IDC_STATIC,5,81,219,8
+	CONTROL         "List1",kctidImportTLFSubstList,"SysListView32",
+					LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_VSCROLL | WS_HSCROLL |
+					WS_BORDER | WS_TABSTOP, 5,91,219,70
+	PUSHBUTTON      "&Add...",   kctidImportTLFSubstListAdd,   103,162,39,14
+	PUSHBUTTON      "&Modify...",kctidImportTLFSubstListModify,144,162,39,14
+	PUSHBUTTON      "&Delete",   kctidImportTLFSubstListDelete,185,162,39,14
+
+	CHECKBOX        "Ignore empty fields",
+					kctidImportTLFDiscardEmptyEnb,5,182,220,10,WS_GROUP
+	RTEXT           "Default value for empty fields: ",IDC_STATIC,5,194,125,8
+	EDITTEXT        kctidImportTLFEmptyDefault,133,192,90,13,ES_AUTOHSCROLL
+	CONTROL         "Match topic list items against abbreviations",
+					kctidImportTLFMatchAbbr,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,
+					5,210,220,10
+	CONTROL         "Match topics list items against full names",
+					kctidImportTLFMatchName,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,
+					5,220,220,10
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportTLFSubstLabelOld     "Your Data"
+	kstidImportTLFSubstLabelNew     "Becomes"
+	kctidImportTLFDelimMultiEnb     "If selected, you can enter character(s) that separate multiple items within a field."
+	kctidImportTLFDelimMulti        "If active, the character(s) that delimit multiple items within a field. If more than one such character or character sequence exists, they are separated by spaces."
+	kctidImportTLFDelimSubEnb       "If selected, you can enter character(s) that cause the importer to recognize the hierarchical considerations."
+	kctidImportTLFDelimSub          "If active, the hierarchical delimiter character(s).  If more than one such character or character sequence exists, they are separated by spaces."
+	kctidImportTLFBetweenEnb        "If selected, you can enter pairs of characters that mark the beginning and end of list item names (or abbreviations) within a field item."
+	kctidImportTLFBetweenAfter      "If active, the initial marker character(s).  If more than one such character or character sequence exists, they are separated by spaces."
+	kctidImportTLFBetweenBefore     "If active, the matching final marker character(s).  If more than one such character or character sequence exists, they are separated by spaces."
+	kctidImportTLFOnlyBeforeEnb     "If selected, you can enter character(s) after which the data (in a given item) is not imported."
+	kctidImportTLFOnlyBefore        "If active, the ""end of item"" marker character(s).  If more than one such character or character sequence exists, they are separated by spaces."
+	kctidImportTLFDiscardNewEnb     "If selected, only items that already exist in the target list will be imported.  All other items in the source data are discarded."
+	kctidImportTLFSubstList         "This pane and the associated buttons allow you to search for and substitute (or delete) text."
+	kctidImportTLFSubstListAdd      "Add makes a new substitution."
+	kctidImportTLFSubstListModify   "Modify allows you to change the selected substitution."
+	kctidImportTLFSubstListDelete   "Delete removes the selected substitution."
+	kstidImportTLFSubstListDelFmt   "Do you want to delete the substitution?"
+	kctidImportTLFDiscardEmptyEnb   "If selected, empty fields are ignored.  When not selected, you can enter a default for empty fields."
+	kctidImportTLFEmptyDefault      "If active, the default value to use for empty fields."
+	kctidImportTLFMatchAbbr         "You can match imported items against either abbreviations or full names in the current list."
+	kctidImportTLFMatchName         "You can match imported items against either abbreviations or full names in the current list."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - embedded text subdialog for Content (Field) Mapping dialog box
+----------------------------------------------------------------------------------------------*/
+kridImportTextFldOptionSubDlg DIALOGEX 0, 0, 229, 233
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Writing system:",IDC_STATIC,10,10,60,8
+	COMBOBOX        kctidImportTFDefaultWrtSys,10,22,100,220,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "A&dd...",kctidImportTFAddWrtSys,116,21,45,14
+	LTEXT           "Paragraph Style: ",IDC_STATIC,10,50,53,8
+	COMBOBOX        kctidImportTFPara,64,48,107,220, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "&Styles...",kctidImportTFStyles,177,47,45,14
+	LTEXT           "Start a new paragraph...",IDC_STATIC,10,70,100,8
+	CHECKBOX        "for each line",kctidImportTFNewParaEachLineEnb,
+					20,80,200,10,WS_GROUP
+	CHECKBOX        "after any blank line",kctidImportTFNewParaAfterBlankEnb,
+					20,90,200,10,WS_GROUP
+	CHECKBOX        "when a line starts with blank space(s)",kctidImportTFNewParaIndentedEnb,
+					20,100,200,10,WS_GROUP
+	CHECKBOX        "after lines shorter than",kctidImportTFNewParaShortLineEnb,
+					20,110,84,10,WS_GROUP
+	EDITTEXT        kctidImportTFShortLineLength,104,110,20,10, ES_LEFT | ES_NUMBER | WS_BORDER
+	LTEXT           "characters",IDC_STATIC,125,110,50,8
+
+	CHECKBOX        "Ignore empty fields",kctidImportTFDiscardEmptyEnb,10,130,220,10,WS_GROUP
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidImportTFPara           "Sets the Paragraph style for this field."
+	kctidImportTFStyles         "Opens the Styles dialog, so you can add a new style, or modify an existing one."
+	kctidImportTFNewParaEachLineEnb    "If selected, each new line in the field starts a new paragraph."
+	kctidImportTFNewParaAfterBlankEnb  "If selected, a blank line in the field separates paragraphs."
+	kctidImportTFNewParaIndentedEnb    "If selected, an indented line in the field starts a new paragraph ."
+	kctidImportTFNewParaShortLineEnb   "If selected, a line in the field shorter than the given number of characters marks the end of the current paragraph.  The following line starts a new paragraph."
+	kctidImportTFShortLineLength       "If enabled, the minimum number of characters in a line that does not end a paragraph."
+	kctidImportTFDefaultWrtSys   "Sets the default writing system for this field."
+	kctidImportTFDiscardEmptyEnb "If selected, empty fields are ignored."
+	kctidImportTFAddWrtSys       "Opens a menu with a list of writing systems you can add to the drop-down list, plus a Define New... command for creating a new writing system to add to the list."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - embedded date subdialog for Content (Field) Mapping dialog box
+----------------------------------------------------------------------------------------------*/
+kridImportDateFldOptionSubDlg DIALOGEX 0, 0, 229, 233
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Date formats:",IDC_STATIC,10,10,100,8
+	CONTROL         "List1",kctidImportDFFormatList,"SysListView32",
+					LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_VSCROLL | WS_HSCROLL |
+					WS_BORDER | WS_TABSTOP, 10,20,209,55
+	PUSHBUTTON      "&Add...",   kctidImportDFFormatAdd,    59,78,50,14
+	PUSHBUTTON      "&Modify...",kctidImportDFFormatModify,114,78,50,14
+	PUSHBUTTON      "&Delete",kctidImportDFFormatDelete,169,78,50,14
+	CHECKBOX        "Ignore empty fields",kctidImportDFDiscardEmptyEnb,10,102,209,10,WS_GROUP
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportDFFormatLabel    "Date Format"
+	kstidImportDFLongDateFmt    "Example: MMMM d, yyyy"
+	kstidImportDFFormatDelFmt   "Do you want to delete the date format ""%<0>s""?"
+	kctidImportDFFormatList     "This pane lists the current set of date formats found in this field.  (Usually only one format is needed, but sometimes more are necessary.)"
+	kctidImportDFFormatAdd      "Opens the Date Definition dialog so you can add a new date format."
+	kctidImportDFFormatModify   "Opens the Date Definition dialog so you can change the selected date format."
+	kctidImportDFFormatDelete   "Deletes the selected date format."
+	kctidImportDFDiscardEmptyEnb "If selected, empty fields are ignored."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - embedded multilingual string subdialog for Content (Field) Mapping
+	dialog box
+----------------------------------------------------------------------------------------------*/
+kridImportMultiLingualFldOptionSubDlg DIALOGEX 0, 0, 229, 233
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Writing system:",IDC_STATIC,10,10,60,8
+	COMBOBOX        kctidImportMLWrtSys,10,22,100,220,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "A&dd...",kctidImportMLAddWrtSys,116,21,45,14
+
+	CHECKBOX    "Ignore empty fields",kctidImportMLDiscardEmptyEnb,10,50,220,10,WS_GROUP
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidImportMLWrtSys          "Sets the writing system for this field."
+	kctidImportMLDiscardEmptyEnb "If selected, empty fields are ignored."
+	kctidImportMLAddWrtSys       "Opens a menu with a list of writing systems you can add to the drop-down list, plus a Define New... command for creating a new writing system to add to the list."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - embedded subdialog for Content (Field) Mapping dialog box
+----------------------------------------------------------------------------------------------*/
+kridImportNoFldOptionSubDlg DIALOGEX 0, 0, 229, 233
+STYLE WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT       "",kcidImportNoOptionsString,20,20,189,20
+	CHECKBOX    "Ignore empty fields",kctidImportNoOptDiscardEmptyEnb,10,40,220,10,WS_GROUP
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportNoStringOptions  "Simple text fields have no import options."
+	kstidImportNoTimeOptions    "Date/Time fields have no import options."
+	kstidImportNoLinkOptions    "Link fields have no import options."
+	kstidImportNoDateOptions    "Date fields have no import options."
+	kstidImportNoIntegerOptions "Integer fields have no import options."
+	kstidImportNoDiscardOptions "Discarded data have no import options."
+	kctidImportNoOptDiscardEmptyEnb    "If selected, empty fields are ignored."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - define a new word to discard from Shoebox topics list field data
+----------------------------------------------------------------------------------------------*/
+kridImportTLFNewDiscardDlg DIALOGEX 0, 0, 180, 50
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Import Topics List Items"
+FONT 8, "MS Sans Serif"
+BEGIN
+	RTEXT       "Word to discard: ",IDC_STATIC,7,9,62,8
+	EDITTEXT    kctidImportTLFDiscard,71,7,101,14,ES_AUTOHSCROLL
+	DEFPUSHBUTTON   "OK",kctidOk,12,30,50,14
+	PUSHBUTTON  "Cancel",kctidCancel,67,30,50,14
+	PUSHBUTTON  "Help...",kctidHelp,122,30,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportTLFDiscardAlreadyFmt """%<0>s"" is already in the discard list!"
+	kstidImportTLFDiscardDelFmt     "Do you want to delete ""%<0>s"" from the discard list?"
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - define a new substitution for Shoebox topics list field data
+----------------------------------------------------------------------------------------------*/
+kridImportTLFNewSubstitutionDlg DIALOGEX 0, 0, 180, 70
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Topics List Import Option"
+FONT 8, "MS Sans Serif"
+BEGIN
+	RTEXT       "Text to match: ",IDC_STATIC,7,9,62,8
+	EDITTEXT    kctidImportTLFSubstMatch,71,7,101,14,ES_AUTOHSCROLL
+	RTEXT       "Text to substitute: ",IDC_STATIC,7,29,62,8
+	EDITTEXT    kctidImportTLFSubstReplace,71,27,101,14,ES_AUTOHSCROLL
+	DEFPUSHBUTTON   "OK",kctidOk,12,50,50,14
+	PUSHBUTTON  "Cancel",kctidCancel,67,50,50,14
+	PUSHBUTTON  "Help...",kctidHelp,122,50,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportTLFSubstAlreadyFmt "There is already a substitution for ""%<0>s""!"
+	kstidImportTLFSubstDelFmt     "Do you want to delete the substitution from ""%<0>s"" to ""%<1>s""?"
+	kctidImportTLFSubstMatch      "Enter the text you want to replace.  The text appears in the Your Data column."
+	kctidImportTLFSubstReplace    "Enter the text to substitute for the text you entered in the Text to match box.  This text appears in the Becomes column.  (It may be empty to delete.)"
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - define a character mapping
+----------------------------------------------------------------------------------------------*/
+kridImportCharMappingDlg DIALOGEX 0, 0, 225, 166
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Import Character Mapping"
+FONT 8, "MS Sans Serif"
+BEGIN
+	GROUPBOX        "Standard Format text",IDC_STATIC,5,7,215,50
+	LTEXT           "&Beginning marker: ",IDC_STATIC,10,19,80,8
+	EDITTEXT        kctidImportCharMapBeginMkr,91,17,123,14,ES_AUTOHSCROLL
+	LTEXT           "&Ending marker: ",IDC_STATIC,10,38,80,8
+	EDITTEXT        kctidImportCharMapEndMkr,91,36,123,14,ES_AUTOHSCROLL
+	GROUPBOX        "Notebook Destination",IDC_STATIC,5,60,215,80
+	CONTROL         "&Writing system:",kctidImportCharMapWrtSystemEnb,"Button",
+					BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,73,82,10
+	COMBOBOX        kctidImportCharMapWrtSystemSelect,91,71,87,60,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "&Add...",kctidImportCharMapWrtSystems,179,71,35,14
+	CONTROL         "&Character style:",kctidImportCharMapStyleEnb,"Button",
+					BS_AUTORADIOBUTTON | WS_TABSTOP,8,90,82,10
+	COMBOBOX        kctidImportCharMapStyleSelect,91,88,87,60,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "&Styles...",kctidImportCharMapStyles,179,88,35,14
+	CONTROL         "&Direct formatting:",kctidImportCharMapDirFmtEnb,"Button",
+					BS_AUTORADIOBUTTON | WS_TABSTOP,8,107,82,10
+	COMBOBOX        kctidImportCharMapDirFmtSelect,91,105,87,60,
+					CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "&Ignore (erase the marker during import)",kctidImportCharMapIgnoreEnb,
+					"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,8,124,200,10
+	DEFPUSHBUTTON   "OK",kctidOk,44,146,50,14
+	PUSHBUTTON      "Cancel",kctidCancel,99,146,50,14
+	PUSHBUTTON      "Help...",kctidHelp,154,146,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidImportCharMapBeginMkr          "Signals the beginning of the text to be mapped."
+	kctidImportCharMapEndMkr            "Signals the end of the text to be mapped."
+	kctidImportCharMapWrtSystemEnb      "When selected, all available writing systems are listed for your selection."
+	kctidImportCharMapWrtSystemSelect   "The current choice from the list of all available writing systems."
+	kctidImportCharMapWrtSystems        "Opens a menu with a list of writing systems you can add to the drop-down list, plus a Define New... command for creating a new writing system to add to the list."
+	kctidImportCharMapStyleEnb          "When selected, all available character styles are listed for your selection."
+	kctidImportCharMapStyleSelect       "The current choice from the list of all available character styles."
+	kctidImportCharMapStyles            "The Style button opens the Format...Styles dialog."
+	kctidImportCharMapDirFmtEnb         "When selected, you can apply direct formatting instead of a character style."
+	kctidImportCharMapDirFmtSelect      "The current choice from the list of all available direct formatting options."
+	kctidImportCharMapIgnoreEnb         "When selected, the markers are removed during import, and do not affect the appearance of the imported data."
+END
+
+/*----------------------------------------------------------------------------------------------
+	Import Shoebox Data - define a date format.
+----------------------------------------------------------------------------------------------*/
+kridImportDateFormatDlg DIALOGEX 0, 0, 180, 200
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Import Date Format Definition"
+FONT 8, "MS Sans Serif"
+BEGIN
+	RTEXT           "Date format:",IDC_STATIC, 10,10,50,8
+	EDITTEXT        kctidImportDateFormat, 65,8,90,14, ES_AUTOHSCROLL
+	PUSHBUTTON      "&Apply",kctidImportDateFormatApply, 10,24,50,14
+	EDITTEXT        kctidImportFormattedDate, 65,24,90,14, ES_READONLY
+
+	LTEXT           "Date format picture elements:", IDC_STATIC, 10,45,150,8
+	LTEXT           "d = day of the month (first = 1)", IDC_STATIC, 20,58,150,8
+	LTEXT           "dd = day of the month (first = 01)", IDC_STATIC, 20,68,150,8
+	LTEXT           "M = numeric month (January = 1)", IDC_STATIC, 20,81,150,8
+	LTEXT           "MM = numeric month (January = 01)", IDC_STATIC, 20,91,150,8
+	LTEXT           "MMM = month abbreviation (January = Jan)", IDC_STATIC, 20,101,150,8
+	LTEXT           "MMMM = month name (January = January)", IDC_STATIC, 20,111,150,8
+	LTEXT           "yy = year (2001 = 01)", IDC_STATIC, 20,124,150,8
+	LTEXT           "yyyy = year (2001 = 2001)", IDC_STATIC, 20,134,150,8
+	LTEXT           "Punctuation and space characters are also allowed as verbatim elements.",
+					IDC_STATIC, 20, 147, 150,18
+
+	DEFPUSHBUTTON   "OK",kctidOk,10,176,50,14
+	PUSHBUTTON      "Cancel",kctidCancel,65,176,50,14
+	PUSHBUTTON      "Help...",kctidHelp,120,176,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportDateFormatError    "(Invalid format)"
+	kstidImportDateFormatErrorMsg "The proposed format string contains at least one invalid character."
+	kctidImportDateFormat         "Set the date format using the format elements listed below."
+	kctidImportDateFormatApply    "When you click the Apply button, an example appears in this box on the right."
+	kctidImportFormattedDate      "When you click the Apply button, an example appears in this box on the right."
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Standard format import progress dialog.
+----------------------------------------------------------------------------------------------*/
+kridRnImportProgress DIALOGEX 0, 0, 250, 83
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Importing Standard Format data from %<0>s"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT       "Progress Report Action", kctidImportProgAction, 10, 10, 230, 20
+	LTEXT       "%<0>d / %<1>d, estimated %<3>d:%<4> remaining", kctidImportProgStatus,
+				10, 35, 230, 20
+	CONTROL     "progress", kctidImportProgProgress, "msctls_progress32", PBS_SMOOTH,
+				10, 62, 230, 12
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportFromTitleFmt "Importing Standard Format data from %<0>s"
+	kstidImportCannotMaster "Cannot connect to the master database!?"
+	kstidImportPhaseOne     "Phase One: Deleting old entries (and added list items) from the database.  This may take a few minutes, depending on how many entries existed."
+	kstidImportPhaseTwo     "Phase Two: Importing %<0>d entries into the database."
+	kstidImportPhaseTwo1    "Phase Two: Importing 1 entry into the database."
+	kstidImportOnlyPhase    "Importing %<0>d entries into the database."
+	kstidImportOnlyPhase1   "Importing 1 entry into the database."
+	kstidImportEntryError   "%nSkipped 1 entry due to errors."
+	kstidImportEntriesError "%nSkipped %<0>d entries due to errors."
+	kstidImportStatus       "Elapsed time: %<4>d min %<5>d sec.  Estimated time left: %<2>d min %<3>d sec.%nCompleted %<0>d out of %<1>d entries."
+	kstidImportShortStatus  "%<0>d / %<1>d"
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	List editing progress dialog.
+----------------------------------------------------------------------------------------------*/
+kridRnImportListEditProgress DIALOGEX 0, 0, 250, 103
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Editing Topics List data from %<0>s"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT       "Progress Report Action", kctidImportProgAction, 10, 10, 230, 20
+	LTEXT       "Edited %<0>d of %<1>d Topics Lists, %<2> remaining", kctidImportProgStatus,
+				10, 35, 230, 20
+	CONTROL     "progress", kctidImportProgProgress, "msctls_progress32", PBS_SMOOTH,
+				10, 62, 230, 12
+
+	DEFPUSHBUTTON "Cancel",kctidImportListEditCancel,100,82,50,14
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportListEditCaption  "Editing Topics List data from %<0>s"
+	kstidImportListEditList     "Editing %<0>s"
+	kstidImportListEditStatus   "%<0>d of %<1>d Topics Lists edited, %<2>d remaining"
+	kctidImportListEditCancel   "Cancels any further editing of list items after the current list editor is closed."
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+  kstidImportWizTitle     "Import Notebook Data from Standard Format"
+  kstidImportMsgCaption   "Data Import"
+  kstidImportEditList1Fmt "Do you want to edit the new entry added to this topics list: %<0>s?"
+  kstidImportEditList2Fmt "Do you want to edit the new entries added to this topics list: %<0>s?"
+  kstidImportEditListsFmt "Do you want to edit the new entries added to these topics lists: %<0>s?"
+  kstidImportDelOneFilter         "Deleted one filter due to an obsolete list item reference."
+  kstidImportDelMultipleFilters   "Deleted %<0>d filters due to obsolete list item references."
+	kstidImportWizOverviewStep      "Step 1 of 9"
+	kstidImportWizSettingsStep      "Step 2 of 9"
+	kstidImportWizSfmDbStep         "Step 3 of 9"
+	kstidImportWizRecMarkerStep     "Step 4 of 9"
+	kstidImportWizFldMappingsStep   "Step 5 of 9"
+	kstidImportWizChrMappingsStep   "Step 6 of 9"
+	kstidImportWizEncodeConvStep    "Step 7 of 9"
+	kstidImportWizSaveSetStep       "Step 8 of 9"
+	kstidImportWizFinalStep         "Step 9 of 9"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidImportTitleError           "Error storing title for input record %<0>d. (%<1>s)"
+	kstidImportDateCreatedError     "Error setting creation date for input record %<0>d. (%<1>s)"
+	kstidImportDateModifiedError    "Error setting modification date for input record %<0>d. (%<1>s)"
+	kstidImportVersionHistoryError  "Error storing version history for input record %<0>d. (%<1>s)"
+	kstidImportDateOfEventError     "Error setting the date of event for input record %<0>d. (%<1>s)"
+	kstidImportExternalMaterialsError "Error storing external material reference for input record %<0>d. (%<1>s)"
+	kstidImportPersonalNotesError   "Error storing personal notes for input record %<0>d. (%<1>s)"
+	kstidImportDescriptionError     "Error storing description for input record %<0>d. (%<1>s)"
+	kstidImportResearchPlanError    "Error storing research plan for input record %<0>d. (%<1>s)"
+	kstidImportDiscussionError      "Error storing analysis discussion for input record %<0>d. (%<1>s)"
+	kstidImportFurtherQuestionsError "Error storing 'further questions' for input record %<0>d. (%<1>s)"
+	kstidImportConclusionsError     "Error storing conclusions for input record %<0>d. (%<1>s)"
+	kstidImportHypothesisError      "Error storing analysis hypothesis for input record %<0>d. (%<1>s)"
+	kstidImportGeneralCOMLoadError  "Error loading input record %<0>d. (%<1>s)"
+	kstidImportGeneralLoadError     "Error loading input record %<0>d."
+
+	kstidImportStoreErrorFmt        "Error storing %<0>s for input record %<1>d. (%<2>s)"
+END
+
+#endif    // English (U.S.) resources
+////////////////////////////////////////////////////////////////////////////////////////////////

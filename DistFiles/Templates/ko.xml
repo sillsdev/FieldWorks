@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Do not specify DTD for LD files in the template directory. Doing so causes kstidUILangNotFound error on
+	first startup after installation due to DoesWsXMLExist failing to load the LD file since the DTD is not in the template directory! -->
+<LanguageDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LgWritingSystem>
+	<Locale24>
+	  <Integer val="1042" />
+	</Locale24>
+	<RightToLeft24>
+	  <Boolean val="false" />
+	</RightToLeft24>
+	<DefaultMonospace24>
+	  <Uni>Gulim</Uni>
+	</DefaultMonospace24>
+	<DefaultSansSerif24>
+	  <Uni>Gulim</Uni>
+	</DefaultSansSerif24>
+	<DefaultBodyFont24>
+	  <Uni>Gulim</Uni>
+	</DefaultBodyFont24>
+	<DefaultSerif24>
+	  <Uni>Gulim</Uni>
+	</DefaultSerif24>
+	<FontVariation24 />
+	<SansFontVariation24 />
+	<BodyFontFeatures24 />
+	<ICULocale24>
+	  <Uni>ko</Uni>
+	</ICULocale24>
+	<ValidChars24 />
+	<MatchedPairs24 />
+	<PunctuationPatterns24 />
+	<CapitalizationInfo24 />
+	<QuotationMarks24 />
+	<SpellCheckDictionary24>
+	  <Uni>ko</Uni>
+	</SpellCheckDictionary24>
+	<KeymanKeyboard24 />
+	<Name24>
+	  <AUni ws="en">Korean</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Kor</AUni>
+	</Abbr24>
+	<Collations24>
+	  <LgCollation>
+		<WinLCID30>
+		  <Integer val="1042" />
+		</WinLCID30>
+		<WinCollation30>
+		  <Uni>Latin1_General_CI_AI</Uni>
+		</WinCollation30>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<ICURules30 />
+	  </LgCollation>
+	</Collations24>
+	<LegacyMapping24 />
+  </LgWritingSystem>
+  <EthnoCode>kor</EthnoCode>
+  <LocaleName>Korean</LocaleName>
+  <LocaleCountry />
+  <LocaleScript />
+  <LocaleVariant />
+  <Keyboard />
+  <EncodingConverter />
+</LanguageDefinition>

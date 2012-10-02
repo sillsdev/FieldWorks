@@ -1,0 +1,263 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{DD6C5A65-27B9-4D06-B60A-C6E4EBD2DE30}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>TeResources</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.TE</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\TeResources.xml</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>1591</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="FwResources">
+	  <Name>FwResources</Name>
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TeDialogResources.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TeResourceHelper.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="TeStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>TeStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="TeTMStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>TeTMStrings.resx</DependentUpon>
+	</Compile>
+	<EmbeddedResource Include="HelpTopicPaths.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="INS_VRSE_NBRS.CUR" />
+	<EmbeddedResource Include="TeDialogStrings.resx">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="TeResourceHelper.resx">
+	  <DependentUpon>TeResourceHelper.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="TeStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>TeStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="TeTMStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>PublicResXFileCodeGenerator</Generator>
+	  <LastGenOutput>TeTMStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="RightArrow.cur" />
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Images\Back Translation\Go_to_Next_Unfinished_Paragraph.bmp" />
+	<None Include="Images\Back Translation\Go_to_Previous_Unfinished_Paragraph.bmp" />
+	<None Include="Images\Back Translation\Mark_as_Untranslated_Word.bmp" />
+	<None Include="Images\Back Translation\Mark_Paragraph_as_Consultant_Checked.bmp" />
+	<None Include="Images\Back Translation\Mark_Paragraph_as_Finished.bmp" />
+	<None Include="Images\Back Translation\Mark_Paragraph_as_Unfinished.bmp" />
+	<None Include="Images\Checking\Keyterm-Filtered.bmp" />
+	<None Include="Images\Checking\Keyterm-Ignored.bmp" />
+	<None Include="Images\Checking\Keyterm-Missing.bmp" />
+	<None Include="Images\Checking\Keyterm-Rendered-Auto.bmp" />
+	<None Include="Images\Checking\Keyterm-Rendered.bmp" />
+	<None Include="Images\DiffView\Next_Difference.bmp" />
+	<None Include="Images\DiffView\Previous_Difference.bmp" />
+	<None Include="Images\Edit\Go_to_First_Book.bmp" />
+	<None Include="Images\Edit\Go_to_First_Chapter.bmp" />
+	<None Include="Images\Edit\Go_to_First_Section.bmp" />
+	<None Include="Images\Edit\Go_to_Last_Book.bmp" />
+	<None Include="Images\Edit\Go_to_Last_Chapter.bmp" />
+	<None Include="Images\Edit\Go_to_Last_Section.bmp" />
+	<None Include="Images\Edit\Go_to_Next_Book.bmp" />
+	<None Include="Images\Edit\Go_to_Next_Chapter.bmp" />
+	<None Include="Images\Edit\Go_to_Next_Footnote.bmp" />
+	<None Include="Images\Edit\Go_to_Next_Section.bmp" />
+	<None Include="Images\Edit\Go_to_Previous_Book.bmp" />
+	<None Include="Images\Edit\Go_to_Previous_Chapter.bmp" />
+	<None Include="Images\Edit\Go_to_Previous_Footnote.bmp" />
+	<None Include="Images\Edit\Go_to_Previous_Section.bmp" />
+	<None Include="Images\Format\Delete_Footnote.bmp" />
+	<None Include="Images\Insert\Insert_Chapter_Number.bmp" />
+	<None Include="Images\Insert\Insert_Cross-reference_Footnote.bmp" />
+	<None Include="Images\Insert\Insert_Footnote.bmp" />
+	<None Include="Images\Insert\Insert_Scripture_Section.bmp" />
+	<None Include="Images\Insert\Insert_Verse_Number.bmp" />
+	<None Include="Images\Insert\Insert_Verse_Numbers_Mode.bmp" />
+	<None Include="Images\Navigation\ReceiveSync.bmp" />
+	<None Include="Images\Navigation\SendSync.bmp" />
+	<None Include="Images\response.bmp" />
+	<None Include="Images\Sidebar\Back Trans Drafting-Large.bmp" />
+	<None Include="Images\Sidebar\Back_Translation_Task %28Old%29.bmp" />
+	<None Include="Images\Sidebar\Back_Translation_Task.bmp" />
+	<None Include="Images\Sidebar\BTConsultantCheck-Large.bmp" />
+	<None Include="Images\Sidebar\BTConsultantCheck-Small.bmp" />
+	<None Include="Images\Sidebar\BTDraft-Large.bmp" />
+	<None Include="Images\Sidebar\BTDraft-Small.bmp" />
+	<None Include="Images\Sidebar\BTPrintLayout-Large.bmp" />
+	<None Include="Images\Sidebar\BTPrintLayout-Small.bmp" />
+	<None Include="Images\Sidebar\BTSimplePrintLayout-Large.bmp" />
+	<None Include="Images\Sidebar\BTSimplePrintLayout-Small.bmp" />
+	<None Include="Images\Sidebar\Checking_Tools_Task.bmp" />
+	<None Include="Images\Sidebar\CorrectionPrintLayout-Large.bmp" />
+	<None Include="Images\Sidebar\CorrectionPrintLayout-Small.bmp" />
+	<None Include="Images\Sidebar\Drafting Icon-Large.bmp" />
+	<None Include="Images\Sidebar\Drafting Icon-Small.bmp" />
+	<None Include="Images\Sidebar\Editorial Checks-Large.png" />
+	<None Include="Images\Sidebar\Editorial Checks-Small.png" />
+	<None Include="Images\Sidebar\FilterAdvanced-Large.bmp" />
+	<None Include="Images\Sidebar\FilterAdvanced-Small.bmp" />
+	<None Include="Images\Sidebar\FilterBasic-Large.bmp" />
+	<None Include="Images\Sidebar\FilterBasic-Small.bmp" />
+	<None Include="Images\Sidebar\FilterNo-Large.bmp" />
+	<None Include="Images\Sidebar\FilterNo-Small.bmp" />
+	<None Include="Images\Sidebar\FilterTab.bmp" />
+	<None Include="Images\Sidebar\FWKeyTerms-Large.bmp" />
+	<None Include="Images\Sidebar\FWKeyTerms-Small.bmp" />
+	<None Include="Images\Sidebar\PrintLayout-Large.bmp" />
+	<None Include="Images\Sidebar\PrintLayout-Small.bmp" />
+	<None Include="Images\Sidebar\PrintLayoutTwoColumn-Large.bmp" />
+	<None Include="Images\Sidebar\PrintLayoutTwoColumn-Small.bmp" />
+	<None Include="Images\Sidebar\Publishing_Task.bmp" />
+	<None Include="Images\Sidebar\Scripture_Task.bmp" />
+	<None Include="Images\Sidebar\Template - Magnifying Glass-Large.bmp" />
+	<None Include="Images\Sidebar\Template - Plain Page With Text-Large.bmp" />
+	<None Include="Images\Tools\Find Dictionary.ico" />
+	<None Include="Images\View\Filter_by_Book.bmp" />
+	<None Include="Images\View\No_Filter.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

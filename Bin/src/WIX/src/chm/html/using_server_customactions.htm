@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet type=text/css href=style.css" />
+<title>Windows Installer XML Standard CustomActions</title>
+</head>
+<body>
+<h1>Using the Server Custom Actions</h1>
+
+<p>
+The wix toolset contains a library of custom actions.  The centerpiece of this
+library is the server custom action set.  The server custom actions extend the
+set of resources that an MSI can install to include things such as web sites,
+file shares, user accounts, and many others.  These custom actions properly
+associate these resources with components, and follow all the rules to properly
+install, uninstall and rollback the installation or uninstallation of these
+resources as part of their associated components.  This document will outline
+their use with some examples.
+</p>
+
+<p>
+This document assumes that the reader has an understanding of MSI custom action
+types, and has read "WiX Overview" and "Writing in WiX".
+</p>
+
+<h2>Server Custom Action building blocks</h2>
+
+<p>
+With each release of the wix toolset, the files scasched.dll, scaexec.dll and
+sca.wixlib are released.  The two dll files are the custom action dlls which
+export the custom action entry points for all of the server custom actions.
+When you build an MSI that makes use of the server custom actions, they end
+up in the Binary table of the MSI.  The sca.wixlib contains a system of wix
+fragments that you can link against to ensure that all of the proper error
+messages, custom action records, and binary records get linked into your
+final MSI.
+</p>
+
+<p>
+The simplest way to incorporate the server custom actions into your MSIs is
+to copy the sca.wixlib and the two custom action dlls (scasched.dll and
+scaexec.dll) into a folder in your build environment.  It is not important
+where this directory is, it is only important that the wixlib and the dlls
+are in the same directory.  When you link your MSI using light.exe, you simply
+need to include the full path to sca.wixlib in the list of wixobjs and wixlibs
+you're linking.
+</p>
+
+<h2>Basic Example</h2>
+
+<p>
+First lets try an example that creates a user account when the MSI is installed.
+</p>
+
+<pre>
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+	&lt;Product Id='PutGuidHere' Name='TestUserProduct' Language='1033' Version='0.0.0.0'&gt;
+		&lt;Package Id='PUT-GUID-HERE' Description='Test User Package' InstallerVersion='200' Compressed='yes' /&gt;
+			&lt;Directory Id='TARGETDIR' Name='SourceDir'&gt;
+				&lt;Component Id='TestUserProductComponent' Guid='PutGuidHere'&gt;
+					&lt;User Id='TEST_USER1' Name='testName1' Password='pa$$word'/&gt;
+				&lt;/Component&gt;
+		&lt;/Directory&gt;
+
+		&lt;Feature Id='TestUserProductFeature' Title='Test User Product Feature' Level='1'&gt;
+			&lt;ComponentRef Id='TestUserProductComponent' /&gt;
+		&lt;/Feature&gt;
+	&lt;/Product&gt;
+&lt;/Wix&gt;
+</pre>
+
+<p>
+This is a simple example that will create a new user on the machine called "testName1"
+with the password "pa$$word".  To build the MSI from this wix authoring first put the
+above code in a file (remember to replace the "PUT-GUID-HERE" attributes with real GUIDs),
+run 'candle.exe yourfile.wxs', and then run 'light.exe –out yourfile.msi yourfile.wixout
+sca.wixlib' (replacing sca.wixlib with the full path to sca.wixlib).  Now use Orca to
+open up the resulting msi and take a look at the Error table, the CustomAction table,
+and the Binary table.  You will notice that all of the relevant data for managing users
+has been "linked" into the MSI.  This happened because you have done two key things.
+First, you made use of a &lt;User/&gt; element under a &lt;Component/&gt; element which indicates
+that a user is to be installed as part of the MSI package, and second, you linked with
+the sca.wixlib.  Compiler support, along with the system of fragments that exist in the
+sca.wixlib ensure that only the data associated with the elements you used in your wxs
+file are "linked" into the MSI.
+</p>
+
+<h2>The server custom action elements</h2>
+
+<p>
+In the previous example you learned that by using the &lt;User/&gt; element in your WiX authoring
+and then linking with the sca.wixlib that all of the relevant custom actions, error messages,
+and binary table rows were brought in automatically.  The wix compiler contains support for
+automatically referencing the appropriate symbols in the sca.wixlib when you make use of
+specific elements such as &lt;User/&gt;.  As stated in the introduction the server custom actions
+add the ability to install many new types of resources.  Each of these resource types has
+one or more elements that allow you to install them with your MSI package.  If you're using
+the sca.wixlib, the only things you need to know are the appropriate elements for the
+resources you want to install.  Here is a listing of the different resource types that the
+server custom actions are able to install and the elements that control their installation:
+
+<ul>
+<li>Web Sites - &lt;WebSite/&gt;</li>
+<li>Web Applications - &lt;WebApplication/&gt;</li>
+<li>Certificates - &lt;Certificate/&gt;</li>
+<li>SQL databases - &lt;SqlDatabase/&gt;</li>
+<li>SQL scripts - &lt;SqlScript/&gt;</li>
+<li>SQL strings - &lt;SqlString/&gt;</li>
+<li>Users - &lt;User/&gt;</li>
+<li>FileShares - &lt;FileShare/&gt;</li>
+<li>Perfmon Counter registration - &lt;PerfCounter/&gt;</li>
+</ul>
+</p>
+
+<p>
+By using the appropriate elements from this table in your wix authoring and by linking with
+sca.wixlib, you will ensure that you are properly using the wix server custom actions.
+</p>
+
+</body>
+</html>

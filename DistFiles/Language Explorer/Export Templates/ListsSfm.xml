@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="sf">
+	<FxtDocumentDescription dataLabel="Lists" formatLabel="SFM" defaultExtension="db" filter="Standard Format files (*.db)|*.db|All files (*.*)|*.*">
+Export the following subset of lists into a single SFM file: Grammatical Categories (POS), Anthropology Categories, Semantic Domains, People, Locations, Genres, Entry Types, Morpheme Types, Usages, and Academic Domains. Data in all checked analysis writing systems will be exported.
+	</FxtDocumentDescription>
+
+	<class name="LangProject">
+		<group objProperty="PartsOfSpeechOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="AnthroListOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="SemanticDomainListOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="PeopleOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="LocationsOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="GenreListOA">
+			<call name="CmPossibilityList"/>
+		</group>
+		<group objProperty="LexDbOA">
+			<group objProperty="ComplexEntryTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="VariantEntryTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="MorphTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="UsageTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+			<group objProperty="DomainTypesOA">
+				<call name="CmPossibilityList"/>
+			</group>
+		</group>
+	</class>
+
+	<class name="CmPossibilityList">
+		<element name="lna" progressIncrement="true">
+			<string simpleProperty="Name" ws="analysis"/>
+		</element>
+		<element name="lab">
+			<string simpleProperty="Abbreviation" ws="analysis"/>
+		</element>
+		<objVector objProperty="PossibilitiesOC"/>
+		<newLine/>
+		<newLine/>
+	</class>
+
+	<class name="CmPossibility">
+		<newLine/>
+		<multilingualStringElement name="n" simpleProperty="Name" ws="all analysis"/>
+		<multilingualStringElement name="a" simpleProperty="Abbreviation" ws="all analysis"/>
+		<multilingualStringElement name="d" simpleProperty="Description" ws="all analysis"/>
+		<objVector objProperty="SubPossibilitiesOC"/>
+	</class>
+
+	<class name="CmSemanticDomain">
+		<progress progressIncrement="true"/>
+		<multilingualStringElement name="a" simpleProperty="Abbreviation" ws="all analysis"/>
+		<multilingualStringElement name="n" simpleProperty="Name" ws="all analysis"/>
+		<multilingualStringElement name="d" simpleProperty="Description" ws="all analysis"/>
+		<objVector objProperty="QuestionsOC"/>
+		<newLine/>
+		<objVector objProperty="SubPossibilitiesOC"/>
+	</class>
+
+	<class name="CmDomainQ">
+		<multilingualStringElement name="q" simpleProperty="Question" ws="all analysis"/>
+		<multilingualStringElement name="w" simpleProperty="ExampleWords" ws="all analysis"/>
+		<multilingualStringElement name="s" simpleProperty="ExampleSentences" ws="all analysis"/>
+	</class>
+
+	<class name="PartOfSpeech">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="LexEntryType">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="MoMorphType">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="CmPerson">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="CmAnthroItem">
+		<call name="CmPossibility"/>
+	</class>
+
+	<class name="CmLocation">
+		<call name="CmPossibility"/>
+	</class>
+
+</template>

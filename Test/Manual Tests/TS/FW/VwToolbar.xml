@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="vwTb" num="2.3.5" abbr="vwTb" file="FW\VwToolbar.xml">
+ <title tag="vwTb">View-Toolbars Tests</title>
+ <index>
+<li>View: Toolbars</li>
+ </index>
+  <introduction>
+   <p>Brings up a cascading submenu listing the various toolbars in the system. Choosing items in this submenu toggles the various toolbars on and off. If a toolbar is currently being displayed, then its name in the submenu has a check beside it.
+ </p>
+  </introduction>
+  <context>
+<p> See spec at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-Toolbar" type="doc">Toolbars Overview</link> and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html" type="doc">Toolbars Details</link>.
+</p>
+<p>Use "View-Toolbars" as the first phrase in bug reports.</p>
+  </context>
+
+ <case id="vwTbStart" num="1.0" order="any">
+  <title tag="vwTbStart">Visual Inspection</title>
+  <context>
+<p>When the application is running</p>
+</context>
+
+  <step name="1.0" link="Bug">Bring up the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-Toolbar" type="doc">View-Toolbars Overview</link> specs to compare against the application menu.
+	<r>The toolbar list matchs those shown in the specs. Not all are used in every FW application.</r>
+	<p name="bug">View-Toolbars list is incomplete</p>
+	<p name="bug">View-Toolbars list names are wrong</p>
+  </step>
+
+ </case>
+
+ <case id="vwTbTst" num="2.0" order="any">
+  <title tag="vwTbTst">Toolbar Visibility</title>
+  <context>
+<p>For each toolbar item in the View-Toolbars submenu</p>
+</context>
+
+  <step name="2.1" link="Bug">When the toolbar item is unchecked, check it.
+	<r>
+<ul>
+<li>The toolbar appears.</li>
+<li>The toolbar submenu disappears.</li>
+<li>Toolbar does not cover up other parts of the window.</li>
+</ul>
+</r>
+	<p name="bug">View-Toolbars not displayed when checked</p>
+	<p name="bug">View-Toolbars submenu remains after action</p>
+	<p name="bug">View-Toolbars displays toolbar in wrong place</p>
+  </step>
+  <step name="2.2" link="Bug">When the toolbar item is checked, uncheck it.
+	<r>
+<ul>
+<li>The toolbar disappears.</li>
+<li>The toolbar submenu disappears.</li>
+<li>If the toolbar row is empty, it disappears.</li>
+</ul>
+</r>
+	<p name="bug">View-Toolbars not closed when unchecked</p>
+	<p name="bug">View-Toolbars submenu remains after action</p>
+	<p name="bug">View-Toolbars leaves empty toolbar row</p>
+  </step>
+
+<step name="2.3" link="Bug">Quit and restart application.
+<r>
+Last settings of the toolbars to show are remembered.
+</r>
+<p name="bug">View-Toolbars settings not remembered on re-launching application</p>
+</step>
+
+ </case>
+
+<update date="Apr-18-01" author="RickM">Put into XML format</update>
+<update date="Sep-26-01" author="MikeL">Added bugs, contexts, removed "should"s and refs to DN</update>
+<update date="May-24-02" author="JoelC">Added step 2.3</update>
+
+</test>

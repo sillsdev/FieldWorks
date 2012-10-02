@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="NAnt directory and tools properties" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	directories.include - Contains global directory properties for the NAnt builds.
+	2005.10.12 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Dependencies
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  In order to fully build wix, you must have the following Frameworks and SDKs installed:
+	* NAnt version 0.85 rc3 or higher
+	* .NET Framework 1.1 and SDK
+	* .NET Framework 2.0 (SDK is optional)
+	* PlatformSDK (version 3790.1830 or higher)
+	*   Core SDK
+	*   Web Workshop (IE) SDK
+	*   Internet Information Server (IIS) SDK
+	*   Microsoft Data Access Services (MDAC) SDK
+	*   Microsoft Windows Installer SDK
+	* One of the following Visual Studio 2005 Editions:
+	*   Visual C++ Express Edition
+	*   Professional or higher with Visual C++ installed
+	*   (To install Votive on Visual Studio 2005, you must have the Standard edition or higher)
+	* HTML Help SDK 1.4 or higher
+
+  To build Sconce and Votive, you must have the following SDKs installed:
+	* Visual Studio Partner Integration Program (VSIP) SDK 2003
+	* VSIP SDK 2003 Extras
+  -->
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Directories
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!--
+  This must be set to the root directory of the wix files. You can either pass it in via the
+  command line ("nant.exe -D:dir.root=path") or you can change the value here to an absolute path.
+  -->
+  <property name="dir.root" value="" overwrite="false" />
+  <if test="${string::get-length(string::trim(dir.root)) == 0 and environment::variable-exists('WIX20_PUBLIC')}">
+	<property name="dir.root" value="${environment::get-variable('WIX20_PUBLIC')}" overwrite="true" />
+  </if>
+  <echo level="Verbose" message="dir.root = ${dir.root}" />
+  <if test="${string::get-length(string::trim(dir.root)) == 0 or not directory::exists(dir.root)}">
+	<fail message="Please specify the value of dir.root to the absolute path of the wix files." />
+  </if>
+
+  <!-- Properties that can be set on the command line -->
+  <property name="flavor" value="debug" overwrite="false" />
+  <if test="${flavor != 'debug' and flavor != 'ship'}">
+	<fail message="Please specify either 'debug' or 'ship' for the flavor." />
+  </if>
+
+  <!-- Root directories -->
+  <property name="dir.buildroot" value="${dir.root}\Build" readonly="true" />
+  <property name="dir.logroot" value="${dir.root}\Logs" readonly="true" />
+  <property name="dir.srcroot" value="${dir.root}\src" readonly="true" />
+  <property name="dir.targetroot" value="${dir.root}\Release" readonly="true" />
+
+  <!-- SDK directories: first check for 2003R2 SDK, then try 2003SP1 -->
+  <readregistry property="dir.platformsdk" key="SOFTWARE\Microsoft\MicrosoftSDK\InstalledSDKs\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1\Install Dir" hive="LocalMachine" failonerror="false" />
+  <if test="${not property::exists('dir.platformsdk') or not directory::exists(dir.platformsdk)}">
+	<readregistry property="dir.platformsdk" key="SOFTWARE\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3\Install Dir" hive="LocalMachine" failonerror="false" />
+	<if test="${not property::exists('dir.platformsdk') or not directory::exists(dir.platformsdk)}">
+	  <fail message="Please install the PlatformSDK version 3790.1830 or higher." />
+	</if>
+  </if>
+
+  <property name="dir.vc8" value="${environment::get-variable('VS80COMNTOOLS')}..\..\VC" />
+  <if test="${not property::exists('dir.vc8') or not directory::exists(dir.vc8)}">
+	<fail message="Please install one of the editions of Visual C++ 2005." />
+  </if>
+
+  <readregistry property="dir.vsip" key="SOFTWARE\Microsoft\VisualStudio\VSIP\7.1\InstallDir" hive="LocalMachine" failonerror="false" />
+  <property name="vsip.installed" value="${property::exists('dir.vsip') and directory::exists(dir.vsip)}" readonly="true" />
+  <if test="${not vsip.installed}">
+	<echo level="Warning" message="Visual Studio 2003 VSIP SDK not detected; Sconce and Votive will not be built." />
+  </if>
+
+  <echo level="Verbose" message="PlatformSDK directory (dir.platformsdk) = ${dir.platformsdk}" />
+  <echo level="Verbose" message="VC8 directory (dir.vc8) = ${dir.vc8}" />
+  <if test="${property::exists('dir.vsip')}">
+	<echo level="Verbose" message="VSIP SDK 2003 directory (dir.vsip) = ${dir.vsip}" />
+  </if>
+
+  <!-- Library directories -->
+  <property name="dir.platformsdk.lib.x86" value="${path::combine(dir.platformsdk, 'Lib')}" readonly="true" />
+  <property name="dir.vc8.lib.x86" value="${path::combine(dir.vc8, 'lib')}" readonly="true" />
+
+  <!-- Include directories -->
+  <property name="dir.dutil.inc" value="${dir.root}\src\dutil" readonly="true" />
+  <property name="dir.platformsdk.inc" value="${path::combine(dir.platformsdk, 'Include')}" readonly="true" />
+  <property name="dir.crt.inc" value="${dir.platformsdk.inc}\crt" readonly="true" />
+  <property name="dir.vc8.inc" value="${path::combine(dir.vc8, 'include')}" readonly="true" />
+
+  <!-- The directory that contains the NAnt assemblies -->
+  <property name="dir.nant" value="${nant::get-base-directory()}" readonly="true" />
+  <echo level="Verbose" message="NAnt directory (dir.nant) = ${dir.nant}" />
+  <if test="${string::get-length(string::trim(dir.nant)) == 0 or not directory::exists(dir.nant)}">
+	<fail message="Please specify the value of dir.nant to an absolute path of where the NAnt assemblies reside." />
+  </if>
+
+  <!-- Platform and flavor properties -->
+  <property name="platform" value="x86" readonly="true" />
+  <property name="x86" value="true" readonly="true" />
+  <property name="debug" value="${flavor == 'debug'}" readonly="true" />
+  <property name="ship" value="${flavor == 'ship'}" readonly="true" />
+
+  <if test="${x86}">
+	<property name="dir.platformsdk.lib" value="${dir.platformsdk.lib.x86}" readonly="true" />
+	<property name="dir.vc8.lib" value="${dir.vc8.lib.x86}" readonly="true" />
+  </if>
+
+  <!-- Directories derived from the current platform and flavor -->
+  <property name="dir.build.project" value="${dir.buildroot}\${flavor}" readonly="true" />
+  <property name="dir.log.project" value="${dir.logroot}\${flavor}" readonly="true" />
+  <property name="dir.target.project" value="${dir.targetroot}\${flavor}" readonly="true" />
+  <property name="dir.build.dutil" value="${dir.build.project}" readonly="true" />
+  <property name="dir.target.dutil" value="${dir.target.project}" readonly="true" />
+
+  <!-- Directories related to VSIP -->
+  <if test="${vsip.installed}">
+	<property name="dir.vsip.lib.x86" value="${path::combine(dir.vsip, 'EnvSDK\common\lib')}" readonly="true" if="${property::exists('dir.vsip')}" />
+	<if test="${x86}">
+		<property name="dir.vsip.lib" value="${dir.vsip.lib.x86}" readonly="true" if="${property::exists('dir.vsip')}" />
+	</if>
+	<property name="dir.vsip.inc" value="${path::combine(dir.vsip, 'EnvSDK\common\inc')}" readonly="true" if="${property::exists('dir.vsip')}" />
+	<!-- The path to the Visual Studio interop assemblies -->
+	<property name="dir.vsip.interopassemblies" value="${path::combine(dir.vsip, 'EnvSDK\common\VSIA')}" readonly="true" if="${property::exists('dir.vsip')}" />
+  </if>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Files
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <property name="file.target.dutil" value="${dir.target.dutil}\dutil.lib" readonly="true" />
+  <property name="file.publickey_wix" value="${dir.root}\bin\wix_sf.snk" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Tools
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Tool executables -->
+  <property name="tool.ctc" value="${path::combine(dir.vsip, 'EnvSDK\tools\bin\x86\ctc.exe')}" if="${property::exists('dir.vsip')}" />
+  <if test="${property::exists('dir.vsip') and not file::exists(tool.ctc)}">
+	<echo level="Verbose" message="Cannot find the ctc.exe tool in ${tool.ctc}" />
+	<fail message="Plese install the VSIP 2003 SDK (or change the path of the tool.ctc variable)." />
+  </if>
+  <if test="${property::exists('tool.ctc')}">
+	<echo level="Verbose" message="ctc.exe (tool.ctc) found at ${tool.ctc}" />
+  </if>
+
+  <property name="tool.hhc" value="${path::combine(environment::get-folder-path('ProgramFiles'), 'HTML Help Workshop\hhc.exe')}" />
+  <if test="${not file::exists(tool.hhc)}">
+	<echo level="Verbose" message="Cannot find the hhc.exe tool in ${tool.hhc}" />
+	<fail message="Please install the HTML Help SDK 1.4 or higher (or change the path of the tool.hhc variable)." />
+  </if>
+  <echo level="Verbose" message="hhc.exe (tool.hhc) found at ${tool.hhc}" />
+
+  <property name="tool.mergemod.dll" value="${path::combine(dir.platformsdk, 'Bin\MergeMod.dll')}" />
+  <if test="${not file::exists(tool.mergemod.dll)}">
+	<echo level="Verbose" message="Cannot find the MergeMod.dll in ${tool.mergemod.dll}" />
+	<fail message="Please install the MSI SDK as part of the Platform SDK installation." />
+  </if>
+
+  <!-- This prevents this file from being included more than once (by convention, not by syntax) -->
+  <property name="directories.properties.defined" value="true" readonly="true" />
+</project>

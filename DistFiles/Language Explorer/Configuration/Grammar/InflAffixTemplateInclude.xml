@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+<!--<include path="../CommonDataTreeInclude.xml"/>-->
+<!--
+  ===========================================================
+  Commands
+  ===========================================================
+  -->
+  <commands>
+<!--
+	Help - show help information
+	-->
+	<command id="CmdInflAffixTemplate-Help" label="Help..." icon="Help" message="InflAffixTemplateHelp"/>
+<!--
+	Parts of Speech
+	-->
+	<command id="CmdInflAffixTemplate-Insert-Slot-Before" label="Insert Slot before XXX" message="InflTemplateInsertSlotBefore">
+	  <parameters field="Slots" className="MoInflAffixTemplate"/>
+	</command>
+	<command id="CmdInflAffixTemplate-Insert-Slot-After" label="Insert Slot after XXX" message="InflTemplateInsertSlotAfter">
+	  <parameters field="Slots" className="MoInflAffixTemplate"/>
+	</command>
+	<command id="CmdInflAffixTemplate-Move-Slot-Left" label="Move XXX back one Slot" message="InflTemplateMoveSlotLeft" icon="Left">
+	  <parameters field="Slots" className="MoInflAffixTemplate"/>
+	</command>
+	<command id="CmdInflAffixTemplate-Move-Slot-Right" label="Move XXX forward one Slot" message="InflTemplateMoveSlotRight" icon="Right">
+	  <parameters field="Slots" className="MoInflAffixTemplate"/>
+	</command>
+	<command id="CmdInflAffixTemplate-Remove-Slot" label="Remove XXX Slot" message="InflTemplateRemoveSlot" icon="Remove">
+	  <parameters field="Slots" className="MoInflAffixTemplate"/>
+	</command>
+	<command id="CmdInflAffixTemplate-Toggle-Slot-Optionality" label="Change Optionality of XXX Slot" message="InflTemplateToggleSlotOptionality">
+	  <parameters field="Slots" className="MoInflAffixTemplate"/>
+	</command>
+	<command id="CmdInflAffixTemplate-Add-InflAffixMsa" label="Add inflectional affix(es) to XXX" message="InflTemplateAddInflAffixMsa" guicontrol="InflAffixMsaFlatList">
+	  <parameters field="Slots" className="MoInflAffixTemplate"/>
+<!-- this needs to be changed when the model changes -->
+	</command>
+	<command id="CmdInflAffixTemplate-Remove-InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
+	  <parameters field="AffixCategory" className="MoInflAffMsa"/>
+<!-- this needs to be changed when the model changes -->
+	</command>
+  </commands>
+<!--
+  ===========================================================
+  Context Menus
+  ===========================================================
+  -->
+  <contextMenus>
+	<!--<include query="window/contextMenus/*"/>-->
+	<menu id="mnuInflAffixTemplate-Help">
+	  <item command="CmdInflAffixTemplate-Help"/>
+	</menu>
+<!--
+	Inflectional Affix Template
+	-->
+	<menu id="mnuInflAffixTemplate-TemplateTable">
+	  <item command="CmdInflAffixTemplate-Add-InflAffixMsa"/>
+	  <item command="CmdInflAffixTemplate-Insert-Slot-Before"/>
+	  <item command="CmdInflAffixTemplate-Insert-Slot-After"/>
+	  <item command="CmdInflAffixTemplate-Move-Slot-Left"/>
+	  <item command="CmdInflAffixTemplate-Move-Slot-Right"/>
+	  <item command="CmdInflAffixTemplate-Toggle-Slot-Optionality"/>
+	  <item command="CmdInflAffixTemplate-Remove-Slot"/>
+	  <item command="CmdInflAffixTemplate-Remove-InflAffixMsa"/>
+	  <item command="CmdEntryJumpToDefault"/>
+	  <item command="CmdInflAffixTemplate-Help"/>
+	</menu>
+<!--
+	<menu id="mnuInflAffixTemplate-POS-AffixTemplates">
+	  <item command="CmdInflAffixTemplate-Insert-POS-AffixTemplate"/>
+	  <item command="CmdInflAffixTemplate-Help"/>
+	</menu>
+	<menu id="mnuInflAffixTemplate-POS-InflectionClass-Subclasses">
+	  <item command="CmdInflAffixTemplate-Insert-POS-InflectionClass-Subclasses"/>
+	  <item command="CmdInflAffixTemplate-Help"/>
+	</menu>
+	<menu id="mnuInflAffixTemplate-POS-InflectionClasses">
+	  <item command="CmdInflAffixTemplate-Insert-POS-InflectionClasses"/>
+	  <item command="CmdInflAffixTemplate-Help"/>
+	</menu>
+	<menu id="mnuInflAffixTemplate-POS-SubPossibilities">
+	  <item command="CmdInflAffixTemplate-Insert-POS-SubPossibilities"/>
+	  <item command="CmdInflAffixTemplate-Help"/>
+	</menu>
+	-->
+  </contextMenus>
+</window>

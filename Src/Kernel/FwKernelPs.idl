@@ -1,0 +1,29 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: TextServPs.idl
+Responsibility: Jeff Gayle
+Last reviewed:
+
+	Defines Text Services Interfaces for proxy / stub generation.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+import "oaidl.idl";
+import "ocidl.idl";
+
+#include "Common.idh"
+
+#define NO_COCLASSES 1
+
+#include "FwKernel.idh"
+#include "TextServ.idh"
+
+#include "BackupDelegates.idh"	// for DbServices DLL
+#include "DbBackup.idh"
+#include "DbDisconnect.idh"
+#include "RemoteWarn.idh"
+#include "DbAccess.idh"		// for DbAccess DLL
+#include "Render.idh"		// for Language DLL
+#include "Language.idh"

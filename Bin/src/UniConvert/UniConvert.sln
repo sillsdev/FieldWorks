@@ -1,0 +1,40 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniConvert", "UniConvert.vcproj", "{391EE900-3B49-44EE-8960-F45DCD294C3B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3788F3C1-EE34-4865-BD03-C5E5A81B6A85} = {3788F3C1-EE34-4865-BD03-C5E5A81B6A85}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConvertString", "ConvertString\ConvertString.vcproj", "{3788F3C1-EE34-4865-BD03-C5E5A81B6A85}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccProjectUniqueName0 = UniConvert.vcproj
+		SccProjectName0 = \u0022$/Bin/src/UniConvert\u0022,\u0020QLBAAAAA
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		SccProjectUniqueName1 = ConvertString\\ConvertString.vcproj
+		SccProjectName1 = \u0022$/Bin/src/UniConvert/ConvertString\u0022,\u0020VVFAAAAA
+		SccLocalPath1 = ConvertString
+		SccProvider1 = MSSCCI:Perforce\u0020SCM
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{391EE900-3B49-44EE-8960-F45DCD294C3B}.Debug.ActiveCfg = Debug|Win32
+		{391EE900-3B49-44EE-8960-F45DCD294C3B}.Debug.Build.0 = Debug|Win32
+		{391EE900-3B49-44EE-8960-F45DCD294C3B}.Release.ActiveCfg = Release|Win32
+		{391EE900-3B49-44EE-8960-F45DCD294C3B}.Release.Build.0 = Release|Win32
+		{3788F3C1-EE34-4865-BD03-C5E5A81B6A85}.Debug.ActiveCfg = Debug|Win32
+		{3788F3C1-EE34-4865-BD03-C5E5A81B6A85}.Release.ActiveCfg = Release|Win32
+		{3788F3C1-EE34-4865-BD03-C5E5A81B6A85}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

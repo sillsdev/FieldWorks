@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Edit various lists. -->
+
+<accil on-fail="assert">
+ <bug id="LT-5771"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application run="ok" args="-db $projectName" on-fail="assert">
+
+  <click select="menubar/view/lists/lexical-relations"/>
+
+<!--   Create Lexical Relations    -->
+
+  <click select="toolbar/new-lexical-relation"/>
+
+  <model select="list[@role='view']">
+
+  <var id="RefType1" set="Sense tree e.g., Part-Whole"/>
+  <var id="ind" set="*"/>
+  <var id="fld" set="Name"/>
+  <var id="row" set="1"/>
+  <click select="item/multi/text"/>
+	<insert>$RefType1</insert><insert>{TAB}</insert>
+	<insert>RM-st-pw</insert><insert>{TAB}</insert>
+	<insert>{s 3}</insert><insert>{TAB}</insert><!-- Sense Tree (Part-Whole) -->
+	<insert>bll</insert><insert>{TAB}</insert>
+	<insert>Description of Rick $RefType1</insert>
+
+<!--   -->
+  <var id="RefType2" set="Sense collection e.g., Synonym"/>
+  <click select="//toolbar/new-lexical-relation"/>
+  <click select="item/multi/text"/>
+	<insert>$RefType2</insert><insert>{TAB}</insert>
+	<insert>RM-syn</insert><insert>{TAB}</insert>
+	<insert>{TAB}</insert><!-- Sense collection is default-->
+	<insert>bll</insert><insert>{TAB}</insert>
+	<insert>Description of Rick $RefType2</insert>
+
+<!--  -->
+  <var id="RefType3" set="Sense pair e.g., Antonym"/>
+  <click select="//toolbar/new-lexical-relation"/>
+  <click select="item/multi/text"/>
+	<insert>$RefType3</insert><insert>{TAB}</insert>
+	<insert>RM-sp-ant</insert><insert>{TAB}</insert>
+	<insert>s</insert><insert>{TAB}</insert><!-- Sense pair (Antonym) -->
+	<insert>bll</insert><insert>{TAB}</insert>
+	<insert>Description of Rick $RefType3</insert>
+
+<!--   -->
+  <var id="RefType4" set="Entry pair (Cross Reference)"/>
+  <click select="//toolbar/new-lexical-relation"/>
+  <click select="item/multi/text"/>
+	<insert>$RefType4</insert><insert>{TAB}</insert>
+	<insert>RM-ep-cross</insert><insert>{TAB}</insert>
+	<insert>{e 2}</insert><insert>{TAB}</insert><!-- Entry pair-->
+	<insert>bll</insert><insert>{TAB}</insert>
+	<insert>Description of Rick $RefType4</insert>
+
+<!--   -->
+  <var id="RefType5" set="Entry tree (Cross Reference)"/>
+  <click select="//toolbar/new-lexical-relation"/>
+  <click select="item/multi/text"/>
+	<insert>$RefType5</insert><insert>{TAB}</insert>
+	<insert>RM-et-cross</insert><insert>{TAB}</insert>
+	<insert>{e 4}</insert><insert>{TAB}</insert><!-- Entry Tree -->
+	<insert>bll</insert><insert>{TAB}</insert>
+	<insert>Description of Rick $RefType5</insert>
+
+<!--   -->
+  <var id="RefType6" set="Entry sequence or scale (Cross Reference)"/>
+  <click select="//toolbar/new-lexical-relation"/>
+  <click select="item/multi/text"/>
+	<insert>$RefType6</insert><insert>{TAB}</insert>
+	<insert>RM-ess-cross</insert><insert>{TAB}</insert>
+	<insert>{s 4}</insert><insert>{TAB}</insert><!-- Entry sequence or scale -->
+	<insert>bll</insert><insert>{TAB}</insert>
+	<insert>Description of Rick $RefType6</insert><insert>{TAB}</insert>
+
+ <!--   Now Delete    -->
+
+  <var id="row" set="*"/>
+  <click select="tree" path="rexp#RM-st-pw"/>
+  <click select="//toolbar/delete"/>
+	<on-dialog title="Delete Lexical Relation" on-fail="assert">
+		<insert>d</insert>
+	</on-dialog>
+
+  <var id="row" set="*"/>
+  <click select="tree" path="rexp#RM-syn"/>
+  <click select="//toolbar/delete"/>
+	<on-dialog title="Delete Lexical Relation" on-fail="assert">
+		<insert>d</insert>
+	</on-dialog>
+
+  <var id="row" set="*"/>
+  <click select="tree" path="rexp#RM-sp-ant"/>
+  <click select="//toolbar/delete"/>
+	<on-dialog title="Delete Lexical Relation" on-fail="assert">
+		<insert>d</insert>
+	</on-dialog>
+
+  <var id="row" set="*"/>
+  <click select="tree" path="rexp#RM-ep-cross"/>
+  <!--click select="tree" path="RM-ep-cross - $RefType4"/-->
+  <click select="//toolbar/delete"/>
+	<on-dialog title="Delete Lexical Relation" on-fail="assert">
+		<insert>d</insert>
+	</on-dialog>
+
+  <var id="row" set="*"/>
+  <click select="tree" path="rexp#RM-et-cross"/>
+  <click select="//toolbar/delete"/>
+	<on-dialog title="Delete Lexical Relation" on-fail="assert">
+		<insert>d</insert>
+	</on-dialog>
+
+  <var id="row" set="*"/>
+  <click select="tree" path="rexp#RM-ess-cross"/>
+  <click select="//toolbar/delete"/>
+	<on-dialog title="Delete Lexical Relation" on-fail="assert">
+		<insert>d</insert>
+	</on-dialog>
+
+  </model>
+
+ </on-application>
+</accil>

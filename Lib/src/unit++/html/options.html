@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>options_utils::optmap& unitpp::options</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2><!1><A HREF="optmap.html">options_utils::optmap</A>&amp; <A HREF="#DOC.DOCU">unitpp::options</A></H2><H2>()</H2><BLOCKQUOTE> The singleton instance of the option handler of main.</BLOCKQUOTE>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+The singleton instance of the option handler of main.
+
+<P>This allows a test to add its own flags to the resulting test program, in
+the following way.
+
+<P><TT>bool&nbsp;x_flg&nbsp;=&nbsp;false;</TT>
+<TT>unitpp::options().add(&quot;x&quot;,&nbsp;new&nbsp;options_utils::opt_flag(x_flg));</TT>
+
+<P>If a -x is now given to the resulting test it will set the <TT>x_flg</TT>
+variable;</BLOCKQUOTE>
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>RemoteFileCache</name>
+	</assembly>
+	<members>
+		<member name="T:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Accesses a remote file cache
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:RemoteCacheManager"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.m_fDisposed">
+			<summary></summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.Finalize">
+			------------------------------------------------------------------------------------
+			<summary>
+			Releases unmanaged resources and performs other cleanup operations before the
+			<see cref="T:SIL.FieldWorks.Tools.RemoteCacheManager"/> is reclaimed by garbage
+			collection.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.Dispose">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs application-defined tasks associated with freeing, releasing, or resetting
+			unmanaged resources.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.Dispose(System.Boolean)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Executes in two distinct scenarios.
+			1. If disposing is true, the method has been called directly
+			or indirectly by a user's code via the Dispose method.
+			Both managed and unmanaged resources can be disposed.
+			2. If disposing is false, the method has been called by the
+			runtime from inside the finalizer and you should not reference (access)
+			other managed objects, as they already have been garbage collected.
+			Only unmanaged resources can be disposed.
+			</summary>
+			<param name="disposing">if set to <c>true</c> this method is called from the
+			Dispose() method, if set to <c>false</c> it's called from finalizer.</param>
+			<remarks>
+			If any exceptions are thrown, that is fine.
+			If the method is being done in a finalizer, it will be ignored.
+			If it is thrown by client code calling Dispose,
+			it needs to be handled by fixing the bug.
+			If subclasses override this method, they should call the base implementation.
+			</remarks>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.Close">
+			------------------------------------------------------------------------------------
+			<summary>
+			Closes this instance.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.IsCached(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines whether the specified files are cached.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<returns>
+				<c>true</c> if the specified files have changed or if they were never
+			cached before; otherwise, <c>false</c>.
+			</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.CacheFile(System.String,System.IO.FileStream[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Caches the output file that is the output of the given input files with parameter.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<param name="outFileStreams">The output file streams.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.GetCachedFiles(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets a cached file.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<returns>The filenames of the cached files, or <c>null</c> if file is not cached.
+			</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.FileCache.RemoteCacheManager.CacheManager">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the cache manager.
+			</summary>
+			<value>The cache manager.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.FileCache.RemoteCachedFile">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Extends the regular cached file by a file stream that allows copying the file over the
+			network.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.FileCache.RemoteCachedFile.m_stream">
+			<summary>File stream for remote file cache</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCachedFile.#ctor(System.String,System.String,System.IO.FileStream)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:CachedFile"/> class.
+			</summary>
+			<param name="originalName">Name of the original.</param>
+			<param name="cachedFile">The cached file.</param>
+			<param name="stream">The stream.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileCache.RemoteCachedFile.CopyTo(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copies cached file to specified directory and gives it the original name.
+			</summary>
+			<param name="dir">The target directory.</param>
+			------------------------------------------------------------------------------------
+		</member>
+	</members>
+</doc>

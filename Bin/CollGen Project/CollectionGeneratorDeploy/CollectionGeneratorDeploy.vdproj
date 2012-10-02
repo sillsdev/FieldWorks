@@ -1,0 +1,1691 @@
+"DeployProject"
+{
+"VSVersion" = "3:700"
+"ProjectType" = "8:{5443560c-dbb4-11d2-8724-00a0c9a8b90c}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:Collection Generator"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_0E9BA18CC51F4F19B1FEAAF72C646A54"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\COLLGENDEMO.CSPROJ.USER"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_102ED5EB404145EC996E2D3844B3361A"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\COLLECTIONGENERATORDEPLOY\\COLLECTIONGENERATORDEPLOY.VDPROJ"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_1CE667F1335E4FB5B2F0C96631EAD7D8"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\APP.ICO"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_239DD84EFF89451F9DF342DFBA9EB4D0"
+		"OwnerKey" = "8:_6DC54EDA0C0B4D999B65AECC521503B2"
+		"MsmSig" = "8:mondo.E4183BB4_18A8_11D5_A549_0090278A1BB8"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_239DD84EFF89451F9DF342DFBA9EB4D0"
+		"OwnerKey" = "8:_EF89EBC126EE4ED2905F63178034921A"
+		"MsmSig" = "8:mondo.E4183BB4_18A8_11D5_A549_0090278A1BB8"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_239DD84EFF89451F9DF342DFBA9EB4D0"
+		"OwnerKey" = "8:_794C3969E97948A2B1739445B762D941"
+		"MsmSig" = "8:mondo.E4183BB4_18A8_11D5_A549_0090278A1BB8"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_245D76761BE44855A0BEE29FE9328CAE"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\CUSTOMER.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_3BB2A5B82A3C4AD288C1C1B719E48013"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\ASSEMBLYINFO.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_3C96F303CEAD49AC834C75C4D1FB6B37"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\ASSEMBLYINFO.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_3CA749C1603A424882CBEB4A9224E2EF"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\TYPEDCOLLECTIONGENERATOR.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_47FC8F6865364DD792164B81C3CF04A3"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\COLLGENDEMO.SLN"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_568CED3087A54C77BDF608DEDC713602"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\RUN.BAT"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_596CEC11AE9044139A66587F38BD4D6E"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\COLLECTIONGENERATOR.SUO"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_605F95A3C7D04EA9803E4E2B86977FFD"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\COLLGEN.PDB"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_6A78CDAE3F1C40739E80E4D162D99862"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\EXPLANATION.HTM"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_6DC54EDA0C0B4D999B65AECC521503B2"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:collectiongeneratorc:\\collectiongenerator\\bin\\debug\\collectiongenerator.exe"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_7109769217CE4E108E068EB866847378"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\DUMMYCODE.HTM"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_7556951C5DC44F6CADD0DBA1875C577D"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\CLIENT.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_775F0B67765C4DC89A852CADFF25FB6B"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\COLLECTIONGENERATOR.CSPROJ"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_78E55D2F330E4139947119882B288B2D"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\COLLECTIONGENERATOR.SLN"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_794C3969E97948A2B1739445B762D941"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:collgenc:\\collectiongenerator\\collgen.exe"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_99F8706C85104D9095C9F8CD3F6C4914"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\TYPEDCOLLECTIONDIALOG.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_B7868EA9793A4F83A910312B224C26F9"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\COLLGEN.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_BE767DDDD43D44DD92526477E8548FCA"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\COLLGENDEMO.SUO"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_CB2DEF8B9F6242DBA26CB1E324A56914"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\COLLGENDEMO.CSPROJ"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_D56B005E11434F8894E3828C0C211EAB"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\CLIENT.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_D7DCBA309BD54D5D872CC432B425B318"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGEN.GIF"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_DBEFD2A678404FF389920DF2AA315CBC"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\WORK PROJECTS\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\COLLGENDEMO\\CUSTOMERCOLLECTION.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E94F9EC2361942BF91E35854EE5D737F"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\TYPEDCOLLECTIONDIALOG.RESX"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_EF89EBC126EE4ED2905F63178034921A"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:cgc:\\collectiongenerator\\cg.exe"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_EF95DA893F494DF8B87C7643DC65C153"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\HELP.HTM"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F0B2D95B02A545BFBE8F73EF67653B04"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\CUSTOMER.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F54D70DE392042479A4B242B04D465B9"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\BIN\\DEBUG\\HELP\\CUSTOMERCOLLECTION.CS"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F5FE944EBDDA45AFA6DA6408B78E215B"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:C:\\COLLECTIONGENERATOR\\COLLECTIONGENERATOR.CSPROJ.USER"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Release\\Setup.msi"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:2"
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:Release\\Setup.msi"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:2"
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"Feature"
+		{
+		}
+		"File"
+		{
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_0E9BA18CC51F4F19B1FEAAF72C646A54"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\CollGenDemo.csproj.user"
+			"TargetName" = "8:CollGenDemo.csproj.user"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_102ED5EB404145EC996E2D3844B3361A"
+			{
+			"SourcePath" = "8:CollectionGeneratorDeploy.vdproj"
+			"TargetName" = "8:CollectionGeneratorDeploy.vdproj"
+			"Tag" = "8:"
+			"Folder" = "8:_41703BA1D54A45FE88BD115D15658097"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_1CE667F1335E4FB5B2F0C96631EAD7D8"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\App.ico"
+			"TargetName" = "8:App.ico"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_245D76761BE44855A0BEE29FE9328CAE"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\Customer.cs"
+			"TargetName" = "8:Customer.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_3BB2A5B82A3C4AD288C1C1B719E48013"
+			{
+			"SourcePath" = "8:..\\AssemblyInfo.cs"
+			"TargetName" = "8:AssemblyInfo.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_3C96F303CEAD49AC834C75C4D1FB6B37"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\AssemblyInfo.cs"
+			"TargetName" = "8:AssemblyInfo.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_3CA749C1603A424882CBEB4A9224E2EF"
+			{
+			"SourcePath" = "8:..\\TypedCollectionGenerator.cs"
+			"TargetName" = "8:TypedCollectionGenerator.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_47FC8F6865364DD792164B81C3CF04A3"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\CollGenDemo.sln"
+			"TargetName" = "8:CollGenDemo.sln"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_568CED3087A54C77BDF608DEDC713602"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\run.bat"
+			"TargetName" = "8:run.bat"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_596CEC11AE9044139A66587F38BD4D6E"
+			{
+			"SourcePath" = "8:..\\CollectionGenerator.suo"
+			"TargetName" = "8:CollectionGenerator.suo"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_605F95A3C7D04EA9803E4E2B86977FFD"
+			{
+			"SourcePath" = "8:..\\collGen.pdb"
+			"TargetName" = "8:collGen.pdb"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_6A78CDAE3F1C40739E80E4D162D99862"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\Explanation.htm"
+			"TargetName" = "8:Explanation.htm"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{C7BF5952-4B9D-11D3-8E24-00C04F6837D0}:_6DC54EDA0C0B4D999B65AECC521503B2"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:CollectionGenerator, Version=1.0.775.238, Culture=neutral"
+				"ScatterAssemblies"
+				{
+					"_6DC54EDA0C0B4D999B65AECC521503B2"
+					{
+					"Name" = "8:CollectionGenerator.exe"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\bin\\Debug\\CollectionGenerator.exe"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_7C6FD20DDB5D4224A0F6AB8F9F68F63B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_7109769217CE4E108E068EB866847378"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\DummyCode.htm"
+			"TargetName" = "8:DummyCode.htm"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_7556951C5DC44F6CADD0DBA1875C577D"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\Client.cs"
+			"TargetName" = "8:Client.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_775F0B67765C4DC89A852CADFF25FB6B"
+			{
+			"SourcePath" = "8:..\\CollectionGenerator.csproj"
+			"TargetName" = "8:CollectionGenerator.csproj"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_78E55D2F330E4139947119882B288B2D"
+			{
+			"SourcePath" = "8:..\\CollectionGenerator.sln"
+			"TargetName" = "8:CollectionGenerator.sln"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{C7BF5952-4B9D-11D3-8E24-00C04F6837D0}:_794C3969E97948A2B1739445B762D941"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:collGen, Version=0.0.0.0, Culture=neutral"
+				"ScatterAssemblies"
+				{
+					"_794C3969E97948A2B1739445B762D941"
+					{
+					"Name" = "8:collGen.exe"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\collGen.exe"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_99F8706C85104D9095C9F8CD3F6C4914"
+			{
+			"SourcePath" = "8:..\\TypedCollectionDialog.cs"
+			"TargetName" = "8:TypedCollectionDialog.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_B7868EA9793A4F83A910312B224C26F9"
+			{
+			"SourcePath" = "8:..\\CollGen.cs"
+			"TargetName" = "8:CollGen.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_BE767DDDD43D44DD92526477E8548FCA"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\CollGenDemo.suo"
+			"TargetName" = "8:CollGenDemo.suo"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_CB2DEF8B9F6242DBA26CB1E324A56914"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\CollGenDemo.csproj"
+			"TargetName" = "8:CollGenDemo.csproj"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_D56B005E11434F8894E3828C0C211EAB"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\client.cs"
+			"TargetName" = "8:Client.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_D7DCBA309BD54D5D872CC432B425B318"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGen.gif"
+			"TargetName" = "8:CollGen.gif"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_DBEFD2A678404FF389920DF2AA315CBC"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CollGenDemo\\CustomerCollection.cs"
+			"TargetName" = "8:CustomerCollection.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_E94F9EC2361942BF91E35854EE5D737F"
+			{
+			"SourcePath" = "8:..\\TypedCollectionDialog.resx"
+			"TargetName" = "8:TypedCollectionDialog.resx"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{C7BF5952-4B9D-11D3-8E24-00C04F6837D0}:_EF89EBC126EE4ED2905F63178034921A"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:cg, Version=1.0.634.29546, Culture=neutral"
+				"ScatterAssemblies"
+				{
+					"_EF89EBC126EE4ED2905F63178034921A"
+					{
+					"Name" = "8:cg.exe"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\cg.exe"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_EF95DA893F494DF8B87C7643DC65C153"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\Help.htm"
+			"TargetName" = "8:Help.htm"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_F0B2D95B02A545BFBE8F73EF67653B04"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\Customer.cs"
+			"TargetName" = "8:Customer.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_F54D70DE392042479A4B242B04D465B9"
+			{
+			"SourcePath" = "8:..\\bin\\Debug\\Help\\CustomerCollection.cs"
+			"TargetName" = "8:CustomerCollection.cs"
+			"Tag" = "8:"
+			"Folder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{54DA9790-1474-11D3-8E00-00C04F6837D0}:_F5FE944EBDDA45AFA6DA6408B78E215B"
+			{
+			"SourcePath" = "8:..\\CollectionGenerator.csproj.user"
+			"TargetName" = "8:CollectionGenerator.csproj.user"
+			"Tag" = "8:"
+			"Folder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{777C097F-0ED8-11D3-8D6C-00A0C9CFCEE6}:_1A12D5C1735F4AAFAE6294EB68F33C26"
+			{
+			"Name" = "8:#1916"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:DesktopFolder"
+				"Folders"
+				{
+				}
+			}
+			"{777C097F-0ED8-11D3-8D6C-00A0C9CFCEE6}:_607A1F46F9954F4FBE9DA1FD0AF731B0"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_D4470EF29E32471E83C1569E8E01F3C5"
+					{
+					"Name" = "8:Collection Generator"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_4EA8FF6C4DE549B7BDB441A3D955976B"
+						"Folders"
+						{
+						}
+					}
+				}
+			}
+			"{EE62640D-12F2-11D3-8D6C-00A0C9CFCEE6}:_7C6FD20DDB5D4224A0F6AB8F9F68F63B"
+			{
+			"DefaultLocation" = "8:[ProgramFilesFolder]\\[ProductName]"
+			"Name" = "8:#1925"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:TARGETDIR"
+				"Folders"
+				{
+					"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+					{
+					"Name" = "8:Help"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_F455E17741D544949940F7248131EEC4"
+						"Folders"
+						{
+							"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_FA1B39806BD14724BDFFEC39983F637D"
+							{
+							"Name" = "8:CollGenDemo"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_2175B2CF8D924582BE3CB29323EDB400"
+								"Folders"
+								{
+									"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_1E37E19C45E249C0AACD262EB57FDE76"
+									{
+									"Name" = "8:bin"
+									"AlwaysCreate" = "11:FALSE"
+									"Condition" = "8:"
+									"Transitive" = "11:FALSE"
+									"Property" = "8:_4BFA15D565F84F06B24F011E3D8399B6"
+										"Folders"
+										{
+											"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_7E7C62D3F047442286803CE4A4E58EB5"
+											{
+											"Name" = "8:Debug"
+											"AlwaysCreate" = "11:FALSE"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"Property" = "8:_6A2F0630AFD24126BB8A4FC913D33073"
+												"Folders"
+												{
+												}
+											}
+										}
+									}
+									"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_A8E4AE03ACE9449D8674F32C485825FD"
+									{
+									"Name" = "8:obj"
+									"AlwaysCreate" = "11:FALSE"
+									"Condition" = "8:"
+									"Transitive" = "11:FALSE"
+									"Property" = "8:_D5381CA8B2DB45069DBA07DF749E6CD3"
+										"Folders"
+										{
+											"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_870B6BFBAA6D480E8D598925427C4745"
+											{
+											"Name" = "8:Debug"
+											"AlwaysCreate" = "11:FALSE"
+											"Condition" = "8:"
+											"Transitive" = "11:FALSE"
+											"Property" = "8:_00514BF1752545199381C2FC791986AA"
+												"Folders"
+												{
+													"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_270FB2E6B7D744138AE10C5B31E6D989"
+													{
+													"Name" = "8:temp"
+													"AlwaysCreate" = "11:FALSE"
+													"Condition" = "8:"
+													"Transitive" = "11:FALSE"
+													"Property" = "8:_43C8F5C1F1484C08A4AD57F1BA9B72E0"
+														"Folders"
+														{
+														}
+													}
+													"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_9A1F9EB8FBE144FAA92F0F159E454A33"
+													{
+													"Name" = "8:TempPE"
+													"AlwaysCreate" = "11:FALSE"
+													"Condition" = "8:"
+													"Transitive" = "11:FALSE"
+													"Property" = "8:_ED49E7EDC16448FFAFCDB90254F5D738"
+														"Folders"
+														{
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_FA488DC5236442AEA44AC85E73513503"
+					{
+					"Name" = "8:CollGen Project"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_2B3B1FBBFB5742468D21CA8840A19D91"
+						"Folders"
+						{
+							"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_3DDE92EC77EA44F3B6069ED82C71DB34"
+							{
+							"Name" = "8:bin"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_5C1B78DCB79F4CF9ACCA548968D462AA"
+								"Folders"
+								{
+								}
+							}
+							"{461E96AF-1495-11D3-8D6C-00A0C9CFCEE6}:_41703BA1D54A45FE88BD115D15658097"
+							{
+							"Name" = "8:CollectionGeneratorDeploy"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_D35CAF992B40471C806BCB7D0B214ADB"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		"LaunchCondition"
+		{
+			"{B26CFB94-18E3-45BF-8D42-933BDAF5E76C}:_0349CA26CAE84C6A99721F00A66103F3"
+			{
+			"Name" = "8:MsiNetAssemblySupport"
+			"Condition" = "8:MsiNetAssemblySupport"
+			"Message" = "8:[VSDNETMSG]"
+			}
+		}
+		"Locator"
+		{
+		}
+		"Shortcut"
+		{
+			"{D0C99CFE-1238-11D3-8E00-00C04F6837D0}:_440BD36F5DB4438A914C4B5B1D7C2B49"
+			{
+			"Name" = "8:Help.htm"
+			"Arguments" = "8:"
+			"Description" = "8:"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_EF95DA893F494DF8B87C7643DC65C153"
+			"Folder" = "8:_D4470EF29E32471E83C1569E8E01F3C5"
+			"WorkingFolder" = "8:_921C5568C7FF4CADAB1CEE2EB00F7D2B"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+			"{D0C99CFE-1238-11D3-8E00-00C04F6837D0}:_5133515EF67D485F8A31DC4243ADC200"
+			{
+			"Name" = "8:Demo Solution (VS)"
+			"Arguments" = "8:"
+			"Description" = "8:"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_47FC8F6865364DD792164B81C3CF04A3"
+			"Folder" = "8:_D4470EF29E32471E83C1569E8E01F3C5"
+			"WorkingFolder" = "8:_FA1B39806BD14724BDFFEC39983F637D"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+			"{D0C99CFE-1238-11D3-8E00-00C04F6837D0}:_AA84D27E02D9433982A5181794780916"
+			{
+			"Name" = "8:Source Code Solution (VS)"
+			"Arguments" = "8:"
+			"Description" = "8:"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_78E55D2F330E4139947119882B288B2D"
+			"Folder" = "8:_D4470EF29E32471E83C1569E8E01F3C5"
+			"WorkingFolder" = "8:_FA488DC5236442AEA44AC85E73513503"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+			"{D0C99CFE-1238-11D3-8E00-00C04F6837D0}:_BC67C5D48E03472189A6B0A1B4FA614D"
+			{
+			"Name" = "8:CollectionGenerator"
+			"Arguments" = "8:"
+			"Description" = "8:"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_6DC54EDA0C0B4D999B65AECC521503B2"
+			"Folder" = "8:_D4470EF29E32471E83C1569E8E01F3C5"
+			"WorkingFolder" = "8:_7C6FD20DDB5D4224A0F6AB8F9F68F63B"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+		}
+		"Sequences"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+					"{7DF0CD0A-FF27-11D2-8D6B-00A0C9CFCEE6}:_A86652DDEA2647E284A6174862F996C2"
+					{
+					"Name" = "8:Software"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{7DF0CD0A-FF27-11D2-8D6B-00A0C9CFCEE6}:_28E675B6636C4056B929EEFFBDBE5BB6"
+							{
+							"Name" = "8:[Manufacturer]"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+					"{7DF0CD0A-FF27-11D2-8D6B-00A0C9CFCEE6}:_AEF1856CC5BC46328EE3513077B65B93"
+					{
+					"Name" = "8:Software"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{7DF0CD0A-FF27-11D2-8D6B-00A0C9CFCEE6}:_AE25B1424D94438DB611BD38EF13804C"
+							{
+							"Name" = "8:[Manufacturer]"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"ProjectOutput"
+		{
+		}
+		"Product"
+		{
+		"Name" = "8:Microsoft Visual Studio"
+		"ProductName" = "8:Collection Generator"
+		"ProductCode" = "8:{8D3A9A19-F919-4FD5-BDAB-D5E9700C6849}"
+		"PackageCode" = "8:{AA86857F-3601-4290-B699-E296972848FC}"
+		"UpgradeCode" = "8:{BF901C5F-3178-43EB-8BB2-29E65B3689C1}"
+		"RestartWWWService" = "11:FALSE"
+		"RemovePreviousVersions" = "11:TRUE"
+		"DetectNewerInstalledVersion" = "11:TRUE"
+		"ProductVersion" = "8:1.0.0"
+		"Manufacturer" = "8:CollGen"
+		"ARPHELPTELEPHONE" = "8:"
+		"ARPHELPLINK" = "8:mailto:winchurn@microsoft.com"
+		"Title" = "8:CollectionGenerator Setup Wizard"
+		"Subject" = "8:This application allows you to easily generate your own, strongly type applications"
+		"ARPCONTACT" = "8:Kit George"
+		"Keywords" = "8:Collection, generator, list, CollectionBase, Enumerator"
+		"ARPCOMMENTS" = "8:This process will install the CollectionGenerator utility"
+		"ARPURLINFOABOUT" = "8:www.gotdotnet.com"
+		"ARPPRODUCTICON" = "8:"
+		"ARPIconIndex" = "3:0"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		}
+		"MsiBootstrapper"
+		{
+		"LangId" = "3:1033"
+		}
+		"MergeModule"
+		{
+			"{AC8774A4-3E09-11D3-8E14-00C04F6837D0}:_239DD84EFF89451F9DF342DFBA9EB4D0"
+			{
+			"UseDynamicProperties" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"SourcePath" = "8:dotnetfxredist_x86_enu.msm"
+			"ModuleSignature" = "8:mondo.E4183BB4_18A8_11D5_A549_0090278A1BB8"
+				"Properties"
+				{
+				}
+			"LanguageId" = "3:1033"
+			"Exclude" = "11:TRUE"
+			"Folder" = "8:"
+			"Feature" = "8:"
+			"IsolateTo" = "8:"
+			}
+		}
+		"UserInterface"
+		{
+			"{7DFFC192-4ABE-11D3-8D78-00A0C9CFCEE6}:_0C0FE383784C4D9BB9F1795985407762"
+			{
+			"Name" = "8:#1901"
+			"Sequence" = "3:1"
+			"Attributes" = "3:2"
+				"Dialogs"
+				{
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_29A2F0DF68A349F9984A5BF6B5E94126"
+					{
+					"Sequence" = "3:100"
+					"DisplayName" = "8:Progress"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdProgressDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.4FB12620_0D15_42D0_8677_2766FFA6923F"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+							"ShowProgress"
+							{
+							"Name" = "8:ShowProgress"
+							"DisplayName" = "8:#1009"
+							"Description" = "8:#1109"
+							"Type" = "3:5"
+							"ContextData" = "8:1;True=1;False=0"
+							"Attributes" = "3:0"
+							"Setting" = "3:0"
+							"Value" = "3:1"
+							"DefaultValue" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+				}
+			}
+			"{7DFFC192-4ABE-11D3-8D78-00A0C9CFCEE6}:_294875054272445EA4B105E60018D7B7"
+			{
+			"Name" = "8:#1902"
+			"Sequence" = "3:1"
+			"Attributes" = "3:3"
+				"Dialogs"
+				{
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_A14898017B894CBA96B3734A2D99A51D"
+					{
+					"Sequence" = "3:100"
+					"DisplayName" = "8:Finished"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdFinishedDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.1DB77F5A_BA5C_4470_89B6_0B0EC07E3A10"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+				}
+			}
+			"{7DFFC192-4ABE-11D3-8D78-00A0C9CFCEE6}:_443DF6D13BB742E49AD91F558F9E8A74"
+			{
+			"Name" = "8:#1900"
+			"Sequence" = "3:2"
+			"Attributes" = "3:1"
+				"Dialogs"
+				{
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_00C615B7A2974764A2A6A9E088C735E8"
+					{
+					"Sequence" = "3:100"
+					"DisplayName" = "8:Welcome"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdAdminWelcomeDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.E35A0E2C_F131_4B57_B946_59A1A2A8F45F"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+							"CopyrightWarning"
+							{
+							"Name" = "8:CopyrightWarning"
+							"DisplayName" = "8:#1002"
+							"Description" = "8:#1102"
+							"Type" = "3:3"
+							"ContextData" = "8:"
+							"Attributes" = "3:0"
+							"Setting" = "3:1"
+							"Value" = "8:#1202"
+							"DefaultValue" = "8:#1202"
+							"UsePlugInResources" = "11:TRUE"
+							}
+							"Welcome"
+							{
+							"Name" = "8:Welcome"
+							"DisplayName" = "8:#1003"
+							"Description" = "8:#1103"
+							"Type" = "3:3"
+							"ContextData" = "8:"
+							"Attributes" = "3:0"
+							"Setting" = "3:1"
+							"Value" = "8:#1203"
+							"DefaultValue" = "8:#1203"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_3EFC4DA7E3D4442BBC2EC6393995B252"
+					{
+					"Sequence" = "3:200"
+					"DisplayName" = "8:Installation Folder"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdAdminFolderDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.2DED2424_5429_4616_A1AD_4D62837C2ADA"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_8DF91263B6F5492C93E5ABECF70325F8"
+					{
+					"Sequence" = "3:300"
+					"DisplayName" = "8:Confirm Installation"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdAdminConfirmDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.FA58E60A_A1E8_4876_95FC_2AC3B5AAA5F8"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+				}
+			}
+			"{E4ECAB26-4AB7-11D3-8D78-00A0C9CFCEE6}:_8656DC4E4D05491A9929593F69EC714D"
+			{
+			"UseDynamicProperties" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"SourcePath" = "8:<VsdDialogDir>\\VsdUserInterface.wim"
+			"ModuleSignature" = "8:VsdUserInterface.524F4245_5254_5341_4C45_534153783400"
+			}
+			"{7DFFC192-4ABE-11D3-8D78-00A0C9CFCEE6}:_92DA407569DC4A85AD1EA3A9A483CE8A"
+			{
+			"Name" = "8:#1902"
+			"Sequence" = "3:2"
+			"Attributes" = "3:3"
+				"Dialogs"
+				{
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_99B300D17BF7446FBB09FE17096BAA7E"
+					{
+					"Sequence" = "3:100"
+					"DisplayName" = "8:Finished"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdAdminFinishedDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.83D22742_1B79_46f6_9A99_DF0F2BD4C077"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+				}
+			}
+			"{E4ECAB26-4AB7-11D3-8D78-00A0C9CFCEE6}:_BA62A68E99884BBF8FFAF8726692B51C"
+			{
+			"UseDynamicProperties" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"SourcePath" = "8:<VsdDialogDir>\\VsdBasicDialogs.wim"
+			"ModuleSignature" = "8:VsdDialogs.CE4B864F_F1C1_4B85_98D4_2A2BF5FFB12B"
+			}
+			"{7DFFC192-4ABE-11D3-8D78-00A0C9CFCEE6}:_F747A10C632745639842290257B6FDFC"
+			{
+			"Name" = "8:#1900"
+			"Sequence" = "3:1"
+			"Attributes" = "3:1"
+				"Dialogs"
+				{
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_54A66A14709E458885AD5471747D7741"
+					{
+					"Sequence" = "3:100"
+					"DisplayName" = "8:Welcome"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdWelcomeDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.68F69290_BB7C_474E_A153_6679845F3DDF"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+							"CopyrightWarning"
+							{
+							"Name" = "8:CopyrightWarning"
+							"DisplayName" = "8:#1002"
+							"Description" = "8:#1102"
+							"Type" = "3:3"
+							"ContextData" = "8:"
+							"Attributes" = "3:0"
+							"Setting" = "3:2"
+							"Value" = "8:This program may be freely distributed"
+							"DefaultValue" = "8:#1202"
+							"UsePlugInResources" = "11:TRUE"
+							}
+							"Welcome"
+							{
+							"Name" = "8:Welcome"
+							"DisplayName" = "8:#1003"
+							"Description" = "8:#1103"
+							"Type" = "3:3"
+							"ContextData" = "8:"
+							"Attributes" = "3:0"
+							"Setting" = "3:1"
+							"Value" = "8:#1203"
+							"DefaultValue" = "8:#1203"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_C99256FB728440F391B653AE472A7D4C"
+					{
+					"Sequence" = "3:300"
+					"DisplayName" = "8:Confirm Installation"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdConfirmDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.6DBC9783_3677_4D68_8BF5_D749558A0AC1"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_EA21E3CC01264B6E8158ABCC8CA6A116"
+					{
+					"Sequence" = "3:200"
+					"DisplayName" = "8:Installation Folder"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdFolderDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.C113BC36_2532_4D45_8099_4818B1133B2F"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+				}
+			}
+			"{7DFFC192-4ABE-11D3-8D78-00A0C9CFCEE6}:_F9E91FCB67D747D790BCB654606E7D6B"
+			{
+			"Name" = "8:#1901"
+			"Sequence" = "3:2"
+			"Attributes" = "3:2"
+				"Dialogs"
+				{
+					"{E4ECAB24-4AB7-11D3-8D78-00A0C9CFCEE6}:_D376EEAFD53040EF885BCF61B7A6669A"
+					{
+					"Sequence" = "3:100"
+					"DisplayName" = "8:Progress"
+					"UseDynamicProperties" = "11:TRUE"
+					"IsDependency" = "11:FALSE"
+					"SourcePath" = "8:<VsdDialogDir>\\VsdAdminProgressDlg.wid"
+					"ModuleSignature" = "8:VsdDialogs.EE9A1AFA_41DD_4514_B727_DF0ACA1D7389"
+						"Properties"
+						{
+							"BannerBitmap"
+							{
+							"Name" = "8:BannerBitmap"
+							"DisplayName" = "8:#1001"
+							"Description" = "8:#1101"
+							"Type" = "3:8"
+							"ContextData" = "8:Bitmap"
+							"Attributes" = "3:4"
+							"Setting" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+							"ShowProgress"
+							{
+							"Name" = "8:ShowProgress"
+							"DisplayName" = "8:#1009"
+							"Description" = "8:#1109"
+							"Type" = "3:5"
+							"ContextData" = "8:1;True=1;False=0"
+							"Attributes" = "3:0"
+							"Setting" = "3:0"
+							"Value" = "3:1"
+							"DefaultValue" = "3:1"
+							"UsePlugInResources" = "11:TRUE"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

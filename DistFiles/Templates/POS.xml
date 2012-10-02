@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PartsOfSpeech6001>
+   <CmPossibilityList>
+	  <Depth8>
+		 <Integer val="127"/>
+	  </Depth8>
+	  <IsSorted8>
+		 <Boolean val="true"/>
+	  </IsSorted8>
+	  <UseExtendedFields8>
+		 <Boolean val="true"/>
+	  </UseExtendedFields8>
+	  <ItemClsid8>
+		 <Integer val="5049"/>
+	  </ItemClsid8>
+	  <WsSelector8>
+		 <Integer val="-3"/>
+	  </WsSelector8>
+	  <Name5>
+		 <AUni ws="es">Categorías Gramáticas</AUni>
+		 <AUni ws="en">Parts Of Speech</AUni>
+		 <AUni ws="fr">Parties du Discours</AUni>
+	  </Name5>
+	  <Abbreviation8>
+		 <AUni ws="en">Pos</AUni>
+	  </Abbreviation8>
+	  <Possibilities8>
+		 <PartOfSpeech>
+			<ForeColor7>
+			   <Integer val="6303632"/>
+			</ForeColor7>
+			<BackColor7>
+			   <Integer val="-1073741824"/>
+			</BackColor7>
+			<UnderColor7>
+			   <Integer val="-1073741824"/>
+			</UnderColor7>
+			<UnderStyle7>
+			   <Integer val="1"/>
+			</UnderStyle7>
+			<Name7>
+			   <AUni ws="en">Adverb</AUni>
+			   <AUni ws="es">Adverbio</AUni>
+			   <AUni ws="fr">Adverbe</AUni>
+			   <AUni ws="zh_CN">副词</AUni>
+			   <AUni ws="ko">부사</AUni>
+			   <AUni ws="ru">наречие</AUni>
+			</Name7>
+			<Abbreviation7>
+			   <AUni ws="en">adv</AUni>
+			   <AUni ws="es">adv</AUni>
+			   <AUni ws="fr">adv</AUni>
+			   <AUni ws="zh_CN">副</AUni>
+			   <AUni ws="ko">부</AUni>
+			   <AUni ws="ru">нареч</AUni>
+			</Abbreviation7>
+			<Description7>
+			   <AStr ws="en">
+				  <Run ws="en">An adverb, narrowly defined, is a part of speech whose members modify verbs for such categories as time, manner, place, or direction. An adverb, broadly defined, is a part of speech whose members modify any constituent class of words other than nouns, such as verbs, adjectives, adverbs, phrases, clauses, or sentences. Under this definition, the possible type of modification depends on the class of the constituent being modified.</Run>
+			   </AStr>
+			   <AStr ws="es">
+				  <Run ws="es"/>
+			   </AStr>
+			   <AStr ws="fr">
+				  <Run ws="fr">Dans un sens restreint, un adverbe modifie un verbe à propos d’informations concernant le moment, le lieu, la manière ou la direction. Dans un sens plus large, un adverbe modifie n’importe quel autre constituant autre que le nom, tel qu’un verbe, un adjectif, un adverbe, un syntagme, une proposition ou une phrase. Dans cette acception, le type de modification apportée par l’adverbe dépend de la classe du constituant qui est modifié.</Run>
+			   </AStr>
+			   <AStr ws="zh_CN">
+				  <Run ws="zh_CN"/>
+			   </AStr>
+			   <AStr ws="ko">
+				  <Run ws="ko"/>
+			   </AStr>
+			   <AStr ws="ru">
+				  <Run ws="ru">Наречие в узком смысле является частью речи, которая изменяет глагол в таких категориях, как время, образ действия, место или направление. Наречие в широком смысле - это часть речи, которая модифицирует любой класс непосредственных составляющих кроме существительных, а именно глаголы, прилагательные, наречия, словосочетания, клаузы или предложения. По этому определению возможный тип изменения зависит от класса изменяемой непосредственной составляющей.</Run>
+			   </AStr>
+			</Description7>
+			<CatalogSourceId5049>
+			   <Uni>Adverb</Uni>
+			</CatalogSourceId5049>
+		 </PartOfSpeech>
+		 <PartOfSpeech>
+			<ForeColor7>
+			   <Integer val="6303632"/>
+			</ForeColor7>
+			<BackColor7>
+			   <Integer val="-1073741824"/>
+			</BackColor7>
+			<UnderColor7>
+			   <Integer val="-1073741824"/>
+			</UnderColor7>
+			<UnderStyle7>
+			   <Integer val="1"/>
+			</UnderStyle7>
+			<Name7>
+			   <AUni ws="en">Noun</AUni>
+			   <AUni ws="es">Nombre</AUni>
+			   <AUni ws="fr">Nom</AUni>
+			   <AUni ws="zh_CN">名词</AUni>
+			   <AUni ws="ko">명사</AUni>
+			   <AUni ws="ru">существительное</AUni>
+			</Name7>
+			<Abbreviation7>
+			   <AUni ws="en">n</AUni>
+			   <AUni ws="es">sus</AUni>
+			   <AUni ws="fr">n</AUni>
+			   <AUni ws="zh_CN">名</AUni>
+			   <AUni ws="ko">명</AUni>
+			   <AUni ws="ru">сущ</AUni>
+			</Abbreviation7>
+			<Description7>
+			   <AStr ws="en">
+				  <Run ws="en">A noun is a broad classification of parts of speech which include substantives and nominals.</Run>
+			   </AStr>
+			   <AStr ws="es">
+				  <Run ws="es"/>
+			   </AStr>
+			   <AStr ws="fr">
+				  <Run ws="fr"/>
+			   </AStr>
+			   <AStr ws="zh_CN">
+				  <Run ws="zh_CN"/>
+			   </AStr>
+			   <AStr ws="ko">
+				  <Run ws="ko"/>
+			   </AStr>
+			   <AStr ws="ru">
+				  <Run ws="ru">Существительное является широкой классификацией частей речи, которая включает имена нарицательные и собственные.</Run>
+			   </AStr>
+			</Description7>
+			<CatalogSourceId5049>
+			   <Uni>Noun</Uni>
+			</CatalogSourceId5049>
+		 </PartOfSpeech>
+		 <PartOfSpeech>
+			<ForeColor7>
+			   <Integer val="6303632"/>
+			</ForeColor7>
+			<BackColor7>
+			   <Integer val="-1073741824"/>
+			</BackColor7>
+			<UnderColor7>
+			   <Integer val="-1073741824"/>
+			</UnderColor7>
+			<UnderStyle7>
+			   <Integer val="1"/>
+			</UnderStyle7>
+			<Name7>
+			   <AUni ws="en">Pro-form</AUni>
+			   <AUni ws="es"/>
+			   <AUni ws="fr">Proforme</AUni>
+			   <AUni ws="zh_CN"/>
+			   <AUni ws="ko"/>
+			   <AUni ws="ru">Местоименное слово</AUni>
+			</Name7>
+			<Abbreviation7>
+			   <AUni ws="en">pro-form</AUni>
+			   <AUni ws="es"/>
+			   <AUni ws="fr">proforme</AUni>
+			   <AUni ws="zh_CN"/>
+			   <AUni ws="ko"/>
+			   <AUni ws="ru"/>
+			</Abbreviation7>
+			<Description7>
+			   <AStr ws="en">
+				  <Run ws="en">A pro-form is a part of speech whose members usually substitute for other constituents, including phrases, clauses, or sentences, and whose meaning is recoverable from the linguistic or extralinguistic context.</Run>
+			   </AStr>
+			   <AStr ws="es">
+				  <Run ws="es"/>
+			   </AStr>
+			   <AStr ws="fr">
+				  <Run ws="fr"/>
+			   </AStr>
+			   <AStr ws="zh_CN">
+				  <Run ws="zh_CN"/>
+			   </AStr>
+			   <AStr ws="ko">
+				  <Run ws="ko"/>
+			   </AStr>
+			   <AStr ws="ru">
+				  <Run ws="ru">Местоименное слово - часть речи, слова которой обычно замещают другие непосредственные составляющие, включая словосочетания, клаузы или предложения, и смысл которых восстанавливается из лингвистического или экстралингвистического контекста.</Run>
+			   </AStr>
+			</Description7>
+			<CatalogSourceId5049>
+			   <Uni>Pro-form</Uni>
+			</CatalogSourceId5049>
+			<SubPossibilities7>
+			   <PartOfSpeech>
+				  <ForeColor7>
+					 <Integer val="6303632"/>
+				  </ForeColor7>
+				  <BackColor7>
+					 <Integer val="-1073741824"/>
+				  </BackColor7>
+				  <UnderColor7>
+					 <Integer val="-1073741824"/>
+				  </UnderColor7>
+				  <UnderStyle7>
+					 <Integer val="1"/>
+				  </UnderStyle7>
+				  <Name7>
+					 <AUni ws="en">Pronoun</AUni>
+					 <AUni ws="es">Pronombre</AUni>
+					 <AUni ws="fr">Pronom</AUni>
+					 <AUni ws="zh_CN">代词</AUni>
+					 <AUni ws="ko">대명사</AUni>
+					 <AUni ws="ru">местоимение</AUni>
+				  </Name7>
+				  <Abbreviation7>
+					 <AUni ws="en">pro</AUni>
+					 <AUni ws="es">pro</AUni>
+					 <AUni ws="fr">pron</AUni>
+					 <AUni ws="zh_CN">代</AUni>
+					 <AUni ws="ko">대명</AUni>
+					 <AUni ws="ru">мест</AUni>
+				  </Abbreviation7>
+				  <Description7>
+					 <AStr ws="en">
+						<Run ws="en">A pronoun is a pro-form which functions like a noun and substitutes for a noun or noun phrase.</Run>
+					 </AStr>
+					 <AStr ws="es">
+						<Run ws="es"/>
+					 </AStr>
+					 <AStr ws="fr">
+						<Run ws="fr">Un pronom se substitue à un nominal (nom ou syntagme nominal).</Run>
+					 </AStr>
+					 <AStr ws="zh_CN">
+						<Run ws="zh_CN"/>
+					 </AStr>
+					 <AStr ws="ko">
+						<Run ws="ko"/>
+					 </AStr>
+					 <AStr ws="ru">
+						<Run ws="ru">Местоимение является местоименным словом, которое функционирует как существительное и замещает существительное или именное словосочетание.</Run>
+					 </AStr>
+				  </Description7>
+				  <CatalogSourceId5049>
+					 <Uni>Pronoun</Uni>
+				  </CatalogSourceId5049>
+			   </PartOfSpeech>
+			</SubPossibilities7>
+		 </PartOfSpeech>
+		 <PartOfSpeech>
+			<ForeColor7>
+			   <Integer val="6303632"/>
+			</ForeColor7>
+			<BackColor7>
+			   <Integer val="-1073741824"/>
+			</BackColor7>
+			<UnderColor7>
+			   <Integer val="-1073741824"/>
+			</UnderColor7>
+			<UnderStyle7>
+			   <Integer val="1"/>
+			</UnderStyle7>
+			<Name7>
+			   <AUni ws="en">Verb</AUni>
+			   <AUni ws="es">Verbo</AUni>
+			   <AUni ws="fr">Verbe</AUni>
+			   <AUni ws="zh_CN">动词</AUni>
+			   <AUni ws="ko">동사</AUni>
+			   <AUni ws="ru">Глагол</AUni>
+			</Name7>
+			<Abbreviation7>
+			   <AUni ws="en">v</AUni>
+			   <AUni ws="es">v</AUni>
+			   <AUni ws="fr">v</AUni>
+			   <AUni ws="zh_CN">动</AUni>
+			   <AUni ws="ko">동</AUni>
+			   <AUni ws="ru">гл</AUni>
+			</Abbreviation7>
+			<Description7>
+			   <AStr ws="en">
+				  <Run ws="en">A verb is a part of speech whose members typically signal events and actions; constitute, singly or in a phrase, a minimal predicate in a clause; govern the number and types of other constituents which may occur in the clause; and, in inflectional languages, may be inflected for tense, aspect, voice, modality, or agreement with other constituents in person, number, or grammatical gender.</Run>
+			   </AStr>
+			   <AStr ws="es">
+				  <Run ws="es">"Verbo" típicamente significa palabras de acción.</Run>
+			   </AStr>
+			   <AStr ws="fr">
+				  <Run ws="fr">Un verbe est une partie du discours caractérisée syntaxiquement par sa fonction de prédicat. En tant que tel, il gouverne la structure argumentale de la proposition, c’est-à-dire le nombre d’arguments possibles. Dans les langues flexionnelles, il peut être fléchi en ce qui concerne le temps, l’aspect, la voix ou le mode ; il peut aussi être en accord avec d’autres constituants en ce qui concerne la personne, le nombre ou le genre. Du point de vue sémantique, il désigne généralement des événements et des actions ou encore des états.</Run>
+			   </AStr>
+			   <AStr ws="zh_CN">
+				  <Run ws="zh_CN"/>
+			   </AStr>
+			   <AStr ws="ko">
+				  <Run ws="ko"/>
+			   </AStr>
+			   <AStr ws="ru">
+				  <Run ws="ru">Глагол - это часть речи, члены которой типично обозначают события и действия; составляет самостоятельно или в словосочетании минимальный предикат предложения; управляет определённым количеством и типами других непосредственных составляющих, которые могут встретиться в предложении; во флективных языках может изменяться по времени, виду, залогу, модальности или согласовываться с другими непосредственными составляющими по лицу, числу или грамматическому роду.</Run>
+			   </AStr>
+			</Description7>
+			<CatalogSourceId5049>
+			   <Uni>Verb</Uni>
+			</CatalogSourceId5049>
+		 </PartOfSpeech>
+	  </Possibilities8>
+   </CmPossibilityList>
+</PartsOfSpeech6001>

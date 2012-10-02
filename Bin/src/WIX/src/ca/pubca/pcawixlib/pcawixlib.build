@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="scawixlib" default="scawixlib.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	scawixlib.build - Builds the sca.wixlib
+	2005.12.09 fregro Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- pcawixlib-specific properties -->
+  <property name="pcawixlib.file.target" value="${dir.target.wix}\pubca.wixlib" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="pcawixlib.build" description="Peforms a full rebuild (clean then build)" depends="pcawixlib.clean, pcawixlib.inc" />
+
+  <!-- Clean -->
+  <target name="pcawixlib.clean" description="Cleans the build">
+	<delete dir="${dir.build.pcawixlib}" failonerror="false" if="${directory::exists(dir.build.pcawixlib)}" />
+	<delete file="${pcawixlib.file.target}" failonerror="false" if="${file::exists(pcawixlib.file.target)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="pcawixlib.inc" description="Performs an incremental build" depends="makeDirs">
+	<!-- Pull in the wix tools NAnt tasks -->
+	<loadtasks assembly="${file.nanttasks}" />
+
+	<!-- Build the wixca.wixlib -->
+	<candle out="${dir.build.pcawixlib}\" exedir="${dir.target.wix}">
+	  <defines>
+		<define name="caerrwxi" value="${file.target.caerr.wxi}" />
+		<define name="pcaschedDll" value="${file.target.pcasched}" />
+		<define name="pcaexecDll" value="${file.target.pcaexec}" />
+	  </defines>
+	  <sources basedir="${dir.src.ca.pubca}\pcawixlib">
+		<include name="pubca.wxs" />
+	  </sources>
+	</candle>
+	<lit out="${pcawixlib.file.target}" exedir="${dir.target.wix}">
+	  <sources basedir="${dir.build.pcawixlib}">
+		<include name="*.wixobj" />
+	  </sources>
+	</lit>
+  </target>
+
+</project>

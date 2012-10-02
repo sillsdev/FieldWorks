@@ -1,0 +1,248 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2000, SIL International. All rights reserved.
+
+File: ConvertStringTlb.idh
+Responsibility: Darrell Zook
+Last reviewed:
+
+Description:
+	This file contains the interface definitions for ConvertString and ConvertCallback.
+----------------------------------------------------------------------------------------------*/
+
+typedef [v1_enum] enum
+{
+	kiecNoError = 0,
+	kiecNoArgument,
+	kiecIllegalArgument,
+	kiecDuplicateArgument,
+	kiecNoReplacement,
+	kiecIllegalReplacement,
+	kiecIllegalRule,
+	kiecFileNotFound,
+	kiecFileReadError,
+	kiecOutOfMemory
+} InitErrorCode;
+
+interface ICsConvertAToW;
+interface ICsConvertWToA;
+interface ICsConvertWToW;
+interface ICsCallbackAToW;
+interface ICsCallbackWToA;
+interface ICsCallbackWToW;
+
+DeclareInterface(CsConvertAToW, Unknown, 5C2D3024-994A-11d3-A19E-00E029272DB4)
+{
+	// Initialize should be called before any other method is called. if fFileName is true,
+	// bstrTable should contain the filename containing the init table (this file must be
+	// 16 bit). Otherwise, bstrTable should contain the init table itself. If pccaw is
+	// not NULL, the InitError method is called on it if there are any syntax problems
+	// while intializing. Otherwise an error code is returned.
+	HRESULT Initialize(
+		[in] BSTR bstrTable,
+		[in] BOOL fFileName,
+		[in] ICsCallbackAToW * pccaw);
+
+	// Convert takes an array of characters and stores the converted text in a newly
+	// allocatd BSTR.
+	HRESULT Convert(
+		[in, size_is(cchSrc)] byte * prgchSrc,
+		[in] int cchSrc,
+		[out, retval] BSTR * pbstrDst);
+
+	// ConvertRgch takes an array of characters and stores the converted text in the buffer
+	// pointed to by prgchDst. If prgchDst is not big enough to store all the converted
+	// text, an error code is returned. If prgchDst is NULL and cchDst is 0, pcchNeed
+	// will contain the required size of the buffer. If a character in the input buffer does
+	// not match any rules, the ProcessError method will be called on pccaw. If pccaw is NULL,
+	// the character will be output to prgchDst without any conversion done on it.
+	HRESULT ConvertRgch(
+		[in, size_is(cchSrc)] byte * prgchSrc,
+		[in] int cchSrc,
+		[out, size_is(cchDst)] OLECHAR * prgchDst,
+		[in] int cchDst,
+		[in] ICsCallbackAToW * pccaw,
+		[out, retval] int * pcchNeed);
+
+	// ConvertCallback takes an array of characters and calls the HaveText method on
+	// pccaw after at most cchChunk characters have been converted.
+	// Example: If cchChunk is 750, prgchSrc points to an array of 500 characters
+	//     (cchSrc = 500), and each character gets converted into two characters, HaveText
+	//     will be called twice: once with 750 characters and once with 250 characters.
+	[restricted] HRESULT ConvertCallback(
+		[in, size_is(cchSrc)] byte * prgchSrc,
+		[in] int cchSrc,
+		[in] int cchChunk,
+		[in] ICsCallbackAToW * pccaw);
+};
+
+DeclareInterface(CsConvertWToA, Unknown, 5C2D3025-994A-11d3-A19E-00E029272DB4)
+{
+	// Initialize should be called before any other method is called. if fFileName is true,
+	// bstrTable should contain the filename containing the init table (this file must be
+	// 16 bit). Otherwise, bstrTable should contain the init table itself. If pccwa is
+	// not NULL, the InitError method is called on it if there are any syntax problems
+	// while intializing. Otherwise an error code is returned.
+	HRESULT Initialize(
+		[in] BSTR bstrTable,
+		[in] BOOL fFileName,
+		[in] ICsCallbackWToA * pccwa);
+
+	// Convert takes a BSTR and stores the converted text in a newly allocatd array of
+	// characters.
+   [restricted] HRESULT Convert(
+		[in] BSTR bstrSrc,
+		[out, size_is(, *pcchNeed)] byte ** pprgchDst,
+		[out, retval] int * pcchNeed);
+
+	// ConvertRgch takes an array of characters and stores the converted text in the buffer
+	// pointed to by prgchDst. If prgchDst is not big enough to store all the converted
+	// text, an error code is returned. If prgchDst is NULL and cchDst is 0, pcchNeed
+	// will contain the required size of the buffer. If a character in the input buffer does
+	// not match any rules, the ProcessError method will be called on pccwa. If pccwa is NULL,
+	// the character will be output to prgchDst without any conversion done on it.
+	HRESULT ConvertRgch(
+		[in, size_is(cchSrc)] OLECHAR * prgchSrc,
+		[in] int cchSrc,
+		[out, size_is(cchDst)] byte * prgchDst,
+		[in] int cchDst,
+		[in] ICsCallbackWToA * pccwa,
+		[out, retval] int * pcchNeed);
+
+	// ConvertCallback takes an array of characters and calls the HaveText method on
+	// pccwa after at most cchChunk characters have been converted.
+	// Example: If cchChunk is 750, prgchSrc points to an array of 500 characters
+	//     (cchSrc = 500), and each character gets converted into two characters, HaveText
+	//     will be called twice: once with 750 characters and once with 250 characters.
+	[restricted] HRESULT ConvertCallback(
+		[in, size_is(cchSrc)] OLECHAR * prgchSrc,
+		[in] int cchSrc,
+		[in] int cchChunk,
+		[in] ICsCallbackWToA * pccwa);
+};
+
+DeclareInterface(CsConvertWToW, Unknown, 5C2D3026-994A-11d3-A19E-00E029272DB4)
+{
+	// Initialize should be called before any other method is called. if fFileName is true,
+	// bstrTable should contain the filename containing the init table (this file must be
+	// 16 bit). Otherwise, bstrTable should contain the init table itself. If pccww is
+	// not NULL, the InitError method is called on it if there are any syntax problems
+	// while intializing. Otherwise an error code is returned.
+	HRESULT Initialize(
+		[in] BSTR bstrTable,
+		[in] BOOL fFileName,
+		[in] ICsCallbackWToW * pccww);
+
+	// Convert takes a BSTR and stores the converted text in a newly allocatd BSTR.
+	HRESULT Convert(
+		[in] BSTR bstrSrc,
+		[out, retval] BSTR * pbstrDst);
+
+	// ConvertRgch takes an array of characters and stores the converted text in the buffer
+	// pointed to by prgchDst. If prgchDst is not big enough to store all the converted
+	// text, an error code is returned. If prgchDst is NULL and cchDst is 0, pcchNeed
+	// will contain the required size of the buffer. If a character in the input buffer does
+	// not match any rules, the ProcessError method will be called on pccww. If pccww is NULL,
+	// the character will be output to prgchDst without any conversion done on it.
+	HRESULT ConvertRgch(
+		[in, size_is(cchSrc)] OLECHAR * prgchSrc,
+		[in] int cchSrc,
+		[out, size_is(cchDst)] OLECHAR * prgchDst,
+		[in] int cchDst,
+		[in] ICsCallbackWToW * pccww,
+		[out] int * pcchNeed);
+
+	// ConvertCallback takes an array of characters and calls the HaveText method on
+	// pccww after at most cchChunk characters have been converted.
+	// Example: If cchChunk is 750, prgchSrc points to an array of 500 characters
+	//     (cchSrc = 500), and each character gets converted into two characters, HaveText
+	//     will be called twice: once with 750 characters and once with 250 characters.
+	[restricted] HRESULT ConvertCallback(
+		[in, size_is(cchSrc)] OLECHAR * prgchSrc,
+		[in] int cchSrc,
+		[in] int cchChunk,
+		[in] ICsCallbackWToW * pccww);
+};
+
+DeclareInterface(CsCallbackAToW, Unknown, 5C2D3027-994A-11d3-A19E-00E029272DB4)
+{
+	// HaveText is called from ConvertCallback when a certain number of characters have
+	// been completed. cchCompleted refers to the total number of characters that have been
+	// processed in the input buffer passed to ConvertCallback. cch <= the cchChunk that
+	// was passed to ConvertCallback.
+	[restricted] HRESULT HaveText(
+		[in, size_is(cch)] OLECHAR * prgch,
+		[in] int cch,
+		[in] int cchCompleted);
+
+	// InitError is called when an initialization error occurs due to invalid syntax.
+	// The line number and text of the invalid line is given. pfContinue should be set
+	// to TRUE to continue initializing or to FALSE to cancel.
+	HRESULT InitError(
+		[in] InitErrorCode iec,
+		[in] int iInvalidLine,
+		[in] BSTR bstrInvalidLine,
+		[out, retval] BOOL * pfContinue);
+
+	// ProcessError is called when a character in the input buffer does not match any rule.
+	// ichInput gives the index of the character within the input buffer.
+	// pfContinue should be set to TRUE to continue processing or to FALSE to cancel.
+	HRESULT ProcessError(
+		[in] int ichInput,
+		[out, retval] BOOL * pfContinue);
+};
+
+DeclareInterface(CsCallbackWToA, Unknown, 5C2D3028-994A-11d3-A19E-00E029272DB4)
+{
+	// HaveText is called from ConvertCallback when a certain number of characters have
+	// been completed. cchCompleted refers to the total number of characters that have been
+	// processed in the input buffer passed to ConvertCallback. cch <= the cchChunk that
+	// was passed to ConvertCallback.
+	[restricted] HRESULT HaveText(
+		[in, size_is(cch)] byte * prgch,
+		[in] int cch,
+		[in] int cchCompleted);
+
+	// InitError is called when an initialization error occurs due to invalid syntax.
+	// The line number and text of the invalid line is given. pfContinue should be set
+	// to TRUE to continue initializing or to FALSE to cancel.
+	HRESULT InitError(
+		[in] InitErrorCode iec,
+		[in] int iInvalidLine,
+		[in] BSTR bstrInvalidLine,
+		[out, retval] BOOL * pfContinue);
+
+	// ProcessError is called when a character in the input buffer does not match any rule.
+	// ichInput gives the index of the character within the input buffer.
+	// pfContinue should be set to TRUE to continue processing or to FALSE to cancel.
+	HRESULT ProcessError(
+		[in] int ichInput,
+		[out, retval] BOOL * pfContinue);
+};
+
+DeclareInterface(CsCallbackWToW, Unknown, 5C2D3029-994A-11d3-A19E-00E029272DB4)
+{
+	// HaveText is called from ConvertCallback when a certain number of characters have
+	// been completed. cchCompleted refers to the total number of characters that have been
+	// processed in the input buffer passed to ConvertCallback. cch <= the cchChunk that
+	// was passed to ConvertCallback.
+	[restricted] HRESULT HaveText(
+		[in, size_is(cch)] OLECHAR * prgch,
+		[in] int cch,
+		[in] int cchCompleted);
+
+	// InitError is called when an initialization error occurs due to invalid syntax.
+	// The line number and text of the invalid line is given. pfContinue should be set
+	// to TRUE to continue initializing or to FALSE to cancel.
+	HRESULT InitError(
+		[in] InitErrorCode iec,
+		[in] int iInvalidLine,
+		[in] BSTR bstrInvalidLine,
+		[out, retval] BOOL * pfContinue);
+
+	// ProcessError is called when a character in the input buffer does not match any rule.
+	// ichInput gives the index of the character within the input buffer.
+	// pfContinue should be set to TRUE to continue processing or to FALSE to cancel.
+	HRESULT ProcessError(
+		[in] int ichInput,
+		[out, retval] BOOL * pfContinue);
+};

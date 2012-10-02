@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Module Id="EcFolderACLs" Guid="B6E6BA6F-0A22-4954-AA06-8304F59C7E9A" Language="0" Version="1.0">
+		<Package Id="????????-????-????-????-????????????" Keywords="MergeModule, MSI, Database, Encoding Converters" Description="Encoding Converters Folders ACL configuration" Comments="Sets write permissions ofr all users on Encoding Converters data folders" Manufacturer="SIL International" InstallerVersion="110" Platforms="Intel" Languages="0" Compressed="yes" SummaryCodepage="1252"/>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="CommonAppDataFolder" SourceName="AppData">
+				<Directory Id="ACLAppDataSIL" Name="SIL">
+					<Directory Id="Repository" LongName="Repository" Name="REPOSI~1">
+						<Component Id="CreateRepositoryFolder" Guid="BCDD82DF-E049-421A-A550-E79CF29221C2">
+							<CreateFolder>
+								<Permission Extended="yes" User="AuthenticatedUser" GenericAll="yes" />
+							</CreateFolder>
+						</Component>
+					</Directory>
+					<Directory Id="MapsTables" LongName="MapsTables" Name="MAPSTA~1">
+						<Component Id="CreateMapsTablesFolder" Guid="B3F0B285-BE31-42C6-82E6-D0553A7F1C94">
+							<CreateFolder>
+								<Permission Extended="yes" User="AuthenticatedUser" GenericAll="yes" />
+							</CreateFolder>
+						</Component>
+					</Directory>
+				</Directory>
+				<Directory Id="ACLAppDataMicrosoft" LongName="Microsoft" Name="Micros~1">
+					<Directory Id="Templates" LongName="Templates" Name="Templa~1">
+						<Component Id="CreateTemplatesFolder" Guid="12257D82-3EE0-4b4e-8BBB-ED24DEBD975F">
+							<CreateFolder>
+								<Permission Extended="yes" User="AuthenticatedUser" GenericAll="yes" />
+							</CreateFolder>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Module>
+</Wix>

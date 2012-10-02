@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- ********************************************************** -->
+	<!-- ************************ clerks *********************** -->
+	<!-- ********************************************************** -->
+	<clerks>
+		<clerk id="ReversalEntriesPOS">
+			<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryPOSClerk"/>
+			<recordList owner="ReversalIndex" property="PartsOfSpeech">
+				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexPOSRecordList"/>
+			</recordList>
+			<filters/>
+			<sortMethods>
+				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+			</sortMethods>
+			<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
+		</clerk>
+	</clerks>
+	<!-- ********************************************************** -->
+	<!-- ************************ tools *********************** -->
+	<!-- ********************************************************** -->
+	<tools>
+		<tool label="Reversal Index Categories" value="reversalToolReversalIndexPOS" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="lists" id="RevEntryPOSesAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="ReversalIndexPOS" PaneBarGroupId="PaneBar-ReversalIndicesMenu">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters area="lists" id="ReversalIndexPOS" clerk="ReversalEntriesPOS" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="PartOfSpeech-Plural">
+									<columns>
+										<column label="Name" ws="$ws=best analysis" width="50%" field="Name">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="Name" ws="best analysis"/>
+											</span>
+										</column>
+										<column label="Abbreviation" width="50%" ws="$ws=best analysis" field="Abbreviation">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="Abbreviation" ws="best analysis"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-reversalToolReversalIndexPOS" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters area="lists" clerk="ReversalEntriesPOS" treeBarAvailability="NotAllowed" persistContext="listsEdit" layout="Reversal">
+									<menuHandler>
+										<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalPOSMenuHandler"/>
+									</menuHandler>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

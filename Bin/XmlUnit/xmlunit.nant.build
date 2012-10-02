@@ -1,0 +1,71 @@
+<project name="xmlunit" description="XmlUnit for .Net" default="compile">
+  <property name="project.version" value="0.3"/>
+  <property name="base.dir" value="${nant.project.basedir}"/>
+  <property name="src.dir" value="${base.dir}/src/csharp"/>
+  <property name="tests.src.dir" value="${base.dir}/tests/csharp"/>
+  <property name="bin.dir" value="${base.dir}/bin"/>
+  <property name="csc.verbose" value="false"/>
+  <property name="deploy.file" value="${nant.project.name}${project.version}.zip"/>
+
+  <!-- *** You may need to edit these properties for your filesystem *** -->
+  <property name="nunit.v2.frameworkdir" value="..\nunit\bin\"/>
+  <property name="nunit.v2.assembly" value="nunit.framework.dll"/>
+  <property name="nunit.v2.bin.dir" value="..\..\nunit\bin"/>
+
+  <target name="init" description="prepare for other targets">
+	<mkdir dir="${bin.dir}"/>
+	<copy file="${nunit.v2.frameworkdir}${nunit.v2.assembly}" todir="${bin.dir}"/>
+  </target>
+
+  <target name="clean" description="clean out compiled files">
+	<delete failonerror="false">
+	  <fileset basedir="${bin.dir}">
+		<includes name="${nant.project.name}.*"/>
+	  </fileset>
+	</delete>
+  </target>
+
+  <target name="compile" description="compile all source files" depends="init">
+	<csc target="library" output="${bin.dir}/${nant.project.name}.dll" debug="true" verbose="${csc.verbose}">
+	  <references basedir="${bin.dir}">
+		<includes name="${nunit.v2.assembly}"/>
+	  </references>
+	  <sources basedir="${src.dir}">
+		<includes name="*.cs"/>
+	  </sources>
+	</csc>
+
+	<csc target="library" output="${bin.dir}/${nant.project.name}.tests.dll" debug="true" verbose="${csc.verbose}">
+		<references basedir="${bin.dir}">
+			<includes name="${nant.project.name}.dll"/>
+			<includes name="${nunit.v2.assembly}"/>
+		</references>
+		<sources basedir="${tests.src.dir}">
+			<includes name="*.cs"/>
+			<excludes name="AllTests.cs"/>
+		</sources>
+	</csc>
+  </target>
+
+  <target name="test" description="run all tests" depends="compile">
+	<exec basedir="${bin.dir}" workingdir="${bin.dir}" program="${nunit.v2.bin.dir}/nunit-console.exe" commandline="${nant.project.name}.tests.dll"/>
+  </target>
+
+  <target name="deploy" description="zip all code for deployment" depends="test">
+	<delete file="${deploy.file}" failonerror="false"/>
+	<zip zipfile="${deploy.file}">
+	  <fileset basedir="${base.dir}">
+		<includes name="LICENSE.txt"/>
+		<includes name="NUnit.ReadMe"/>
+		<includes name="*.build"/>
+		<includes name="**/*.cs"/>
+		<includes name="./tests/etc/**/*.*"/>
+		<includes name="**/${nant.project.name}*.dll"/>
+		<excludes name="**/AllTests.cs"/>
+	  </fileset>
+	</zip>
+  </target>
+
+  <target name="all" description="execute all tasks in the project" depends="clean,compile,test,deploy"/>
+
+</project>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window label="Itinerary Maker" settingsId="itinerary">
+  <commands>
+	<command id="CmdSubmitItinerary" label="_Submit Itinerary" shortcut="CTRL+S" message="SubmitItinerary" icon="submit"/>
+	<command id="CmdChat" label="_Chat with a representative" message="ChatWithRep" icon="chat"/>
+	<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable" icon="listPropertiesTable"/>
+  </commands>
+  <lists>
+	<list id="Cities">
+	  <item label="Dallas" value="DFW" icon="USA"/>
+	  <item label="Waxhaw" value="WAX" icon="USA"/>
+	  <item label="Rome" value="ROM" icon="Italy"/>
+	</list>
+  </lists>
+  <menubar>
+	<menu id="View" label="_View">
+	  <item label="Show Sidebar" boolProperty="ShowSidebar"/>
+	  <item label="Show Tree Bar" boolProperty="ShowTreeBar"/>
+	</menu>
+	<menu id="ActionsMenu" label="_Actions">
+	  <item id="submit" command="CmdSubmitItinerary"/>
+	  <menu id="OtherMenu" label="_Other">
+		<item id="Chat" command="CmdChat"/>
+	  </menu>
+	</menu>
+	<menu id="SpecialMenu" label="_Needs">
+	  <item label="Wheelchair Required" boolProperty="wheelchair"/>
+	  <item label="Basinet Required" boolProperty="basinet"/>
+<!-- notice that this one override the default value, which is "false" -->
+	  <item label="Food Required" boolProperty="food" defaultBoolPropertyValue="true"/>
+	</menu>
+	<menu id="Departure" list="Cities" label="_Departure Location" behavior="singlePropertyAtomicValue" property="departure">
+	  <item label="Nearby Airports OK" boolProperty="nearbyDestination"/>
+	  <menu id="Departure" list="Cities" label="_Departure Location" behavior="singlePropertyAtomicValue" property="departure"/>
+	</menu>
+	<menu id="Destination" list="Cities" label="D_estination" behavior="singlePropertyAtomicValue" property="destination"/>
+	<menu id="CombinationTest" label="Combination Test">
+	  <item label="Nearby Airports OK" boolProperty="nearbyDestination"/>
+	  <menu id="DepartureX" list="Cities" label="_Departure Location SubMenu" behavior="singlePropertyAtomicValue" property="departure"/>
+	  <item label="-"/>
+	  <menu id="DepartureY" list="Cities" label="_Departure Location Inline won't see this" behavior="singlePropertyAtomicValue" property="departure" inline="true"/>
+	</menu>
+	<menu id="DebugMenu" label="_Debug">
+	  <item command="CmdListPropertiesTable"/>
+	</menu>
+  </menubar>
+  <contextMenus>
+	<menu id="TestContextMenu" label="_Needs">
+	  <item label="Wheelchair Required" boolProperty="wheelchair"/>
+	  <item label="Basinet Required" boolProperty="basinet"/>
+<!-- notice that this one override the default value, which is "false" -->
+	  <item label="Food Required" boolProperty="food" defaultBoolPropertyValue="true"/>
+	</menu>
+  </contextMenus>
+  <sidebar>
+	<tab label="Tree Test">
+	  <group label="foo">
+		<item command="CmdSubmitItinerary"/>
+	  </group>
+	  <group label="List Properties Table" command="CmdListPropertiesTable">
+		<item command="CmdSubmitItinerary"/>
+	  </group>
+	  <item command="CmdListPropertiesTable"/>
+	</tab>
+	<tab label="Test">
+	  <item command="CmdSubmitItinerary"/>
+	  <item command="CmdListPropertiesTable"/>
+	</tab>
+	<tab label="Needs">
+	  <item label="Wheelchr" boolProperty="wheelchair" icon="wheelchair"/>
+	</tab>
+	<tab list="Cities" label="Departure Location" behavior="singlePropertyAtomicValue" property="departure"/>
+	<tab list="Cities" label="Destination" behavior="singlePropertyAtomicValue" property="destination"/>
+  </sidebar>
+  <toolbars>
+	<toolbar id="Actions">
+	  <item command="CmdSubmitItinerary"/>
+	  <item command="CmdListPropertiesTable"/>
+	</toolbar>
+	<toolbar id="Needs">
+	  <item label="Wheelchair Required" boolProperty="wheelchair" icon="wheelchair"/>
+	  <item label="Basinet Required" boolProperty="basinet" icon="basinet"/>
+<!-- notice that this one override the default value, which is "false" -->
+	  <item label="Food Required" boolProperty="food" defaultBoolPropertyValue="true" icon="food"/>
+	</toolbar>
+  </toolbars>
+<!-- The class which will  fill up the window (minus the sidebar, toolbars, and menubar). -->
+<!--<contentClass assemblyPath="G:\WW\Src\XCore\Samples\Itinerary\Ticker\Ticker.dll" class="Ticker"/> -->
+</window>

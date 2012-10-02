@@ -1,0 +1,603 @@
+MIME-Version: 1.0
+Content-Type: multipart/related; boundary="----=_NextPart_01C24DA7.62CAA4C0"
+
+This document is a Web archive file.  If you are seeing this message, this means your browser or editor doesn't support Web archive files.  For more information on the Web archive format, go to http://officeupdate.microsoft.com/office/webarchive.htm
+
+------=_NextPart_01C24DA7.62CAA4C0
+Content-Location: file:///C:/272ADD12/IDLImporter.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="us-ascii"
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml"
+xmlns:o=3D"urn:schemas-microsoft-com:office:office"
+xmlns:w=3D"urn:schemas-microsoft-com:office:word"
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<meta name=3DProgId content=3DWord.Document>
+<meta name=3DGenerator content=3D"Microsoft Word 10">
+<meta name=3DOriginator content=3D"Microsoft Word 10">
+<link rel=3DFile-List href=3D"IDLImporter_files/filelist.xml">
+<title>IDL Importer</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Eberhard Beilharz</o:Author>
+  <o:LastAuthor>Eberhard Beilharz</o:LastAuthor>
+  <o:Revision>16</o:Revision>
+  <o:TotalTime>634</o:TotalTime>
+  <o:Created>2002-07-31T13:20:00Z</o:Created>
+  <o:LastSaved>2002-08-27T12:54:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>1031</o:Words>
+  <o:Characters>5882</o:Characters>
+  <o:Company>JAARS, Inc.</o:Company>
+  <o:Lines>49</o:Lines>
+  <o:Paragraphs>13</o:Paragraphs>
+  <o:CharactersWithSpaces>6900</o:CharactersWithSpaces>
+  <o:Version>10.3501</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:View>Print</w:View>
+  <w:Zoom>BestFit</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:553679495 -2147483648 8 0 66047 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+h3
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:10.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:10.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p.Code, li.Code, div.Code
+	{mso-style-name:Code;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";
+	mso-no-proof:yes;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-footer:url("IDLImporter_files/header.htm") f1;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:3750980;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1480202654 67698689 67698691 67698693 67698689 67698=
+691 67698693 67698689 67698691 67698693;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:151339591;
+	mso-list-template-ids:-1540483444;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=3DEN-US link=3Dblue vlink=3Dpurple style=3D'tab-interval:.5in'>
+
+<div class=3DSection1>
+
+<h1>IDL Importer</h1>
+
+<p class=3DMsoNormal>Author: Eberhard Beilharz, 2002-07-31</p>
+
+<h2>Motivation</h2>
+
+<p class=3DMsoNormal>In order to be able to use COM objects, .NET objects n=
+eed a
+RCW (Runtime Callable Wrapper) that translates (marshals) the parameters and
+return values between .NET and COM. This can be done be adding a reference =
+to a
+COM object in the .NET project, or by creating an <span class=3DSpellE>inte=
+rop</span>
+DLL with the <span class=3DSpellE>TlbImp</span> tool (part of the .NET fram=
+ework
+SDK) and then adding a reference to that DLL.</p>
+
+<p class=3DMsoNormal>Both methods use the type library of the COM object to
+collect the information about classes, interfaces, parameters etc. that the=
+ COM
+object provides. However, this works only for <span class=3DSpellE>OLEAutom=
+ation</span>
+compatible types. If the COM object uses other types (as most of our COM
+objects do), e.g. C-style arrays, the generated wrapper will not work.
+Microsoft recommends to manually patch the RCW (disassemble RCW, patch IL c=
+ode,
+and then assemble new RCW), or to manually re-declare the interfaces in .NET
+(specify same GUID as original COM interface).</p>
+
+<p class=3DMsoNormal>Both methods don&#8217;t work for our automated build
+process, because they involve manual steps.</p>
+
+<p class=3DMsoNormal>Instead of using the type library, it is possible to u=
+se the
+information from the IDL file and generate a RCW from the IDL file. The IDL
+file contains much more information about parameters and functions than the
+type library, e.g. the <span class=3DSpellE>size_<span class=3DGramE>is</sp=
+an></span><span
+class=3DGramE>(</span>) attribute to specify an array, or the string attrib=
+ute to
+specify a string parameter.</p>
+
+<p class=3DMsoNormal>The file <a
+href=3D"file:///C:\fw\Bin\src\IDLImp\doc\TLBImp%20Conversions.mht"><span
+class=3DSpellE>TLBImp</span> Conversions</a> summarizes the conversions tha=
+t <span
+class=3DSpellE>TLBImp</span> does.</p>
+
+<h2>Usage</h2>
+
+<p class=3DMsoNormal>The <span class=3DSpellE>IDLImp</span> tool reads an I=
+DL file <span
+class=3DGramE>an</span> generates a C# file that declares all the interface=
+s in
+it.</p>
+
+<p class=3DMsoNormal>The syntax is:</p>
+
+<p class=3DCode>IDLImp.exe [options] idlfilename.idl</p>
+
+<p class=3DMsoNormal style=3D'tab-stops:1.25in'>Options are:</p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.25in;text-indent:-1.25in;tab-st=
+ops:
+1.25in'>/o <span class=3DSpellE><span class=3DGramE>outfile</span></span><s=
+pan
+style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Name
+of generated file. If no <span class=3DSpellE>outfile</span> is specified, =
+the
+name of the IDL file is used with the extension set to .CS</p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.25in;text-indent:-1.25in;tab-st=
+ops:
+1.25in'>/c <span class=3DSpellE>configfile</span><span style=3D'mso-tab-cou=
+nt:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp; </span>Name
+of XML configuration file. If no <span class=3DSpellE>configfile</span> is
+specified, <span class=3DSpellE>IDLImp.xml</span> in the same directory as =
+the
+executable will be used.</p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.25in;text-indent:-1.25in;tab-st=
+ops:
+1.25in'>/n namespace<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Namespace
+used for interfaces. If no namespace is provided, the name of the IDL file
+(without extension) will be used as namespace.</p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.25in;text-indent:-1.25in;tab-st=
+ops:
+1.25in'>/u namespace <span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp; </span>Specifies
+additional namespaces that are included as &#8220;using&#8221; statements.<=
+/p>
+
+<p class=3DMsoNormal style=3D'margin-left:1.25in;text-indent:-1.25in;tab-st=
+ops:
+1.25in'>/?<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Displays
+help</p>
+
+<h2>Restrictions/ Known Bugs</h2>
+
+<ul style=3D'margin-top:0in' type=3Ddisc>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo3;tab-stops:list .5in=
+'>Parameter
+	 names can&#8217;t have the name of attributes or other reserved words,
+	 e.g. id as parameter name won&#8217;t work. </li>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo3;tab-stops:list .5in=
+'>Only
+	 one base type allowed.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l0 level1 lfo3;tab-stops:list .5in=
+'>The
+	 base type must be defined in the same IDL file.</li>
+</ul>
+
+<h2>Preparing the IDL file</h2>
+
+<p class=3DMsoNormal>Sometimes it is necessary to have the return values of=
+ a
+function (Background: COM returns a value like to indicate failure of a
+function, whereas .NET throws an exception instead). <span class=3DSpellE>I=
+DLImp</span>
+can be instructed to create the function with the correct return value by
+inserting a custom attribute in the IDL file:</p>
+
+<p class=3DCode>custom(&#8220;842883D3-DC67-45cf-B968-E763D37A7A19&#8221;, =
+&#8220;true&#8221;)</p>
+
+<p class=3DMsoNormal>The custom attribute is ignored by MIDL.</p>
+
+<p class=3DMsoNormal>If a function has C-style arrays as parameter, it must
+specify the <span class=3DSpellE>size_<span class=3DGramE>is</span></span><=
+span
+class=3DGramE>(</span>) or string() attribute on that parameter. Otherwise =
+<span
+class=3DSpellE>IDLImp</span> has no clue that it is an array.</p>
+
+<h2>Configuration</h2>
+
+<p class=3DMsoNormal><span class=3DSpellE>IDLImp</span> contains some built=
+-in
+conversions that are performed on interfaces and methods, but most of the
+conversions are configurable in a XML file. Hopefully, there won&#8217;t be=
+ to
+often a need to change the source code (except for enhancements on the
+grammar).</p>
+
+<p class=3DMsoNormal>Two types of conversions can be specified in the XML f=
+ile:
+conversions on the parameter type and on the parameter name. They use the s=
+ame
+data type.</p>
+
+<p class=3DMsoNormal>The XML file can be seen as a set of rules that <span
+class=3DSpellE>IDLImp</span> goes through from the top to the end until it =
+finds
+a rule where all conditions are met. This means that the order of the rules=
+ is
+important.</p>
+
+<p class=3DMsoNormal>The XML file contains the following fields: </p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>Match </b>(re=
+gular
+expression): the parameter type is matched against this regular expression.=
+</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>Replace</b> (=
+regular
+expression replace string): if all conditions are true and Match matched, t=
+hen
+the matching part(s) are replaced with this string (see <span class=3DSpell=
+E>Regex.Replace</span>
+for more information).</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>Attribute</b>
+(string): The specified attribute must be present in the parameter attribute
+list in order that the rule matches. Multiple attributes can be specified,
+separated by comma. To test for the absence of an attribute, precede the
+attribute name with a tilde. Example: <span class=3DSpellE>out<span class=
+=3DGramE>,~</span>retval</span>.</p>
+
+<p class=3DMsoNormal><span class=3DSpellE><b style=3D'mso-bidi-font-weight:=
+normal'>AttrValue</b></span>
+(string): Only valid if Attribute also has a value. <span class=3DGramE>Add=
+itional
+condition.</span> <span class=3DGramE>The value that is compared with the
+attribute value.</span> If <span class=3DSpellE>AttrValue</span> has the fo=
+rm
+&#8220;name=3Dvalue&#8221; than it is a named value. Name is compared with =
+the
+attribute value name and value with the attribute value (implemented, but n=
+ot
+tested). If multiple attributes are specified, then the <span class=3DSpell=
+E>AttrValue</span>
+is used with the first attribute.</p>
+
+<p class=3DMsoNormal><span class=3DSpellE><b style=3D'mso-bidi-font-weight:=
+normal'>NewAttribute</b></span>
+(string): if present and the rule matches, the parameter in the result file
+will get this attribute. Multiple attributes can be specified, separated by
+comma. If the name of the attribute is preceded by the dash, the attribute =
+will
+be deleted. Example: -out removes the out attribute.</p>
+
+<p class=3DMsoNormal><span class=3DSpellE><b style=3D'mso-bidi-font-weight:=
+normal'>NewAttrValue</b></span>
+(string): if present and the rule matches and <span class=3DSpellE>NewAttri=
+bute</span>
+<span class=3DGramE>is</span> specified, the parameter attribute will get t=
+his
+value. Again, this can have the form &#8220;name=3Dvalue&#8221;. If multipl=
+e new
+attributes are specified, then <span class=3DSpellE>NewAttrValue</span> is =
+used
+with the first attribute.</p>
+
+<p class=3DMsoNormal><span class=3DSpellE><span class=3DGramE><b style=3D'm=
+so-bidi-font-weight:
+normal'>fEnd</b></span></span> (<span class=3DSpellE>bool</span>): If set to
+false the processing of the rules will continue, even if this rule matches.=
+ If
+set to true or if it is not specified, the processing of the rules will end=
+ if
+this rule matches.</p>
+
+<h2>Building <span class=3DSpellE>IDLImp</span></h2>
+
+<p class=3DMsoNormal><span class=3DSpellE>IDLImp</span> uses the ANTLR tool=
+ with
+the C# code generator (<a href=3D"http://www.antlr.org/">http://www. Antlr.=
+org</a>).
+I used version 2.7.2a2. I made some changes to the C# code generator (file =
+<span
+class=3DSpellE>CSharpCodeGenerator.java</span>) to eliminate a lot of warni=
+ngs in
+the generated code. The patched version is available at
+\\Jarnet-h\CCS_SWDEV\Source\FW\antlr-2.7.zip</p>
+
+<p class=3DMsoNormal>To use the ANTLR tool, you need JAVA installed on your
+machine. You have to set the CLASSPATH environment variable to your <span
+class=3DSpellE>antlr</span> directory (recommended location:
+C:\fw\Bin\src\IDLImp\antlr-2.7.2a2).</p>
+
+<p class=3DMsoNormal>If you downloaded the ANTLR tool from the Internet, yo=
+u need
+to compile the Java classes. Therefore you need the Java <span class=3DGram=
+E>SDK,</span>
+otherwise the Java Runtime is sufficient. It is available at <a
+href=3D"http://java.sun.com/j2se/1.4/download.html">http://java.sun.com/j2s=
+e/1.4/download.html</a>.</p>
+
+<p class=3DMsoNormal>The solution <span class=3DSpellE>IDLImp.sln</span> co=
+nsists
+of two projects: <span class=3DSpellE>IDLGrammar</span> runs the ANTLR tool=
+ on
+the <span class=3DSpellE>idl.g</span> file. This produces the files <span
+class=3DSpellE>IDLLexer.cs</span>, <span class=3DSpellE>IDLParser.cs</span>=
+ and <span
+class=3DSpellE>IDLTokenTypes.cs</span>. <span class=3DSpellE>IDLImp</span> =
+is the
+C# project that uses these generated files and implements the tool.</p>
+
+<h2>Test Suite</h2>
+
+<p class=3DMsoNormal>The subdirectory <span class=3DGramE>tests contains</s=
+pan> a
+couple of IDL files and generated C# files for reference. If some things get
+changed in the XML file or in the source code, the <span class=3DSpellE>tes=
+ts.bat</span>
+file should be run to assure that the results after the changes are still t=
+he
+same (except if you fixed a bug that also showed in the reference files, of
+course).</p>
+
+</div>
+
+</body>
+
+</html>
+
+------=_NextPart_01C24DA7.62CAA4C0
+Content-Location: file:///C:/272ADD12/IDLImporter_files/header.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="us-ascii"
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml"
+xmlns:o=3D"urn:schemas-microsoft-com:office:office"
+xmlns:w=3D"urn:schemas-microsoft-com:office:word"
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<meta name=3DProgId content=3DWord.Document>
+<meta name=3DGenerator content=3D"Microsoft Word 10">
+<meta name=3DOriginator content=3D"Microsoft Word 10">
+<link id=3DMain-File rel=3DMain-File href=3D"../IDLImporter.htm">
+<![if IE]>
+<base href=3D"file:///C:\272ADD12\IDLImporter_files\header.htm"
+id=3D"webarch_temp_base_tag">
+<![endif]>
+</head>
+
+<body lang=3DEN-US link=3Dblue vlink=3Dpurple>
+
+<div style=3D'mso-element:footer' id=3Df1>
+
+<p class=3DMsoFooter><span style=3D'mso-field-code:" FILENAME   \\* MERGEFO=
+RMAT "'><span
+style=3D'mso-no-proof:yes'>IDL Importer.mht</span></span><span style=3D'mso=
+-tab-count:
+2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; </span><span
+style=3D'mso-field-code:" PAGE   \\* MERGEFORMAT "'><span style=3D'mso-no-p=
+roof:
+yes'>2</span></span>/<span style=3D'mso-field-code:" NUMPAGES   \\* MERGEFO=
+RMAT "'><span
+style=3D'mso-no-proof:yes'>3</span></span></p>
+
+</div>
+
+</body>
+
+</html>
+
+------=_NextPart_01C24DA7.62CAA4C0
+Content-Location: file:///C:/272ADD12/IDLImporter_files/filelist.xml
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/xml; charset="utf-8"
+
+<xml xmlns:o=3D"urn:schemas-microsoft-com:office:office">
+ <o:MainFile HRef=3D"../IDLImporter.htm"/>
+ <o:File HRef=3D"header.htm"/>
+ <o:File HRef=3D"filelist.xml"/>
+</xml>
+------=_NextPart_01C24DA7.62CAA4C0--

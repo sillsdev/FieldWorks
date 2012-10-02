@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="textbox" num="0.7" abbr="tbx" file="StdCtrls\TextBox.xml">
+ <title tag="textbox">Text Box Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A text box is a text input control. It allows editing of the text, filtering, type-ahead, validation, cut, paste and deletion. Text boxes are many times bundled with other controls to produce things like combo boxes containing preset selection values. Sometimes other controls set the text box value. Text boxes can have shortcuts. In dialogs, the side-effect of a text box may be immediate if there is a preview window but usually they are delayed until the dialog is closed. In toolbars, the effects are more immediate.</p>
+  </introduction>
+  <context>
+<p>Each text box is tested with its associated controls so that side-effects can be noted. Testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report. The first words of the bug report title should be a noun phrase containing the words "text box" or the name of a control that triggers an unexpected side-effect that relies on the text box value to occur.</p>
+<p>When side-effects are delayed, the "triggering" control must be used before a text box value can influence it.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, it is described in the help system of many interface development products often as part of another control.</p>
+  </warning>
+ <case id="tbxInsp" num="1" order="any">
+  <title tag="tbxInsp">Text Box Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the text box is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A label may be placed near each text box, usually to its left. An underscored letter indicates an &lt;Alt&gt;&lt;alpha&gt; shortcut.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the text box.
+   <r>The text box and label must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Text box has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the locations of the text box and label relative to eachother and other visible controls.
+   <r>The text box and label should be close to the positions indicated in the specification.</r>
+   <p name="bug">Text box has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">Hover the cursor over the label or text box.
+   <r>A help bubble displays a short help message.</r>
+   <p name="bug">Text box doesn't have hover help</p>
+  </step>
+
+ </case>
+ <case id="tbxEdit" num="2" order="any">
+  <title tag="tbxEdit">Text Box Editting</title>
+  <context>
+<p>When the text box is enabled</p>
+</context>
+
+   <p name="Principle">The state of the text box is changed by typing text, repositioning the cursor and by pressing editing keys and often by selected by a "short-cut" key sequence. Immediate or delayed side-effects may include changes in a preview window on the control frame or changes in another view.</p>
+
+  <step name="2.1" link="Bug">Left click over the label or in the text box.
+   <r>
+<ul>
+	<li>The text in the box is highlighted.</li>
+	<li>The text may be moved to its beginning or end if it fills the box.</li>
+	<li>The cursor is moved to a convenient place in the text, often the end.</li>
+   </ul>
+</r>
+   <p name="bug">Clicked text box not highlighted.</p>
+  </step>
+  <step name="2.2" link="Bug">Press the short-cut &lt;alt&gt;&lt;alpha&gt; for the text box.
+   <r>
+<ul>
+	<li>The text in the box is highlighted.</li>
+	<li>The text may be moved to its beginning or end if it fills the box.</li>
+	<li>The cursor is moved to a convenient place in the text, often the end.</li>
+   </ul>
+</r>
+   <p name="bug">Shorted text box not focused.</p>
+  </step>
+  <step name="2.3" link="Bug">Type some valid characters in the text box.
+   <r>
+<ul>
+	<li>The immediate side-effects match the description in the specification.</li>
+	<li>These may include type-ahead action, automatic selection from a list when a unique match is made or substitution of special characters for recognized coded sequences.</li>
+	<li>In most cases, the characters typed in are echoed in the box.</li>
+   </ul>
+</r>
+   <p name="Notes">Valid characters, numbers, words or phrases may rely on a list or range.</p>
+   <p name="bug">Text box valid data action incorrect</p>
+   <p name="bug">Text box input range is incorrect</p>
+  </step>
+  <step name="2.4" link="Bug">Type some invalid characters in the text box.
+   <r>
+<ul>
+	<li>The immediate side-effects match the description in the specification.</li>
+	<li>There may be an audible sound, the invalid characters may flash or be highlighted in some other way or a message box warning may open.</li>
+   </ul>
+</r>
+   <p name="Notes">Characters or numbers may be out of range; words and phrases may not be on the valid list.</p>
+   <p name="bug">Text box invalid data action incorrect</p>
+   <p name="bug">Text box input range is incorrect</p>
+  </step>
+  <step name="2.5" link="Bug">Delete characters from the text box.
+   <r>The characters deleted should not be visible and the text should close up the gap.</r>
+   <p name="Notes">This can be done using the &lt;Backspace&gt; or &lt;Delete&gt; keys.</p>
+   <p name="bug">Text box problem when deleting data</p>
+  </step>
+  <step name="2.6" link="Bug">Move the cursor.
+   <r>
+<ul>
+	<li>The cursor moves to the expected location.</li>
+	<li>If there is more text than box, it may not be easy to determine how the cursor moved.</li>
+	<li>If it's already at the front of the text, the cursor should not move to the left.</li>
+	<li>Similarly for the end and moving right.</li>
+   </ul>
+</r>
+   <p name="Notes">Use the pointer device, arrow keys or other navigation keys.</p>
+   <p name="bug">Text box problem when positioning cursor</p>
+  </step>
+  <step name="2.7" link="Bug">Paste text into the text box.
+   <r>The text pasted should appear as if it were typed in by hand. Formatting may be lost or converted to a similar effect, font, etc..</r>
+   <p name="bug">Text box paste problem</p>
+  </step>
+  <step name="2.8" link="Bug">Select some text in the text box.
+   <r>The text should be highlighted for cutting.</r>
+   <p name="Notes">Use the pointer device, arrow keys or other navigation keys to select the text.</p>
+   <p name="bug">Text box data selection problem</p>
+  </step>
+  <step name="2.9" link="Bug">Cut selected text from the text box. Paste in another text box or application.
+   <r>
+<ul>
+	<li>The selected characters should not be visible and the text should close up the gap.</li>
+	<li>The characters should render in the new location up to possible formatting differences.</li>
+   </ul>
+</r>
+   <p name="bug">Text box data cut problem.</p>
+  </step>
+
+ </case>
+ <case id="tbxOp" num="3" order="any">
+  <title tag="tbxOp">Text Box Operation</title>
+  <context>
+<p>When the text is active</p>
+</context>
+
+   <p name="Principle">Text boxes have many uses and cause widely different side-effects.</p>
+
+  <step name="3.1" link="Bug">Exercise a triggering control to activate the delayed side-effects of the text box with nothing in it (if this is possible).
+   <r>The side-effects match the description in the specification for a blank value.</r>
+   <p name="bug">Null text box action incorrect</p>
+  </step>
+  <step name="3.2" link="Bug">Press &lt;Enter;&gt; to activate the delayed side-effects of the text box with nothing in it (if this is speified).
+   <r>
+<ul>
+	<li>The side-effects match the description in the specification.</li>
+	<li>If validity is checked a message box may pop up if there is invalid data.</li>
+   </ul>
+</r>
+   <p name="bug">Text box value return action incorrect</p>
+  </step>
+  <step name="3.3" link="Bug">Exercise a triggering control to activate the delayed side-effects of the text box with a value in it.
+   <r>
+<ul>
+	<li>The side-effects match the description in the specification.</li>
+	<li>If validity is checked a message box may pop up if there is invalid data.</li>
+   </ul>
+</r>
+   <p name="bug">Text box value action incorrect</p>
+  </step>
+  <step name="3.4" link="Bug">When operating the text box, do side-effects obscure or disable other functionality in the control frame or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Text box operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Dec-18-00" author="MikeL">Test created.</update>
+
+</test>

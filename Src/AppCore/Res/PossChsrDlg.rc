@@ -1,0 +1,249 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "PossChsrDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"PossChsrDlgRes.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridPossChsrDlg DIALOGEX 0, 0, 226, 273
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE |
+	WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Possibility List Choices"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "",kctidTreeEditLabel,6,9,30,9
+	COMBOBOX        kctidKeywordHist,38,7,181,71,CBS_DROPDOWN | NOT
+					WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	COMBOBOX        kctidChoiceHist,38,7,181,71,CBS_DROPDOWN | WS_VSCROLL |
+					WS_TABSTOP
+	CONTROL         "Tree1",kctidKeywordTree,"SysTreeView32",TVS_HASLINES |
+					TVS_SHOWSELALWAYS | TVS_TRACKSELECT | NOT WS_VISIBLE |
+					WS_TABSTOP,6,22,213,191,WS_EX_CLIENTEDGE
+	CONTROL         "",kcidPossChsrChoices,"Button",BS_OWNERDRAW,6,163,213,50
+//    EDITTEXT        kctidCurrentChoices,6,163,213,50,ES_MULTILINE |
+//                    ES_READONLY | NOT WS_VISIBLE | WS_VSCROLL
+	CONTROL         "&Show selected items",kctidShowChoices,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,6,217,84,8
+	PUSHBUTTON      "&More >>",kctidToggleHelp,185,233,39,11
+	CONTROL         "Tab1",kctidTab,"SysTabControl32",TCS_BOTTOM |
+					TCS_HOTTRACK | WS_TABSTOP,2,3,222,239
+	PUSHBUTTON      "OK",kctidOk,64,247,50,15
+	PUSHBUTTON      "Cancel",kctidCancel,119,247,50,15
+	PUSHBUTTON      "Help...",kctidHelp,174,247,50,15
+	PUSHBUTTON      "Mo&dify",kctidModifyLst,10,247,50,15
+END
+
+kridChsrInsertDlg DIALOG  0, 0, 285, 134
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Item &name:",IDC_STATIC,5,11,38,13
+	EDITTEXT        kctidChsrInsName,50,9,228,15,ES_AUTOHSCROLL
+	LTEXT           "&Abbreviation:",IDC_STATIC,5,30,42,10
+	EDITTEXT        kctidChsrInsAbbr,50,28,41,15,ES_AUTOHSCROLL
+	LTEXT           "Short &Description:",IDC_STATIC,5,49,43,20
+	EDITTEXT        kctidChsrInsDesc,50,47,228,63,ES_MULTILINE |
+					ES_AUTOVSCROLL
+	PUSHBUTTON      "OK",kctidOk,111,116,50,15
+	PUSHBUTTON      "Cancel",kctidCancel,167,116,50,15
+	PUSHBUTTON      "Help...",kctidHelp,221,116,50,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+kridPossChsrIcon        ICON                    "../../AppCore/Res/PossChsr.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridPossToolbarCold     BITMAP                  "../../AppCore/Res/PossChsrToolCold.bmp"
+kridPossToolbarHot      BITMAP                  "../../AppCore/Res/PossChsrToolHot.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+	kridPossChsrDlg, DIALOG
+	BEGIN
+		RIGHTMARGIN, 224
+		VERTGUIDE, 6
+		VERTGUIDE, 10
+		VERTGUIDE, 36
+		VERTGUIDE, 219
+		TOPMARGIN, 3
+		BOTTOMMARGIN, 262
+		HORZGUIDE, 7
+		HORZGUIDE, 22
+		HORZGUIDE, 213
+		HORZGUIDE, 221
+		HORZGUIDE, 242
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	kctidTab                "The Topics List tab shows all items in the list. The Keyword Search tab shows only items that match a search string you type in the List item box."
+	kctidChoiceHist         "Type the first characters of an item in the list to jump to it or use the drop-down list to go to items you have previously visited."
+	kctidKeywordHist        "Type a word or part of a word. Then press Enter to see a list of items that match your search string."
+	kctidChoiceTree         "Select a box to choose an item. Clear a box to remove a choice."
+	kctidKeywordTree        "Select a box to choose an item. Clear a box to remove a choice."
+	kctidShowChoices        "Opens a small pane above the check box and lists all current choices."
+	kctidToggleHelp         "[More >>] opens a descriptive help pane on the right for the selected item. [<< Less] closes the descriptive help pane."
+	kcidPossChsrChoices     "Shows the items that are currently selected and will be inserted when you click OK."
+	kctidModifyLst          "Opens a menu so you can change the contents of the dialog or the appearance of the dialog contents."
+END
+
+STRINGTABLE
+BEGIN
+	kctidOvlyTabChoice       "Shows all the list items in the topics list so you can select or clear items for the new overlay."
+	kctidOvlyTabKeyword      "Opens an empty pane where you search for and display list items that match a search string you type in the <i>Keyword</i> box."
+	kctidOvlyChoiceHist      "Shows the selected item in the list and allows you to type the first characters or numbers of an item in the list to locate and select it. Also, you can use the drop-down list to go back to items you have already visited."
+	kctidOvlyKeywordHist     "Allows you to type a seach string and display all list items that contain the search string. Type a word or part of a word and press <i>Enter</i>."
+	kctidOvlyChoiceTree      "Shows the list items from the topics list associated with this overlay.  Select a box to choose an item and include it in the overlay for use as a tag. Clear a box to remove an item from the overlay."
+	kctidOvlyKeywordTree     "Displays all items that match your search string. If a check box is empty, click it to include that list item in the overlay. If a box is checked, click it to clear the box and exclude the list item from the overlay."
+	kctidOvlyShowChoices     "If selected, opens a small pane above the check box that displays a list of all selected items."
+	kctidOvlyToggleHelp      "<i>More>></i> opens a descriptive help pane on the right for the selected item.  <i><<Less</i> closes the descriptive help pane."
+	kctidOvlyCurrentChoices  "Shows the selected items that will be included in the overlay when you click the OK button."
+	kctidOvlyModifyLst       "Opens a menu so you can change the contents of the dialog or the appearance of the dialog contents."
+	kctidOvlyOK              "Updates the list of included list items in the <i>Options</i> dialog for this Overlay and closes this dialog."
+END
+
+
+STRINGTABLE
+BEGIN
+	kcidPossBack            "Goes back to the item you last selected in the left pane."
+	kcidPossForward         "Goes to the item that was selected when you clicked the Back button."
+	kcidPossPrint           "Prints the current help topic."
+	kcidPossDispName        "Display tree items using just their names\nShow &Names"
+	kcidPossDispNameAbbrev  "Display tree items using both their abbreviations and their names\nSho&w Abbreviations and Names"
+	kcidPossDispAbbrev      "Display tree items using just their abbreviations\nShow &Abbreviations"
+	kstidPossTbBack         "Back"
+	kstidPossTbForward      "Forward"
+	kstidPossTbPrint        "Print"
+	kstidPssItem            "List it&em:"
+	kstidKeyword            "&Keyword:"
+	kstidChooser            " Chooser"
+	kstidOverlayChooser     " Overlay Tag Chooser"
+	kcidPossExcludeTag      "&Exclude this Item from Overlay"
+	kcidPossExcludeSubtags  "Exclude Item and All &Subitems"
+	kcidPossIncludeSubtags  "&Include Item and All Subitems"
+	kstidModifyLstOptions   "&Options"
+END
+
+STRINGTABLE
+BEGIN
+	kstidEmptyLst           "Empty List"
+	kcidPossTrMerge         "Merge the selected item with Another\n&Merge..."
+	kstidEmptyLstTxt        "This list does not contain any items yet.\nThe Topics List Editor will open so you can add items to this list "
+	kcidPossTrInsert        "Insert an item into the list\n&Insert Item..."
+	kcidPossTrInsertBef     "Insert an item into the list above the current one\n&Insert Item Above..."
+	kcidPossTrInsertAft     "Insert an item into the list below the current one\nInsert Item &Below..."
+	kcidPossTrInsertSub     "Insert a subitem nested inside the current one\nInsert &Subitem..."
+	kcidPossTrRename        "Rename the selected item\n&Rename..."
+	kcidPossTrDelete        "Delete the selected item\n&Delete..."
+	kcidPossTrEditList      "Opens the Topics Editor with this List\n&Edit List..."
+	kstidTopicsLst          "Topics List"
+	kstidKeywordSrch        "Keyword Search"
+	kstidTitle              "Title"
+	kstidNoDesc             "There is no description available for this list item."
+	kstidShortDescription   "Short Description"
+	kstidListSubitems       "List Subitems"
+	kstidListItems          "List Items"
+	kstidListSubitem        "List Subitem"
+	kstidListItem           "List Item"
+END
+
+STRINGTABLE
+BEGIN
+	kcidPossInsert          "Insert New List Item"
+	kcidPossRename          "Rename Item"
+	kstidChsrInsDup         "The name or abbreviation you specified for the new list item already exists.\nPlease specify a different name or abbreviation."
+	kstidChsrInsDupHead     "Duplicate Name"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

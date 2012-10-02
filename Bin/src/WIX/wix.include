@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="WiX Toolset NAnt build properties" default="makedirs" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	wix.include - Contains properties for the NAnt builds.
+	2005.09.12 jrock Created
+  </description>
+
+  <!-- Include the global properties -->
+  <include buildfile="global.include" unless="${property::exists('global.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Use .NET 1.1 for our default framework -->
+  <property name="nant.settings.currentframework" value="net-1.1" />
+
+  <!-- Directories derived from the current platform and flavor -->
+  <property name="dir.build.wix" value="${dir.build.project}" readonly="true" />
+  <property name="dir.log.wix" value="${dir.log.project}" readonly="true" />
+  <property name="dir.target.wix" value="${dir.target.project}" readonly="true" />
+  <property name="dir.wixroot" value="${dir.root}" readonly="true" />
+  <property name="dir.wixroot.inc" value="${dir.wixroot}\inc" readonly="true" />
+  <property name="dir.wixroot.src" value="${dir.wixroot}\src" readonly="true" />
+
+  <!-- Build directories for the toolsrc projects -->
+  <property name="dir.build.doccompiler" value="${dir.build.wix}\toolsrc\doccompiler" readonly="true" />
+  <property name="dir.build.generatewixinclude" value="${dir.build.wix}\toolsrc\generatewixinclude" readonly="true" />
+  <property name="dir.build.msggen" value="${dir.build.wix}\toolsrc\msggen" readonly="true" />
+  <property name="dir.build.votivepp" value="${dir.build.wix}\toolsrc\votivepp" readonly="true" />
+  <property name="dir.build.residgen" value="${dir.build.wix}\toolsrc\residgen" readonly="true" />
+  <property name="dir.build.wixcop" value="${dir.build.wix}\toolsrc\wixcop" readonly="true" />
+  <property name="dir.build.xsdgen" value="${dir.build.wix}\toolsrc\xsdgen" readonly="true" />
+
+  <!-- Source directories for the toolsrc projects -->
+  <property name="dir.src.toolsrc" value="${dir.wixroot}\toolsrc" readonly="true" />
+  <property name="dir.src.doccompiler" value="${dir.src.toolsrc}\doccompiler" readonly="true" />
+  <property name="dir.src.generatewixinclude" value="${dir.src.toolsrc}\generatewixinclude" readonly="true" />
+  <property name="dir.src.msggen" value="${dir.src.toolsrc}\msggen" readonly="true" />
+  <property name="dir.src.residgen" value="${dir.src.toolsrc}\residgen" readonly="true" />
+  <property name="dir.src.votivepp" value="${dir.src.toolsrc}\votivepp" readonly="true" />
+  <property name="dir.src.wixcop" value="${dir.src.toolsrc}\wixcop" readonly="true" />
+  <property name="dir.src.xsdgen" value="${dir.src.toolsrc}\xsdgen" readonly="true" />
+
+  <!-- Build directories for the main wix projects -->
+  <property name="dir.build.candle" value="${dir.build.wix}\candle" readonly="true" />
+  <property name="dir.build.chm" value="${dir.build.wix}\chm" readonly="true" />
+  <property name="dir.build.dark" value="${dir.build.wix}\dark" readonly="true" />
+  <property name="dir.build.ext" value="${dir.build.wix}\ext" readonly="true" />
+  <property name="dir.build.ext.netfxextension" value="${dir.build.ext}\netfxextension" readonly="true" />
+  <property name="dir.build.ext.vsextension" value="${dir.build.ext}\vsextension" readonly="true" />
+  <property name="dir.build.ext.pca" value="${dir.build.wix}\ca\pubca\pcaext" readonly="true" />
+  <property name="dir.build.ext.sca" value="${dir.build.ext}\sca" readonly="true" />
+  <property name="dir.build.ext.mmcextension" value="${dir.build.ext}\mmcextension" readonly="true" />
+  <property name="dir.build.light" value="${dir.build.wix}\light" readonly="true" />
+  <property name="dir.build.lit" value="${dir.build.wix}\lit" readonly="true" />
+  <property name="dir.build.pcaexec" value="${dir.build.wix}\ca\pubca\pcaexec" readonly="true" />
+  <property name="dir.build.pcasched" value="${dir.build.wix}\ca\pubca\pcasched" readonly="true" />
+  <property name="dir.build.pcawixlib" value="${dir.build.wix}\ca\pubca\pcawixlib" readonly="true" />
+  <property name="dir.build.qtest" value="${dir.build.wix}\qtest" readonly="true" />
+  <property name="dir.build.scaexec" value="${dir.build.wix}\ca\serverca\scaexec" readonly="true" />
+  <property name="dir.build.scasched" value="${dir.build.wix}\ca\serverca\scasched" readonly="true" />
+  <property name="dir.build.scawixlib" value="${dir.build.wix}\ca\serverca\scawixlib" readonly="true" />
+  <property name="dir.build.tallow" value="${dir.build.wix}\tallow" readonly="true" />
+  <property name="dir.build.ui" value="${dir.build.wix}\ui" readonly="true" />
+  <property name="dir.build.votive" value="${dir.build.wix}\votive" readonly="true" />
+  <property name="dir.build.wcautil" value="${dir.build.wix}\ca\wcautil" readonly="true" />
+  <property name="dir.build.winterop" value="${dir.build.wix}\winterop" readonly="true" />
+  <property name="dir.build.wixca" value="${dir.build.wix}\ca\wixca" readonly="true" />
+  <property name="dir.build.wixdll" value="${dir.build.wix}\wixdll" readonly="true" />
+  <property name="dir.build.wixtasks" value="${dir.build.wix}\wixtasks" readonly="true" />
+
+  <!-- Source directories for the main wix projects -->
+  <property name="dir.src.ca" value="${dir.wixroot.src}\ca" readonly="true" />
+  <property name="dir.src.ca.pubca" value="${dir.wixroot.src}\ca\pubca" readonly="true" />
+  <property name="dir.src.ca.serverca" value="${dir.wixroot.src}\ca\serverca" readonly="true" />
+  <property name="dir.src.ca.wcautil" value="${dir.wixroot.src}\ca\wcautil" readonly="true" />
+  <property name="dir.src.ca.wixca" value="${dir.wixroot.src}\ca\wixca" readonly="true" />
+  <property name="dir.src.ca.wixca.dll" value="${dir.src.ca.wixca}\dll" readonly="true" />
+  <property name="dir.src.ca.wixca.setup" value="${dir.src.ca.wixca}\setup" readonly="true" />
+  <property name="dir.src.candle" value="${dir.wixroot.src}\candle" readonly="true" />
+  <property name="dir.src.common" value="${dir.wixroot.src}\common" readonly="true" />
+  <property name="dir.src.chm" value="${dir.wixroot.src}\chm" readonly="true" />
+  <property name="dir.src.dark" value="${dir.wixroot.src}\dark" readonly="true" />
+  <property name="dir.src.dutil" value="${dir.wixroot.src}\dutil" readonly="true" />
+  <property name="dir.src.ext" value="${dir.wixroot.src}\ext" readonly="true" />
+  <property name="dir.src.light" value="${dir.wixroot.src}\light" readonly="true" />
+  <property name="dir.src.lit" value="${dir.wixroot.src}\lit" readonly="true" />
+  <property name="dir.src.nanttasks" value="${dir.wixroot.src}\nanttasks" readonly="true" />
+  <property name="dir.src.qtest" value="${dir.wixroot.src}\qtest" readonly="true" />
+  <property name="dir.src.sconce" value="${dir.wixroot.src}\sconce" readonly="true" />
+  <property name="dir.src.tallow" value="${dir.wixroot.src}\tallow" readonly="true" />
+  <property name="dir.src.ui" value="${dir.wixroot.src}\ui" readonly="true" />
+  <property name="dir.src.votive" value="${dir.wixroot.src}\votive" readonly="true" />
+  <property name="dir.src.wcautil" value="${dir.wixroot.src}\ca\wcautil" readonly="true" />
+  <property name="dir.src.winterop" value="${dir.wixroot.src}\winterop" readonly="true" />
+  <property name="dir.src.wixca" value="${dir.wixroot.src}\ca\wixca" readonly="true" />
+  <property name="dir.src.wixdll" value="${dir.wixroot.src}\wix" readonly="true" />
+  <property name="dir.src.wixtasks" value="${dir.wixroot.src}\wixtasks" readonly="true" />
+
+  <!-- Target files that are referenced between projects -->
+  <property name="file.target.caerr.wxi" value="${dir.target.wix}\caerr.wxi" readonly="true" />
+  <property name="file.target.pcaexec" value="${dir.target.wix}\pcaexec.dll" readonly="true" />
+  <property name="file.target.pcasched" value="${dir.target.wix}\pcasched.dll" readonly="true" />
+  <property name="file.target.scaexec" value="${dir.target.wix}\scaexec.dll" readonly="true" />
+  <property name="file.target.scasched" value="${dir.target.wix}\scasched.dll" readonly="true" />
+  <property name="file.target.wcautil" value="${dir.target.wix}\wcautil.lib" readonly="true" />
+  <property name="file.target.wixdll" value="${dir.target.wix}\wix.dll" readonly="true" />
+
+  <!-- Files -->
+  <property name="file.flattenxmlvbs" value="${dir.wixroot}\bin\flattenxml.vbs" readonly="true" />
+  <property name="file.nanttasks" value="${dir.target.wix}\Microsoft.Tools.WindowsInstallerXml.NAntTasks.dll" readonly="true" />
+  <property name="file.wixver" value="${dir.wixroot.inc}\wixver.cs" readonly="true" />
+  <property name="file.wixkey" value="${dir.build.wix}\wixkey.cs" readonly="true" />
+
+  <!--
+	On the build machine the OFFICIAL_WIX_BUILD env var will point to the private key, otherwise
+	use the public key in the enlistment.  We must find a key file.
+  -->
+  <if test="${not environment::variable-exists('OFFICIAL_WIX_BUILD')}">
+	<property name="file.keyfile" value="${dir.wixroot}\bin\publickey_wix.snk" readonly="true" />
+	<property name="delaysign" value="false" readonly="true" />
+	<property name="delaysignarg" value="/delaysign+" readonly="true" />
+  </if>
+  <if test="${environment::variable-exists('OFFICIAL_WIX_BUILD')}">
+	<property name="file.keyfile" value="${environment::get-variable('OFFICIAL_WIX_BUILD')}" readonly="true" />
+	<property name="delaysign" value="false" readonly="true" />
+	<property name="delaysignarg" value="/delaysign-" readonly="true" />
+  </if>
+
+  <fail message="Could not find public (or private) key file for WiX build at: ${file.keyfile}" if="${not file::exists(file.keyfile)}"/>
+
+  <!-- Tools for the wix build -->
+  <property name="tool.doccompiler" value="${dir.target.wix}\DocCompiler.exe" readonly="true" />
+  <property name="tool.generatewixinclude" value="${dir.target.wix}\GenerateWixInclude.exe" readonly="true" />
+  <property name="tool.msggen" value="${dir.target.wix}\MsgGen.exe" readonly="true" />
+  <property name="tool.residgen" value="${dir.target.wix}\ResIdGen.exe" readonly="true" />
+  <property name="tool.votivepp" value="${dir.target.wix}\VotivePP.exe" readonly="true" />
+  <property name="tool.xsdgen" value="${dir.target.wix}\XsdGen.exe" readonly="true" />
+
+  <!-- Additional compiler flags specific to wix -->
+  <property name="cl.standardIncludes" value="${cl.standardIncludes} /I &quot;${dir.wixroot.inc}&quot;" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- makeDirs -->
+  <target name="makeDirs" description="Makes the required build and setup directories" depends="global.makeDirs">
+	<mkdir dir="${dir.build.wix}" />
+	<mkdir dir="${dir.log.wix}" />
+	<mkdir dir="${dir.target.wix}" />
+
+	<!-- toolsrc directories -->
+	<mkdir dir="${dir.build.doccompiler}" />
+	<mkdir dir="${dir.build.msggen}" />
+	<mkdir dir="${dir.build.residgen}" />
+	<mkdir dir="${dir.build.votivepp}" />
+	<mkdir dir="${dir.build.wixcop}" />
+	<mkdir dir="${dir.build.xsdgen}" />
+
+	<!-- src directories -->
+	<mkdir dir="${dir.build.candle}" />
+	<mkdir dir="${dir.build.chm}" />
+	<mkdir dir="${dir.build.dark}" />
+	<mkdir dir="${dir.build.ext}" />
+	<mkdir dir="${dir.build.ext.netfxextension}" />
+	<mkdir dir="${dir.build.ext.vsextension}" />
+	<mkdir dir="${dir.build.ext.pca}" />
+	<mkdir dir="${dir.build.ext.sca}" />
+	<mkdir dir="${dir.build.light}" />
+	<mkdir dir="${dir.build.lit}" />
+	<mkdir dir="${dir.build.pcaexec}" />
+	<mkdir dir="${dir.build.pcasched}" />
+	<mkdir dir="${dir.build.pcawixlib}" />
+	<mkdir dir="${dir.build.qtest}" />
+	<mkdir dir="${dir.build.scaexec}" />
+	<mkdir dir="${dir.build.scasched}" />
+	<mkdir dir="${dir.build.scawixlib}" />
+	<mkdir dir="${dir.build.tallow}" />
+	<mkdir dir="${dir.build.ui}" />
+	<mkdir dir="${dir.build.votive}" />
+	<mkdir dir="${dir.build.wcautil}" />
+	<mkdir dir="${dir.build.winterop}" />
+	<mkdir dir="${dir.build.wixca}" />
+	<mkdir dir="${dir.build.wixdll}" />
+	<mkdir dir="${dir.build.wixtasks}" />
+  </target>
+
+  <!-- createKeyFile -->
+  <target name="createKeyFile" description="Dynamically creates a file that contains assembly attributes related to the strong name signing" depends="makeDirs">
+	<echo file="${file.wixkey}" unless="${file::exists(file.wixkey)}" message="[assembly: System.Reflection.AssemblyDelaySign(${delaysign})][assembly: System.Reflection.AssemblyKeyFile(@&quot;${file.keyfile}&quot;)]" />
+  </target>
+
+  <!-- flattenXml: Define flattenxml.source and flattenxml.target before calling this target. -->
+  <target name="flattenXml" description="Compresses an XML file by removing extraneous whitespace">
+	<if test="${not property::exists('flattenxml.source') or not property::exists('flattenxml.target')}">
+	  <fail message="One of the required 'flattenxml.source' or 'flattenxml.target' properties is not defined." />
+	</if>
+	<if test="${not file::up-to-date(flattenxml.source, flattenxml.target)}">
+	  <mkdir dir="${path::get-directory-name(flattenxml.target)}" />
+	  <echo message="Flattening ${path::get-file-name(flattenxml.source)}" />
+	  <exec program="cscript.exe">
+		<arg value="//nologo" />
+		<arg value="${file.flattenxmlvbs}" />
+		<arg value="${flattenxml.source}" />
+		<arg value="${flattenxml.target}" />
+	  </exec>
+	</if>
+  </target>
+
+  <!-- This prevents this file from being included more than once (by convention, not by syntax) -->
+  <property name="wix.properties.defined" value="true" readonly="true" />
+
+</project>

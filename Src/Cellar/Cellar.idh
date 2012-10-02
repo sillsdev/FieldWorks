@@ -1,0 +1,178 @@
+/*-----------------------------------------------------------------------------------*//*:Ignore
+Copyright 2001, SIL International. All rights reserved.
+
+File: Cellar.idh
+Responsibility: Steve McConnel (was Shon Katzenberger)
+Last reviewed:
+
+----------------------------------------------------------------------------------------------*/
+
+interface IFwXmlData;
+
+typedef [v1_enum] enum CellarModuleDefns
+{
+	#define CMCG_SQL_ENUM 1
+	#include "CmTypes.h"
+	#include "Cellar.sqh"
+	#undef CMCG_SQL_ENUM
+
+	// flids larger than this are considered dummies, and it is not an error if we don't
+	// find information about them in the database.
+	// Note: FwMetaDataCache::GetFieldType knows this value, though it does not use the
+	// constant here because (to reduce cyclic dependencies) it does not include this header.
+	// Note: currently any flid >= kflidDummyFlids is interpreted as a dummy. I (JohnT)
+	// recommend that we limit ourselves to dummies in the 1000 domain (1000000000 to
+	// 1000999999) just on the offchance that one day we want more than 1000 domains.
+	kflidStartDummyFlids = 1000000000,
+} CellarModuleDefns;
+
+/*----------------------------------------------------------------------------------------------
+	Provides enums for predefined CmObject fields.
+	Note: these values are also known to the DbAccess component (FwMetaDataCache::Init)
+	although it does not currently use the defines because it does not include the Cellar
+	headers.
+----------------------------------------------------------------------------------------------*/
+typedef enum CmObjectFields
+{
+	kflidCmObject_Id = 100, // We start high enough to allow the CM to add CmObject fields.
+	kflidCmObject_Guid,
+	kflidCmObject_Class,
+	kflidCmObject_Owner,
+	kflidCmObject_OwnFlid,
+	kflidCmObject_OwnOrd,
+} CmObjectFields;
+//:End Ignore
+
+/*----------------------------------------------------------------------------------------------
+	Functions related to importing or exporting data into a FieldWorks database.
+
+	@h3{When to implement}
+		This is already implemented as the primary content of FwCellar.dll, and there should be
+		no need to provide another implementation.
+	@h3{When to use}
+		This interface is used for XML import to and export from a FieldWorks database.
+		Currently, it is provided by a pair of command line oriented programs, LoadXML and
+		DumpXML.
+	@h3{How to obtain an instance}
+	@code{
+		IFwXmlDataPtr qfwdb;
+		qfwdb.CreateInstance(CLSID_FwXmlData, CLSCTX_INPROC_SERVER);
+}
+
+	@h3{Hungarian: fwxd}
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(FwXmlData, Unknown, 65BAE1A5-1B75-4127-841E-0228F908727D)
+{
+	// Open a connection to the given database on the given server.
+	//
+	// @param bstrServer Name of the desired server.  Use @code{"."} to access the local
+	//		machine without needing to get its actual name. Our default is (machine name)\SILFW.
+	// @param bstrDatabase Name of the desired database on the given server.
+	HRESULT Open(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase);
+
+	// Close an open connection to a database.
+	HRESULT Close(
+		);
+
+	// Load an empty, but initialized, Fieldworks database from an XML file.
+	//
+	// @param bstrFile Name of the input XML file.
+	// @param padvi Pointer to progress bar interface (may be NULL).
+	HRESULT LoadXml(
+		[in] BSTR bstrFile,
+		[in] IAdvInd * padvi);
+
+	// Write the Fieldworks database to an XML file.
+	//
+	// @param bstrFile Name of the output XML file.
+	// @param pwsf Pointer to the database's writing system factory object.
+	// @param padvi Pointer to a progress bar object (may be NULL).
+	HRESULT SaveXml(
+		[in] BSTR bstrFile,
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] IAdvInd * padvi);
+};
+
+
+/*----------------------------------------------------------------------------------------------
+	Extended functions related to importing data into a FieldWorks database.
+
+	@h3{When to implement}
+		This is already implemented as part of FwCellar.dll, and there should be no need to
+		provide another implementation.
+	@h3{When to use}
+		This interface is used for XML import of one or more objects to a FieldWorks database.
+	@h3{How to obtain an instance}
+		Create an instance of ${FwXmlData}, and call ${QueryInterface}.
+
+		Or (??)
+
+	@code{
+		IFwXmlData2Ptr qfwdb2;
+		qfwdb2.CreateInstance(CLSID_FwXmlData, CLSCTX_INPROC_SERVER);
+		}
+
+	@h3{Hungarian: fwxd2}
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(FwXmlData2, FwXmlData, 40E3057F-B530-4f80-94BC-84FD51A12C8F)
+{
+	// Load one or more objects from an XML file into a specific field in a Fieldworks database.
+	//
+	// @param bstrFile Name of the input XML file.
+	// @param hvoOwner Database id of the object's owner.
+	// @param flid Field id of the object.
+	// @param padvi Pointer to progress bar interface (may be NULL).
+	HRESULT ImportXmlObject(
+		[in] BSTR bstrFile,
+		[in] int hvoOwner,
+		[in] int flid,
+		[in] IAdvInd * padvi);
+
+	// Load one or more objects from an XML file into one or more fields in a Fieldworks
+	// database.
+	//
+	// @param bstrFile Name of the input XML file.
+	// @param hvoOwner Database id of the object's owner.
+	// @param padvi Pointer to progress bar interface (may be NULL).
+	HRESULT ImportMultipleXmlFields(
+		[in] BSTR bstrFile,
+		[in] int hvoOwner,
+		[in] IAdvInd * padvi);
+
+	// Update a list from an XML file which contains the set of deleted items and merged items,
+	// as well as the entire contents of the list.
+	//
+	// @param bstrFile Name of the input XML file.
+	// @param hvoOwner Database id of the list's owner.
+	// @param flid Field id of the list.
+	// @param padvi Pointer to progress bar interface (may be NULL).
+	HRESULT UpdateListFromXml(
+		[in] BSTR bstrFile,
+		[in] int hvoOwner,
+		[in] int flid,
+		[in] IAdvInd * padvi);
+
+
+	// Set the base directory for an import operation.  This may be needed to access
+	// auxiliary files such as pictures or media.
+	//
+	// @param bstrDir pathname of the base directory for the imported files
+	HRESULT put_BaseImportDirectory(
+		[in] BSTR bstrDir);
+	HRESULT get_BaseImportDirectory(
+		[out, retval] BSTR * pbstrDir);
+};
+
+#ifndef NO_COCLASSES
+/*************************************************************************************//*:Ignore
+	CoClass definitions.
+***********************************************************************************************/
+DeclareCoClass(FwXmlData, 2F0FCCC2-C160-11d3-8DA2-005004DEFEC4)
+{
+	interface IFwXmlData2;
+};
+#endif /*!NO_COCLASSES*/
+
+//:End Ignore

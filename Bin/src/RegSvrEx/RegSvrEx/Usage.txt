@@ -1,0 +1,8 @@
+Enchanced Server Registration Utility
+Copyright V. Rama Krishna
+
+Usage: RegSvrEx [/u] [/c] servername
+
+ /u -           Unregister server
+ /c -           Register only for the current user
+ servername -   Full path of the server .exe or .dll

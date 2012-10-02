@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<EncConverterPlugins xmlns="http://www.sil.org/computing/schemas/ECPlugins.xsd">
+  <ECPluginDetails ImplementationName="SIL.Font2Iscii"
+				   ImplementationProgId="SilEncConverters30.Font2IsciiEncConverter"
+				   Priority="2"
+				   AssemblyReference="SilIndicEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+
+  <ECPluginDetails ImplementationName="SIL.ITrans"
+				   ImplementationProgId="SilEncConverters30.ITransEncConverter"
+				   Priority="2"
+				   AssemblyReference="SilIndicEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+
+  <ECPluginDetails ImplementationName="SIL.UTrans"
+				   ImplementationProgId="SilEncConverters30.UTransEncConverter"
+				   Priority="2"
+				   AssemblyReference="SilIndicEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+</EncConverterPlugins>

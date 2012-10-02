@@ -1,0 +1,368 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2000, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: AfFindDlg.rc
+Responsibility:
+Last reviewed: never
+
+Description:
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+//Microsoft Developer Studio generated resource script.
+//
+#include "AfFindDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "AfAppRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"AfFindDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""AfAppRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridAfFindDlg DIALOGEX 0, 0, 404, 149
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+	WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Find and Replace"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Find w&hat:",IDC_STATIC,13,33,36,8
+	EDITTEXT        kctidFindWhat,70,30,316,14,ES_AUTOHSCROLL
+	LTEXT           "Re&place with:",kctidReplaceLabel,13,53,44,8
+	EDITTEXT        kctidFindReplaceWith,70,50,316,14,ES_AUTOHSCROLL
+	PUSHBUTTON      "&More",kctidFindMoreLess,71,78,50,14
+	PUSHBUTTON      "&Replace",kctidFindReplace,125,78,50,14,NOT WS_VISIBLE
+	PUSHBUTTON      "Replace &All",kctidFindReplaceAll,179,78,50,14,NOT
+					WS_VISIBLE
+	DEFPUSHBUTTON   "&Find Next",kctidFindFindNow,233,78,50,14
+	PUSHBUTTON      "Close",kctidFindClose,287,78,50,14
+	// The Stop button occupies the same space as the Close button:
+	PUSHBUTTON      "Stop",kctidFindStop,287,78,50,14
+	PUSHBUTTON      "Help...",kctidHelp,341,78,50,14
+	LTEXT           "Search Options",kctidSearchOptionsLabel,13,98,54,8,NOT
+					WS_VISIBLE
+	LTEXT           "",kctidSeparator,68,102,327,1,SS_SUNKEN
+
+	PUSHBUTTON      "F&ormat   ",kctidFindFormat,16,112,50,14
+
+	CONTROL         "Match &case",kctidFindMatchCase,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,80,112,53,10
+	CONTROL         "Match &diacritics",kctidFindMatchDiacritics,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,180,112,65,10
+	CONTROL         "Match as a &whole word",kctidFindMatchWholeWord,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,80,125,89,10
+	CONTROL         "Match writing s&ystem",kctidFindMatchWrtSys,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,180,125,81,10
+	CONTROL         "Animate1",kctidFindAnimation,"SysAnimate32",
+					ACS_TRANSPARENT | NOT WS_VISIBLE | WS_BORDER,18,61,41,33
+	CONTROL         "Tab1",kctidFindTab,"SysTabControl32",TCS_HOTTRACK |
+					WS_TABSTOP,7,7,390,135
+
+	// The following controls are not currently used.
+	GROUPBOX        "Search in:",kctidFindInBorder,175,115,184,44,NOT
+					WS_VISIBLE
+	LTEXT           "Which E&ntries:",kctidWhichEntriesLabel,180,126,47,8,
+					NOT WS_VISIBLE
+	COMBOBOX        kctidFindWhichEntries,235,122,116,30,CBS_DROPDOWNLIST |
+					CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "F&ield:",kctidFindFieldCheck,"Button",BS_AUTOCHECKBOX |
+					NOT WS_VISIBLE | WS_TABSTOP,182,140,33,10
+	COMBOBOX        kctidFindFieldCombo,235,138,116,30,CBS_DROPDOWN |
+					CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Sp&ecial    ",kctidFindSpecial,71,172,50,14,NOT
+					WS_VISIBLE
+	CONTROL         "&Show a list of matches",kctidListResults,"Button",
+					BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,271,176,87,
+					10
+END
+
+/***
+kridAfFindDlg DIALOGEX 0, 0, 404, 199
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+	WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Find and Replace"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Find w&hat:",IDC_STATIC,13,33,36,8
+	EDITTEXT        kctidFindWhat,70,30,316,14,ES_AUTOHSCROLL
+	LTEXT           "Re&place with:",kctidReplaceLabel,13,53,44,8
+	EDITTEXT        kctidFindReplaceWith,70,50,316,14,ES_AUTOHSCROLL
+	PUSHBUTTON      "&More",kctidFindMoreLess,71,78,50,14
+	PUSHBUTTON      "&Replace",kctidFindReplace,125,78,50,14,NOT WS_VISIBLE
+	PUSHBUTTON      "Replace &All",kctidFindReplaceAll,179,78,50,14,NOT
+					WS_VISIBLE
+	DEFPUSHBUTTON   "&Find Next",kctidFindFindNow,233,78,50,14
+	PUSHBUTTON      "Close",kctidFindClose,287,78,50,14
+	// The Stop button occupies the same space as the Close button:
+	PUSHBUTTON      "Stop",kctidFindStop,287,78,50,14
+	PUSHBUTTON      "Help...",kctidHelp,341,78,50,14
+	LTEXT           "Search Options",kctidSearchOptionsLabel,13,98,54,8,NOT
+					WS_VISIBLE
+	LTEXT           "",kctidSeparator,68,102,327,1,SS_SUNKEN
+	CONTROL         "Match &case",kctidFindMatchCase,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,13,112,53,10
+	CONTROL         "Match &diacritics",kctidFindMatchDiacritics,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,13,126,65,10
+	CONTROL         "Match as a &whole word",kctidFindMatchWholeWord,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,13,140,89,10
+	CONTROL         "Match writing s&ystem",kctidFindMatchWrtSys,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,13,154,81,10
+	CONTROL         "Animate1",kctidFindAnimation,"SysAnimate32",
+					ACS_TRANSPARENT | NOT WS_VISIBLE | WS_BORDER,18,61,41,33
+	GROUPBOX        "Search in:",kctidFindInBorder,175,115,184,44,NOT
+					WS_VISIBLE
+	LTEXT           "Which E&ntries:",kctidWhichEntriesLabel,180,126,47,8,
+					NOT WS_VISIBLE
+	COMBOBOX        kctidFindWhichEntries,235,122,116,30,CBS_DROPDOWNLIST |
+					CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "F&ield:",kctidFindFieldCheck,"Button",BS_AUTOCHECKBOX |
+					NOT WS_VISIBLE | WS_TABSTOP,182,140,33,10
+	COMBOBOX        kctidFindFieldCombo,235,138,116,30,CBS_DROPDOWN |
+					CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "F&ormat   ",kctidFindFormat,16,172,50,14
+	PUSHBUTTON      "Sp&ecial    ",kctidFindSpecial,71,172,50,14,NOT
+					WS_VISIBLE
+	CONTROL         "&Show a list of matches",kctidListResults,"Button",
+					BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,271,176,87,
+					10
+	CONTROL         "Tab1",kctidFindTab,"SysTabControl32",TCS_HOTTRACK |
+					WS_TABSTOP,7,7,390,185
+END
+***/
+
+// The following dialog is not actually used; we use the Find dialog for both
+// find and replace.
+kridAfReplaceDlg DIALOG DISCARDABLE  0, 0, 320, 135
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Find w&hat:",IDC_STATIC,7,10,34,8
+	EDITTEXT        kctidFindWhat,58,7,202,14,ES_AUTOHSCROLL
+	LTEXT           "Re&place with:",kctidReplaceLabel,7,31,44,8
+	EDITTEXT        kctidFindReplaceWith,58,28,202,14,ES_AUTOHSCROLL
+	DEFPUSHBUTTON   "&Find Next",kctidFindFindNow,263,7,50,14
+	DEFPUSHBUTTON   "&Replace",kctidFindReplace,263,23,50,14
+	DEFPUSHBUTTON   "Replace &All",kctidFindReplaceAll,263,39,50,14
+	PUSHBUTTON      "Help...",kctidHelp,263,55,50,14
+	PUSHBUTTON      "Close",kctidFindClose,263,71,50,14
+	// The Stop button occupies the same space as the Close button:
+	PUSHBUTTON      "Stop",kctidFindStop,263,71,50,14
+	PUSHBUTTON      "More >>",kctidFindMoreLess,208,65,50,14
+	GROUPBOX        "Find in:",kctidFindInBorder,2,46,154,44,NOT WS_VISIBLE
+	COMBOBOX        kctidFindWhichEntries,65,54,90,30,CBS_DROPDOWNLIST |
+					CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "F&ield:",kctidFindFieldCheck,"Button",BS_AUTOCHECKBOX |
+					NOT WS_VISIBLE | WS_TABSTOP,8,73,33,10
+	COMBOBOX        kctidFindFieldCombo,65,70,90,30,CBS_DROPDOWN | CBS_SORT |
+					NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "Match &case",kctidFindMatchCase,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,7,102,53,10
+	CONTROL         "Match &diacritics",kctidFindMatchDiacritics,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,73,102,65,10
+	CONTROL         "Match as a &whole word",kctidFindMatchWholeWord,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,7,118,89,10
+	PUSHBUTTON      "Sp&ecial    ",kctidFindSpecial,199,114,50,14,NOT
+					WS_VISIBLE
+	PUSHBUTTON      "F&ormat   ",kctidFindFormat,263,114,50,14
+	CONTROL         "Animate1",kctidFindAnimation,"SysAnimate32",NOT
+					WS_VISIBLE | WS_BORDER,162,46,41,33
+	LTEXT           "",kctidSeparator,1,95,316,1,SS_SUNKEN
+END
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridAfFindDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 397
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 192
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+kridAfFindDlg DLGINIT
+BEGIN
+	kctidFindWhichEntries, 0x403, 23, 0
+0x6c41, 0x206c, 0x4628, 0x6c69, 0x6574, 0x6572, 0x2964, 0x4520, 0x746e,
+0x6972, 0x7365, "\000"
+	kctidFindWhichEntries, 0x403, 19, 0
+0x7543, 0x7272, 0x6e65, 0x2074, 0x6e45, 0x7274, 0x2079, 0x6e4f, 0x796c,
+"\000"
+	0
+END
+
+kridAfReplaceDlg DLGINIT
+BEGIN
+	kctidFindWhichEntries, 0x403, 23, 0
+0x6c41, 0x206c, 0x4628, 0x6c69, 0x6574, 0x6572, 0x2964, 0x4520, 0x746e,
+0x6972, 0x7365, "\000"
+	kctidFindWhichEntries, 0x403, 19, 0
+0x7543, 0x7272, 0x6e65, 0x2074, 0x6e45, 0x7274, 0x2079, 0x6e4f, 0x796c,
+"\000"
+	0
+END
+
+
+// For confirming replacement of empty string
+kridEmptyReplaceDlg DIALOGEX 0, 0, 246, 70
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Replace"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+	ICON          "",kridConfirmReplaceIcon,10,5,21,20
+	LTEXT         "You are about to replace all occurrences of the specified writing system, style, and/or overlay tag. Are you sure you want to do this?",
+				  kcidConfirmEmptyReplaceText,37,9,200,27
+	PUSHBUTTON    "&Replace",kctidOk,43,47,50,15
+	DEFPUSHBUTTON "&Cancel",kctidCancel,99,47,50,15
+	PUSHBUTTON    "&Help...",kctidHelp,153,47,50,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AVI
+//
+
+kridFindAnimation       AVI     DISCARDABLE     "FINDFILE.AVI"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidFindFindNow        "Starts the search or finds the next match of the search text."
+	kctidFindClose          "Closes the dialog without searching for more occurrences or doing more replacements."
+	kctidFindStop			"Aborts the current search immediately."
+	kctidFindMoreLess       "Shows or hides options at the bottom of the dialog box for restricting the search text or the search location."
+	kctidFindWhat           "Type the characters, word, or phrase  you want to find (search text)."
+	kctidListResults        "Displays a concordance-type list of successful matches for the search text."
+	kstidFindFmtWs          "&Writing Systems"
+	kstidFindFmtStyle		"&Style"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidFindReplace        "Replaces the search text with the replacement text and finds the next match."
+	kctidFindReplaceAll     "Replaces all occurrences of the search text."
+	kctidFindReplaceWith    "Type  the characters, word, or phrase to replace the search text (replacement text)."
+	kctidFindTab            "Changes the dialog box to show Find options or Replace options."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidFindWhichEntries   "Specifies the scope of the search: All Entries or Current Entry Only."
+	kctidFindFieldCheck     "If selected, finds only matching text in the selected field."
+	kctidFindFieldCombo     "Specifies the field that will be searched."
+	kctidFindMatchWholeWord "If selected, finds only a complete word or phrase that matches the character string in the search text."
+	kctidFindMatchCase      "If selected, finds only text in the same case as the search text."
+	kctidFindMatchDiacritics
+							"If selected, finds only text with the same diacritics as the search text. If not selected, ignores diacritics in the search text."
+	kctidFindSpecial        "Inserts a wildcard character in the search text to find words that match a pattern of character types."
+	kctidFindFormat         "Specifies the format of the search text or the replacement text, depending on which box contains the cursor or selection."
+	kctidFindMatchWrtSys    "If selected, finds only matching text in the selected writing system."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidMorePlain          "&More"
+	kstidLessPlain          "&Less"
+	kstidFind               "Find"
+	kstidReplace            "Replace"
+	kstidCloseButton        "Close"
+	kstidReplaceAll         "Replace All"
+	kstidNoMatchesDoc       "Finished searching the entire document. No matches found."
+	kstidNoMatchesField     "Finished searching the field. No matches found."
+	kstidNoMoreMatches      "No more matches found."
+	kstidReplaceErr         "Please enter text to be replaced."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidReplaceNDoc        "Finished searching the entire document. Made %<0>d replacements."
+	kstidReplaceNField      "Finished searching the field. Made %<0>d replacements."
+	kstidNoFindMatch        "There has been no previous search to repeat."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

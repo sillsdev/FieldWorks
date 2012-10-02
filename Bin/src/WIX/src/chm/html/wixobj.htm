@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Object Files (.wixobj)</title>
+</head>
+<body>
+<h1>Object Files (.wixobj)</h1>
+<p>
+A .wixobj file is created by the compiler for each source file compiled.  The .wixobj file is an XML document that follows the objects.xsd schema defined in the WiX project.  As stated above the .wixobj file contains one or more sections that, in turn, contain symbols and references to other symbols.
+</p>
+<p>
+While the symbols and references are arguably the most important pieces of data in the .wixobj file, they are rarely the bulk of the information.  Instead, the majority of most .wixobj files are composed of <table/>, <row/> and <field/> elements that provide the raw data to be placed in the Windows Installer database.  In many cases, the linker will not only process the symbols and references but also use and update the raw data from the .wixobj file.
+</p>
+<p>
+It is interesting to note that the object file schema, objects.xsd, uses camel casing where the source file schema, wix.xsd, uses Pascal casing.  This was a conscious choice to indicate that the object files are not intended to be edited by the user.  In fact, all schemas that defines data to be processed only by the WiX tools use camel casing.
+</p>
+</body>
+</html>

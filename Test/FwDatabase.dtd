@@ -1,0 +1,2673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT Abbr24 (AUni)*>
+<!ELEMENT Abbrev3002 (AUni)*>
+<!ELEMENT Abbreviation5039 (AUni)*>
+<!ELEMENT Abbreviation5047 (AUni)*>
+<!ELEMENT Abbreviation5048 (AUni)*>
+<!ELEMENT Abbreviation5054 (AUni)*>
+<!ELEMENT Abbreviation5093 (AUni)*>
+<!ELEMENT Abbreviation5109 (AUni)*>
+<!ELEMENT Abbreviation55 (AUni)*>
+<!ELEMENT Abbreviation59 (AUni)*>
+<!ELEMENT Abbreviation65 (AUni)*>
+<!ELEMENT Abbreviation7 (AUni)*>
+<!ELEMENT Abbreviation8 (AUni)*>
+<!ELEMENT Accepted32 (Boolean)?>
+<!ELEMENT ActivatedFeatures6001 (UserAppFeatAct)*>
+<!ATTLIST ActivatedFeatures6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT ActivatedLevel41 (Integer)?>
+<!ELEMENT AdditionalFields (CustomField)*>
+<!ELEMENT AdhocCoProhibitions5040 (MoAdhocProhibGr | MoAlloAdhocProhib | MoMorphAdhocProhib)*>
+<!ATTLIST AdhocCoProhibitions5040
+	size CDATA #IMPLIED
+>
+<!ELEMENT Adjacency5026 (Integer)?>
+<!ELEMENT AffixCategories6001 (CmPossibilityList)?>
+<!ELEMENT AffixCategory5031 (Link)?>
+<!ELEMENT AffixCategory5038 (Link)?>
+<!ELEMENT AffixForm5074 (Link)?>
+<!ELEMENT AffixForm5075 (Link)?>
+<!ELEMENT AffixMsa5074 (Link)?>
+<!ELEMENT AffixMsa5075 (Link)?>
+<!ELEMENT AffixSlots5049 (MoInflAffixSlot)*>
+<!ATTLIST AffixSlots5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT AffixTemplates5049 (MoInflAffixTemplate)*>
+<!ATTLIST AffixTemplates5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT AfterSeparator5109 (Uni)?>
+<!ELEMENT Alias12 (AUni)*>
+<!ELEMENT Alias13 (AUni)*>
+<!ELEMENT AllomorphIndex5005 (Link)*>
+<!ATTLIST AllomorphIndex5005
+	size CDATA #IMPLIED
+>
+<!ELEMENT Allomorphs5101 (Link)*>
+<!ATTLIST Allomorphs5101
+	size CDATA #IMPLIED
+>
+<!ELEMENT AllowsComment35 (Boolean)?>
+<!ELEMENT AllowsFeatureStructure35 (Boolean)?>
+<!ELEMENT AllowsInstanceOf35 (Boolean)?>
+<!ELEMENT AlternateForms5002 (MoAffixAllomorph | MoAffixForm | MoAffixProcess | MoStemAllomorph)*>
+<!ATTLIST AlternateForms5002
+	size CDATA #IMPLIED
+>
+<!ELEMENT AMPLEStringSegment5097 (Uni)?>
+<!ELEMENT Analyses5062 (WfiAnalysis)*>
+<!ATTLIST Analyses5062
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnalysisStatus6001 (CmPossibilityList)?>
+<!ELEMENT AnalysisWss6001 (Link)*>
+<!ATTLIST AnalysisWss6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnalyzedTextObjects16 (ChkRef | ChkRendering | ChkSense | ChkTerm | CmAgent | CmAgentEvaluation | CmAnnotation | CmAnnotationDefn | CmAnthroItem | CmBaseAnnotation | CmCell | CmCustomItem | CmDomainQ | CmFile | CmFilter | CmFolder | CmIndirectAnnotation | CmLocation | CmMajorObject | CmMedia | CmMediaAnnotation | CmObject | CmOverlay | CmPerson | CmPicture | CmPossibility | CmPossibilityList | CmProject | CmResource | CmRow | CmSemanticDomain | CmSortSpec | CmTranslation | CrossReference | DsChart | DsConstChart | DsDiscourseData | FsAbstractStructure | FsClosedFeature | FsClosedValue | FsComplexFeature | FsComplexValue | FsDisjunctiveValue | FsFeatDefn | FsFeatStruc | FsFeatStrucDisj | FsFeatStrucType | FsFeatureSpecification | FsFeatureSystem | FsNegatedValue | FsOpenFeature | FsOpenValue | FsSharedValue | FsSymFeatVal | LangProject | LexAppendix | LexDb | LexEntry | LexEntryRef | LexEntryType | LexEtymology | LexExampleSentence | LexPronunciation | LexReference | LexRefType | LexSense | LgCollation | LgWritingSystem | MoAdhocProhib | MoAdhocProhibGr | MoAffixAllomorph | MoAffixForm | MoAffixProcess | MoAlloAdhocProhib | MoBinaryCompoundRule | MoCompoundRule | MoCompoundRuleApp | MoCoordinateCompound | MoCopyFromInput | MoDeriv | MoDerivAffApp | MoDerivAffMsa | MoDerivStepMsa | MoDerivTrace | MoEndoCompound | MoExoCompound | MoForm | MoGlossItem | MoGlossSystem | MoInflAffixSlot | MoInflAffixSlotApp | MoInflAffixTemplate | MoInflAffMsa | MoInflClass | MoInflTemplateApp | MoInsertNC | MoInsertPhones | MoModifyFromInput | MoMorphAdhocProhib | MoMorphData | MoMorphSynAnalysis | MoMorphType | MoPhonolRuleApp | MoReferralRule | MoRuleMapping | MoStemAllomorph | MoStemMsa | MoStemName | MoStratum | MoStratumApp | MoUnclassifiedAffixMsa | PartOfSpeech | PhBdryMarker | PhCode | PhContextOrVar | PhEnvironment | PhFeatureConstraint | PhIterationContext | PhMetathesisRule | PhNaturalClass | PhNCFeatures | PhNCSegments | PhPhonContext | PhPhonData | PhPhoneme | PhPhonemeSet | PhPhonRuleFeat | PhRegularRule | PhSegmentRule | PhSegRuleRHS | PhSequenceContext | PhSimpleContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg | PhTerminalUnit | PhVariable | PubDivision | PubHeader | PubHFSet | Publication | PubPageLayout | Reminder | ReversalIndex | ReversalIndexEntry | RnAnalysis | RnEvent | RnGenericRec | RnResearchNbk | RnRoledPartic | ScrBook | ScrBookAnnotations | ScrBookRef | ScrCheckRun | ScrDifference | ScrDraft | ScrImportP6Project | ScrImportSet | ScrImportSFFiles | ScrImportSource | Scripture | ScrMarkerMapping | ScrRefSystem | ScrScriptureNote | ScrSection | StFootnote | StJournalText | StPara | StStyle | StText | StTxtPara | Text | UserAppFeatAct | UserConfigAcct | UserView | UserViewField | UserViewRec | WfiAnalysis | WfiGloss | WfiMorphBundle | WfiWordform | WfiWordSet | WordformInventory | WordFormLookup | WordformLookupList)*>
+<!ATTLIST AnalyzedTextObjects16
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnalyzingAgents5040 (Link)*>
+<!ATTLIST AnalyzingAgents5040
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnalyzingAgents6001 (CmAgent)*>
+<!ATTLIST AnalyzingAgents6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnnotationDefs6001 (CmPossibilityList)?>
+<!ELEMENT Annotations6001 (CmBaseAnnotation | CmIndirectAnnotation | CmMediaAnnotation | ScrScriptureNote)*>
+<!ATTLIST Annotations6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnnotationType34 (Link)?>
+<!ELEMENT AnthroCentral5064 (Integer)?>
+<!ELEMENT AnthroCodes4004 (Link)*>
+<!ATTLIST AnthroCodes4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnthroCodes5016 (Link)*>
+<!ATTLIST AnthroCodes5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnthroCodes5064 (Link)*>
+<!ATTLIST AnthroCodes5064
+	size CDATA #IMPLIED
+>
+<!ELEMENT AnthroList6001 (CmPossibilityList)?>
+<!ELEMENT AnthroNote5016 (AStr)*>
+<!ELEMENT App18 (Guid)?>
+<!ELEMENT App31 (Guid)?>
+<!ELEMENT App9 (Guid)?>
+<!ELEMENT Appendixes5005 (LexAppendix)*>
+<!ATTLIST Appendixes5005
+	size CDATA #IMPLIED
+>
+<!ELEMENT Appendixes5016 (Link)*>
+<!ATTLIST Appendixes5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT ApplicationId41 (Guid)?>
+<!ELEMENT AppliesTo36 (Link)*>
+<!ATTLIST AppliesTo36
+	size CDATA #IMPLIED
+>
+<!ELEMENT ArchivedDrafts3001 (ScrDraft)*>
+<!ATTLIST ArchivedDrafts3001
+	size CDATA #IMPLIED
+>
+<!ELEMENT AStr (Run)*>
+<!ATTLIST AStr
+	ws CDATA #REQUIRED
+>
+<!ELEMENT AUni (#PCDATA)>
+<!ATTLIST AUni
+	ws CDATA #REQUIRED
+>
+<!ELEMENT BackColor7 (Integer)?>
+<!ELEMENT BackTransSources3008 (ScrImportP6Project | ScrImportSFFiles)*>
+<!ATTLIST BackTransSources3008
+	size CDATA #IMPLIED
+>
+<!ELEMENT BasedOn17 (Link)?>
+<!ELEMENT BasedOn5123 (Link)?>
+<!ELEMENT BaseFontSize42 (Integer)?>
+<!ELEMENT BaseLineSpacing42 (Integer)?>
+<!ELEMENT BasicIPASymbol5092 (Str)?>
+<!ELEMENT BearableFeatures5049 (Link)*>
+<!ATTLIST BearableFeatures5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT BeginMarker3016 (Uni)?>
+<!ELEMENT BeginObject37 (Link)?>
+<!ELEMENT BeginOffset37 (Integer)?>
+<!ELEMENT BeginRef37 (Integer)?>
+<!ELEMENT Bibliography5002 (AStr)*>
+<!ELEMENT Bibliography5016 (AStr)*>
+<!ELEMENT Binary (#PCDATA)>
+<!ELEMENT BindingEdge42 (Integer)?>
+<!ELEMENT BodyFontFeatures24 (Uni)?>
+<!ELEMENT BookAbbrev3004 (AUni)*>
+<!ELEMENT BookAnnotations3001 (ScrBookAnnotations)*>
+<!ATTLIST BookAnnotations3001
+	size CDATA #IMPLIED
+>
+<!ELEMENT BookId3002 (Link)?>
+<!ELEMENT BookName3004 (AUni)*>
+<!ELEMENT BookNameAlt3004 (AUni)*>
+<!ELEMENT Books3003 (ScrBookRef)*>
+<!ATTLIST Books3003
+	size CDATA #IMPLIED
+>
+<!ELEMENT Books3010 (ScrBook)*>
+<!ATTLIST Books3010
+	size CDATA #IMPLIED
+>
+<!ELEMENT Boolean EMPTY>
+<!ATTLIST Boolean
+	val (false | true) #REQUIRED
+>
+<!ELEMENT BoundaryMarkers5089 (PhBdryMarker)*>
+<!ATTLIST BoundaryMarkers5089
+	size CDATA #IMPLIED
+>
+<!ELEMENT Bridge3001 (Uni)?>
+<!ELEMENT BulNumFontInfo EMPTY>
+<!ATTLIST BulNumFontInfo
+	backcolor CDATA #IMPLIED
+	bold (invert | off | on) #IMPLIED
+	fontsize CDATA #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (invert | off | on) #IMPLIED
+	offset CDATA #IMPLIED
+	superscript (off | sub | super) #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (dashed | dotted | double | none | single | squiggle | strikethrough) #IMPLIED
+	fontFamily CDATA #IMPLIED
+>
+<!ELEMENT CanCreateOrphan35 (Boolean)?>
+<!ELEMENT CanonicalNum3002 (Integer)?>
+<!ELEMENT CapitalizationInfo24 (Uni)?>
+<!ELEMENT Caption48 (AStr)*>
+<!ELEMENT Cases5105 (Link)*>
+<!ATTLIST Cases5105
+	size CDATA #IMPLIED
+>
+<!ELEMENT CatalogSourceId5049 (Uni)?>
+<!ELEMENT CatalogSourceId55 (Uni)?>
+<!ELEMENT CatalogSourceId59 (Uni)?>
+<!ELEMENT CatalogSourceId65 (Uni)?>
+<!ELEMENT Categories3018 (Link)*>
+<!ATTLIST Categories3018
+	size CDATA #IMPLIED
+>
+<!ELEMENT Category5059 (Link)?>
+<!ELEMENT Cells10 (CmCell)*>
+<!ATTLIST Cells10
+	size CDATA #IMPLIED
+>
+<!ELEMENT CenteredText46 (Str)?>
+<!ELEMENT ChapterLabel3001 (Str)?>
+<!ELEMENT ChapterVerseSepr3001 (Uni)?>
+<!ELEMENT ChartMarkers5124 (CmPossibilityList)?>
+<!ELEMENT Charts5124 (DsConstChart)*>
+<!ATTLIST Charts5124
+	size CDATA #IMPLIED
+>
+<!ELEMENT CheckId3019 (Guid)?>
+<!ELEMENT CheckLists6001 (CmPossibilityList)*>
+<!ATTLIST CheckLists6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Checksum5062 (Integer)?>
+<!ELEMENT ChkHistRecs3017 (ScrCheckRun)*>
+<!ATTLIST ChkHistRecs3017
+	size CDATA #IMPLIED
+>
+<!ELEMENT ChkRef (Custom | CustomLink | CustomObj | CustomStr | KeyWord5116 | Location5116 | Ref5116 | Rendering5116 | Status5116)*>
+<!ATTLIST ChkRef
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ChkRendering (Custom | CustomLink | CustomObj | CustomStr | Explanation5126 | Meaning5126 | SurfaceForm5126)*>
+<!ATTLIST ChkRendering
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ChkSense (Custom | CustomLink | CustomObj | CustomStr | Explanation5121 | Sense5121)*>
+<!ATTLIST ChkSense
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ChkTerm (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Name7 | Occurrences5125 | Renderings5125 | Researchers7 | Restrictions7 | SeeAlso5125 | SortSpec7 | Status7 | SubPossibilities7 | TermId5125 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST ChkTerm
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CitationForm5002 (AUni)*>
+<!ELEMENT ClassId31 (Integer)?>
+<!ELEMENT ClassId9 (Integer)?>
+<!ELEMENT Clsid19 (Integer)?>
+<!ELEMENT CmAgent (Custom | CustomLink | CustomObj | CustomStr | Evaluations23 | Human23 | Name23 | Notes23 | StateInformation23 | Version23)*>
+<!ATTLIST CmAgent
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmAgentEvaluation (Accepted32 | Custom | CustomLink | CustomObj | CustomStr | DateCreated32 | Details32 | Target32)*>
+<!ATTLIST CmAgentEvaluation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmAnnotation (AnnotationType34 | Comment34 | CompDetails34 | Custom | CustomLink | CustomObj | CustomStr | DateCreated34 | DateModified34 | Features34 | InstanceOf34 | Source34 | Text34)*>
+<!ATTLIST CmAnnotation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmAnnotationDefn (Abbreviation7 | AllowsComment35 | AllowsFeatureStructure35 | AllowsInstanceOf35 | BackColor7 | CanCreateOrphan35 | Confidence7 | CopyCutPastable35 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | InstanceOfSignature35 | IsProtected7 | MaxDupOccur35 | Multi35 | Name7 | PromptUser35 | Researchers7 | Restrictions7 | Severity35 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7 | UserCanCreate35 | ZeroWidth35)*>
+<!ATTLIST CmAnnotationDefn
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmAnthroItem (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Name7 | Researchers7 | Restrictions7 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST CmAnthroItem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmBaseAnnotation (AnnotationType34 | BeginObject37 | BeginOffset37 | BeginRef37 | Comment34 | CompDetails34 | Custom | CustomLink | CustomObj | CustomStr | DateCreated34 | DateModified34 | EndObject37 | EndOffset37 | EndRef37 | Features34 | Flid37 | InstanceOf34 | OtherObjects37 | Source34 | Text34 | WritingSystem37 | WsSelector37)*>
+<!ATTLIST CmBaseAnnotation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmCell (Contents11 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST CmCell
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmCustomItem (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Name7 | Researchers7 | Restrictions7 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST CmCustomItem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmDomainQ (Custom | CustomLink | CustomObj | CustomStr | ExampleSentences67 | ExampleWords67 | Question67)*>
+<!ATTLIST CmDomainQ
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmFile (Copyright47 | Custom | CustomLink | CustomObj | CustomStr | Description47 | InternalPath47 | Name47 | OriginalPath47)*>
+<!ATTLIST CmFile
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmFilter (App9 | ClassId9 | ColumnInfo9 | Custom | CustomLink | CustomObj | CustomStr | FieldId9 | FieldInfo9 | Name9 | PromptText9 | Rows9 | ShowPrompt9 | Type9)*>
+<!ATTLIST CmFilter
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmFolder (Custom | CustomLink | CustomObj | CustomStr | Description2 | Files2 | Name2 | SubFolders2)*>
+<!ATTLIST CmFolder
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmIndirectAnnotation (AnnotationType34 | AppliesTo36 | Comment34 | CompDetails34 | Custom | CustomLink | CustomObj | CustomStr | DateCreated34 | DateModified34 | Features34 | InstanceOf34 | Source34 | Text34)*>
+<!ATTLIST CmIndirectAnnotation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmLocation (Abbreviation7 | Alias12 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Name7 | Researchers7 | Restrictions7 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST CmLocation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmMajorObject (Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | HeaderFooterSets5 | Name5 | Publications5)*>
+<!ATTLIST CmMajorObject
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmMedia (Custom | CustomLink | CustomObj | CustomStr | Label69 | MediaFile69)*>
+<!ATTLIST CmMedia
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmMediaAnnotation (AnnotationType34 | Comment34 | CompDetails34 | Custom | CustomLink | CustomObj | CustomStr | DateCreated34 | DateModified34 | Features34 | InstanceOf34 | Source34 | Text34)*>
+<!ATTLIST CmMediaAnnotation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmObject (#PCDATA)>
+<!ATTLIST CmObject
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmOverlay (Custom | CustomLink | CustomObj | CustomStr | Name21 | PossItems21 | PossList21)*>
+<!ATTLIST CmOverlay
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmPerson (Abbreviation7 | Alias13 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | DateOfBirth13 | DateOfDeath13 | Description7 | Discussion7 | Education13 | ForeColor7 | Gender13 | HelpId7 | Hidden7 | IsProtected7 | IsResearcher13 | Name7 | PlaceOfBirth13 | PlacesOfResidence13 | Positions13 | Researchers7 | Restrictions7 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST CmPerson
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmPicture (Caption48 | Custom | CustomLink | CustomObj | CustomStr | Description48 | LayoutPos48 | LocationMax48 | LocationMin48 | LocationRangeType48 | PictureFile48 | ScaleFactor48)*>
+<!ATTLIST CmPicture
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmPossibility (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Name7 | Researchers7 | Restrictions7 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST CmPossibility
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmPossibilityList (Abbreviation8 | Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Depth8 | Description5 | DisplayOption8 | HeaderFooterSets5 | HelpFile8 | IsClosed8 | IsSorted8 | IsVernacular8 | ItemClsid8 | ListVersion8 | Name5 | Possibilities8 | PreventChoiceAboveLevel8 | PreventDuplicates8 | PreventNodeChoices8 | Publications5 | UseExtendedFields8 | WritingSystem8 | WsSelector8)*>
+<!ATTLIST CmPossibilityList
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmProject (Custom | CustomLink | CustomObj | CustomStr | DateCreated1 | DateModified1 | Description1 | Name1)*>
+<!ATTLIST CmProject
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmResource (Custom | CustomLink | CustomObj | CustomStr | Name70 | Version70)*>
+<!ATTLIST CmResource
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmRow (Cells10 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST CmRow
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmSemanticDomain (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | LouwNidaCodes66 | Name7 | OcmCodes66 | OcmRefs66 | Questions66 | RelatedDomains66 | Researchers7 | Restrictions7 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST CmSemanticDomain
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmSortSpec (App31 | ClassId31 | Custom | CustomLink | CustomObj | CustomStr | IncludeSubentries31 | Name31 | PrimaryCollation31 | PrimaryCollType31 | PrimaryField31 | PrimaryReverse31 | PrimaryWs31 | SecondaryCollation31 | SecondaryCollType31 | SecondaryField31 | SecondaryReverse31 | SecondaryWs31 | TertiaryCollation31 | TertiaryCollType31 | TertiaryField31 | TertiaryReverse31 | TertiaryWs31)*>
+<!ATTLIST CmSortSpec
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CmTranslation (Custom | CustomLink | CustomObj | CustomStr | Status29 | Translation29 | Type29)*>
+<!ATTLIST CmTranslation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Codes5090 (PhCode)*>
+<!ATTLIST Codes5090
+	size CDATA #IMPLIED
+>
+<!ELEMENT Collations24 (LgCollation)*>
+<!ATTLIST Collations24
+	size CDATA #IMPLIED
+>
+<!ELEMENT ColumnInfo9 (Uni)?>
+<!ELEMENT Comment28 (AStr)*>
+<!ELEMENT Comment34 (AStr)*>
+<!ELEMENT Comment5002 (AStr)*>
+<!ELEMENT Comment5113 (AStr)*>
+<!ELEMENT Comment5120 (AStr)*>
+<!ELEMENT CompDetails34 (Uni)?>
+<!ELEMENT ComplexEntryTypes5005 (CmPossibilityList)?>
+<!ELEMENT ComplexEntryTypes5127 (Link)*>
+<!ATTLIST ComplexEntryTypes5127
+	size CDATA #IMPLIED
+>
+<!ELEMENT ComplexNameFirst5109 (Boolean)?>
+<!ELEMENT ComplexNameSeparator5109 (Uni)?>
+<!ELEMENT ComponentLexemes5127 (Link)*>
+<!ATTLIST ComponentLexemes5127
+	size CDATA #IMPLIED
+>
+<!ELEMENT Components5041 (Link)*>
+<!ATTLIST Components5041
+	size CDATA #IMPLIED
+>
+<!ELEMENT CompoundRuleApps5059 (Link)*>
+<!ATTLIST CompoundRuleApps5059
+	size CDATA #IMPLIED
+>
+<!ELEMENT CompoundRuleApps5078 (MoCompoundRuleApp)*>
+<!ATTLIST CompoundRuleApps5078
+	size CDATA #IMPLIED
+>
+<!ELEMENT CompoundRules5040 (MoBinaryCompoundRule | MoCoordinateCompound | MoEndoCompound | MoExoCompound)*>
+<!ATTLIST CompoundRules5040
+	size CDATA #IMPLIED
+>
+<!ELEMENT Conclusions4005 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Confidence4004 (Link)?>
+<!ELEMENT Confidence7 (Link)?>
+<!ELEMENT ConfidenceLevels6001 (CmPossibilityList)?>
+<!ELEMENT ConstChartTempl5124 (CmPossibilityList)?>
+<!ELEMENT Content3005 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Content5068 (Link)*>
+<!ATTLIST Content5068
+	size CDATA #IMPLIED
+>
+<!ELEMENT Content5069 (Link)?>
+<!ELEMENT Content5070 (Link)?>
+<!ELEMENT Content5103 (Link)?>
+<!ELEMENT Contents11 (Str)?>
+<!ELEMENT Contents16 (Str)?>
+<!ELEMENT Contents5046 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Contents5054 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Contents58 (FsFeatStruc)*>
+<!ATTLIST Contents58
+	size CDATA #IMPLIED
+>
+<!ELEMENT Context17 (Integer)?>
+<!ELEMENT Contexts5099 (PhIterationContext | PhPhonContext | PhSequenceContext | PhSimpleContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg | PhVariable)*>
+<!ATTLIST Contexts5099
+	size CDATA #IMPLIED
+>
+<!ELEMENT ConvertCVDigitsOnExport3001 (Boolean)?>
+<!ELEMENT CopyCutPastable35 (Boolean)?>
+<!ELEMENT Copyright47 (AStr)*>
+<!ELEMENT CounterEvidence4005 (Link)*>
+<!ATTLIST CounterEvidence4005
+	size CDATA #IMPLIED
+>
+<!ELEMENT CreatedBy68 (Link)?>
+<!ELEMENT CrossReference (Comment28 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST CrossReference
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT CrossReferences4001 (CrossReference)*>
+<!ATTLIST CrossReferences4001
+	size CDATA #IMPLIED
+>
+<!ELEMENT CrossReferences4004 (Link)*>
+<!ATTLIST CrossReferences4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT CrossReferences5002 (Link)?>
+<!ELEMENT CrossRefMarkerSymbol3001 (Uni)?>
+<!ELEMENT CrossRefMarkerType3001 (Integer)?>
+<!ELEMENT CrossRefsCombinedWithFootnotes3001 (Boolean)?>
+<!ELEMENT CurAnalysisWss6001 (Link)*>
+<!ATTLIST CurAnalysisWss6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT CurPronunWss6001 (Link)*>
+<!ATTLIST CurPronunWss6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT CurVernWss6001 (Link)*>
+<!ATTLIST CurVernWss6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Custom (Binary | Boolean | Float | GenDate | Guid | Image | Integer | Numeric | Str | Time | Uni)?>
+<!ATTLIST Custom
+	name CDATA #REQUIRED
+>
+<!ELEMENT CustomField EMPTY>
+<!ATTLIST CustomField
+	class (ChkRef | ChkRendering | ChkSense | ChkTerm | CmAgent | CmAgentEvaluation | CmAnnotation | CmAnnotationDefn | CmAnthroItem | CmBaseAnnotation | CmCell | CmCustomItem | CmDomainQ | CmFile | CmFilter | CmFolder | CmIndirectAnnotation | CmLocation | CmMajorObject | CmMedia | CmMediaAnnotation | CmObject | CmOverlay | CmPerson | CmPicture | CmPossibility | CmPossibilityList | CmProject | CmResource | CmRow | CmSemanticDomain | CmSortSpec | CmTranslation | CrossReference | DsChart | DsConstChart | DsDiscourseData | FsAbstractStructure | FsClosedFeature | FsClosedValue | FsComplexFeature | FsComplexValue | FsDisjunctiveValue | FsFeatDefn | FsFeatStruc | FsFeatStrucDisj | FsFeatStrucType | FsFeatureSpecification | FsFeatureSystem | FsNegatedValue | FsOpenFeature | FsOpenValue | FsSharedValue | FsSymFeatVal | LangProject | LexAppendix | LexDb | LexEntry | LexEntryRef | LexEntryType | LexEtymology | LexExampleSentence | LexPronunciation | LexReference | LexRefType | LexSense | LgCollation | LgWritingSystem | MoAdhocProhib | MoAdhocProhibGr | MoAffixAllomorph | MoAffixForm | MoAffixProcess | MoAlloAdhocProhib | MoBinaryCompoundRule | MoCompoundRule | MoCompoundRuleApp | MoCoordinateCompound | MoCopyFromInput | MoDeriv | MoDerivAffApp | MoDerivAffMsa | MoDerivStepMsa | MoDerivTrace | MoEndoCompound | MoExoCompound | MoForm | MoGlossItem | MoGlossSystem | MoInflAffixSlot | MoInflAffixSlotApp | MoInflAffixTemplate | MoInflAffMsa | MoInflClass | MoInflTemplateApp | MoInsertNC | MoInsertPhones | MoModifyFromInput | MoMorphAdhocProhib | MoMorphData | MoMorphSynAnalysis | MoMorphType | MoPhonolRuleApp | MoReferralRule | MoRuleMapping | MoStemAllomorph | MoStemMsa | MoStemName | MoStratum | MoStratumApp | MoUnclassifiedAffixMsa | PartOfSpeech | PhBdryMarker | PhCode | PhContextOrVar | PhEnvironment | PhFeatureConstraint | PhIterationContext | PhMetathesisRule | PhNaturalClass | PhNCFeatures | PhNCSegments | PhPhonContext | PhPhonData | PhPhoneme | PhPhonemeSet | PhPhonRuleFeat | PhRegularRule | PhSegmentRule | PhSegRuleRHS | PhSequenceContext | PhSimpleContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg | PhTerminalUnit | PhVariable | PubDivision | PubHeader | PubHFSet | Publication | PubPageLayout | Reminder | ReversalIndex | ReversalIndexEntry | RnAnalysis | RnEvent | RnGenericRec | RnResearchNbk | RnRoledPartic | ScrBook | ScrBookAnnotations | ScrBookRef | ScrCheckRun | ScrDifference | ScrDraft | ScrImportP6Project | ScrImportSet | ScrImportSFFiles | ScrImportSource | Scripture | ScrMarkerMapping | ScrRefSystem | ScrScriptureNote | ScrSection | StFootnote | StJournalText | StPara | StStyle | StText | StTxtPara | Text | UserAppFeatAct | UserConfigAcct | UserView | UserViewField | UserViewRec | WfiAnalysis | WfiGloss | WfiMorphBundle | WfiWordform | WfiWordSet | WordformInventory | WordFormLookup | WordformLookupList) #REQUIRED
+	name CDATA #REQUIRED
+	userLabel CDATA #REQUIRED
+	helpString CDATA #IMPLIED
+	wsSelector CDATA #REQUIRED
+	flid CDATA #REQUIRED
+	big CDATA #REQUIRED
+	type (BigString | BigUnicode | Binary | Boolean | Float | GenDate | Guid | Image | Integer | MultiBigString | MultiBigUnicode | MultiString | MultiUnicode | Numeric | OwningAtom | OwningCollection | OwningSequence | ReferenceAtom | ReferenceCollection | ReferenceSequence | String | Time | Unicode) #REQUIRED
+	target (ChkRef | ChkRendering | ChkSense | ChkTerm | CmAgent | CmAgentEvaluation | CmAnnotation | CmAnnotationDefn | CmAnthroItem | CmBaseAnnotation | CmCell | CmCustomItem | CmDomainQ | CmFile | CmFilter | CmFolder | CmIndirectAnnotation | CmLocation | CmMajorObject | CmMedia | CmMediaAnnotation | CmObject | CmOverlay | CmPerson | CmPicture | CmPossibility | CmPossibilityList | CmProject | CmResource | CmRow | CmSemanticDomain | CmSortSpec | CmTranslation | CrossReference | DsChart | DsConstChart | DsDiscourseData | FsAbstractStructure | FsClosedFeature | FsClosedValue | FsComplexFeature | FsComplexValue | FsDisjunctiveValue | FsFeatDefn | FsFeatStruc | FsFeatStrucDisj | FsFeatStrucType | FsFeatureSpecification | FsFeatureSystem | FsNegatedValue | FsOpenFeature | FsOpenValue | FsSharedValue | FsSymFeatVal | LangProject | LexAppendix | LexDb | LexEntry | LexEntryRef | LexEntryType | LexEtymology | LexExampleSentence | LexPronunciation | LexReference | LexRefType | LexSense | LgCollation | LgWritingSystem | MoAdhocProhib | MoAdhocProhibGr | MoAffixAllomorph | MoAffixForm | MoAffixProcess | MoAlloAdhocProhib | MoBinaryCompoundRule | MoCompoundRule | MoCompoundRuleApp | MoCoordinateCompound | MoCopyFromInput | MoDeriv | MoDerivAffApp | MoDerivAffMsa | MoDerivStepMsa | MoDerivTrace | MoEndoCompound | MoExoCompound | MoForm | MoGlossItem | MoGlossSystem | MoInflAffixSlot | MoInflAffixSlotApp | MoInflAffixTemplate | MoInflAffMsa | MoInflClass | MoInflTemplateApp | MoInsertNC | MoInsertPhones | MoModifyFromInput | MoMorphAdhocProhib | MoMorphData | MoMorphSynAnalysis | MoMorphType | MoPhonolRuleApp | MoReferralRule | MoRuleMapping | MoStemAllomorph | MoStemMsa | MoStemName | MoStratum | MoStratumApp | MoUnclassifiedAffixMsa | PartOfSpeech | PhBdryMarker | PhCode | PhContextOrVar | PhEnvironment | PhFeatureConstraint | PhIterationContext | PhMetathesisRule | PhNaturalClass | PhNCFeatures | PhNCSegments | PhPhonContext | PhPhonData | PhPhoneme | PhPhonemeSet | PhPhonRuleFeat | PhRegularRule | PhSegmentRule | PhSegRuleRHS | PhSequenceContext | PhSimpleContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg | PhTerminalUnit | PhVariable | PubDivision | PubHeader | PubHFSet | Publication | PubPageLayout | Reminder | ReversalIndex | ReversalIndexEntry | RnAnalysis | RnEvent | RnGenericRec | RnResearchNbk | RnRoledPartic | ScrBook | ScrBookAnnotations | ScrBookRef | ScrCheckRun | ScrDifference | ScrDraft | ScrImportP6Project | ScrImportSet | ScrImportSFFiles | ScrImportSource | Scripture | ScrMarkerMapping | ScrRefSystem | ScrScriptureNote | ScrSection | StFootnote | StJournalText | StPara | StStyle | StText | StTxtPara | Text | UserAppFeatAct | UserConfigAcct | UserView | UserViewField | UserViewRec | WfiAnalysis | WfiGloss | WfiMorphBundle | WfiWordform | WfiWordSet | WordformInventory | WordFormLookup | WordformLookupList) #IMPLIED
+>
+<!ELEMENT CustomLink (Link)*>
+<!ATTLIST CustomLink
+	name CDATA #REQUIRED
+>
+<!ELEMENT CustomObj (ChkRef | ChkRendering | ChkSense | ChkTerm | CmAgent | CmAgentEvaluation | CmAnnotationDefn | CmAnthroItem | CmBaseAnnotation | CmCell | CmCustomItem | CmDomainQ | CmFile | CmFilter | CmFolder | CmIndirectAnnotation | CmLocation | CmMedia | CmMediaAnnotation | CmObject | CmOverlay | CmPerson | CmPicture | CmPossibility | CmPossibilityList | CmResource | CmRow | CmSemanticDomain | CmSortSpec | CmTranslation | CrossReference | DsConstChart | DsDiscourseData | FsClosedFeature | FsClosedValue | FsComplexFeature | FsComplexValue | FsDisjunctiveValue | FsFeatStruc | FsFeatStrucDisj | FsFeatStrucType | FsFeatureSystem | FsNegatedValue | FsOpenFeature | FsOpenValue | FsSharedValue | FsSymFeatVal | LangProject | LexAppendix | LexDb | LexEntry | LexEntryRef | LexEntryType | LexEtymology | LexExampleSentence | LexPronunciation | LexReference | LexRefType | LexSense | LgCollation | LgWritingSystem | MoAdhocProhibGr | MoAffixAllomorph | MoAffixProcess | MoAlloAdhocProhib | MoBinaryCompoundRule | MoCompoundRuleApp | MoCoordinateCompound | MoCopyFromInput | MoDeriv | MoDerivAffApp | MoDerivAffMsa | MoDerivStepMsa | MoEndoCompound | MoExoCompound | MoGlossItem | MoGlossSystem | MoInflAffixSlot | MoInflAffixSlotApp | MoInflAffixTemplate | MoInflAffMsa | MoInflClass | MoInflTemplateApp | MoInsertNC | MoInsertPhones | MoModifyFromInput | MoMorphAdhocProhib | MoMorphData | MoMorphType | MoPhonolRuleApp | MoReferralRule | MoStemAllomorph | MoStemMsa | MoStemName | MoStratum | MoStratumApp | MoUnclassifiedAffixMsa | PartOfSpeech | PhBdryMarker | PhCode | PhEnvironment | PhFeatureConstraint | PhIterationContext | PhMetathesisRule | PhNCFeatures | PhNCSegments | PhPhonData | PhPhoneme | PhPhonemeSet | PhPhonRuleFeat | PhRegularRule | PhSegmentRule | PhSegRuleRHS | PhSequenceContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg | PhVariable | PubDivision | PubHeader | PubHFSet | Publication | PubPageLayout | Reminder | ReversalIndex | ReversalIndexEntry | RnAnalysis | RnEvent | RnResearchNbk | RnRoledPartic | ScrBook | ScrBookAnnotations | ScrBookRef | ScrCheckRun | ScrDifference | ScrDraft | ScrImportP6Project | ScrImportSet | ScrImportSFFiles | Scripture | ScrMarkerMapping | ScrRefSystem | ScrScriptureNote | ScrSection | StFootnote | StJournalText | StStyle | StText | StTxtPara | Text | UserAppFeatAct | UserConfigAcct | UserView | UserViewField | UserViewRec | WfiAnalysis | WfiGloss | WfiMorphBundle | WfiWordform | WfiWordSet | WordformInventory | WordFormLookup | WordformLookupList)*>
+<!ATTLIST CustomObj
+	name CDATA #REQUIRED
+>
+<!ELEMENT CustomStr (AStr | AUni)*>
+<!ATTLIST CustomStr
+	name CDATA #REQUIRED
+>
+<!ELEMENT CVPattern5014 (Str)?>
+<!ELEMENT Date4007 (GenDate)?>
+<!ELEMENT DateCreated1 (Time)?>
+<!ELEMENT DateCreated3010 (Time)?>
+<!ELEMENT DateCreated32 (Time)?>
+<!ELEMENT DateCreated34 (Time)?>
+<!ELEMENT DateCreated4004 (Time)?>
+<!ELEMENT DateCreated5 (Time)?>
+<!ELEMENT DateCreated5002 (Time)?>
+<!ELEMENT DateCreated68 (Time)?>
+<!ELEMENT DateCreated7 (Time)?>
+<!ELEMENT DateModified1 (Time)?>
+<!ELEMENT DateModified34 (Time)?>
+<!ELEMENT DateModified4004 (Time)?>
+<!ELEMENT DateModified5 (Time)?>
+<!ELEMENT DateModified5002 (Time)?>
+<!ELEMENT DateModified68 (Time)?>
+<!ELEMENT DateModified7 (Time)?>
+<!ELEMENT DateOfBirth13 (GenDate)?>
+<!ELEMENT DateOfDeath13 (GenDate)?>
+<!ELEMENT DateOfEvent4006 (GenDate)?>
+<!ELEMENT DateResolved3018 (Time)?>
+<!ELEMENT Default55 (FsClosedValue | FsComplexValue | FsDisjunctiveValue | FsNegatedValue | FsOpenValue | FsSharedValue)?>
+<!ELEMENT DefaultAffix5047 (Link)?>
+<!ELEMENT DefaultBodyFont24 (Uni)?>
+<!ELEMENT DefaultFeatures5049 (FsFeatStruc)?>
+<!ELEMENT DefaultFooter45 (PubHeader)?>
+<!ELEMENT DefaultHeader45 (PubHeader)?>
+<!ELEMENT DefaultInflectionClass5049 (Link)?>
+<!ELEMENT DefaultMonospace24 (Uni)?>
+<!ELEMENT DefaultSansSerif24 (Uni)?>
+<!ELEMENT DefaultSerif24 (Uni)?>
+<!ELEMENT DefaultStem5047 (Link)?>
+<!ELEMENT Definition5016 (AStr)*>
+<!ELEMENT Depth8 (Integer)?>
+<!ELEMENT DerivAffApp5078 (MoDerivAffApp)*>
+<!ATTLIST DerivAffApp5078
+	size CDATA #IMPLIED
+>
+<!ELEMENT Derivation5059 (MoDeriv)?>
+<!ELEMENT Description1 (AStr)*>
+<!ELEMENT Description2 (AStr)*>
+<!ELEMENT Description24 (AStr)*>
+<!ELEMENT Description3008 (AUni)*>
+<!ELEMENT Description3010 (Uni)?>
+<!ELEMENT Description4006 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Description4007 (Str)?>
+<!ELEMENT Description42 (Str)?>
+<!ELEMENT Description44 (Str)?>
+<!ELEMENT Description45 (Str)?>
+<!ELEMENT Description47 (AStr)*>
+<!ELEMENT Description48 (AStr)*>
+<!ELEMENT Description5 (AStr)*>
+<!ELEMENT Description5030 (AStr)*>
+<!ELEMENT Description5036 (AStr)*>
+<!ELEMENT Description5037 (AStr)*>
+<!ELEMENT Description5039 (AStr)*>
+<!ELEMENT Description5044 (AStr)*>
+<!ELEMENT Description5047 (AStr)*>
+<!ELEMENT Description5048 (AStr)*>
+<!ELEMENT Description5081 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Description5089 (AStr)*>
+<!ELEMENT Description5090 (AStr)*>
+<!ELEMENT Description5093 (AStr)*>
+<!ELEMENT Description5097 (AStr)*>
+<!ELEMENT Description5105 (AStr)*>
+<!ELEMENT Description5110 (AStr)*>
+<!ELEMENT Description5128 (AStr)*>
+<!ELEMENT Description55 (AStr)*>
+<!ELEMENT Description59 (AStr)*>
+<!ELEMENT Description65 (AStr)*>
+<!ELEMENT Description7 (AStr)*>
+<!ELEMENT Details18 (Binary)?>
+<!ELEMENT Details19 (Binary)?>
+<!ELEMENT Details20 (Binary)?>
+<!ELEMENT Details32 (Uni)?>
+<!ELEMENT DifferentEvenHF43 (Boolean)?>
+<!ELEMENT DifferentFirstHF43 (Boolean)?>
+<!ELEMENT Diffs3002 (ScrDifference)*>
+<!ATTLIST Diffs3002
+	size CDATA #IMPLIED
+>
+<!ELEMENT DiffType3011 (Integer)?>
+<!ELEMENT Direction5128 (Integer)?>
+<!ELEMENT DiscourseData6001 (DsDiscourseData)?>
+<!ELEMENT DiscourseNote5016 (AStr)*>
+<!ELEMENT Discussion3018 (StJournalText)?>
+<!ELEMENT Discussion4005 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Discussion7 (StFootnote | StJournalText | StText)?>
+<!ELEMENT DisplayCrossRefReference3001 (Boolean)?>
+<!ELEMENT DisplayFootnoteMarker39 (Boolean)?>
+<!ELEMENT DisplayFootnoteReference3001 (Boolean)?>
+<!ELEMENT DisplayFootnoteReference39 (Boolean)?>
+<!ELEMENT DisplayOption8 (Integer)?>
+<!ELEMENT DisplaySymbolInCrossRef3001 (Boolean)?>
+<!ELEMENT DisplaySymbolInFootnote3001 (Boolean)?>
+<!ELEMENT DisplayToRightOfValues55 (Boolean)?>
+<!ELEMENT Divisions42 (PubDivision)*>
+<!ATTLIST Divisions42
+	size CDATA #IMPLIED
+>
+<!ELEMENT Domain3016 (Integer)?>
+<!ELEMENT DomainTypes5005 (CmPossibilityList)?>
+<!ELEMENT DomainTypes5016 (Link)*>
+<!ATTLIST DomainTypes5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT DoNotUseForParsing5002 (Boolean)?>
+<!ELEMENT DsChart (Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | HeaderFooterSets5 | Name5 | Publications5 | Template5122)*>
+<!ATTLIST DsChart
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT DsConstChart (BasedOn5123 | Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | HeaderFooterSets5 | Name5 | Publications5 | Rows5123 | Template5122)*>
+<!ATTLIST DsConstChart
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT DsDiscourseData (ChartMarkers5124 | Charts5124 | ConstChartTempl5124 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST DsDiscourseData
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Education13 (Link)?>
+<!ELEMENT Education6001 (CmPossibilityList)?>
+<!ELEMENT EmptyParadigmCells5049 (FsFeatStruc)*>
+<!ATTLIST EmptyParadigmCells5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT EncyclopedicInfo5016 (AStr)*>
+<!ELEMENT EndMarker3016 (Uni)?>
+<!ELEMENT EndObject37 (Link)?>
+<!ELEMENT EndOffset37 (Integer)?>
+<!ELEMENT EndRef37 (Integer)?>
+<!ELEMENT Entries5005 (LexEntry)*>
+<!ATTLIST Entries5005
+	size CDATA #IMPLIED
+>
+<!ELEMENT Entries5052 (ReversalIndexEntry)*>
+<!ATTLIST Entries5052
+	size CDATA #IMPLIED
+>
+<!ELEMENT EntryRefs5002 (LexEntryRef)*>
+<!ATTLIST EntryRefs5002
+	size CDATA #IMPLIED
+>
+<!ELEMENT Environments5099 (PhEnvironment)*>
+<!ATTLIST Environments5099
+	size CDATA #IMPLIED
+>
+<!ELEMENT EthnologueCode6001 (Uni)?>
+<!ELEMENT EticID5109 (Uni)?>
+<!ELEMENT Etymology5002 (LexEtymology)?>
+<!ELEMENT Evaluations23 (CmAgentEvaluation)*>
+<!ATTLIST Evaluations23
+	size CDATA #IMPLIED
+>
+<!ELEMENT EvenFooter45 (PubHeader)?>
+<!ELEMENT EvenHeader45 (PubHeader)?>
+<!ELEMENT EventTypes4001 (CmPossibilityList)?>
+<!ELEMENT Example5004 (AStr)*>
+<!ELEMENT Examples5016 (LexExampleSentence)*>
+<!ATTLIST Examples5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT ExampleSentences67 (AStr)*>
+<!ELEMENT ExampleWords67 (AUni)*>
+<!ELEMENT ExclRuleFeats5131 (Link)*>
+<!ATTLIST ExclRuleFeats5131
+	size CDATA #IMPLIED
+>
+<!ELEMENT ExcludeAsHeadword5002 (Boolean)?>
+<!ELEMENT Excluded3016 (Boolean)?>
+<!ELEMENT Explanation5121 (AUni)*>
+<!ELEMENT Explanation5126 (AUni)*>
+<!ELEMENT ExternalMaterials4004 (StFootnote | StJournalText | StText)?>
+<!ELEMENT ExtLinkRootDir6001 (Uni)?>
+<!ELEMENT FeatConstraints5099 (PhFeatureConstraint)*>
+<!ATTLIST FeatConstraints5099
+	size CDATA #IMPLIED
+>
+<!ELEMENT FeatStructFrag5109 (FsFeatStruc)?>
+<!ELEMENT Feature5096 (Link)?>
+<!ELEMENT Feature56 (Link)?>
+<!ELEMENT FeatureDisjunctions57 (FsFeatStrucDisj)*>
+<!ATTLIST FeatureDisjunctions57
+	size CDATA #IMPLIED
+>
+<!ELEMENT FeatureId41 (Integer)?>
+<!ELEMENT Features34 (FsFeatStruc)?>
+<!ELEMENT Features49 (FsClosedFeature | FsComplexFeature | FsOpenFeature)*>
+<!ATTLIST Features49
+	size CDATA #IMPLIED
+>
+<!ELEMENT Features5092 (FsFeatStruc)?>
+<!ELEMENT Features5094 (FsFeatStruc)?>
+<!ELEMENT Features59 (Link)*>
+<!ATTLIST Features59
+	size CDATA #IMPLIED
+>
+<!ELEMENT FeatureSpecs57 (FsClosedValue | FsComplexValue | FsDisjunctiveValue | FsNegatedValue | FsOpenValue | FsSharedValue)*>
+<!ATTLIST FeatureSpecs57
+	size CDATA #IMPLIED
+>
+<!ELEMENT FeatureStructure5085 (Link)?>
+<!ELEMENT FeatureStructure5086 (Link)?>
+<!ELEMENT FeatureStructure5087 (Link)?>
+<!ELEMENT FieldId9 (Integer)?>
+<!ELEMENT FieldInfo9 (Uni)?>
+<!ELEMENT Fields19 (UserViewField)*>
+<!ATTLIST Fields19
+	size CDATA #IMPLIED
+>
+<!ELEMENT FieldWorkLocation6001 (AUni)*>
+<!ELEMENT FileFormat3015 (Integer)?>
+<!ELEMENT Files2 (CmFile)*>
+<!ATTLIST Files2
+	size CDATA #IMPLIED
+>
+<!ELEMENT Files3015 (CmFile)*>
+<!ATTLIST Files3015
+	size CDATA #IMPLIED
+>
+<!ELEMENT Filters6001 (CmFilter)*>
+<!ATTLIST Filters6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Final5037 (Boolean)?>
+<!ELEMENT FinalStratum5128 (Link)?>
+<!ELEMENT FirstAllomorph5101 (Link)?>
+<!ELEMENT FirstFooter45 (PubHeader)?>
+<!ELEMENT FirstHeader45 (PubHeader)?>
+<!ELEMENT FirstMorpheme5102 (Link)?>
+<!ELEMENT Flid20 (Integer)?>
+<!ELEMENT Flid37 (Integer)?>
+<!ELEMENT Float EMPTY>
+<!ATTLIST Float
+	val CDATA #REQUIRED
+	bin CDATA #IMPLIED
+>
+<!ELEMENT FontVariation24 (Uni)?>
+<!ELEMENT FootnoteMarker39 (Str)?>
+<!ELEMENT FootnoteMarkerSymbol3001 (Uni)?>
+<!ELEMENT FootnoteMarkerType3001 (Integer)?>
+<!ELEMENT Footnotes3002 (StFootnote)*>
+<!ATTLIST Footnotes3002
+	size CDATA #IMPLIED
+>
+<!ELEMENT FootnoteSepWidth42 (Integer)?>
+<!ELEMENT ForeColor7 (Integer)?>
+<!ELEMENT Form5014 (AUni)*>
+<!ELEMENT Form5035 (AUni)*>
+<!ELEMENT Form5060 (AUni)*>
+<!ELEMENT Form5062 (AUni)*>
+<!ELEMENT Form5064 (Str)?>
+<!ELEMENT Form5112 (AStr)*>
+<!ELEMENT Form5113 (AUni)*>
+<!ELEMENT FromInflectionClass5031 (Link)?>
+<!ELEMENT FromMsFeatures5031 (FsFeatStruc)?>
+<!ELEMENT FromPartOfSpeech5031 (Link)?>
+<!ELEMENT FromPartsOfSpeech5001 (Link)*>
+<!ATTLIST FromPartsOfSpeech5001
+	size CDATA #IMPLIED
+>
+<!ELEMENT FromProdRestrict5031 (Link)*>
+<!ATTLIST FromProdRestrict5031
+	size CDATA #IMPLIED
+>
+<!ELEMENT FromProdRestrict5038 (Link)*>
+<!ATTLIST FromProdRestrict5038
+	size CDATA #IMPLIED
+>
+<!ELEMENT FromStemName5031 (Link)?>
+<!ELEMENT FsAbstractStructure (Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST FsAbstractStructure
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsClosedFeature (Abbreviation55 | CatalogSourceId55 | Custom | CustomLink | CustomObj | CustomStr | Default55 | Description55 | DisplayToRightOfValues55 | GlossAbbreviation55 | Name55 | RightGlossSep55 | ShowInGloss55 | Values50)*>
+<!ATTLIST FsClosedFeature
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsClosedValue (Custom | CustomLink | CustomObj | CustomStr | Feature56 | RefNumber56 | Value51 | ValueState56)*>
+<!ATTLIST FsClosedValue
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsComplexFeature (Abbreviation55 | CatalogSourceId55 | Custom | CustomLink | CustomObj | CustomStr | Default55 | Description55 | DisplayToRightOfValues55 | GlossAbbreviation55 | Name55 | RightGlossSep55 | ShowInGloss55 | Type4)*>
+<!ATTLIST FsComplexFeature
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsComplexValue (Custom | CustomLink | CustomObj | CustomStr | Feature56 | RefNumber56 | Value53 | ValueState56)*>
+<!ATTLIST FsComplexValue
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsDisjunctiveValue (Custom | CustomLink | CustomObj | CustomStr | Feature56 | RefNumber56 | Value54 | ValueState56)*>
+<!ATTLIST FsDisjunctiveValue
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsFeatDefn (Abbreviation55 | CatalogSourceId55 | Custom | CustomLink | CustomObj | CustomStr | Default55 | Description55 | DisplayToRightOfValues55 | GlossAbbreviation55 | Name55 | RightGlossSep55 | ShowInGloss55)*>
+<!ATTLIST FsFeatDefn
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsFeatStruc (Custom | CustomLink | CustomObj | CustomStr | FeatureDisjunctions57 | FeatureSpecs57 | Type57)*>
+<!ATTLIST FsFeatStruc
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsFeatStrucDisj (Contents58 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST FsFeatStrucDisj
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsFeatStrucType (Abbreviation59 | CatalogSourceId59 | Custom | CustomLink | CustomObj | CustomStr | Description59 | Features59 | Name59)*>
+<!ATTLIST FsFeatStrucType
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsFeatureSpecification (Custom | CustomLink | CustomObj | CustomStr | Feature56 | RefNumber56 | ValueState56)*>
+<!ATTLIST FsFeatureSpecification
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsFeatureSystem (Custom | CustomLink | CustomObj | CustomStr | Features49 | Types49)*>
+<!ATTLIST FsFeatureSystem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsNegatedValue (Custom | CustomLink | CustomObj | CustomStr | Feature56 | RefNumber56 | Value61 | ValueState56)*>
+<!ATTLIST FsNegatedValue
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsOpenFeature (Abbreviation55 | CatalogSourceId55 | Custom | CustomLink | CustomObj | CustomStr | Default55 | Description55 | DisplayToRightOfValues55 | GlossAbbreviation55 | Name55 | RightGlossSep55 | ShowInGloss55 | WritingSystem62 | WsSelector62)*>
+<!ATTLIST FsOpenFeature
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsOpenValue (Custom | CustomLink | CustomObj | CustomStr | Feature56 | RefNumber56 | Value63 | ValueState56)*>
+<!ATTLIST FsOpenValue
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsSharedValue (Custom | CustomLink | CustomObj | CustomStr | Feature56 | RefNumber56 | Value64 | ValueState56)*>
+<!ATTLIST FsSharedValue
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT FsSymFeatVal (Abbreviation65 | CatalogSourceId65 | Custom | CustomLink | CustomObj | CustomStr | Description65 | GlossAbbreviation65 | Name65 | RightGlossSep65 | ShowInGloss65)*>
+<!ATTLIST FsSymFeatVal
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Function17 (Integer)?>
+<!ELEMENT FurtherQuestions4004 (StFootnote | StJournalText | StText)?>
+<!ELEMENT FwDatabase (AdditionalFields | CmPicture | CmPossibilityList | LangProject | LgWritingSystem | ReversalIndex | ScrRefSystem | UserView | CmBaseAnnotation | CmIndirectAnnotation)*>
+<!ATTLIST FwDatabase
+	version CDATA #IMPLIED
+>
+<!ELEMENT GenDate EMPTY>
+<!ATTLIST GenDate
+	val CDATA #REQUIRED
+>
+<!ELEMENT Gender13 (Integer)?>
+<!ELEMENT GeneralNote5016 (AStr)*>
+<!ELEMENT GenreList6001 (CmPossibilityList)?>
+<!ELEMENT Genres5054 (Link)*>
+<!ATTLIST Genres5054
+	size CDATA #IMPLIED
+>
+<!ELEMENT Gloss5016 (AUni)*>
+<!ELEMENT Gloss5113 (AUni)*>
+<!ELEMENT GlossAbbreviation55 (AUni)*>
+<!ELEMENT GlossAbbreviation65 (AUni)*>
+<!ELEMENT GlossBundle5041 (Link)*>
+<!ATTLIST GlossBundle5041
+	size CDATA #IMPLIED
+>
+<!ELEMENT Glosses5108 (MoGlossItem)*>
+<!ATTLIST Glosses5108
+	size CDATA #IMPLIED
+>
+<!ELEMENT GlossItems5109 (MoGlossItem)*>
+<!ATTLIST GlossItems5109
+	size CDATA #IMPLIED
+>
+<!ELEMENT GlossString5041 (Uni)?>
+<!ELEMENT GlossSystem5040 (MoGlossSystem)?>
+<!ELEMENT GrammarNote5016 (AStr)*>
+<!ELEMENT Guid EMPTY>
+<!ATTLIST Guid
+	val CDATA #REQUIRED
+>
+<!ELEMENT GutterLoc42 (Integer)?>
+<!ELEMENT GutterMargin42 (Integer)?>
+<!ELEMENT HasMaintenance40 (Boolean)?>
+<!ELEMENT HeaderFooterSets5 (PubHFSet)*>
+<!ATTLIST HeaderFooterSets5
+	size CDATA #IMPLIED
+>
+<!ELEMENT Heading3005 (StFootnote | StJournalText | StText)?>
+<!ELEMENT HeadLast5033 (Boolean)?>
+<!ELEMENT HelpFile8 (Uni)?>
+<!ELEMENT HelpId7 (Uni)?>
+<!ELEMENT HelpString20 (AUni)*>
+<!ELEMENT HFSet43 (PubHFSet)?>
+<!ELEMENT Hidden7 (Boolean)?>
+<!ELEMENT HideMinorEntry5127 (Integer)?>
+<!ELEMENT HomographNumber5002 (Integer)?>
+<!ELEMENT Human23 (Boolean)?>
+<!ELEMENT Hypothesis4005 (StFootnote | StJournalText | StText)?>
+<!ELEMENT ICULocale24 (Uni)?>
+<!ELEMENT ICULocale3013 (Uni)?>
+<!ELEMENT ICULocale3016 (Uni)?>
+<!ELEMENT IcuResourceName30 (Uni)?>
+<!ELEMENT IcuResourceText30 (Uni)?>
+<!ELEMENT ICURules30 (Uni)?>
+<!ELEMENT IdText3002 (Uni)?>
+<!ELEMENT Image (#PCDATA)>
+<!ELEMENT ImportProjToken3008 (Uni)?>
+<!ELEMENT ImportResidue5002 (Str)?>
+<!ELEMENT ImportResidue5016 (Str)?>
+<!ELEMENT ImportSettings3001 (ScrImportSet)*>
+<!ATTLIST ImportSettings3001
+	size CDATA #IMPLIED
+>
+<!ELEMENT ImportSettings3008 (Binary)?>
+<!ELEMENT ImportType3008 (Integer)?>
+<!ELEMENT IncludeSubentries31 (Boolean)?>
+<!ELEMENT InflectableFeats5049 (Link)*>
+<!ATTLIST InflectableFeats5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT InflectionalFeats5100 (FsFeatStruc)?>
+<!ELEMENT InflectionClass5001 (Link)?>
+<!ELEMENT InflectionClass5032 (Link)?>
+<!ELEMENT InflectionClasses5028 (Link)*>
+<!ATTLIST InflectionClasses5028
+	size CDATA #IMPLIED
+>
+<!ELEMENT InflectionClasses5049 (MoInflClass)*>
+<!ATTLIST InflectionClasses5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT InflFeats5032 (FsFeatStruc)?>
+<!ELEMENT InflFeats5038 (FsFeatStruc)?>
+<!ELEMENT InflTemplateApps5059 (Link)*>
+<!ATTLIST InflTemplateApps5059
+	size CDATA #IMPLIED
+>
+<!ELEMENT InherFeatVal5049 (FsFeatStruc)?>
+<!ELEMENT InitialStratum5128 (Link)?>
+<!ELEMENT Input5029 (PhIterationContext | PhPhonContext | PhSequenceContext | PhSimpleContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg | PhVariable)*>
+<!ATTLIST Input5029
+	size CDATA #IMPLIED
+>
+<!ELEMENT Input5044 (FsFeatStruc)?>
+<!ELEMENT InputPOSes5131 (Link)*>
+<!ATTLIST InputPOSes5131
+	size CDATA #IMPLIED
+>
+<!ELEMENT InsideAlignedText46 (Str)?>
+<!ELEMENT InstanceOf34 (Link)?>
+<!ELEMENT InstanceOfSignature35 (Integer)?>
+<!ELEMENT Integer EMPTY>
+<!ATTLIST Integer
+	val CDATA #REQUIRED
+	str CDATA #IMPLIED
+>
+<!ELEMENT InternalPath47 (Uni)?>
+<!ELEMENT Introduction5005 (StFootnote | StJournalText | StText)?>
+<!ELEMENT IsAbstract5035 (Boolean)?>
+<!ELEMENT IsBodyInSeparateSubentry5005 (Boolean)?>
+<!ELEMENT IsBuiltIn17 (Boolean)?>
+<!ELEMENT IsBuiltIn44 (Boolean)?>
+<!ELEMENT IsClosed8 (Boolean)?>
+<!ELEMENT IsCustomField20 (Boolean)?>
+<!ELEMENT IsHeadwordCitationForm5005 (Boolean)?>
+<!ELEMENT IsLandscape42 (Boolean)?>
+<!ELEMENT IsModified17 (Boolean)?>
+<!ELEMENT IsModified44 (Boolean)?>
+<!ELEMENT IsProtected7 (Boolean)?>
+<!ELEMENT IsPublishedTextStyle17 (Boolean)?>
+<!ELEMENT IsResearcher13 (Boolean)?>
+<!ELEMENT IsSorted8 (Boolean)?>
+<!ELEMENT IsTranslated5054 (Boolean)?>
+<!ELEMENT IsVernacular8 (Boolean)?>
+<!ELEMENT Item5132 (Link)?>
+<!ELEMENT ItemClsid8 (Integer)?>
+<!ELEMENT KeyboardType24 (Uni)?>
+<!ELEMENT KeymanKeyboard24 (Uni)?>
+<!ELEMENT KeyWord5116 (Str)?>
+<!ELEMENT Label16 (Str)?>
+<!ELEMENT Label20 (AUni)*>
+<!ELEMENT Label69 (AStr)*>
+<!ELEMENT LangProject (ActivatedFeatures6001 | AffixCategories6001 | AnalysisStatus6001 | AnalysisWss6001 | AnalyzingAgents6001 | AnnotationDefs6001 | Annotations6001 | AnthroList6001 | CheckLists6001 | ConfidenceLevels6001 | CurAnalysisWss6001 | CurPronunWss6001 | CurVernWss6001 | Custom | CustomLink | CustomObj | CustomStr | DateCreated1 | DateModified1 | Description1 | DiscourseData6001 | Education6001 | EthnologueCode6001 | ExtLinkRootDir6001 | FieldWorkLocation6001 | Filters6001 | GenreList6001 | LexDb6001 | Locations6001 | MainCountry6001 | Media6001 | MorphologicalData6001 | MsFeatureSystem6001 | Name1 | Overlays6001 | PartsOfSpeech6001 | People6001 | PhFeatureSystem6001 | PhonologicalData6001 | Pictures6001 | Positions6001 | ResearchNotebook6001 | Restrictions6001 | Roles6001 | SemanticDomainList6001 | SortSpecs6001 | Styles6001 | TextMarkupTags6001 | Texts6001 | Thesaurus6001 | TimeOfDay6001 | TranslatedScripture6001 | TranslationTags6001 | UserAccounts6001 | VernWss6001 | WeatherConditions6001 | WordformInventory6001 | WordformLookupLists6001 | WorldRegion6001)*>
+<!ATTLIST LangProject
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LastModified24 (Time)?>
+<!ELEMENT LayoutPos48 (Integer)?>
+<!ELEMENT LeftContext5097 (Link)?>
+<!ELEMENT LeftContext5131 (PhIterationContext | PhSequenceContext | PhSimpleContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg)?>
+<!ELEMENT LeftForm5073 (Link)?>
+<!ELEMENT LeftMsa5106 (MoStemMsa)?>
+<!ELEMENT LegacyMapping24 (Uni)?>
+<!ELEMENT Level19 (Integer)?>
+<!ELEMENT LexAppendix (Contents5046 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST LexAppendix
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexDb (AllomorphIndex5005 | Appendixes5005 | ComplexEntryTypes5005 | Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | DomainTypes5005 | Entries5005 | HeaderFooterSets5 | Introduction5005 | IsBodyInSeparateSubentry5005 | IsHeadwordCitationForm5005 | LexicalFormIndex5005 | MorphTypes5005 | Name5 | Publications5 | References5005 | Resources5005 | ReversalIndexes5005 | SenseTypes5005 | Status5005 | Styles5005 | UsageTypes5005 | VariantEntryTypes5005)*>
+<!ATTLIST LexDb
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexDb6001 (LexDb)?>
+<!ELEMENT LexemeForm5002 (MoAffixAllomorph | MoAffixForm | MoAffixProcess | MoStemAllomorph)?>
+<!ELEMENT LexEntry (AlternateForms5002 | Bibliography5002 | CitationForm5002 | Comment5002 | Custom | CustomLink | CustomObj | CustomStr | DateCreated5002 | DateModified5002 | DoNotUseForParsing5002 | EntryRefs5002 | Etymology5002 | ExcludeAsHeadword5002 | HomographNumber5002 | ImportResidue5002 | LexemeForm5002 | LiftResidue5002 | LiteralMeaning5002 | MainEntriesOrSenses5002 | MorphoSyntaxAnalyses5002 | Pronunciations5002 | Restrictions5002 | Senses5002 | SummaryDefinition5002)*>
+<!ATTLIST LexEntry
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexEntryRef (ComplexEntryTypes5127 | ComponentLexemes5127 | Custom | CustomLink | CustomObj | CustomStr | HideMinorEntry5127 | LiftResidue5127 | PrimaryLexemes5127 | RefType5127 | Summary5127 | VariantEntryTypes5127)*>
+<!ATTLIST LexEntryRef
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexEntryType (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Name7 | Researchers7 | Restrictions7 | ReverseAbbr5118 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST LexEntryType
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexEtymology (Comment5113 | Custom | CustomLink | CustomObj | CustomStr | Form5113 | Gloss5113 | LiftResidue5113 | Source5113)*>
+<!ATTLIST LexEtymology
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexExampleSentence (Custom | CustomLink | CustomObj | CustomStr | Example5004 | LiftResidue5004 | Reference5004 | Translations5004)*>
+<!ATTLIST LexExampleSentence
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexicalFormIndex5005 (Link)*>
+<!ATTLIST LexicalFormIndex5005
+	size CDATA #IMPLIED
+>
+<!ELEMENT LexicalRelations5016 (Link)?>
+<!ELEMENT LexPronunciation (Custom | CustomLink | CustomObj | CustomStr | CVPattern5014 | Form5014 | LiftResidue5014 | Location5014 | MediaFiles5014 | Tone5014)*>
+<!ATTLIST LexPronunciation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexReference (Comment5120 | Custom | CustomLink | CustomObj | CustomStr | LiftResidue5120 | Name5120 | Targets5120)*>
+<!ATTLIST LexReference
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexRefType (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | MappingType5119 | Members5119 | Name7 | Researchers7 | Restrictions7 | ReverseAbbreviation5119 | ReverseName5119 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST LexRefType
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LexSense (AnthroCodes5016 | AnthroNote5016 | Appendixes5016 | Bibliography5016 | Custom | CustomLink | CustomObj | CustomStr | Definition5016 | DiscourseNote5016 | DomainTypes5016 | EncyclopedicInfo5016 | Examples5016 | GeneralNote5016 | Gloss5016 | GrammarNote5016 | ImportResidue5016 | LiftResidue5016 | MorphoSyntaxAnalysis5016 | PhonologyNote5016 | Pictures5016 | Restrictions5016 | ReversalEntries5016 | ScientificName5016 | SemanticDomains5016 | SemanticsNote5016 | Senses5016 | SenseType5016 | SocioLinguisticsNote5016 | Source5016 | Status5016 | ThesaurusItems5016 | UsageTypes5016)*>
+<!ATTLIST LexSense
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LgCollation (Custom | CustomLink | CustomObj | CustomStr | IcuResourceName30 | IcuResourceText30 | ICURules30 | Name30 | WinCollation30 | WinLCID30)*>
+<!ATTLIST LgCollation
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LgWritingSystem (Abbr24 | BodyFontFeatures24 | CapitalizationInfo24 | Collations24 | Custom | CustomLink | CustomObj | CustomStr | DefaultBodyFont24 | DefaultMonospace24 | DefaultSansSerif24 | DefaultSerif24 | Description24 | FontVariation24 | ICULocale24 | KeyboardType24 | KeymanKeyboard24 | LastModified24 | LegacyMapping24 | Locale24 | MatchedPairs24 | Name24 | PunctuationPatterns24 | QuotationMarks24 | RightToLeft24 | SansFontVariation24 | SpellCheckDictionary24 | ValidChars24)*>
+<!ATTLIST LgWritingSystem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LiftResidue5002 (Uni)?>
+<!ELEMENT LiftResidue5004 (Uni)?>
+<!ELEMENT LiftResidue5014 (Uni)?>
+<!ELEMENT LiftResidue5016 (Uni)?>
+<!ELEMENT LiftResidue5035 (Uni)?>
+<!ELEMENT LiftResidue5041 (Uni)?>
+<!ELEMENT LiftResidue5113 (Uni)?>
+<!ELEMENT LiftResidue5120 (Uni)?>
+<!ELEMENT LiftResidue5127 (Uni)?>
+<!ELEMENT Link EMPTY>
+<!ATTLIST Link
+	target IDREF #IMPLIED
+	class CDATA #IMPLIED
+	ord CDATA #IMPLIED
+	db CDATA #IMPLIED
+	ws CDATA #IMPLIED
+	form CDATA #IMPLIED
+	abbr CDATA #IMPLIED
+	abbrOwner CDATA #IMPLIED
+	name CDATA #IMPLIED
+	namev CDATA #IMPLIED
+	nameOwner CDATA #IMPLIED
+	wsa CDATA #IMPLIED
+	wsv CDATA #IMPLIED
+	entry CDATA #IMPLIED
+	sense CDATA #IMPLIED
+	path CDATA #IMPLIED
+>
+<!ELEMENT Linker5073 (Link)?>
+<!ELEMENT Linker5106 (MoAffixAllomorph | MoAffixProcess)?>
+<!ELEMENT ListVersion8 (Guid)?>
+<!ELEMENT LiteralMeaning5002 (AStr)*>
+<!ELEMENT Locale24 (Integer)?>
+<!ELEMENT Location5014 (Link)?>
+<!ELEMENT Location5116 (Integer)?>
+<!ELEMENT LocationMax48 (Integer)?>
+<!ELEMENT LocationMin48 (Integer)?>
+<!ELEMENT LocationRangeType48 (Integer)?>
+<!ELEMENT Locations4006 (Link)*>
+<!ATTLIST Locations4006
+	size CDATA #IMPLIED
+>
+<!ELEMENT Locations6001 (CmPossibilityList)?>
+<!ELEMENT LouwNidaCodes66 (Uni)?>
+<!ELEMENT MainCountry6001 (AUni)*>
+<!ELEMENT MainEntriesOrSenses5002 (Link)*>
+<!ATTLIST MainEntriesOrSenses5002
+	size CDATA #IMPLIED
+>
+<!ELEMENT MappingType5119 (Integer)?>
+<!ELEMENT MarginBottom44 (Integer)?>
+<!ELEMENT MarginInside44 (Integer)?>
+<!ELEMENT MarginOutside44 (Integer)?>
+<!ELEMENT MarginTop44 (Integer)?>
+<!ELEMENT MatchedPairs24 (Uni)?>
+<!ELEMENT MaxDupOccur35 (Integer)?>
+<!ELEMENT Maximum5082 (Integer)?>
+<!ELEMENT Meaning5126 (Link)?>
+<!ELEMENT Meanings5059 (WfiGloss)*>
+<!ATTLIST Meanings5059
+	size CDATA #IMPLIED
+>
+<!ELEMENT Media6001 (CmFolder)*>
+<!ATTLIST Media6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT MediaFile69 (Link)?>
+<!ELEMENT MediaFiles5014 (CmMedia)*>
+<!ATTLIST MediaFiles5014
+	size CDATA #IMPLIED
+>
+<!ELEMENT Member5082 (Link)?>
+<!ELEMENT Members5083 (Link)*>
+<!ATTLIST Members5083
+	size CDATA #IMPLIED
+>
+<!ELEMENT Members5110 (MoAdhocProhibGr | MoAlloAdhocProhib | MoMorphAdhocProhib)*>
+<!ATTLIST Members5110
+	size CDATA #IMPLIED
+>
+<!ELEMENT Members5119 (LexReference)*>
+<!ATTLIST Members5119
+	size CDATA #IMPLIED
+>
+<!ELEMENT Minimum5082 (Integer)?>
+<!ELEMENT MinusConstr5086 (Link)*>
+<!ATTLIST MinusConstr5086
+	size CDATA #IMPLIED
+>
+<!ELEMENT MoAdhocProhib (Adjacency5026 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST MoAdhocProhib
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoAdhocProhibGr (Adjacency5026 | Custom | CustomLink | CustomObj | CustomStr | Description5110 | Members5110 | Name5110)*>
+<!ATTLIST MoAdhocProhibGr
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoAffixAllomorph (Custom | CustomLink | CustomObj | CustomStr | Form5035 | InflectionClasses5028 | IsAbstract5035 | LiftResidue5035 | MorphType5035 | MsEnvFeatures5027 | MsEnvPartOfSpeech5027 | PhoneEnv5027 | Position5027)*>
+<!ATTLIST MoAffixAllomorph
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoAffixForm (Custom | CustomLink | CustomObj | CustomStr | Form5035 | InflectionClasses5028 | IsAbstract5035 | LiftResidue5035 | MorphType5035)*>
+<!ATTLIST MoAffixForm
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoAffixProcess (Custom | CustomLink | CustomObj | CustomStr | Form5035 | InflectionClasses5028 | Input5029 | IsAbstract5035 | LiftResidue5035 | MorphType5035 | Output5029)*>
+<!ATTLIST MoAffixProcess
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoAlloAdhocProhib (Adjacency5026 | Allomorphs5101 | Custom | CustomLink | CustomObj | CustomStr | FirstAllomorph5101 | RestOfAllos5101)*>
+<!ATTLIST MoAlloAdhocProhib
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoBinaryCompoundRule (Custom | CustomLink | CustomObj | CustomStr | Description5030 | LeftMsa5106 | Linker5106 | Name5030 | RightMsa5106 | Stratum5030 | ToProdRestrict5030)*>
+<!ATTLIST MoBinaryCompoundRule
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoCompoundRule (Custom | CustomLink | CustomObj | CustomStr | Description5030 | Name5030 | Stratum5030 | ToProdRestrict5030)*>
+<!ATTLIST MoCompoundRule
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoCompoundRuleApp (Custom | CustomLink | CustomObj | CustomStr | LeftForm5073 | Linker5073 | OutputForm5072 | RightForm5073)*>
+<!ATTLIST MoCompoundRuleApp
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoCoordinateCompound (Custom | CustomLink | CustomObj | CustomStr | Description5030 | LeftMsa5106 | Linker5106 | Name5030 | RightMsa5106 | Stratum5030 | ToProdRestrict5030)*>
+<!ATTLIST MoCoordinateCompound
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoCopyFromInput (Content5103 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST MoCopyFromInput
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoDeriv (Custom | CustomLink | CustomObj | CustomStr | InflectionalFeats5100 | StemForm5100 | StemMsa5100 | StratumApps5100)*>
+<!ATTLIST MoDeriv
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoDerivAffApp (AffixForm5074 | AffixMsa5074 | Custom | CustomLink | CustomObj | CustomStr | OutputForm5072 | OutputMsa5074)*>
+<!ATTLIST MoDerivAffApp
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoDerivAffMsa (AffixCategory5031 | Components5041 | Custom | CustomLink | CustomObj | CustomStr | FromInflectionClass5031 | FromMsFeatures5031 | FromPartOfSpeech5031 | FromProdRestrict5031 | FromStemName5031 | GlossBundle5041 | GlossString5041 | LiftResidue5041 | Stratum5031 | ToInflectionClass5031 | ToMsFeatures5031 | ToPartOfSpeech5031 | ToProdRestrict5031)*>
+<!ATTLIST MoDerivAffMsa
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoDerivStepMsa (Components5041 | Custom | CustomLink | CustomObj | CustomStr | GlossBundle5041 | GlossString5041 | InflectionClass5032 | InflFeats5032 | LiftResidue5041 | MsFeatures5032 | PartOfSpeech5032 | ProdRestrict5032)*>
+<!ATTLIST MoDerivStepMsa
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoDerivTrace (Custom | CustomLink | CustomObj | CustomStr | OutputForm5072)*>
+<!ATTLIST MoDerivTrace
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Modification5070 (Link)?>
+<!ELEMENT ModifiedBy68 (Link)?>
+<!ELEMENT MoEndoCompound (Custom | CustomLink | CustomObj | CustomStr | Description5030 | HeadLast5033 | LeftMsa5106 | Linker5106 | Name5030 | OverridingMsa5033 | RightMsa5106 | Stratum5030 | ToProdRestrict5030)*>
+<!ATTLIST MoEndoCompound
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoExoCompound (Custom | CustomLink | CustomObj | CustomStr | Description5030 | LeftMsa5106 | Linker5106 | Name5030 | RightMsa5106 | Stratum5030 | ToMsa5034 | ToProdRestrict5030)*>
+<!ATTLIST MoExoCompound
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoForm (Custom | CustomLink | CustomObj | CustomStr | Form5035 | IsAbstract5035 | LiftResidue5035 | MorphType5035)*>
+<!ATTLIST MoForm
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoGlossItem (Abbreviation5109 | AfterSeparator5109 | ComplexNameFirst5109 | ComplexNameSeparator5109 | Custom | CustomLink | CustomObj | CustomStr | EticID5109 | FeatStructFrag5109 | GlossItems5109 | Name5109 | Status5109 | Target5109 | Type5109)*>
+<!ATTLIST MoGlossItem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoGlossSystem (Custom | CustomLink | CustomObj | CustomStr | Glosses5108)*>
+<!ATTLIST MoGlossSystem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInflAffixSlot (Custom | CustomLink | CustomObj | CustomStr | Description5036 | Name5036 | Optional5036)*>
+<!ATTLIST MoInflAffixSlot
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInflAffixSlotApp (AffixForm5075 | AffixMsa5075 | Custom | CustomLink | CustomObj | CustomStr | OutputForm5072 | Slot5075)*>
+<!ATTLIST MoInflAffixSlotApp
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInflAffixTemplate (Custom | CustomLink | CustomObj | CustomStr | Description5037 | Final5037 | Name5037 | PrefixSlots5037 | Region5037 | Slots5037 | Stratum5037 | SuffixSlots5037)*>
+<!ATTLIST MoInflAffixTemplate
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInflAffMsa (AffixCategory5038 | Components5041 | Custom | CustomLink | CustomObj | CustomStr | FromProdRestrict5038 | GlossBundle5041 | GlossString5041 | InflFeats5038 | LiftResidue5041 | PartOfSpeech5038 | Slots5038)*>
+<!ATTLIST MoInflAffMsa
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInflClass (Abbreviation5039 | Custom | CustomLink | CustomObj | CustomStr | Description5039 | Name5039 | ReferenceForms5039 | RulesOfReferral5039 | StemNames5039 | Subclasses5039)*>
+<!ATTLIST MoInflClass
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInflTemplateApp (Custom | CustomLink | CustomObj | CustomStr | OutputForm5072 | SlotApps5076 | Template5076)*>
+<!ATTLIST MoInflTemplateApp
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInsertNC (Content5069 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST MoInsertNC
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoInsertPhones (Content5068 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST MoInsertPhones
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoModifyFromInput (Content5070 | Custom | CustomLink | CustomObj | CustomStr | Modification5070)*>
+<!ATTLIST MoModifyFromInput
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoMorphAdhocProhib (Adjacency5026 | Custom | CustomLink | CustomObj | CustomStr | FirstMorpheme5102 | Morphemes5102 | RestOfMorphs5102)*>
+<!ATTLIST MoMorphAdhocProhib
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoMorphData (AdhocCoProhibitions5040 | AnalyzingAgents5040 | CompoundRules5040 | Custom | CustomLink | CustomObj | CustomStr | GlossSystem5040 | ParserParameters5040 | ProdRestrict5040 | Strata5040 | TestSets5040)*>
+<!ATTLIST MoMorphData
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoMorphSynAnalysis (Components5041 | Custom | CustomLink | CustomObj | CustomStr | GlossBundle5041 | GlossString5041 | LiftResidue5041)*>
+<!ATTLIST MoMorphSynAnalysis
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoMorphType (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Name7 | Postfix5042 | Prefix5042 | Researchers7 | Restrictions7 | SecondaryOrder5042 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST MoMorphType
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoPhonolRuleApp (Custom | CustomLink | CustomObj | CustomStr | OutputForm5072 | Rule5077 | VacuousApp5077)*>
+<!ATTLIST MoPhonolRuleApp
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoReferralRule (Custom | CustomLink | CustomObj | CustomStr | Description5044 | Input5044 | Name5044 | Output5044)*>
+<!ATTLIST MoReferralRule
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Morph5112 (Link)?>
+<!ELEMENT MorphBundles5059 (WfiMorphBundle)*>
+<!ATTLIST MorphBundles5059
+	size CDATA #IMPLIED
+>
+<!ELEMENT Morphemes5102 (Link)*>
+<!ATTLIST Morphemes5102
+	size CDATA #IMPLIED
+>
+<!ELEMENT MorphologicalData6001 (MoMorphData)?>
+<!ELEMENT MorphoSyntaxAnalyses5002 (MoDerivAffMsa | MoDerivStepMsa | MoInflAffMsa | MoStemMsa | MoUnclassifiedAffixMsa)*>
+<!ATTLIST MorphoSyntaxAnalyses5002
+	size CDATA #IMPLIED
+>
+<!ELEMENT MorphoSyntaxAnalysis5016 (Link)?>
+<!ELEMENT MorphType5035 (Link)?>
+<!ELEMENT MorphTypes5005 (CmPossibilityList)?>
+<!ELEMENT MoRuleMapping (Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST MoRuleMapping
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoStemAllomorph (Custom | CustomLink | CustomObj | CustomStr | Form5035 | IsAbstract5035 | LiftResidue5035 | MorphType5035 | PhoneEnv5045 | StemName5045)*>
+<!ATTLIST MoStemAllomorph
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoStemMsa (Components5041 | Custom | CustomLink | CustomObj | CustomStr | FromPartsOfSpeech5001 | GlossBundle5041 | GlossString5041 | InflectionClass5001 | LiftResidue5041 | MsFeatures5001 | PartOfSpeech5001 | ProdRestrict5001 | Stratum5001)*>
+<!ATTLIST MoStemMsa
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoStemName (Abbreviation5047 | Custom | CustomLink | CustomObj | CustomStr | DefaultAffix5047 | DefaultStem5047 | Description5047 | Name5047 | Regions5047)*>
+<!ATTLIST MoStemName
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoStratum (Abbreviation5048 | Custom | CustomLink | CustomObj | CustomStr | Description5048 | Name5048 | Phonemes5048)*>
+<!ATTLIST MoStratum
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoStratumApp (CompoundRuleApps5078 | Custom | CustomLink | CustomObj | CustomStr | DerivAffApp5078 | OutputForm5072 | PRuleApps5078 | Stratum5078 | TemplateApp5078)*>
+<!ATTLIST MoStratumApp
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT MoUnclassifiedAffixMsa (Components5041 | Custom | CustomLink | CustomObj | CustomStr | GlossBundle5041 | GlossString5041 | LiftResidue5041 | PartOfSpeech5117)*>
+<!ATTLIST MoUnclassifiedAffixMsa
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Msa5112 (Link)?>
+<!ELEMENT MsEnvFeatures5027 (FsFeatStruc)?>
+<!ELEMENT MsEnvPartOfSpeech5027 (Link)?>
+<!ELEMENT MsFeatures5001 (FsFeatStruc)?>
+<!ELEMENT MsFeatures5032 (FsFeatStruc)?>
+<!ELEMENT MsFeatures5059 (FsFeatStruc)?>
+<!ELEMENT MsFeatureSystem6001 (FsFeatureSystem)?>
+<!ELEMENT Multi35 (Boolean)?>
+<!ELEMENT Name1 (AUni)*>
+<!ELEMENT Name17 (Uni)?>
+<!ELEMENT Name18 (AUni)*>
+<!ELEMENT Name2 (AUni)*>
+<!ELEMENT Name21 (Uni)?>
+<!ELEMENT Name23 (AUni)*>
+<!ELEMENT Name24 (AUni)*>
+<!ELEMENT Name30 (AUni)*>
+<!ELEMENT Name3002 (AUni)*>
+<!ELEMENT Name3008 (AUni)*>
+<!ELEMENT Name31 (Uni)?>
+<!ELEMENT Name42 (Uni)?>
+<!ELEMENT Name44 (Uni)?>
+<!ELEMENT Name45 (Uni)?>
+<!ELEMENT Name47 (AUni)*>
+<!ELEMENT Name5 (AUni)*>
+<!ELEMENT Name5030 (AUni)*>
+<!ELEMENT Name5036 (AUni)*>
+<!ELEMENT Name5037 (AUni)*>
+<!ELEMENT Name5039 (AUni)*>
+<!ELEMENT Name5044 (AUni)*>
+<!ELEMENT Name5047 (AUni)*>
+<!ELEMENT Name5048 (AUni)*>
+<!ELEMENT Name5081 (AUni)*>
+<!ELEMENT Name5089 (AUni)*>
+<!ELEMENT Name5090 (AUni)*>
+<!ELEMENT Name5093 (AUni)*>
+<!ELEMENT Name5097 (AUni)*>
+<!ELEMENT Name5105 (AUni)*>
+<!ELEMENT Name5109 (AUni)*>
+<!ELEMENT Name5110 (AUni)*>
+<!ELEMENT Name5120 (AUni)*>
+<!ELEMENT Name5128 (AUni)*>
+<!ELEMENT Name55 (AUni)*>
+<!ELEMENT Name59 (AUni)*>
+<!ELEMENT Name65 (AUni)*>
+<!ELEMENT Name7 (AUni)*>
+<!ELEMENT Name70 (Uni)?>
+<!ELEMENT Name9 (Uni)?>
+<!ELEMENT NaturalClasses5099 (PhNCFeatures | PhNCSegments)*>
+<!ATTLIST NaturalClasses5099
+	size CDATA #IMPLIED
+>
+<!ELEMENT Next17 (Link)?>
+<!ELEMENT NoteCategories3001 (CmPossibilityList)?>
+<!ELEMENT NoteMappings3008 (ScrMarkerMapping)*>
+<!ATTLIST NoteMappings3008
+	size CDATA #IMPLIED
+>
+<!ELEMENT Notes23 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Notes3017 (ScrScriptureNote)*>
+<!ATTLIST Notes3017
+	size CDATA #IMPLIED
+>
+<!ELEMENT NoteSources3008 (ScrImportP6Project | ScrImportSFFiles)*>
+<!ATTLIST NoteSources3008
+	size CDATA #IMPLIED
+>
+<!ELEMENT NoteType3013 (Link)?>
+<!ELEMENT NoteType3016 (Link)?>
+<!ELEMENT NumColumns43 (Integer)?>
+<!ELEMENT Numeric EMPTY>
+<!ATTLIST Numeric
+	val CDATA #REQUIRED
+>
+<!ELEMENT ObjRefs16 (Link)*>
+<!ATTLIST ObjRefs16
+	size CDATA #IMPLIED
+>
+<!ELEMENT Occurrences5125 (ChkRef)*>
+<!ATTLIST Occurrences5125
+	size CDATA #IMPLIED
+>
+<!ELEMENT OcmCodes66 (Uni)?>
+<!ELEMENT OcmRefs66 (Link)*>
+<!ATTLIST OcmRefs66
+	size CDATA #IMPLIED
+>
+<!ELEMENT Optional5036 (Boolean)?>
+<!ELEMENT OriginalPath47 (Uni)?>
+<!ELEMENT OtherObjects37 (Link)*>
+<!ATTLIST OtherObjects37
+	size CDATA #IMPLIED
+>
+<!ELEMENT Output5029 (MoCopyFromInput | MoInsertNC | MoInsertPhones | MoModifyFromInput)*>
+<!ATTLIST Output5029
+	size CDATA #IMPLIED
+>
+<!ELEMENT Output5044 (FsFeatStruc)?>
+<!ELEMENT OutputForm5072 (AUni)*>
+<!ELEMENT OutputMsa5074 (MoDerivStepMsa)?>
+<!ELEMENT OutsideAlignedText46 (Str)?>
+<!ELEMENT Overlays6001 (CmOverlay)*>
+<!ATTLIST Overlays6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT OverridingMsa5033 (MoStemMsa)?>
+<!ELEMENT PageHeight42 (Integer)?>
+<!ELEMENT PageLayout43 (PubPageLayout)?>
+<!ELEMENT PageWidth42 (Integer)?>
+<!ELEMENT PaperHeight42 (Integer)?>
+<!ELEMENT PaperWidth42 (Integer)?>
+<!ELEMENT Paragraphs14 (StTxtPara)*>
+<!ATTLIST Paragraphs14
+	size CDATA #IMPLIED
+>
+<!ELEMENT ParatextID3014 (Uni)?>
+<!ELEMENT ParserParameters5040 (Uni)?>
+<!ELEMENT Participants4006 (RnRoledPartic)*>
+<!ATTLIST Participants4006
+	size CDATA #IMPLIED
+>
+<!ELEMENT Participants4010 (Link)*>
+<!ATTLIST Participants4010
+	size CDATA #IMPLIED
+>
+<!ELEMENT PartOfSpeech (Abbreviation7 | AffixSlots5049 | AffixTemplates5049 | BackColor7 | BearableFeatures5049 | CatalogSourceId5049 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | DefaultFeatures5049 | DefaultInflectionClass5049 | Description7 | Discussion7 | EmptyParadigmCells5049 | ForeColor7 | HelpId7 | Hidden7 | InflectableFeats5049 | InflectionClasses5049 | InherFeatVal5049 | IsProtected7 | Name7 | ReferenceForms5049 | Researchers7 | Restrictions7 | RulesOfReferral5049 | SortSpec7 | Status7 | StemNames5049 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST PartOfSpeech
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PartOfSpeech5001 (Link)?>
+<!ELEMENT PartOfSpeech5032 (Link)?>
+<!ELEMENT PartOfSpeech5038 (Link)?>
+<!ELEMENT PartOfSpeech5053 (Link)?>
+<!ELEMENT PartOfSpeech5117 (Link)?>
+<!ELEMENT PartsOfSpeech5052 (CmPossibilityList)?>
+<!ELEMENT PartsOfSpeech6001 (CmPossibilityList)?>
+<!ELEMENT People6001 (CmPossibilityList)?>
+<!ELEMENT PersonalNotes4006 (StFootnote | StJournalText | StText)?>
+<!ELEMENT PhBdryMarker (Codes5090 | Custom | CustomLink | CustomObj | CustomStr | Description5090 | Name5090)*>
+<!ATTLIST PhBdryMarker
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhCode (Custom | CustomLink | CustomObj | CustomStr | Representation5098)*>
+<!ATTLIST PhCode
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhContextOrVar (Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST PhContextOrVar
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhEnvironment (AMPLEStringSegment5097 | Custom | CustomLink | CustomObj | CustomStr | Description5097 | LeftContext5097 | Name5097 | RightContext5097 | StringRepresentation5097)*>
+<!ATTLIST PhEnvironment
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhFeatureConstraint (Custom | CustomLink | CustomObj | CustomStr | Feature5096)*>
+<!ATTLIST PhFeatureConstraint
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhFeatureSystem6001 (FsFeatureSystem)?>
+<!ELEMENT PhIterationContext (Custom | CustomLink | CustomObj | CustomStr | Description5081 | Maximum5082 | Member5082 | Minimum5082 | Name5081)*>
+<!ATTLIST PhIterationContext
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhMetathesisRule (Custom | CustomLink | CustomObj | CustomStr | Description5128 | Direction5128 | FinalStratum5128 | InitialStratum5128 | Name5128 | StrucChange5130 | StrucDesc5128)*>
+<!ATTLIST PhMetathesisRule
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhNaturalClass (Abbreviation5093 | Custom | CustomLink | CustomObj | CustomStr | Description5093 | Name5093)*>
+<!ATTLIST PhNaturalClass
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhNCFeatures (Abbreviation5093 | Custom | CustomLink | CustomObj | CustomStr | Description5093 | Features5094 | Name5093)*>
+<!ATTLIST PhNCFeatures
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhNCSegments (Abbreviation5093 | Custom | CustomLink | CustomObj | CustomStr | Description5093 | Name5093 | Segments5095)*>
+<!ATTLIST PhNCSegments
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhoneEnv5027 (Link)*>
+<!ATTLIST PhoneEnv5027
+	size CDATA #IMPLIED
+>
+<!ELEMENT PhoneEnv5045 (Link)*>
+<!ATTLIST PhoneEnv5045
+	size CDATA #IMPLIED
+>
+<!ELEMENT Phonemes5048 (Link)?>
+<!ELEMENT Phonemes5089 (PhPhoneme)*>
+<!ATTLIST Phonemes5089
+	size CDATA #IMPLIED
+>
+<!ELEMENT PhonemeSets5099 (PhPhonemeSet)*>
+<!ATTLIST PhonemeSets5099
+	size CDATA #IMPLIED
+>
+<!ELEMENT PhonologicalData6001 (PhPhonData)?>
+<!ELEMENT PhonologyNote5016 (AStr)*>
+<!ELEMENT PhonRuleFeats5099 (CmPossibilityList)?>
+<!ELEMENT PhonRules5099 (PhMetathesisRule | PhRegularRule | PhSegmentRule)*>
+<!ATTLIST PhonRules5099
+	size CDATA #IMPLIED
+>
+<!ELEMENT PhPhonContext (Custom | CustomLink | CustomObj | CustomStr | Description5081 | Name5081)*>
+<!ATTLIST PhPhonContext
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhPhonData (Contexts5099 | Custom | CustomLink | CustomObj | CustomStr | Environments5099 | FeatConstraints5099 | NaturalClasses5099 | PhonemeSets5099 | PhonRuleFeats5099 | PhonRules5099)*>
+<!ATTLIST PhPhonData
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhPhoneme (BasicIPASymbol5092 | Codes5090 | Custom | CustomLink | CustomObj | CustomStr | Description5090 | Features5092 | Name5090)*>
+<!ATTLIST PhPhoneme
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhPhonemeSet (BoundaryMarkers5089 | Custom | CustomLink | CustomObj | CustomStr | Description5089 | Name5089 | Phonemes5089)*>
+<!ATTLIST PhPhonemeSet
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhPhonRuleFeat (Abbreviation7 | BackColor7 | Confidence7 | Custom | CustomLink | CustomObj | CustomStr | DateCreated7 | DateModified7 | Description7 | Discussion7 | ForeColor7 | HelpId7 | Hidden7 | IsProtected7 | Item5132 | Name7 | Researchers7 | Restrictions7 | SortSpec7 | Status7 | SubPossibilities7 | UnderColor7 | UnderStyle7)*>
+<!ATTLIST PhPhonRuleFeat
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhraseTags4004 (Link)*>
+<!ATTLIST PhraseTags4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT PhRegularRule (Custom | CustomLink | CustomObj | CustomStr | Description5128 | Direction5128 | FinalStratum5128 | InitialStratum5128 | Name5128 | RightHandSides5129 | StrucDesc5128)*>
+<!ATTLIST PhRegularRule
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhSegmentRule (Custom | CustomLink | CustomObj | CustomStr | Description5128 | Direction5128 | FinalStratum5128 | InitialStratum5128 | Name5128 | StrucDesc5128)*>
+<!ATTLIST PhSegmentRule
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhSegRuleRHS (Custom | CustomLink | CustomObj | CustomStr | ExclRuleFeats5131 | InputPOSes5131 | LeftContext5131 | ReqRuleFeats5131 | RightContext5131 | StrucChange5131)*>
+<!ATTLIST PhSegRuleRHS
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhSequenceContext (Custom | CustomLink | CustomObj | CustomStr | Description5081 | Members5083 | Name5081)*>
+<!ATTLIST PhSequenceContext
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhSimpleContext (Custom | CustomLink | CustomObj | CustomStr | Description5081 | Name5081)*>
+<!ATTLIST PhSimpleContext
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhSimpleContextBdry (Custom | CustomLink | CustomObj | CustomStr | Description5081 | FeatureStructure5085 | Name5081)*>
+<!ATTLIST PhSimpleContextBdry
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhSimpleContextNC (Custom | CustomLink | CustomObj | CustomStr | Description5081 | FeatureStructure5086 | MinusConstr5086 | Name5081 | PlusConstr5086)*>
+<!ATTLIST PhSimpleContextNC
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhSimpleContextSeg (Custom | CustomLink | CustomObj | CustomStr | Description5081 | FeatureStructure5087 | Name5081)*>
+<!ATTLIST PhSimpleContextSeg
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhTerminalUnit (Codes5090 | Custom | CustomLink | CustomObj | CustomStr | Description5090 | Name5090)*>
+<!ATTLIST PhTerminalUnit
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PhVariable (Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST PhVariable
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PictureFile48 (Link)?>
+<!ELEMENT Pictures5016 (CmPicture)*>
+<!ATTLIST Pictures5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT Pictures6001 (CmFolder)*>
+<!ATTLIST Pictures6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT PlaceOfBirth13 (Link)?>
+<!ELEMENT PlacesOfResidence13 (Link)*>
+<!ATTLIST PlacesOfResidence13
+	size CDATA #IMPLIED
+>
+<!ELEMENT PlusConstr5086 (Link)*>
+<!ATTLIST PlusConstr5086
+	size CDATA #IMPLIED
+>
+<!ELEMENT PosFooter44 (Integer)?>
+<!ELEMENT PosHeader44 (Integer)?>
+<!ELEMENT Position5027 (Link)*>
+<!ATTLIST Position5027
+	size CDATA #IMPLIED
+>
+<!ELEMENT Positions13 (Link)*>
+<!ATTLIST Positions13
+	size CDATA #IMPLIED
+>
+<!ELEMENT Positions6001 (CmPossibilityList)?>
+<!ELEMENT Possibilities8 (ChkTerm | CmAnnotationDefn | CmAnthroItem | CmCustomItem | CmLocation | CmPerson | CmPossibility | CmSemanticDomain | LexEntryType | LexRefType | MoMorphType | PartOfSpeech | PhPhonRuleFeat)*>
+<!ATTLIST Possibilities8
+	size CDATA #IMPLIED
+>
+<!ELEMENT PossItems21 (Link)*>
+<!ATTLIST PossItems21
+	size CDATA #IMPLIED
+>
+<!ELEMENT PossList20 (Link)?>
+<!ELEMENT PossList21 (Link)?>
+<!ELEMENT Postfix5042 (Uni)?>
+<!ELEMENT Prefix5042 (Uni)?>
+<!ELEMENT PrefixSlots5037 (Link)*>
+<!ATTLIST PrefixSlots5037
+	size CDATA #IMPLIED
+>
+<!ELEMENT PreventChoiceAboveLevel8 (Integer)?>
+<!ELEMENT PreventDuplicates8 (Boolean)?>
+<!ELEMENT PreventNodeChoices8 (Boolean)?>
+<!ELEMENT PrimaryCollation31 (Link)?>
+<!ELEMENT PrimaryCollType31 (Integer)?>
+<!ELEMENT PrimaryField31 (Uni)?>
+<!ELEMENT PrimaryLexemes5127 (Link)*>
+<!ATTLIST PrimaryLexemes5127
+	size CDATA #IMPLIED
+>
+<!ELEMENT PrimaryReverse31 (Boolean)?>
+<!ELEMENT PrimaryWs31 (Link)?>
+<!ELEMENT ProdRestrict5001 (Link)*>
+<!ATTLIST ProdRestrict5001
+	size CDATA #IMPLIED
+>
+<!ELEMENT ProdRestrict5032 (Link)*>
+<!ATTLIST ProdRestrict5032
+	size CDATA #IMPLIED
+>
+<!ELEMENT ProdRestrict5040 (CmPossibilityList)?>
+<!ELEMENT PromptText9 (Uni)?>
+<!ELEMENT PromptUser35 (Boolean)?>
+<!ELEMENT Pronunciations5002 (LexPronunciation)*>
+<!ATTLIST Pronunciations5002
+	size CDATA #IMPLIED
+>
+<!ELEMENT Prop (BulNumFontInfo | WsStyles9999)*>
+<!ATTLIST Prop
+	align CDATA #IMPLIED
+	backcolor CDATA #IMPLIED
+	bold (invert | off | on) #IMPLIED
+	borderBottom CDATA #IMPLIED
+	borderColor CDATA #IMPLIED
+	borderLeading CDATA #IMPLIED
+	borderTop CDATA #IMPLIED
+	borderTrailing CDATA #IMPLIED
+	bulNumScheme CDATA #IMPLIED
+	bulNumStartAt CDATA #IMPLIED
+	bulNumTxtAft CDATA #IMPLIED
+	bulNumTxtBef CDATA #IMPLIED
+	charStyle CDATA #IMPLIED
+	firstIndent CDATA #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (invert | off | on) #IMPLIED
+	keepTogether CDATA #IMPLIED
+	keepWithNext CDATA #IMPLIED
+	leadingIndent CDATA #IMPLIED
+	lineHeight CDATA #IMPLIED
+	lineHeightUnit (mpt | rel) #IMPLIED
+	lineHeightType (atLeast | exact) #IMPLIED
+	marginTop CDATA #IMPLIED
+	namedStyle CDATA #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit (mpt | rel) #IMPLIED
+	padBottom CDATA #IMPLIED
+	padLeading CDATA #IMPLIED
+	padTop CDATA #IMPLIED
+	padTrailing CDATA #IMPLIED
+	paracolor CDATA #IMPLIED
+	rightToLeft CDATA #IMPLIED
+	spaceAfter CDATA #IMPLIED
+	spaceBefore CDATA #IMPLIED
+	spellcheck CDATA #IMPLIED
+	superscript (off | sub | super) #IMPLIED
+	tabDef CDATA #IMPLIED
+	trailingIndent CDATA #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (dashed | dotted | double | none | single | squiggle | strikethrough) #IMPLIED
+	widowOrphan CDATA #IMPLIED
+	ws CDATA #IMPLIED
+	wsBase CDATA #IMPLIED
+>
+<!ELEMENT Protected3010 (Boolean)?>
+<!ELEMENT PRuleApps5078 (MoPhonolRuleApp)*>
+<!ATTLIST PRuleApps5078
+	size CDATA #IMPLIED
+>
+<!ELEMENT PsalmLabel3001 (Str)?>
+<!ELEMENT PubDivision (Custom | CustomLink | CustomObj | CustomStr | DifferentEvenHF43 | DifferentFirstHF43 | HFSet43 | NumColumns43 | PageLayout43 | StartAt43)*>
+<!ATTLIST PubDivision
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PubHeader (CenteredText46 | Custom | CustomLink | CustomObj | CustomStr | InsideAlignedText46 | OutsideAlignedText46)*>
+<!ATTLIST PubHeader
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PubHFSet (Custom | CustomLink | CustomObj | CustomStr | DefaultFooter45 | DefaultHeader45 | Description45 | EvenFooter45 | EvenHeader45 | FirstFooter45 | FirstHeader45 | Name45)*>
+<!ATTLIST PubHFSet
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Publication (BaseFontSize42 | BaseLineSpacing42 | BindingEdge42 | Custom | CustomLink | CustomObj | CustomStr | Description42 | Divisions42 | FootnoteSepWidth42 | GutterLoc42 | GutterMargin42 | IsLandscape42 | Name42 | PageHeight42 | PageWidth42 | PaperHeight42 | PaperWidth42 | SheetLayout42 | SheetsPerSig42)*>
+<!ATTLIST Publication
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Publications5 (Publication)*>
+<!ATTLIST Publications5
+	size CDATA #IMPLIED
+>
+<!ELEMENT PubPageLayout (Custom | CustomLink | CustomObj | CustomStr | Description44 | IsBuiltIn44 | IsModified44 | MarginBottom44 | MarginInside44 | MarginOutside44 | MarginTop44 | Name44 | PosFooter44 | PosHeader44)*>
+<!ATTLIST PubPageLayout
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT PunctuationPatterns24 (Uni)?>
+<!ELEMENT Question67 (AUni)*>
+<!ELEMENT Questions66 (CmDomainQ)*>
+<!ATTLIST Questions66
+	size CDATA #IMPLIED
+>
+<!ELEMENT QuotationMarks24 (Uni)?>
+<!ELEMENT Quote3018 (StJournalText)?>
+<!ELEMENT Recommendation3018 (StJournalText)?>
+<!ELEMENT Records18 (UserViewRec)*>
+<!ATTLIST Records18
+	size CDATA #IMPLIED
+>
+<!ELEMENT Records4001 (RnAnalysis | RnEvent)*>
+<!ATTLIST Records4001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Ref5116 (Integer)?>
+<!ELEMENT RefEnd3011 (Integer)?>
+<!ELEMENT Reference5004 (Str)?>
+<!ELEMENT ReferenceForms5039 (FsFeatStruc)*>
+<!ATTLIST ReferenceForms5039
+	size CDATA #IMPLIED
+>
+<!ELEMENT ReferenceForms5049 (FsFeatStruc)*>
+<!ATTLIST ReferenceForms5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT References5005 (CmPossibilityList)?>
+<!ELEMENT RefNumber56 (Integer)?>
+<!ELEMENT RefSepr3001 (Uni)?>
+<!ELEMENT RefStart3011 (Integer)?>
+<!ELEMENT RefType5127 (Integer)?>
+<!ELEMENT Region5037 (FsFeatStruc)?>
+<!ELEMENT Regions5047 (FsFeatStruc)*>
+<!ATTLIST Regions5047
+	size CDATA #IMPLIED
+>
+<!ELEMENT RelatedDomains66 (Link)*>
+<!ATTLIST RelatedDomains66
+	size CDATA #IMPLIED
+>
+<!ELEMENT Reminder (Custom | CustomLink | CustomObj | CustomStr | Date4007 | Description4007)*>
+<!ATTLIST Reminder
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Reminders4001 (Reminder)*>
+<!ATTLIST Reminders4001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Reminders4004 (Link)*>
+<!ATTLIST Reminders4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT Rendering5116 (Link)?>
+<!ELEMENT Renderings5125 (ChkRendering)*>
+<!ATTLIST Renderings5125
+	size CDATA #IMPLIED
+>
+<!ELEMENT Representation5098 (AUni)*>
+<!ELEMENT ReqRuleFeats5131 (Link)*>
+<!ATTLIST ReqRuleFeats5131
+	size CDATA #IMPLIED
+>
+<!ELEMENT Required20 (Integer)?>
+<!ELEMENT Researchers4004 (Link)*>
+<!ATTLIST Researchers4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT Researchers7 (Link)*>
+<!ATTLIST Researchers7
+	size CDATA #IMPLIED
+>
+<!ELEMENT ResearchNotebook6001 (RnResearchNbk)?>
+<!ELEMENT ResearchPlan4005 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Resolution3018 (StJournalText)?>
+<!ELEMENT ResolutionStatus3018 (Integer)?>
+<!ELEMENT Resources3001 (CmResource)*>
+<!ATTLIST Resources3001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Resources5005 (CmResource)*>
+<!ATTLIST Resources5005
+	size CDATA #IMPLIED
+>
+<!ELEMENT Responses3018 (StJournalText)*>
+<!ATTLIST Responses3018
+	size CDATA #IMPLIED
+>
+<!ELEMENT RestartFootnoteBoundary3001 (Integer)?>
+<!ELEMENT RestartFootnoteSequence3001 (Boolean)?>
+<!ELEMENT RestOfAllos5101 (Link)*>
+<!ATTLIST RestOfAllos5101
+	size CDATA #IMPLIED
+>
+<!ELEMENT RestOfMorphs5102 (Link)*>
+<!ATTLIST RestOfMorphs5102
+	size CDATA #IMPLIED
+>
+<!ELEMENT Restrictions4004 (Link)*>
+<!ATTLIST Restrictions4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT Restrictions5002 (AUni)*>
+<!ELEMENT Restrictions5016 (AUni)*>
+<!ELEMENT Restrictions6001 (CmPossibilityList)?>
+<!ELEMENT Restrictions7 (Link)*>
+<!ATTLIST Restrictions7
+	size CDATA #IMPLIED
+>
+<!ELEMENT Result3019 (Integer)?>
+<!ELEMENT ReversalEntries5016 (Link)*>
+<!ATTLIST ReversalEntries5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT ReversalForm5053 (AUni)*>
+<!ELEMENT ReversalIndex (Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | Entries5052 | HeaderFooterSets5 | Name5 | PartsOfSpeech5052 | Publications5 | WritingSystem5052)*>
+<!ATTLIST ReversalIndex
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ReversalIndexEntry (Custom | CustomLink | CustomObj | CustomStr | PartOfSpeech5053 | ReversalForm5053 | Subentries5053)*>
+<!ATTLIST ReversalIndexEntry
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ReversalIndexes5005 (ReversalIndex)*>
+<!ATTLIST ReversalIndexes5005
+	size CDATA #IMPLIED
+>
+<!ELEMENT ReverseAbbr5118 (AUni)*>
+<!ELEMENT ReverseAbbreviation5119 (AUni)*>
+<!ELEMENT ReverseName5119 (AUni)*>
+<!ELEMENT RevLim3011 (Integer)?>
+<!ELEMENT RevMin3011 (Integer)?>
+<!ELEMENT RevParagraph3011 (Link)?>
+<!ELEMENT RightContext5097 (Link)?>
+<!ELEMENT RightContext5131 (PhIterationContext | PhSequenceContext | PhSimpleContext | PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg)?>
+<!ELEMENT RightForm5073 (Link)?>
+<!ELEMENT RightGlossSep55 (AUni)*>
+<!ELEMENT RightGlossSep65 (AUni)*>
+<!ELEMENT RightHandSides5129 (PhSegRuleRHS)*>
+<!ATTLIST RightHandSides5129
+	size CDATA #IMPLIED
+>
+<!ELEMENT RightMsa5106 (MoStemMsa)?>
+<!ELEMENT RightToLeft14 (Boolean)?>
+<!ELEMENT RightToLeft24 (Boolean)?>
+<!ELEMENT RnAnalysis (AnthroCodes4004 | Conclusions4005 | Confidence4004 | CounterEvidence4005 | CrossReferences4004 | Custom | CustomLink | CustomObj | CustomStr | DateCreated4004 | DateModified4004 | Discussion4005 | ExternalMaterials4004 | FurtherQuestions4004 | Hypothesis4005 | PhraseTags4004 | Reminders4004 | Researchers4004 | ResearchPlan4005 | Restrictions4004 | SeeAlso4004 | Status4005 | SubRecords4004 | SupersededBy4005 | SupportingEvidence4005 | Title4004 | VersionHistory4004)*>
+<!ATTLIST RnAnalysis
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT RnEvent (AnthroCodes4004 | Confidence4004 | CrossReferences4004 | Custom | CustomLink | CustomObj | CustomStr | DateCreated4004 | DateModified4004 | DateOfEvent4006 | Description4006 | ExternalMaterials4004 | FurtherQuestions4004 | Locations4006 | Participants4006 | PersonalNotes4006 | PhraseTags4004 | Reminders4004 | Researchers4004 | Restrictions4004 | SeeAlso4004 | Sources4006 | SubRecords4004 | TimeOfEvent4006 | Title4004 | Type4006 | VersionHistory4004 | Weather4006)*>
+<!ATTLIST RnEvent
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT RnGenericRec (AnthroCodes4004 | Confidence4004 | CrossReferences4004 | Custom | CustomLink | CustomObj | CustomStr | DateCreated4004 | DateModified4004 | ExternalMaterials4004 | FurtherQuestions4004 | PhraseTags4004 | Reminders4004 | Researchers4004 | Restrictions4004 | SeeAlso4004 | SubRecords4004 | Title4004 | VersionHistory4004)*>
+<!ATTLIST RnGenericRec
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT RnResearchNbk (CrossReferences4001 | Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | EventTypes4001 | HeaderFooterSets5 | Name5 | Publications5 | Records4001 | Reminders4001)*>
+<!ATTLIST RnResearchNbk
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT RnRoledPartic (Custom | CustomLink | CustomObj | CustomStr | Participants4010 | Role4010)*>
+<!ATTLIST RnRoledPartic
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Role4010 (Link)?>
+<!ELEMENT Roles6001 (CmPossibilityList)?>
+<!ELEMENT Rows5123 (Link)*>
+<!ATTLIST Rows5123
+	size CDATA #IMPLIED
+>
+<!ELEMENT Rows9 (CmRow)*>
+<!ATTLIST Rows9
+	size CDATA #IMPLIED
+>
+<!ELEMENT Rule5077 (Link)?>
+<!ELEMENT Rules17 (Binary | Prop)?>
+<!ELEMENT RulesOfReferral5039 (MoReferralRule)*>
+<!ATTLIST RulesOfReferral5039
+	size CDATA #IMPLIED
+>
+<!ELEMENT RulesOfReferral5049 (MoReferralRule)*>
+<!ATTLIST RulesOfReferral5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT Run (#PCDATA)>
+<!ATTLIST Run
+	type (chars | picture) #IMPLIED
+	ownlink CDATA #IMPLIED
+	contextString CDATA #IMPLIED
+	backcolor CDATA #IMPLIED
+	bold (invert | off | on) #IMPLIED
+	ws CDATA #REQUIRED
+	wsBase CDATA #IMPLIED
+	externalLink CDATA #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit CDATA #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (invert | off | on) #IMPLIED
+	link CDATA #IMPLIED
+	namedStyle CDATA #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit CDATA #IMPLIED
+	superscript (sub | super) #IMPLIED
+	tabList CDATA #IMPLIED
+	tags IDREFS #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (dashed | dotted | double | none | single | squiggle | strikethrough) #IMPLIED
+>
+<!ELEMENT RunDate3019 (Time)?>
+<!ELEMENT SansFontVariation24 (Uni)?>
+<!ELEMENT ScaleFactor48 (Integer)?>
+<!ELEMENT ScientificName5016 (Str)?>
+<!ELEMENT ScrBook (Abbrev3002 | BookId3002 | CanonicalNum3002 | Custom | CustomLink | CustomObj | CustomStr | Diffs3002 | Footnotes3002 | IdText3002 | Name3002 | Sections3002 | Title3002 | UseChapterNumHeading3002)*>
+<!ATTLIST ScrBook
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrBookAnnotations (ChkHistRecs3017 | Custom | CustomLink | CustomObj | CustomStr | Notes3017)*>
+<!ATTLIST ScrBookAnnotations
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrBookRef (BookAbbrev3004 | BookName3004 | BookNameAlt3004 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST ScrBookRef
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrCheckRun (CheckId3019 | Custom | CustomLink | CustomObj | CustomStr | Result3019 | RunDate3019)*>
+<!ATTLIST ScrCheckRun
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrDifference (Custom | CustomLink | CustomObj | CustomStr | DiffType3011 | RefEnd3011 | RefStart3011 | RevLim3011 | RevMin3011 | RevParagraph3011)*>
+<!ATTLIST ScrDifference
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrDraft (Books3010 | Custom | CustomLink | CustomObj | CustomStr | DateCreated3010 | Description3010 | Protected3010 | Type3010)*>
+<!ATTLIST ScrDraft
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrImportP6Project (Custom | CustomLink | CustomObj | CustomStr | ICULocale3013 | NoteType3013 | ParatextID3014)*>
+<!ATTLIST ScrImportP6Project
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrImportSet (BackTransSources3008 | Custom | CustomLink | CustomObj | CustomStr | Description3008 | ImportProjToken3008 | ImportSettings3008 | ImportType3008 | Name3008 | NoteMappings3008 | NoteSources3008 | ScriptureMappings3008 | ScriptureSources3008)*>
+<!ATTLIST ScrImportSet
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrImportSFFiles (Custom | CustomLink | CustomObj | CustomStr | FileFormat3015 | Files3015 | ICULocale3013 | NoteType3013)*>
+<!ATTLIST ScrImportSFFiles
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrImportSource (Custom | CustomLink | CustomObj | CustomStr | ICULocale3013 | NoteType3013)*>
+<!ATTLIST ScrImportSource
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScriptDigitZero3001 (Integer)?>
+<!ELEMENT Scripture (ArchivedDrafts3001 | BookAnnotations3001 | Bridge3001 | ChapterLabel3001 | ChapterVerseSepr3001 | ConvertCVDigitsOnExport3001 | CrossRefMarkerSymbol3001 | CrossRefMarkerType3001 | CrossRefsCombinedWithFootnotes3001 | Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | DisplayCrossRefReference3001 | DisplayFootnoteReference3001 | DisplaySymbolInCrossRef3001 | DisplaySymbolInFootnote3001 | FootnoteMarkerSymbol3001 | FootnoteMarkerType3001 | HeaderFooterSets5 | ImportSettings3001 | Name5 | NoteCategories3001 | PsalmLabel3001 | Publications5 | RefSepr3001 | Resources3001 | RestartFootnoteBoundary3001 | RestartFootnoteSequence3001 | ScriptDigitZero3001 | ScriptureBooks3001 | Styles3001 | UseScriptDigits3001 | VersePunct3001 | VerseSepr3001 | Versification3001)*>
+<!ATTLIST Scripture
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScriptureBooks3001 (ScrBook)*>
+<!ATTLIST ScriptureBooks3001
+	size CDATA #IMPLIED
+>
+<!ELEMENT ScriptureMappings3008 (ScrMarkerMapping)*>
+<!ATTLIST ScriptureMappings3008
+	size CDATA #IMPLIED
+>
+<!ELEMENT ScriptureSources3008 (ScrImportP6Project | ScrImportSFFiles)*>
+<!ATTLIST ScriptureSources3008
+	size CDATA #IMPLIED
+>
+<!ELEMENT ScrMarkerMapping (BeginMarker3016 | Custom | CustomLink | CustomObj | CustomStr | Domain3016 | EndMarker3016 | Excluded3016 | ICULocale3016 | NoteType3016 | Style3016 | Target3016)*>
+<!ATTLIST ScrMarkerMapping
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrRefSystem (Books3003 | Custom | CustomLink | CustomObj | CustomStr)*>
+<!ATTLIST ScrRefSystem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrScriptureNote (AnnotationType34 | BeginObject37 | BeginOffset37 | BeginRef37 | Categories3018 | Comment34 | CompDetails34 | Custom | CustomLink | CustomObj | CustomStr | DateCreated34 | DateModified34 | DateResolved3018 | Discussion3018 | EndObject37 | EndOffset37 | EndRef37 | Features34 | Flid37 | InstanceOf34 | OtherObjects37 | Quote3018 | Recommendation3018 | Resolution3018 | ResolutionStatus3018 | Responses3018 | Source34 | Text34 | WritingSystem37 | WsSelector37)*>
+<!ATTLIST ScrScriptureNote
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT ScrSection (Content3005 | Custom | CustomLink | CustomObj | CustomStr | Heading3005 | VerseRefEnd3005 | VerseRefMax3005 | VerseRefMin3005 | VerseRefStart3005)*>
+<!ATTLIST ScrSection
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT SecondaryCollation31 (Link)?>
+<!ELEMENT SecondaryCollType31 (Integer)?>
+<!ELEMENT SecondaryField31 (Uni)?>
+<!ELEMENT SecondaryOrder5042 (Integer)?>
+<!ELEMENT SecondaryReverse31 (Boolean)?>
+<!ELEMENT SecondaryWs31 (Link)?>
+<!ELEMENT Sections3002 (ScrSection)*>
+<!ATTLIST Sections3002
+	size CDATA #IMPLIED
+>
+<!ELEMENT SeeAlso4004 (Link)*>
+<!ATTLIST SeeAlso4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT SeeAlso5125 (AUni)*>
+<!ELEMENT Segments5095 (Link)*>
+<!ATTLIST Segments5095
+	size CDATA #IMPLIED
+>
+<!ELEMENT SemanticDomainList6001 (CmPossibilityList)?>
+<!ELEMENT SemanticDomains5016 (Link)*>
+<!ATTLIST SemanticDomains5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT SemanticsNote5016 (AStr)*>
+<!ELEMENT Sense5112 (Link)?>
+<!ELEMENT Sense5121 (Link)?>
+<!ELEMENT Senses5002 (LexSense)*>
+<!ATTLIST Senses5002
+	size CDATA #IMPLIED
+>
+<!ELEMENT Senses5016 (LexSense)*>
+<!ATTLIST Senses5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT SenseType5016 (Link)?>
+<!ELEMENT SenseTypes5005 (CmPossibilityList)?>
+<!ELEMENT Severity35 (Integer)?>
+<!ELEMENT SheetLayout42 (Integer)?>
+<!ELEMENT SheetsPerSig42 (Integer)?>
+<!ELEMENT ShowInGloss55 (Boolean)?>
+<!ELEMENT ShowInGloss65 (Boolean)?>
+<!ELEMENT ShowPrompt9 (Integer)?>
+<!ELEMENT Sid40 (Binary)?>
+<!ELEMENT Slot5075 (Link)?>
+<!ELEMENT SlotApps5076 (MoInflAffixSlotApp)*>
+<!ATTLIST SlotApps5076
+	size CDATA #IMPLIED
+>
+<!ELEMENT Slots5037 (Link)*>
+<!ATTLIST Slots5037
+	size CDATA #IMPLIED
+>
+<!ELEMENT Slots5038 (Link)*>
+<!ATTLIST Slots5038
+	size CDATA #IMPLIED
+>
+<!ELEMENT SocioLinguisticsNote5016 (AStr)*>
+<!ELEMENT SortSpec7 (Integer)?>
+<!ELEMENT SortSpecs6001 (CmSortSpec)*>
+<!ATTLIST SortSpecs6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT SoundFilePath5054 (Uni)?>
+<!ELEMENT Source34 (Link)?>
+<!ELEMENT Source5016 (Str)?>
+<!ELEMENT Source5054 (AStr)*>
+<!ELEMENT Source5113 (Uni)?>
+<!ELEMENT Sources4006 (Link)*>
+<!ATTLIST Sources4006
+	size CDATA #IMPLIED
+>
+<!ELEMENT SpellCheckDictionary24 (Uni)?>
+<!ELEMENT SpellingStatus5062 (Integer)?>
+<!ELEMENT StartAt43 (Integer)?>
+<!ELEMENT StateInformation23 (Uni)?>
+<!ELEMENT Status29 (AUni)*>
+<!ELEMENT Status4005 (Link)?>
+<!ELEMENT Status5005 (CmPossibilityList)?>
+<!ELEMENT Status5016 (Link)?>
+<!ELEMENT Status5109 (Boolean)?>
+<!ELEMENT Status5116 (Integer)?>
+<!ELEMENT Status7 (Link)?>
+<!ELEMENT StemForm5100 (Link)?>
+<!ELEMENT StemMsa5100 (Link)?>
+<!ELEMENT StemName5045 (Link)?>
+<!ELEMENT StemNames5039 (MoStemName)*>
+<!ATTLIST StemNames5039
+	size CDATA #IMPLIED
+>
+<!ELEMENT StemNames5049 (MoStemName)*>
+<!ATTLIST StemNames5049
+	size CDATA #IMPLIED
+>
+<!ELEMENT Stems5059 (Link)*>
+<!ATTLIST Stems5059
+	size CDATA #IMPLIED
+>
+<!ELEMENT StFootnote (Custom | CustomLink | CustomObj | CustomStr | DisplayFootnoteMarker39 | DisplayFootnoteReference39 | FootnoteMarker39 | Paragraphs14 | RightToLeft14)*>
+<!ATTLIST StFootnote
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT StJournalText (CreatedBy68 | Custom | CustomLink | CustomObj | CustomStr | DateCreated68 | DateModified68 | ModifiedBy68 | Paragraphs14 | RightToLeft14)*>
+<!ATTLIST StJournalText
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT StPara (Custom | CustomLink | CustomObj | CustomStr | StyleName15 | StyleRules15)*>
+<!ATTLIST StPara
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Str (Run)*>
+<!ELEMENT Strata5040 (MoStratum)*>
+<!ATTLIST Strata5040
+	size CDATA #IMPLIED
+>
+<!ELEMENT Stratum5001 (Link)?>
+<!ELEMENT Stratum5030 (Link)?>
+<!ELEMENT Stratum5031 (Link)?>
+<!ELEMENT Stratum5037 (Link)?>
+<!ELEMENT Stratum5078 (Link)?>
+<!ELEMENT StratumApps5100 (MoStratumApp)*>
+<!ATTLIST StratumApps5100
+	size CDATA #IMPLIED
+>
+<!ELEMENT StringRepresentation5097 (Str)?>
+<!ELEMENT StrucChange5130 (Str)?>
+<!ELEMENT StrucChange5131 (PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg)*>
+<!ATTLIST StrucChange5131
+	size CDATA #IMPLIED
+>
+<!ELEMENT StrucDesc5128 (PhSimpleContextBdry | PhSimpleContextNC | PhSimpleContextSeg)*>
+<!ATTLIST StrucDesc5128
+	size CDATA #IMPLIED
+>
+<!ELEMENT Structure17 (Integer)?>
+<!ELEMENT StStyle (BasedOn17 | Context17 | Custom | CustomLink | CustomObj | CustomStr | Function17 | IsBuiltIn17 | IsModified17 | IsPublishedTextStyle17 | Name17 | Next17 | Rules17 | Structure17 | Type17 | Usage17 | UserLevel17)*>
+<!ATTLIST StStyle
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT StText (Custom | CustomLink | CustomObj | CustomStr | Paragraphs14 | RightToLeft14)*>
+<!ATTLIST StText
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT StTxtPara (AnalyzedTextObjects16 | Contents16 | Custom | CustomLink | CustomObj | CustomStr | Label16 | ObjRefs16 | StyleName15 | StyleRules15 | TextObjects16 | Translations16)*>
+<!ATTLIST StTxtPara
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Style20 (Uni)?>
+<!ELEMENT Style3016 (Link)?>
+<!ELEMENT StyleName15 (Uni)?>
+<!ELEMENT StyleRules15 (Binary | Prop)?>
+<!ELEMENT Styles3001 (StStyle)*>
+<!ATTLIST Styles3001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Styles5005 (StStyle)*>
+<!ATTLIST Styles5005
+	size CDATA #IMPLIED
+>
+<!ELEMENT Styles6001 (StStyle)*>
+<!ATTLIST Styles6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Subclasses5039 (MoInflClass)*>
+<!ATTLIST Subclasses5039
+	size CDATA #IMPLIED
+>
+<!ELEMENT Subentries5053 (ReversalIndexEntry)*>
+<!ATTLIST Subentries5053
+	size CDATA #IMPLIED
+>
+<!ELEMENT SubfieldOf20 (Link)?>
+<!ELEMENT SubFolders2 (CmFolder)*>
+<!ATTLIST SubFolders2
+	size CDATA #IMPLIED
+>
+<!ELEMENT SubPossibilities7 (ChkTerm | CmAnnotationDefn | CmAnthroItem | CmCustomItem | CmLocation | CmPerson | CmPossibility | CmSemanticDomain | LexEntryType | LexRefType | MoMorphType | PartOfSpeech | PhPhonRuleFeat)*>
+<!ATTLIST SubPossibilities7
+	size CDATA #IMPLIED
+>
+<!ELEMENT SubRecords4004 (RnAnalysis | RnEvent)*>
+<!ATTLIST SubRecords4004
+	size CDATA #IMPLIED
+>
+<!ELEMENT SubType18 (Integer)?>
+<!ELEMENT SuffixSlots5037 (Link)*>
+<!ATTLIST SuffixSlots5037
+	size CDATA #IMPLIED
+>
+<!ELEMENT Summary5127 (AStr)*>
+<!ELEMENT SummaryDefinition5002 (AStr)*>
+<!ELEMENT SupersededBy4005 (Link)*>
+<!ATTLIST SupersededBy4005
+	size CDATA #IMPLIED
+>
+<!ELEMENT SupportingEvidence4005 (Link)*>
+<!ATTLIST SupportingEvidence4005
+	size CDATA #IMPLIED
+>
+<!ELEMENT SurfaceForm5126 (Link)?>
+<!ELEMENT System18 (Boolean)?>
+<!ELEMENT Target3016 (Integer)?>
+<!ELEMENT Target32 (Link)?>
+<!ELEMENT Target5109 (Link)?>
+<!ELEMENT Targets5120 (Link)*>
+<!ATTLIST Targets5120
+	size CDATA #IMPLIED
+>
+<!ELEMENT Template5076 (Link)?>
+<!ELEMENT Template5122 (Link)?>
+<!ELEMENT TemplateApp5078 (MoInflTemplateApp)?>
+<!ELEMENT TermId5125 (Integer)?>
+<!ELEMENT TertiaryCollation31 (Link)?>
+<!ELEMENT TertiaryCollType31 (Integer)?>
+<!ELEMENT TertiaryField31 (Uni)?>
+<!ELEMENT TertiaryReverse31 (Boolean)?>
+<!ELEMENT TertiaryWs31 (Link)?>
+<!ELEMENT TestSets5040 (WfiWordSet)*>
+<!ATTLIST TestSets5040
+	size CDATA #IMPLIED
+>
+<!ELEMENT Text (Abbreviation5054 | Contents5054 | Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | Genres5054 | HeaderFooterSets5 | IsTranslated5054 | Name5 | Publications5 | SoundFilePath5054 | Source5054)*>
+<!ATTLIST Text
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Text34 (StFootnote | StJournalText | StText)?>
+<!ELEMENT TextMarkupTags6001 (CmPossibilityList)?>
+<!ELEMENT TextObjects16 (Link)*>
+<!ATTLIST TextObjects16
+	size CDATA #IMPLIED
+>
+<!ELEMENT Texts6001 (Text)*>
+<!ATTLIST Texts6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Thesaurus6001 (Link)?>
+<!ELEMENT ThesaurusCentral5064 (Integer)?>
+<!ELEMENT ThesaurusItems5016 (Link)*>
+<!ATTLIST ThesaurusItems5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT ThesaurusItems5064 (Link)*>
+<!ATTLIST ThesaurusItems5064
+	size CDATA #IMPLIED
+>
+<!ELEMENT Time EMPTY>
+<!ATTLIST Time
+	val CDATA #REQUIRED
+>
+<!ELEMENT TimeOfDay6001 (CmPossibilityList)?>
+<!ELEMENT TimeOfEvent4006 (Link)*>
+<!ATTLIST TimeOfEvent4006
+	size CDATA #IMPLIED
+>
+<!ELEMENT Title3002 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Title4004 (Str)?>
+<!ELEMENT ToInflectionClass5031 (Link)?>
+<!ELEMENT ToMsa5034 (MoStemMsa)?>
+<!ELEMENT ToMsFeatures5031 (FsFeatStruc)?>
+<!ELEMENT Tone5014 (Str)?>
+<!ELEMENT ToPartOfSpeech5031 (Link)?>
+<!ELEMENT ToProdRestrict5030 (Link)*>
+<!ATTLIST ToProdRestrict5030
+	size CDATA #IMPLIED
+>
+<!ELEMENT ToProdRestrict5031 (Link)*>
+<!ATTLIST ToProdRestrict5031
+	size CDATA #IMPLIED
+>
+<!ELEMENT TranslatedScripture6001 (Scripture)?>
+<!ELEMENT Translation29 (AStr)*>
+<!ELEMENT Translations16 (CmTranslation)*>
+<!ATTLIST Translations16
+	size CDATA #IMPLIED
+>
+<!ELEMENT Translations5004 (CmTranslation)*>
+<!ATTLIST Translations5004
+	size CDATA #IMPLIED
+>
+<!ELEMENT TranslationTags6001 (CmPossibilityList)?>
+<!ELEMENT Type17 (Integer)?>
+<!ELEMENT Type18 (Integer)?>
+<!ELEMENT Type20 (Integer)?>
+<!ELEMENT Type29 (Link)?>
+<!ELEMENT Type3010 (Integer)?>
+<!ELEMENT Type4 (Link)?>
+<!ELEMENT Type4006 (Link)?>
+<!ELEMENT Type5109 (Integer)?>
+<!ELEMENT Type57 (Link)?>
+<!ELEMENT Type9 (Integer)?>
+<!ELEMENT Types49 (FsFeatStrucType)*>
+<!ATTLIST Types49
+	size CDATA #IMPLIED
+>
+<!ELEMENT UnderColor7 (Integer)?>
+<!ELEMENT UnderStyle7 (Integer)?>
+<!ELEMENT Uni (#PCDATA)>
+<!ELEMENT Usage17 (AUni)*>
+<!ELEMENT UsageTypes5005 (CmPossibilityList)?>
+<!ELEMENT UsageTypes5016 (Link)*>
+<!ATTLIST UsageTypes5016
+	size CDATA #IMPLIED
+>
+<!ELEMENT UseChapterNumHeading3002 (Boolean)?>
+<!ELEMENT UseExtendedFields8 (Boolean)?>
+<!ELEMENT UserAccounts6001 (UserConfigAcct)*>
+<!ATTLIST UserAccounts6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT UserAppFeatAct (ActivatedLevel41 | ApplicationId41 | Custom | CustomLink | CustomObj | CustomStr | FeatureId41 | UserConfigAcct41)*>
+<!ATTLIST UserAppFeatAct
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT UserCanCreate35 (Boolean)?>
+<!ELEMENT UserConfigAcct (Custom | CustomLink | CustomObj | CustomStr | HasMaintenance40 | Sid40 | UserLevel40)*>
+<!ATTLIST UserConfigAcct
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT UserConfigAcct41 (Link)*>
+<!ATTLIST UserConfigAcct41
+	size CDATA #IMPLIED
+>
+<!ELEMENT UserLevel17 (Integer)?>
+<!ELEMENT UserLevel40 (Integer)?>
+<!ELEMENT UserView (App18 | Custom | CustomLink | CustomObj | CustomStr | Details18 | Name18 | Records18 | SubType18 | System18 | Type18)*>
+<!ATTLIST UserView
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT UserViewField (Custom | CustomLink | CustomObj | CustomStr | Details20 | Flid20 | HelpString20 | IsCustomField20 | Label20 | PossList20 | Required20 | Style20 | SubfieldOf20 | Type20 | Visibility20 | WritingSystem20 | WsSelector20)*>
+<!ATTLIST UserViewField
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT UserViewRec (Clsid19 | Custom | CustomLink | CustomObj | CustomStr | Details19 | Fields19 | Level19)*>
+<!ATTLIST UserViewRec
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT UseScriptDigits3001 (Boolean)?>
+<!ELEMENT VacuousApp5077 (Boolean)?>
+<!ELEMENT ValidChars24 (Uni)?>
+<!ELEMENT Value51 (Link)?>
+<!ELEMENT Value53 (FsFeatStruc | FsFeatStrucDisj)?>
+<!ELEMENT Value54 (Link)*>
+<!ATTLIST Value54
+	size CDATA #IMPLIED
+>
+<!ELEMENT Value61 (Link)?>
+<!ELEMENT Value63 (AUni)*>
+<!ELEMENT Value64 (Link)?>
+<!ELEMENT Values50 (FsSymFeatVal)*>
+<!ATTLIST Values50
+	size CDATA #IMPLIED
+>
+<!ELEMENT ValueState56 (Integer)?>
+<!ELEMENT VariantEntryTypes5005 (CmPossibilityList)?>
+<!ELEMENT VariantEntryTypes5127 (Link)*>
+<!ATTLIST VariantEntryTypes5127
+	size CDATA #IMPLIED
+>
+<!ELEMENT VernWss6001 (Link)*>
+<!ATTLIST VernWss6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT VersePunct3001 (Uni)?>
+<!ELEMENT VerseRefEnd3005 (Integer)?>
+<!ELEMENT VerseRefMax3005 (Integer)?>
+<!ELEMENT VerseRefMin3005 (Integer)?>
+<!ELEMENT VerseRefStart3005 (Integer)?>
+<!ELEMENT VerseSepr3001 (Uni)?>
+<!ELEMENT Versification3001 (Integer)?>
+<!ELEMENT Version23 (Uni)?>
+<!ELEMENT Version70 (Guid)?>
+<!ELEMENT VersionHistory4004 (StFootnote | StJournalText | StText)?>
+<!ELEMENT Visibility20 (Integer)?>
+<!ELEMENT Weather4006 (Link)*>
+<!ATTLIST Weather4006
+	size CDATA #IMPLIED
+>
+<!ELEMENT WeatherConditions6001 (CmPossibilityList)?>
+<!ELEMENT WfiAnalysis (Category5059 | CompoundRuleApps5059 | Custom | CustomLink | CustomObj | CustomStr | Derivation5059 | InflTemplateApps5059 | Meanings5059 | MorphBundles5059 | MsFeatures5059 | Stems5059)*>
+<!ATTLIST WfiAnalysis
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WfiGloss (Custom | CustomLink | CustomObj | CustomStr | Form5060)*>
+<!ATTLIST WfiGloss
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WfiMorphBundle (Custom | CustomLink | CustomObj | CustomStr | Form5112 | Morph5112 | Msa5112 | Sense5112)*>
+<!ATTLIST WfiMorphBundle
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WfiWordform (Analyses5062 | Checksum5062 | Custom | CustomLink | CustomObj | CustomStr | Form5062 | SpellingStatus5062)*>
+<!ATTLIST WfiWordform
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WfiWordSet (Cases5105 | Custom | CustomLink | CustomObj | CustomStr | Description5105 | Name5105)*>
+<!ATTLIST WfiWordSet
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WinCollation30 (Uni)?>
+<!ELEMENT WinLCID30 (Integer)?>
+<!ELEMENT WordformInventory (Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | HeaderFooterSets5 | Name5 | Publications5 | Wordforms5063)*>
+<!ATTLIST WordformInventory
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WordformInventory6001 (WordformInventory)?>
+<!ELEMENT WordFormLookup (AnthroCentral5064 | AnthroCodes5064 | Custom | CustomLink | CustomObj | CustomStr | Form5064 | ThesaurusCentral5064 | ThesaurusItems5064)*>
+<!ATTLIST WordFormLookup
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WordformLookupList (Custom | CustomLink | CustomObj | CustomStr | DateCreated5 | DateModified5 | Description5 | HeaderFooterSets5 | Name5 | Publications5 | Wordforms5065 | WritingSystem5065)*>
+<!ATTLIST WordformLookupList
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT WordformLookupLists6001 (Link)*>
+<!ATTLIST WordformLookupLists6001
+	size CDATA #IMPLIED
+>
+<!ELEMENT Wordforms5063 (WfiWordform)*>
+<!ATTLIST Wordforms5063
+	size CDATA #IMPLIED
+>
+<!ELEMENT Wordforms5065 (WordFormLookup)*>
+<!ATTLIST Wordforms5065
+	size CDATA #IMPLIED
+>
+<!ELEMENT WorldRegion6001 (AUni)*>
+<!ELEMENT WritingSystem20 (Link)?>
+<!ELEMENT WritingSystem37 (Link)?>
+<!ELEMENT WritingSystem5052 (Link)?>
+<!ELEMENT WritingSystem5065 (Link)?>
+<!ELEMENT WritingSystem62 (Link)?>
+<!ELEMENT WritingSystem8 (Link)?>
+<!ELEMENT WsProp EMPTY>
+<!ATTLIST WsProp
+	ws CDATA #REQUIRED
+	backcolor CDATA #IMPLIED
+	bold (invert | off | on) #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (invert | off | on) #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit (mpt | rel) #IMPLIED
+	superscript (off | sub | super) #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (dashed | dotted | double | none | single | squiggle | strikethrough) #IMPLIED
+>
+<!ELEMENT WsSelector20 (Integer)?>
+<!ELEMENT WsSelector37 (Integer)?>
+<!ELEMENT WsSelector62 (Integer)?>
+<!ELEMENT WsSelector8 (Integer)?>
+<!ELEMENT WsStyles9999 (WsProp)*>
+<!ELEMENT ZeroWidth35 (Boolean)?>

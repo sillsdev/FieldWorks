@@ -1,0 +1,363 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:Hebrew"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_0E8637349A164BBFAA7225D7BDBC3F7F"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_4A9A193382EA4FE48A43EA8086517F6E"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_64950FC5B6B640609CF810A3CEAEA15E"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_674E64088ECD4DD6A09B3D94FBFAA355"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_A884AD9879DD4C078682D2D87EEC1D03"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_B6BCFB6D1B444D40AA9D0B83597B201D"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_B89D1079B7D74A9AB9AB8F8F2F6B5F1C"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\Hebrew.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\Hebrew.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0E8637349A164BBFAA7225D7BDBC3F7F"
+			{
+			"SourcePath" = "8:MapsTables\\EzraSIL20to25.tec"
+			"TargetName" = "8:EzraSIL20to25.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_1B6AE952436243A296E089057ADA6929"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4A9A193382EA4FE48A43EA8086517F6E"
+			{
+			"SourcePath" = "8:MapsTables\\EzraSIL20to25.map"
+			"TargetName" = "8:EzraSIL20to25.map"
+			"Tag" = "8:"
+			"Folder" = "8:_1B6AE952436243A296E089057ADA6929"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_64950FC5B6B640609CF810A3CEAEA15E"
+			{
+			"SourcePath" = "8:MapsTables\\r2l_2004.cct"
+			"TargetName" = "8:r2l_2004.cct"
+			"Tag" = "8:"
+			"Folder" = "8:_1B6AE952436243A296E089057ADA6929"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_674E64088ECD4DD6A09B3D94FBFAA355"
+			{
+			"SourcePath" = "8:MapsTables\\SILEzratoUni50.tec"
+			"TargetName" = "8:SILEzratoUni50.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_1B6AE952436243A296E089057ADA6929"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A884AD9879DD4C078682D2D87EEC1D03"
+			{
+			"SourcePath" = "8:MapsTables\\SILEzratoUni50.map"
+			"TargetName" = "8:SILEzratoUni50.map"
+			"Tag" = "8:"
+			"Folder" = "8:_1B6AE952436243A296E089057ADA6929"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B6BCFB6D1B444D40AA9D0B83597B201D"
+			{
+			"SourcePath" = "8:MapsTables\\Hebrew.xml"
+			"TargetName" = "8:Hebrew.xml"
+			"Tag" = "8:"
+			"Folder" = "8:_1B6AE952436243A296E089057ADA6929"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B89D1079B7D74A9AB9AB8F8F2F6B5F1C"
+			{
+			"SourcePath" = "8:MapsTables\\SIL Ezra.vbs"
+			"TargetName" = "8:SIL Ezra.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_1B6AE952436243A296E089057ADA6929"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_EC639C0994BE443F93DF382D8A28DDF2"
+			{
+			"DefaultLocation" = "8:[CommonAppDataFolder]SIL\\SILConverters31"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_1B6AE952436243A296E089057ADA6929"
+					{
+					"Name" = "8:MapsTables"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_8E08090D4C61434E95CC18A3E64C16C9"
+						"Folders"
+						{
+						}
+					}
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:Hebrew30MergeModule.2C134B8AE6E146B98C4845E817DE5E35"
+		"Version" = "8:3.1.0.0"
+		"Title" = "8:Hebrew"
+		"Subject" = "8:Converters related to Hebrew"
+		"Author" = "8:Roland Fumey"
+		"Keywords" = "8:SILConverters; Encoding Conversion; Transliteration; EncConverters"
+		"Comments" = "8:Converters used in Papua New Guinea"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+		}
+	}
+}

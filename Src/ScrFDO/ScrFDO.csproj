@@ -1,0 +1,224 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{3B6B9B69-CE84-4CBB-8951-9C420D5D1FB9}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>ScrFDO</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.FDO.Scripture</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\ScrFDO.XML</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\Output\debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\Output\debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwResources, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwUtils">
+	  <Name>FwUtils</Name>
+	  <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="Interop.SCRIPTUREOBJECTSLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\DistFiles\Interop.SCRIPTUREOBJECTSLib.dll</HintPath>
+	</Reference>
+	<Reference Include="Reporting, Version=1.0.2825.23674, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ScriptureUtils">
+	  <Name>ScriptureUtils</Name>
+	  <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="ScrUtilsInterfaces, Version=5.3.0.16057, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="ZipUtils, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<COMReference Include="stdole">
+	  <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+	  <VersionMajor>2</VersionMajor>
+	  <VersionMinor>0</VersionMinor>
+	  <Lcid>0</Lcid>
+	  <WrapperTool>primary</WrapperTool>
+	</COMReference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="ScrScriptureNote.cs" />
+	<Compile Include="ScrCheckingTokenizer.cs" />
+	<Compile Include="FdoScripture.cs" />
+	<Compile Include="FilteredScrBooks.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FootnoteMarkerIndexCache.cs" />
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ImportFileSource.cs" />
+	<Compile Include="ParaNodeMap.cs" />
+	<Compile Include="ScrBook.cs" />
+	<Compile Include="ScrBookRef.cs" />
+	<Compile Include="ScrCheckingToken.cs" />
+	<Compile Include="ScrFdoResources.Designer.cs">
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>ScrFdoResources.resx</DependentUpon>
+	</Compile>
+	<Compile Include="ScrFootnote.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrImportFileInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrImportP6Project.cs" />
+	<Compile Include="ScrImportSet.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Scripture.cs" />
+	<Compile Include="ScrMappingList.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrMarkerMapping.cs" />
+	<Compile Include="ScrSection.cs" />
+	<Compile Include="ScrSfFileList.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrStyleNames.cs" />
+	<Compile Include="ScrTxtPara.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrVerse.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SCScriptureText.cs" />
+	<Compile Include="SCTextEnum.cs" />
+	<Compile Include="ScrChecksDataSource.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="buildinclude.xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="ScrFdoResources.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>PublicResXFileCodeGenerator</Generator>
+	  <LastGenOutput>ScrFdoResources.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

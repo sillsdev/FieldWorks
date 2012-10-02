@@ -1,0 +1,140 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "TlsStatsDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "AfAppRes.h"
+#include "..\AfDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"TlsStatsDlgRes.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""AfAppRes.h""\r\n"
+	"#include ""..\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsStatsDlg DIALOGEX 0, 0, 295, 213
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE |
+	WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU | WS_SIZEBOX
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+CAPTION "List Statistics"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Choose Topics &List:",IDC_STATIC,16,8,63,10
+	COMBOBOX        kcidTlsStatListCb,82,6,187,170,CBS_DROPDOWNLIST |
+					CBS_SORT | WS_VSCROLL | WS_TABSTOP
+	GROUPBOX        "",kcidTlsStatGB,6,19,286,171
+	CONTROL         "",kcidTlsStatList,"Button",BS_OWNERDRAW,10,63,275,122
+	CONTROL         "&Show Abbreviations",kcidTlsStatAbbr,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,11,28,79,10
+	CONTROL         "E&xclude Zero Counts",kcidTlsStatZero,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,92,28,82,10
+	CONTROL         "&Include List Subitems in Count",kcidTlsStatSub,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,177,28,111,10
+	LTEXT           "&Order By:",IDC_STATIC,12,47,30,8
+	COMBOBOX        kcidTlsStatOrderBy,45,45,69,114,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	CONTROL         "&Ascending",kcidTlsStatAsc,"Button",BS_AUTORADIOBUTTON |
+					WS_GROUP,121,42,49,10
+	CONTROL         "&Descending",kcidTlsStatDesc,"Button",
+					BS_AUTORADIOBUTTON,121,51,54,10
+	PUSHBUTTON      "&Show",kcidTlsStatShow,199,44,64,15,WS_GROUP
+	PUSHBUTTON      "Copy to Clipboard",kcidTlsStatCopy,20,195,65,15
+	PUSHBUTTON      "&Print...",kcidTlsStatPrint,95,195,53,15
+	PUSHBUTTON      "&Close",kcidTlsStatClose,158,195,53,15
+	PUSHBUTTON      "Help...",kctidHelp,221,195,53,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	kstidTlsStatCaption     "List Statistics"
+	kstidTlsStatHeaderAbbr  "Abbr."
+	kstidTlsStatHeaderName  "Name"
+	kstidTlsStatHeaderCount "Count"
+	kstidTlsStatDefault     "Default"
+END
+
+// Status bar text, tool tip, what's-this help
+
+STRINGTABLE DISCARDABLE  // ???
+BEGIN
+//  kcidTlsExample     "Status bar text\ntool tip\nwhat's-this help\n"
+
+	kcidTlsStatListCb  "\n\nSpecifies the Topics List that has the list items/subitems about which you want to learn usage frequency.\n"
+	kcidTlsStatList    "\n\nDisplays how many times the list items/subitems from the selected Topics List are used in the current project.\n"
+	kcidTlsStatAbbr    "\n\nShows/hides the Abbreviations column.\n"
+	kcidTlsStatZero    "\n\nIncludes/excludes any row with a zero in the Count column.\n"
+	kcidTlsStatSub     "\n\nIncludes/excludes topics list subitems in the Count column calculations.\n"
+	kcidTlsStatOrderBy "\n\nSpecifies the column on which to sort the results.\n"
+	kcidTlsStatAsc     "\n\nSpecifies ascending order for the results based on the column selected in the Order By drop-down list.\n"
+	kcidTlsStatDesc    "\n\nSpecifies descending order for the results based on the column selected in the Order By drop-down list.\n"
+	kcidTlsStatShow    "\n\nRefreshes the results pane.\n"
+	kcidTlsStatCopy    "\n\nCopies all of the results as displayed to the clipboard.  You cannot select individual rows in this display.\n"
+	kcidTlsStatPrint   "\n\nOpens the Print dialog so you can print the results as displayed.\n"
+	kcidTlsStatClose   "\n\nCloses this dialog.  The results and settings are not retained.\n"
+END
+
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

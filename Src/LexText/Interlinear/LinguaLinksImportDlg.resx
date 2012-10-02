@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="linkLabel2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 43</value>
+  </data>
+  <data name="linkLabel2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>304, 32</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="linkLabel2.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="linkLabel2.Text" xml:space="preserve">
+	<value>Click here for help in exporting your LinguaLinks data.</value>
+  </data>
+  <data name="&gt;&gt;linkLabel2.Name" xml:space="preserve">
+	<value>linkLabel2</value>
+  </data>
+  <data name="&gt;&gt;linkLabel2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;linkLabel2.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;linkLabel2.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 80</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>112, 16</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+	<value>LinguaLinks XML file:</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="m_LinguaLinksXmlFileName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>136, 80</value>
+  </data>
+  <data name="m_LinguaLinksXmlFileName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>333, 20</value>
+  </data>
+  <data name="m_LinguaLinksXmlFileName.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_LinguaLinksXmlFileName.Text" xml:space="preserve">
+	<value>*.xml</value>
+  </data>
+  <data name="&gt;&gt;m_LinguaLinksXmlFileName.Name" xml:space="preserve">
+	<value>m_LinguaLinksXmlFileName</value>
+  </data>
+  <data name="&gt;&gt;m_LinguaLinksXmlFileName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_LinguaLinksXmlFileName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_LinguaLinksXmlFileName.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="btn_LinguaLinksXmlBrowse.Location" type="System.Drawing.Point, System.Drawing">
+	<value>483, 80</value>
+  </data>
+  <data name="btn_LinguaLinksXmlBrowse.Size" type="System.Drawing.Size, System.Drawing">
+	<value>88, 24</value>
+  </data>
+  <data name="btn_LinguaLinksXmlBrowse.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="btn_LinguaLinksXmlBrowse.Text" xml:space="preserve">
+	<value>Browse...</value>
+  </data>
+  <data name="&gt;&gt;btn_LinguaLinksXmlBrowse.Name" xml:space="preserve">
+	<value>btn_LinguaLinksXmlBrowse</value>
+  </data>
+  <data name="&gt;&gt;btn_LinguaLinksXmlBrowse.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btn_LinguaLinksXmlBrowse.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btn_LinguaLinksXmlBrowse.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="columnHeader1.Text" xml:space="preserve">
+	<value>LL Language Definition</value>
+  </data>
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+	<value>178</value>
+  </data>
+  <data name="columnHeader2.Text" xml:space="preserve">
+	<value>FW Writing System</value>
+  </data>
+  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
+	<value>178</value>
+  </data>
+  <data name="columnHeader3.Text" xml:space="preserve">
+	<value>Converter</value>
+  </data>
+  <data name="columnHeader3.Width" type="System.Int32, mscorlib">
+	<value>179</value>
+  </data>
+  <data name="listViewMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>32, 192</value>
+  </data>
+  <data name="listViewMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>539, 240</value>
+  </data>
+  <data name="listViewMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;listViewMapping.Name" xml:space="preserve">
+	<value>listViewMapping</value>
+  </data>
+  <data name="&gt;&gt;listViewMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;listViewMapping.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;listViewMapping.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>40, 146</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>520, 32</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+	<value>For each LinguaLinks language definition, specify a FieldWorks writing system and an encoding converter to convert the LinguaLinks language data to Unicode.</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="btnModifyMapping.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnModifyMapping.Location" type="System.Drawing.Point, System.Drawing">
+	<value>483, 446</value>
+  </data>
+  <data name="btnModifyMapping.Size" type="System.Drawing.Size, System.Drawing">
+	<value>88, 24</value>
+  </data>
+  <data name="btnModifyMapping.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="btnModifyMapping.Text" xml:space="preserve">
+	<value>Specify ...</value>
+  </data>
+  <data name="&gt;&gt;btnModifyMapping.Name" xml:space="preserve">
+	<value>btnModifyMapping</value>
+  </data>
+  <data name="&gt;&gt;btnModifyMapping.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnModifyMapping.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnModifyMapping.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="btnImport.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnImport.Location" type="System.Drawing.Point, System.Drawing">
+	<value>281, 490</value>
+  </data>
+  <data name="btnImport.Size" type="System.Drawing.Size, System.Drawing">
+	<value>88, 24</value>
+  </data>
+  <data name="btnImport.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="btnImport.Text" xml:space="preserve">
+	<value>Import</value>
+  </data>
+  <data name="&gt;&gt;btnImport.Name" xml:space="preserve">
+	<value>btnImport</value>
+  </data>
+  <data name="&gt;&gt;btnImport.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnImport.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnImport.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="btn_Cancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>382, 490</value>
+  </data>
+  <data name="btn_Cancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>88, 24</value>
+  </data>
+  <data name="btn_Cancel.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="btn_Cancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btn_Cancel.Name" xml:space="preserve">
+	<value>btn_Cancel</value>
+  </data>
+  <data name="&gt;&gt;btn_Cancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btn_Cancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btn_Cancel.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="lblFinishWOImport.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblFinishWOImport.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblFinishWOImport.Location" type="System.Drawing.Point, System.Drawing">
+	<value>40, 456</value>
+  </data>
+  <data name="lblFinishWOImport.Size" type="System.Drawing.Size, System.Drawing">
+	<value>224, 56</value>
+  </data>
+  <data name="lblFinishWOImport.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="lblFinishWOImport.Text" xml:space="preserve">
+	<value>Process without importing.  Useful for creating all of the LLPhaseXOutput files.</value>
+  </data>
+  <data name="lblFinishWOImport.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;lblFinishWOImport.Name" xml:space="preserve">
+	<value>lblFinishWOImport</value>
+  </data>
+  <data name="&gt;&gt;lblFinishWOImport.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFinishWOImport.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblFinishWOImport.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_btnHelp.AccessibleName" xml:space="preserve">
+	<value>btnHelp</value>
+  </data>
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>483, 490</value>
+  </data>
+  <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>88, 24</value>
+  </data>
+  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_btnHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+	<value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="lblMappingLanguages.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblMappingLanguages.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblMappingLanguages.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 122</value>
+  </data>
+  <data name="lblMappingLanguages.Size" type="System.Drawing.Size, System.Drawing">
+	<value>176, 23</value>
+  </data>
+  <data name="lblMappingLanguages.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="lblMappingLanguages.Text" xml:space="preserve">
+	<value>Language mapping</value>
+  </data>
+  <data name="&gt;&gt;lblMappingLanguages.Name" xml:space="preserve">
+	<value>lblMappingLanguages</value>
+  </data>
+  <data name="&gt;&gt;lblMappingLanguages.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMappingLanguages.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblMappingLanguages.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>544, 26</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>This process will load LinguaLinks lexicon, wordforms, and interlinear texts into the current FieldWorks project. The input file is an xml file exported from LinguaLinks.</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>25</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>600, 532</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+	<value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Import LinguaLinks Data</value>
+  </data>
+  <data name="&gt;&gt;openFileDialog.Name" xml:space="preserve">
+	<value>openFileDialog</value>
+  </data>
+  <data name="&gt;&gt;openFileDialog.Type" xml:space="preserve">
+	<value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
+	<value>columnHeader1</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
+	<value>columnHeader2</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Name" xml:space="preserve">
+	<value>columnHeader3</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>LinguaLinksImportDlg</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DTD for Master Gloss List data
+	 G. Simons, 25 Sept 2002
+	 Modifed by A. Black 08 Nov 2002
+	 Revised 12 Sep 2005-->
+<!ELEMENT masterGlossList (item+)>
+<!ATTLIST masterGlossList
+	afterSeparator CDATA #IMPLIED
+	complexNameSeparator CDATA #IMPLIED
+	complexNameFirst (yes | no) #IMPLIED
+>
+<!ELEMENT item (abbrev?, term, def?, citation*, item*)>
+<!ATTLIST item
+	id ID #IMPLIED
+	status (visible | hidden) #IMPLIED
+	type (fsType | complex | feature | value | group | deriv | xref) #REQUIRED
+	target IDREF #IMPLIED
+	embed IDREFS #IMPLIED
+	append IDREF #IMPLIED
+	carry (yes | no) #IMPLIED
+	posid CDATA #IMPLIED
+	cellar CDATA #IMPLIED
+	emeld CDATA #IMPLIED
+	afterSeparator CDATA #IMPLIED
+	complexNameSeparator CDATA #IMPLIED
+	complexNameFirst (yes | no) #IMPLIED
+>
+<!ELEMENT abbrev (#PCDATA)>
+<!ATTLIST abbrev
+	ws CDATA #REQUIRED
+>
+<!ELEMENT term (#PCDATA)>
+<!ATTLIST term
+	ws CDATA #REQUIRED
+>
+<!-- append is to append the feature:value pair of indicated item to this feature structure; allows subtyping while maintaining appropriate requirements.  For example, imperfective is
+  aspect:Impfv
+but continuous is
+  aspect:Impfv
+  impfvSubtype:Cont
+  -->
+<!-- allow following for those items which do not have either a cellar or emeld attr, but still need/want a definition, etc.
+-->
+<!ELEMENT def (#PCDATA | English)*>
+<!ATTLIST def
+	ws CDATA #REQUIRED
+>
+<!ELEMENT citation (#PCDATA)>
+<!ELEMENT English (#PCDATA)>

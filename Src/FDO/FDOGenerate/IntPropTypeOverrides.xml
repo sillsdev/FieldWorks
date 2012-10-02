@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- This files contains INTEGER properties which should be generated with a different
+	type (usually enumeration). -->
+<IntPropTypeOverrides>
+	<Class id="StStyle">
+		<property name="Type" type="StyleType"/>
+		<property name="Context" type="ContextValues"/>
+		<property name="Structure" type="StructureValues"/>
+		<property name="Function" type="FunctionValues"/>
+	</Class>
+	<Class id="Scripture">
+		<property name="FootnoteMarkerType" type="FootnoteMarkerTypes"/>
+		<property name="CrossRefMarkerType" type="FootnoteMarkerTypes"/>
+		<property name="Versification" type="Paratext.ScrVers"/>
+	</Class>
+	<Class id="ScrScriptureNote">
+		<property name="ResolutionStatus" type="NoteStatus"/>
+	</Class>
+	<Class id="ScrCheckRun">
+		<property name="Result" type="ScrCheckRunResult"/>
+	</Class>
+	<Class id="PubDivision">
+		<property name="StartAt" type="DivisionStartOption"/>
+	</Class>
+	<Class id="Publication">
+		<property name="BindingEdge" type="BindingSide"/>
+		<property name="SheetLayout" type="MultiPageLayout"/>
+	</Class>
+	<Class id="ChkRef">
+		<property name="Status" type="KeyTermRenderingStatus"/>
+	</Class>
+	<Class id="ScrDraft">
+		<property name="Type" type="ScrDraftType"/>
+	</Class>
+	<Class id="CmPicture">
+		<property name="LayoutPos" type="PictureLayoutPosition"/>
+		<property name="LocationRangeType" type="PictureLocationRangeType"/>
+	</Class>
+</IntPropTypeOverrides>

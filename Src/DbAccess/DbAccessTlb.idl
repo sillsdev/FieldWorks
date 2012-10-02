@@ -1,0 +1,27 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: DbAccessTlb.idl
+Responsibility: Paul Panek
+Last reviewed: Not yet.
+Description:
+	Interface descriptions for the DbAccess server. See DbAccess.idh for a fuller description.
+----------------------------------------------------------------------------------------------*/
+
+/***********************************************************************************************
+	Include files
+***********************************************************************************************/
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+
+#include "Common.idh" // DeclareInterface and similar
+
+//DeclareLibrary(LanguageLib, 1.0, "Language 1.0 Type Library",
+DeclareLibrary(DbAccess, 1.0, "DbAccess 1.0 Type Library",
+	AAB4A4A1-3C83-11d4-A1BB-00C04F0C9593)
+{
+	importlib("FwKernelTlb.tlb");
+
+	#include "DbAccess.idh"
+};

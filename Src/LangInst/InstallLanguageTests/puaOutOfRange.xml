@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LanguageDefinition SYSTEM "LanguageDefinition.dtd">
+<LanguageDefinition>
+  <LgWritingSystem>
+	<Locale24>
+	  <Integer val="13321"/>
+	</Locale24>
+	<DefaultMonospace24>
+	  <Uni>Courier New</Uni>
+	</DefaultMonospace24>
+	<DefaultSansSerif24>
+	  <Uni>Arial</Uni>
+	</DefaultSansSerif24>
+	<DefaultSerif24>
+	  <Uni>Times New Roman</Uni>
+	</DefaultSerif24>
+	<ICULocale24>
+	  <Uni>tl</Uni>
+	</ICULocale24>
+	<Name24>
+	  <AUni ws="en">Tagalog</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">TGL</AUni>
+	</Abbr24>
+	<Description24>
+	  <AStr ws="en">
+		<Run ws="en">The standard alphabetic representation of Tagalog (Philippines).</Run>
+	  </AStr>
+	</Description24>
+	<Collations24>
+	  <LgCollation>
+		<WinLCID30>
+		  <Integer val="1033"/>
+		</WinLCID30>
+		<WinCollation30>
+		  <Uni>Latin1_General_CI_AI</Uni>
+		</WinCollation30>
+		<Name30>
+		  <AUni ws="en">Default Collation</AUni>
+		</Name30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <BaseLocale/>
+  <NewLocale>tl</NewLocale>
+  <LocaleName>Tagalog</LocaleName>
+  <LocaleCountry/>
+  <LocaleVariant/>
+<!-- This LCID is for English in the Philippines. Microsoft has not defined one for Tagalog. -->
+  <LocaleWinLCID>13321</LocaleWinLCID>
+  <CollationElements>"&amp; B &lt; ċ &lt;&lt;&lt; Ċ" // ċ  Ċ
+"    &lt; c&lt;&lt;&lt;C"
+</CollationElements>
+  <LocaleResources>
+	zoneStrings {
+		{
+			"Europe/London",
+			"Greenwich Mean Time",
+			"GMT",
+			"British Summer Time",
+			"BST",
+		}
+	}
+</LocaleResources>
+  <PuaDefinitions>
+<!-- These codes are intentionally out of order -->
+<!--<Char_NOT_Defs code="F136" data="PIGDASH;Mn;202;NSM;;;;;N;;;;;"/>
+<Char_NOT_Defs code="F137" data="PIG Curlytail;Mn;202;NSM;;;;;N;;;;;"/>
+<Char_NOT_Defs code="F139" data="PIG Jump;L1;202;L;;;;;N;;;;;"/>
+<Char_NOT_Defs code="F171" data="PIGCHARACTER UGLY;L4;5;R;23;JK;S4;;N;;;DS;;"/>
+-->
+	<CharDef code="F16F" data="JIBBERISH SMALL LETTER P WITH TWO STROKES;Ll;0;L;;;;;N;;;;;"/>
+	<CharDef code="E000" data="PIG NUMERAL 7;Ll;0;NSM;;;;;N;;;;;"/>
+	<CharDef code="E001" data="PIG NUMERAL 8;Ll;0;L;;;;;N;;;;;"/>
+	<CharDef code="DC01" data="PIG NUMERAL 1;Ll;0;L;;;;;N;;;;;"/>
+	<CharDef code="DC02" data="PIG NUMERAL 2;Ll;0;L;;;;;N;;;;;"/>
+	<CharDef code="DEEE" data="PIG NUMERAL 3;Ll;0;L;;;;;N;;;;;"/>
+	<CharDef code="DFFE" data="PIG NUMERAL 5;Ll;0;L;;;;;N;;;;;"/>
+	<CharDef code="DEEF" data="PIG NUMERAL 4;Ll;0;R;;;;;N;;;;;"/>
+	<CharDef code="DFFF" data="PIG NUMERAL 6;Ll;0;L;;;;;N;;;;;"/>
+  </PuaDefinitions>
+  <Fonts>
+	<Font file="arial.ttf"/>
+	<Font file="arialbd.ttf"/>
+	<Font file="ariali.ttf"/>
+	<Font file="arialbi.ttf"/>
+	<Font file="times.ttf"/>
+	<Font file="timesbd.ttf"/>
+	<Font file="timesbi.ttf"/>
+	<Font file="timesi.ttf"/>
+  </Fonts>
+  <Keyboard file="Tagalog.kmx"/>
+  <EncodingConverter install="SIL_IPA93.tec.vbs" file="SIL-IPA93.tec"/>
+</LanguageDefinition>

@@ -1,0 +1,21 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: ViewsPs.idl
+Responsibility: Shon Katzenberger
+Last reviewed:
+
+	Defines Text Services Interfaces for proxy / stub generation.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+import "oaidl.idl";
+import "ocidl.idl";
+import "FwKernelPs.idl";	// includes DbAccess, DbServices, and Language
+
+#include "Common.idh"
+
+#define NO_COCLASSES
+
+#include "Views.idh"

@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>SettingsProvider</name>
+	</assembly>
+	<members>
+		<member name="T:SIL.FieldWorks.Tools.LocalDllSettingsProvider">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Provides persistence for application settings classes for use with DLLs.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:LocalDllSettingsProvider"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.Initialize(System.String,System.Collections.Specialized.NameValueCollection)">
+			------------------------------------------------------------------------------------
+			<summary>
+			</summary>
+			<param name="name"></param>
+			<param name="values"></param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.GetPropertyValues(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection)">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Returns the collection of setting property values for the specified application instance
+			and settings property group.
+			</summary>
+			<param name="context">A <see cref="T:System.Configuration.SettingsContext"></see>
+			describing the current application usage.</param>
+			<param name="properties">A <see cref="T:System.Configuration.SettingsPropertyCollection"/>
+			containing the settings property group whose values are to be retrieved.</param>
+			<returns>A <see cref="T:System.Configuration.SettingsPropertyValueCollection"/> containing
+			the values for the specified settings property group.
+			</returns>
+
+			<exception cref="T:System.Configuration.ConfigurationErrorsException">
+			A user-scoped setting was encountered but the current configuration only supports application-scoped settings.
+			</exception>
+			<PermissionSet>
+				<IPermission class="System.Security.Permissions.EnvironmentPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+					version="1" Unrestricted="true"/>
+				<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+					version="1" Unrestricted="true"/>
+				<IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+					version="1" Flags="ControlEvidence, ControlPrincipal"/>
+			</PermissionSet>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.SetPropertyValues(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyValueCollection)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Sets the values of the specified group of property settings.
+			</summary>
+			<param name="context">A <see cref="T:System.Configuration.SettingsContext"/>
+			describing the current application usage.</param>
+			<param name="values">A <see cref="T:System.Configuration.SettingsPropertyValueCollection"/>
+			representing the group of property settings to set.</param>
+			<exception cref="T:System.Configuration.ConfigurationErrorsException">A user-scoped
+			setting was encountered but the current configuration only supports application-
+			scoped settings.
+			-or-There was a general failure saving the settings to the configuration file.
+			</exception>
+			<PermissionSet>
+				<IPermission class="System.Security.Permissions.EnvironmentPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+					version="1" Unrestricted="true"/>
+				<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+					version="1" Unrestricted="true"/>
+				<IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+					version="1" Flags="ControlEvidence, ControlPrincipal"/>
+			</PermissionSet>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.ReadProperties(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection,System.Configuration.ExeConfigurationFileMap,System.Configuration.ConfigurationUserLevel,System.Configuration.SettingsPropertyValueCollection)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Reads the properties.
+			</summary>
+			<param name="context">The context.</param>
+			<param name="properties">The properties.</param>
+			<param name="configMap">The config map.</param>
+			<param name="userLevel">The user level.</param>
+			<param name="values">The values.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.SetConfigFiles">
+			------------------------------------------------------------------------------------
+			<summary>
+			Sets the configuration files.
+			</summary>
+			<returns>File mapping for configuration files</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.SetProperty(System.Configuration.SettingsPropertyValue,System.Configuration.SettingsProperty,System.Configuration.SettingElement)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Extracts a property from the XML element.
+			</summary>
+			<param name="property">The property.</param>
+			<param name="setting">The setting.</param>
+			<param name="elem">The elem.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalDllSettingsProvider.SerializeToXmlElement(System.Configuration.SettingsPropertyValue)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Serializes to XML element.
+			</summary>
+			<param name="value">The property.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+	</members>
+</doc>

@@ -1,0 +1,25 @@
+;Some simple tests of reading and writing.
+;Open a new language for testing purposes:
+(open_language message Phonology Test Language)
+;Don't let abort make us quit:
+(morpher_set message (*quit_on_error* false))
+;A listing of top level commands to test the reading and writing of
+; various strucs etc.
+;Next cmd should output message 6502:
+(morpher_set message (*trace_inputs* true))
+;Next cmd should output error msg 6001:
+(morpher_set message (foo bar))
+;Next_cmd should output error msg, but it's mainly to check parsing of atoms with internal spaces:
+(morpher_set message ('two words' bar))
+;Next cmd should output error msg 6002; also check the parsing of the
+; record struc, which is one known to the morpher, in the err msg:
+(morpher_set message
+												(*trace_inputs* <nonhead pseq apseq r_pos (n VERB)
+																												  r_hf (nom + foo -)
+																					   >
+												)
+)
+;Next cmd should pass transparently, chk record struc, quote chars, and the neg num:
+(foo morpher_set <some_rec foo quote:"" embedded_rec <another rec f -1 e 2> an_atom (an embedded list with quote)>)
+;Next cmd should stop the morpher:
+(terminate_morpher )

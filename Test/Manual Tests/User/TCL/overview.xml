@@ -1,0 +1,15 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="TCL\overview.xml">
+ <title tag="tcl">Test case library</title>
+ <index>
+  <li>Test case library</li>
+ </index>
+ <moduleGroup>
+  <li><link uri="TestCaseLib.xml" type="module">What is a test case library?</link></li>
+  <li><link uri="TestScript.xml" type="module">What is a test script?</link></li>
+  <li><link uri="TestCase.xml" type="module">What is a test case?</link></li>
+  <li><link uri="CaseStep.xml" type="module">What is a test case step?</link></li>
+  <li><link uri="Action.xml" type="module">What is an action?</link></li>
+  <li><link uri="Result.xml" type="module">What is a result?</link></li>
+ </moduleGroup>
+</overview>

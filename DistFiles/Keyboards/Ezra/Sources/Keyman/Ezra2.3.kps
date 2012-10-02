@@ -1,0 +1,81 @@
+[Package]
+RedistributableInstaller=0
+CreatingFreeVersion=0
+Version=6.0
+ExecuteProgram=
+ReadMeFile=..\README.txt
+GraphicFile=alef.bmp
+DisableKeepFonts=0
+BothVersionsIncluded=0
+[Buttons]
+Count=3
+[Button-0]
+ButtonType=install
+Caption=&Install
+URL=
+Left=0
+Top=0
+[Button-1]
+ButtonType=cancel
+Caption=Cancel
+URL=
+Left=0
+Top=0
+[Button-2]
+ButtonType=about
+Caption=&About...
+URL=
+Left=0
+Top=0
+[StartMenu]
+Path=Ezra SIL Unicode 2.3
+Create=1
+AddUninstallEntry=1
+[StartMenuEntries]
+Ezra SIL Keyboard Chart2.3="Ezra SIL Keyboard Chart2.3.pdf",""
+Ezra Unicode Install2.5="Ezra Unicode Install2.5.pdf",""
+Keying in Hebrew="Keying in Hebrew.pdf",""
+Simplified keyboard chart="Simplified keyboard chart.pdf",""
+Readme.txt="README.txt",""
+Ezra Unicode Covert30="Ezra Unicode Convert30.pdf",""
+Licenses="Licenses.txt",""
+Unicode Ezra Chart17short="Unicode Ezra Chart17short.pdf",""
+[Info]
+name="Ezra SIL Unicode 2.3",""
+copyright="Copyright © 2003-2007 SIL International",""
+Author="","mailto:sil_fonts@sil.org"
+WebSite="http://scripts.sil.org/EzraSIL_Home","http://scripts.sil.org/EzraSIL_Home"
+[Files]
+0="Font Ezra SIL SR","..\SILEOTSR.ttf",0
+1="File Ezra Unicode Convert30.pdf","..\Ezra Unicode Convert30.pdf",0
+2="File Ezra Unicode Install2.5.pdf","..\Ezra Unicode Install2.5.pdf",0
+3="File Filelist.txt","..\Filelist.txt",0
+4="File FONTLOG.txt","..\FONTLOG.txt",0
+5="File Licenses.txt","..\Licenses.txt",0
+6="File OFL-FAQ.txt","..\OFL-FAQ.txt",0
+7="File README.txt","..\README.txt",0
+8="Font Ezra SIL","..\SILEOT.ttf",0
+9="File EzraSIL20to25.map","..\mappings\EzraSIL20to25.map",0
+10="File EzraSIL20to25.tec","..\mappings\EzraSIL20to25.tec",0
+11="File HEB-map.xml","..\mappings\HEB-map.xml",0
+12="File Hebrew_MCtoUni50.map","..\mappings\Hebrew_MCtoUni50.map",0
+13="File Hebrew_MCtoUni50.tec","..\mappings\Hebrew_MCtoUni50.tec",0
+14="File iso-8859-1.map","..\mappings\iso-8859-1.map",0
+15="File iso-8859-1.tec","..\mappings\iso-8859-1.tec",0
+16="File MC2se_2007.cct","..\mappings\MC2se_2007.cct",0
+17="File r2l.cct","..\mappings\r2l.cct",0
+18="File r2l_2004.cct","..\mappings\r2l_2004.cct",0
+19="File se2de_2007.cct","..\mappings\se2de_2007.cct",0
+20="File se2tr_2007.cct","..\mappings\se2tr_2007.cct",0
+21="File SILEzratoUni50.map","..\mappings\SILEzratoUni50.map",0
+22="File SILEzratoUni50.tec","..\mappings\SILEzratoUni50.tec",0
+23="File unpoint.cct","..\mappings\unpoint.cct",0
+24="File WLC2sfm.cct","..\mappings\WLC2sfm.cct",0
+25="File Unicode Ezra Chart17short.pdf","Unicode Ezra Chart17short.pdf",0
+26="File alef.bmp","alef.bmp",0
+27="File Ezra SIL Keyboard Chart2.3.pdf","Ezra SIL Keyboard Chart2.3.pdf",0
+28="Keyboard Ezra SIL Unicode 2.3","EZRAUNI23.kmx",0
+29="File EZRAUNI23.kvk","EZRAUNI23.kvk",0
+30="File HEBDISPY.bmp","HEBDISPY.bmp",0
+31="File Keying in Hebrew.pdf","Keying in Hebrew.pdf",0
+32="File Simplified keyboard chart.pdf","Simplified keyboard chart.pdf",0

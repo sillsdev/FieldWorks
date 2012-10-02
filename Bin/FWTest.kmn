@@ -1,0 +1,140 @@
+﻿c Test keyboard for use with the "Fieldworks Test SIL" font.
+c Character ranges are:
+c U+E000   to U+E012   (PUA plane 0)
+c U+E100   to U+E10E   (PUA plane 0)
+c U+F0000  to U+F0012  (PUA plane 15)
+c U+10FF00 to U+10FF0C (PUA plane 16)
+
+c The compiled version is FwTest.kmx which is also under source control.
+c This .kmn file is provided for information and to avoid the build process
+c having to use the development version of Keyman.
+
+c To use Keyman keyboards, Keyman run-time must be installed. This can be
+c downloaded from http://www.tavultesoft.com/.
+c Run Keyman and "install" FwTest.kmx. Then use
+c Settings/Control Panel/Regional and Language Options/Languages tab/Details
+c to add an appropriate language (Ukrainian) and to show the language bar.
+c Test.kmx needs to be installed via Keyman.
+c Now, provided that Keyman is running, it should be possible to choose the FwTest
+c writing system from the FieldWorks language combo and start typing using this file.
+c The language bar should show Ukrainian, Tavultesoft Keyman, FwTest.
+
+VERSION 6.0                 c This keyboard is for use with Keyman 6.0
+NAME "FwTest"
+BITMAP "FwTest.bmp"         c Should be in the same folder as the compiled keyboard.
+
+begin Unicode > use(Main)
+
+group(Main) using keys
+
+c Note that RALT is the Right ALT key (the Left ALT key is not affected).
+c Note that "virtual key codes" have been used here. Thus K_A is the key
+c (unshifted unless SHIFT precedes it) "a" on a standard US keyboard. It may
+c not be the "a" key on other keyboards.
+
+c Right to Left
+'a' + '<' > U+E100
+'b' + '<' > U+E101
+'c' + '<' > U+E102
+'d' + '<' > U+E103
+'e' + '<' > U+E104
+'f' + '<' > U+E105
+'g' + '<' > U+E106
+'h' + '<' > U+E107
+'i' + '<' > U+E108
+'j' + '<' > U+E109
+'k' + '<' > U+E10A
+'l' + '<' > U+E10B
+'m' + '<' > U+E10C
+'5' + '<' > U+E10D
+'6' + '<' > U+E10E
+'n' + '<' > U+10FF00
+'o' + '<' > U+10FF01
+'p' + '<' > U+10FF02
+'q' + '<' > U+10FF03
+'r' + '<' > U+10FF04
+'s' + '<' > U+10FF05
+'t' + '<' > U+10FF06
+'u' + '<' > U+10FF07
+'v' + '<' > U+10FF08
+'w' + '<' > U+10FF09
+'x' + '<' > U+10FF0A
+'y' + '<' > U+10FF0B
+'z' + '<' > U+10FF0C
+
+c Left to Right
+'a' + '>' > U+E000
+'b' + '>' > U+E001
+'c' + '>' > U+E002
+'d' + '>' > U+E003
+'e' + '>' > U+E004
+'f' + '>' > U+E005
+'g' + '>' > U+E006
+'h' + '>' > U+E007
+'i' + '>' > U+E008
+'j' + '>' > U+E009
+'k' + '>' > U+E00A
+'l' + '>' > U+E00B
+'m' + '>' > U+E00C
+'A' + '>' > U+E00D
+'B' + '>' > U+E00E
+'-' + '>' > U+E00F
+'.' + '>' > U+E010
+'1' + '>' > U+E011
+'2' + '>' > U+E012
+'n' + '>' > U+F0000
+'o' + '>' > U+F0001
+'p' + '>' > U+F0002
+'q' + '>' > U+F0003
+'r' + '>' > U+F0004
+'s' + '>' > U+F0005
+'t' + '>' > U+F0006
+'u' + '>' > U+F0007
+'v' + '>' > U+F0008
+'w' + '>' > U+F0009
+'x' + '>' > U+F000A
+'y' + '>' > U+F000B
+'z' + '>' > U+F000C
+'N' + '>' > U+F000D
+'O' + '>' > U+F000E
+'(' + '>' > U+F000F c Left parenthesis
+')' + '>' > U+F0010 c Right parenthesis
+'3' + '>' > U+F0011
+'4' + '>' > U+F0012
+
+'$' + '%' > U+030A c Combining Ring above
+'$' + '^' > U+0302 c Combining Circumflex
+'$' + '`' > U+0300 c Combining Grave
+'$' + "'" > U+0301 c Combining Acute
+'$' + '-' > U+0304 c Combining Macron
+'$' + '*' > U+0328 c Combining Ogonek
+
+'o' + '^' > U+00F4 c o with Circumflex
+'o' + '`' > U+00F2 c o with Grave
+'o' + "'" > U+00F3 c o with Acute
+'o' + '-' > U+014D c o with Macron
+'o' + '*' > U+01EB c o with Ogonek
+'o' + '#' > U+01ED c o with Macron and Ogonek
+
+'a' + '^' > U+00E2 c a with Circumflex
+'a' + '`' > U+00E0 c a with Grave
+'a' + "'" > U+00E1 c a with Acute
+'a' + '-' > U+0101 c a with Macron
+
+'e' + '^' > U+00EA c e with Circumflex
+'e' + '`' > U+00E8 c e with Grave
+'e' + "'" > U+00E9 c e with Acute
+'e' + '-' > U+0113 c e with Macron
+
+'i' + '^' > U+00EE c i with Circumflex
+'i' + '`' > U+00EC c i with Grave
+'i' + "'" > U+00ED c i with Acute
+'i' + '-' > U+012B c i with Macron
+
+'u' + '^' > U+00FB c u with Circumflex
+'u' + '`' > U+00F9 c u with Grave
+'u' + "'" > U+00FA c u with Acute
+'u' + '-' > U+016B c u with Macron
+
+'A' + '%' > U+212B  c A with ring above
+'A' + '#' > U+01FA c A with ring above and acute

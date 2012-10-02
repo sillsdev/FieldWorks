@@ -1,0 +1,315 @@
+/* Help.css 2009-07-31 */
+/* Style sheet for Help topics */
+
+/* For information about resetting default values of Web browsers, */
+/* see pages 13 and 29 of CSS Mastery: Advanced Web Standards Solutions. */
+/* Instead of the universal selector which does not work for the RoboHelp editor, */
+/* adapt from the pattern in http://meyerweb.com/eric/tools/css/reset/ */
+html,
+body,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+p,
+a,
+img,
+ol,
+ul,
+li,
+table,
+tr,
+th,
+td
+{
+font-size: 100%; /* Typography */
+margin: 0; /* Layout */
+outline: 0;
+border: 0;
+padding: 0;
+vertical-align: baseline;
+background: transparent /* Color */
+}
+
+/* For information about organizing style sheets by typography, layout, and color, */
+/* see http://www.alistapart.com/articles/progressiveenhancementwithcss */
+
+/* TYPOGRAPHY =============================================================== */
+/* Help topics use only one font. The base size is 75% of the learner's default size. */
+/* Nominal values in pixels (px) assume medium text size and 100% zoom magnification. */
+
+body
+{
+font-family: Verdana, Helvetica, Arial, sans-serif;
+font-size: 75%; /* 12px */
+}
+
+/* Block elements ----------------------------------------------------------- */
+/* The RoboHelp editor uses the x-next-class and x-next-type properties, */
+/* which are analogous to the Style for Next Paragraph property in Microsoft Word. */
+/* These properties are expected errors if you validate this Cascading Style Sheet. */
+
+/* Headings: the value in em of margin-top or margin-bottom depends on font-size. */
+
+h1, /* Heading 1 is not used in Help topics */
+h2 /* Heading 2 */
+{
+font-size: 150%; /* 18px */
+/* No margin-top because Heading 2 is the first element in the body. */
+margin-bottom: 0.4em; /* 7px = 0.4 * 150% * 12px */
+x-next-class: BodyText;
+x-next-type: p;
+}
+
+h3 /* Heading 3 */
+{
+font-size: 115%; /* 14px */
+margin-top: 0.87em; /* 12px */
+margin-bottom: 0.52em; /* 7px = 0.52 * 115% * 12px */
+x-next-class: BodyText;
+x-next-type: p;
+}
+
+h4 /* Heading 4 */
+{
+font-size: 100%; /* 12px */
+margin-top: 1em; /* 12px */
+margin-bottom: 0.6em; /* 7px = 0.6 * 100% * 12px */
+x-next-class: BodyText;
+x-next-type: p;
+}
+
+h4.Note
+{
+padding-left: 1.5em; /* 18px, same as padding-left of ul */
+background: url(Note.png) no-repeat left center;
+}
+
+h4.Tip
+{
+padding-left: 1.5em; /* 18px, same as padding-left of ul */
+background: url(Tip.png) no-repeat left center;
+}
+
+h4.Important
+{
+padding-left: 1.5em; /* 18px, same as padding-left of ul */
+background: url(Important.png) no-repeat left center;
+}
+
+h4.Caution
+{
+padding-left: 1.5em; /* 18px, same as padding-left of ul */
+background: url(Caution.png) no-repeat left center;
+}
+
+h4.Warning
+{
+padding-left: 1.5em; /* 18px, same as padding-left of ul */
+background: url(Warning.png) no-repeat left center;
+}
+
+/* Paragraphs */
+
+li p, /* Paragraphs in lists and tables do not need a class. */
+tr p, /* Will override the margin-bottom, see below. */
+p.BodyText
+{
+line-height: 1.34; /* 16px */
+margin-bottom: 0.6em; /* 7px */
+}
+
+p.SpaceSingle
+{
+line-height: 1; /* 12px */
+}
+
+p.SpaceHalf
+{
+line-height: 0.5; /* 6px */
+}
+
+/* Paragraphs in table cells */
+
+tr p.BodyText, /* For paragraphs in tables which previously had a class. */
+tr th p, /* Table Heading Row */
+tr td p /* Table Row */
+{
+margin-top: 0.25em; /* 3px */
+margin-bottom: 0.25em; /* Override default for paragraphs. */
+}
+
+/* Lists: see https://developer.mozilla.org/en/Consistent_List_Indentation */
+
+ul /* List Bullet and List Bullet 2 */
+{
+list-style: disc;
+padding-left: 1.5em; /* 18px */
+}
+
+ul.none /* List aligned at left with no bullets, especially for lists of hyperlinks. */
+{
+list-style: none;
+text-indent: -1.5em; /* 18px, hanging indent. */
+}
+
+ol /* List Number */
+{
+list-style: decimal;
+padding-left: 2em; /* 24px, wide enough for a single decimal digit. */
+}
+
+li table /* Though rare, a table might follow the main paragraph in a list item. */
+{
+margin-bottom: 0.6em; /* 7px, same as a paragraph. */
+}
+
+/* Inline elements ---------------------------------------------------------- */
+
+/* Character styles */
+
+span.BookTitle,
+span.DefinedWord,
+span.Emphasis, /* Equivalent to the em element. */
+span.Placeholder,
+span.Style,
+span.VernacularEmphasis
+{
+font-style: italic;
+}
+
+span.Keyboard,
+span.Strong, /* Equivalent to the strong element. */
+span.TypedText,
+span.UserInterface,
+span.VernacularStrong
+{
+font-weight: bold;
+}
+
+/* The line spacing of Doulos SIL is inherently loose */
+/* to be able to display multiple stacked diacritics. */
+/* Times New Roman has many, though not all, vernacular characters. */
+span.Vernacular,
+span.VernacularEmphasis,
+span.VernacularStrong
+{
+font-family: "Doulos SIL", "Times New Roman", serif;
+font-size: 144%;
+}
+
+span.FileName
+{
+/* Same as Default paragraph font in Help topics */
+}
+
+/* Hyperlinks */
+
+a:link /* Pseudo-class excludes anchor element with name attribute instead of href. */
+{
+text-decoration: underline;
+}
+
+/* LAYOUT =================================================================== */
+
+body
+{
+padding-top: 0.66em; /* 8px */
+padding-bottom: 1em; /* 12px */
+padding-left: 1em;
+padding-right: 1em;
+max-width: 60em; /* 720px, limits the line length */
+/* if the screen resolution is large and the browser window is maximized. */
+/* However, it does not affect Internet Explorer 6 and earlier, */
+/* nor Microsoft HTML Help if topics have a DOCTYPE declaration for quirks mode. */
+}
+
+img.right
+{
+float: right;
+clear: right; /* If there are multiple images in an element, they lay out vertically instead of horizontally. */
+}
+
+/* Tables */
+
+table
+{
+border-style: none;
+}
+
+th, /* Table Heading Row */
+td /* Table Row */
+{
+/* No padding-left: align the left edge of the table with BodyText paragraphs. */
+padding-right: 1em; /* 12px */
+text-align: left;
+vertical-align: baseline; /* Align cells containing text with cells containing images. */
+border-style: none;
+}
+
+/* If a table needs borders, add two attributes to the table start tag: */
+/* HTML: <table class=TableGrid cellspacing=0 ...> */
+/* XHTML: <table class="TableGrid" cellspacing="0" ...> */
+/* Note: The default for cellspacing is 2. */
+/* The one-pixel border consists of the top and left from table itself; */
+/* the bottom and right from each cell. */
+
+table.TableGrid /* Table Grid */
+{
+border-spacing: 0px;
+border-top-style: solid;
+border-top-width: 1px;
+border-left-style: solid;
+border-left-width: 1px;
+}
+
+table.TableGrid th, /* Table Heading Row */
+table.TableGrid td /* Table Row */
+{
+border-spacing: 0px;
+border-bottom-style: solid;
+border-bottom-width: 1px;
+border-right-style: solid;
+border-right-width: 1px;
+padding-left: 0.5em; /* 6px */
+padding-right: 0.5em; /* 6px */
+}
+
+/* COLOR ==================================================================== */
+/* Help topics use the learner's default text and background colors. */
+
+/* Tables */
+
+table.TableGrid /* Table Grid */
+{
+border-color: #000000; /* Black */
+}
+
+th /* Table Heading Row */
+{
+background-color: #dddddd; /* light shade of gray */
+}
+
+/* Hyperlinks */
+
+a:link,
+a:visited
+{
+color: #0000ff; /* Blue */
+}
+
+a:active,
+a:focus,
+a:hover
+{
+color: #ff0000; /* Red */
+}
+
+/* Highlighted text can occur with or without a style. */
+
+.highlighted
+{
+background-color: #ffffab; /* desaturated yellow rgb(255,255,171) hsv(60,33%,100%) */
+}

@@ -1,0 +1,87 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{B1EC5099-5500-4B0C-BC7F-D5965B0A78DE}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks.Tools</RootNamespace>
+	<AssemblyName>FileCache</AssemblyName>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccAuxPath>
+	</SccAuxPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>bin\Debug\FileCache.xml</DocumentationFile>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+	<Reference Include="System.configuration" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Runtime.Remoting" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="App.config" />
+	<None Include="Properties\Settings.settings">
+	  <Generator>SettingsSingleFileGenerator</Generator>
+	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	</None>
+	<Compile Include="CacheManager.cs" />
+	<Compile Include="Properties\Settings.cs" />
+	<Compile Include="Properties\Settings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	  <DependentUpon>Settings.settings</DependentUpon>
+	</Compile>
+	<Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\LocalFileCache\LocalFileCache.csproj">
+	  <Project>{71A0C15F-7AD9-40F0-BD35-86BEA72CD1F1}</Project>
+	  <Name>LocalFileCache</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\RemoteFileCache\RemoteFileCache.csproj">
+	  <Project>{75223048-84B5-4E72-AE1E-20561A2FDA42}</Project>
+	  <Name>RemoteFileCache</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\SettingsProvider\SettingsProvider.csproj">
+	  <Project>{E1C9DB5B-5BA4-4A23-8980-BBBA798E9C08}</Project>
+	  <Name>SettingsProvider</Name>
+	</ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

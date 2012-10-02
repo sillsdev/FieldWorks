@@ -1,0 +1,101 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="EcMergeModulesFragment">
+		<!-- Media item 1 is defined in EC.wxs -->
+		<Media Id='2' Cabinet='EC2.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='3' Cabinet='EC3.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='4' Cabinet='EC4.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='5' Cabinet='EC5.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='6' Cabinet='EC6.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='7' Cabinet='EC7.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='8' Cabinet='EC8.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='9' Cabinet='EC9.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='10' Cabinet='EC10.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='11' Cabinet='EC11.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='12' Cabinet='EC12.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='13' Cabinet='EC13.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='14' Cabinet='EC14.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='15' Cabinet='EC15.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='16' Cabinet='EC16.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='17' Cabinet='EC17.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='18' Cabinet='EC18.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='19' Cabinet='EC19.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='20' Cabinet='EC20.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='21' Cabinet='EC21.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='22' Cabinet='EC22.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='23' Cabinet='EC23.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='24' Cabinet='EC24.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='25' Cabinet='EC25.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='26' Cabinet='EC26.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='27' Cabinet='EC27.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='28' Cabinet='EC28.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='29' Cabinet='EC29.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='30' Cabinet='EC30.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='31' Cabinet='EC31.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='32' Cabinet='EC32.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='33' Cabinet='EC33.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='34' Cabinet='EC34.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='35' Cabinet='EC35.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='36' Cabinet='EC36.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='37' Cabinet='EC37.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='38' Cabinet='EC38.cab' EmbedCab='no' CompressionLevel='high'/>
+
+		<DirectoryRef Id="INSTALLDIR">
+			<!-- The following merge modules install to the default directory: C:\Program Files\SIL\SILConverters -->
+	  <Merge Id="AdaptIt2Unicode" Language="1033" SourceFile="Installer\externalencodingconverters\AdaptIt2UnicodeMM.msm" DiskId="2"/>
+	  <Merge Id="Clipboard_EncConverter" Language="1033" SourceFile="Installer\externalencodingconverters\Clipboard EncConverter MM.msm" DiskId="13"/>
+	  <Merge Id="DChartHelper" Language="1033" SourceFile="Installer\externalencodingconverters\DChartHelperMM.msm" DiskId="14"/>
+	  <Merge Id="MS_KB908002_Fix" Language="1033" SourceFile="Installer\MS KB908002 Fix.msm" DiskId="15"/>
+			<Merge Id="SCOffice" Language="1033" SourceFile="Installer\externalencodingconverters\SCOfficeMM.msm" DiskId="16"/>
+			<Merge Id="SFM_Converter" Language="1033" SourceFile="Installer\externalencodingconverters\SFM Converter.msm" DiskId="17"/>
+			<Merge Id="SILConvertersForWord" Language="1033" SourceFile="Installer\externalencodingconverters\SILConvertersForWordMM.msm" DiskId="18"/>
+			<Merge Id="TECkitMapUEditor" Language="1033" SourceFile="Installer\externalencodingconverters\TECkitMapUEditor.msm" DiskId="19"/>
+	  <Merge Id="XmlConverters" Language="1033" SourceFile="Installer\externalencodingconverters\XmlConvertersMM.msm" DiskId="20"/>
+	  <Merge Id="Jump2TbxMergeModule" Language="1033" SourceFile="Installer\externalencodingconverters\Jump2TbxMergeModule.msm" DiskId="21"/>
+	</DirectoryRef>
+	<DirectoryRef Id="AllUserAppDataSIL">
+		<Merge Id="EcFolderACLs" Language="1033" SourceFile="Installer\EcFolderACLs.msm" DiskId="1"/>
+		<Merge Id="CscDot" Language="1033" SourceFile="Installer\externalencodingconverters\CscDotMM.msm" DiskId="36"/>
+		<Merge Id="DcmDot" Language="1033" SourceFile="Installer\externalencodingconverters\DcmDotMM.msm" DiskId="37"/>
+		<Merge Id="SpellFixerEc" Language="1033" SourceFile="Installer\externalencodingconverters\SpellFixerEcMM.msm" DiskId="38"/>
+	</DirectoryRef>
+	<DirectoryRef Id="AllUserAppDataSILConverters31">
+	  <Merge Id="SetupSCOptionsInstaller" Language="1033" SourceFile="Installer\externalencodingconverters\SetupSCOptionsInstallerMM.msm" DiskId="22"/>
+	  <Merge Id="FindPhone2IPA" Language="1033" SourceFile="Installer\externalencodingconverters\FindPhone2IPA.msm" DiskId="23"/>
+	  <Merge Id="ICUTransliterators" Language="1033" SourceFile="Installer\externalencodingconverters\ICUTransliterators.msm" DiskId="24"/>
+	  <Merge Id="SAGIndic" Language="1033" SourceFile="Installer\externalencodingconverters\SAGIndic.msm" DiskId="25"/>
+	  <Merge Id="Central_Africa" Language="1033" SourceFile="Installer\externalencodingconverters\Central Africa.msm" DiskId="26"/>
+	  <Merge Id="East_Africa" Language="1033" SourceFile="Installer\externalencodingconverters\East Africa.msm" DiskId="27"/>
+	  <Merge Id="Eastern_Congo_Group" Language="1033" SourceFile="Installer\externalencodingconverters\Eastern Congo Group.msm" DiskId="28"/>
+	  <Merge Id="Hebrew" Language="1033" SourceFile="Installer\externalencodingconverters\Hebrew.msm" DiskId="29"/>
+	  <Merge Id="IndicConverters" Language="1033" SourceFile="Installer\externalencodingconverters\IndicConverters.msm" DiskId="30"/>
+	  <Merge Id="NLCI_India" Language="1033" SourceFile="Installer\externalencodingconverters\NLCI (India).msm" DiskId="31"/>
+	  <Merge Id="PNG" Language="1033" SourceFile="Installer\externalencodingconverters\PNG.msm" DiskId="32"/>
+	  <Merge Id="West_Africa" Language="1033" SourceFile="Installer\externalencodingconverters\West Africa.msm" DiskId="33"/>
+	  <Merge Id="BasicConverters" Language="1033" SourceFile="Installer\externalencodingconverters\BasicConverters.msm" DiskId="34"/>
+	  <Merge Id="Cameroon" Language="1033" SourceFile="Installer\externalencodingconverters\Cameroon.msm" DiskId="35"/>
+	</DirectoryRef>
+	<DirectoryRef Id="SIL2">
+			<!-- The following merge modules install to the directory: C:\Program Files\Common Files\SIL -->
+			<Merge Id="SetPath" Language="1033" SourceFile="Installer\SetPath.msm" DiskId="1"/>
+			<Merge Id="EncConverters_Core_GAC" Language="1033" SourceFile="Installer\EC_GAC_30.msm" DiskId="2"/>
+			<Merge Id="AIGuesser" Language="1033" SourceFile="Installer\externalencodingconverters\AIGuesserMM.msm" DiskId="4"/>
+			<Merge Id="ScHelp" Language="1033" SourceFile="Installer\externalencodingconverters\ScHelpMM.msm" DiskId="5"/>
+			<Merge Id="CC_DLL" Language="1033" SourceFile="Installer\externalencodingconverters\CC DLL.msm" DiskId="6"/>
+			<Merge Id="ICU" Language="1033" SourceFile="Installer\ICU040.msm" DiskId="7"/>
+			<Merge Id="ICUECHelp" Language="1033" SourceFile="Installer\ICUECHelp.msm" DiskId="7"/>
+			<Merge Id="Managed_Install_Fix" Language="1033" SourceFile="Installer\Managed Install Fix.msm" DiskId="2"/>
+			<Merge Id="PerlEC" Language="1033" SourceFile="Installer\PerlEC.msm" DiskId="8"/>
+			<Merge Id="PythonEC" Language="1033" SourceFile="Installer\PythonEC.msm" DiskId="9"/>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="Installer\externalencodingconverters\TECkit DLLs.msm" DiskId="10"/>
+			<Merge Id="TECkit_DOCs" Language="1033" SourceFile="Installer\externalencodingconverters\TECkit DOCs.msm" DiskId="11"/>
+			<Merge Id="TECkit_EXEs" Language="1033" SourceFile="Installer\externalencodingconverters\TECkit EXEs.msm" DiskId="12"/>
+		</DirectoryRef>
+		<DirectoryRef Id="SystemFolder">
+			<Merge Id="MFC" Language="1033" SourceFile="Installer\ExternalMergeModules\Microsoft_VC90_MFC_x86.msm" DiskId="3"/>
+			<Merge Id="MFC_Policy" Language="1033" SourceFile="Installer\ExternalMergeModules\policy_9_0_Microsoft_VC90_MFC_x86.msm" DiskId="3"/>
+			<Merge Id="CRT" Language="1033" SourceFile="Installer\ExternalMergeModules\Microsoft_VC90_CRT_x86.msm" DiskId="3"/>
+			<Merge Id="CRT_Policy" Language="1033" SourceFile="Installer\ExternalMergeModules\policy_9_0_Microsoft_VC90_CRT_x86.msm" DiskId="3"/>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

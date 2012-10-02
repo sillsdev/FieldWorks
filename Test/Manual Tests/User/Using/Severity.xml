@@ -1,0 +1,20 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Severity.xml">
+ <title tag="useSev">Choosing a severity level</title>
+ <index>
+  <li>report: severity</li>
+  <li>severity of a bug</li>
+  <li>setting severity of a bug</li>
+ </index>
+ <introduction>
+  <p>Severity measures impact of the bug on the system under test not considering user perspective.</p>
+ </introduction>
+ <guidelines>
+  <p>If the severity is not indicated in the bug pattern, here are some guidelines to identify the severity level of a bug:</p>
+  <ul>
+	<li>Assign 1 "Fatal" if the program crashes or data is lost or corrupted or there is a safety-related failure</li>
+	<li>Assign 2 "Severe" if the program fails to meet the specifications in a way that affects a user's ability to get work done and there is no reasonable workaround</li>
+	<li>Assign 3 "Minor" if the program fails to meet specifications in a less significant way</li>
+  </ul>
+ </guidelines>
+</task>

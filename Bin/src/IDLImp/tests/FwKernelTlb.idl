@@ -1,0 +1,2253 @@
+#line 1 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+
+
+
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+#line 1 "c:\\FwTeXp\\src\\Generic\\Common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 17 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	#line 1 "c:\\fwtexp\\src\\kernel\\FwKernel.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwTool") cpp_quote(",") cpp_quote("37396941-4DD1-11d4-8078-0000C0FB81B5") cpp_quote(");") [ uuid("37396941-4DD1-11d4-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface IFwTool : IUnknown
+{
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT NewMainWnd(
+		[in] BSTR bstrServerName,
+		[in] BSTR bstrDbName,
+		[in] int hvoLangProj,
+		[in] int hvoMainObj,
+		[in] int encUi,
+		[in] int nTool,
+		[in] int nParam,
+		[out] int * ppidNew,
+		[out, retval] long * phtool);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT NewMainWndWithSel(
+		[in] BSTR bstrServerName,
+		[in] BSTR bstrDbName,
+		[in] int hvoLangProj,
+		[in] int hvoMainObj,
+		[in] int encUi,
+		[in] int nTool,
+		[in] int nParam,
+		[in, size_is(chvo)] const long * prghvo,
+		[in] int chvo,
+		[in, size_is(cflid)] const int * prgflid,
+		[in] int cflid,
+		[in] int ichCur,
+		[in] int nView,
+		[out] int * ppidNew,
+		[out, retval] long * phtool);
+
+
+
+
+
+
+	HRESULT CloseMainWnd(
+		[in] long htool,
+		[out, retval] ComBool *pfCancelled);
+
+
+
+
+
+
+
+	HRESULT CloseDbAndWindows(
+		[in] BSTR bstrSvrName,
+		[in] BSTR bstrDbName,
+		[in] ComBool fOkToClose);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IUndoAction") cpp_quote(",") cpp_quote("7B22BF52-2748-4730-B094-095D8C082453") cpp_quote(");") [ uuid("7B22BF52-2748-4730-B094-095D8C082453"), object, pointer_default(unique) ] interface IUndoAction : IUnknown
+{
+
+	HRESULT Undo();
+
+
+	HRESULT Redo();
+
+
+	HRESULT Commit();
+
+
+
+	HRESULT IsDataChange(ComBool * pfRet);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IActionHandler") cpp_quote(",") cpp_quote("32C2020C-3094-42bc-80FF-45AD89826F62") cpp_quote(");") [ uuid("32C2020C-3094-42bc-80FF-45AD89826F62"), object, pointer_default(unique) ] interface IActionHandler : IUnknown
+
+{
+
+
+
+
+
+
+
+	HRESULT BeginUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+
+
+	HRESULT EndUndoTask();
+
+
+
+
+	HRESULT ContinueUndoTask();
+
+
+
+	HRESULT EndOuterUndoTask();
+
+
+
+	HRESULT BreakUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT StartSeq(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo,
+		[in] IUndoAction * puact);
+
+
+
+
+
+	HRESULT AddAction(
+		[in] IUndoAction * puact);
+
+
+
+
+	HRESULT GetUndoText(
+		[out] BSTR * pbstrUndoText);
+
+
+
+
+
+	HRESULT GetRedoText(
+		[out] BSTR * pbstrRedoText);
+
+
+
+	HRESULT CanUndo(
+		[out] ComBool * pfCanUndo);
+
+
+
+	HRESULT CanRedo(
+		[out] ComBool * pfCanRedo);
+
+
+
+	HRESULT Undo();
+
+
+
+	HRESULT Redo();
+
+
+
+
+	HRESULT Commit();
+
+
+
+
+	HRESULT Close();
+
+
+
+	HRESULT Mark(
+		[out] int * phMark);
+
+
+
+	HRESULT DiscardToMark(
+		[in] int hMark);
+
+
+	[propget] HRESULT TopMarkHandle(
+		[out, retval] int * phMark);
+
+
+
+	[propget] HRESULT TasksSinceMark(
+		[in] ComBool fUndo,
+		[out, retval] ComBool * pf);
+};
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CDED8B0B-5BD0-43be-96C4-6B8E8E7B017D") cpp_quote(",") cpp_quote("ActionHandler") cpp_quote(");") [ uuid(CDED8B0B-5BD0-43be-96C4-6B8E8E7B017D) ] coclass ActionHandler
+{
+	interface IActionHandler;
+};
+#line 299 "c:\\fwtexp\\src\\kernel\\FwKernel.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IAdvInd") cpp_quote(",") cpp_quote("5F74AB40-EFE8-4a0d-B9AE-30F493FE6E21") cpp_quote(");") [ uuid("5F74AB40-EFE8-4a0d-B9AE-30F493FE6E21"), object, pointer_default(unique) ] interface IAdvInd : IUnknown
+{
+
+
+
+
+	HRESULT Step(
+		[in] int nStepAmt);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IAdvInd2") cpp_quote(",") cpp_quote("639C98DB-A241-496d-BE19-1EFC85CA1DD7") cpp_quote(");") [ uuid("639C98DB-A241-496d-BE19-1EFC85CA1DD7"), object, pointer_default(unique) ] interface IAdvInd2 : IAdvInd
+{
+
+	HRESULT NextStage();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IAdvInd3") cpp_quote(",") cpp_quote("86b6ae62-3dfa-4020-b5d1-7fa28e7726e4") cpp_quote(");") [ uuid("86b6ae62-3dfa-4020-b5d1-7fa28e7726e4"), object, pointer_default(unique) ] interface IAdvInd3 : IAdvInd
+{
+
+
+	[propput] HRESULT Title(
+		[in] BSTR bstrTitle);
+
+
+	[propput] HRESULT Message(
+		[in] BSTR bstrMessage);
+
+
+	[propput] HRESULT Position(
+		[in] int nPos);
+
+	[propput] HRESULT StepSize(
+		[in] int nStepInc);
+
+	HRESULT SetRange(
+		[in] int nMin,
+		[in] int nMax);
+};
+#line 25 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwtexp\\src\\kernel\\TextServ.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+interface ITsString;
+interface ITsTextProps;
+interface ITsStrFactory;
+interface ITsPropsFactory;
+interface ITsStrBldr;
+interface ITsIncStrBldr;
+interface ITsPropsBldr;
+interface ITsMultiString;
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("const OLECHAR kchObject = 0xFFFC;")
+cpp_quote("#else // !defined(__cplusplus)")
+const OLECHAR kchObject = 0xFFFC;
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextPropVar
+{
+	ktpvDefault    = 0x0,
+	ktpvMilliPoint = 0x1,
+	ktpvRelative   = 0x2,
+	ktpvEnum       = 0x3,
+
+	ktpvNinch      = 0xF
+} FwTextPropVar;
+
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextPropType
+{
+
+	ktptEncAndWs = 1,
+
+
+	ktptItalic = 2,
+
+
+	ktptBold = 3,
+
+
+	ktptSuperscript = 4,
+
+
+	ktptUnderline = 5,
+
+
+
+	ktptFontSize = 6,
+
+
+
+	ktptOffset = 7,
+
+
+
+	ktptForeColor = 8,
+
+
+
+	ktptBackColor = 9,
+
+
+
+	ktptUnderColor = 10,
+
+
+
+
+
+
+
+	ktptBaseEncAndWs = 16,
+
+
+	ktptAlign = 17,
+
+
+
+
+	ktptFirstIndent = 18,
+
+
+	ktptLeadingIndent = 19,
+	ktptMarginLeading = 19,
+
+
+	ktptTrailingIndent = 20,
+	ktptMarginTrailing = 20,
+
+
+	ktptSpaceBefore = 21,
+	ktptMswMarginTop = 21,
+
+
+	ktptSpaceAfter = 22,
+	ktptMarginBottom = 22,
+
+
+	ktptTabDef = 23,
+
+
+
+
+	ktptLineHeight = 24,
+
+
+
+	ktptParaColor = 25,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	ktptMarginTop = 50,
+
+
+
+
+
+
+	ktptFontFamily = 1,
+	ktptCharStyle = 2,
+	ktptParaStyle = 3,
+	ktptTabList = 4,
+	ktptTags = 5,
+	ktptObjData = 6,
+
+
+
+
+
+
+	ktptRightToLeft = 128,
+	ktptDirectionDepth = 129,
+
+	ktptFontVariations = 130,
+
+
+
+
+
+
+
+	ktptWritingSystemStyle = 131,
+	ktptWsStyleAppend = 132,
+	ktptNamedStyle = 133,
+	ktptPadLeading = 134,
+	ktptPadTrailing = 135,
+	ktptPadTop = 136,
+	ktptPadBottom = 137,
+
+	ktptBorderTop = 138,
+	ktptBorderBottom = 139,
+	ktptBorderLeading = 140,
+	ktptBorderTrailing = 141,
+	ktptBorderColor = 142,
+
+	ktptBulNumScheme = 143,
+	ktptBulNumStartAt = 144,
+	ktptBulNumTxtBef = 145,
+	ktptBulNumTxtAft = 146,
+	ktptBulNumFontInfo = 147,
+
+
+	ktptKeepWithNext = 148,
+	ktptKeepTogether = 149,
+	ktptHyphenate = 150,
+	ktptMaxLines = 151,
+
+
+	ktptCellBorderWidth = 152,
+	ktptCellSpacing = 153,
+	ktptCellPadding = 154,
+
+	ktptEditable = 155,
+
+	ktptWsStyle = 156,
+
+
+	ktptWsOverrides = 157,
+
+	ktptWsOverridesAppend = 158,
+	ktptSetRowDefaults = 159,
+
+
+
+	ktptRelLineHeight = 160,
+	ktptTableRule = 161,
+
+
+
+	ktptFieldName = 9998,
+
+
+
+	ktptMarkItem = 9999
+
+} FwTextPropType;
+
+
+
+
+
+
+typedef [v1_enum] enum TptEditable
+ {
+	ktptNotEditable = 0,
+	ktptIsEditable,
+	ktptSemiEditable,
+} TptEditable;
+
+
+
+
+typedef [v1_enum] enum FwObjDataTypes
+{
+	kodtPictEven = 1,
+	kodtPictOdd = 2,
+
+
+
+
+
+
+
+
+	kodtNameGuidHot,
+
+
+
+
+	kodtExternalPathName,
+} FwObjDataTypes;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextScalarProp
+{
+
+
+
+
+
+
+	kscpEncoding = ((ktptEncAndWs) << 2) | 2,
+
+
+
+	kscpEncAndWs = ((ktptEncAndWs) << 2) | 3,
+
+
+
+	kscpItalic = ((ktptItalic) << 2) | 0,
+
+
+
+	kscpBold = ((ktptBold) << 2) | 0,
+
+
+
+	kscpSuperscript = ((ktptSuperscript) << 2) | 0,
+
+
+
+	kscpUnderline = ((ktptUnderline) << 2) | 0,
+
+
+
+
+	kscpFontSize = ((ktptFontSize) << 2) | 2,
+
+
+
+
+	kscpOffset = ((ktptOffset) << 2) | 2,
+
+
+
+
+	kscpForeColor = ((ktptForeColor) << 2) | 2,
+
+
+
+
+	kscpBackColor = ((ktptBackColor) << 2) | 2,
+
+
+
+
+	kscpUnderColor = ((ktptUnderColor) << 2) | 2,
+
+
+
+
+
+
+
+
+	kscpBaseEncoding = ((ktptBaseEncAndWs) << 2) | 2,
+
+
+
+	kscpBaseEncAndWs = ((ktptBaseEncAndWs) << 2) | 3,
+
+
+
+	kscpAlign = ((ktptAlign) << 2) | 0,
+
+
+
+
+
+	kscpFirstIndent = ((ktptFirstIndent) << 2) | 2,
+
+
+
+	kscpLeadingIndent = ((ktptLeadingIndent) << 2) | 2,
+
+
+
+	kscpTrailingIndent = ((ktptTrailingIndent) << 2) | 2,
+
+
+
+	kscpSpaceBefore = ((ktptSpaceBefore) << 2) | 2,
+
+
+
+	kscpSpaceAfter = ((ktptSpaceAfter) << 2) | 2,
+
+
+
+	kscpTabDef = ((ktptTabDef) << 2) | 2,
+
+
+
+
+
+	kscpLineHeight = ((ktptLineHeight) << 2) | 2,
+
+
+
+
+	kscpParaColor = ((ktptParaColor) << 2) | 2,
+
+
+
+	kscpMarkItem = ((ktptMarkItem) << 2) | 0
+
+} FwTextScalarProp;
+
+
+
+
+
+typedef [v1_enum] enum FwTextStringProp
+{
+	kstpFontFamily = ktptFontFamily,
+	kstpCharStyle = ktptCharStyle,
+	kstpParaStyle = ktptParaStyle,
+	kstpTabList = ktptTabList,
+	kstpTags = ktptTags,
+	kstpObjData = ktptObjData,
+
+	kstpFontVariations = ktptFontVariations,
+	kstpWritingSystemStyle = ktptWritingSystemStyle,
+	kstpWsStyleAppend = ktptWsStyleAppend,
+	kstpNamedStyle = ktptNamedStyle,
+	kstpBulNumTxtBef = ktptBulNumTxtBef,
+	kstpBulNumTxtAft = ktptBulNumTxtAft,
+	kstpBulNumFontInfo = ktptBulNumFontInfo,
+	kstpWsStyle = ktptWsStyle,
+	kstpWsOverrides = ktptWsOverrides,
+	kstpWsOverridesAppend = ktptWsOverridesAppend,
+
+
+	 kstpFieldName = ktptFieldName
+
+} FwTextStringProp;
+
+
+
+
+
+typedef [v1_enum] enum FwTextPropConstants
+{
+
+	kdenTextPropRel = 10000,
+
+
+	kcbitTextPropVar = 4,
+
+
+
+	knNinch = 0x80000000,
+
+	knConflicting = 0x80000001,
+} FwTextPropConstants;
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextToggleVal
+{
+	kttvOff = 0,
+	kttvForceOn = 1,
+	kttvInvert = 2,
+} FwTextToggleVal;
+
+
+
+
+
+
+typedef [v1_enum] enum FwSuperscriptVal
+{
+	kssvOff = 0,
+	kssvSuper = 1,
+	kssvSub = 2,
+} FwSuperscriptVal;
+
+
+
+
+
+
+typedef [v1_enum] enum FwTextColor
+{
+	kclrWhite       = 0x00FFFFFF,
+	kclrBlack       = 0x00000000,
+	kclrRed         = 0x000000FF,
+	kclrGreen       = 0x0000FF00,
+	kclrBlue        = 0x00FF0000,
+	kclrYellow		= 0x0000FFFF,
+	kclrMagenta		= 0x00FF00FF,
+	kclrCyan		= 0x00FFFF00,
+
+
+
+
+	kclrReserved1 = 0x80000000,
+	kclrReserved2 = 0x80000001,
+
+	kclrTransparent = 0xC0000000,
+} FwTextColor;
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum FwUnderlineType
+{
+	kuntMin,
+
+	kuntNone = kuntMin,
+	kuntDotted,
+	kuntDashed,
+	kuntSingle,
+	kuntDouble,
+
+
+	kuntSquiggle,
+
+	kuntLim,
+} FwUnderlineType;
+
+
+
+
+
+typedef [v1_enum] enum FwTextAlign
+{
+	ktalMin,
+
+	ktalLeading = ktalMin,
+	ktalLeft,
+	ktalCenter,
+	ktalRight,
+	ktalTrailing,
+	ktalJustify,
+
+	ktalLim,
+} FwTextAlign;
+
+
+
+typedef struct TsRunInfo
+{
+	int ichMin;
+	int ichLim;
+	int irun;
+} TsRunInfo;
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quote(",") cpp_quote("F1EF76E2-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E2-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsString : IUnknown
+{
+
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT Length(
+		[out, retval] int * pcch);
+
+	[propget] HRESULT RunCount(
+		[out, retval] int * pcrun);
+
+
+
+
+
+	[propget] HRESULT RunAt(
+		[in] int ich,
+		[out, retval] int * pirun);
+
+	[propget] HRESULT MinOfRun(
+		[in] int irun,
+		[out, retval] int * pichMin);
+
+	[propget] HRESULT LimOfRun(
+		[in] int irun,
+		[out, retval] int * pichLim);
+
+	HRESULT GetBoundsOfRun(
+		[in] int irun,
+		[out] int * pichMin,
+		[out] int * pichLim);
+
+
+
+
+	HRESULT FetchRunInfoAt(
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+	HRESULT FetchRunInfo(
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+	[propget] HRESULT RunText(
+		[in] int irun,
+		[out, retval] BSTR * pbstr);
+
+	HRESULT GetChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, retval] BSTR * pbstr);
+
+
+	[restricted, local] HRESULT FetchChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, size_is(ichLim - ichMin)] OLECHAR * prgch);
+
+
+
+
+	[restricted, local] HRESULT LockText(
+		[out] const OLECHAR ** pprgch,
+		[out] int * pcch);
+
+	[restricted, local] HRESULT UnlockText(
+		[in] const OLECHAR * prgch);
+
+	[restricted, local] HRESULT LockRun(
+		[in] int irun,
+		[out] const OLECHAR ** pprgch,
+		[out] int * pcch);
+
+	[restricted, local] HRESULT UnlockRun(
+		[in] int irun,
+		[in] const OLECHAR * prgch);
+
+
+
+	[propget] HRESULT PropertiesAt(
+		[in] int ich,
+		[out, retval] ITsTextProps ** ppttp);
+
+	[propget] HRESULT Properties(
+		[in] int irun,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+
+
+	HRESULT GetBldr(
+		[out, retval] ITsStrBldr ** pptsb);
+
+
+
+	HRESULT GetIncBldr(
+		[out, retval] ITsIncStrBldr ** pptisb);
+
+
+	HRESULT GetFactoryClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+
+
+	HRESULT Equals(
+		[in] ITsString * ptss,
+		[out, retval] ComBool * pfEqual);
+
+
+
+	HRESULT WriteAsXml(
+		[in] IStream * pstrm,
+		[in] int cchIndent,
+		[in] int enc,
+		[in] ComBool fWriteObjData);
+};
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_quote(",") cpp_quote("F3342FE2-205F-45a8-890B-09BE9BBDC6B7") cpp_quote(");") [ uuid("F3342FE2-205F-45a8-890B-09BE9BBDC6B7"), object, pointer_default(unique) ] interface ITsTextProps : IUnknown
+{
+
+
+	[propget] HRESULT IntPropCount(
+		[out, retval] int * pcv);
+
+
+	HRESULT GetIntProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] int * pnVar,
+		[out, retval] int * pnVal);
+
+
+
+
+	HRESULT GetIntPropValues(
+		[in] int tpt,
+		[out] int * pnVar,
+		[out, retval] int * pnVal);
+
+
+	[propget] HRESULT StrPropCount(
+		[out, retval] int * pcv);
+
+	HRESULT GetStrProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out, retval] BSTR * pbstrVal);
+
+
+	HRESULT GetStrPropValue(
+		[in] int tpt,
+		[out, retval] BSTR * pbstrVal);
+
+
+
+
+
+	HRESULT GetBldr(
+		[out, retval] ITsPropsBldr ** pptpb);
+
+
+	HRESULT GetFactoryClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT Serialize(
+		[in] IStream * pstrm);
+
+	HRESULT SerializeRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcb);
+
+
+
+	HRESULT SerializeRgPropsRgb(
+		[in] int cpttp,
+		[in] ITsTextProps ** rgpttp,
+		[in] int * rgich,
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcb);
+
+
+
+
+
+	HRESULT WriteAsXml(
+		[in] IStream * pstrm,
+		[in] int cchIndent);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrFactory") cpp_quote(",") cpp_quote("F1EF76E4-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E4-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsStrFactory : IUnknown
+{
+	HRESULT DeserializeStringStreams(
+		[in] IStream * pstrmTxt,
+		[in] IStream * pstrmFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeString(
+		[in] BSTR bstrTxt,
+		[in] IStream * pstrmFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeStringRgb(
+		[in] BSTR bstrTxt,
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[out, retval] ITsString ** pptss);
+	HRESULT DeserializeStringRgch(
+		[in, size_is(*pcchTxt)] const OLECHAR * prgchTxt,
+		[in, out] int * pcchTxt,
+		[in, size_is(*pcbFmt)] const BYTE * prgbFmt,
+		[in, out] int * pcbFmt,
+		[out, retval] ITsString ** pptss);
+
+
+
+
+	HRESULT MakeString(
+		[in] BSTR bstr,
+		[in] int enc,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[restricted] HRESULT MakeStringRgch(
+		[in, size_is(cch)] const OLECHAR * prgch,
+		[in] int cch,
+		[in] int enc,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[restricted] HRESULT MakeStringWithPropsRgch(
+		[in, size_is(cch)] const OLECHAR * prgch,
+		[in] int cch,
+		[in] ITsTextProps * pttp,
+		[out, retval] ITsString ** pptss);
+
+
+
+	HRESULT GetBldr(
+		[out, retval] ITsStrBldr ** pptsb);
+
+
+	HRESULT GetIncBldr(
+		[out, retval] ITsIncStrBldr ** pptisb);
+
+
+
+	[propget] HRESULT RunCount(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[out, retval] int * pcrun);
+
+
+
+	HRESULT FetchRunInfoAt(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+	HRESULT FetchRunInfo(
+		[in, size_is(cbFmt)] const BYTE * prgbFmt,
+		[in] int cbFmt,
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+};
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsFactory") cpp_quote(",") cpp_quote("8DCE56A6-CFF1-4402-95FE-2B574912B54E") cpp_quote(");") [ uuid("8DCE56A6-CFF1-4402-95FE-2B574912B54E"), object, pointer_default(unique) ] interface ITsPropsFactory : IUnknown
+{
+	HRESULT DeserializeProps(
+		[in] IStream * pstrm,
+		[out, retval] ITsTextProps ** ppttp);
+	HRESULT DeserializePropsRgb(
+		[in, size_is(*pcb)] const BYTE * prgb,
+		[in, out] int * pcb,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+	HRESULT DeserializeRgPropsRgb(
+		[in] int cpttpMax,
+		[in, size_is(*pcb)] const BYTE * prgb,
+		[in, out] int * pcb,
+		[out] int * pcpttpRet,
+		[out, size_is(cpttpMax)] ITsTextProps ** rgpttp,
+		[out, size_is(cpttpMax)] int * rgich);
+
+
+
+
+
+	HRESULT MakeProps(
+		[in] BSTR bstrStyle,
+		[in] int enc,
+		[in] int ws,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+
+
+	[restricted] HRESULT MakePropsRgch(
+		[in, size_is(cch)] const OLECHAR * prgchStyle,
+		[in] int cch,
+		[in] int enc,
+		[in] int ws,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+	HRESULT GetPropsBldr(
+		[out] ITsPropsBldr ** pptpb);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrBldr") cpp_quote(",") cpp_quote("F1EF76E6-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E6-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsStrBldr : IUnknown
+{
+
+
+
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+	[propget] HRESULT Length(
+		[out, retval] int * pcch);
+	[propget] HRESULT RunCount(
+		[out, retval] int * pcrun);
+
+
+	[propget] HRESULT RunAt(
+		[in] int ich,
+		[out, retval] int * pirun);
+
+	HRESULT GetBoundsOfRun(
+		[in] int irun,
+		[out] int * pichMin,
+		[out] int * pichLim);
+	[restricted] HRESULT FetchRunInfoAt(
+		[in] int ich,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+	[restricted] HRESULT FetchRunInfo(
+		[in] int irun,
+		[out] TsRunInfo * ptri,
+		[out, retval] ITsTextProps ** ppttp);
+
+
+	[propget] HRESULT RunText(
+		[in] int irun,
+		[out, retval] BSTR * pbstr);
+	HRESULT GetChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, retval] BSTR * pbstr);
+	[restricted, local] HRESULT FetchChars(
+		[in] int ichMin,
+		[in] int ichLim,
+		[out, size_is(ichLim - ichMin)] OLECHAR * prgch);
+
+
+	[propget] HRESULT PropertiesAt(
+		[in] int ich,
+		[out, retval] ITsTextProps ** pttp);
+	[propget] HRESULT Properties(
+		[in] int irun,
+		[out, retval] ITsTextProps ** pttp);
+
+
+
+
+
+
+
+
+	HRESULT Replace(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] BSTR bstrIns,
+		[in] ITsTextProps * pttp);
+
+
+
+	HRESULT ReplaceTsString(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] ITsString * ptssIns);
+
+
+
+	HRESULT ReplaceRgch(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in, size_is(cchIns)] const OLECHAR * prgchIns,
+		[in] int cchIns,
+		[in] ITsTextProps * pttp);
+
+
+	HRESULT SetProperties(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] ITsTextProps * pttp);
+
+
+
+	HRESULT SetIntPropValues(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+
+
+	HRESULT SetStrPropValue(
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+
+	HRESULT GetString(
+		[out, retval] ITsString ** pptss);
+
+	HRESULT Clear(
+		);
+
+
+	HRESULT GetBldrClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsIncStrBldr") cpp_quote(",") cpp_quote("F1EF76E7-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E7-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsIncStrBldr : IUnknown
+{
+
+	[propget, id(0)] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+
+
+
+	HRESULT Append(
+		[in] BSTR bstrIns);
+
+	HRESULT AppendTsString(
+		[in] ITsString * ptssIns);
+
+	[restricted] HRESULT AppendRgch(
+		[in, size_is(cchIns)] const OLECHAR * prgchIns,
+		[in] int cchIns);
+
+
+
+
+
+	HRESULT SetIntPropValues(
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+
+
+
+	HRESULT SetStrPropValue(
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+
+	HRESULT GetString(
+		[out, retval] ITsString ** pptss);
+
+	HRESULT Clear(
+		);
+
+
+	HRESULT GetIncBldrClsid(
+		[out, retval] CLSID * pclsid);
+	HRESULT SerializeFmt(
+		[in] IStream * pstrm);
+	HRESULT SerializeFmtRgb(
+		[out, size_is(cbMax)] BYTE * prgb,
+		[in] int cbMax,
+		[out, retval] int * pcbNeeded);
+
+};
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsBldr") cpp_quote(",") cpp_quote("F1EF76E8-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E8-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsPropsBldr : IUnknown
+{
+
+	[propget] HRESULT IntPropCount(
+		[out, retval] int * pcv);
+
+	HRESULT GetIntProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] int * pnVar,
+		[out] int * pnVal);
+
+
+	HRESULT GetIntPropValues(
+		[in] int tpt,
+		[out] int * pnVar,
+		[out] int * pnVal);
+
+
+	[propget] HRESULT StrPropCount(
+		[out, retval] int * pcv);
+
+	HRESULT GetStrProp(
+		[in] int iv,
+		[out] int * ptpt,
+		[out] BSTR * pbstrVal);
+
+
+	HRESULT GetStrPropValue(
+		[in] int tpt,
+		[out] BSTR * pbstrVal);
+
+
+
+	HRESULT SetIntPropValues(
+		[in] int tpt,
+		[in] int nVar,
+		[in] int nVal);
+
+	HRESULT SetStrPropValue(
+		[in] int tpt,
+		[in] BSTR bstrVal);
+
+
+
+	HRESULT GetTextProps(
+		[out, retval] ITsTextProps ** ppttp);
+};
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsMultiString") cpp_quote(",") cpp_quote("DD409520-C212-11d3-9BB7-00400541F9E9") cpp_quote(");") [ uuid("DD409520-C212-11d3-9BB7-00400541F9E9"), object, pointer_default(unique) ] interface ITsMultiString : IUnknown
+{
+
+	[propget] HRESULT StringCount(
+		[out, retval] int * pctss);
+
+
+
+
+
+
+	HRESULT GetStringFromIndex(
+		[in] int ienc,
+		[out] int * penc,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[propget] HRESULT String(
+		[in] int enc,
+		[out, retval] ITsString ** pptss);
+
+
+
+	[propputref] HRESULT String(
+		[in] int enc,
+		[in] ITsString * ptss);
+};
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E9-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsStrFactory") cpp_quote(");") [ uuid(F1EF76E9-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsStrFactory
+{
+	interface ITsStrFactory;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76EA-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsPropsFactory") cpp_quote(");") [ uuid(F1EF76EA-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsPropsFactory
+{
+	interface ITsPropsFactory;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76EB-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsStrBldr") cpp_quote(");") [ uuid(F1EF76EB-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsStrBldr
+{
+	interface ITsStrBldr;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76EC-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsIncStrBldr") cpp_quote(");") [ uuid(F1EF76EC-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsIncStrBldr
+{
+	interface ITsIncStrBldr;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsPropsBldr") cpp_quote(");") [ uuid(F1EF76ED-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsPropsBldr
+{
+	interface ITsPropsBldr;
+};
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-00400541F9E9") cpp_quote(",") cpp_quote("TsMultiString") cpp_quote(");") [ uuid(7A1B89C0-C2D6-11d3-9BB7-00400541F9E9) ] coclass TsMultiString
+{
+	interface ITsMultiString;
+};
+
+#line 1286 "c:\\fwtexp\\src\\kernel\\TextServ.idh"
+#line 26 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\FwTeXp\\src\\DbServices\\BackupDelegates.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IBackupDelegates") cpp_quote(",") cpp_quote("1C0FA5AF-00B4-4dc1-8F9E-168AF3F892B0") cpp_quote(");") [ uuid("1C0FA5AF-00B4-4dc1-8F9E-168AF3F892B0"), object, pointer_default(unique) ] interface IBackupDelegates : IUnknown
+	{
+
+		HRESULT GetLocalServer_Bkupd([out, string, retval] OLECHAR ** ppszSvrName);
+
+
+		HRESULT GetLogPointer_Bkupd([out, retval] IStream** ppfist);
+
+
+
+		HRESULT SaveAllData_Bkupd([in, string] const OLECHAR * pszDbName);
+
+
+
+		HRESULT CloseDbAndWindows_Bkupd(
+			[in, string]  const OLECHAR * pszSvrName,
+			[in, string]  const OLECHAR * pszDbName,
+			[in]  ComBool fOkToClose,
+			[out, retval] ComBool * pfWindowsClosed);
+
+
+
+		HRESULT IncExportedObjects_Bkupd();
+
+
+
+		HRESULT DecExportedObjects_Bkupd();
+
+
+
+		HRESULT CheckDbVerCompatibility_Bkupd(
+			[in, string]  const OLECHAR * pszSvrName,
+			[in, string]  const OLECHAR * pszDbName,
+			[out, retval] ComBool * pfCompatible);
+
+
+
+
+		HRESULT ReopenDbAndOneWindow_Bkupd(
+			[in, string] const OLECHAR * pszSvrName,
+			[in, string] const OLECHAR * pszDbName);
+	};
+#line 27 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\FwTeXp\\src\\DbServices\\DbBackup.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("DIFwBackupDb") cpp_quote(",") cpp_quote("00A94783-8F5F-42af-A993-49F2154A67E2") cpp_quote(");") [ uuid("00A94783-8F5F-42af-A993-49F2154A67E2"), dual, oleautomation, pointer_default(unique) ] interface DIFwBackupDb : IDispatch
+{
+
+
+
+	HRESULT Init([in] IBackupDelegates * pbkupd, [in] int hwndParent);
+
+
+	HRESULT CheckForMissedSchedules();
+
+
+	HRESULT Backup();
+
+
+	HRESULT Remind();
+
+
+
+
+
+
+
+
+
+
+	HRESULT UserConfigure([in] ComBool fShowRestore, [out] int * pnUserAction);
+};
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0783E03E-5208-4d71-9D98-3D4974C8E633") cpp_quote(",") cpp_quote("FwBackup") cpp_quote(");") [ uuid(0783E03E-5208-4d71-9D98-3D4974C8E633) ] coclass FwBackup
+{
+	interface DIFwBackupDb;
+};
+
+#line 76 "c:\\FwTeXp\\src\\DbServices\\DbBackup.idh"
+#line 28 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\FwTeXp\\src\\DbServices\\DbDisconnect.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDisconnectDb") cpp_quote(",") cpp_quote("0CC74E0C-3017-4c02-A507-3FB8CE621CDC") cpp_quote(");") [ uuid("0CC74E0C-3017-4c02-A507-3FB8CE621CDC"), object, pointer_default(unique) ] interface IDisconnectDb : IUnknown
+{
+
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] BSTR bstrDatabase,
+		[in] BSTR bstrServer,
+		[in] BSTR bstrReason,
+		[in] BSTR bstrExternalReason,
+		[in] ComBool fConfirmCancel,
+		[in] BSTR bstrCancelQuestion,
+		[in] int hwndParent);
+
+
+
+	HRESULT CheckConnections([out] int * pnResponse);
+
+
+
+	HRESULT DisconnectAll([out] ComBool * pfResult);
+
+
+	HRESULT ForceDisconnectAll();
+}
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("008B93C5-866A-4238-963B-3F6C51B5BB03") cpp_quote(",") cpp_quote("FwDisconnect") cpp_quote(");") [ uuid(008B93C5-866A-4238-963B-3F6C51B5BB03) ] coclass FwDisconnect
+{
+	interface IDisconnectDb;
+};
+
+#line 86 "c:\\FwTeXp\\src\\DbServices\\DbDisconnect.idh"
+#line 29 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\FwTeXp\\src\\DbServices\\RemoteWarn.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRemoteDbWarn") cpp_quote(",") cpp_quote("004C42AE-CB07-47b5-A936-D9CA4AC466D7") cpp_quote(");") [ uuid("004C42AE-CB07-47b5-A936-D9CA4AC466D7"), object, pointer_default(unique) ] interface IRemoteDbWarn : IUnknown
+{
+
+
+
+
+	HRESULT WarnSimple(
+		[in] BSTR bstrMessage,
+		[in] int nFlags,
+		[out] int * pnResponse);
+
+
+
+
+	HRESULT WarnWithTimeout(
+		[in] BSTR bstrMessage,
+		[in] int nTimeLeft);
+
+
+	HRESULT Cancel();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDbWarnSetup") cpp_quote(",") cpp_quote("06082023-C2BA-4425-90FD-2F76B74CCBE7") cpp_quote(");") [ uuid("06082023-C2BA-4425-90FD-2F76B74CCBE7"), object, pointer_default(unique) ] interface IDbWarnSetup : IUnknown
+{
+
+	HRESULT PermitRemoteWarnings();
+
+
+	HRESULT RefuseRemoteWarnings();
+}
+
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0732A981-4921-4d4b-9E1D-AF9362E2708D") cpp_quote(",") cpp_quote("FwRemote") cpp_quote(");") [ uuid(0732A981-4921-4d4b-9E1D-AF9362E2708D) ] coclass FwRemote
+{
+	interface IRemoteDbWarn;
+	interface IDbWarnSetup;
+};
+
+#line 113 "c:\\FwTeXp\\src\\DbServices\\RemoteWarn.idh"
+#line 30 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\FwTeXp\\Src\\CommonCOMDlgs\\CmnDlgs.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	interface IOpenFWProjectDlg;
+	interface IVwOleDbDa;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOpenFWProjectDlg") cpp_quote(",") cpp_quote("8645fa52-ee90-11d2-a9b8-0080c87b6086") cpp_quote(");") [ uuid("8645fa52-ee90-11d2-a9b8-0080c87b6086"), object, pointer_default(unique) ] interface IOpenFWProjectDlg : IUnknown
+	{
+
+
+
+
+
+
+
+
+
+
+
+		HRESULT Show(
+			[in] IStream * fist,
+			[in] BSTR bstrLocalServer,
+			[in] int userEnc,
+			[in] DWORD hwndParent,
+			[in] ComBool fAllowMenu,
+			[in] int clidSubitem,
+			[in] BSTR bstrHelpUrl);
+
+
+
+
+
+
+
+
+
+
+
+
+		HRESULT GetResults(
+			[out] ComBool * fHaveProject,
+			[out] int * hvoProj,
+			[out] BSTR * bstrProject,
+			[out] BSTR * bstrDatabase,
+			[out] BSTR * bstrMachine,
+			[out] GUID * guid,
+			[out] ComBool * fHaveSubitem,
+			[out] int * hvoSubitem,
+			[out] BSTR * bstrName);
+	};
+
+	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("8645fa53-ee90-11d2-a9b8-0080c87b6086") cpp_quote(",") cpp_quote("OpenFWProjectDlg") cpp_quote(");") [ uuid(8645fa53-ee90-11d2-a9b8-0080c87b6086) ] coclass OpenFWProjectDlg
+	{
+		interface IOpenFWProjectDlg;
+	};
+	#line 90 "c:\\FwTeXp\\Src\\CommonCOMDlgs\\CmnDlgs.idh"
+
+#line 31 "c:\\FwTeXp\\src\\Kernel\\FwKernelTlb.idl"
+};

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<post-build>
+		<!-- Create a manifest file - add the dependency for Common Controls v6. -->
+		<regfree executable="${dir.buildOutput}/Flex.exe">
+			<asis basedir="${fwroot}/Src/LexText/LexTextExe">
+				<include name="InclCommonControls.fragment.manifest"/>
+			</asis>
+		</regfree>
+	</post-build>
+</include>

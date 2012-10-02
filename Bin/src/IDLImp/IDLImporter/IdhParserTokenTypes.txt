@@ -1,0 +1,41 @@
+// $ANTLR 2.7.7 (20060930): idh.g -> IdhParserTokenTypes.txt$
+IdhParser    // output token vocab name
+COMMENT=4
+LITERAL_typedef="typedef"=5
+PREPROCESSOR=6
+IDENTIFIER=7
+LITERAL_DeclareInterface="DeclareInterface"=8
+LPAREN=9
+COMMA=10
+RPAREN=11
+LBRACE=12
+ATTRIBUTE=13
+RBRACE=14
+SEMICOLON=15
+LITERAL_DeclareCoClass="DeclareCoClass"=16
+LITERAL_DeclareDualInterface="DeclareDualInterface"=17
+"DeclareDualInterface2"=18
+LITERAL_interface="interface"=19
+LITERAL_enum="enum"=20
+LITERAL_struct="struct"=21
+EQUAL=22
+BAR=23
+PLUS=24
+LITERAL_const="const"=25
+STAR=26
+LBRACKET=27
+RBRACKET=28
+MINUS=29
+LITERAL_import="import"=30
+STRING_LITERAL=31
+ATTRVAL=32
+VARIABLE=33
+EXPRESSION=34
+ATTRLIST=35
+ESC("an escape sequence")=36
+OCTDIGIT("an octal digit")=37
+DIGIT=38
+HEXDIGIT=39
+LETTER=40
+WS=41
+IGNORE=42

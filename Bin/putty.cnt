@@ -1,0 +1,392 @@
+:Title PuTTY User Manual
+1 Title page=Top
+1 Chapter 1: Introduction to PuTTY
+2 Chapter 1: Introduction to PuTTY=t00000000
+2 Section 1.1: What are SSH, Telnet and Rlogin?=t00000001
+2 Section 1.2: How do SSH, Telnet and Rlogin differ?=t00000002
+1 Chapter 2: Getting started with PuTTY
+2 Chapter 2: Getting started with PuTTY=t00000003
+2 Section 2.1: Starting a session=t00000004
+2 Section 2.2: Verifying the Host Key (SSH only)=t00000005
+2 Section 2.3: Logging In=t00000006
+2 Section 2.4: After Logging In=t00000007
+2 Section 2.5: Logging Out=t00000008
+1 Chapter 3: Using PuTTY
+2 Chapter 3: Using PuTTY=t00000009
+2 Section 3.1: During your session
+3 Section 3.1: During your session=t00000010
+3 Section 3.1.1: Copying and pasting text=t00000011
+3 Section 3.1.2: Scrolling the screen back=t00000012
+3 Section 3.1.3: The System menu
+4 Section 3.1.3: The System menu=t00000013
+4 Section 3.1.3.1: The PuTTY Event Log=t00000014
+4 Section 3.1.3.2: Starting new sessions=t00000015
+4 Section 3.1.3.3: Changing your session settings=t00000016
+4 Section 3.1.3.4: Copy All to Clipboard=t00000017
+4 Section 3.1.3.5: Clearing and resetting the terminal=t00000018
+4 Section 3.1.3.6: Full screen mode=t00000019
+1 Section 3.2: Creating a log file of your session=t00000020
+1 Section 3.3: Altering your character set configuration=t00000021
+1 Section 3.4: Using X11 forwarding in SSH=t00000022
+1 Section 3.5: Using port forwarding in SSH=t00000023
+1 Section 3.6: Making raw TCP connections=t00000024
+2 Section 3.7: The PuTTY command line
+3 Section 3.7: The PuTTY command line=t00000025
+3 Section 3.7.1: Starting a session from the command line=t00000026
+3 Section 3.7.2: -cleanup=t00000027
+3 Section 3.7.3: Standard command-line options
+4 Section 3.7.3: Standard command-line options=t00000028
+4 Section 3.7.3.1: -load: load a saved session=t00000029
+4 Section 3.7.3.2: Selecting a protocol: -ssh, -telnet, -rlogin, -raw=t00000030
+4 Section 3.7.3.3: -v: increase verbosity=t00000031
+4 Section 3.7.3.4: -l: specify a login name=t00000032
+4 Section 3.7.3.5: -L and -R: set up port forwardings=t00000033
+4 Section 3.7.3.6: -m: read a remote command or script from a file=t00000034
+4 Section 3.7.3.7: -P: specify a port number=t00000035
+4 Section 3.7.3.8: -pw: specify a password=t00000036
+4 Section 3.7.3.9: -A and -a: control agent forwarding=t00000037
+4 Section 3.7.3.10: -X and -x: control X11 forwarding=t00000038
+4 Section 3.7.3.11: -t and -T: control pseudo-terminal allocation=t00000039
+4 Section 3.7.3.12: -C: enable compression=t00000040
+4 Section 3.7.3.13: -1 and -2: specify an SSH protocol version=t00000041
+4 Section 3.7.3.14: -i: specify an SSH private key=t00000042
+1 Chapter 4: Configuring PuTTY
+2 Chapter 4: Configuring PuTTY=t00000043
+2 Section 4.1: The Session panel
+3 Section 4.1: The Session panel=t00000044
+3 Section 4.1.1: The host name section=session.hostname
+3 Section 4.1.2: Loading and storing saved sessions=session.saved
+3 Section 4.1.3: ‘Close Window on Exit’=session.coe
+2 Section 4.2: The Logging panel
+3 Section 4.2: The Logging panel=logging.main
+3 Section 4.2.1: ‘Log file name’=logging.filename
+3 Section 4.2.2: ‘What to do if the log file already exists’=logging.exists
+2 Section 4.3: The Terminal panel
+3 Section 4.3: The Terminal panel=t00000045
+3 Section 4.3.1: ‘Auto wrap mode initially on’=terminal.autowrap
+3 Section 4.3.2: ‘DEC Origin Mode initially on’=terminal.decom
+3 Section 4.3.3: ‘Implicit CR in every LF’=terminal.lfhascr
+3 Section 4.3.4: ‘Use background colour to erase screen’=terminal.bce
+3 Section 4.3.5: ‘Enable blinking text’=terminal.blink
+3 Section 4.3.6: ‘Answerback to ^E’=terminal.answerback
+3 Section 4.3.7: ‘Local echo’=terminal.localecho
+3 Section 4.3.8: ‘Local line editing’=terminal.localedit
+3 Section 4.3.9: Remote-controlled printing=terminal.printing
+2 Section 4.4: The Keyboard panel
+3 Section 4.4: The Keyboard panel=t00000046
+3 Section 4.4.1: Changing the action of the Backspace key=keyboard.backspace
+3 Section 4.4.2: Changing the action of the Home and End keys=keyboard.homeend
+3 Section 4.4.3: Changing the action of the function keys and keypad=keyboard.funkeys
+3 Section 4.4.4: Controlling Application Cursor Keys mode=keyboard.appcursor
+3 Section 4.4.5: Controlling Application Keypad mode=keyboard.appkeypad
+3 Section 4.4.6: Using NetHack keypad mode=keyboard.nethack
+3 Section 4.4.7: Enabling a DEC-like Compose key=keyboard.compose
+3 Section 4.4.8: ‘Control-Alt is different from AltGr’=keyboard.ctrlalt
+2 Section 4.5: The Bell panel
+3 Section 4.5: The Bell panel=t00000047
+3 Section 4.5.1: ‘Set the style of bell’=bell.style
+3 Section 4.5.2: ‘Taskbar/caption indication on bell’=bell.taskbar
+3 Section 4.5.3: ‘Control the bell overload behaviour’=bell.overload
+2 Section 4.6: The Features panel
+3 Section 4.6: The Features panel=t00000048
+3 Section 4.6.1: Disabling application keypad and cursor keys=features.application
+3 Section 4.6.2: Disabling xterm-style mouse reporting=features.mouse
+3 Section 4.6.3: Disabling remote terminal resizing=features.resize
+3 Section 4.6.4: Disabling switching to the alternate screen=features.altscreen
+3 Section 4.6.5: Disabling remote window title changing=features.retitle
+3 Section 4.6.6: Disabling destructive backspace=features.dbackspace
+3 Section 4.6.7: Disabling remote character set configuration=features.charset
+2 Section 4.7: The Window panel
+3 Section 4.7: The Window panel=t00000049
+3 Section 4.7.1: Setting the size of the PuTTY window=window.size
+3 Section 4.7.2: What to do when the window is resized=window.resize
+3 Section 4.7.3: Controlling scrollback=window.scrollback
+2 Section 4.8: The Appearance panel
+3 Section 4.8: The Appearance panel=t00000050
+3 Section 4.8.1: Controlling the appearance of the cursor=appearance.cursor
+3 Section 4.8.2: Controlling the font used in the terminal window=appearance.font
+3 Section 4.8.3: Controlling the window title=appearance.title
+3 Section 4.8.4: ‘Hide mouse pointer when typing in window’=appearance.hidemouse
+3 Section 4.8.5: Controlling the window border=appearance.border
+2 Section 4.9: The Behaviour panel
+3 Section 4.9: The Behaviour panel=t00000051
+3 Section 4.9.1: ‘Warn before closing window’=behaviour.closewarn
+3 Section 4.9.2: ‘Window closes on ALT-F4’=behaviour.altf4
+3 Section 4.9.3: ‘System menu appears on ALT-Space’=behaviour.altspace
+3 Section 4.9.4: ‘System menu appears on Alt alone’=behaviour.altonly
+3 Section 4.9.5: ‘Ensure window is always on top’=behaviour.alwaysontop
+3 Section 4.9.6: ‘Full screen on Alt-Enter’=behaviour.altenter
+2 Section 4.10: The Translation panel
+3 Section 4.10: The Translation panel=t00000052
+3 Section 4.10.1: Controlling character set translation=translation.codepage
+3 Section 4.10.2: ‘Caps Lock acts as Cyrillic switch’=translation.cyrillic
+3 Section 4.10.3: Controlling display of line drawing characters=translation.linedraw
+2 Section 4.11: The Selection panel
+3 Section 4.11: The Selection panel=t00000053
+3 Section 4.11.1: Controlling the pasting of line drawing characters=selection.linedraw
+3 Section 4.11.2: Pasting in Rich Text Format=selection.rtf
+3 Section 4.11.3: Changing the actions of the mouse buttons=selection.buttons
+3 Section 4.11.4: ‘Shift overrides application's use of mouse’=selection.shiftdrag
+3 Section 4.11.5: Default selection mode=selection.rect
+3 Section 4.11.6: Configuring word-by-word selection=selection.charclasses
+2 Section 4.12: The Colours panel
+3 Section 4.12: The Colours panel=t00000054
+3 Section 4.12.1: ‘Bolded text is a different colour’=colours.bold
+3 Section 4.12.2: ‘Attempt to use logical palettes’=colours.logpal
+3 Section 4.12.3: Adjusting the colours in the terminal window=colours.config
+2 Section 4.13: The Connection panel
+3 Section 4.13: The Connection panel=t00000055
+3 Section 4.13.1: ‘Terminal-type string’=connection.termtype
+3 Section 4.13.2: ‘Auto-login username’=connection.username
+3 Section 4.13.3: Using keepalives to prevent disconnection=connection.keepalive
+3 Section 4.13.4: ‘Disable Nagle's algorithm’=connection.nodelay
+2 Section 4.14: The Proxy panel
+3 Section 4.14: The Proxy panel=proxy.main
+3 Section 4.14.1: Setting the proxy type=proxy.type
+3 Section 4.14.2: Excluding parts of the network from proxying=proxy.exclude
+3 Section 4.14.3: Username and password=proxy.auth
+3 Section 4.14.4: Specifying the Telnet proxy command=proxy.command
+3 Section 4.14.5: Selecting the version of the SOCKS protocol=proxy.socksver
+2 Section 4.15: The Telnet panel
+3 Section 4.15: The Telnet panel=t00000056
+3 Section 4.15.1: ‘Terminal-speed string’=telnet.termspeed
+3 Section 4.15.2: Setting environment variables on the server=telnet.environ
+3 Section 4.15.3: ‘Handling of OLD_ENVIRON ambiguity’=telnet.oldenviron
+3 Section 4.15.4: Passive and active Telnet negotiation modes=telnet.passive
+3 Section 4.15.5: ‘Keyboard sends telnet Backspace and Interrupt’=telnet.specialkeys
+3 Section 4.15.6: ‘Return key sends telnet New Line instead of ^M’=telnet.newline
+2 Section 4.16: The Rlogin panel
+3 Section 4.16: The Rlogin panel=t00000057
+3 Section 4.16.1: ‘Terminal-speed string’=rlogin.termspeed
+3 Section 4.16.2: ‘Local username’=rlogin.localuser
+2 Section 4.17: The SSH panel
+3 Section 4.17: The SSH panel=t00000058
+3 Section 4.17.1: Executing a specific command on the server=ssh.command
+3 Section 4.17.2: ‘Don't allocate a pseudo-terminal’=ssh.nopty
+3 Section 4.17.3: ‘Enable compression’=ssh.compress
+3 Section 4.17.4: ‘Preferred SSH protocol version’=ssh.protocol
+3 Section 4.17.5: Encryption algorithm selection=ssh.ciphers
+2 Section 4.18: The Auth panel
+3 Section 4.18: The Auth panel=t00000059
+3 Section 4.18.1: ‘Attempt TIS or CryptoCard authentication’=ssh.auth.tis
+3 Section 4.18.2: ‘Attempt keyboard-interactive authentication’=ssh.auth.ki
+3 Section 4.18.3: ‘Allow agent forwarding’=ssh.auth.agentfwd
+3 Section 4.18.4: ‘Allow attempted changes of username in SSH2’=ssh.auth.changeuser
+3 Section 4.18.5: ‘Private key file for authentication’=ssh.auth.privkey
+2 Section 4.19: The Tunnels panel
+3 Section 4.19: The Tunnels panel=t00000060
+3 Section 4.19.1: X11 forwarding=ssh.tunnels.x11
+3 Section 4.19.2: Port forwarding=ssh.tunnels.portfwd
+3 Section 4.19.3: Controlling the visibility of forwarded ports=ssh.tunnels.portfwd.localhost
+2 Section 4.20: The Bugs panel
+3 Section 4.20: The Bugs panel=t00000061
+3 Section 4.20.1: ‘Chokes on SSH1 ignore messages’=ssh.bugs.ignore1
+3 Section 4.20.2: ‘Refuses all SSH1 password camouflage’=ssh.bugs.plainpw1
+3 Section 4.20.3: ‘Chokes on SSH1 RSA authentication’=ssh.bugs.rsa1
+3 Section 4.20.4: ‘Miscomputes SSH2 HMAC keys’=ssh.bugs.hmac2
+3 Section 4.20.5: ‘Miscomputes SSH2 encryption keys’=ssh.bugs.derivekey2
+3 Section 4.20.6: ‘Requires padding on SSH2 RSA signatures’=ssh.bugs.rsapad2
+3 Section 4.20.7: ‘Chokes on Diffie-Hellman group exchange’=ssh.bugs.dhgex2
+1 Section 4.21: Storing configuration in a file=t00000062
+1 Chapter 5: Using PSCP to transfer files securely
+2 Chapter 5: Using PSCP to transfer files securely=t00000063
+2 Section 5.1: Starting PSCP=t00000064
+2 Section 5.2: PSCP Usage
+3 Section 5.2: PSCP Usage=t00000065
+3 Section 5.2.1: The basics
+4 Section 5.2.1: The basics=t00000066
+4 Section 5.2.1.1: user=t00000067
+4 Section 5.2.1.2: host=t00000068
+4 Section 5.2.1.3: source=t00000069
+4 Section 5.2.1.4: target=t00000070
+3 Section 5.2.2: Options
+4 Section 5.2.2: Options=t00000071
+4 Section 5.2.2.1: -p preserve file attributes=t00000072
+4 Section 5.2.2.2: -q quiet, don't show statistics=t00000073
+4 Section 5.2.2.3: -r copies directories recursively=t00000074
+4 Section 5.2.2.4: -batch avoid interactive prompts=t00000075
+2 Section 5.2.3: Return value=t00000076
+2 Section 5.2.4: Using public key authentication with PSCP=t00000077
+1 Section 5.3: Secure iXplorer=t00000078
+1 Chapter 6: Using PSFTP to transfer files securely
+2 Chapter 6: Using PSFTP to transfer files securely=t00000079
+2 Section 6.1: Starting PSFTP
+3 Section 6.1: Starting PSFTP=t00000080
+3 Section 6.1.1: -b: specify a file containing batch commands=t00000081
+3 Section 6.1.2: -bc: display batch commands as they are run=t00000082
+3 Section 6.1.3: -be: continue batch processing on errors=t00000083
+3 Section 6.1.4: -batch: avoid interactive prompts=t00000084
+2 Section 6.2: Running PSFTP
+3 Section 6.2: Running PSFTP=t00000085
+3 Section 6.2.1: General quoting rules for PSFTP commands=t00000086
+3 Section 6.2.2: The open command: start a session=t00000087
+3 Section 6.2.3: The quit command: end your session=t00000088
+3 Section 6.2.4: The help command: get quick online help=t00000089
+3 Section 6.2.5: The cd and pwd commands: changing the remote working directory=t00000090
+3 Section 6.2.6: The lcd and lpwd commands: changing the local working directory=t00000091
+3 Section 6.2.7: The get command: fetch a file from the server=t00000092
+3 Section 6.2.8: The put command: send a file to the server=t00000093
+3 Section 6.2.9: The reget and reput commands: resuming file transfers=t00000094
+3 Section 6.2.10: The dir command: list remote files=t00000095
+3 Section 6.2.11: The chmod command: change permissions on remote files=t00000096
+3 Section 6.2.12: The del command: delete remote files=t00000097
+3 Section 6.2.13: The mkdir command: create remote directories=t00000098
+3 Section 6.2.14: The rmdir command: remove remote directories=t00000099
+3 Section 6.2.15: The ren command: rename remote files=t00000100
+3 Section 6.2.16: The ! command: run a local Windows command=t00000101
+1 Section 6.3: Using public key authentication with PSFTP=t00000102
+1 Chapter 7: Using the command-line connection tool Plink
+2 Chapter 7: Using the command-line connection tool Plink=t00000103
+2 Section 7.1: Starting Plink=t00000104
+2 Section 7.2: Using Plink
+3 Section 7.2: Using Plink=t00000105
+3 Section 7.2.1: Using Plink for interactive logins=t00000106
+3 Section 7.2.2: Using Plink for automated connections=t00000107
+3 Section 7.2.3: Plink command line options=t00000108
+1 Section 7.3: Using Plink in batch files and scripts=t00000109
+1 Section 7.4: Using Plink with CVS=t00000110
+1 Section 7.5: Using Plink with WinCVS=t00000111
+1 Chapter 8: Using public keys for SSH authentication
+2 Chapter 8: Using public keys for SSH authentication=t00000112
+2 Section 8.1: Public key authentication - an introduction=t00000113
+2 Section 8.2: Using PuTTYgen, the PuTTY key generator
+3 Section 8.2: Using PuTTYgen, the PuTTY key generator=puttygen.general
+3 Section 8.2.1: Generating a new key=t00000114
+3 Section 8.2.2: Selecting the type of key=puttygen.keytype
+3 Section 8.2.3: Selecting the size (strength) of the key=puttygen.bits
+3 Section 8.2.4: The ‘Generate’ button=puttygen.generate
+3 Section 8.2.5: The ‘Key fingerprint’ box=puttygen.fingerprint
+3 Section 8.2.6: Setting a comment for your key=puttygen.comment
+3 Section 8.2.7: Setting a passphrase for your key=puttygen.passphrase
+3 Section 8.2.8: Saving your private key to a disk file=puttygen.savepriv
+3 Section 8.2.9: Saving your public key to a disk file=puttygen.savepub
+3 Section 8.2.10: ‘Public key for pasting into authorized_keys file’=puttygen.pastekey
+3 Section 8.2.11: Reloading a private key=puttygen.load
+3 Section 8.2.12: Dealing with private keys in other formats=puttygen.conversions
+1 Section 8.3: Getting ready for public key authentication=t00000115
+1 Chapter 9: Using Pageant for authentication
+2 Chapter 9: Using Pageant for authentication=pageant.general
+2 Section 9.1: Getting started with Pageant=t00000116
+2 Section 9.2: The Pageant main window
+3 Section 9.2: The Pageant main window=t00000117
+3 Section 9.2.1: The key list box=pageant.keylist
+3 Section 9.2.2: The ‘Add Key’ button=pageant.addkey
+3 Section 9.2.3: The ‘Remove Key’ button=pageant.remkey
+2 Section 9.3: The Pageant command line
+3 Section 9.3: The Pageant command line=t00000118
+3 Section 9.3.1: Making Pageant automatically load keys on startup=t00000119
+3 Section 9.3.2: Making Pageant run another program=t00000120
+1 Section 9.4: Using agent forwarding=t00000121
+1 Section 9.5: Security considerations=t00000122
+1 Chapter 10: Common error messages
+2 Chapter 10: Common error messages=t00000123
+2 Section 10.1: ‘The server's host key is not cached in the registry’=t00000124
+2 Section 10.2: ‘WARNING - POTENTIAL SECURITY BREACH!’=t00000125
+2 Section 10.3: ‘Out of space for port forwardings’=t00000126
+2 Section 10.4: ‘The first cipher supported by the server is ... below the configured warning threshold’=t00000127
+2 Section 10.5: ‘Out of memory’=t00000128
+2 Section 10.6: ‘Internal error’, ‘Internal fault’, ‘Assertion failed’=t00000129
+2 Section 10.7: ‘Server refused our public key’ or ‘Key refused’=t00000130
+2 Section 10.8: ‘Incorrect CRC received on packet’ or ‘Incorrect MAC received on packet’=t00000131
+2 Section 10.9: ‘Incoming packet was garbled on decryption’=t00000132
+2 Section 10.10: ‘Authentication failed at PuTTY X11 proxy’=t00000133
+2 Section 10.11: ‘Network error: Software caused connection abort’=t00000134
+2 Section 10.12: ‘Network error: Connection reset by peer’=t00000135
+2 Section 10.13: ‘Network error: Connection refused’=t00000136
+1 Appendix A: PuTTY FAQ
+2 Appendix A: PuTTY FAQ=t00000137
+2 Section A.1: Features supported in PuTTY
+3 Section A.1: Features supported in PuTTY=t00000138
+3 Question A.1.1: Does PuTTY support SSH v2?=t00000139
+3 Question A.1.2: Does PuTTY support reading OpenSSH or ssh.com SSHv2 private key files?=t00000140
+3 Question A.1.3: Does PuTTY support SSH v1?=t00000141
+3 Question A.1.4: Does PuTTY support local echo?=t00000142
+3 Question A.1.5: Does PuTTY support storing its settings in a disk file?=t00000143
+3 Question A.1.6: Does PuTTY support full-screen mode, like a DOS box?=t00000144
+3 Question A.1.7: Does PuTTY have the ability to remember my password so I don't have to type it every time?=t00000145
+3 Question A.1.8: Is there an option to turn off the annoying host key prompts?=t00000146
+3 Question A.1.9: Will you write an SSH server for the PuTTY suite, to go with the client?=t00000147
+3 Question A.1.10: Can PSCP or PSFTP transfer files in ASCII mode?=t00000148
+2 Section A.2: Ports to other operating systems
+3 Section A.2: Ports to other operating systems=t00000149
+3 Question A.2.1: What ports of PuTTY exist?=t00000150
+3 Question A.2.2: Will there be a port to Windows CE or PocketPC?=t00000151
+3 Question A.2.3: Is there a port to Windows 3.1?=t00000152
+3 Question A.2.4: Will there be a port to the Mac?=t00000153
+3 Question A.2.5: Will there be a port to Unix?=t00000154
+3 Question A.2.6: Will there be a port to EPOC?=t00000155
+2 Section A.3: Embedding PuTTY in other programs
+3 Section A.3: Embedding PuTTY in other programs=t00000156
+3 Question A.3.1: Is the SSH or Telnet code available as a DLL?=t00000157
+3 Question A.3.2: Is the SSH or Telnet code available as a Visual Basic component?=t00000158
+3 Question A.3.3: How can I use PuTTY to make an SSH connection from within another program?=t00000159
+2 Section A.4: Details of PuTTY's operation
+3 Section A.4: Details of PuTTY's operation=t00000160
+3 Question A.4.1: What terminal type does PuTTY use?=t00000161
+3 Question A.4.2: Where does PuTTY store its data?=t00000162
+2 Section A.5: HOWTO questions
+3 Section A.5: HOWTO questions=t00000163
+3 Question A.5.1: How can I make PuTTY start up maximised?=t00000164
+3 Question A.5.2: How can I create a Windows shortcut to start a particular saved session directly?=t00000165
+3 Question A.5.3: How can I start an SSH session straight from the command line?=t00000166
+3 Question A.5.4: How do I copy and paste between PuTTY and other Windows applications?=t00000167
+3 Question A.5.5: How do I use X forwarding and port forwarding? I can't find the Tunnels panel.=t00000168
+3 Question A.5.6: How do I use all PuTTY's features (public keys, port forwarding, SSH v2, etc.) in PSCP, PSFTP and Plink?=t00000169
+3 Question A.5.7: How do I use PSCP.EXE? When I double-click it gives me a command prompt window which then closes instantly.=t00000170
+3 Question A.5.8: How do I use PSCP to copy a file whose name has spaces in?=t00000171
+2 Section A.6: Troubleshooting
+3 Section A.6: Troubleshooting=t00000172
+3 Question A.6.1: Why do I see ‘Incorrect MAC received on packet’?=t00000173
+3 Question A.6.2: Why do I see ‘Fatal: Protocol error: Expected control record’ in PSCP?=t00000174
+3 Question A.6.3: I clicked on a colour in the Colours panel, and the colour didn't change in my terminal.=t00000175
+3 Question A.6.4: Plink on Windows 95 says it can't find WS2_32.DLL.=t00000176
+3 Question A.6.5: My PuTTY sessions close after an hour and tell me ‘Server failed host key check’.=t00000177
+3 Question A.6.6: After trying to establish an SSH 2 connection, PuTTY says ‘Out of memory’ and dies.=t00000178
+3 Question A.6.7: When attempting a file transfer, either PSCP or PSFTP says ‘Out of memory’ and dies.=t00000179
+3 Section A.6.8: PSFTP transfers files much slower than PSCP.=t00000180
+3 Question A.6.9: When I run full-colour applications, I see areas of black space where colour ought to be.=t00000181
+3 Question A.6.10: When I change some terminal settings, nothing happens.=t00000182
+3 Question A.6.11: I can't type characters that require the AltGr key.=t00000183
+3 Question A.6.12: My PuTTY sessions unexpectedly close after they are idle for a while.=t00000184
+3 Question A.6.13: PuTTY's network connections time out too quickly when network connectivity is temporarily lost.=t00000185
+3 Question A.6.14: When I cat a binary file, I get `PuTTYPuTTYPuTTY' on my command line.=t00000186
+3 Question A.6.15: When I cat a binary file, my window title changes to a nonsense string.=t00000187
+3 Question A.6.16: My keyboard stops working once PuTTY displays the password prompt.=t00000188
+3 Question A.6.17: One or more function keys don't do what I expected in a server-side application.=t00000189
+3 Question A.6.18: Since my SSH server was upgraded to OpenSSH 3.1p1/3.4p1, I can no longer connect with PuTTY.=t00000190
+3 Question A.6.19: Why do I see "Couldn't load private key from ..."? Why can PuTTYgen load my key but not PuTTY?=t00000191
+2 Section A.7: Security questions
+3 Section A.7: Security questions=t00000192
+3 Question A.7.1: Is it safe for me to download PuTTY and use it on a public PC?=t00000193
+3 Question A.7.2: What does PuTTY leave on a system? How can I clean up after it?=t00000194
+3 Question A.7.3: How come PuTTY now supports DSA, when the website used to say how insecure it was?=t00000195
+3 Question A.7.4: Couldn't Pageant use VirtualLock() to stop private keys being written to disk?=t00000196
+2 Section A.8: Administrative questions
+3 Section A.8: Administrative questions=t00000197
+3 Question A.8.1: Would you like me to register you a nicer domain name?=t00000198
+3 Question A.8.2: Would you like free web hosting for the PuTTY web site?=t00000199
+3 Question A.8.3: Why don't you move PuTTY to SourceForge?=t00000200
+3 Question A.8.4: Why can't I subscribe to the putty-bugs mailing list?=t00000201
+3 Question A.8.5: If putty-bugs isn't a general-subscription mailing list, what is?=t00000202
+3 Question A.8.6: How can I donate to PuTTY development?=t00000203
+2 Section A.9: Miscellaneous questions
+3 Section A.9: Miscellaneous questions=t00000204
+3 Question A.9.1: Is PuTTY a port of OpenSSH, or based on OpenSSH?=t00000205
+3 Question A.9.2: Where can I buy silly putty?=t00000206
+3 Question A.9.3: How do I pronounce PuTTY?=t00000207
+1 Appendix B: Feedback and bug reporting
+2 Appendix B: Feedback and bug reporting=t00000208
+2 Section B.1: General guidelines
+3 Section B.1: General guidelines=t00000209
+3 Section B.1.1: Sending large attachments=t00000210
+1 Section B.2: Reporting bugs=t00000211
+1 Section B.3: Requesting extra features=t00000212
+1 Section B.4: Requesting features that have already been requested=t00000213
+1 Section B.5: Support requests=t00000214
+1 Section B.6: Web server administration=t00000215
+1 Section B.7: Asking permission for things=t00000216
+1 Section B.8: Mirroring the PuTTY web site=t00000217
+1 Section B.9: Praise and compliments=t00000218
+1 Section B.10: E-mail address=t00000219
+1 Appendix C: PuTTY Licence
+2 Appendix C: PuTTY Licence=t00000220

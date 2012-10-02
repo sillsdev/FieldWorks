@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="Candle" default="candle.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	candle.build - Builds the candle project (candle.exe).
+	2005.09.12 johnls Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- candle-specific properties -->
+  <property name="candle.file.res.target" value="${dir.build.candle}\candle.res" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="candle.build" description="Peforms a full rebuild (clean then build)" depends="candle.clean, candle.inc" />
+
+  <!-- Clean -->
+  <target name="candle.clean" description="Cleans the build">
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="candle.exe" />
+		<include name="candle.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="candle.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the candle.exe.config -->
+	<copy todir="${dir.target.wix}">
+	  <fileset basedir="${dir.src.candle}">
+		<include name="candle.exe.config" />
+	  </fileset>
+	</copy>
+
+	<!-- Compile the candle.rc file -->
+	<rc rcfile="${dir.src.candle}\candle.rc" langid="0" output="${candle.file.res.target}" options="${rc.standardOptions} ${cl.standardIncludes}" />
+
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\candle.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.candle}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="candle.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <arg value="-win32res:&quot;${candle.file.res.target}&quot;" />
+	</csc>
+  </target>
+
+</project>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil>
+
+   <!-- Restore the Mutsun database, then time openning it to Lexicon Edit -->
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+	<var id="OpenProject" set="Mutsun"/>
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+	<on-application run = "ok" args = "-db $projectName" close = "no" on-fail = "assert">
+
+   <click log="all" select="menubar/file/project-management/backup-and-restore"/>
+   <model select="backup-and-restore/restore">
+   <on-dialog title="Backup and Restore">
+	 <click select="tab"/>
+	 <insert>%R</insert><!-- Restore from: -->
+	 <insert>C:\GuiTestDriver\</insert>
+	 <insert>%P</insert><!-- Project -->
+	 <click select="project/drop"/>
+	 <insert wait="300">{PGDN}</insert>
+	 <insert wait="500">{PGDN}</insert>
+	 <insert wait="500">{PGDN}</insert>
+	 <click select="project/list" path="$OpenProject"/>
+	 <insert>%V</insert> <!-- go to Version -->
+	 <insert>^{END}</insert>
+	 <insert>%S</insert>
+	 <do-once until="5000" on-fail="skip">
+		<on-dialog title="Restore Options" on-fail="skip">
+		  <insert>{DOWN}~</insert>
+		</on-dialog>
+		<on-dialog title="FieldWorks Backup System" on-fail="skip">
+			<click path="18:FieldWorks Backup System/9:OK/43:OK"/>
+		</on-dialog>
+	 </do-once>
+   </on-dialog>
+   </model>
+
+  <var id="FlexSig" set=" - FieldWorks Language Explorer"/>
+
+   <do-once until="60000" waiting-for="$OpenProject;$FlexSig">
+	  <on-dialog until="500" title="Twiddle Thumbs" on-fail="skip">
+		  <insert>~</insert> <!-- you never know -->
+	  </on-dialog>
+   </do-once>
+
+ </on-application>
+
+   <sound frequency = "700" duration = "500"/>
+   <on-application args="-db $OpenProject" run="yes" close="no" on-fail="assert">
+	  <glimpse select="sidebar/list" path="Lexicon Edit" prop="selected"/>
+   </on-application>
+
+</accil>

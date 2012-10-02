@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+	<dbversion output="${dir.srcProj}\DbVersion.cs">
+	  <sources>
+		<include name="${fwroot}\src\AppCore\DbVersion.h"/>
+	  </sources>
+	</dbversion>
+  </pre-build>
+  <post-clean>
+	<delete file="${dir.srcProj}\DbVersion.cs" verbose="true" failonerror="false"/>
+  </post-clean>
+</include>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="colorpal" num="0.11" abbr="clrp" file="StdCtrls\ColorPal.xml">
+ <title tag="colorpal">Color Pallet Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>A color pallet allows the visual selection of a color from a compact frame. A text box or read-only label is associated with each color pallet. When the pallet is not permanently displayed on the control frame, a drop-down triangle widget is used to access the pallet. Keystrokes allow operation when there is no pointer device.</p>
+   <p name="Specification">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html#Formatting-Background Color" type="doc">Formatting-Background Color</link>.</p>
+ </introduction>
+  <context>
+   <p>Each color pallet is tested with its associated control so that side-effects can be noted. Testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report. The first words of the bug report title should be a noun phrase containing the words "color pallet". See <link uri="textbox.xml" type="module">Text Box Tests</link> to test the associated text box, if any.</p>
+ </context>
+ <case id="clrpInsp" num="1" order="any">
+  <title tag="clrpInsp">Color Pallet Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the color pallet is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A label may be placed near the color pallet, usually to its left or on top. An underscored letter indicates an &lt;Alt&gt;&lt;alpha&gt; shortcut. If the color pallet has a drop-down, a triangular widget should be present.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the color pallet.
+   <r>The color pallet and label must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="Notes">To view the color pallet, the drop-down control may need to be activated.</p>
+   <p name="bug">Color pallet has incorrect appearance</p>
+   <p name="bug">Color pallet drop-down doesn't work</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the locations of the color pallet and label relative to eachother and other visible controls.
+   <r>The color pallet and label should be close to the positions indicated in the specification.</r>
+   <p name="bug">Color pallet has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">If on a toolbar, hover the cursor over the color pallet.
+   <r>A help bubble displays a short help message.</r>
+   <p name="bug">Color pallet doesn't have hover help</p>
+  </step>
+
+ </case>
+ <case id="clrpAct" num="2" order="any">
+  <title tag="clrpAct">Activate the Color Pallet Control</title>
+  <context>
+<p>When the control is enabled and showing in an application or dialog</p>
+</context>
+  <step name="2.1" link="Bug">Click the triangle to pull-down the color pallet.
+   <r>The color pallet should be displayed with the current color highlighted.</r>
+   <p name="bug">Clicked color pallet does not open</p>
+  </step>
+  <step name="2.2" link="Bug">When the color pallet has focus, press &lt;Alt&gt; &lt;DownArrow&gt;.
+   <r>The color pallet opens.</r>
+   <p name="bug">Shorted color pallet does not open</p>
+  </step>
+  <step name="2.3" link="Bug">When the color pallet has focus, press the arrow keys to change the selection and &lt;Enter&gt; to accept the selected value.
+   <r>The drop-down should not open, but the value shown in it should change according to the arrow keys; but the change does not take effect until &lt;Enter&gt; is pressed.</r>
+   <p name="bug">Color pallet doesn't respond to arrow keys</p>
+  </step>
+
+ </case>
+ <case id="clrpOp" num="3" order="any">
+  <title tag="clrpOp">Exercise the Color Pallet Control</title>
+  <context>
+<p>When the color pallet control is open on a toolbar or dialog</p>
+</context>
+  <step name="3.1" link="Bug">Click a color on the color pallet.
+   <r>
+<ul>
+	<li>The color pallet disappears.</li>
+	<li>The selected color is displayed in the text box or incorporated into the label.</li>
+   </ul>
+</r>
+   <p name="bug">Color pallet doesn't disappear</p>
+   <p name="bug">Color pallet doesn't show selected color</p>
+  </step>
+  <step name="3.2" link="Bug">Click somewhere else on the screen, or press Esc.
+   <r>
+<ul>
+	<li>The color pallet should disappear.</li>
+	<li>The selected color displayed in the combobox should not change.</li>
+	<li>If activated from a toolbar or tied to a visible toolbar by selected text, the corresponding icon's indicated color should not change.</li>
+   </ul>
+</r>
+   <p name="bug">Color pallet candidate color selected on focus move</p>
+  </step>
+  <step name="3.3" link="Bug">Press the arrow keys to change the selection and &lt;Enter&gt; to accept the selected value.
+   <r>The selection should move according to the arrow keys, and the value selected when &lt;Enter&gt; is pressed should take effect.</r>
+   <p name="bug">Color pallet doesn't show arrow-selected color</p>
+  </step>
+
+ </case>
+ <update date="Dec-21-00" author="MikeL">Created in XML</update>
+ <update date="Apr-09-01" author="MikeL">Added spec ref and list formatting in result fields</update>
+
+</test>

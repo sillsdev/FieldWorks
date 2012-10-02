@@ -1,0 +1,21 @@
+I fixed a bug in antlr-2.7.7\lib\csharp\antlr.runtime\antlr\InputBuffer.cs (which caused a crash). Otherwise
+the source code from version 2.7.7 is unchanged:
+
+Original version (2.7.7):
+		/*Get a lookahead character */
+		public virtual char LA(int i)
+		{
+			fill(i);
+			return (char) queue[markerOffset + i - 1];
+		}
+
+Fixed version:
+		/*Get a lookahead character */
+		public virtual char LA(int i)
+		{
+			fill(i);
+
+			if (queue.Count >= markerOffset + i)
+				return (char) queue[markerOffset + i - 1];
+			return CharScanner.EOF_CHAR;
+		}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Visits the lexicon tool views. -->
+
+<accil on-fail="assert">
+  <bug id="6044"/>
+
+<var id="projectName" set="Kalaba"/>
+<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<on-application run="ok" args="-db $projectName" on-fail="assert">
+
+   <model select="menubar/view/lexicon/*">
+	 <!--do-once until="9999999"-->
+	   <click until="9999999" path="$guiPath"/>
+	 <!--/do-once-->
+	 <on-dialog wait="1000" until="2000" title="Information" on-fail="skip">
+		 <click path="$ok"/>
+	 </on-dialog>
+	 <!-- not all views have tabs, so skip if there arn't any -->
+	 <model select="/fwuiml/$nodeName;[@role='view']/*/tab" on-fail="skip">
+	   <click path="$guiPath"/>
+	 </model>
+   </model>
+
+</on-application>
+</accil>

@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!--  **********************************************************   -->
+	<!--  ************************ commands ***********************   -->
+	<!--  **********************************************************   -->
+	<commands>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
+		<include path="DataTreeInclude.xml" query="window/commands/*"/>
+		<include path="InflAffixTemplateInclude.xml" query="window/commands/*"/>
+		<command id="CmdInsertPOS" label="Category" message="InsertItemInVector" shortcut="Ctrl+I" icon="AddItem">
+			<params className="PartOfSpeech"/>
+		</command>
+		<command id="CmdInsertEndocentricCompound" label="Headed Compound" message="InsertItemInVector" icon="endocompoundRule">
+			<params className="MoEndoCompound"/>
+		</command>
+		<command id="CmdInsertExocentricCompound" label="Non-headed Compound" message="InsertItemInVector" icon="exocompoundRule">
+			<params className="MoExoCompound"/>
+		</command>
+		<command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
+			<params className="CmPossibility" restrictToClerkID="ProdRestrict"/>
+		</command>
+	<command id="CmdInsertPhonologicalClosedFeature" label="_Phonological Feature..." message="InsertItemInVector" icon="addFeature" >
+	  <params className="FsClosedFeature" restrictToClerkID="phonologicalfeatures"/>
+	</command>
+	<command id="CmdInsertClosedFeature" label="_Feature..." message="InsertItemInVector" icon="addFeature">
+			<params className="FsClosedFeature" restrictToClerkID="features"/>
+		</command>
+		<command id="CmdInsertComplexFeature" label="_Complex Feature..." message="InsertItemInVector" icon="addComplexFeature">
+			<params className="FsComplexFeature" restrictToClerkID="features"/>
+		</command>
+		<command id="CmdInsertPhoneme" label="Phoneme" message="InsertItemInVector" icon="phoneme" shortcut="Ctrl+I">
+			<params className="PhPhoneme"/>
+		</command>
+		<!--  In Stage 1, there is only one boundary marker: word boundary (#).  It is inserted when a new language is created.
+		Therefore, there is no need for this tool in Stage 1.
+		<command id="CmdInsertBoundaryMarker" label="Boundary Marker" message="InsertItemInVector" icon="boundaryMarker">
+			<params className="PhBdryMarker"/>
+		</command>  -->
+		<command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
+			<params className="PhEnvironment"/>
+		</command>
+	<command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
+	  <params className="PhNCSegments"/>
+	</command>
+	<command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature" >
+	  <params className="PhNCFeatures"/>
+	</command>
+		<command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
+			<params className="PhRegularRule"/>
+		</command>
+		<command id="CmdInsertPhMetathesisRule" label="Metathesis Rule" message="InsertItemInVector" icon="metathesis">
+			<params className="PhMetathesisRule"/>
+		</command>
+		<command id="CmdInsertMorphemeACP" label="Rule to prevent morpheme co-occurrence" message="InsertItemInVector" icon="morphCoprohib">
+			<params className="MoMorphAdhocProhib"/>
+		</command>
+		<command id="CmdInsertAllomorphACP" label="Rule to prevent allomorph co-occurrence" message="InsertItemInVector" icon="alloCoprohib">
+			<params className="MoAlloAdhocProhib"/>
+		</command>
+		<command id="CmdInsertACPGroup" label="Group of ad hoc rules" message="InsertItemInVector" icon="coprohibGroup">
+			<params className="MoAdhocProhibGr"/>
+		</command>
+		<command id="CmdJumpToEnvironmentList" label="Show in Environments list" message="JumpToTool">
+			<parameters tool="EnvironmentEdit" className="PhEnvironment" ownerClass="PhPhonData" ownerField="Environments"/>
+		</command>
+		<command id="CmdShowEnvironmentErrorMessage" label="Describe Error in Environment" message="ShowEnvironmentError"/>
+		<command id="CmdInsertEnvSlash" label="Insert Environment slash" message="InsertSlash"/>
+		<command id="CmdInsertEnvUnderscore" label="Insert Environment bar" message="InsertEnvironmentBar"/>
+		<command id="CmdInsertEnvNaturalClass" label="Insert Natural Class" message="InsertNaturalClass"/>
+		<command id="CmdInsertEnvOptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
+		<command id="CmdInsertEnvHashMark" label="Insert Word Boundary" message="InsertHashMark"/>
+
+		<command id="CmdCtxtOccurOnce" label="Occurs exactly once" message="ContextSetOccurrence">
+			<parameters min="1" max="1"/>
+		</command>
+		<command id="CmdCtxtOccurZeroMore" label="Occurs zero or more times" message="ContextSetOccurrence">
+			<parameters min="0" max="-1"/>
+		</command>
+		<command id="CmdCtxtOccurOneMore" label="Occurs one or more times" message="ContextSetOccurrence">
+			<parameters min="1" max="-1"/>
+		</command>
+		<command id="CmdCtxtSetOccur" label="Set occurrence (min. and max.)..." message="ContextSetOccurrence"/>
+		<command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures"/>
+		<command id="CmdCtxtSetVariables" label="Set Feature Variables..." message="ContextSetVariables"/>
+		<command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass"/>
+		<command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme"/>
+
+		<command id="CmdMappingSetFeatures" label="Set Phonological Features..." message="MappingSetFeatures"/>
+		<command id="CmdMappingSetNC" label="Set Natural Class..." message="MappingSetNaturalClass"/>
+		<command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass"/>
+		<command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme"/>
+	</commands>
+	<!--  **********************************************************   -->
+	<!--  ************************ lists ***********************   -->
+	<!--  **********************************************************   -->
+	<lists>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
+		<list id="GrammarToolsList"/>
+	</lists>
+	<!-- ********************************************************** -->
+	<!-- ************* controls (embedded browse view) ************ -->
+	<!-- ********************************************************** -->
+	<controls>
+		<parameters id="guicontrols">
+			<guicontrol id="PhonemeFlatList">
+		<parameters id="phonemeList" listItemsClass="PhTerminalUnit" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="true">
+		  <columns>
+			<column label="Phoneme" width="33%" layout="Name" ws="$ws=best vernacular" field="Name"/>
+			<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
+			<column label="Graphemes" width="34%" multipara="true" layout="Codes"/>
+		  </columns>
+		</parameters>
+			</guicontrol>
+		  <guicontrol id="PhonologicalFeaturesFlatList">
+			<parameters id="PhonologicalFeaturesList" listItemsClass="FsClosedFeature" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+								hscroll="true" editable="false" selectColumn="false">
+			  <columns>
+				<column label="Value" width="20%">
+				  <obj class="FsClosedFeature" field="DummyValue" layout="empty">
+					<string field="Abbreviation" ws="$ws=best analysis"/>
+				  </obj>
+				</column>
+				<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation" visibility="menu"/>
+				<column label="Name" width="80%" layout="Name" ws="$ws=best analysis" field="Name"/>
+				<column label="Description" width="65%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
+			  </columns>
+			</parameters>
+		  </guicontrol>
+			<guicontrol id="FeatureConstraintFlatList">
+				<parameters id="FeatureConstraintList" listItemsClass="FsClosedFeature" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+									hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Polarity" width="20%">
+							<string field="DummyPolarity"/>
+						</column>
+						<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation" visibility="menu"/>
+						<column label="Name" width="80%" layout="Name" ws="$ws=best analysis" field="Name"/>
+						<column label="Description" width="65%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+		  <guicontrol id="EnvironmentFlatList">
+				<parameters id="environmentList" listItemsClass="PhEnvironment" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="true">
+					<columns>
+					  <column label="Environment" width="100%" layout="StringRepresentation" ws="$ws=vernacular"/>
+					  <column label="Name" width="33%" layout="Name" ws="$ws=analysis" visibility="menu"/>
+					  <column label="Description" width="33%" layout="Description" ws="$ws=analysis" visibility="menu"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="RuleEnvironmentFlatList">
+				<parameters id="ruleEnvironmentList" listItemsClass="PhEnvironment" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Environment" width="100%" layout="StringRepresentation" ws="$ws=vernacular"/>
+						<column label="Name" width="33%" layout="Name" ws="$ws=best analysis" field="Name" visibility="menu"/>
+						<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="RulePhonemeFlatList">
+				<parameters id="rulePhonemeList" listItemsClass="PhPhoneme" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+									hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Phoneme" width="33%" layout="Name" ws="$ws=best vernacular" field="Name"/>
+						<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
+						<column label="Graphemes" width="34%" multipara="true" layout="Codes"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="RuleNaturalClassFlatList">
+				<parameters id="ruleNaturalClassList" listItemsClass="PhNaturalClass" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+									hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Name" width="33%" layout="Name" ws="$ws=best analysis" field="Name"/>
+						<column label="Abbreviation" width="33%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+						<column label="Description" width="34%" layout="Description" ws="$ws=best analysis" field="Description"/>
+						<column label="Phonemes/Features" width="33%" layout="Segments" visibility="menu"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="InflAffixMsaFlatList">
+				<parameters id="inflAffixMsaList" listItemsClass="MoInflAffMsa" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="true">
+					<columns>
+					  <column label="Headword" editable="false" ws="$ws=vernacular" width="50%">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+							  <obj class="MoInflAffMsa" field="OwningEntry" layout="empty">
+								  <string field="HeadWord" ws="$ws=vernacular"/>
+							  </obj>
+							</span>
+						</column>
+					  <column label="Gloss" editable="false" width="50%">
+						<span>
+						  <properties>
+							<editable value="false"/>
+						  </properties>
+						  <string field="GlossTSS" ws="$ws=analysis"/>
+						</span>
+					  </column>
+					  <column label="Lexeme Form" editable="false" visibility="menu">
+						<span>
+						  <properties>
+							<editable value="false"/>
+						  </properties>
+						  <obj class="MoInflAffMsa" field="OwningEntry" layout="empty">
+							<obj field="LexemeForm" layout="empty">
+							  <string field="Form" ws="$ws=vernacular"/>
+							</obj>
+						  </obj>
+						</span>
+					  </column>
+					  <column label="Citation Form" editable="false" visibility="menu">
+						<span>
+						  <properties>
+							<editable value="false"/>
+						  </properties>
+						  <obj class="MoInflAffMsa" field="OwningEntry" layout="empty">
+							  <string field="CitationForm" ws="$ws=vernacular"/>
+						  </obj>
+						</span>
+					  </column>
+					  <column label="Allomorphs" editable="false" visibility="menu">
+						<span>
+						  <properties>
+							<editable value="false"/>
+						  </properties>
+						  <obj class="MoInflAffMsa" field="OwningEntry" layout="empty">
+							<seq field="AlternateForms" layout="empty" sep=", ">
+							  <string field="Form" ws="$ws=vernacular"/>
+							</seq>
+						  </obj>
+						</span>
+					  </column>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/guicontrol/*"/>
+			<clerks>
+			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
+			</clerks>
+		</parameters>
+	</controls>
+	<!--  **********************************************************   -->
+	<!--  ************************ menus ***********************   -->
+	<!--  **********************************************************   -->
+	<menubar>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
+	</menubar>
+	<!-- ********************************************************** -->
+	<!-- ************************ menuAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<menuAddOn>
+		<menu id="Insert">
+			<item command="CmdInsertPOS" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-POS-SubPossibilities" defaultVisible="false" label="Subcategory..."/>
+			<item command="CmdDataTree-Insert-POS-AffixTemplate" label="Affix Template" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-POS-AffixSlot" label="Affix Slot" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-POS-InflectionClass" label="Inflection Class" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertEndocentricCompound" defaultVisible="false"/>
+			<item command="CmdInsertExocentricCompound" defaultVisible="false"/>
+			<item command="CmdInsertExceptionFeature" defaultVisible="false"/>
+			<item command="CmdInsertPhonologicalClosedFeature" defaultVisible="false"/>
+			<item command="CmdInsertClosedFeature" defaultVisible="false"/>
+			<item command="CmdInsertComplexFeature" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-ClosedFeature-Value" label="Feature Value" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertPhoneme" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Phoneme-Code" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<!-- In Stage 1, there is only one boundary marker: word boundary (#).  It is inserted when a new language is created.
+		Therefore, there is no need for this tool in Stage 1.
+			<item command="CmdInsertBoundaryMarker"/>
+			<item label="-" translate="do not translate"/>  -->
+			<item command="CmdInsertSegmentNaturalClasses" defaultVisible="false"/>
+			<item command="CmdInsertFeatureNaturalClasses" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertPhEnvironment" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertPhRegularRule" defaultVisible="false"/>
+			<item command="CmdInsertPhMetathesisRule" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<!-- <menu id="ACP" label="Co-Prohibitions">  -->
+			<item command="CmdInsertMorphemeACP" defaultVisible="false"/>
+			<item command="CmdInsertAllomorphACP" defaultVisible="false"/>
+			<item command="CmdInsertACPGroup" defaultVisible="false"/>
+		</menu>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
+	</menuAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ contextMenus *********************** -->
+	<!-- ********************************************************** -->
+	<contextMenus>
+		<include path="DataTreeInclude.xml" query="window/contextMenus/*"/>
+		<include path="InflAffixTemplateInclude.xml" query="window/contextMenus/*"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
+
+		<menu id="mnuPhRegularRule">
+			<item command="CmdCtxtOccurOnce"/>
+			<item command="CmdCtxtOccurZeroMore"/>
+			<item command="CmdCtxtOccurOneMore"/>
+			<item command="CmdCtxtSetOccur"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdCtxtSetFeatures"/>
+			<item command="CmdCtxtSetVariables"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdCtxtJumpToNC"/>
+			<item command="CmdCtxtJumpToPhoneme"/>
+		</menu>
+		<menu id="mnuPhMetathesisRule">
+			<item command="CmdCtxtSetFeatures"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdCtxtJumpToNC"/>
+			<item command="CmdCtxtJumpToPhoneme"/>
+		</menu>
+		<menu id="mnuMoAffixProcess">
+			<item command="CmdCtxtSetFeatures"/>
+			<item command="CmdMappingSetFeatures"/>
+			<item command="CmdMappingSetNC"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdCtxtJumpToNC"/>
+			<item command="CmdCtxtJumpToPhoneme"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdMappingJumpToNC"/>
+			<item command="CmdMappingJumpToPhoneme"/>
+		</menu>
+	</contextMenus>
+	<!--  **********************************************************   -->
+	<!--  ************************ sidebar ***********************   -->
+	<!--  **********************************************************   -->
+	<sidebar>
+		<tab label="Grammar Tools" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
+	</sidebar>
+	<!--  **********************************************************   -->
+	<!--  ************************ toolbars ***********************   -->
+	<!--  **********************************************************   -->
+	<toolbars>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbars/*"/>
+	</toolbars>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbarsAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<toolbarsAddOn>
+		<toolbar id="Insert">
+			<item command="CmdInsertPOS" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-POS-SubPossibilities" label="Subcategory..." defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertEndocentricCompound" defaultVisible="false"/>
+			<item command="CmdInsertExocentricCompound" defaultVisible="false"/>
+			<item command="CmdInsertExceptionFeature" defaultVisible="false"/>
+	  <item command="CmdInsertPhonologicalClosedFeature" defaultVisible="false"/>
+	  <item command="CmdInsertClosedFeature" defaultVisible="false"/>
+	  <item command="CmdInsertComplexFeature" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertPhoneme" defaultVisible="false"/>
+			<!--  In Stage 1, there is only one boundary marker: word boundary (#).  It is inserted when a new language is created.
+		Therefore, there is no need for this tool in Stage 1.
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertBoundaryMarker"/>  -->
+			<item label="-" translate="do not translate"/>
+	  <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false"/>
+	  <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false"/>
+	  <item label="-" translate="do not translate"/>
+			<item command="CmdInsertPhEnvironment" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertPhRegularRule" defaultVisible="false"/>
+			<item command="CmdInsertPhMetathesisRule" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertMorphemeACP" defaultVisible="false"/>
+			<item command="CmdInsertAllomorphACP" defaultVisible="false"/>
+			<item command="CmdInsertACPGroup" defaultVisible="false"/>
+		</toolbar>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
+	</toolbarsAddOn>
+	<!--  **********************************************************   -->
+	<!--  ************************ resources ***********************   -->
+	<!--  **********************************************************   -->
+	<resources>
+		<imageList assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right, AddSubItem"/>
+		<imageList assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MEImages" field="buttonImages" size="small" labels="pos, endocompoundRule, exocompoundRule, phoneme, boundaryMarker, naturalClass, environment, morphCoprohib, alloCoprohib, coprohibGroup, AddItem, addFeature, addComplexFeature, addExceptionFeature, metathesis"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
+	</resources>
+	<!--  **********************************************************   -->
+	<!--  ************************ listeners ***********************   -->
+	<!--  **********************************************************   -->
+	<listeners>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
+		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MasterCatDlgListener"/>
+		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MasterInflFeatDlgListener"/>
+	<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MasterPhonFeatDlgListener"/>
+  </listeners>
+	<!-- ********************************************************** -->
+	<!-- ************************ virtual property declarations *********************** -->
+	<!-- ********************************************************** -->
+	<virtuals>
+		<!-- Support extensions for official areas. Add official virtuals in Main.xml, not here. -->
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/virtuals/*"/>
+		<virtual modelclass="PhSegmentRule" virtualfield="OrderNumber" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PhSegRuleRHS" virtualfield="OwningRule">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.OwnerOfClassVirtualHandler"/>
+			<parameters OwnerClass="PhRegularRule"/>
+		</virtual>
+		<virtual modelclass="PhRegularRule" virtualfield="FeatureConstraints" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+	</virtuals>
+	<!--  **********************************************************   -->
+	<!--  ************************ defaultProperties ***********************   -->
+	<!--  **********************************************************   -->
+	<!-- set the value of some simple properties to the defaults we want in the case that this is the first time the user has run the program, or the settings file is missing, or the program was launched with the shift key down  -->
+	<defaultProperties>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
+		<property name="ToolForAreaNamed_grammar" value="posEdit" settingsGroup="local"/>
+		<!--  Default splitter values   -->
+		<property name="PartsOfSpeech.posEdit.DataTree-Splitter" intValue="200" settingsGroup="local"/>
+		<property name="PartsOfSpeech.posAdvancedEdit.DataTree-Splitter" intValue="200" settingsGroup="local"/>
+	</defaultProperties>
+	<!--  **********************************************************   -->
+	<!--  ************************ Area Item ***********************   -->
+	<!--  **********************************************************   -->
+	<item label="Grammar" value="grammar" icon="folder-grammar">
+		<parameters id="grammar">
+			<panels>
+				<listPanel label="Grammar Tools" listId="GrammarToolsList"/>
+			</panels>
+			<clerks>
+				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
+				<clerk id="categories">
+					<recordList owner="LangProject" property="PartsOfSpeech">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" ws="best analorvern" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="compoundRules">
+					<recordList owner="MorphologicalData" property="CompoundRules"/>
+				</clerk>
+				<clerk id="phonemes">
+					<recordList owner="MorphologicalData" property="Phonemes"/>
+		</clerk>
+				<clerk id="naturalClasses">
+					<recordList owner="MorphologicalData" property="NaturalClasses"/>
+				</clerk>
+				<clerk id="environments">
+					<recordList owner="MorphologicalData" property="Environments"/>
+				</clerk>
+		<clerk id="phonologicalfeatures">
+		  <recordList owner="PhFeatureSystem" property="PhonologicalFeatures"/>
+		</clerk>
+				<clerk id="phonologicalRules">
+					<recordList owner="MorphologicalData" property="PhonologicalRules"/>
+				</clerk>
+				<clerk id="adhocCoprohibitions">
+					<recordList owner="MorphologicalData" property="AdhocCoprohibitions"/>
+				</clerk>
+				<clerk id="features">
+					<recordList owner="MsFeatureSystem" property="Features"/>
+				</clerk>
+				<clerk id="ProdRestrict">
+					<recordList owner="MorphologicalData" property="ProdRestrict">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best analorvern" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="lexProblems">
+					<recordList owner="LangProject" property="Problems"/>
+					<filters>
+						<filter label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.ProblemAnnotationFilter" targetClasses="LexEntry, LexSense, PhEnvironment"/>
+					</filters>
+					<sortMethods/>
+				</clerk>
+				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
+			</clerks>
+			<tools>
+				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
+			</tools>
+		</parameters>
+	</item>
+</root>

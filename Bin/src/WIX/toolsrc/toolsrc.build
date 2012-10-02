@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="toolsrc" default="toolsrc.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	toolsrc.build - Builds the toolsrc projects.
+	2005.12.01 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Includes
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <include buildfile="${dir.src.doccompiler}\doccompiler.build" />
+  <include buildfile="${dir.src.generatewixinclude}\generatewixinclude.build" />
+  <include buildfile="${dir.src.msggen}\msggen.build" />
+  <include buildfile="${dir.src.residgen}\residgen.build" />
+  <include buildfile="${dir.src.votivepp}\votivepp.build" />
+  <include buildfile="${dir.src.wixcop}\wixcop.build" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="toolsrc.build" description="Peforms a full rebuild (clean then build)" depends="toolsrc.clean, toolsrc.inc" />
+
+  <!-- Clean -->
+  <target name="toolsrc.clean" description="Cleans the build"
+		  depends="doccompiler.clean, generatewixinclude.clean, msggen.clean, residgen.clean, votivepp.clean, wixcop.clean">
+  </target>
+
+  <!-- Inc -->
+  <target name="toolsrc.inc" description="Performs an incremental build"
+		  depends="doccompiler.inc, generatewixinclude.inc, msggen.inc, residgen.inc, votivepp.inc, wixcop.inc" />
+
+</project>

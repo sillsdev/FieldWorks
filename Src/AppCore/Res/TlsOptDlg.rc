@@ -1,0 +1,103 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "TlsOptDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "AfAppRes.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"TlsOptDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsOptDlg DIALOGEX 0, 0, 401, 234
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+	WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+CAPTION "Options"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidOk,228,215,44,15
+	PUSHBUTTON      "Cancel",kctidCancel,280,215,44,15
+	PUSHBUTTON      "Help...",kctidHelp,331,215,44,15
+	CONTROL         "Tab1",kcidTlsOptDlgTab,"SysTabControl32",TCS_HOTTRACK |
+					TCS_RAGGEDRIGHT | WS_TABSTOP,9,5,384,206
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgTab        "Click a tab to add, delete, or modify a particular kind of FieldWorks feature. The General tab specifies data requirements for fields in all views and measurement units for margins and tabs."
+	kstidTlsOptSubentries   "Subentries"
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCopy1		"Copy of %<0>s"
+	kstidCopyN		"Copy (%<0>d) of %<1>s"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

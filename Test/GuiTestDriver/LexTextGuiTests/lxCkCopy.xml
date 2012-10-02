@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Configure Dictionary and Configure Interlinear -->
+<!--  Assumes original Kalaba database-->
+<!--  On switch to Bulk Edt Senses, assumes the focused tab will be List Choice -->
+<!--  Assumes Headword, Grammatical Category, Gloss, and Definition headings are on -->
+
+<accil on-fail="assert">
+ <bug id="LT-6386"/>
+
+	<var id="projectName" set="Kalaba"/>
+	<sound frequency = "500" duration = "500"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <var id="onMore" set="$NL;60:NAMELESS[1]/9:Replace/9:NAMELESS"/>
+
+<!-- Go to Lexicon/Bulk Edit Senses-->
+  <click select="menubar/view/lexicon/bulk-edit-senses"/>
+
+  <click select="toolbar/no-filters"/>
+  <click select="toolbar/first-record"/>
+
+  <model select="bulk-edit-senses[@role='view']">
+
+<!-- click Click Copy tab-->
+  <click select="click-copy/tab"/><!-- this one is ignored -->
+  <click select="click-copy/tab"/>
+
+<!-- click Configure Columns button, uncheck Definition, check Reversals -->
+  <click select="senses/col/changer"/>
+  <insert wait="500">d</insert>
+  <click select="senses/col/changer"/>
+  <insert wait="500">r</insert>
+
+<!-- Filter For Grammatical Category "noun"-->
+  <insert wait="500">{F5}</insert><!-- gets the wrong column if no reset -->
+  <click select="click-copy/tab"/><!-- reset moves to list choice -->
+  <var id="col" set="2"/>
+  <click select="senses/col/filter/text"/>
+  <insert>f</insert>
+  <insert>~</insert>
+  <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	<insert>noun</insert>
+	<click path="9:Whole item/45:Whole item"/>
+	<click path="$ok"/>
+  </on-dialog>
+
+  <click select="click-copy/target-field/text"/>
+  <insert wait="500">r</insert>
+  <insert>~</insert>
+  <click select="click-copy/copy/string"/><!-- Copy the whole string -->
+
+<!-- check before -->
+  <var id="row" set="2"/>
+  <var id="col" set="5"/>
+  <glimpse wait="200" id="checkb2" select="senses/record/col" prop="value" expect=""/>
+  <var id="row" set="4"/>
+  <glimpse wait="200" id="checkb4" select="senses/record/col" prop="value" expect=""/>
+
+<!-- Click Copy-->
+  <var id="row" set="2"/>
+  <var id="col" set="4"/>
+  <glimpse wait="200" id="see2" select="senses/record/col" prop="value" on-fail="skip"/>
+  <click id="no2" select="senses/record/col"/>
+  <var id="row" set="4"/>
+  <glimpse wait="200" id="see4" select="senses/record/col" prop="value" on-fail="skip"/>
+  <click id="no4" select="senses/record/col"/>
+
+<!-- check Click Copy-->
+  <var id="row" set="2"/>
+  <var id="col" set="5"/>
+<glimpse wait="200" id="check2" select="senses/record/col" prop="value" expect="$see2.value"/>
+  <var id="row" set="4"/>
+<glimpse wait="200" id="check4" select="senses/record/col" prop="value" expect="$see4.value"/>
+
+ <!--click Bulk Replace tab-->
+  <click select="bulk-replace/tab"/>
+
+<!-- Select Target Field reversals-->
+  <click select="bulk-replace/target-field/text"/>
+  <insert wait="500">r</insert>
+  <insert>~</insert>
+
+  <!-- click Setup-->
+  <click select="bulk-replace/setup"/>
+
+  <on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	<insert wait="200">.{+}</insert>
+	<insert>{TAB}</insert>
+	<insert>{END}</insert>
+	<insert>+{HOME}</insert>
+	<insert>{BKSP}</insert>
+	  <glimpse id="bMore" path="$onMore;/9:More/43:More" on-fail="skip"/>
+	  <if><condition of="$bMore" is="true"/>
+	  <then><click path="$onMore;/9:More/43:More"/></then>
+	  </if>
+	<click path="$onMore;[2]/9:Use regular expressions/44:Use regular expressions"/>
+	<insert wait="200">~</insert>
+  </on-dialog>
+
+  <!-- click Apply-->
+  <click select="bulk-replace/apply"/>
+
+<!-- Filter For Grammatical Category "noun"-->
+  <var id="col" set="2"/>
+  <click select="senses/col/filter/text"/>
+  <insert wait="500">s</insert>
+  <insert>~</insert>
+
+<!-- click Configure Columns button, uncheck Reversals, check Definition -->
+  <click select="senses/col/changer"/>
+  <insert wait="500">r</insert>
+  <click select="senses/col/changer"/>
+  <insert wait="500">d</insert>
+
+  <!-- click List Choice tab : have to click else where first (-%-->
+  <click select="//toolbar/no-filters"/>
+  <click select="//toolbar/first-record"/>
+  <click select="list-choice/tab"/>
+
+</model>
+
+ </on-application>
+</accil>

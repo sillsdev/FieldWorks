@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="dark" default="dark.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	dark.build - Builds the dark project (dark.exe).
+	2005.09.12 johnls Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- dark-specific properties -->
+  <property name="dark.file.res.target" value="${dir.build.dark}\dark.res" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="dark.build" description="Peforms a full rebuild (clean then build)" depends="dark.clean, dark.inc" />
+
+  <!-- Clean -->
+  <target name="dark.clean" description="Cleans the build">
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="dark.exe" />
+		<include name="dark.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="dark.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the dark.exe.config -->
+	<copy todir="${dir.target.wix}">
+	  <fileset basedir="${dir.src.dark}">
+		<include name="dark.exe.config" />
+	  </fileset>
+	</copy>
+
+	<!-- Compile the dark.rc file -->
+	<rc rcfile="${dir.src.dark}\dark.rc" langid="0" output="${dark.file.res.target}" options="${rc.standardOptions} ${cl.standardIncludes}" />
+
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\dark.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.dark}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="dark.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <arg value="-win32res:&quot;${dark.file.res.target}&quot;" />
+	</csc>
+  </target>
+
+</project>

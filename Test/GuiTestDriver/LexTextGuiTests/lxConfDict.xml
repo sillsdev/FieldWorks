@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Configure Dictionary and Configure Interlinear -->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to Lexicon/Dictionary-->
+  <click select="menubar/view/lexicon/dictionary"/>
+
+<!-- 2. Go to Tools/Configure Dictionary-->
+  <click select="menubar/tools/configure-dictionary"/>
+
+  <!--  Move Fields up and down -->
+  <on-dialog name="XmlDocConfigureDlg" title="Configure Dictionary View">
+   <click path="9:m_tvParts/44:Headword"/>
+   <click path="9:m_btnMoveDown/43:m_btnMoveDown"/>
+   <click path="9:m_btnMoveDown/43:m_btnMoveDown"/>
+   <click path="9:m_btnMoveDown/43:m_btnMoveDown"/>
+   <click path="9:m_btnMoveDown/43:m_btnMoveDown"/>
+   <click path="9:m_btnMoveDown/43:m_btnMoveDown"/>
+   <click path="9:m_btnMoveUp/43:m_btnMoveUp"/>
+   <click path="9:m_btnMoveUp/43:m_btnMoveUp"/>
+   <click path="9:m_btnMoveUp/43:m_btnMoveUp"/>
+   <click path="9:m_btnMoveUp/43:m_btnMoveUp"/>
+   <click path="9:m_btnMoveUp/43:m_btnMoveUp"/>
+   <click path="9:m_btnDuplicate/43:m_btnDuplicate"/>
+   <click path="9:m_tvParts/44:Headword (1)"/>
+   <click path="9:m_btnRemove/43:m_btnRemove"/>
+   <click path="9:m_btnOK/43:m_btnOK"/>
+ </on-dialog>
+
+<!-- Go to Texts/Document-->
+  <click wait="2000" select="menubar/view/texts-words/interlinear-texts"/>
+  <click wait="2000" select="interlinear-texts[@role='view']/text/print-view/tab"/>
+
+<!-- 2. Go to Tools/Configure Interlinear-->
+  <click select="menubar/tools/configure-interlinear"/>
+
+  <!--  Hide, Show, move up and down -->
+  <on-dialog title="Configure Interlinear Lines">
+   <click path="9:Displayed lines:[2]/listitem:Word"/>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="100">{TAB}</insert>
+   <insert wait="100">{TAB}</insert>
+   <insert wait="100">{TAB}</insert>
+   <insert wait="100">~</insert>
+   <click path="9:Available lines:[2]/listitem:Word"/>
+   <insert wait="500">{TAB}</insert>
+   <insert wait="100">{TAB}</insert>
+   <insert wait="100">{TAB}</insert>
+   <insert wait="100">{TAB}</insert>
+   <insert wait="100">{TAB}</insert>
+   <insert wait="100">~</insert>
+   <click path="$nl;[2]"/>
+   <click path="$nl;[1]"/>
+   <click path="$nl;[2]" repeat="3"/>
+   <click path="$ok"/>
+  </on-dialog>
+
+ </on-application>
+</accil>

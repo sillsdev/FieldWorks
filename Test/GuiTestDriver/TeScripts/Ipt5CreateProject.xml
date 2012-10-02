@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- Delete Fieldworks Project -->
+		<click select="menubar/file/project-management/delete-fieldWorks-project"/>
+
+		<on-dialog title="Delete Fieldworks Project" until="10000" on-fail="skip">
+			<glimpse id="project_found" path="9:NAMELESS/34:MALAY PARATEXT 5 IMPORT TEST" on-fail="skip"/>
+			<if>
+				<condition of="$project_found" is="true"/>
+				<then>
+					<click path="9:NAMELESS/34:MALAY PARATEXT 5 IMPORT TEST"/>
+					<click path="9:Delete/43:Delete"/>
+					<click path="$Yes"/>
+					<click path="$Close"/>
+				</then>
+				<else>
+					<click path="$Close"/>
+				</else>
+			</if>
+		</on-dialog>
+
+		<!-- New Fieldworks Project -->
+		<click select="menubar/file/new-fieldworks-project"/>
+
+		<on-dialog title="New FieldWorks Project" until="10000" >
+			<insert>MALAY PARATEXT 5 IMPORT TEST</insert>
+			<insert>{TAB}</insert>
+
+			<var id="Label" set="These are the languages used for translations, texts, lexical headwords, example sentences, people, location names, etc. Select, or define, a default vernacular language writing system."/>
+			<var id="CheckPath" set="9:$Label;[2]/41:$Label"/>
+			<click path="$CheckPath"/>
+			<var id="ExpectedValue" set="Malay"/>
+			<include from="IncLangProjComboBox.xml"/>
+
+			<insert>{TAB 4}</insert>
+			<insert>{ENTER}</insert>
+		</on-dialog>
+
+		<!-- Wait until the Project Creation has finished -->
+		<on-dialog title="Empty Scripture" until="3000000" on-fail="skip">
+			<click path="9:Show Blank Screen/43:Show Blank Screen"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

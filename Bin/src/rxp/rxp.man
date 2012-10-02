@@ -1,0 +1,152 @@
+RXP(1)                                                                  RXP(1)
+
+
+
+NAME
+	   rxp - XML parser program
+
+SYNOPSIS
+	   rxp [ -abemnNRsStvVx ] [ -o b|p|0|1|2|3|i|d ] [ U 0|1|2 ] [ -c encoding
+	   ] [ url ]
+
+DESCRIPTION
+	   rxp reads and parses XML from the url (or standard  input  if  none  is
+	   provided)  and writes it to standard output, optionally expanding enti-
+	   ties, defaulting attributes, and  translating  to  a  different  output
+	   encoding.
+
+	   rxp  accepts  XML  1.0  and  1.1, and the corresponding versions of XML
+	   namespaces.  It implements the Oasis XML catalog specification.
+
+	   Common option combinations are -Nxs  to  check  a  document  for  well-
+	   formedness  and  namespace well-formedness, and -VNxs to also check for
+	   DTD-validity.
+
+OPTIONS
+	   -a     Insert declared default values for omitted attributes.
+
+	   -v     Be verbose.
+
+	   -V     Validate the document.  Repeating this option will make the pro-
+			  gram  treat  validity errors as well-formedness errors, and exit
+			  after the first validity error  (otherwise  a  warning  will  be
+			  printed for each one).
+
+	   -d     Read  the  whole DTD (internal and external parts) regardless of
+			  any standalone  declaration.   Otherwise  a  declaration  "stan-
+			  dalone='yes'"  will  prevent  the  external part from being read
+			  (unless validation is selected).
+
+	   -N     Enable XML namespace support.  The document will be checked  for
+			  correct namespace syntax, and if -b is specified  qualified ele-
+			  ment and attribute names will be displayed with their URIs.
+
+	   -R     The value of this flag is a time limit in seconds,  after  which
+			  the  program  will abort.  This is to protect against denial-of-
+			  service attacks using malicious documents.
+
+	   -S     Keep track of xml:space attributes.   This  will  affect  output
+			  only when -b is specified.
+
+	   -e     Obsolete, do not use.
+
+	   -E     Do not expand entity references (opposite of old -e flag)
+
+	   -s     Be  silent  (that is, suppress output).  Useful for benchmarking
+			  or if you just want to see the error messages.
+
+	   -b     Print output as "bits".
+
+	   -n     Treat the  input  as  normalised  SGML  rather  than  XML.   Not
+			  intended for general use.
+
+	   -o     If  this  flag is p, output is in the default (plain) format. If
+			  it is b, output is printed as "bits" (equivalent to  -b).     If
+			  it is 0, output is suppressed (equivalent to -s).  If it is 1, 2
+			  or 3, output is in first, second or third canonical form.  If it
+			  is  i,  output is a dump of the document's infoset.  If it is d,
+			  output is in a form suitable for use with "diff"; in  particular
+			  attributes are sorted into alphabetical order.
+
+	   -m     Merge  PCData  across  entity  references.  This will affect the
+			  output only when -b is specified.
+
+	   -t     Read in the input as a tree, rather than bits.  Should  make  no
+			  difference to the output.
+
+	   -u base_uri
+			  Use the specified base URI when resolving system identifiers.
+
+	   -U     This  flag  controls Unicode normalization checking and is rele-
+			  vant only when parsing XML 1.1 documents.  If it is 0, no check-
+			  ing  is done.  If it is 1, rxp checks that the document is fully
+			  normalized as defined by the W3C character model.  If it  is  2,
+			  the document is checked and any unknown characters (which may be
+			  ones corresponding to a newer version of Unicode than rxp  knows
+			  about) will also cause an error.
+
+	   -x     Strict  XML  mode.   This  suppresses  some  warnings (eg entity
+			  redefinitions) but treats  all  XML  well-formedness  errors  as
+			  fatal.   This  flag  implies  the  -a  flag, and sets the output
+			  encoding to UTF-8 unless the -c flag is given.  It sets the out-
+			  put  format to first canonical form unless the -o, -b or -s flag
+			  is given.
+
+	   -c encoding
+			  Produce output  in  the  specified  character  encoding.   Known
+			  encodings  include  ISO-8859-1, UTF-8, ISO-10646-UCS and UTF-16.
+			  16-bit encoding names my be suffixed with -B or  -L  to  specify
+			  big-  or  little-endian byte order (the default is the host byte
+			  order).  If no -c or -x option is given, output is in  the  same
+			  encoding as the input document.
+
+	   -D name sysid
+			  Force  use  of  the  document type specified by sysid.  The root
+			  element name for validation is name.  Any DTD in the document is
+			  ignored.   This  flag  does  not  imply  validation;  use  -V if
+			  required.
+
+	   -i     Do xml:id processing.  Attributes named xml:id are recognised as
+			  IDs even if not declared.
+
+	   -I     The  same  as  -i, but in addition xml:id attributes are checked
+			  for uniqueness.
+
+	   -z     Use a shorter format for error  messages.   Particularly  useful
+			  when  using  the parser in Emacs compilation mode, so that Emacs
+			  can find the error location.
+
+	   -f file.err
+			  Write error messages to the specified file.  If no -f option  is
+			  given,  error  messages are written to the standard error stream
+			  (the  screen  by  default).   This  option  is  most  useful  on
+			  Microsoft  Windows,  since  the  standard Microsoft shells (com-
+			  mand.com and cmd.exe) make  no  provision  for  redirecting  the
+			  standard error stream.
+
+EXIT STATUS
+	   If the -V flag is given, and the document is well-formed but not valid,
+	   2 is returned.  If the document is not well-formed, or a  system  error
+	   occurs,  1 is returned.  Otherwise 0 is returned.  Since the parser can
+	   expand external entities even when not validating,  it  treats  certain
+	   errors which are technically validity errors as well-formedness errors.
+	   If -x is not specified, some well-formedness errors produce only  warn-
+	   ings and do not affect the exit status.
+
+ENVIRONMENT
+	   If  the environment variable XML_CATALOG_FILES is set, XML catalog pro-
+	   cessing is enabled.  The variable should be set  to  a  space-separated
+	   list  of  catalog files.  The variable XML_CATALOG_PREFER may be set to
+	   public or system to set the initial mode for  catalog  processing;  the
+	   default is system.
+
+	   If the variable RXPURL is set, it is used as the URL of the document to
+	   parse. This may be useful in CGI scripts and the like  to  avoid  shell
+	   parsing of a user-supplied argument.
+
+	   The variable http_proxy can be used to specify a proxy for HTTP connec-
+	   tions.  The syntax is hostname[:port].
+
+
+
+							   RXP release 1.4.7                        RXP(1)

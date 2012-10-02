@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Module Id="SILPYTHON25B" Guid="F43C06D9-FB1E-4391-AA71-7C0F3980A81A" Language="1033" Version="3.1.0.0">
+	<Package Id="????????-????-????-????-????????????" Keywords="Python, Encoding Conversion, SILConverters" Description="Python EncConverter merge module" Comments="Merge module containing the Python EncConverter DLLs" Manufacturer="SIL" InstallerVersion="200" Platforms="Intel" Languages="1033" SummaryCodepage="1252" />
+	<Directory Id="TARGETDIR" Name="SourceDir">
+	  <Component Id="PythonRemoveOldShortcuts" Guid="1371781E-FDD1-4231-89C5-C4A3EB4011D3" KeyPath="yes">
+		<RemoveFolder Id="PythonRemoveOldShortcuts1" Directory="PFSILConvertersFolder" On="uninstall" />
+		<RemoveFolder Id="PythonRemoveOldShortcuts2" Directory="SILConvHelp" On="uninstall" />
+	  </Component>
+	  <Directory Id="CommonFilesFolder" Name="Common">
+		<Directory Id="SIL" Name="SIL">
+			<Component Id="MSVCR71.DLL" Guid="C1356695-1CCF-7ED0-A51E-7AF166E751DB">
+			  <File Id="MSVCR71.DLL" Name="MSVCR71.DLL" Vital="yes" KeyPath="yes" Source="Lib\release\MSVCR71.DLL" />
+		  </Component>
+		  <Component Id="PythonEC25b.dll" Guid="8B91C85C-1B3E-472f-B987-DA10DBBDEA5E">
+			<File Id="PythonEC25b.dll" Name="PYTHON~1.DLL" LongName="PythonEC25b.dll" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\PythonEC25b.dll"/>
+		  </Component>
+		  <Component Id="PythonEC25b.tlb" Guid="FDBC4445-01C9-4366-A36A-5AD122AB6137">
+			<File Id="PythonEC25b.tlb" Name="PYTHON~1.TLB" LongName="PythonEC25b.tlb" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\PythonEC25b.tlb"/>
+			<TypeLib Id="640AC7A0-77F8-479b-B963-1A5D243E4059" Language="0" MajorVersion="3" MinorVersion="1" Description="Python IEncConverter implementation 3.1 Type Library" Cost="0" />
+		  </Component>
+		  <Component Id="pywintypes25.dll" Guid="18DA44D9-C203-C7EB-292A-CFF49929DCE3">
+			<File Id="pywintypes25.dll" Name="PYWINT~1.DLL" LongName="pywintypes25.dll" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="DistFiles\pywintypes25.dll"/>
+		  </Component>
+		  <Component Id="python25.dll" Guid="3F764636-300E-B647-6215-3D517EC3326E">
+			<File Id="python25.dll" Name="PYTHON25.DLL" LongName="python25.dll" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="DistFiles\python25.dll"/>
+		  </Component>
+		  <Component Id="pythoncom25.dll" Guid="E21DAA0E-FC10-FD7A-0F48-3DC6F8C3422D">
+			<File Id="pythoncom25.dll" Name="PYTHON~2.DLL" LongName="pythoncom25.dll" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="DistFiles\pythoncom25.dll"/>
+		  </Component>
+		  <Directory Id="Help" Name="Help">
+			<Component Id="PythonScriptPluginAboutbox" Guid="082C4028-8388-7C6E-179B-16B2F088DE56">
+			  <File Id="PythonScriptPluginAboutbox" Name="PYTHON~1.HTM" LongName="Python Script Plug-in About box.htm" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box.htm"/>
+			</Component>
+			<Directory Id="PythonScriptPluginAboutboxFiles" Name="PYTHON~1" LongName="Python Script Plug-in About box_files">
+			  <Component Id="PythonScriptPluginAboutboxFilesimage007.png" Guid="A6DADCBA-5BFE-227B-70FB-E8C26FEBBA34">
+				<File Id="PythonScriptPluginAboutboxFilesimage007.png" Name="IMAGE007.PNG" LongName="image007.png" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\image007.png"/>
+			  </Component>
+			  <Component Id="PythonScriptPluginAboutboxFilesimage008.jpg" Guid="F1906D00-D34A-7E68-1D44-5213E4816634">
+				<File Id="PythonScriptPluginAboutboxFilesimage008.jpg" Name="IMAGE008.JPG" LongName="image008.jpg" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\image008.jpg"/>
+			  </Component>
+			  <Component Id="PythonScriptPluginAboutboxFilesimage005.jpg" Guid="1C12C207-A0D9-4BFD-FE65-AAF2489E26B4">
+				<File Id="PythonScriptPluginAboutboxFilesimage005.jpg" Name="IMAGE005.JPG" LongName="image005.jpg" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\image005.jpg"/>
+			  </Component>
+			  <Component Id="PythonScriptPluginAboutboxFilesheader.htm" Guid="D8D775B2-A9FB-CF00-37A4-02AC64806EBC">
+				<File Id="PythonScriptPluginAboutboxFilesheader.htm" Name="HEADER.HTM" LongName="header.htm" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\header.htm"/>
+			  </Component>
+			  <Component Id="PythonScriptPluginAboutboxFilesimage003.png" Guid="2CBF4392-1C66-6285-80B4-405A6BE026FD">
+				<File Id="PythonScriptPluginAboutboxFilesimage003.png" Name="IMAGE003.PNG" LongName="image003.png" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\image003.png"/>
+			  </Component>
+			  <Component Id="PythonScriptPluginAboutboxFilesimage001.png" Guid="B6952E13-A6FB-8807-64E5-0EC9ECA8D91C">
+				<File Id="PythonScriptPluginAboutboxFilesimage001.png" Name="IMAGE001.PNG" LongName="image001.png" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\image001.png"/>
+			  </Component>
+			  <Component Id="PythonScriptPluginAboutboxFilesfilelist.xml" Guid="727B5515-9862-A9F2-2936-C84F9D6072DF">
+				<File Id="PythonScriptPluginAboutboxFilesfilelist.xml" Name="FILELIST.XML" LongName="filelist.xml" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\filelist.xml"/>
+			  </Component>
+			  <Component Id="PythonScriptPluginAboutboxFilesimage004.jpg" Guid="850772D1-5C0F-4091-71FD-070BBA72BB5B">
+				<File Id="PythonScriptPluginAboutboxFilesimage004.jpg" Name="IMAGE004.JPG" LongName="image004.jpg" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Python Script Plug-in About box_files\image004.jpg"/>
+			  </Component>
+			</Directory>
+		  </Directory>
+		</Directory>
+	  </Directory>
+	  <Directory Id="ProgramMenuFolder" SourceName="USER'S~1" LongSource="User's Programs Menu">
+		<Directory Id="PFSILConvertersFolder" Name="SILCON~1" LongName="SIL Converters">
+		  <Directory Id="SILConvHelp" Name="HELP" LongName="Help">
+			<Component Id="HelpShortcuts" Guid="76BC6C14-9D62-4ec9-825F-354674541FBE" KeyPath="yes">
+			  <Shortcut Id="PythonScriptPluginHelp" Directory="SILConvHelp" Name="HELPFO~1" LongName="Help for Python Script Plug-in" Target="[#PythonScriptPluginAboutbox]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+			</Component>
+		  </Directory>
+		</Directory>
+	  </Directory>
+	  <Directory Id="CommonAppDataFolder" SourceName="AppData">
+		<Directory Id="AppDataSIL" Name="SIL">
+		  <Directory Id="ECFolder" Name="EC">
+			<Directory Id="PluginsFolder" Name="PLUGINS" LongName="Plugins">
+			  <Directory Id="IEC3100" Name="IEC3.1~1" LongName="IEC3.1.0.0">
+				<Component Id="PythonEC25_3.1.0.0PluginDetails.xml" Guid="98D189BF-33FE-47c3-B39B-529E7E5F901D">
+				  <File Id="PythonEC25_3.1.0.0PluginDetails.xml" Name="PYTHON~2.XML" LongName="PythonEC25 3.1.0.0 Plugin Details.xml" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\release\Plugins\IEC3.1.0.0\PythonEC25 3.1.0.0 Plugin Details.xml"/>
+				</Component>
+			  </Directory>
+			</Directory>
+		  </Directory>
+		  <Directory Id="SILConverters31Folder" Name="SILCON~1" LongName="SILConverters31">
+			<Directory Id="MapsTablesFolder" Name="MAPSTA~1" LongName="MapsTables">
+			  <Component Id="TestPyScript.py" Guid="8DFB4898-1EB2-4f05-A8DE-1EA5D78C141F">
+				<File Id="TestPyScript.py" Name="TESTPY~1.PY" LongName="TestPyScript.py" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="DistFiles\EncodingConverters\TestPyScript.py"/>
+			  </Component>
+			</Directory>
+		  </Directory>
+		</Directory>
+	  </Directory>
+	</Directory>
+	<UI />
+  </Module>
+</Wix>

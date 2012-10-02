@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<pre-build>
+		<!-- Note: The XMI part is now handled by a 'depends' on the main FDO target in FieldWorks.build. -->
+		<!-- Generate FDO files. -->
+		<property name="needupdate" value="false"/>
+		<foreach item="String" in="${modulenames}" delim=" " property="module">
+			<uptodate property="tmp" verbose="${verbose}">
+				<sourcefiles>
+					<include name="${dir.xmiOutput}\xmi2cellar2.xml"/>
+					<include name="${dir.srcProj}\FDOGenerate\*"/>
+					<include name="${assembly::get-location(task::get-assembly('fdogenerate'))}"/>
+				</sourcefiles>
+				<targetfiles>
+					<include name="${dir.srcProj}\${module}.cs"/>
+					<include name="${dir.srcProj}\FdoInterfaces.cs"/>
+				</targetfiles>
+			</uptodate>
+			<property name="needupdate" value="true" unless="${tmp}"/>
+		</foreach>
+		<echo message="Generating FDO files" if="${needupdate}"/>
+		<echo message="FDO files up to date" unless="${needupdate}"/>
+		<fdogenerate xmi="${dir.xmiOutput}\xmi2cellar2.xml" outdir="${dir.srcProj}" template="${dir.srcProj}\FDOGenerate\main.vm.cs" if="${needupdate}"/>
+	</pre-build>
+	<post-clean>
+		<foreach item="String" in="${modulenames}" delim=" " property="module">
+			<delete file="${dir.srcProj}\${module}.cs" verbose="true" failonerror="false"/>
+		</foreach>
+		<delete file="${dir.srcProj}\FdoInterfaces.cs" verbose="true" failonerror="false"/>
+	</post-clean>
+</include>

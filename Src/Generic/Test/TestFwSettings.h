@@ -1,0 +1,114 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 2006 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: TestFwSettings.h
+Responsibility:
+Last reviewed:
+
+	Unit tests for the functions/classes from Generic/FwSettings.cpp
+-------------------------------------------------------------------------------*//*:End Ignore*/
+#ifndef TESTFWSETTINGS_H_INCLUDED
+#define TESTFWSETTINGS_H_INCLUDED
+
+#pragma once
+
+#include "testGenericLib.h"
+
+namespace TestGenericLib
+{
+	class TestFwSettings : public unitpp::suite
+	{
+		const achar * m_CompleteRoot;
+
+		// Tests getting and setting a DWORD with subkey specified
+		void testStaticDwordWithSubkey()
+		{
+			m_CompleteRoot = _T("GenericTests\\SetDword");
+			FwSettings::SetDword(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetDword"), _T("DwordValue"), 4711);
+
+			DWORD dword = 0;
+			bool fRet = FwSettings::GetDword(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetDword"), _T("DwordValue"), &dword);
+			unitpp::assert_true("GetDword with subkey returned false", fRet);
+			unitpp::assert_eq("GetDword with subkey returned wrong value", (DWORD)4711, dword);
+		}
+
+		// Tests getting and setting a DWORD with no subkey specified
+		void testStaticDwordNoSubkey()
+		{
+			FwSettings settings;
+			m_CompleteRoot = _T("GenericTests");
+			settings.SetRoot(_T("GenericTests"));
+			FwSettings::SetDword(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				NULL, _T("DwordValue"), 4711);
+
+			DWORD dword = 0;
+			bool fRet = FwSettings::GetDword(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				NULL, _T("DwordValue"), &dword);
+			unitpp::assert_true("GetDword no subkey returned false", fRet);
+			unitpp::assert_eq("GetDword no subkey returned wrong value", (DWORD)4711, dword);
+		}
+
+		// Tests getting and setting a string with subkey specified
+		void testStaticStringWithSubkey()
+		{
+			m_CompleteRoot = _T("GenericTests\\SetString");
+			StrApp origValue(_T("bla"));
+			FwSettings::SetString(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetString"), _T("StringValue"), origValue);
+
+			StrApp value;
+			bool fRet = FwSettings::GetString(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetString"), _T("StringValue"), value);
+			unitpp::assert_true("GetString with subkey returned false", fRet);
+			unitpp::assert_eq("GetString with subkey returned wrong value", 0, value.Compare(_T("bla")));
+		}
+
+		// Tests getting and setting a Bool value with subkey specified
+		void testStaticBoolWithSubkey()
+		{
+			m_CompleteRoot = _T("GenericTests\\SetBool");
+
+			// Test setting true
+			FwSettings::SetBool(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetBool"), _T("BoolValue"), true);
+
+			bool fValue = false;
+			bool fRet = FwSettings::GetBool(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetBool"), _T("BoolValue"), &fValue);
+			unitpp::assert_true("1. GetBool with subkey returned false", fRet);
+			unitpp::assert_true("1. GetBool with subkey returned wrong value", fValue);
+
+			// Test setting false
+			FwSettings::SetBool(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetBool"), _T("BoolValue"), false);
+
+			fValue = true;
+			fRet = FwSettings::GetBool(_T("Software\\SIL\\Fieldworks\\GenericTests"),
+				_T("SetBool"), _T("BoolValue"), &fValue);
+			unitpp::assert_true("2. GetBool with subkey returned false", fRet);
+			unitpp::assert_true("2. GetBool with subkey returned wrong value", !fValue);
+		}
+
+	public:
+		TestFwSettings();
+
+		virtual void Teardown()
+		{
+			FwSettings settings;
+			settings.SetRoot(m_CompleteRoot);
+			settings.RemoveAll();
+		}
+	};
+}
+
+#endif /*TESTFWSETTINGS_H_INCLUDED*/
+
+// Local Variables:
+// mode:C++
+// compile-command:"cmd.exe /e:4096 /c c:\\FW\\Bin\\mkGenLib-tst.bat"
+// End: (These 4 lines are useful to Steve McConnel.)

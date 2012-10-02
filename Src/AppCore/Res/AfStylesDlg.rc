@@ -1,0 +1,172 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2000, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: AfStylesDlg.rc
+Responsibility:
+Last reviewed: never
+
+Description:
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+#include "AfStylesDlgRes.h"
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridAfStylesList        BITMAP  DISCARDABLE     "../../AppCore/Res/AfStylesDlg.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridAfStyleDlg DIALOGEX 0, 0, 399, 260
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Style"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidClose,178,239,50,14
+	PUSHBUTTON		"Ap&ply",kctidOk,233,239,50,14
+	PUSHBUTTON      "Cancel",kctidCancel,288,239,50,14
+	PUSHBUTTON      "Help",kctidHelp,342,239,50,14
+	LTEXT           "&Styles:",IDC_STATIC,7,7,22,9
+	CONTROL         "ListStyles",kctidLstStyles,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					LVS_EDITLABELS | LVS_NOCOLUMNHEADER | WS_BORDER |
+					WS_VSCROLL | WS_TABSTOP,7,20,130,188
+	CONTROL         "Tab1",kctidTabDlgs,"SysTabControl32",TCS_HOTTRACK |
+					TCS_RAGGEDRIGHT | WS_TABSTOP,140,7,252,220
+	PUSHBUTTON      "&Add",kctidAfsdBtnAdd,15,211,34,14
+	PUSHBUTTON      "&Copy",kctidAfsdBtnCopy,51,211,34,14
+	PUSHBUTTON      "&Delete",kctidAfsdBtnDel,87,211,40,14
+	LTEXT           "",IDC_STATIC,7,228,385,1,SS_SUNKEN
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridAfStyleDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 392
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 253
+		HORZGUIDE, 202
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+kctidAfsdAddMnu MENU DISCARDABLE
+BEGIN
+	POPUP "AfStyleDlgAdd"
+	BEGIN
+		MENUITEM "Paragraph Style",					kcidAfsdAddPara
+		MENUITEM "Character Style",					kcidAfsdAddChar
+	END
+END
+
+kctidStylePopup MENU DISCARDABLE
+BEGIN
+	POPUP "StylePopup"
+	BEGIN
+		MENUITEM "Help"                         kcidStylePopupHelp
+	END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+// Context help for Format Styles dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidClose				"Closes the dialog box and saves changes you have made but does not apply the selected style to the currently selected text. Use [Apply] to save changes and apply the style."
+//	kctidApply				"Applys the selected style to currently seleted text, closes the dialog box, and saves changes you have made."
+	kctidLstStyles			"Lists the styles provided with FieldWorks and others you have added. Click a style to see or change its settings."
+	kctidTabDlgs			"Choose a tab to modify corresponding features of the currently selected style."
+	kctidAfsdBtnAdd			"Opens a menu so you can select a type of style to create and add to the list."
+	kctidAfsdBtnCopy		"Copies the selected style and adds it to the style list."
+	kctidAfsdBtnDel			"Deletes the selected style (if user created)."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidParagraph			"Paragraph"
+	kstidCharacter			"Character"
+	kstidStyles				"Styles"
+	kstidCopyOf				"Copy of %<0>s"
+	kstidCopyNOf			"Copy %<0>d of %<1>s"
+	kstidAfsdEmptyNameMsg	"A style must have a non-empty name."
+	kstidAfsdSameNameMsg	"Each style must have an unique name."
+	kstidAfsdSameBasedOnMsg	"A style may not be based on itself,\ndirectly or indirectly."
+	kstidNewCharStyleName	"New Character Style"
+	kstidNewParaStyleName	"New Paragraph Style"
+	kstidDefParaChars		"Default Paragraph Characters"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidStyFont			"Font"
+	kstidStyParagraph		"Paragraph"
+	kstidStyBullNum			"Bullets and Numbering"
+	kstidStyBorder			"Border"
+	kstidStyGeneral			"General"
+END
+
+
+
+kridDelAndChgStylesWarningDlg DIALOGEX 0, 0, 250, 100
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL			"", kctidDelAndChgStylesIcon, "Static", SS_ICON, 8,8,32,32
+
+	LTEXT           "Warning: ",kctidDelAndChgStylesWarning,45,8,100,8
+	LTEXT           "",kctidDelAndChgStylesText,45,18,196,56
+
+	PUSHBUTTON		"&Yes",kctidOk,45,80,50,14
+	PUSHBUTTON      "&No",kctidCancel,100,80,50,14
+	PUSHBUTTON      "Help",kctidHelp,155,80,50,14
+END
+
+
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidChgStyleTitle				"Renaming Style"
+	kstidChgStylesTitle				"Renaming Styles"
+	kstidDelStyleTitle				"Deleting Style"
+	kstidDelStylesTitle				"Deleting Styles"
+	kstidDelAndChgStylesTitle		"Renaming/Deleting Styles"
+	kstidChgStyleQuestion			"You have asked to rename 1 style. This will permanently change all references to this style in your project. You cannot undo this change. The change may take several minutes.\n\nAre you sure you want to rename this style?"
+	kstidChgStylesQuestion			"You have asked to rename %d styles. This will permanently change all references to these styles in your project. You cannot undo this change. The change may take several minutes.\n\nAre you sure you want to rename these styles?"
+	kstidDelStyleQuestion			"You have asked to delete 1 style. This will permanently remove all references to this style in your project. You cannot undo this change. The change may take several minutes.\n\nAre you sure you want to delete this style?"
+	kstidDelStylesQuestion			"You have asked to delete %d styles. This will permanently remove all references to these styles in your project. You cannot undo this change. The change may take several minutes.\n\nAre you sure you want to delete these styles?"
+	kstidDelAndChgStylesQuestion	"You have asked to rename/delete %d styles. This will permanently change/remove all references to these styles in your project. You cannot undo this change. The change may take several minutes.\n\nAre you sure you want to rename/delete these styles?"
+	kstidChgStyleLabel				"Change Style Names"
+	kstidChgStylePhaseOne			"Phase One: update multilingual strings"
+	kstidChgStylePhaseTwo			"Phase Two: update monolingual strings"
+	kstidChgStylePhaseThree			"Phase Three: update paragraph styles"
+	kstidChgStylePhaseFour			"Phase Four: update configured views"
+END

@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>Index</title>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="linglink.css" TITLE="Original">
+
+<SCRIPT FOR=window EVENT=onload LANGUAGE="JScript">
+document.forms.SearchBoxForm.Box.focus();
+</SCRIPT>
+
+<SCRIPT Language="javascript" type="text/javascript">
+
+var g_lastMatchAnchor = 0;
+var g_lastMatch = '';
+
+function gotoHash()
+{
+	var oBottomDoc = parent.bottom.document;
+	if (oBottomDoc.readyState != 'complete')
+	{
+		// Wait until the new document is fully loaded.
+		setTimeout('gotoHash()', 10);
+		return;
+	}
+
+	var oAnchors = oBottomDoc.anchors;
+
+	<!--Get the length of the string in the search box-->
+	var boxLength = document.SearchBoxForm.Box.value.length;
+
+	<!--Get the actual string value from the search box-->
+	var boxValue = document.SearchBoxForm.Box.value.toLowerCase();
+	var str = '';
+
+	if (boxLength == 0)
+	{
+		g_lastMatchAnchor = 0;
+		g_lastMatch = '';
+	}
+	else if (boxLength == 1)
+	{
+		// This should scroll up to the top of the page.
+		foundMatch = 1;
+	}
+	else
+	{
+		<!--Get the total anchors on the page-->
+		var totalAnchors = oAnchors.length;
+		var currentAnchor;
+		var foundMatch = 0;
+		g_lastMatchAnchor = 0;
+
+		<!-- Here we go through each anchor sequentially, looking for a match against the string in the value box.-->
+		<!-- For the CurrentAnchor is equal to the last match anchor.-->
+		<!-- If the currentAnchor number is less than the totalAnchors on page, then carry out the following -->
+		<!-- and increment currentAnchor.-->
+
+		for (currentAnchor = g_lastMatchAnchor; currentAnchor < totalAnchors; currentAnchor++)
+		{
+			<!--Get the current boxLength and the current boxValue,-->
+			<!-- Check to see if the first boxLength letters of the currentAnchor is equal to the currentboxValue.-->
+
+			<!--Eg. str = name of the currentAnchor-->
+
+			str = oAnchors[currentAnchor].name;
+			if (str.substr(0,boxLength) == boxValue)
+			{
+				g_lastMatchAnchor = currentAnchor;
+				g_lastMatch = boxValue;
+				foundMatch = 1;
+				break;
+			}
+		}
+	}
+
+	if (foundMatch == 1)
+		oBottomDoc.location.hash = str;
+	else
+		document.forms.SearchBoxForm.Box.value = g_lastMatch;
+}
+
+function matchAnchor()
+{
+	<!--Get the actual string value from the search box-->
+	var boxValue = document.SearchBoxForm.Box.value;
+	<!--Get the length of the string in the search box-->
+	var boxLength = boxValue.length;
+
+	<!--If there is nothing in the search box-->
+	if (boxLength > 0)
+	{
+		<!--Jump to that "letter" page if needed-->
+		var oBottomDoc = parent.bottom.document;
+		var sNewIndex = boxValue.substr(0, 1).toUpperCase();
+		var ch = sNewIndex.charCodeAt(0);
+		if (ch < 65 || ch > 90)
+		{
+			// This is not a valid index page, so don't continue.
+			document.forms.SearchBoxForm.Box.value = g_lastMatch;
+			return true;
+		}
+
+		var iDot = oBottomDoc.location.href.lastIndexOf('.');
+		var sCurrentIndex = oBottomDoc.location.href.substr(iDot - 1, 1).toUpperCase();
+		if (sNewIndex != sCurrentIndex)
+		{
+			// Load the new index page.
+			g_lastMatchAnchor = 0;
+			g_lastMatch = sNewIndex;
+			oBottomDoc.location.href = 'Index' + sNewIndex + '.htm';
+			if (boxLength == 1)
+			{
+				// There's no point in calling gotoHash, since it will move to the top of the
+				// page, which is where we already are, so we return here.
+				return;
+			}
+		}
+	}
+	gotoHash();
+
+	return true;
+}
+
+</SCRIPT>
+
+</head><body><div class=Module>
+<p><b>Index - Click on the first letter of the word you wish to find:<b></p>
+<ul onclick="document.forms.SearchBoxForm.Box.value = '';
+document.forms.SearchBoxForm.Box.focus()" class=ComboSubmoduleLinks>
+<a href="IndexA.htm" target="bottom">A</a>
+<a href="IndexB.htm" target="bottom">B</a>
+<a href="IndexC.htm" target="bottom">C</a>
+<a href="IndexD.htm" target="bottom">D</a>
+<a href="IndexE.htm" target="bottom">E</a>
+<a href="IndexF.htm" target="bottom">F</a>
+<a href="IndexG.htm" target="bottom">G</a>
+<a href="IndexH.htm" target="bottom">H</a>
+<a href="IndexI.htm" target="bottom">I</a>
+<a href="IndexJ.htm" target="bottom">J</a>
+<a href="IndexK.htm" target="bottom">K</a>
+<a href="IndexL.htm" target="bottom">L</a>
+<a href="IndexM.htm" target="bottom">M</a>
+<a href="IndexN.htm" target="bottom">N</a>
+<a href="IndexO.htm" target="bottom">O</a>
+<a href="IndexP.htm" target="bottom">P</a>
+<a href="IndexQ.htm" target="bottom">Q</a>
+<a href="IndexR.htm" target="bottom">R</a>
+<a href="IndexS.htm" target="bottom">S</a>
+<a href="IndexT.htm" target="bottom">T</a>
+<a href="IndexU.htm" target="bottom">U</a>
+<a href="IndexV.htm" target="bottom">V</a>
+<a href="IndexW.htm" target="bottom">W</a>
+<a href="IndexX.htm" target="bottom">X</a>
+<a href="IndexY.htm" target="bottom">Y</a>
+<a href="IndexZ.htm" target="bottom">Z</a>
+</ul>
+<FORM name="SearchBoxForm">
+Or type in a search term:
+<INPUT TYPE=TEXT name="Box" onKeyPress="setTimeout('matchAnchor()', 50)">
+</FORM>
+</div>
+</body>
+</html>

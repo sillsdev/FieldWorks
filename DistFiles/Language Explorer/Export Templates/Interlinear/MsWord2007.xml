@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="Microsoft Word 2007 XML" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="applySingleTransform" transform="xml2Word2007.xsl">
+Export to an XML format which can be read directly by Microsoft Word 2007 (or, presumably, later versions). Definitely will NOT work in earlier versions.
+</FxtDocumentDescription>

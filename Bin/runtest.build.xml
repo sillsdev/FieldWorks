@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Tests" default="all">
+	<property name="debug-mode" value="d" /> <!-- d=debug/r=release -->
+
+<!-- main target -->
+<target name="all" depends="prepare,init,test"/>
+
+<!-- *************************************************************************************************** -->
+<!-- Initialization: set variables -->
+<target name="init" depends="prepare,init-${debug-mode}"/>
+
+<!-- set fwroot variable -->
+<target name="prepare">
+	<script language="C#">
+		<code><![CDATA[
+		public static void ScriptMain(Project project)
+		{
+			if (project.Properties["fwroot"] == null || project.Properties["fwroot"] == String.Empty)
+			{
+				string str = System.Environment.GetEnvironmentVariable("fwroot");
+				if (str == null || str == string.Empty)
+					str = System.IO.Path.GetFullPath(System.IO.Path.Combine(
+						project.Properties["nant.project.basedir"], ".."));
+				project.Properties.AddReadOnly("fwroot", str);
+			}
+		}
+		]]></code>
+	</script>
+	<echo message="fwroot=${fwroot}"/>
+</target>
+
+<!-- set the paths for the tests depending on debug/release -->
+<target name="init-d">
+	<property name="fdotests-path" value="${fwroot}/Output/Test/FDOTests/FDOTests.dll"/>
+	<property name="fwnettest-path" value="${fwroot}/Output/Test/FwNetTest.dll"/>
+	<property name="EcoSoTests-path" value="${fwroot}/Output/Test/EcoSoTest.dll"/>
+</target>
+<target name="init-r">
+	<property name="fdotests-path" value="${fwroot}/Output/Release/FDOTests/FDOTests.dll"/>
+	<property name="fwnettest-path" value="${fwroot}/Output/Test/FwNetTest.dll"/>
+	<property name="EcoSoTests-path" value="${fwroot}/Output/Test/EcoSoTest.dll"/>
+</target>
+
+<!-- *************************************************************************************************** -->
+<!-- Run the tests -->
+<target name="test" depends="FDOTests,FwNetTests,EcoSoTests"/>
+
+<target name="FDOTests" depends="init">
+	<nunit2>
+		<test assemblyname="${fdotests-path}"/>
+	</nunit2>
+</target>
+<target name="FwNetTests" depends="init">
+	<nunit2>
+		<test assemblyname="${fwnettest-path}"/>
+	</nunit2>
+</target>
+<target name="EcoSoTests" depends="init">
+	<nunit2>
+		<test assemblyname="${EcoSoTests-path}"/>
+	</nunit2>
+</target>
+
+</project>

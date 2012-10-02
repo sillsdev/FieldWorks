@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization xmlns="http://schemas.microsoft.com/wix/2003/11/localization">
+  <String Id="YOURLOCID">Your Value</String>
+</WixLocalization>

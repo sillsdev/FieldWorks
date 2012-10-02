@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests writing system dialog-->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <var id="nameTab" set="$NL;60:NAMELESS[*]/9:Name"/>
+  <var id="panel" set="$nameTab;/9:NAMELESS"/>
+
+<!-- 2. Go to FieldWorks Project Properties... -->
+	<click select="menubar/file/project-management/fieldworks-project-properties"/>
+
+<!--FieldWorks Project Properties box-->
+  <on-dialog title="FieldWorks Project Properties">
+   <click path="$NL;37:Writing Systems"/>
+   <click path="$NL;9:Writing Systems/9:Modify...[1]"/>
+  </on-dialog>
+
+<!--Writing System Properties box-->
+  <on-dialog title="Writing System Properties">
+
+	<model select="writing-system-properties[@role='dialog']">
+
+   <click select="general/tab"/>
+   <click select="general/variant/region/value"/>
+   <insert>afr</insert>
+   <click select="general/variant/name/value"/>
+   <insert>ipa</insert>
+
+<!--check success-->
+   <click select="ws" path="Kalaba (afr, ipa)"/>
+
+<!--check close success-->
+   <click select="cancel"/>
+
+	</model>
+  </on-dialog>
+
+  <on-dialog title="FieldWorks Project Properties">
+   <click path="$cancel"/>
+  </on-dialog>
+
+ </on-application>
+</accil>

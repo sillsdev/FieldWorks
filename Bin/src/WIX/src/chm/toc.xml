@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DocCompiler xmlns="http://schemas.microsoft.com/wix/2005/DocCompiler">
+	<TableOfContents>
+		<Topic Title="WiX Help" SourceFile="html\wix_index.htm">
+			<Topic Title="Overview" SourceFile="html\overview.htm"/>
+			<Topic Title="Authoring" SourceFile="html\authoring.htm">
+				<Topic Title="Getting Started" SourceFile="html\authoring_getting_started.htm">
+					<Topic Title="First wxs File" SourceFile="html\authoring_first_file.htm"/>
+					<Topic Title="Creating Merge Modules" SourceFile="html\authoring_merge_modules.htm"/>
+					<Topic Title="Adding Custom Actions" SourceFile="html\authoring_custom_actions.htm"/>
+					<Topic Title="Msi Tables to WiX Schema" SourceFile="html\msitowix.htm"/>
+					<Topic Title="WiX Online Tutorials" SourceFile="html\online_tutorial.htm"/>
+				</Topic>
+				<Topic Title="WiX Standard CustomActions" SourceFile="html\standard_customactions.htm">
+					<Topic Title="Using Server CustomActions" SourceFile="html\using_server_customactions.htm"/>
+					<Topic Title="Performance Counter CustomAction" SourceFile="html\perfmon.htm"/>
+					<Topic Title="Quiet Execution CustomAction" SourceFile="html\qtexec.htm"/>
+				</Topic>
+				<Topic Title="Extensions" SourceFile="html\extensions.htm"/>
+				<Topic Title="Patch Building" SourceFile="html\patch_building.htm"/>
+				<Topic Title="Using the WixUI dialog library" SourceFile="html\WixUI_dialog_library.htm"/>
+				<XmlSchema SourceFile="..\..\src\wix\Xsd\wix.xsd" Main="yes"/>
+				<XmlSchema SourceFile="..\..\src\ext\MMCExtension\wixext\xsd\mmc.xsd"/>
+				<XmlSchema SourceFile="..\..\src\ext\NetFxExtension\wixext\xsd\netfx.xsd"/>
+				<XmlSchema SourceFile="..\..\src\ext\VSExtension\wixext\xsd\vs.xsd"/>
+				<XmlSchema SourceFile="..\..\src\ca\pubca\pcaext\xsd\pubca.xsd"/>
+			</Topic>
+			<Topic Title="Tools" SourceFile="html\tools.htm">
+				<Topic Title="Preprocessor" SourceFile="html\preprocessor.htm"/>
+				<Topic Title="Compiler (candle)" SourceFile="html\candle.htm"/>
+				<Topic Title="Linker (light)" SourceFile="html\light.htm"/>
+				<Topic Title="Decompiler (dark)" SourceFile="html\dark.htm"/>
+				<Topic Title="Visual Studio Package (votive)" SourceFile="html\votive.htm"/>
+			</Topic>
+			<Topic Title="Files" SourceFile="html\files.htm">
+				<Topic Title="Include Files (.wxi)" SourceFile="html\wxi.htm"/>
+				<Topic Title="Source Files (.wxs)" SourceFile="html\wxs.htm"/>
+				<Topic Title="Object Files (.wixobj)" SourceFile="html\wixobj.htm"/>
+				<Topic Title="Installation Packages (.msi)" SourceFile="html\msi.htm"/>
+				<Topic Title="Merge Modules (.msm)" SourceFile="html\msm.htm"/>
+			</Topic>
+			<Topic Title="Development">
+				<Topic Title="Building WiX" SourceFile="html\building_wix.htm"/>
+			</Topic>
+			<Topic Title="Blogs" SourceFile="html\blogs.htm">
+				<Topic Title="Rob Mensching - when setup isn't just xcopy" SourceFile="html\robmen.htm">
+					<Topic Title="2004/04/05 - Windows Installer XML (WiX) toolset has released as Open Source on SourceForge.net." SourceFile="html\robmen_20040405.htm"/>
+					<Topic Title="2004/04/14 - So you want to be a Windows Installer XML developer?" SourceFile="html\robmen_20040414.htm"/>
+					<Topic Title="2004/05/11 - Sections, Symbols and References in the Windows Installer XML (WiX) toolset." SourceFile="html\robmen_20040511.htm"/>
+					<Topic Title="2004/05/16 - My philsophical musings about building setup for software." SourceFile="html\robmen_20040516.htm"/>
+					<Topic Title="2004/05/20 - VBScript (and Jscript) MSI CustomActions suck." SourceFile="html\robmen_20040520.htm"/>
+					<Topic Title="2004/11/22 - Localization and your MSI file." SourceFile="html\robmen_20041122.htm"/>
+					<Topic Title="2004/11/30 - Creating localized MSI files using WiX toolset and .wxl files." SourceFile="html\robmen_20041130.htm"/>
+				</Topic>
+			</Topic>
+			<Topic Title="Getting Help" SourceFile="html\help.htm"/>
+		</Topic>
+	</TableOfContents>
+	<CopyFile Source="html\style.css" Destination="html\style.css"/>
+</DocCompiler>

@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="wixtasks.net-2.0" default="build" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	wixtasks.net-2.0.build - Support for the WixTasks build file
+	2005.11.15 johnls Created
+  </description>
+
+  <!--
+	Use .NET 2.0 for our framework.  The COMPLUSBUILD environment can be used to work with a newer release
+	of .NET, e.g. COMPLUSBUILD=v3.0.0
+  -->
+  <property name="wixtasks.use.private.framework" value="${environment::variable-exists('COMPLUSBUILD')}"/>
+  <if test="${wixtasks.use.private.framework}">
+	<property name="wix.newframework" value="net-2.0-p" />
+	<if test="${framework::exists(wix.newframework)}">
+		<property name="nant.settings.currentframework" value="net-2.0-p" />
+	</if>
+  </if>
+  <if test="${not wixtasks.use.private.framework}">
+	<property name="wix.newframework" value="net-2.0" />
+	<if test="${framework::exists(wix.newframework)}">
+		<property name="nant.settings.currentframework" value="net-2.0" />
+	</if>
+  </if>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <target name="build" description="Compiles the WixTasks assembly using .NET 2.0">
+	<echo message="Couldn't find net-2.0 framework in NAnt.exe.config -- skipping the build of the MSBuild tasks" level="Info" unless="${framework::exists(wix.newframework)}" />
+	<if test="${framework::exists(wix.newframework)}">
+		<csc
+		  target="library"
+		  output="${dir.target.wix}\WixTasks.dll"
+		  debug="${csc.debug}"
+		  optimize="${ship}"
+		  define="${csc.defines}"
+		  warnaserror="false"
+		  warninglevel="4"
+		  checked="true"
+		>
+		  <arg value="${delaysignarg}" />
+		  <arg value="/keyfile:${file.keyfile}" />
+		  <sources basedir="${dir.src.wixtasks}">
+			<include name="${file.wixver}" />
+			<include name="AssemblyInfo.cs" />
+			<include name="CommandLineBuilder.cs"/>
+			<include name="Candle.cs" />
+			<include name="Light.cs" />
+			<include name="Lit.cs" />
+		  </sources>
+		  <references basedir="${framework::get-framework-directory(framework::get-runtime-framework())}">
+			<include name="Microsoft.Build.Tasks.dll" />
+			<include name="Microsoft.Build.Framework.dll" />
+			<include name="Microsoft.Build.Utilities.dll" />
+		  </references>
+		</csc>
+	</if>
+  </target>
+
+</project>

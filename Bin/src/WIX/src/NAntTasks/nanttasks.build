@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="nanttasks" default="nanttasks.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	nanttasks.build - Builds the nanttasks project (Microsoft.Tools.WindowsInstallerXml.NAnttasks.dll).
+	2005.10.18 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="nanttasks.build" description="Peforms a full rebuild (clean then build)" depends="nanttasks.clean, nanttasks.inc" />
+
+  <!-- Clean -->
+  <target name="nanttasks.clean" description="Cleans the build">
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="Microsoft.Tools.WindowsInstallerXml.NAntTasks.dll" />
+		<include name="Microsoft.Tools.WindowsInstallerXml.NAntTasks.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="nanttasks.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<csc
+	  target="library"
+	  output="${dir.target.wix}\Microsoft.Tools.WindowsInstallerXml.NAntTasks.dll"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  doc="${dir.target.wix}\Microsoft.Tools.WindowsInstallerXml.NAntTasks.xml"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.nanttasks}">
+		<include name="${file.wixver}" />
+		<include name="CandleTask.cs" />
+		<include name="LightTask.cs" />
+		<include name="LitTask.cs" />
+		<include name="SingleOutputWixTask.cs" />
+		<include name="Strings.cs" />
+		<include name="Utility.cs" />
+		<include name="WixTask.cs" />
+	  </sources>
+	  <references basedir="${dir.nant}">
+		<include name="NAnt.Core.dll" />
+	  </references>
+	  <resources failonempty="true" basedir="${dir.src.nanttasks}" prefix="Microsoft.Tools.WindowsInstallerXml.NAntTasks">
+		<include name="Strings.resx" />
+	  </resources>
+	</csc>
+  </target>
+
+</project>

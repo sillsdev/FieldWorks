@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+<include from="IncKalaba.xml"/>
+
+<!-- Andy Black's demo sections D and E -->
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		<include from="IncStartUp.xml"/>
+		<include from="IncGrammar.xml"/>
+		<include from="IncLexicon.xml"/>
+
+		<var id="gramSket" set="$menuGRAMMAR;menu:Grammar Sketch"/>
+
+ <!-- 1.	Note the types and their counts. There is no instance of a bound stem. So we'll make one.-->
+
+ <!-- 2.	Go to Lexicon / Lexicon Edit.-->
+  <click path="$vwLexEdit"/>
+
+ <!-- 3.	Navigate to the "palti" record (can click on "palti" in the Record List view ; use the "Go to lexical entry" toolbar button; or "Data / Go to entry" menu item).-->
+  <click path="$lxFindLex"/>
+  <on-dialog title="Find Lexical Entry">
+   <insert>palti</insert>
+   <click path="$fleListItem;/$Col;/$Text;/value:rexp#palti"/>
+   <click path="$goto"/>
+  </on-dialog>
+
+ <!-- 4.	In the MorphType slice, click on the chooser button.-->
+  <click dx="50" path="$lxFldMorphType"/>
+  <click path="$multiEdFIELD;9:morphtypeatomicreference/$sp;2/9:Morph Type/9:.../$NL;43:NAMELESS"/>
+
+ <!-- 5.	Select "bound stem" in the chooser and click OK (or double click on "bound stem").-->
+  <on-dialog title="Choose Morpheme Type">
+   <click path="olitem:bound stem"/>
+   <click path="$ok"/>
+  </on-dialog>
+
+ <!-- 6.	Go to Grammar / Grammar Sketch and re-generate.-->
+  <click path="$gramSket" />
+  <click path="$Generate;" />
+
+ <!-- 7.	Go to the Morpheme Types section and note that "bound stem" is now listed.-->
+  <click path="$grmSkPanel" />
+  <insert wait="1000">{PGDN 2}</insert>
+  <insert wait="1000">{DOWN 4}</insert>
+
+ <!-- E.	Word categories. -->
+
+ <!-- 1.	Note the counts and how they are listed. -->
+ <!-- 2.	No instances of an article, so we'll add one. -->
+ <!-- 3.	Go to Lexicon / Lexicon Edit -->
+  <click path="$vwLexEdit"/>
+
+ <!-- 4.	Click on the Insert Major Entry button. -->
+  <click path="$insEntry"/>
+
+ <!-- 5.	Type "in" in the Form field. -->
+  <on-dialog title="New Entry">
+   <insert wait="200">in</insert>
+
+ <!-- 6.	Change the type to "Particle" -->
+   <insert wait="500">{TAB}p</insert>
+
+ <!-- 7.	Type "the" for the gloss. -->
+   <insert wait="500">{TAB}the</insert>
+
+ <!-- 8.	Click on the Category chooser button. -->
+   <insert wait="500">{TAB}</insert>
+
+ <!-- 9.	Open up the "article" node in the chooser. -->
+	<insert wait="500">aa</insert> <!-- set the selection to the first in the list -->
+	<insert wait="500">{RIGHT}</insert> <!-- open the sublist -->
+
+ <!-- 10.	Select "definite article" and click OK (or double click on "definite article"). -->
+	<insert wait="500">{DOWN}~</insert>
+
+ <!-- 11.	Click on the Create button. -->
+   <click path="9:Create/button:Create"/>
+  </on-dialog>
+
+ <!-- 12.	Go to Grammar / Grammar Sketch and re-generate. -->
+  <click path="$gramSket" />
+  <click path="$Generate;" />
+
+ <!-- 13.	Note the addition of the definite article. -->
+  <click path="$grmSkPanel" />
+  <insert wait="1000">{PGDN 2}</insert>
+  <insert wait="500">{DOWN 4}</insert>
+
+ </on-application>
+</accil>

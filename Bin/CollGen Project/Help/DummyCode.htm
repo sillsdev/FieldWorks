@@ -1,0 +1,228 @@
+<html>
+<head></head>
+<title>Collection Generator: Code Example</title>
+<body bgcolor="#EEFFFF">
+<center>
+<h1>Collection Generator: Code Example</h1>
+</center>
+<p>
+<hr>
+This file provides you with some code which will allow you to test a collection created with the Collection Generator. The code found here is intended to work specifically with the example which is offered in the Collection Generator itself, when you click the "Show Example" button. Note that you need to use the collecton generator to create the collection you use in this example, however once the collection is created, you do not need to modify a single line of code in the collection: it is ready to go!
+<hr>
+<p>
+<h3>Process</h3>
+Take the following steps to try out this sample (this example assumes you have Visual Studio):
+<p>
+<center>
+<table border=0 width=800 cellspacing=5>
+<tr><td bgcolor="#FFFFEE">
+<ol>
+<li>
+Run the Collection Generator, and click the 'Show Example' button. Then click the "Generate" button (generate the source in the default, CSharp language). This will create the source file for the example collection inside the same directory as the generator, called 'CustomerCollection.cs'
+<li>Copy the collection source file to the 'CollGenDemo' directory, in the 'Help' directory. Note that an empty file with the same name is already in this directory. Overwriting it is fine
+<li>Go to the CollGenDemo, and open the demo project (the 'CollGenDemo.sln' file)
+<li>Review the client code to see how the fully working collection is used. If needed, review the customer code. This can be any object you make, or any existing object. Your new collection's code can be viewed also
+<li>Run the project (F5)
+<li>Modify the client code to try out other methods exposed in your new collection
+<li>Make your own collection, and object to store in it!
+</ol>
+</td></tr>
+</table>
+
+<p>
+
+<table border=0 width=800 cellspacing=5>
+<tr>
+<td bgcolor="#FFFF00"><b>Client Code</b></td>
+<td bgcolor="#FFFFCC">The Client code basically constructs some number of customers (feel free to add, or modify any entries) and then places them into the generated collection. It then uses the enumerator associated with the collection to loop through, and print out all of the information. You can also use other functions on the new collection, such as removing entries.
+</td></tr>
+<tr>
+<td colspan = 2 bgcolor="#FFFFEE">
+<pre>using System;
+using YourSpace;
+
+namespace MySpace
+{
+	class Client
+	{
+		[STAThread]
+		public static void Main()
+		{
+			// Make an instance of your new collection
+			CustomerCollection cc = new CustomerCollection();
+
+			// Add some objects to it. This is arbitrary information
+			cc.Add(new Customer(98302, "Bob Harroway",
+				"1 NonExistent Place, Chicago", "999-999-9999",
+				new DateTime(1943, 11, 29)));
+			cc.Add(new Customer(12948, "Sarah Fawkes",
+				"3 NonExistent Place, Chicago", "999-999-9992",
+				new DateTime(1967, 2, 3)));
+			cc.Add(new Customer(38291, "Joseph Collins",
+				"11 NonExistent Place, Chicago", "999-999-9991",
+				new DateTime(1979, 8, 15)));
+			cc.Add(new Customer(13849, "Michelle Dover",
+				"16 NonExistent Place, Chicago", "999-999-9985",
+				new DateTime(1952, 12, 27)));
+			cc.Add(new Customer(13849, "Abigail Rivers",
+				"22 NonExistent Place, Chicago", "999-999-9921",
+				new DateTime(1960, 4, 6)));
+
+			// Loop trhough your colleciton and take appropriate actions
+			// In this example ,we are simply printing the information to the screen
+			foreach (Customer c in cc)
+			{
+				Console.WriteLine("\r\n------------------");
+
+				// Format and display the entries
+				Console.WriteLine("{0,-20}{1}", "Customer Name:", c.Name);
+				Console.WriteLine("{0,-20}{1}", "Customer ID:", c.Identification);
+				Console.WriteLine("{0,-20}{1}", "Customer Address:", c.Address);
+				Console.WriteLine("{0,-20}{1}", "Customer Phone:", c.Phone);
+				Console.WriteLine("{0,-20}{1}", "Customer Birthday:", c.BirthDate);
+				DateTime dt = new DateTime(c.GetAge().Ticks);
+				Console.WriteLine("{0,-20}{1}", "Customer Age:",
+					dt.Year + " years, " + dt.Day + " days");
+			}
+
+			// Catch input from the user, to ensure the command window stays open
+			Console.WriteLine("\r\n------------------");
+			Console.WriteLine("Press <Enter> to Finish...");
+			Console.Read();
+		}
+	}
+}</pre>
+</td>
+</tr>
+</table>
+<p>
+
+<table border=0 width=800 cellspacing=5>
+<tr>
+<td bgcolor="#FFFF00"><b>Customer Code</b></td>
+<td bgcolor="#FFFFCC">The Customer code is some basic information for a theoretical customer class. This class represents the object you wish to store in your collection.
+</td></tr>
+<tr>
+<td colspan = 2 bgcolor="#FFFFEE">
+<pre>using System;
+
+namespace YourSpace
+{
+	public class Customer
+	{
+
+		int _id;
+		string _name;
+		string _address;
+		string _phone;
+		DateTime _birthDate;
+
+		public Customer(int id, string name, string address,
+			string phone, DateTime birthDate)
+		{
+			_id = id;
+			_name = name;
+			_address = address;
+			_phone = phone;
+			_birthDate = birthDate;
+		}
+
+		public int Identification
+		{
+			get
+			{
+				return _id;
+			}
+
+			set
+			{
+				_id = value;
+			}
+		}
+
+		public string Name
+		{
+			get
+			{
+				return _name;
+			}
+
+			set
+			{
+				_name = value;
+			}
+		}
+
+		public string Address
+		{
+			get
+			{
+				return _address;
+			}
+
+			set
+			{
+				_address = value;
+			}
+		}
+
+		public string Phone
+		{
+			get
+			{
+				return _phone;
+			}
+
+			set
+			{
+				_phone = value;
+			}
+		}
+
+		public DateTime BirthDate
+		{
+			get
+			{
+				return _birthDate;
+			}
+
+			set
+			{
+				_birthDate = value;
+			}
+		}
+
+		public TimeSpan GetAge()
+		{
+			return DateTime.Now.Subtract(_birthDate);
+		}
+	}
+}</pre>
+</td>
+</tr>
+</table>
+<p>
+
+<table border=0>
+<tr>
+<td width=200><center>
+<font size=2>
+<a href="help.htm">Main Help Page</a>
+</font>
+</td>
+<td width=200><center>
+<font size=2>
+<a href="explanation.htm">Explanation of Fields</a>
+</font>
+</td>
+<td width=200><center>
+<font size=2>
+<a href="dummycode.htm">Code Example</a>
+</font>
+</td>
+</tr>
+</table>
+
+</center>
+</body>
+</html>

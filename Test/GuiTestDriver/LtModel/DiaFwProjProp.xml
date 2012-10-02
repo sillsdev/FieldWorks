@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<fw-project-properties role="dialog" title="FieldWorks Project Properties" root="yes">
+
+  <general role="tab" name="General">
+	<tab path="37:General"/>
+	<var id="genPANE" set="9:General/"/>
+	<project-name path="$genPANE;9:Project Name:">
+	  <label name="Project Name:" path="/41:$name"/>
+	  <text path="[2]/42:Project Name:"/>
+	</project-name>
+	<server path="$genPANE">
+	  <label name="Server:" path="9:$name;/41:$name"/>
+	  <name path="9:rexp#SILFW"/>
+	</server>
+	<date-created path="$genPANE">
+	  <label name="Date Created:" path="9:$name;/41:$name"/>
+	  <time-stamp path="9:rexp#{AM|PM}"/>
+	</date-created>
+	<last-modified path="$genPANE">
+	  <label name="Last Modified:" path="9:$name;/41:$name"/>
+	  <time-stamp path="9:rexp#{AM|PM}"/>
+	</last-modified>
+	<description path="$genPANE;9:Description:">
+	  <label name="Description:" path="/41:$name"/>
+	  <text path="[2]/42:Description:"/>
+	</description>
+
+	<help name="Help" path="9:$name;/43:$name">
+	  <dialog title="FieldWorks Language Explorer Help" topic="Project Properties, General tab" topic-path="$topic"/>
+	</help>
+  </general>
+
+  <writing-systems role="tab" name="Writing Systems">
+	<tab path="37:Writing Systems"/>
+	<var id="wsPANE" set="9:Writing Systems/"/>
+	<var id="wsLabelA" set="Writing systems defined for this project are shown below. Check those which you want to appear in multilingual, single-line fiel/41:Writing systems defined for this project are shown below. Check those which you want to appear in multilingual, single-line fields. The first checked writing system is the default for its type."/>
+	<label name="$wsLabelA" path="$wsPANE;9:$name;/41:$name"/>
+
+	<vernacular-ws path="$wsPANE">
+	  <label name="Vernacular Writing Systems" path="9:Vernacular Writing Systems/41:$name"/>
+	  <list path="9:Vernacular Writing Systems[2]/33:Vernacular Writing Systems/44:"/> <!-- path="ws name" -->
+	  <add name="Add" path="9:$name;/43:$name">
+		<list/>
+	  </add>
+	  <modify name="Modify" path="9:$name;.../43:$name;...">
+		<dialog title="Writing Systems Properties" tab="Name"/>
+	  </modify>
+	  <remove name="Remove" path="9:$name;/43:$name"/>
+	  <move-down name="Move Down" path="9:6/43:6"/>
+	  <move-up name="Move Up" path="9:5/43:5"/>
+	</vernacular-ws>
+
+	<analysis-ws path="$wsPANE">
+	  <label name="Analysis Writing Systems" path="9:Analysis Writing Systems/41:$name"/>
+	  <list path="9:Analysis Writing Systems[2]/33:Analysis Writing Systems/44:"/> <!-- path="ws name" -->
+	  <add name="Add" path="9:$name;[2]/43:$name">
+		<list/>
+	  </add>
+	  <modify name="Modify" path="9:$name;...[2]/43:$name;...">
+		<dialog title="Writing Systems Properties" tab="Name"/>
+	  </modify>
+	  <remove name="Remove" path="9:$name;[2]/43:$name"/>
+	  <move-down name="Move Down" path="9:6[2]/43:6"/>
+	  <move-up name="Move Up" path="9:5[2]/43:5"/>
+	</analysis-ws>
+
+	<help name="Help" path="9:$name;/43:$name">
+	  <dialog title="FieldWorks Language Explorer Help" topic="Project Properties, Writing Systems tab" topic-path="$topic"/>
+	</help>
+  </writing-systems>
+
+  <external-links role="tab" name="External Links">
+	<tab path="37:External Links"/>
+	<var id="elPANE" set="9:External Links/"/>
+	<var id="elLabelA" set="FieldWorks allows you to establish links to external files, such as documents and photos. These files will open in their native application (e.g. Word documents will open in Word)."/>
+	<label name="$elLabelA" path="$elPANE;9:$name;/41:$name"/>
+	<var id="elLabelB" set="If you intend to use this project across a network connection, you will need to give FieldWorks a reference folder under which your external files are located."/>
+	<label name="$elLabelB" path="$elPANE;9:$name;/41:$name"/>
+	<var id="refName" set="Enter a reference folder for External Links:"/>
+	<el-reference path="$elPANE">
+	  <label name="$refName" path="9:$refName;/41:$name"/>
+	  <text path="9:$refName;[2]/42:$refName"/>
+	  <browse name="Browse" path="9:$name;.../43:$name;..."/>
+	</el-reference>
+	<var id="elLabelC" set="NOTE: Be sure to &quot;share&quot; this folder if you will be using this project over a network connection."/>
+	<label name="$elLabelC" path="$elPANE;9:$name;/41:$name"/>
+	<help name="Help" path="9:$name;/43:$name">
+	  <dialog title="FieldWorks Language Explorer Help" topic="Project Properties, External Links tab" topic-path="$topic"/>
+	</help>
+  </external-links>
+
+  <ok name="OK" path="9:$name;/43:$name"/>
+  <cancel name="Cancel" path="9:$name;/43:$name"/>
+</fw-project-properties>

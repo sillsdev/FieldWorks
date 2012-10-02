@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<GAFAWSData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation=".\GAFAWS.xsd">
+  <WordRecords>
+	<WordRecord WRID="WR1">
+	  <Prefixes>
+		<Affix MIDREF="p4"/>
+		<Affix MIDREF="p3"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	  <Suffixes>
+		<Affix MIDREF="s2"/>
+	  </Suffixes>
+	  <Other>
+		<clientWordStuff/>
+	  </Other>
+	</WordRecord>
+	<WordRecord WRID="WR2">
+	  <Prefixes>
+		<Affix MIDREF="p3"/>
+		<Affix MIDREF="p2"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	  <Suffixes>
+		<Affix MIDREF="s1"/>
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR3">
+	  <Prefixes>
+		<Affix MIDREF="p4"/>
+		<Affix MIDREF="p1"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	  <Suffixes>
+		<Affix MIDREF="s1"/>
+		<Affix MIDREF="s2"/>
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR4">
+	  <Prefixes>
+		<Affix MIDREF="p2"/>
+		<Affix MIDREF="p1"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	  <Suffixes>
+		<Affix MIDREF="s2"/>
+		<Affix MIDREF="s3"/>
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR5">
+	  <Prefixes>
+		<Affix MIDREF="p4"/>
+		<Affix MIDREF="p23"/>
+		<Affix MIDREF="p1"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	  <Suffixes>
+		<Affix MIDREF="s12"/>
+		<Affix MIDREF="s3"/>
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR6">
+	  <Prefixes>
+		<Affix MIDREF="p34"/>
+		<Affix MIDREF="p12"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	  <Suffixes>
+		<Affix MIDREF="s1"/>
+		<Affix MIDREF="s23"/>
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR7">
+	  <Prefixes>
+		<Affix MIDREF="p3"/>
+		<Affix MIDREF="p12"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	</WordRecord>
+	<WordRecord WRID="WR8">
+	  <Prefixes>
+		<Affix MIDREF="p34"/>
+		<Affix MIDREF="p2"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	</WordRecord>
+	<WordRecord WRID="WR9">
+	  <Prefixes>
+		<Affix MIDREF="p4"/>
+		<Affix MIDREF="p13"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	  <Suffixes>
+		<Affix MIDREF="s13"/>
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR10">
+	  <Prefixes>
+		<Affix MIDREF="p24"/>
+		<Affix MIDREF="p1"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	</WordRecord>
+	<WordRecord WRID="WR11">
+	  <Prefixes>
+		<Affix MIDREF="p14"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	</WordRecord>
+	<WordRecord WRID="WR12">
+	  <Prefixes>
+		<Affix MIDREF="p2"/>
+		<Affix MIDREF="p3"/>
+		<Affix MIDREF="p1"/>
+	  </Prefixes>
+	  <Stem MIDREF="R"/>
+	</WordRecord>
+  </WordRecords>
+  <Morphemes>
+	<Morpheme MID="R" type="s">
+	  <Other>
+		<clientMorphemeStuff/>
+	  </Other>
+	</Morpheme>
+	<Morpheme MID="p1" type="pfx"/>
+	<Morpheme MID="p2" type="pfx"/>
+	<Morpheme MID="p3" type="pfx"/>
+	<Morpheme MID="p4" type="pfx"/>
+	<Morpheme MID="p12" type="pfx"/>
+	<Morpheme MID="p13" type="pfx"/>
+	<Morpheme MID="p14" type="pfx"/>
+	<Morpheme MID="p23" type="pfx"/>
+	<Morpheme MID="p24" type="pfx"/>
+	<Morpheme MID="p34" type="pfx"/>
+	<Morpheme MID="s1" type="sfx"/>
+	<Morpheme MID="s2" type="sfx"/>
+	<Morpheme MID="s3" type="sfx"/>
+	<Morpheme MID="s12" type="sfx"/>
+	<Morpheme MID="s13" type="sfx"/>
+	<Morpheme MID="s23" type="sfx"/>
+  </Morphemes>
+  <Classes>
+	<PrefixClasses/>
+	<SuffixClasses/>
+  </Classes>
+  <Challenges/>
+</GAFAWSData>

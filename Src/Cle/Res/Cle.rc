@@ -1,0 +1,880 @@
+1 TYPELIB "..\..\..\Output\Common\CleTlb.tlb"
+
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h" //
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfApp.rc"
+#include "..\..\AppCore\Res\FmtParaDlg.rc"
+#include "..\..\AppCore\Res\FmtWrtSysDlg.rc"
+#include "..\..\AppCore\Res\FmtBdrDlg.rc"
+#include "..\..\AppCore\Res\FmtBulNumDlg.rc"
+#include "..\..\AppCore\Res\FmtFntDlg.rc"
+#include "..\..\AppCore\Res\FmtGenDlg.rc"
+#include "..\..\AppCore\Res\AfStylesDlg.rc"
+#include "..\..\AppCore\Res\FilPgSetDlg.rc"
+#include "..\..\AppCore\Res\TlsListsDlg.rc"
+#include "..\..\AppCore\Res\TlsOptDlg.rc"
+#include "..\..\AppCore\Res\TlsOptView.rc"
+#include "..\..\AppCore\Res\TlsOptGen.rc"
+#include "..\..\AppCore\Res\TlsOptCust.rc"
+#include "..\..\AppCore\Res\PossChsrDlg.rc"
+#include "..\..\AppCore\Res\MiscDlgs.rc"
+#include "..\..\AppCore\Res\AfTagOverlay.rc"
+#include "..\..\AppCore\Res\FwFilter.rc"
+#include "..\..\AppCore\Res\AfSortMethod.rc"
+#include "CleNewProj.rc"
+#include "CleLstNotFndDlg.rc"
+#include "..\..\AppCore\Res\AfWizardDlg.rc"
+#include "..\..\AppCore\Res\AfFindDlg.rc"
+#include "..\..\AppCore\Res\ListsPropDlg.rc"
+#include "..\..\AppCore\Res\GeneralPropDlg.rc"
+#include "..\..\AppCore\Res\AfProgressDlg.rc"
+#include "..\..\AppCore\Res\AfPrjNotFndDlg.rc"
+#include "..\..\Generic\Generic.rc"
+#include "..\..\AppCore\Res\RecMainWndRes.rc"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+
+//----------------------------------------------------------------------------------------------
+// FieldWorks Developers, NOTE: ANY STRINGS THAT WILL APPEAR IN THE UI NEED TO BE REVIEWED BY
+// PM. PLEASE ADD A TODO NOTE IF YOU ADD ANY SUCH STRINGS."
+//----------------------------------------------------------------------------------------------
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridTBarIns         BITMAP  DISCARDABLE     "ToolbarInsert.bmp"
+kridTBarTools       BITMAP  DISCARDABLE     "ToolbarTools.bmp"
+kridTBarInvisible   BITMAP  DISCARDABLE     "ToolbarInvisible.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+kridCleIcon          ICON    DISCARDABLE     "Cle.ico"
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version: bldinc.h holds the current version number and it is created by executing
+// bin\mkverrsc.exe from within the bin\mkcle.bat file. The major and minor version
+// numbers are hard-coded in mkcle.bat.
+#include "..\..\..\Output\Common\bldinc.h"
+VS_VERSION_INFO VERSIONINFO
+// NOTE: These defines are in bldinc.h which come from bld/GlobalInclude.xml
+// BUILDLVL comes from %BUILD_LEVEL% and defaults to 9 for developer machines, but
+// is set to lower numbers by the build machine.
+ FILEVERSION TLE_MAJOR_VERSION,TLE_MINOR_VERSION,TLE_REVISION,NUMBER_OF_DAYS
+// PRODUCTVERSION should be the Fieldworks suite version
+ PRODUCTVERSION MAJOR_VERSION,MINOR_VERSION,SUITE_REVISION,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904b0"
+		BEGIN
+			VALUE "Comments", "\0"
+			VALUE "CompanyName", "SIL International\0"
+			VALUE "FileDescription", "Choices List Editor\0"
+			VALUE "FileVersion", STR_PRODUCT // Uses FILEVERSION.
+			VALUE "InternalName", "Cle\0"
+			VALUE "LegalCopyright", COPYRIGHT
+			VALUE "LegalTrademarks", "\0"
+			VALUE "OriginalFilename", "FwListEditor.exe\0"
+			VALUE "PrivateBuild", "\0"
+			VALUE "ProductName", "SIL FieldWorks\0"
+			VALUE "ProductVersion", FWSUITE_VERSION
+			VALUE "SpecialBuild", "\0"
+		END
+	END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1200
+	END
+END
+
+#endif    // !_MAC
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+kridAppMenu MENU DISCARDABLE
+BEGIN
+	POPUP "&File"
+	BEGIN
+		POPUP "New"
+		BEGIN
+			MENUITEM "New Topics List...",          kcidFileNewTL
+			MENUITEM "New FieldWorks Project...",     kcidFileNewLP
+		END
+		MENUITEM "&Open...",                        kcidFileOpen
+		MENUITEM "&Save",                           kcidFileSave
+		POPUP "Project Management"
+		BEGIN
+			MENUITEM "FieldWorks Proje&ct Properties..."	kcidFilePropsLP
+			MENUITEM "&Backup and Restore..."				kcidFileBackup
+			MENUITEM "Delete..."                            kcidFileDelete
+		END
+		MENUITEM SEPARATOR
+		MENUITEM "Page Set&up...",                  kcidFilePageSetup
+//      MENUITEM "Print Pre&view",                  kcidFilePrintPrevw
+		MENUITEM "&Print...",                       kcidFilePrint
+		MENUITEM SEPARATOR
+// commented out as per Raid bug 3435
+		POPUP "&Import"
+		BEGIN
+			MENUITEM "&Standard Format...",         kcidFileImpt
+//          MENUITEM "&XML Format...",              kcidFileImpt
+		END
+		MENUITEM "&Export...",                      kcidFileExpt
+//      MENUITEM "&Backup and Restore...",          kcidFileBackup
+		MENUITEM SEPARATOR
+		POPUP "P&roperties"
+		BEGIN
+//          MENUITEM "Proje&ct Properties...",      kcidFilePropsLP
+			MENUITEM "&Topics List Properties...",  kcidFilePropsTL
+		END
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit",                           kcidFileExit
+	END
+	POPUP "&Edit"
+	BEGIN
+		MENUITEM "&Undo",                       kcidEditUndo
+		MENUITEM "&Redo",                       kcidEditRedo
+		MENUITEM SEPARATOR
+		MENUITEM "Cu&t",                        kcidEditCut
+		MENUITEM "&Copy",                       kcidEditCopy
+		MENUITEM "&Paste",                      kcidEditPaste
+//        MENUITEM "Paste &Special...",           kcidEditPasteSp
+		MENUITEM "Select A&ll",                 kcidEditSelAll
+		MENUITEM SEPARATOR
+		MENUITEM "&Find...",                    kcidEditSrch
+		MENUITEM "Find Ne&xt",                  kcidEditNextMatch
+		MENUITEM "Find Pre&vious",              kcidEditPrevMatch
+		MENUITEM "R&eplace...",                 kcidEditRepl
+		MENUITEM SEPARATOR
+		MENUITEM "&Delete...",                  kcidEditDel
+	END
+	POPUP "&View"
+	BEGIN
+		POPUP "&List"
+		BEGIN
+			MENUITEM "Show &Abbreviations", kcidViewTreeAbbrevs
+			MENUITEM "Show &Names",         kcidViewTreeNames
+			MENUITEM "Sho&w Abbreviations and Names", kcidViewTreeBoth
+		END
+		POPUP "&Views"
+		BEGIN
+			// Views should be dynamically listed first.
+			MENUITEM "",                            kcidExpViews
+			MENUITEM SEPARATOR
+			MENUITEM "&Configure...",               kcidViewViewsConfig
+		END
+		POPUP "&Filters"
+		BEGIN
+			// Filters should be dynamically listed following the first separator.
+			MENUITEM "",                            kcidExpFilters
+//            MENUITEM "No Filter",                 kcidViewFltrsNone
+//            MENUITEM SEPARATOR
+			MENUITEM SEPARATOR
+			MENUITEM "&Configure...",               kcidViewFltrsConfig
+		END
+		POPUP "&Sort Methods"
+		BEGIN
+			// Sort methods should be dynamically listed following the first separator.
+			MENUITEM "",                            kcidExpSortMethods
+//            MENUITEM "Default Sort",              kcidViewSortsNone
+//            MENUITEM SEPARATOR
+			MENUITEM SEPARATOR
+			MENUITEM "&Configure...",               kcidViewSortsConfig
+		END
+	  MENUITEM SEPARATOR
+		POPUP "&Toolbars"
+		BEGIN
+			MENUITEM "",                            kcidExpToolbars
+		END
+		MENUITEM "Si&de Bar",                       kcidViewVbar
+		MENUITEM "Status &Bar",                     kcidViewSbar
+		MENUITEM "Full &Window",                    kcidViewFullWindow
+//        MENUITEM SEPARATOR
+//        POPUP "Synchronize With Other &Apps"
+//        BEGIN
+//            MENUITEM "&Send Context",               kcidViewSyncSend
+//            MENUITEM "&Receive Context",            kcidViewSyncRecv
+//            MENUITEM SEPARATOR
+//            MENUITEM "&Configure Synchronization...", kcidViewSyncConfig
+//        END
+		// The views, as listed in the leftmost pane, should be listed next, after a separator.
+	END
+	POPUP "&Data"
+	BEGIN
+		MENUITEM "&First",                      kcidDataFirst
+		MENUITEM "&Previous",                   kcidDataPrev
+		MENUITEM "&Next",                       kcidDataNext
+		MENUITEM "&Last",                       kcidDataLast
+//        MENUITEM SEPARATOR
+//        POPUP "&History",                       // kcidDataHist
+//        BEGIN
+//            MENUITEM SEPARATOR
+//        END
+//        POPUP "F&avorites",                     // kcidDataFav
+//        BEGIN
+//            MENUITEM SEPARATOR
+//        END
+//        MENUITEM "&Organize Favorites...",      kcidDataOrgFav
+//        MENUITEM SEPARATOR
+//        POPUP "&Modify Templates..."
+//        BEGIN
+//            MENUITEM SEPARATOR
+//        END
+	END
+	POPUP "&Insert"
+	BEGIN
+		MENUITEM "List &Item",                  kcidInsListItem
+		MENUITEM "List Item &Above",            kcidInsListItemBef
+		MENUITEM "List Item &Below",            kcidInsListItemAft
+		MENUITEM "List &Subitem",               kcidInsListSubItem
+		MENUITEM SEPARATOR
+//        MENUITEM "&Comment...",                 kcidInsComment
+		MENUITEM "External &Link...",           kcidExtLink
+//        MENUITEM SEPARATOR
+//        MENUITEM "&Table...",                   kcidInsTable
+//        MENUITEM "So&und...",                   kcidInsSound
+//        MENUITEM "&Video...",                   kcidInsVideo
+//        MENUITEM "&Picture...",                 kcidInsPic
+//        MENUITEM "&Object...",                  kcidInsObj
+	END
+	POPUP "F&ormat"
+	BEGIN
+		MENUITEM "&Font...",                    kcidFmtFnt
+		MENUITEM "&Writing System...",          kcidFmtWrtgSys
+		MENUITEM "&Paragraph...",               kcidFmtPara
+		MENUITEM "Bullets and &Numbering...",   kcidFmtBulNum
+		MENUITEM "&Border...",                  kcidFmtBdr
+//        MENUITEM "&Table...",                   kcidFmtTable
+		MENUITEM SEPARATOR
+		MENUITEM "&Style...",                   kcidFmtStyles
+	END
+	POPUP "&Tools"
+	BEGIN
+//        MENUITEM "&Spelling...",                kcidToolsSplg
+//        MENUITEM SEPARATOR
+//        MENUITEM "&FieldWorks Explorer...",     kcidToolsExpl
+//        POPUP "Show Selection &Using",          // kcidToolsShowSelUsing
+//        BEGIN
+//            MENUITEM SEPARATOR
+//        END
+//        MENUITEM SEPARATOR
+		MENUITEM "&Options...",                 kcidToolsOpts
+//        MENUITEM "&Customize...",               kcidToolsCust
+	END
+	POPUP "&Window"
+	BEGIN
+		MENUITEM "&New Window",                 kcidWndNew
+		MENUITEM SEPARATOR
+		MENUITEM "&Cascade Windows",                    kcidWndCascad
+		MENUITEM "&Tile Windows",                       kcidWndTile
+		MENUITEM "Tile Side &By Side",          kcidWndSideBy
+		MENUITEM SEPARATOR
+		MENUITEM "&Split Window",               kcidWndSplit
+		// The open windows should be listed next, after a separator.
+	END
+	POPUP "&Help"
+	BEGIN
+//        MENUITEM "&FieldWorks Suite...",        kcidHelpConts
+		MENUITEM "Topics &List Editor...",      kcidHelpApp
+		MENUITEM "&What's This?",               kcidHelpWhatsThis
+		MENUITEM SEPARATOR
+		MENUITEM "&About Topics List Editor...", kcidHelpAbout
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+kridTBarIns TOOLBAR DISCARDABLE  16, 15
+BEGIN
+	BUTTON      kcidInsListItem
+	BUTTON      kcidInsListItemBef
+	BUTTON      kcidInsListItemAft
+	BUTTON      kcidInsListSubItem
+	SEPARATOR
+	BUTTON      kcidExtLink
+//    SEPARATOR
+//    BUTTON      kcidInsTable
+//    BUTTON      kcidInsSound
+//    BUTTON      kcidInsVideo
+//    BUTTON      kcidInsPic
+//    BUTTON      kcidInsObj
+END
+
+kridTBarTools TOOLBAR DISCARDABLE  16, 15
+BEGIN
+//    BUTTON      kcidToolsSplg
+//    SEPARATOR
+//    BUTTON      kcidToolsExpl
+//    BUTTON      kcidToolsShowSelUsing
+//    SEPARATOR
+	BUTTON      kcidToolsOpts
+//    BUTTON      kcidToolsCust
+END
+
+kridTBarInvisible TOOLBAR MOVEABLE PURE  16, 15
+BEGIN
+	BUTTON      kcidFilePageSetup
+	BUTTON      kcidFilePropsLP
+	BUTTON      kcidEditDel
+//    BUTTON      kcidInsComment
+	BUTTON      kcidFmtFnt
+	BUTTON      kcidFmtWrtgSys
+	BUTTON      kcidFmtPara
+	BUTTON      kcidFmtBulNum
+	BUTTON      kcidFmtBdr
+//    BUTTON      kcidFmtTable
+	BUTTON      kcidHelpApp
+	BUTTON      kcidHelpHowDoI
+	BUTTON      kcidHelpStudentManual
+	BUTTON      kcidHelpAbout
+	BUTTON      kcidHelpConts
+	BUTTON      kcidHelpIndex
+	BUTTON      kcidHelpFind
+	BUTTON      kcidAddSimpleFilter
+	BUTTON      kcidAddFullFilter
+	BUTTON      kcidViewViewsConfig
+	BUTTON      kcidViewFltrsConfig
+	BUTTON      kcidViewSortsConfig
+	BUTTON      kcidViewTreesConfig
+	BUTTON      kcidFilePropsTL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+kridAccelStd ACCELERATORS DISCARDABLE
+BEGIN
+	"P",            kcidFilePrint,          VIRTKEY, CONTROL, NOINVERT
+	"O",            kcidFileOpen,           VIRTKEY, CONTROL, NOINVERT
+	"S",            kcidFileSave,           VIRTKEY, CONTROL, NOINVERT
+
+	"A",            kcidEditSelAll,         VIRTKEY, CONTROL, NOINVERT
+	"C",            kcidEditCopy,           VIRTKEY, CONTROL, NOINVERT
+	VK_INSERT,      kcidEditCopy,           VIRTKEY, CONTROL, NOINVERT
+	"V",            kcidEditPaste,          VIRTKEY, CONTROL, NOINVERT
+	VK_INSERT,      kcidEditPaste,          VIRTKEY, SHIFT, NOINVERT
+	"X",            kcidEditCut,            VIRTKEY, CONTROL, NOINVERT
+	VK_DELETE,      kcidEditCut,            VIRTKEY, SHIFT, NOINVERT
+	"Y",            kcidEditRedo,           VIRTKEY, CONTROL, NOINVERT
+	"Z",            kcidEditUndo,           VIRTKEY, CONTROL, NOINVERT
+	VK_BACK,        kcidEditUndo,           VIRTKEY, ALT, NOINVERT
+
+	"B",            kcidFmttbBold,          VIRTKEY, CONTROL, NOINVERT
+	"I",            kcidFmttbItal,          VIRTKEY, CONTROL, NOINVERT
+	"S",            kcidFmttbFocusStyleBox, VIRTKEY, SHIFT, CONTROL, NOINVERT
+	"N",            kcidApplyNormalStyle,   VIRTKEY, SHIFT, CONTROL, NOINVERT
+
+	"F",            kcidEditSrch,           VIRTKEY, CONTROL, NOINVERT
+	"H",            kcidEditRepl,           VIRTKEY, CONTROL, NOINVERT
+	"G",            kcidEditNextMatch,      VIRTKEY, CONTROL, NOINVERT
+	VK_F3,          kcidEditNextMatch,      VIRTKEY, NOINVERT
+	VK_F4,          kcidEditNextMatch,      VIRTKEY, SHIFT, NOINVERT
+	"D",            kcidEditPrevMatch,      VIRTKEY, CONTROL, NOINVERT
+	VK_F3,          kcidEditPrevMatch,      VIRTKEY, SHIFT, NOINVERT
+
+	VK_F1,          kcidHelpApp,            VIRTKEY, NOINVERT
+	VK_F1,          kcidHelpWhatsThis,      VIRTKEY, SHIFT, NOINVERT
+	VK_F5,          kcidViewRefresh,        VIRTKEY, NOINVERT
+
+	"N",            kcidDataNext,           VIRTKEY, ALT, NOINVERT
+	"P",            kcidDataPrev,           VIRTKEY, ALT, NOINVERT
+
+	"W",            kcidViewFullWindow,     VIRTKEY, CONTROL, NOINVERT
+
+//    "L",            kcidInsListItemAft,     VIRTKEY, SHIFT, CONTROL, NOINVERT
+//    "E",            kcidToolsExpl,          VIRTKEY, CONTROL, NOINVERT
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""AfDef.h""\r\n"
+	"#include ""FmtParaDlgRes.h""\r\n"
+	"#include ""FmtBdrDlgRes.h""\r\n"
+	"#include ""FmtBulNumDlgRes.h""\r\n"
+	"#include ""FmtParaDlg.rc""\r\n"
+	"#include ""FmtGenDlg.rc""\r\n"
+	"#include ""FmtBdrDlg.rc""\r\n"
+	"#include ""FmtBulNumDlg.rc""\r\n"
+	"#include ""FmtFntDlg.rc""\r\n"
+	"#include ""FilPgSetDlg.rc""\r\n"
+	"#include ""FilPgSetDlgRes.h""\r\n"
+	"#include ""MiscDlgs.rc""\r\n"
+	"#include ""MiscDlgsRes.h""\r\n"
+	"#include ""TlsListsDlg.rc""\r\n"
+	"#include ""TlsListsDlgRes.h""\r\n"
+	"#include ""TlsOptDlg.rc""\r\n"
+	"#include ""TlsOptDlgRes.h""\r\n"
+	"#include ""PossChsrDlgRes.h""\r\n"
+	"#include ""AfTagOverlayRes.h""\r\n"
+	"#include ""FwFilterRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptPossibility          "Possibility List"
+	kstidTlsOptPerson               "Person List"
+	kstidTlsOptLocation             "Location List"
+	kstidTlsOptAnthroItem           "AnthroItem List"
+	kstidTlsOptCustomItem           "CustomItem List"
+	kstidTlsOptLexEntryType			"Lex Entry Type"
+	kstidTlsOptMoMorphType          "Mo Morph Type"
+	kstidTlsOptPartOfSpeech         "Part Of Speech"
+	kstidTlsOptCstAllPss            "All Possibility Lists"
+END
+
+#ifdef ADD_LEXTEXT_LISTS
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptAnnAllowsComment     "Allows Comment"
+	kstidTlsOptAnnAllowsFeatStruct  "Allows Feature Structure"
+	kstidTlsOptAnnAllowsInstOf      "Allows Instance Of"
+	kstidTlsOptAnnInstOfSig         "Instance of Signature"
+	kstidTlsOptAnnUserCanCreate     "User Can Create"
+	kstidTlsOptAnnCanCreateOrphan   "Can Create Orphan"
+	kstidTlsOptAnnPromptUser        "Prompt User"
+	kstidTlsOptAnnCopyCutPastable   "Able To Copy/Cut/Paste"
+	kstidTlsOptAnnZeroWidth         "Zero Width"
+	kstidTlsOptAnnMulti             "Multi"
+	kstidTlsOptAnnSeverity          "Severity"
+	kstidTlsOptTypType				"Type"
+	kstidTlsOptTypReverseAbbr		"Reverse Abbr"
+	kstidTlsOptMorPostFix           "Postfix"
+	kstidTlsOptMorPreFix            "Prefix"
+	kstidTlsOptMorSecondaryOrder    "Secondary Order"
+END
+#endif
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptClName               "Name"
+	kstidTlsOptClPossibilities      "Subitems"
+	kstidTlsOptClDiscussion         "Discussion"
+	kstidTlsOptClAbbreviation       "Abbreviation"
+	kstidTlsOptClDescription        "Short Description"
+	kstidTlsOptClSortSpec           "Sort Specification"
+	kstidTlsOptERestrictions        "Restrictions"
+	kstidTlsOptEConfidence          "Confidence"
+	kstidTlsOptEDateModified        "Date Modified"
+	kstidTlsOptEResearchers         "Researcher"
+	kstidTlsOptHelpId               "Help Id"
+	kstidListEntry                  "List Item"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptPerName              "Full Name"
+	kstidTlsOptPerDiscussion        "Biographical Information"
+	kstidTlsOptPerAlias             "Alias"
+	kstidTlsOptPerGender            "Gender"
+	kstidTlsOptPerDateOfBirth       "Date of Birth"
+	kstidTlsOptPerPlaceOfBirth      "Place of Birth"
+	kstidTlsOptPerIsResearcher      "Is a Researcher"
+	kstidTlsOptPerPlacesOfResidence "Place of Residence"
+	kstidTlsOptPerEducation         "Education"
+	kstidTlsOptPerDateOfDeath       "Date of Death"
+	kstidTlsOptPerPositions         "Position"
+	kstidTlsOptPerDateModified      "Date Modified"
+	kstidTlsOptPerResearchers       "Researcher"
+
+	kstidTlsOptLocName              "Location Name"
+	kstidTlsOptLocAlias             "Alias"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTrBarInsert         "Inserts an item into the list.\n&Insert Item"
+	kcidTrBarInsertBef      "Inserts a list item above the current selection.\nInsert Item &Above"
+	kcidTrBarInsertAft      "Inserts a list item below the current selection.\nInsert Item &Below"
+	kcidTrBarInsertSub      "Inserts a list subitem under the current selection.\nInsert &Subitem"
+	kcidTrBarDelete         "Deletes the selected item.\n&Delete..."
+	kcidTrBarMerge          "Merges the selected item with another.\n&Merge..."
+	kcidViewTreeAbbrevs     "Displays the list using abbreviations only.\nShow &Abbreviations"
+	kcidViewTreeNames       "Displays the list  using names only.\nShow &Names"
+	kcidViewTreeBoth        "Displays the list using both abbreviations and names.\nShow Abbreviations and Names"
+
+	kstidInsListItem        "&Insert Item"
+	kstidInsListItemBef     "&Insert Item Above"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidViews              "Views"
+	kstidFilters            "Filters"
+	kstidSortMethods        "Sort Methods"
+	kstidList               "List Items"
+	kstidDefaultListName    "Weather"
+	kstidSortIncLabel       "Include subitems"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCmPossibility_Name           "(single-line text field)  The official or commonly understood name or term used for the list item."
+	kstidCmPossibility_Abbreviation   "(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available."
+	kstidCmPossibility_Description    "(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog."
+	kstidCmPossibility_Restrictions   "(list reference field)  Specifies any limitations on the distribution of information associated with this list item."
+	kstidCmPossibility_Confidence     "(list reference field)  The reliability of the data in this list item."
+	kstidCmPossibility_DateCreated    "(date field)  The date and time this list item was first created."
+	kstidCmPossibility_DateModified   "(date field)  The date and time this list item was last modified."
+	kstidCmPossibility_Researchers    "(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item."
+	kstidCmPossibility_SortSpec       "Provides a way to override the normal sorting of this list item in the list."
+	kstidCmPossibility_Discussion     "(multiparagraph text field)  The main body of information about this list item."
+	kstidCmPossibility_HelpId         "(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCmPerson_Name              "(single-line text field)  The complete name of the person.  Whenever possible, enter names in a consistent pattern such as 'John P. Doe' or 'Doe, John P.'."
+	kstidCmPerson_Discussion        "(multiparagraph text field)  Biographical information for the person."
+	kstidCmPerson_Alias             "(single-line text field)  The assumed or special-usage name of the person."
+	kstidCmPerson_Gender            "(list reference field)  The sex of the person."
+	kstidCmPerson_DateOfBirth       "(date field)  The date the person was born."
+	kstidCmPerson_PlaceOfBirth      "(list reference field)  The location where the person was born."
+	kstidCmPerson_IsResearcher      "(list reference field)  Specifies whether or not the person is a researcher contributing to this project."
+	kstidCmPerson_PlacesOfResidence "(list reference field)  The place where the person lives or calls home."
+	kstidCmPerson_Education         "(list reference field)  The highest level of schooling completed by the person."
+	kstidCmPerson_DateOfDeath       "(date field)  The date the person died."
+	kstidCmPerson_Positions         "(list reference field)  The social position, job title, rank, religious office and other capabilities of the person."
+
+	kstidCmLocation_Name            "(single-line text field)  Specifies a location by a place's name or a unique descriptive phrase.  Enter a more detailed description in the Short Description field, and a complete discussion in the discussion field."
+	kstidCmLocation_Alias           "(single-line text field)  The assumed or special-usage name of the location."
+END
+
+#ifdef ADD_LEXTEXT_LISTS
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCmAnnotationDefn_AllowsComment             "This annotation can have a comment."
+	kstidCmAnnotationDefn_AllowsFeatureStructure    "This annotation allows feature structures."
+	kstidCmAnnotationDefn_AllowsInstanceOf          "This annotation can reference an object."
+	kstidCmAnnotationDefn_InstanceOfSignature       "The type (class number) of the object being referenced."
+	kstidCmAnnotationDefn_UserCanCreate             "A user can create these annotations."
+	kstidCmAnnotationDefn_CanCreateOrphan           "The annotation can create an orphan."
+	kstidCmAnnotationDefn_PromptUser                "The user is prompted for something."
+	kstidCmAnnotationDefn_CopyCutPastable           "This annotation can be copied, cut, and pasted."
+	kstidCmAnnotationDefn_ZeroWidth                 "This annotation has zero width."
+	kstidCmAnnotationDefn_Multi                     "This annotation allows multiple writing systems."
+	kstidCmAnnotationDefn_Severity                  "This is the level of severity for this annotation."
+	kstidLexEntryType_ReverseAbbr					"This abbreviation may be used in the minor/subentry when referring to the major entry."
+	kstidMoMorphType_PostFix                        "This is the character(s) to attach to the end of a morpheme of this type."
+	kstidMoMorphType_PreFix                         "This is the character(s) to attach to the beginning of a morpheme of this type."
+	kstidMoMorphType_SecondaryOrder                 "This defines the secondary order for sorting entries of this type."
+END
+#endif
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidChoicesListEditor  "Topics List Editor"
+	kstidSupportEmail        "fieldworks_support@sil.org"
+	kstidAnthroList         "Anthropology Categories"
+END
+
+// Status bar text, tool tip, what's-this help
+
+STRINGTABLE DISCARDABLE  // File menu 1
+BEGIN
+	kcidFileNewLP  "Creates a new FieldWorks project\nNew FieldWorks Project\nCreates a new FieldWorks project\n"
+	kcidFileNewTL  "Creates a new topics list\nNew Topics List\nCreates a new topics list\n"
+	kcidFileOpen "Opens another Topics List\nOpen Topics List\nOpens another Topics List\n"
+	kcidFileSave "Saves changes.\nSave\nSaves changes you have made.\n"
+	kcidFileBackup  "Enables configuration and activation of backup and restore.\nBackup or Restore\n"
+	kcidFileExit "Exits this application.\nExit\n\n"
+END
+
+STRINGTABLE DISCARDABLE // File menu 2
+BEGIN
+	kcidFilePageSetup           "Opens a dialog to change the page setup for printing.\nSetup Page\nOpens the dialog to change page setup features for printing such as margins, headers and footers, and page size and orientation.\n"
+//    kcidFilePrintPrevw          "Shows the current view as it appears in print.\nPrint Preview\nShows the current view as it appears in print.\n"
+	kcidFilePrint               "Opens a dialog to print the current view.\nPrint\nOpens a dialog to print the current view, which may include more content than is visible in the window.\n"
+	kcidFileImpt                "Opens a dialog to import data from an external file.\nImport Data\nOpens a dialog to import data from an an external file with XML or another format.\n"
+	kcidFileExpt                "Opens a dialog to export data to an external file.\nExport Data\nOpens a dialog to export data to an external file with XML or other format you specify.\n"
+	kcidFilePropsLP             "Opens a dialog to view or change properties of the open FieldWorks project.\nFieldWorks Project Properties\nOpens a dialog to view or change properties of the open FieldWorks project.\n"
+	kcidFilePropsTL             "Opens a dialog to view or change properties of the open topics list.\nTopics List Properties\nOpens a dialog to view or change properties of the open topics list.\n"
+END
+
+STRINGTABLE DISCARDABLE // Edit menu
+BEGIN
+	kcidEditUndo                "Undoes the most recent change.\nUndo\nUndoes the most recent change.\n"
+	kcidEditRedo                "Reverses the most recent Undo action.\nRedo\nReverses the most recent Undo action.\n"
+	kcidEditCut                 "Copies a selection to the clipboard and deletes the selection.\nCut\nCopies a selection to the clipboard and deletes the selection.\n"
+	kcidEditCopy                "Copies a selection to the clipboard.\nCopy\nCopies a selection to the clipboard.\n"
+	kcidEditPaste               "Inserts the content of the clipboard at the cursor.\nPaste\nInserts the content of the clipboard at the cursor.\n"
+//    kcidEditPasteSp             "Inserts the content of the clipboard at the cursor with constraints you specify.\nPaste Special\nInserts the content of the clipboard at the cursor with constraints you specify.\n"
+	kcidEditSrch                "Opens the Find dialog to find items according to a search criteria.\nFind\nOpens the Find dialog to find items according to a user-defined search criteria.\n"
+	kcidEditPrevMatch           "Goes to the previous item that matches the search criteria.\nFind Previous\nGoes to the previous item that matches the search criteria.\n"
+	kcidEditNextMatch           "Goes to the next item that matches the search criteria.\nFind Next\nGoes to the next item that matches the search criteria.\n"
+	kcidEditRepl                "Opens the Replace dialog to find and replace specified words or characters.\nReplace Text\nOpens the Replace dialog to find and replace specified words or characters.\n"
+	kcidEditSelAll              "Selects all data in the current field.\nSelect All\nSelects all entries in the view except in Data Entry view where it selects all the content of a field.\n"
+	kcidEditDel                 "Deletes an item or subitem.\nDelete Item/Subitem\nDeletes the item or subitem where the cursor is positioned.\n"
+	kcidEditSrchQuick           "Searches for the characters, word, or phrase you type here.\nQuick Find\nSearchs for any character string you type in the box. Press Enter to start the search. Use Previous/Next match buttons to repeat the search. Uses any search options set in the Find and Replace dialog."
+END
+
+STRINGTABLE DISCARDABLE // View menu
+BEGIN
+	// Views submenu
+	kcidViewViewsConfig         "Opens a dialog to configure views.\nConfigure Views\nOpens a dialog to configure views.\nConfigure...\n"
+
+	// Filters submenu
+	kcidViewFltrsNone           "Turns off all filters.\nTurn Off Filters\nTurns off all filters.\n"
+	kcidViewFltrsConfig         "Opens a dialog to configure filters.\nConfigure Filters\nOpens a dialog to configure filters.\nConfigure...\n"
+
+	// Sort Methods submenu
+	kcidViewSortsNone           "Turns off any current sort method.\nTurns Off Sort Method\nTurns off any current sort method.\n"
+	kcidViewSortsConfig         "Opens a dialog to configure sort methods.\nConfigure Sort Methods\nOpens a dialog to configure sort methods.\nConfigure...\n"
+
+	// Overlays submenu
+//  kcidViewTreesNone           kcidViewOlaysNone           "Turns off all overlays.\nTurn Off Overlays\nTurns off all overlays.\n"
+	kcidViewTreesConfig         "Opens a dialog to configure overlays.\nConfigure Overlays\nOpens a dialog to configure overlays.\n"
+
+	// Back to View menu
+	kcidViewVbar                "Shows/hides the Side bar.\nShow/hide Side Bar\nShows/hides the Side bar that occupies the left edge of the window.\n"
+
+	// Synchronize With Other Apps submenu
+//    kcidViewSyncSend            "Sends information to other applications about the open item.\nSend Context\nSends information to other applications about the open item.\n"
+//    kcidViewSyncRecv            "Receives information about the open item in another application.\nReceive Context\nReceives information about the open item in another application.\n"
+//    kcidViewSyncConfig          "Identifies open applications for synchronization.\nConfigure Synchronization\nIdentifies open applications for synchronization.\n"
+	kcidViewFullWindow          "Hides/shows both the view bar and toolbars.\nHide/show All Bars\nHides/shows both the view bar and toolbars to maximize work space.\n"
+END
+
+STRINGTABLE DISCARDABLE // Insert menu 1
+BEGIN
+	// Entry submenu
+	kcidInsListItem             "Inserts a new list item.\nInsert List Item\nInserts a new list item.\n"
+	kcidInsListItemBef          "Inserts a new list item above the current item.\nInsert List Item Above\nInserts a new list item above the current item.\n"
+	kcidInsListItemAft          "Inserts a new list item below the current item.\nInsert List Item Below\nInserts a new list item below the current item.\n"
+	kcidInsListSubItem          "Inserts a new list subitem under the current item.\nInsert Subitem\nInserts a new list subitem under the current item.\n"
+	//kcidExtLink                 "Opens a dialog to insert a link.\nInsert Link\nOpens a dialog to insert a link.\n"
+
+	kcidExtLinkOpen             "Opens the linked file with the associated program.\nOpens Linked File\nOpens the linked file with the associated program.\n"
+	kcidExtLinkOpenWith         "Opens the Open With dialog so you can change the program that is associated with the linked file.\nOpens the Open With Dialog\nOpens the Open With dialog so you can change the program that is associated with the linked file.\n"
+	kcidExtLink                 "Opens a dialog to insert a link.\nInsert Link\nOpens the Create External Link dialog so you can select a file for this external link to open.\n"
+	kcidExtLinkRemove           "Changes the selected External Link to normal text.\nRemove Link\nChanges the selected External Link to normal text.\n"
+
+END
+
+//STRINGTABLE DISCARDABLE // Insert menu 2
+//BEGIN
+	// Back to main insert menu
+//    kcidInsComment              "Opens a dialog to insert a comment.\nInsert Comment\nOpens a dialog to insert a comment.\n"
+//    kcidExtLink                 "Opens a dialog to insert a link.\nInsert Link\nOpens a dialog to insert a link.\n"
+//    kcidInsTable                "Opens a dialog to insert a table.\nInsert Table\nOpens a dialog to insert a table.\n"
+//    kcidInsSound                "Opens a dialog to insert a sound file.\nInsert Sound\nOpens a dialog to insert a sound file.\n"
+//    kcidInsVideo                "Opens a dialog to insert a video file.\nInsert Video\nOpens a dialog to insert a video file.\n"
+//    kcidInsPic                  "Opens a dialog to insert a picture file.\nInsert Picture\nOpens a dialog to insert a picture file.\n"
+//    kcidInsObj                  "Opens a dialog to insert an object.\nInsert Object\nOpens a dialog to insert an object.\n"
+//END
+
+STRINGTABLE DISCARDABLE // Format menu
+BEGIN
+	kcidFmtFnt                  "Opens a dialog to change the font of selected text.\nFont Dialog\nOpens a dialog to change the font of selected text.\n"
+	kcidFmtWrtgSys              "Opens a dialog to change the writing system of selected text.\nWriting System Selection\nOpens a dialog to change the writing system of selected text.\n"
+	kcidFmtPara                 "Opens a dialog to change the format of a selected paragraph.\nParagraph Format\nOpens a dialog to change the format of a selected paragraph.\n"
+	kcidFmtBulNum               "Opens a dialog to format a paragraph as a bulleted or numbered list item.\nBullets and Numbering\nOpens a dialog to format a paragraph as a bulleted or numbered list item.\n"
+	kcidFmtBdr                  "Opens a dialog to apply or change the border of a selected paragraph or table.\nBorders Format\nOpens a dialog to apply or change the border of a selected paragraph or table.\n"
+//    kcidFmtTable                "Opens a dialog to change the format  of a selected table.\nTable Format\nOpens a dialog to change the format  of a selected table.\n"
+	kcidFmtStyles               "Opens a dialog to add, delete, or change styles.\nStyles\nOpens a dialog to add, delete, or change styles.\n"
+END
+
+STRINGTABLE DISCARDABLE // Format toolbar
+BEGIN
+	kcidFmttbStyle              "Changes the style of a selected paragraph or selected characters.\nStyle\nChanges the style of a selected paragraph or selected characters.\n"
+	kcidFmttbWrtgSys            "Changes the writing system of selected characters.\nWriting System\nChanges the writing system of selected characters.\n"
+	kcidFmttbFnt                "Changes the font of selected characters.\nFont\nChanges the font of selected characters.\n"
+	kcidFmttbFntSize            "Changes the font size of selected characters.\nFont Size\nChanges the font size of selected characters.\n"
+	kcidFmttbBold               "Changes selected characters to bold or reverses the change.\nBold\nChanges selected characters to bold or reverses the conversion. Alternately, applies or cancels bold at the cursor position so that either change extends as you type new text.\n"
+	kcidFmttbItal               "Changes selected characters to italic or reverses the change.\nItalic\nChanges selected characters to italic or reverses the change. Alternately, applies or cancels italic at the cursor position so that either change extends as you type new text.\n"
+	kcidFmttbAlignLeft          "Aligns selected paragraph against the left indent or margin.\nLeft Align\nAligns selected paragraph against the left indent or margin.\n"
+	kcidFmttbAlignCntr          "Centers the selected paragraph between indents or margins.\nCenter\nCenters the selected paragraph between indents or margins.\n"
+	kcidFmttbAlignRight         "Aligns the selected paragraph against the right indent or margin.\nRight Align\nAligns the selected paragraph against the right indent or margin.\n"
+	kcidFmttbLstNum             "Converts the selected paragraph to a numbered list item or reverses the conversion.\nNumbered List Item\nConverts the selected paragraph to a numbered list item or reverses the conversion.\n"
+	kcidFmttbLstBullet          "Converts the selected paragraph to a bulleted list item or reverses the conversion.\nBulleted List Item\nConverts the selected paragraph to a bulleted list item or reverses the conversion.\n"
+	kcidFmttbUnind              "Decreases the indent of the selected paragraph (only if indented).\nDecrease Indent\nDecreases the indent of the selected paragraph (only if indented).\n"
+	kcidFmttbInd                "Increases the indent of the selected paragraph.\nIncrease Indent\nIncreases the indent of the selected paragraph.\n"
+	kcidFmttbApplyBdr           "Opens a menu of border configurations and applies your choice to the selected paragraph or table.\nBorders\nOpens a menu of border configurations and applies your choice to the selected paragraph or table.\n"
+	kcidFmttbApplyBgrndColor    "Icon applies color to the background of selected text. Use the down arrow to choose a new background color.\nBackground Color\nThe Background Color button applies its color to the background of selected text. The down arrow opens a color palette to choose a new background color for selected text and the Background Color button. Alternately, the button applies the background color at the cursor position so that it extends as you type new text. Also, clicking the button cancels the corresponding background color on selected text or on new text you type at the cursor.\n"
+	kcidFmttbApplyFgrndColor    "Icon applies color to the font of selected text. Use the down arrow to choose a new font color.\nFont Color\nThe Font Color button applies its color to the font of selected text. The down arrow opens a color palette to choose a new font color for selected text and for the Font Color button. Alternately, the button applies the font color at the cursor position so that it extends as you type new text. Also, clicking the button cancels the corresponding font color on selected text or on new text you type at the cursor.\n"
+END
+
+// Status bar text, tool tip, what's-this help
+
+STRINGTABLE DISCARDABLE // Tools menu
+BEGIN
+	// Tools submenu
+//    kcidToolsSplg               "Opens a dialog to check the spelling of words in the view.\nCheck Spelling\n\n"
+
+	// Back to main tools menu
+//    kcidToolsExpl               "Opens the FieldWorks Explorer window.\nOpen FieldWorks Explorer\nOpens the FieldWorks Explorer window so you can access other FieldWorks applications, open new language projects, backup your data, and import or export data.\n"
+//    kcidToolsShowSelUsing       "Lists applications available for displaying or editing the selection.\nLists Available Applications\n\n"
+	kcidToolsOpts               "Opens a dialog to set options for the Topics List Editor.\nOptions\nOpens a dialog to set view, overlay and custom field options for the Topics List Editor.\n"
+//    kcidToolsCust               "Opens a dialog to customize the user interface of the Topics List Editor.\nCustomize\n\n"
+END
+
+STRINGTABLE DISCARDABLE // Window menu
+BEGIN
+	// Window submenu
+	kcidWndNew                  "Opens another identical window containing the same content.\nOpen New Window\nOpens an identical second window containing the same data.\n"
+	kcidWndCascad               "Cascades the open windows.\nCascade Windows\nCascades the open windows.\n"
+	kcidWndTile                 "Tiles the open windows one above another.\nTile windows one above another\nTile windows one above another.\n"
+	kcidWndSideBy               "Tiles the open windows side by side.\nTile windows side by side\nTiles windows side by side.\n"
+
+	// Help submenu
+	// Help:FieldWorks submenu
+	kcidHelpConts               "Shows a multilevel outline of Help topics.\nHelp Outline\nShows a multilevel outline of Help topics.\n"
+	kcidHelpIndex               "Shows an alphabetical list of Help topics and terms.\nIndex of Topics\nShows an alphabetical list of Help topics and terms.\n"
+	kcidHelpFind                "Finds words in the Help file using characters you type.\nFind by Typing\nFinds words in the Help file using characters you type.\n"
+
+	// Back to help submenu
+	kcidHelpApp                 "Opens the Help file to the main topic for this application.\nMain Topic\nOpens the Help file to the main topic for this application.\n"
+	kcidHelpHowDoI              "Opens the Help file to the main task for this application.\nTask Help\n\n"
+	kcidHelpWhatsThis           "Adds a question mark to the mouse cursor enabling it to display a brief description for a toolbar button, menu item, or field you click.\nWhat's This? help\n\n"
+	kcidHelpAbout               "Shows information about the application and system resources.\nVersion\nShows information about the application and system resources.\n"
+END
+
+// Messages for the splash window
+STRINGTABLE DISCARDABLE
+BEGIN
+	kridSplashStartMessage      "Starting Topics List Editor..."
+	kridSplashSqlMessage        "Starting the SQL Database..."
+	kridSplashFinishingMessage  "Completing FieldWorks Topics List Editor startup..."
+	kstidAppName                "Topics List Editor"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidConfigureVBar          "&Configure..."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidSelectView               "Selects the %<0>s view"
+	kstidSelectFilter             "Selects the %<0>s filter"
+	kstidSelectSortMethod         "Selects the %<0>s sort method"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidPossibilityFmt             "%<0>s List Item"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidEnumGender             "unknown\nmale\nfemale"
+	kstidEnumNoYes              "no\nyes"
+	kstidEnumBool               "false\ntrue"
+END
+
+// TODO PM (RandyR): Review next string table.
+// This is used for displaying part of the command line options for CLE.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidCmdLineName             "ListName"
+	kstidCmdLineOptions          "  -c\tComputerName\n  -db\tDatabaseName\n"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFltrNoEntries          "No list items match the current filter."
+	kstidFltrTurnOffInfo        "A filter is currently on.  In order to insert a new item, the filter needs to be turned off."
+	kstidFltrTurnOffQuestion    "Do you want to turn off the filter and insert the new item now?"
+	kcidSortTurnOffInfo         "A sort method is currently on.  In order to insert a new entry, the sort method must be turned off."
+	kcidSortTurnOffQuestion     "Do you want to turn off the sort method and insert the new entry now?"
+END
+
+// Application dependent; duplicate strings
+// These strings are defined differently in different applications
+STRINGTABLE DISCARDABLE
+BEGIN
+	// AfSortMethod.rc; applications:  Cle, Notebk
+	kctidSortIncludeSubrecords "When selected, includes subitems in the sort and displays them in the sorted view as if they were top-level list items."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

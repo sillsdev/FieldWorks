@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GAFAWSData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" date="Friday, October 03, 2003" time="9:48:33 PM">
+  <WordRecords>
+	<WordRecord WRID="WR1">
+	  <Prefixes>
+		<Affix MIDREF="p4" />
+		<Affix MIDREF="p3" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	  <Suffixes>
+		<Affix MIDREF="s2" />
+	  </Suffixes>
+	  <Other>
+		<XmlElements />
+	  </Other>
+	</WordRecord>
+	<WordRecord WRID="WR2">
+	  <Prefixes>
+		<Affix MIDREF="p3" />
+		<Affix MIDREF="p2" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	  <Suffixes>
+		<Affix MIDREF="s1" />
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR3">
+	  <Prefixes>
+		<Affix MIDREF="p4" />
+		<Affix MIDREF="p1" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	  <Suffixes>
+		<Affix MIDREF="s1" />
+		<Affix MIDREF="s2" />
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR4">
+	  <Prefixes>
+		<Affix MIDREF="p2" />
+		<Affix MIDREF="p1" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	  <Suffixes>
+		<Affix MIDREF="s2" />
+		<Affix MIDREF="s3" />
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR5">
+	  <Prefixes>
+		<Affix MIDREF="p4" />
+		<Affix MIDREF="p23" />
+		<Affix MIDREF="p1" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	  <Suffixes>
+		<Affix MIDREF="s12" />
+		<Affix MIDREF="s3" />
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR6">
+	  <Prefixes>
+		<Affix MIDREF="p34" />
+		<Affix MIDREF="p12" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	  <Suffixes>
+		<Affix MIDREF="s1" />
+		<Affix MIDREF="s23" />
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR7">
+	  <Prefixes>
+		<Affix MIDREF="p3" />
+		<Affix MIDREF="p12" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	</WordRecord>
+	<WordRecord WRID="WR8">
+	  <Prefixes>
+		<Affix MIDREF="p34" />
+		<Affix MIDREF="p2" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	</WordRecord>
+	<WordRecord WRID="WR9">
+	  <Prefixes>
+		<Affix MIDREF="p4" />
+		<Affix MIDREF="p13" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	  <Suffixes>
+		<Affix MIDREF="s13" />
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="WR10">
+	  <Prefixes>
+		<Affix MIDREF="p24" />
+		<Affix MIDREF="p1" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	</WordRecord>
+	<WordRecord WRID="WR11">
+	  <Prefixes>
+		<Affix MIDREF="p14" />
+	  </Prefixes>
+	  <Stem MIDREF="R" />
+	</WordRecord>
+  </WordRecords>
+  <Morphemes>
+	<Morpheme MID="R" type="s">
+	  <Other>
+		<XmlElements />
+	  </Other>
+	</Morpheme>
+	<Morpheme MID="p1" StartCLIDREF="PP1" EndCLIDREF="PP1" type="pfx" />
+	<Morpheme MID="p2" StartCLIDREF="PP2" EndCLIDREF="PP2" type="pfx" />
+	<Morpheme MID="p3" StartCLIDREF="PP3" EndCLIDREF="PP3" type="pfx" />
+	<Morpheme MID="p4" StartCLIDREF="PP4" EndCLIDREF="PP4" type="pfx" />
+	<Morpheme MID="p12" StartCLIDREF="PP1" EndCLIDREF="PP2" type="pfx" />
+	<Morpheme MID="p13" StartCLIDREF="PP1" EndCLIDREF="PP3" type="pfx" />
+	<Morpheme MID="p14" StartCLIDREF="PP1" EndCLIDREF="PP4" type="pfx" />
+	<Morpheme MID="p23" StartCLIDREF="PP2" EndCLIDREF="PP3" type="pfx" />
+	<Morpheme MID="p24" StartCLIDREF="PP2" EndCLIDREF="PP4" type="pfx" />
+	<Morpheme MID="p34" StartCLIDREF="PP3" EndCLIDREF="PP4" type="pfx" />
+	<Morpheme MID="s1" StartCLIDREF="SP1" EndCLIDREF="SP1" type="sfx" />
+	<Morpheme MID="s2" StartCLIDREF="SP2" EndCLIDREF="SP2" type="sfx" />
+	<Morpheme MID="s3" StartCLIDREF="SP3" EndCLIDREF="SP3" type="sfx" />
+	<Morpheme MID="s12" StartCLIDREF="SP1" EndCLIDREF="SP2" type="sfx" />
+	<Morpheme MID="s13" StartCLIDREF="SP1" EndCLIDREF="SP3" type="sfx" />
+	<Morpheme MID="s23" StartCLIDREF="SP2" EndCLIDREF="SP3" type="sfx" />
+  </Morphemes>
+  <Classes>
+	<PrefixClasses>
+	  <Class CLID="PP1" />
+	  <Class CLID="PP2" />
+	  <Class CLID="PP3" />
+	  <Class CLID="PP4" />
+	</PrefixClasses>
+	<SuffixClasses>
+	  <Class CLID="SP1" />
+	  <Class CLID="SP2" />
+	  <Class CLID="SP3" />
+	</SuffixClasses>
+  </Classes>
+  <Challenges />
+</GAFAWSData>

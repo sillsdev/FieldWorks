@@ -1,0 +1,53 @@
+<word>
+  <form>ximuzo</form>
+  <resultSoFar>
+	<word syncat="73" syncatAbbr="Adv">
+	  <full syncat="73" syncatAbbr="Adv" requiresInfl="-" inflected="-">
+		<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph type="root" wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<alloform>ximu</alloform>
+			<gloss>slowly</gloss>
+			<citationForm>ximu</citationForm>
+			<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </full>
+	</word>
+	<morph type="sfx" wordType="enclitic">
+	  <shortName>=zo (RelativeClause): zo</shortName>
+	  <alloform>=zo</alloform>
+	  <gloss>RelativeClause</gloss>
+	  <citationForm>zo</citationForm>
+	  <stemMsa cat="104" catAbbr="part" inflClass="0" requiresInfl="-">
+		<fromPartsOfSpeech fromCat="81" fromCatAbbr="N" />
+		<fromPartsOfSpeech fromCat="110" fromCatAbbr="Pro" />
+	  </stemMsa>
+	</morph>
+  </resultSoFar>
+  <seq>
+	<word syncat="73" syncatAbbr="Adv">
+	  <full syncat="73" syncatAbbr="Adv" requiresInfl="-" inflected="-">
+		<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph type="root" wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<alloform>ximu</alloform>
+			<gloss>slowly</gloss>
+			<citationForm>ximu</citationForm>
+			<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </full>
+	</word>
+	<morph type="sfx" wordType="enclitic">
+	  <shortName>=zo (RelativeClause): zo</shortName>
+	  <alloform>=zo</alloform>
+	  <gloss>RelativeClause</gloss>
+	  <citationForm>zo</citationForm>
+	  <stemMsa cat="104" catAbbr="part" inflClass="0" requiresInfl="-">
+		<fromPartsOfSpeech fromCat="81" fromCatAbbr="N" />
+		<fromPartsOfSpeech fromCat="110" fromCatAbbr="Pro" />
+	  </stemMsa>
+	</morph>
+  </seq>
+</word>

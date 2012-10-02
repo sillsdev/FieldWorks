@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<VisualStudioProject>
+	<WindowsInstallerXML
+		ProductVersion="2.0.0.0"
+		SchemaVersion="1.0"
+	>
+		<BuildSettings
+			OutputName="Project"
+			OutputType="MSI"
+		/>
+		<Configurations>
+			<Configuration
+				Name="Debug"
+				RelativeOutputDirectory="bin\Debug"
+				RelativeIntermediateDirectory="obj\Debug"
+			/>
+			<Configuration
+				Name="Release"
+				RelativeOutputDirectory="bin\Release"
+				RelativeIntermediateDirectory="obj\Release"
+			/>
+		</Configurations>
+		<WixlibReferences />
+		<Files>
+		  <File
+			  RelativePath="Product.wxs"
+		  />
+		</Files>
+	</WindowsInstallerXML>
+</VisualStudioProject>

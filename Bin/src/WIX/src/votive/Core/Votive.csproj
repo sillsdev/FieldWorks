@@ -1,0 +1,248 @@
+<VisualStudioProject>
+	<CSHARP
+		ProjectType = "Local"
+		ProductVersion = "7.10.3077"
+		SchemaVersion = "2.0"
+		ProjectGuid = "{17ADF054-A7C7-42BA-AFEA-C61F1432C260}"
+	>
+		<Build>
+			<Settings
+				ApplicationIcon = ""
+				AssemblyKeyContainerName = ""
+				AssemblyName = "votive"
+				AssemblyOriginatorKeyFile = ""
+				DefaultClientScript = "JScript"
+				DefaultHTMLPageLayout = "Grid"
+				DefaultTargetSchema = "IE50"
+				DelaySign = "false"
+				OutputType = "Library"
+				PreBuildEvent = ""
+				PostBuildEvent = 'echo Compiling the Win32 resources...&#xd;&#xa;"$(DevEnvDir)..\..\Vc7\bin\rc.exe" /d "UNICODE" /d "_UNICODE" /d "_X86_=1" /d "i386=1" /d "WIN32" /d "WINNT=1" /d "_DEBUG" /d "DEBUG" /d "_NEW_SDK=1" /l 0x409 /I "$(DevEnvDir)..\..\Vc7\atlmfc\include" /I "$(DevEnvDir)..\..\Vc7\PlatformSDK\Include" /I "$(ProjectDir)..\..\..\..\dtools\inc\dtools" /I "$(ProjectDir)..\..\..\inc" /fo "$(TargetDir)$(TargetName).res" "$(ProjectDir)$(TargetName).rc"&#xd;&#xa;&#xd;&#xa;echo Recompiling the project to embed the Win32 resource file...&#xd;&#xa;pushd "$(ProjectDir)"&#xd;&#xa;"%SystemRoot%\Microsoft.NET\Framework\v1.1.4322\csc.exe" @BuildFiles\Common.rsp @BuildFiles\$(ConfigurationName).rsp /recurse:*.cs /nologo "$(ProjectDir)..\..\..\..\wix\inc\wixver.cs"&#xd;&#xa;popd&#xd;&#xa;'
+				RootNamespace = "Microsoft.Tools.WindowsInstallerXml.VisualStudio"
+				RunPostBuildEvent = "OnBuildSuccess"
+				StartupObject = ""
+			>
+				<Config
+					Name = "Debug"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "true"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "DEBUG;TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					NoStdLib = "false"
+					NoWarn = ""
+					Optimize = "false"
+					OutputPath = "bin\Debug\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "true"
+					WarningLevel = "4"
+				/>
+				<Config
+					Name = "Release"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "true"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "false"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					NoStdLib = "false"
+					NoWarn = ""
+					Optimize = "true"
+					OutputPath = "bin\Release\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "true"
+					WarningLevel = "4"
+				/>
+			</Settings>
+			<References>
+				<Reference
+					Name = "System"
+					AssemblyName = "System"
+					HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
+				/>
+				<Reference
+					Name = "System.Drawing"
+					AssemblyName = "System.Drawing"
+					HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
+				/>
+				<Reference
+					Name = "System.Windows.Forms"
+					AssemblyName = "System.Windows.Forms"
+					HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+				/>
+				<Reference
+					Name = "System.XML"
+					AssemblyName = "System.Xml"
+					HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+				/>
+				<Reference
+					Name = "wix"
+					AssemblyName = "wix"
+					HintPath = "..\..\..\..\..\Target\wix\x86\debug\lang-neutral\wix.dll"
+				/>
+				<Reference
+					Name = "Sconce"
+					Project = "{A0A82600-B8B1-4E6C-8B8C-248587175210}"
+					Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+				/>
+				<Reference
+					Name = "Microsoft.VisualStudio.Shell.Interop"
+					AssemblyName = "Microsoft.VisualStudio.Shell.Interop"
+					HintPath = "..\..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.Shell.Interop.dll"
+				/>
+				<Reference
+					Name = "Microsoft.VisualStudio.OLE.Interop"
+					AssemblyName = "Microsoft.VisualStudio.OLE.Interop"
+					HintPath = "..\..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.OLE.Interop.dll"
+				/>
+			</References>
+		</Build>
+		<Files>
+			<Include>
+				<File
+					RelPath = "AssemblyInfo.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "CandleSettings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "LightSettings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "SolutionExplorerIcons.bmp"
+					BuildAction = "EmbeddedResource"
+				/>
+				<File
+					RelPath = "Strings.resx"
+					BuildAction = "EmbeddedResource"
+				/>
+				<File
+					RelPath = "Votive.rc"
+					BuildAction = "Content"
+				/>
+				<File
+					RelPath = "WixBuildableProjectConfiguration.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixBuildSettings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixFileNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixHierarchyImages.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixlibReferenceFileNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixlibReferenceFolderNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixLocalizedCategoryAttribute.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixLocalizedDescriptionAttribute.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixLocalizedDisplayNameAttribute.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixManagedResourceManager.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixPackage.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixPackageContext.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixPackageSettings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixProject.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixProjectConfiguration.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixProjectFactory.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixProjectNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixProjectSerializer.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "WixStrings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "BuildFiles\Common.rsp"
+					BuildAction = "None"
+				/>
+				<File
+					RelPath = "BuildFiles\Debug.rsp"
+					BuildAction = "None"
+				/>
+				<File
+					RelPath = "BuildFiles\Release.rsp"
+					BuildAction = "None"
+				/>
+			</Include>
+		</Files>
+	</CSHARP>
+</VisualStudioProject>

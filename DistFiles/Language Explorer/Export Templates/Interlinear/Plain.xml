@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="Interlinear XML" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="doNothing">
+Export to a generic XML format suitable for transforming to various interlinear renderings.
+</FxtDocumentDescription>

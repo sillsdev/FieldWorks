@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="doccompiler" default="doccompiler.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	doccompiler.build - Builds the doccompiler project (DocCompiler.exe).
+	2005.10.14 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="doccompiler.build" description="Peforms a full rebuild (clean then build)" depends="doccompiler.clean, doccompiler.inc" />
+
+  <!-- Clean -->
+  <target name="doccompiler.clean" description="Cleans the build">
+	<delete dir="${dir.build.doccompiler}" failonerror="false" if="${directory::exists(dir.build.doccompiler)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="DocCompiler.exe" />
+		<include name="DocCompiler.pdb" />
+		<include name="DocCompiler.xml" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="doccompiler.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Flatten the xsd file -->
+	<property name="flattenxml.source" value="${dir.src.doccompiler}\Xsd\docCompiler.xsd" />
+	<property name="flattenxml.target" value="${dir.build.doccompiler}\docCompiler.xsd" />
+	<call target="flattenXml" />
+
+	<!-- Build the DocCompiler.exe -->
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\DocCompiler.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  doc="${dir.target.wix}\DocCompiler.xml"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.doccompiler}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="DocCompiler.cs" />
+		<include name="XmlSchemaCompiler.cs" />
+	  </sources>
+	  <!-- Embed the XSD into the assembly -->
+	  <resources failonempty="true" basedir="${dir.build.doccompiler}" prefix="Microsoft.Tools.DocCompiler.Xsd">
+		<include name="docCompiler.xsd" />
+	  </resources>
+	</csc>
+  </target>
+
+</project>

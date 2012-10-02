@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'
+	targetNamespace='http://schemas.microsoft.com/wix/2003/11/libraries'
+			  xmlns='http://schemas.microsoft.com/wix/2003/11/libraries'
+		 xmlns:objs='http://schemas.microsoft.com/wix/2003/04/objects'>
+	<xs:annotation>
+		<xs:documentation>
+			Copyright (c) Microsoft Corporation.  All rights reserved.
+
+			The use and distribution terms for this software are covered by the
+			Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+			which can be found in the file CPL.TXT at the root of this distribution.
+			By using this software in any fashion, you are agreeing to be bound by
+			the terms of this license.
+
+			You must not remove this notice, or any other, from this software.
+
+			Schema for describing Windows Installer Xml Library files (.wixlib).
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:import namespace="http://schemas.microsoft.com/wix/2003/04/objects" schemaLocation="objects.xsd" />
+
+	<xs:element name='wixLibrary'>
+		<xs:complexType>
+			<xs:sequence minOccurs='0' maxOccurs="unbounded">
+				<xs:element ref='objs:wixObject'/>
+			</xs:sequence>
+
+			<xs:attribute name='version' type='xs:string' use='required'>
+				<xs:annotation>
+					<xs:documentation>Version of WiX used to create this library file</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

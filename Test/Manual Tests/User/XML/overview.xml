@@ -1,0 +1,14 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="XML\overview.xml">
+ <title tag="xml">Test case library XML</title>
+ <index>
+  <li>Manual: XML source</li>
+ </index>
+ <moduleGroup>
+  <li><link uri="XML.xml" type="module">What is XML?</link></li>
+  <li><link uri="XSL.xml" type="module">What is XSL?</link></li>
+  <li><link uri="MarkUp.xml" type="module">What is mark up?</link></li>
+  <li><link uri="Batch.xml" type="module">What is a batch file?</link></li>
+  <li><link uri="Editor.xml" type="module">What is a text editor?</link></li>
+ </moduleGroup>
+</overview>

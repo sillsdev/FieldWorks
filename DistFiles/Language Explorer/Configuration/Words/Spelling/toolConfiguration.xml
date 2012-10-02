@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks/>
+	<tools>
+		<tool label="(Spelling Proto)" value="spelling" icon="BrowseView">
+			<!-- Use this to get the common set of browse columns.
+			<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='WordformBrowseControl']"/>-->
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="wordList">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+						<parameters area="textsWords" id="wordList" clerk="concordanceWords" filterBar="true" editable="false" altTitleId="WfiWordform-Plural">
+							<columns>
+								<column label="Form" width="60%" ws="vernacular">
+									<span>
+										<properties>
+											<bold value="off"/>
+										</properties>
+										<string class="WfiWordform" field="Form" ws="vernacular"/>
+									</span>
+								</column>
+								<column label="Spelled correctly?" width="20%"/>
+							</columns>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

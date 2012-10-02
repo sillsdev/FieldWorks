@@ -1,0 +1,26 @@
+XMLUnit for .Net
+================
+
+To run this software you will need:
+- Nunit v2.1 (http://nunit.org/)
+- .NET runtime v1.1 or Mono runtime v0.28 (or above)
+
+If you want to build the source code yourself you will also need NAnt (http://nant.sourceforge.net/)
+
+This build of the source code was prepared using .NET csc 1.1.4322, NUnit2.1.4, and NAnt0.8.3
+
+Enjoy!
+http://xmlunit.sourceforge.net/
+
+Changes in version 0.3:
+- New XSLT assertions
+- New XmlOutput class
+- Much interface refactoring (should be less changes from now on)
+
+Changes in version 0.2:
+- New Xpath assertions
+- New XmlInput class
+- Removed (ab)use of statics - thanks Joe
+
+Changes in version 0.1:
+- New classes for basic xml differencing

@@ -1,0 +1,535 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{9E03A94C-C70E-45C6-A269-E737BBD8B319}</ProjectGuid>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>wix</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>Microsoft.Tools.WindowsInstallerXml</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>bin\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>618,1591</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>false</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="Action.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ActionTable.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ArrayCollectionBase.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="BBControlRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Binder.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="BinderExtension.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Cab\Interop\CabInterop.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Cab\WixCreateCab.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Cab\WixExtractCab.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CLR\Interop\CLRInterop.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ColumnDefinition.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ColumnDefinitionCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Common.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Compiler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CompilerCore.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CompilerExtension.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ComplexReference.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ComplexReferenceCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConnectToFeature.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConnectToFeatureCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConnectToModule.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConnectToModuleCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ControlRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Decompiler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DecompilerCore.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DecompilerExtension.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\DuplicateSymbolsException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixCabCreationException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixCabExtractionException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixDuplicatePrimaryKeyException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixExampleGuidException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixExtensionNamespaceConflictException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixExtensionTableDefinitionConflictException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixExtensionTypeConflictException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixFatalErrorException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixFileInUseException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixFileMediaInformationKeyNotFoundException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixFileNotFoundException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidAssemblyException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidAttributeException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidCodepageException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidElementException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidExtensionException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidFileNameException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidIdtException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidIntermediateException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidOutputException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidSequenceException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidSequenceTypeException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixInvalidXmlException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixMergeFailureException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixMergeModuleMissingFeatureException.cs" />
+	<Compile Include="Exceptions\WixMergeModuleOpenException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixMissingActionException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixMissingDirectoryException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixMissingFeatureException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixMissingTableDefinitionException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixMultiplePrimaryReferencesException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixNotIntermediateException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixNotLibraryException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixParseException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixPreprocessorException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixProhibitedAttributeException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixRecursiveActionException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixRequiredAttributeException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixUnknownMergeLanguageException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixUnresolvedReferenceException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixVersionMismatchException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Exceptions\WixWarningAsErrorException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ExtensionMessages.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FeatureBackLink.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FeatureBackLinkCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Field.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileMediaInformation.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileMediaInformationCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileSystem\FileSystemBase.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileSystem\Interop\FileSystemInterop.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Generated\Messages.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="HashCollectionBase.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IExtensionMessageHandler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IfContext.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IgnoreModularization.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IgnoreModularizationCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IMessageHandler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ImportStream.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ImportStreamCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Intermediate.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IntermediateCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Librarian.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Library.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Linker.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Localizer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MediaRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MediaRowCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MergeRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MessageEventArgs.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MessageHandler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\Database.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\Interop\MsiInterop.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\MsiBase.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\MsiHandle.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\MsmMerge.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\Record.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\SummaryInformation.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Msi\View.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Output.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="OutputRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="OutputRowCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="OutputTable.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="OutputTableCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Preprocessor.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PreprocessorExtension.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="PropertyRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Reference.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ReferenceCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Row.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="RowCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SchemaExtension.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Section.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SectionCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Serialize\ElementCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Serialize\ISchemaElement.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Serialize\wix.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SourceLineNumber.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SourceLineNumberCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Symbol.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SymbolCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Table.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TableCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TableDefinition.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TableDefinitionCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="UpgradeRow.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VerboseEventArgs.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WarningEventArgs.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Content Include="Data\messages.xml" />
+	<Content Include="makefile.inc" />
+	<Content Include="Xsd\wixloc.xsd">
+	  <SubType>Designer</SubType>
+	</Content>
+	<EmbeddedResource Include="Data\actions.xml" />
+	<EmbeddedResource Include="Data\messages.resources" />
+	<EmbeddedResource Include="Data\smalltables.xml">
+	  <CustomToolNamespace>Microsoft.Wix</CustomToolNamespace>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Data\tables.xml">
+	  <CustomToolNamespace>Microsoft.Wix</CustomToolNamespace>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Xsd\actions.xsd">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Xsd\libraries.xsd">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Xsd\objects.xsd">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Xsd\tables.xsd">
+	  <CustomToolNamespace>Microsoft.</CustomToolNamespace>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Xsd\wix.xsd">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>mkdir $(ProjectDir)generated
+$(ProjectDir)..\..\..\..\Target\wix20\x86\debug\lang-neutral\MsgGen.exe $(ProjectDir)Data\messages.xml $(ProjectDir)Generated\Messages.cs $(ProjectDir)Data\messages.resources</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

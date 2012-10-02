@@ -1,0 +1,6 @@
+LIBRARY	"Main DLL"
+
+EXPORTS
+   CheckCoreFeatures		@1
+   CheckForFwResidueFiles	@2
+   RemoveSampleDatabases	@3

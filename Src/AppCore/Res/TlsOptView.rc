@@ -1,0 +1,592 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "TlsOptViewRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\AfDef.h"
+#include "AfAppRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"TlsOptDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"#include ""resource.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"TlsOptDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsOptDlgVw DIALOGEX 0, 0, 378, 188
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "&Views:",IDC_STATIC,7,5,54,8
+	CONTROL         "List1",kcidTlsOptDlgVwVws,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					LVS_SHAREIMAGELISTS | LVS_EDITLABELS |
+					LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP,7,17,111,129
+	PUSHBUTTON      "&Add",kcidTlsOptDlgVwAdd,7,153,34,14
+	PUSHBUTTON      "&Copy",kcidTlsOptDlgVwCpy,44,153,31,14
+	PUSHBUTTON      "&Delete...",kcidTlsOptDlgVwDel,78,153,40,14
+	LTEXT           "Click on a view, then click a field in that view to adjust its appearance.",
+					kcidTlsOptDlgVwHlp,7,174,277,8
+END
+
+kridModBrFldSetDlgT DIALOG DISCARDABLE  0, 0, 266, 52
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Field Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+   LTEXT           "&Character style",IDC_STATIC,8,10,70,8
+	COMBOBOX        kcidTlsOptCharStyForText,60,7,116,76,CBS_DROPDOWNLIST | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Mo&dify Styles...",kcidTlsOptBrModSty,190,6,60,14
+	LTEXT           "",IDC_STATIC,9,27,245,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,103,34,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,157,34,50,14
+	PUSHBUTTON      "Help...",kctidHelp,211,34,50,14
+END
+
+
+kridModFldSetDlgT DIALOG DISCARDABLE  0, 0, 266, 82
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Field Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Field visibility settings:",IDC_STATIC,11,6,87,9
+	CONTROL         "&Always visible",kcidTlsOptDlgModAVis,"Button",
+					BS_AUTORADIOBUTTON,13,18,103,9
+	CONTROL         "&Visible if data present",kcidTlsOptDlgModIDVis,"Button",
+					BS_AUTORADIOBUTTON,13,31,97,9
+	CONTROL         "&Not visible",kcidTlsOptDlgModNVis,"Button",
+					BS_AUTORADIOBUTTON,13,44,104,9
+	LTEXT           "&Character style",IDC_STATIC,124,7,70,8
+	COMBOBOX        kcidTlsOptCharStyForText,124,18,116,76,CBS_DROPDOWNLIST | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Mo&dify Styles...",kcidTlsOptModSty,124,36,116,14
+	LTEXT           "",IDC_STATIC,9,57,245,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,103,64,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,157,64,50,14
+	PUSHBUTTON      "Help...",kctidHelp,211,64,50,14
+END
+
+kridModFldSetDlgCL DIALOG DISCARDABLE  0, 0, 316, 162
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Field Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Field visibility settings:",kcidTlsOptDlgModFVS,11,6,87,9
+	CONTROL         "&Always visible",kcidTlsOptDlgModAVis,"Button",
+					BS_AUTORADIOBUTTON,13,18,101,9
+	CONTROL         "&Visible if data present",kcidTlsOptDlgModIDVis,"Button",
+					BS_AUTORADIOBUTTON,13,31,104,9
+	CONTROL         "&Not visible",kcidTlsOptDlgModNVis,"Button",
+					BS_AUTORADIOBUTTON,13,44,102,9
+	LTEXT           "&Character style",kcidTlsOptDlgModCS,124,7,60,8
+	COMBOBOX        kcidTlsOptCharSty,124,18,116,83,CBS_DROPDOWNLIST | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Mo&dify Styles...",kcidTlsOptModSty,124,36,116,14
+	LTEXT           "",IDC_STATIC,9,59,295,1,SS_SUNKEN
+	LTEXT           "For this list field in this view:",
+					kcidTlsOptDlgModCText,11,66,113,9
+	CONTROL         "Show a&bbreviation",kcidTlsOptDlgModSAb,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,78,89,10
+	CONTROL         "Show na&me",kcidTlsOptDlgModSNa,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,92,89,10
+	CONTROL         "Show &hierarchy",kcidTlsOptDlgModSHi,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,106,89,10
+//    CONTROL         "&List items in this field vertically",
+//                    kcidTlsOptDlgModSLI,"Button",BS_AUTOCHECKBOX |
+//                    WS_TABSTOP,14,120,121,10
+	LTEXT           "Preview",kcidTlsOptDlgModPText,124,71,42,8
+	LISTBOX         kcidTlsOptDlgModPrvw,124,82,180,45,LBS_SORT | LBS_NOINTEGRALHEIGHT |
+					LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+					WS_EX_CLIENTEDGE
+	LTEXT           "",IDC_STATIC,10,137,295,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,153,144,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,207,144,50,14
+	PUSHBUTTON      "Help...",kctidHelp,261,144,50,14
+END
+
+kridModBrFldSetDlgCL DIALOG DISCARDABLE  0, 0, 316, 130
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Field Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "&Character style",kcidTlsOptDlgModCS,8,10,70,8
+	COMBOBOX        kcidTlsOptCharSty,60,7,116,83,CBS_DROPDOWNLIST | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Mo&dify Styles...",kcidTlsOptModSty,190,6,60,14
+	LTEXT           "",IDC_STATIC,9,27,295,1,SS_SUNKEN
+	LTEXT           "For this list field in this view:",
+					kcidTlsOptDlgModCText,11,34,113,9
+	CONTROL         "Show a&bbreviation",kcidTlsOptDlgModSAb,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,46,89,10
+	CONTROL         "Show na&me",kcidTlsOptDlgModSNa,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,60,89,10
+	CONTROL         "Show &hierarchy",kcidTlsOptDlgModSHi,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,74,89,10
+//    CONTROL         "&List items in this field vertically",
+//                    kcidTlsOptDlgModSLI,"Button",BS_AUTOCHECKBOX |
+//                    WS_TABSTOP,14,88,121,10
+	LTEXT           "Preview",kcidTlsOptDlgModPText,124,39,42,8
+	LISTBOX         kcidTlsOptDlgModPrvw,124,50,180,45,LBS_SORT | LBS_NOINTEGRALHEIGHT |
+					LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+					WS_EX_CLIENTEDGE
+	LTEXT           "",IDC_STATIC,9,105,295,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,153,112,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,207,112,50,14
+	PUSHBUTTON      "Help...",kctidHelp,261,112,50,14
+END
+
+
+kridModFldSetDlgExp DIALOG DISCARDABLE  0, 0, 316, 194
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Field Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Field visibility settings:",kcidTlsOptDlgModFVS,11,6,87,9
+	CONTROL         "&Always visible",kcidTlsOptDlgModAVis,"Button",
+					BS_AUTORADIOBUTTON,13,18,101,9
+	CONTROL         "&Visible if data present",kcidTlsOptDlgModIDVis,"Button",
+					BS_AUTORADIOBUTTON,13,31,104,9
+	CONTROL         "&Not visible",kcidTlsOptDlgModNVis,"Button",
+					BS_AUTORADIOBUTTON,13,44,102,9
+	LTEXT           "&Character style",kcidTlsOptDlgModCS,124,7,60,8
+	COMBOBOX        kcidTlsOptCharSty,124,18,116,83,CBS_DROPDOWNLIST | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Mo&dify Styles...",kcidTlsOptModSty,124,36,116,14
+
+	LTEXT           "",IDC_STATIC,9,59,295,1,SS_SUNKEN
+
+	LTEXT           "Expandable field settings:",kcidTlsOptDlgModHText,11,
+					66,113,9
+	CONTROL         "Always &expand in this view",kcidTlsOptDlgModAEx,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,78,105,10
+
+	LTEXT           "",IDC_STATIC,10,93,295,1,SS_SUNKEN
+
+	LTEXT           "For this list field in this view:",
+					kcidTlsOptDlgModCText,11,100,113,9
+	CONTROL         "Show a&bbreviation",kcidTlsOptDlgModSAb,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,112,89,10
+	CONTROL         "Show na&me",kcidTlsOptDlgModSNa,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,126,89,10
+	CONTROL         "Show &hierarchy",kcidTlsOptDlgModSHi,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,140,89,10
+//    CONTROL         "&List items in this field vertically",
+//                    kcidTlsOptDlgModSLI,"Button",BS_AUTOCHECKBOX |
+//                    WS_TABSTOP,14,154,121,10
+	LTEXT           "Preview",kcidTlsOptDlgModPText,124,105,42,8
+	LISTBOX         kcidTlsOptDlgModPrvw,124,116,180,45,LBS_SORT | LBS_NOINTEGRALHEIGHT |
+					LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+					WS_EX_CLIENTEDGE
+
+	LTEXT           "",IDC_STATIC,9,169,295,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,153,176,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,207,176,50,14
+	PUSHBUTTON      "Help...",kctidHelp,261,176,50,14
+END
+
+kridModBrFldSetDlgExp DIALOG DISCARDABLE  0, 0, 316, 164
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Field Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "&Character style",kcidTlsOptDlgModCS,8,10,70,8
+	COMBOBOX        kcidTlsOptCharSty,60,7,116,83,CBS_DROPDOWNLIST | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Mo&dify Styles...",kcidTlsOptModSty,190,6,60,14
+
+	LTEXT           "",IDC_STATIC,9,29,295,1,SS_SUNKEN
+
+	LTEXT           "Expandable field settings:",kcidTlsOptDlgModHText,11,
+					36,113,9
+	CONTROL         "Always &expand in this view",kcidTlsOptDlgModAEx,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,48,105,10
+
+	LTEXT           "",IDC_STATIC,10,63,295,1,SS_SUNKEN
+
+	LTEXT           "For this list field in this view:",
+					kcidTlsOptDlgModCText,11,70,113,9
+	CONTROL         "Show a&bbreviation",kcidTlsOptDlgModSAb,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,82,89,10
+	CONTROL         "Show na&me",kcidTlsOptDlgModSNa,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,96,89,10
+	CONTROL         "Show &hierarchy",kcidTlsOptDlgModSHi,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,110,89,10
+//    CONTROL         "&List items in this field vertically",
+//                    kcidTlsOptDlgModSLI,"Button",BS_AUTOCHECKBOX |
+//                    WS_TABSTOP,14,124,121,10
+	LTEXT           "Preview",kcidTlsOptDlgModPText,124,75,42,8
+	LISTBOX         kcidTlsOptDlgModPrvw,124,86,180,45,LBS_SORT | LBS_NOINTEGRALHEIGHT |
+					LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+					WS_EX_CLIENTEDGE
+
+	LTEXT           "",IDC_STATIC,9,139,295,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,153,146,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,207,146,50,14
+	PUSHBUTTON      "Help...",kctidHelp,261,146,50,14
+END
+
+kridModFldSetDlgHi DIALOG DISCARDABLE  0, 0, 265, 133
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Field Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Field visibility settings:",IDC_STATIC,11,6,87,9
+	CONTROL         "&Always visible",kcidTlsOptDlgModAVis,"Button",
+					BS_AUTORADIOBUTTON,13,18,103,9
+	CONTROL         "&Visible if data present",kcidTlsOptDlgModIDVis,"Button",
+					BS_AUTORADIOBUTTON,13,31,101,9
+	CONTROL         "&Not visible",kcidTlsOptDlgModNVis,"Button",
+					BS_AUTORADIOBUTTON,13,44,102,9
+	LTEXT           "&Character style",IDC_STATIC,124,7,70,8
+	COMBOBOX        kcidTlsOptCharSty,124,18,116,78,CBS_DROPDOWNLIST | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Mo&dify Styles...",kcidTlsOptModSty,124,36,116,14
+	LTEXT           "",IDC_STATIC,9,59,245,1,SS_SUNKEN
+	LTEXT           "Hierarchical settings:",kcidTlsOptDlgModHText,11,
+					66,113,9
+	CONTROL         "Always &expand in this view",kcidTlsOptDlgModAEx,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,78,105,10
+	CONTROL         "Numbering &style:",kcidTlsOptDlgModNSt,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,14,92,68,10
+	COMBOBOX        kcidTlsOptDlgModNSC,82,91,45,53,CBS_DROPDOWNLIST | CBS_SORT |
+						WS_VSCROLL | WS_TABSTOP
+	LTEXT           "",IDC_STATIC,10,108,245,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,103,115,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,157,115,50,14
+	PUSHBUTTON      "Help...",kctidHelp,211,115,50,14
+END
+
+
+// This dialog is obsolete, since we no longer allow settings on
+// groups.
+kridModFldSetDlgGrp DIALOG DISCARDABLE  0, 0, 184, 71
+STYLE DS_CONTEXTHELP | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Modify Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Block visibility settings:",IDC_STATIC,11,6,87,9
+	CONTROL         "&Visible if data present",kcidTlsOptDlgModIDVis,"Button",
+					BS_AUTORADIOBUTTON,13,18,101,9
+	CONTROL         "&Not visible",kcidTlsOptDlgModNVis,"Button",
+					BS_AUTORADIOBUTTON,13,31,102,9
+	LTEXT           "",IDC_STATIC,9,46,195,1,SS_SUNKEN
+	DEFPUSHBUTTON   "OK",IDOK,13,53,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,67,53,50,14
+	PUSHBUTTON      "Help...",kctidHelp,121,53,50,14
+END
+
+
+kridTlsOptDlgVwD DIALOGEX 0, 0, 257, 171
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	GROUPBOX        "Settings ",IDC_STATIC,6,6,248,162
+	LTEXT           "&Fields in:",kcidTlsOptDlgVwFInCap,13,17,34,10,NOT WS_GROUP
+	COMBOBOX        kcidTlsOptDlgVwFIn,56,15,191,100,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	CONTROL         "List1",kcidTlsOptDlgVwFlds,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER |
+					WS_TABSTOP,13,31,233,116
+	PUSHBUTTON      "Move &Up",kcidTlsOptDlgVwUp,13,150,60,14
+	PUSHBUTTON      "Move Dow&n",kcidTlsOptDlgVwDwn,79,150,60,14
+	PUSHBUTTON      "&Modify...",kcidTlsOptDlgVwMod,186,150,60,14
+END
+
+kridTlsOptDlgVwBr DIALOGEX 0, 0, 259, 173
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	GROUPBOX        "Settings ",IDC_STATIC,6,6,248,163
+	CONTROL         "List1",kcidTlsOptDlgVwHFlds,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP
+					 | LVS_SORTASCENDING,11,16,94,107
+	PUSHBUTTON      "  >>   &Show",kcidTlsOptDlgVwShow,108,26,25,22,
+					BS_MULTILINE
+	PUSHBUTTON      "  <<  &Hide",kcidTlsOptDlgVwHide,108,56,25,23,
+					BS_MULTILINE
+	CONTROL         "List1",kcidTlsOptDlgVwDFlds,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP
+					,137,16,111,80
+	PUSHBUTTON      "Move &Up",kcidTlsOptDlgVwUp,137,98,50,14
+	PUSHBUTTON      "Move Dow&n",kcidTlsOptDlgVwDwn,190,98,59,14
+	PUSHBUTTON      "&Modify...",kcidTlsOptDlgVwMod,161,114,60,14
+	GROUPBOX        "Display layout",kcidTlsOptDlgVwDi,11,127,238,39
+	CONTROL         "&Ignore hierarchy",kcidTlsOptDlgVwIgn,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,15,137,71,8
+	LTEXT           "(treat subentries like main entries)",
+					kcidTlsOptDlgVwTreat,27,146,66,16
+	LTEXT           "Number of lines per entry:",kcidTlsOptDlgVwNumb,136,132,
+					85,9
+	CONTROL         "A&ll lines",kcidTlsOptDlgVwAll,"Button",
+					BS_AUTORADIOBUTTON,135,143,64,8
+	CONTROL         "Sho&w only:",kcidTlsOptDlgVwOnly,"Button",
+					BS_AUTORADIOBUTTON,135,153,48,10
+	EDITTEXT        kcidTlsOptDlgVwELine,187,152,31,10,ES_AUTOHSCROLL
+	CONTROL         "Spin1",kcidTlsOptDlgVwSLine,"msctls_updown32",
+					UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,214,152,11,10
+	LTEXT           "line(s)",kcidTlsOptDlgVwLin,227,153,18,8
+END
+
+kridModFldSetNotice DIALOG DISCARDABLE  0, 0, 173, 81
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Modify Field Settings Notice"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "This field's visibility settings cannot be changed because it is specified under the General tab as a field that requires data.",
+					IDC_STATIC,11,6,153,25
+	LTEXT           "To change the visibility, first change the requirements on the General tab.",
+					IDC_STATIC,13,35,143,18
+	DEFPUSHBUTTON   "OK",IDOK,59,64,50,14
+	PUSHBUTTON      "Help...",kctidHelp,113,64,50,14
+	LTEXT           "vv",IDC_STATIC,5,58,160,1,SS_SUNKEN
+END
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridTlsOptVwBmp         BITMAP  DISCARDABLE     "TlsOptVwBmp.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+kcidTlsOptVwVisMnu MENU DISCARDABLE
+BEGIN
+	POPUP "TlsOptVwVis"
+	BEGIN
+		MENUITEM "Always",                      kcidTlsOptVwModAlways
+		MENUITEM "If data present",             kcidTlsOptVwModIfData
+		MENUITEM "Not visible",                 kcidTlsOptVwModNVis
+	END
+END
+
+// This menu is obsolete; the menu for the Document view is now identical
+// to the one used for the Data Entry view (above).
+//kcidTlsOptVwVisDocMnu MENU DISCARDABLE
+//BEGIN
+//    POPUP "TlsOptVwVisDoc"
+//    BEGIN
+//        MENUITEM "If data present",             kcidTlsOptVwDocIfData
+//        MENUITEM "Not visible",                 kcidTlsOptVwDocNVis
+//    END
+//END
+
+kcidTlsOptVwAddViews MENU DISCARDABLE
+BEGIN
+	POPUP "TlsOptVwAddViews"
+	BEGIN
+		MENUITEM "",                            kcidAddExpViews
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidDocument           "Document"
+	kstidBrowse             "Browse"
+	kstidDataEntry          "Data Entry"
+	kstidConcordance		"Concordance"
+	kstidDraft				"Draft"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptView                 "Views"
+	kstidTlsOptFld                  "Field"
+	kstidTlsOptVis                  "Visibility"
+	kstidTlsOptAl                   "Always"
+	kstidTlsOptIfDP                 "If data present"
+	kstidTlsOptNV                   "Not visible"
+	kstidTlsOptEClassifications     "Classifications"
+	kstidTlsOptEGeneralInfo			"General Information"
+	kstidTlsOptEOtherInfo			"Other Information"
+	kstidTlsOptEHistory             "History"
+	kstidTlsOptVwStyle              "Style"
+	kstidDeleteView                 "Delete View"
+	kstidTlsOptVwDMsg               "This deletion is permanent and cannot be reversed with Undo.\nAre you sure you want to delete this view?"
+	kstidViewRenViewMsg             "Each view must have a unique name"
+	kstidViewRenEmptyMsg            "A view must have a non-empty name"
+	kstidTlsOptBrHidFld				"Hidden fields"
+	kstidTlsOptBrDspFld				"Displayed fields"
+	kstidTlsOptVwStNone				"(None)"
+	END
+
+// Context help for Views dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgVwVws		"Shows available views."
+	kcidTlsOptDlgVwAdd		"Opens a menu so you can choose the type of view you want to create.  When you choose, a new view of this type is added to the Views list."
+	kcidTlsOptDlgVwCpy		"Copies the selected view and adds the copy to the Views list."
+	kcidTlsOptDlgVwDel		"Deletes the selected view if it is user-created. You cannot delete a default view."
+END
+
+// Context help for Field Settings controls in the dialog for modifying field visibility.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgModAVis	"Sets field to be visible in all entries."
+	kcidTlsOptDlgModIDVis	"Sets field to be visible when it contains data."
+	kcidTlsOptDlgModNVis	"Sets field to be hidden in all entries."
+	kcidTlsOptCharSty		"Specifies a character style for this field, if desired."
+	kcidTlsOptCharStyForText	"Specifies a character style for this field, if desired.  It is best not to specify a style for multiparagraph text fields where text elements can be formatted in other ways."
+	kcidTlsOptModSty		"Opens the Style dialog so you can add or modify a character style for this field."
+END
+
+// Context help for extra Field Settings controls in the extended dialog.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgModSAb		"Sets field to show abbreviations."
+	kcidTlsOptDlgModSNa		"Sets field to show names."
+	kcidTlsOptDlgModSHi		"Sets field to show hierarchal using colon to indicate sublevels."
+	kcidTlsOptDlgModSLI		"Shows items in the field as a vertical list. The default setting displays items horizonally in the field separated by gray bars."
+	kcidTlsOptDlgModPrvw	"Displays an example of the field contents (not actusl) reflecting the current display settings."
+	kstridTlsOptModAbr1		"762"
+	kstridTlsOptModAbr2		"764"
+	kstridTlsOptModAbr3		"765"
+	kstridTlsOptModNam1		"Suicide"
+	kstridTlsOptModNam2		"Funeral"
+	kstridTlsOptModNam3		"Mourning"
+	kstridTlsOptModAbrNam1	"762 - Suicide"
+	kstridTlsOptModAbrNam2	"764 - Funeral"
+	kstridTlsOptModAbrNam3	"765 - Mourning"
+	kstridTlsOptModHeirA	"WR:76:"
+	kstridTlsOptModHeirN	"Worldview and Religion:Death:"
+	kstridTlsOptModHeirAN	"WR - Worldview and Religion:76 - Death:"
+END
+
+// Context help for Modify Field Settings dialog controls for hierarchical field settings.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgModAEx		"Shows the field expanded everywhere in this view."
+	kcidTlsOptDlgModNSt		"Applies a numbering scheme to the hierarchy in the field."
+	kcidTlsOptDlgModNSC		"Specifies a numbering scheme for the hierarchy."
+END
+
+// Context help for (document) Views dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgVwFIn		"Specifies the type of entry in this view for which you want to change the settings."
+	kcidTlsOptDlgVwFlds		"Shows the fields and blocks of fields (Document views only) you can move and the fields for which you can change visibility and style settings."
+	kcidTlsOptDlgVwUp		"Moves the selected field up one place in the list with each click.  In Document view only, moves a block of fields or a field within a block."
+	kcidTlsOptDlgVwDwn		"Moves the selected field down one place in the list with each click.  In Document view only, moves a block of fields or a field within a block."
+	kcidTlsOptDlgVwMod		"Opens a dialog for changing the settings of the selected field."
+END
+
+// Context help for (browse) Views dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgVwHFlds	"Shows fields available for the view but not displayed."
+	kcidTlsOptDlgVwShow		"Moves a field from the Hidden list to the Displayed list."
+	kcidTlsOptDlgVwHide		"Moves a field from the Displayed list to the Hidden list."
+	//kcidTlsOptDlgVwDFlds	"Shows the displayed fields for this view in sequence as they appear left to right in the window."
+	kcidTlsOptDlgVwIgn		"Sorts entries and subentries as if they were independent of each other, creating a flat list of all of the entries in the display."
+	kcidTlsOptDlgVwAll		"Shows as many vertical lines as needed to entirely display each entry."
+	kcidTlsOptDlgVwOnly		"Shows only a specified number of lines in each entry."
+	kcidTlsOptDlgVwELine	"Specifies how many vertical lines to display in each entry. The default is 4 lines."
+	kcidTlsOptDlgVwSLine	"Increases/decreases the number of lines to display."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 6 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- set case specific variables -->
+		<var id="Mfr" select="tests/test[@case='$TestCase;']/@mfr"/>
+		<var id="MfrNotes" select="tests/test[@case='$TestCase;']/@mfr-notes"/>
+		<var id="MfrBT" select="tests/test[@case='$TestCase;']/@mfr-bt"/>
+
+		<if>
+			<condition of="$Mfr" is="(none)"/>
+			<then>
+				<var id="ScriptureMstrResultsFile" set="FALSE"/>
+			</then>
+			<else>
+				<var id="ScriptureMstrResultsFile" set="$Mfr"/>
+			</else>
+		</if>
+		<if>
+			<condition of="$MfrNotes" is="(none)"/>
+			<then>
+				<var id="NotesMstrResultsFile" set="FALSE"/>
+			</then>
+			<else>
+				<var id="NotesMstrResultsFile" set="$MfrNotes"/>
+			</else>
+		</if>
+		<if>
+			<condition of="$MfrBT" is="(none)"/>
+			<then>
+				<var id="BtMstrResultsFile" set="FALSE"/>
+			</then>
+			<else>
+				<var id="BtMstrResultsFile" set="$MfrBT"/>
+			</else>
+		</if>
+
+		<!-- ========================================================================== -->
+
+		<!--Compare Export Results with the ScriptureMstrResultsFile-->
+
+		<var id="ActualState" set="$ScriptureMstrResultsFile"/>
+		<if>
+			<condition of="$ActualState" is="FALSE"/>
+			<then>
+				<!-- There is no ScriptureMstrResultsFile to test against -->
+				<var id="Do Nothing" set="Do Nothing"/>
+			</then>
+			<else>
+				<file-comp lookAt="files"
+				   of="C:\GuiTestResults\ImportParatext6\Export Paratext6 Scripture.sf"
+				to="$TestBranchDir;\Test\GuiTestDriver\TeExpectedTestResults\ImportParatext6\$ScriptureMstrResultsFile"/>
+			</else>
+		</if>
+
+		<!-- ========================================================================== -->
+
+		<!--Compare Export Results with the NotesMstrResultsFile-->
+
+		<var id="ActualState2" set="$NotesMstrResultsFile"/>
+		<if>
+			<condition of="$ActualState2" is="FALSE"/>
+			<then>
+				<!--There is no NotesMstrResultsFile to test against-->
+				<var id="Do Nothing" set="Do Nothing"/>
+			</then>
+			<else>
+				<file-comp lookAt="files"
+				   of="C:\GuiTestResults\ImportParatext6\Export Paratext6 Notes.sf"
+				   to="$TestBranchDir;\Test\GuiTestDriver\TeExpectedTestResults\ImportParatext6\$NotesMstrResultsFile"/>
+			</else>
+		</if>
+
+		<!-- ========================================================================== -->
+
+		<!--Compare Export Results with the BtMstrResultsFile-->
+
+		<var id="ActualState3" set="$BtMstrResultsFile"/>
+		<if>
+			<condition of="$ActualState3" is="FALSE"/>
+			<then>
+				<!--There is no BtMstrResultsFile to test against-->
+				<var id="Do Nothing" set="Do Nothing"/>
+			</then>
+			<else>
+				<file-comp lookAt="files"
+				   of="C:\GuiTestResults\ImportParatext6\Export Paratext6 BT.sf"
+				   to="$TestBranchDir;\Test\GuiTestDriver\TeExpectedTestResults\ImportParatext6\$BtMstrResultsFile"/>
+			</else>
+		</if>
+
+	</on-application>
+
+</accil>

@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="scrFileList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <metadata name="columnHeader1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader1.Text" xml:space="preserve">
+	<value>File</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+	<value>166</value>
+  </data>
+  <metadata name="columnHeader2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader2.Text" xml:space="preserve">
+	<value>Books</value>
+  </data>
+  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
+	<value>98</value>
+  </data>
+  <metadata name="columnHeader3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader3.Text" xml:space="preserve">
+	<value>Encoding</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="scrFileList.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 40</value>
+  </data>
+  <data name="scrFileList.Size" type="System.Drawing.Size, System.Drawing">
+	<value>328, 136</value>
+  </data>
+  <data name="scrFileList.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;scrFileList.Name" xml:space="preserve">
+	<value>scrFileList</value>
+  </data>
+  <data name="&gt;&gt;scrFileList.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwListView, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;scrFileList.Parent" xml:space="preserve">
+	<value>tabScripture</value>
+  </data>
+  <data name="&gt;&gt;scrFileList.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>332, 28</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+	<value>Scripture files may optionally contain back translations and annotations by using distinctive markers.</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>tabScripture</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="btnRemoveScr.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnRemoveScr.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnRemoveScr.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnRemoveScr.Location" type="System.Drawing.Point, System.Drawing">
+	<value>96, 184</value>
+  </data>
+  <data name="btnRemoveScr.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 24</value>
+  </data>
+  <data name="btnRemoveScr.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="btnRemoveScr.Text" xml:space="preserve">
+	<value>&amp;Remove</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveScr.Name" xml:space="preserve">
+	<value>btnRemoveScr</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveScr.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveScr.Parent" xml:space="preserve">
+	<value>tabScripture</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveScr.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="btnAddScr.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnAddScr.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnAddScr.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 184</value>
+  </data>
+  <data name="btnAddScr.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 24</value>
+  </data>
+  <data name="btnAddScr.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="btnAddScr.Text" xml:space="preserve">
+	<value>&amp;Add...</value>
+  </data>
+  <data name="&gt;&gt;btnAddScr.Name" xml:space="preserve">
+	<value>btnAddScr</value>
+  </data>
+  <data name="&gt;&gt;btnAddScr.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAddScr.Parent" xml:space="preserve">
+	<value>tabScripture</value>
+  </data>
+  <data name="&gt;&gt;btnAddScr.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="tabScripture.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabScripture.Size" type="System.Drawing.Size, System.Drawing">
+	<value>344, 214</value>
+  </data>
+  <data name="tabScripture.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="tabScripture.Text" xml:space="preserve">
+	<value>Scripture</value>
+  </data>
+  <data name="&gt;&gt;tabScripture.Name" xml:space="preserve">
+	<value>tabScripture</value>
+  </data>
+  <data name="&gt;&gt;tabScripture.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabScripture.Parent" xml:space="preserve">
+	<value>tabFileGroups</value>
+  </data>
+  <data name="&gt;&gt;tabScripture.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="btnRemoveBT.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnRemoveBT.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnRemoveBT.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnRemoveBT.Location" type="System.Drawing.Point, System.Drawing">
+	<value>96, 184</value>
+  </data>
+  <data name="btnRemoveBT.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 24</value>
+  </data>
+  <data name="btnRemoveBT.TabIndex" type="System.Int32, mscorlib">
+	<value>27</value>
+  </data>
+  <data name="btnRemoveBT.Text" xml:space="preserve">
+	<value>&amp;Remove</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveBT.Name" xml:space="preserve">
+	<value>btnRemoveBT</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveBT.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveBT.Parent" xml:space="preserve">
+	<value>tabBackTranslation</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveBT.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="btnAddBT.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnAddBT.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnAddBT.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 184</value>
+  </data>
+  <data name="btnAddBT.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 24</value>
+  </data>
+  <data name="btnAddBT.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="btnAddBT.Text" xml:space="preserve">
+	<value>&amp;Add...</value>
+  </data>
+  <data name="&gt;&gt;btnAddBT.Name" xml:space="preserve">
+	<value>btnAddBT</value>
+  </data>
+  <data name="&gt;&gt;btnAddBT.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAddBT.Parent" xml:space="preserve">
+	<value>tabBackTranslation</value>
+  </data>
+  <data name="&gt;&gt;btnAddBT.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="btFileList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <metadata name="columnHeader4.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader4.Text" xml:space="preserve">
+	<value>File</value>
+  </data>
+  <data name="columnHeader4.Width" type="System.Int32, mscorlib">
+	<value>166</value>
+  </data>
+  <metadata name="columnHeader5.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader5.Text" xml:space="preserve">
+	<value>Books</value>
+  </data>
+  <data name="columnHeader5.Width" type="System.Int32, mscorlib">
+	<value>98</value>
+  </data>
+  <metadata name="columnHeader7.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader7.Text" xml:space="preserve">
+	<value>Encoding</value>
+  </data>
+  <data name="btFileList.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 40</value>
+  </data>
+  <data name="btFileList.Size" type="System.Drawing.Size, System.Drawing">
+	<value>328, 136</value>
+  </data>
+  <data name="btFileList.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;btFileList.Name" xml:space="preserve">
+	<value>btFileList</value>
+  </data>
+  <data name="&gt;&gt;btFileList.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwListView, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btFileList.Parent" xml:space="preserve">
+	<value>tabBackTranslation</value>
+  </data>
+  <data name="&gt;&gt;btFileList.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="cboShowBtWritingSystem.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="cboShowBtWritingSystem.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboShowBtWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>240, 184</value>
+  </data>
+  <data name="cboShowBtWritingSystem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>96, 21</value>
+  </data>
+  <data name="cboShowBtWritingSystem.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;cboShowBtWritingSystem.Name" xml:space="preserve">
+	<value>cboShowBtWritingSystem</value>
+  </data>
+  <data name="&gt;&gt;cboShowBtWritingSystem.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboShowBtWritingSystem.Parent" xml:space="preserve">
+	<value>tabBackTranslation</value>
+  </data>
+  <data name="&gt;&gt;cboShowBtWritingSystem.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="lblBtShowWritingSystems.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="lblBtShowWritingSystems.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblBtShowWritingSystems.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblBtShowWritingSystems.Location" type="System.Drawing.Point, System.Drawing">
+	<value>200, 188</value>
+  </data>
+  <data name="lblBtShowWritingSystems.Size" type="System.Drawing.Size, System.Drawing">
+	<value>37, 13</value>
+  </data>
+  <data name="lblBtShowWritingSystems.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblBtShowWritingSystems.Text" xml:space="preserve">
+	<value>&amp;Show:</value>
+  </data>
+  <data name="&gt;&gt;lblBtShowWritingSystems.Name" xml:space="preserve">
+	<value>lblBtShowWritingSystems</value>
+  </data>
+  <data name="&gt;&gt;lblBtShowWritingSystems.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblBtShowWritingSystems.Parent" xml:space="preserve">
+	<value>tabBackTranslation</value>
+  </data>
+  <data name="&gt;&gt;lblBtShowWritingSystems.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>332, 28</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+	<value>Back translation files may optionally contain annotations by using distinctive markers.</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>tabBackTranslation</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="tabBackTranslation.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabBackTranslation.Size" type="System.Drawing.Size, System.Drawing">
+	<value>344, 214</value>
+  </data>
+  <data name="tabBackTranslation.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="tabBackTranslation.Text" xml:space="preserve">
+	<value>Back Translation</value>
+  </data>
+  <data name="&gt;&gt;tabBackTranslation.Name" xml:space="preserve">
+	<value>tabBackTranslation</value>
+  </data>
+  <data name="&gt;&gt;tabBackTranslation.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabBackTranslation.Parent" xml:space="preserve">
+	<value>tabFileGroups</value>
+  </data>
+  <data name="&gt;&gt;tabBackTranslation.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="cboShowNotesWritingSystem.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="cboShowNotesWritingSystem.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboShowNotesWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
+	<value>48, 8</value>
+  </data>
+  <data name="cboShowNotesWritingSystem.Size" type="System.Drawing.Size, System.Drawing">
+	<value>136, 21</value>
+  </data>
+  <data name="cboShowNotesWritingSystem.TabIndex" type="System.Int32, mscorlib">
+	<value>28</value>
+  </data>
+  <data name="&gt;&gt;cboShowNotesWritingSystem.Name" xml:space="preserve">
+	<value>cboShowNotesWritingSystem</value>
+  </data>
+  <data name="&gt;&gt;cboShowNotesWritingSystem.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboShowNotesWritingSystem.Parent" xml:space="preserve">
+	<value>tabNotes</value>
+  </data>
+  <data name="&gt;&gt;cboShowNotesWritingSystem.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="btnRemoveNotes.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnRemoveNotes.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnRemoveNotes.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnRemoveNotes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>96, 184</value>
+  </data>
+  <data name="btnRemoveNotes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 24</value>
+  </data>
+  <data name="btnRemoveNotes.TabIndex" type="System.Int32, mscorlib">
+	<value>27</value>
+  </data>
+  <data name="btnRemoveNotes.Text" xml:space="preserve">
+	<value>&amp;Remove</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveNotes.Name" xml:space="preserve">
+	<value>btnRemoveNotes</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveNotes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveNotes.Parent" xml:space="preserve">
+	<value>tabNotes</value>
+  </data>
+  <data name="&gt;&gt;btnRemoveNotes.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="btnAddNotes.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnAddNotes.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnAddNotes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 184</value>
+  </data>
+  <data name="btnAddNotes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 24</value>
+  </data>
+  <data name="btnAddNotes.TabIndex" type="System.Int32, mscorlib">
+	<value>26</value>
+  </data>
+  <data name="btnAddNotes.Text" xml:space="preserve">
+	<value>&amp;Add...</value>
+  </data>
+  <data name="&gt;&gt;btnAddNotes.Name" xml:space="preserve">
+	<value>btnAddNotes</value>
+  </data>
+  <data name="&gt;&gt;btnAddNotes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAddNotes.Parent" xml:space="preserve">
+	<value>tabNotes</value>
+  </data>
+  <data name="&gt;&gt;btnAddNotes.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="notesFileList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <metadata name="columnHeader8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader8.Text" xml:space="preserve">
+	<value>File</value>
+  </data>
+  <data name="columnHeader8.Width" type="System.Int32, mscorlib">
+	<value>166</value>
+  </data>
+  <metadata name="columnHeader6.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader6.Text" xml:space="preserve">
+	<value>Books</value>
+  </data>
+  <data name="columnHeader6.Width" type="System.Int32, mscorlib">
+	<value>98</value>
+  </data>
+  <metadata name="columnHeader9.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="columnHeader9.Text" xml:space="preserve">
+	<value>Encoding</value>
+  </data>
+  <data name="notesFileList.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 40</value>
+  </data>
+  <data name="notesFileList.Size" type="System.Drawing.Size, System.Drawing">
+	<value>328, 136</value>
+  </data>
+  <data name="notesFileList.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;notesFileList.Name" xml:space="preserve">
+	<value>notesFileList</value>
+  </data>
+  <data name="&gt;&gt;notesFileList.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwListView, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;notesFileList.Parent" xml:space="preserve">
+	<value>tabNotes</value>
+  </data>
+  <data name="&gt;&gt;notesFileList.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="cboShowNoteTypes.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="cboShowNoteTypes.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboShowNoteTypes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>200, 8</value>
+  </data>
+  <data name="cboShowNoteTypes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>136, 21</value>
+  </data>
+  <data name="cboShowNoteTypes.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;cboShowNoteTypes.Name" xml:space="preserve">
+	<value>cboShowNoteTypes</value>
+  </data>
+  <data name="&gt;&gt;cboShowNoteTypes.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboShowNoteTypes.Parent" xml:space="preserve">
+	<value>tabNotes</value>
+  </data>
+  <data name="&gt;&gt;cboShowNoteTypes.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="label3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 11</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>37, 13</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>&amp;Show:</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>tabNotes</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="tabNotes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabNotes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>344, 214</value>
+  </data>
+  <data name="tabNotes.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="tabNotes.Text" xml:space="preserve">
+	<value>Annotations</value>
+  </data>
+  <data name="&gt;&gt;tabNotes.Name" xml:space="preserve">
+	<value>tabNotes</value>
+  </data>
+  <data name="&gt;&gt;tabNotes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabNotes.Parent" xml:space="preserve">
+	<value>tabFileGroups</value>
+  </data>
+  <data name="&gt;&gt;tabNotes.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="tabFileGroups.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="tabFileGroups.ItemSize" type="System.Drawing.Size, System.Drawing">
+	<value>54, 18</value>
+  </data>
+  <data name="tabFileGroups.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="tabFileGroups.Size" type="System.Drawing.Size, System.Drawing">
+	<value>352, 240</value>
+  </data>
+  <data name="tabFileGroups.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;tabFileGroups.Name" xml:space="preserve">
+	<value>tabFileGroups</value>
+  </data>
+  <data name="&gt;&gt;tabFileGroups.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabFileGroups.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabFileGroups.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>352, 240</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
+	<value>columnHeader1</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
+	<value>columnHeader2</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Name" xml:space="preserve">
+	<value>columnHeader3</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader4.Name" xml:space="preserve">
+	<value>columnHeader4</value>
+  </data>
+  <data name="&gt;&gt;columnHeader4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader5.Name" xml:space="preserve">
+	<value>columnHeader5</value>
+  </data>
+  <data name="&gt;&gt;columnHeader5.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader7.Name" xml:space="preserve">
+	<value>columnHeader7</value>
+  </data>
+  <data name="&gt;&gt;columnHeader7.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader8.Name" xml:space="preserve">
+	<value>columnHeader8</value>
+  </data>
+  <data name="&gt;&gt;columnHeader8.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader6.Name" xml:space="preserve">
+	<value>columnHeader6</value>
+  </data>
+  <data name="&gt;&gt;columnHeader6.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader9.Name" xml:space="preserve">
+	<value>columnHeader9</value>
+  </data>
+  <data name="&gt;&gt;columnHeader9.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>SFFileListBuilder</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

@@ -1,0 +1,92 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{B26B6369-5C73-408A-96D6-EEF7D2F4B35A}</ProjectGuid>
+	<OutputType>Exe</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks.Tools.FileCache</RootNamespace>
+	<AssemblyName>RemoteFileCacheService</AssemblyName>
+	<StartupObject>SIL.FieldWorks.Tools.FileCache.RemoteFileCacheService</StartupObject>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccAuxPath>
+	</SccAuxPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+	<Reference Include="System.Configuration.Install" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Management" />
+	<Reference Include="System.ServiceProcess" />
+	<Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="ProjectInstaller.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="ProjectInstaller.Designer.cs">
+	  <DependentUpon>ProjectInstaller.cs</DependentUpon>
+	</Compile>
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="RemoteFileCacheService.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="RemoteFileCacheService.Designer.cs">
+	  <DependentUpon>RemoteFileCacheService.cs</DependentUpon>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="ProjectInstaller.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>ProjectInstaller.cs</DependentUpon>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\RemoteFileCache\RemoteFileCache.csproj">
+	  <Project>{75223048-84B5-4E72-AE1E-20561A2FDA42}</Project>
+	  <Name>RemoteFileCache</Name>
+	</ProjectReference>
+	<ProjectReference Include="..\SettingsProvider\SettingsProvider.csproj">
+	  <Project>{E1C9DB5B-5BA4-4A23-8980-BBBA798E9C08}</Project>
+	  <Name>SettingsProvider</Name>
+	</ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="App.config" />
+	<None Include="File Cache.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,64 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\xteststep.xml">
+ <title tag="wrttcs">Rendering a test step in XML</title>
+ <index>
+  <li>XML: test step</li>
+ </index>
+ <prerequisites>
+  <p>Before starting an XML test step, you should:</p>
+  <ul>
+   <li>Know how to write a test script.</li>
+   <li>Set up the <link uri="..\Writing\tools.xml" type="module">XML authoring tools</link>.</li>
+   <li>Review the structure of a <link uri="..\TCL\CaseStep.xml" type="module">test case step</link>.</li>
+   <li>Review our <link uri="..\XML\overview.xml" type="module">general description of XML</link>.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Here are some guidelines for creating a test case step in a test script in XML:</p>
+
+  <ul>
+
+   <li>Open the *.xml file that contains the test script and edit/create the following tags with your own information:
+	<ul>
+
+	 <li>step - Name is the step number, link is "Bug" if you created a bug pattern for it otherwise, it is omitted. To create a bug pattern see <i>step content (p name="bug")</i> below. If a link is specified via "link="Bug", then the uri generated begins "PatList.htm#". The anchor name is the case id followed by the step number. For example: PatList.htm#fmpaSe5.2..</li>
+
+	 <li>initial step content - The first part of the content is the <b>action</b> to be performed. This can contain italic tags (i), bolding, (b), links (link) and images (img).
+	 </li>
+
+	 <li>step content (r) - Use an r tag for expected <b>results</b>. The result can contain a list (ul) with item tags (li), italic tags (i), bolding, (b), links (link) and images (img).</li>
+
+	 <li>step content (p name="*") - A named paragraph (where * is the label you choose) contains additional discussion of the step. There can be more than one of these.</li>
+
+	 <li>step content (p name="bug") - If this tag is included, a bug pattern for the test case step is created. It contains the title of the bug pattern. These are extracted by a stylesheet to generate the PatList.htm file for this test script. In addition to this the <b>action</b> and <b>result</b> are extracted. </li>
+	</ul>
+   </li>
+
+   <li>To find the name of the file and target of a specific test case to link to from the Test Help file:
+	  <ol>
+	   <li>Open the Test help file by double-clicking it.</li>
+	   <li>Navigate to the test library's Test Script Summary that contains the test.</li>
+	   <li>Right click on the name of the test and select <i>properties</i>.</li>
+	   <li>The file name appears after two colons (::).</li>
+	   <li>Close properties.</li>
+	   <li>Click on the name of the test to open it.</li>
+	   <li>Browse down to the test case you wish to link to.</li>
+	   <li>It's target name is in parenthesis after the case name.</li>
+	   <li>The link will look like, &lt;link type="module" uri="..\LIB\TsFile.xml#Target">Link text&lt;/link></li>
+	  </ol>
+   </li>
+   <li>To find the name of the file and target of a specific test case to link to in a XML test script file on your hard drive:
+	  <ol>
+	   <li>Open the Test Script library's summary list by double-clicking it's <i>folder-name</i>.xml file.</li>
+	   <li>Right click on the name of the test and select <i>properties</i>.</li>
+	   <li>The file name appears in the dialog.</li>
+	   <li>Close properties.</li>
+	   <li>Click on the name of the test to open it.</li>
+	   <li>Browse down to the test case you wish to link to.</li>
+	   <li>It's target name is in parenthesis after the case name.</li>
+	   <li>The link will look like, &lt;link type="module" uri="..\LIB\TsFile.xml#Target">Link text&lt;/link></li>
+	  </ol>
+   </li>
+  </ul>
+ </guidelines>
+</task>

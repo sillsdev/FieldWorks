@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<columns>
+	<column label="Lexeme" width="20%">
+		<span debugId="LexemeSpan">
+			<properties>
+				<bold value="on"/>
+			</properties>
+			<string field="CitationForm" ws="$ws=vernacular" debugId="LexemeCf"/>
+		</span>
+	</column>
+	<column label="Etymology" width="20%">
+		<span debugId="EtymologySpan">
+			<properties>
+				<italic value="on"/>
+			</properties>
+			<obj field="Etymology" layout="empty" debugId="EtymologyObj">
+				<string field="Comment" ws="analysis" debugId="EtymologyComment"/>
+			</obj>
+		</span>
+	</column>
+	<column label="POS" width="20%" multipara="true" layout="Msas"/>
+	<column label="Glosses" width="20%" multipara="true">
+		<seq field="Senses" layout="empty">
+			<para debugId="SenseGlossPara">
+				<string field="Gloss" ws="$ws=vernacular" debugId="SenseGloss"/>
+			</para>
+		</seq>
+	</column>
+	<column label="Definitions" width="20%" multipara="true">
+		<seq field="Senses" layout="empty">
+			<para>
+				<string field="Definition" ws="$ws=analysis"/>
+			</para>
+		</seq>
+	</column>
+	<column label="Sem. Dom." width="20%" multipara="true" layout="DomainsOfSenses"/>
+	<column label="Etymology2" width="20%">
+		<obj field="Etymology" layout="empty">
+			<string field="Comment" ws="veracular" debugId="EtymologyComment2"/>
+		</obj>
+	</column>
+	<column label="Bibliography" common="true">
+		<string label="Bibliography" ws="$ws=analysis"/>
+	</column>
+	<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+		<column label="$label generated" common="true">
+			<seq field="Senses" sep=", " layout="empty">
+				<string field="$fieldName" ws="$ws=analysis"/>
+			</seq>
+		</column>
+	</generate>
+</columns>

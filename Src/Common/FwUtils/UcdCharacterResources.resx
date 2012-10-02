@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="ResMimeType">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="Version">
+		<value>1.0.0.0</value>
+	</resheader>
+	<resheader name="Reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=1.0.3102.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="Writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.3102.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="kstidGenCatLu">
+		<value>Letter, Uppercase</value>
+	</data>
+	<data name="kstidGenCatLl">
+		<value>Letter, Lowercase</value>
+	</data>
+	<data name="kstidGenCatLt">
+		<value>Letter, Titlecase</value>
+	</data>
+	<data name="kstidGenCatLm">
+		<value>Letter, Modifier</value>
+	</data>
+	<data name="kstidGenCatLo">
+		<value>Letter, Other</value>
+	</data>
+	<data name="kstidGenCatMn">
+		<value>Mark, Nonspacing</value>
+	</data>
+	<data name="kstidGenCatMc">
+		<value>Mark, Spacing Combining</value>
+	</data>
+	<data name="kstidGenCatMe">
+		<value>Mark, Enclosing</value>
+	</data>
+	<data name="kstidGenCatNd">
+		<value>Number, Decimal Digit</value>
+	</data>
+	<data name="kstidGenCatNl">
+		<value>Number, Letter</value>
+	</data>
+	<data name="kstidGenCatNo">
+		<value>Number, Other</value>
+	</data>
+	<data name="kstidGenCatPc">
+		<value>Punctuation, Connector</value>
+	</data>
+	<data name="kstidGenCatPd">
+		<value>Punctuation, Dash</value>
+	</data>
+	<data name="kstidGenCatPs">
+		<value>Punctuation, Open</value>
+	</data>
+	<data name="kstidGenCatPe">
+		<value>Punctuation, Close</value>
+	</data>
+	<data name="kstidGenCatPi">
+		<value>Punctuation, Initial quote (may behave like Ps or Pe depending on usage)</value>
+	</data>
+	<data name="kstidGenCatPf">
+		<value>Punctuation, Final quote (may behave like Ps or Pe depending on usage)</value>
+	</data>
+	<data name="kstidGenCatPo">
+		<value>Punctuation, Other</value>
+	</data>
+	<data name="kstidGenCatSm">
+		<value>Symbol, Math</value>
+	</data>
+	<data name="kstidGenCatSc">
+		<value>Symbol, Currency</value>
+	</data>
+	<data name="kstidGenCatSk">
+		<value>Symbol, Modifier</value>
+	</data>
+	<data name="kstidGenCatSo">
+		<value>Symbol, Other</value>
+	</data>
+	<data name="kstidGenCatZs">
+		<value>Separator, Space</value>
+	</data>
+	<data name="kstidGenCatZl">
+		<value>Separator, Line</value>
+	</data>
+	<data name="kstidGenCatZp">
+		<value>Separator, Paragraph</value>
+	</data>
+	<data name="kstidGenCatCc">
+		<value>Other, Control</value>
+	</data>
+	<data name="kstidGenCatCf">
+		<value>Other, Format</value>
+	</data>
+	<data name="kstidGenCatCs">
+		<value>Other, Surrogate</value>
+	</data>
+	<data name="kstidGenCatCo">
+		<value>Other, Private Use</value>
+	</data>
+	<data name="kstidGenCatCn">
+		<value>Other, Not Assigned (no characters in the file have this property)</value>
+	</data>
+	<!-- Canonical Combining Values -->
+	<data name="kstidCanComb0">
+		<value>Spacing, split, enclosing, reordrant, and Tibetan subjoined</value>
+	</data>
+	<data name="kstidCanComb1">
+		<value>Overlays and interior</value>
+	</data>
+	<data name="kstidCanComb7">
+		<value>Nuktas</value>
+	</data>
+	<data name="kstidCanComb8">
+		<value>Hiragana/Katakana voicing marks</value>
+	</data>
+	<data name="kstidCanComb9">
+		<value>Viramas</value>
+	</data>
+	<data name="kstidCanComb10">
+		<value>Start of fixed position classes</value>
+	</data>
+	<data name="kstidCanComb199">
+		<value>End of fixed position classes</value>
+	</data>
+	<data name="kstidCanComb200">
+		<value>Below left attached</value>
+	</data>
+	<data name="kstidCanComb202">
+		<value>Below attached</value>
+	</data>
+	<data name="kstidCanComb204">
+		<value>Below right attached</value>
+	</data>
+	<data name="kstidCanComb208">
+		<value>Left attached (reordrant around single base character)</value>
+	</data>
+	<data name="kstidCanComb210">
+		<value>Right attached</value>
+	</data>
+	<data name="kstidCanComb212">
+		<value>Above left attached</value>
+	</data>
+	<data name="kstidCanComb214">
+		<value>Above attached</value>
+	</data>
+	<data name="kstidCanComb216">
+		<value>Above right attached</value>
+	</data>
+	<data name="kstidCanComb218">
+		<value>Below left</value>
+	</data>
+	<data name="kstidCanComb220">
+		<value>Below</value>
+	</data>
+	<data name="kstidCanComb222">
+		<value>Below right</value>
+	</data>
+	<data name="kstidCanComb224">
+		<value>Left (reordrant around single base character)</value>
+	</data>
+	<data name="kstidCanComb226">
+		<value>Right</value>
+	</data>
+	<data name="kstidCanComb228">
+		<value>Above left</value>
+	</data>
+	<data name="kstidCanComb230">
+		<value>Above</value>
+	</data>
+	<data name="kstidCanComb232">
+		<value>Above right</value>
+	</data>
+	<data name="kstidCanComb233">
+		<value>Double below</value>
+	</data>
+	<data name="kstidCanComb234">
+		<value>Double above</value>
+	</data>
+	<data name="kstidCanComb240">
+		<value>Below (iota subscript)</value>
+	</data>
+	<!-- Bidirectional Class values -->
+	<data name="kstidBidiClassL">
+		<value>Left-to-Right</value>
+	</data>
+	<data name="kstidBidiClassLRE">
+		<value>Left-to-Right Embedding</value>
+	</data>
+	<data name="kstidBidiClassLRO">
+		<value>Left-to-Right Override</value>
+	</data>
+	<data name="kstidBidiClassR">
+		<value>Right-to-Left</value>
+	</data>
+	<data name="kstidBidiClassAL">
+		<value>Right-to-Left Arabic</value>
+	</data>
+	<data name="kstidBidiClassRLE">
+		<value>Right-to-Left Embedding</value>
+	</data>
+	<data name="kstidBidiClassRLO">
+		<value>Right-to-Left Override</value>
+	</data>
+	<data name="kstidBidiClassPDF">
+		<value>Pop Directional Format</value>
+	</data>
+	<data name="kstidBidiClassEN">
+		<value>European Number</value>
+	</data>
+	<data name="kstidBidiClassES">
+		<value>European Number Separator</value>
+	</data>
+	<data name="kstidBidiClassET">
+		<value>European Number Terminator</value>
+	</data>
+	<data name="kstidBidiClassAN">
+		<value>Arabic Number</value>
+	</data>
+	<data name="kstidBidiClassCS">
+		<value>Common Number Separator</value>
+	</data>
+	<data name="kstidBidiClassNSM">
+		<value>Non-Spacing Mark</value>
+	</data>
+	<data name="kstidBidiClassBN">
+		<value>Boundary Neutral</value>
+	</data>
+	<data name="kstidBidiClassB">
+		<value>Paragraph Separator</value>
+	</data>
+	<data name="kstidBidiClassS">
+		<value>Segment Separator</value>
+	</data>
+	<data name="kstidBidiClassWS">
+		<value>Whitespace</value>
+	</data>
+	<data name="kstidBidiClassON">
+		<value>Other Neutrals</value>
+	</data>
+	<!-- Decompostion Compatability Tags -->
+	<data name="kstidDecompCompatNONE">
+		<value>[none]</value>
+	</data>
+	<data name="kstidDecompCompatCANONICAL">
+		<value>[canonical] (same as none)</value>
+	</data>
+	<data name="kstidDecompCompatfont">
+		<value>A font variant (e.g. a blackletter form)</value>
+	</data>
+	<data name="kstidDecompCompatnoBreak">
+		<value>A no-break version of a space or hyphen</value>
+	</data>
+	<data name="kstidDecompCompatinitial">
+		<value>An initial presentation form (Arabic)</value>
+	</data>
+	<data name="kstidDecompCompatmedial">
+		<value>A medial presentation form (Arabic)</value>
+	</data>
+	<data name="kstidDecompCompatfinal">
+		<value>A final presentation form (Arabic)</value>
+	</data>
+	<data name="kstidDecompCompatisolated">
+		<value>An isolated presentation form (Arabic)</value>
+	</data>
+	<data name="kstidDecompCompatcircle">
+		<value>An encircled form</value>
+		<comment>A Unicode technical term, meaning a character that is drawn with a circle around it.</comment>
+	</data>
+	<data name="kstidDecompCompatsuper">
+		<value>A superscript form</value>
+	</data>
+	<data name="kstidDecompCompatsub">
+		<value>A subscript form</value>
+	</data>
+	<data name="kstidDecompCompatvertical">
+		<value>A vertical layout presentation form</value>
+	</data>
+	<data name="kstidDecompCompatwide">
+		<value>A wide (or zenkaku) compatibility character</value>
+	</data>
+	<data name="kstidDecompCompatnarrow">
+		<value>A narrow (or hankaku) compatibility character</value>
+	</data>
+	<data name="kstidDecompCompatsmall">
+		<value>A small variant form (CNS compatibility)</value>
+	</data>
+	<data name="kstidDecompCompatsquare">
+		<value>A CJK squared font variant</value>
+	</data>
+	<data name="kstidDecompCompatfraction">
+		<value>A vulgar fraction form</value>
+		<comment>Displayed as one number divided by another, for example: 3/4 is in vulgar fraction form, whereas 0.75 is not, even though they represent the same thing.</comment>
+	</data>
+	<data name="kstidDecompCompatcompat">
+		<value>Otherwise unspecified compatibility character</value>
+	</data>
+	<data name="kstidNumTypeDECIMAL">
+		<value>Decimal Digit</value>
+	</data>
+	<data name="kstidNumTypeDIGIT">
+		<value>Digit</value>
+	</data>
+	<data name="kstidNumTypeNUMERIC">
+		<value>Numeric Value (e.g. fractions)</value>
+	</data>
+	<data name="kstidNumTypeNONE">
+		<value>[none]</value>
+	</data>
+	<data name="kstidNumTypeCOUNT">
+		<value>Count</value>
+	</data>
+</root>

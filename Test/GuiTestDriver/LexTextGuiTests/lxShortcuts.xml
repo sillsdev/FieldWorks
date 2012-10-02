@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- This fails when the system is slow -->
+<!-- Some actions don't use shortcuts - they work when a user does them, but not for SendKeys()  -->
+<!-- The on-dialogs shouldn't need to be there, but are to make sure the dialogs come up -->
+
+<accil on-fail="assert">
+  <bug id="LT-8175" />
+  <bug id="LT-2693" />
+  <bug id="LT-6909" desc="shortcuts don't work"/>
+
+<!--test Lexicon tool shortcuts-->
+	<var id="projectName" set="Kalaba"/>
+	<sound frequency = "500" duration = "500"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+  <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <!--Go to Texts/Edit-->
+	 <click select="menubar/view/lexicon/lexicon-edit"/>
+	 <model select="lexicon-edit[@role='view']">
+
+  <!--find entry-->
+  <insert wait="3000">^f</insert>
+
+  <on-dialog title="Find Lexical Entry">
+	<insert wait="500">variant</insert>
+	<insert wait="500">{TAB}</insert>
+	<do-once until="100000" > <!-- this search can take a long time -->
+	  <glimpse id="goToButton" path="$goto" prop="unavailable" expect="false"/>
+	</do-once>
+	<insert wait="1000">%g</insert>
+  </on-dialog>
+
+  <!--check find-->
+  <var id="ind" set="*"/>
+  <glimpse id="find" select="entry/slice/lexeme-form/data" prop="value" expect="variant"/>
+  <click select="entry/slice/lexeme-form/data"/><!-- keeps ^e  from clicking the Edit menu-->
+
+  <!--new entry-->
+  <!--insert wait="1000">^E</insert--><!-- this still doesn't work from automation only manually -->
+  <click select="//toolbar/new-entry"/>
+  <on-dialog title="New Entry">
+   <insert wait="500">conquer</insert>
+   <insert wait="1500">%C</insert>
+  </on-dialog>
+
+  <!--check new-->
+  <glimpse id="new" select="entry/slice/lexeme-form/data" prop="value" expect="conquer"/>
+
+ <!--delete entry-->
+  <click select="entry/slice/lexeme-form/data"/>
+  <insert wait="2000">^{DEL}</insert>
+  <insert wait="500">d</insert>
+
+  <!--check find-->
+  <glimpse wait="2000" id="delete1" select="entry/slice/lexeme-form/data" prop="value" expect="CV"/>
+
+  <!-- Scroll up, the first record is hidden (want to go to it via Previous) -->
+  <click select="entries/scroll/up"/>
+
+ <!--previous entry-->
+  <!--insert wait="2000">^{TAB 2}</insert-->
+  <var id="row" set="1"/>
+  <var id="col" set="1"/>
+  <click select="entries/record/col"/><!-- shouldn't need this, but ctrl tab doesn't work auto -->
+  <insert>{UP}</insert><!-- shouldn't need this, but alt p doesn't work auto -->
+  <insert>%{P}</insert>
+
+  <!--check previous-->
+  <glimpse id="previous" select="entry/slice/lexeme-form/data" prop="value" expect="rexp#bi"/>
+
+ <!--next entry-->
+  <insert>{DOWN 2}</insert><!-- shouldn't need this, but alt n doesn't work auto -->
+  <insert wait="500">%{N}</insert>
+  <insert wait="2000">%{N}</insert>
+
+  <!--check next-->
+  <glimpse id="next1" select="entry/slice/lexeme-form/data" prop="value" expect="rexp#de"/>
+
+  <click select="entry/slice/lexeme-form/data"/>
+
+	 </model>
+
+  </on-application>
+</accil>

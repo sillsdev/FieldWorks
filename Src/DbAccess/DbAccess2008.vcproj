@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="DbAccess2008"
+	ProjectGUID="{B0420802-E86E-43D2-8A30-D6D684CB4329}"
+	RootNamespace="DbAccess"
+	SccProjectName="Perforce Project"
+	SccLocalPath="..\.."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\bin\mkdba.bat d"
+				ReBuildCommandLine="..\..\bin\mkdba.bat d cc"
+				CleanCommandLine=""
+				Output="DbAccess.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine=""
+				ReBuildCommandLine=""
+				CleanCommandLine=""
+				Output="DbAccess.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
+			>
+			<File
+				RelativePath="DbAccess.def"
+				>
+			</File>
+			<File
+				RelativePath="DbAdmin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="OleDbEncap.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc"
+			>
+			<File
+				RelativePath="DbAdmin.h"
+				>
+			</File>
+			<File
+				RelativePath="Main.h"
+				>
+			</File>
+			<File
+				RelativePath="OleDbEncap.h"
+				>
+			</File>
+			<File
+				RelativePath="resource.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
+			<File
+				RelativePath="DbAccess.rc"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath="DbAccess.idh"
+			>
+		</File>
+		<File
+			RelativePath="DbAccess.mak"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

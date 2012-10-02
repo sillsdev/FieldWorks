@@ -1,0 +1,17 @@
+<!-- POSes.dtd
+	   DTD for category catalog
+	   -->
+<!ELEMENT Abbreviation (#PCDATA)>
+<!ELEMENT Categories (Category+)>
+<!ELEMENT Category (Languages, Category*)>
+<!ATTLIST Category
+	id ID #REQUIRED
+	use4newLangProjects (yes|no) "yes"
+	>
+<!ELEMENT Citation (#PCDATA)>
+<!ELEMENT Citations (Citation*)>
+<!ELEMENT Description (#PCDATA)>
+<!ELEMENT LangCode (#PCDATA)>
+<!ELEMENT Language (LangCode, Name, Abbreviation, Description,Citations)>
+<!ELEMENT Languages (Language+)>
+<!ELEMENT Name (#PCDATA)>

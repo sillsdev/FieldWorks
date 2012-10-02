@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		  xmlns:xse="http://schemas.microsoft.com/wix/2005/XmlSchemaExtension"
+	targetNamespace="http://schemas.microsoft.com/wix/MmcExtension"
+			  xmlns="http://schemas.microsoft.com/wix/MmcExtension">
+	<xs:annotation>
+		<xs:documentation>
+			Copyright (c) Microsoft Corporation.  All rights reserved.
+
+			The use and distribution terms for this software are covered by the
+			Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+			which can be found in the file CPL.TXT at the root of this distribution.
+			By using this software in any fashion, you are agreeing to be bound by
+			the terms of this license.
+
+			You must not remove this notice, or any other, from this software.
+
+			The source code schema for the Windows Installer XML Toolset MMC Extension.
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="SnapIn">
+		<xs:annotation>
+			<xs:documentation>
+				A managed MMC snap-in, with optional published extendible nodes.
+			</xs:documentation>
+			<xs:appinfo>
+				<xse:parent namespace="http://schemas.microsoft.com/wix/2003/01/wi" ref="File" />
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="ExtendedNodeType">
+					<xs:annotation>
+						<xs:documentation>Node type of another snap-in that is extended by this snap-in.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="PublishedNodeType">
+					<xs:annotation>
+						<xs:documentation>Published node types that can be extended by extension snap-ins.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Resources">
+					<xs:annotation>
+						<xs:documentation>Element describing the localized resources for this snap-in.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:attribute name="Id" use="required" type="uuid">
+				<xs:annotation>
+					<xs:documentation>The guid representing the snap-in's identity.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="About" type="uuid">
+				<xs:annotation>
+					<xs:documentation>The guid representing the snap-in's help topic. Defaults to {00000000-0000-0000-0000-000000000000}.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="AssemblyName" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The name of the assembly in which the snap-in is defined.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="ClassType" use="required" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The fully-qualified type name of the snap-in.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="DefaultCulture" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The culture of the snap-in assembly. Defaults to neutral.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="DefaultPublicKeyToken" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The public key token of the snap-in. Defaults to null.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="DefaultVersion" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The version of the snap-in assembly. Defaults to 1.0.0.0.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Description" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The description of the snap-in, which will be shown to users in the Add/Remove snap-in dialog.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="ExtensionType">
+				<xs:annotation>
+					<xs:documentation>Specifies the type of the extension.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="ContextMenu"/>
+						<xs:enumeration value="NameSpace"/>
+						<xs:enumeration value="PropertySheet"/>
+						<xs:enumeration value="Task"/>
+						<xs:enumeration value="ToolBar"/>
+						<xs:enumeration value="View"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="MmcVersion" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The version of MMC that this snap-in was compiled to. Defaults to 3.0.0.0.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Name" use="required" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The name of the snap-in as shown to users in the Add/Remove snap-in dialog.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Provider" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The provider of the snap-in as shown to users in the Add/Remove snap-in dialog.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="RuntimeVersion" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The version of the CLR that this snap-in was compiled to. Defaults to 2.0.50727.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="ExtendedNodeType">
+		<xs:annotation>
+			<xs:documentation>
+				Published node type that is extended by this snap-in.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="Id" use="required" type="uuid">
+				<xs:annotation>
+					<xs:documentation>The guid representing the extended node.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Description" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The description of the extension.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="PublishedNodeType">
+		<xs:annotation>
+			<xs:documentation>
+				Published node type that can be extended by extension snap-ins.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="Id" use="required" type="uuid">
+				<xs:annotation>
+					<xs:documentation>The guid representing the extensible node.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Description" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The description of the extensible node.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Resources">
+		<xs:annotation>
+			<xs:documentation>
+				Element describing the localized resources for this snap-in.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="DllName" use="required" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The name of the DLL containing the embedded resources for this snap-in.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="DisplayNameId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the display name of the snap-in in the resources DLL.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="DescriptionId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the description of the snap-in in the resources DLL.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="VendorId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the vendor of the snap-in in the resources DLL.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="VersionId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the version of the snap-in in the resources DLL.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="IconId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the icon of the snap-in in the resources DLL. Used for the icon of a saved MSC file, and the icon in the top left of the MMC window, not for the snap-in selection dialog.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="LargeFolderBitmapId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the large folder bitmap of the snap-in in the resources DLL. Used for the snap-in selection dialog when Add/Remove Snap-ins is chosen.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="SmallFolderBitmapId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the small folder bitmap of the snap-in in the resources DLL. Used for the snap-in selection dialog when Add/Remove Snap-ins is chosen.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="SmallFolderSelectedBitmapId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The resource ID for the small selected folder bitmap of the snap-in in the resources DLL. Used for the snap-in selection dialog when Add/Remove Snap-ins is chosen.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="FolderBitmapsColorMask" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>The color mask for transparency in folder bitmaps.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="uuid">
+		<xs:annotation>
+			<xs:documentation>Values of this type will look like: "01234567-89AB-CDEF-0123-456789ABCDEF" or "{01234567-89AB-CDEF-0123-456789ABCDEF}".</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[{(]?[0-9A-Fa-f]{8}\-?[0-9A-Fa-f]{4}\-?[0-9A-Fa-f]{4}\-?[0-9A-Fa-f]{4}\-?[0-9A-Fa-f]{12}[})]?"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

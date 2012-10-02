@@ -1,0 +1,88 @@
+
+/***************************************************************************
+		 Copyright (c) Microsoft Corporation, All rights reserved.
+	This code sample is provided "AS IS" without warranty of any kind,
+	it is not recommended for use in a production environment.
+***************************************************************************/
+
+// Package Command Bar Definition
+//
+
+#include <stdidcmd.h>
+#include <vsshlids.h>
+#include <msobtnid.h>
+#include <virtkeys.h>
+#include "MenuCommandIds.h"
+#include "Resource.h"
+
+#define _CTC_GUIDS_
+#include "Guids.h"
+
+// shorthand macros for a more compact and manageable table
+
+#define OI_NOID         guidOfficeIcon:msotcidNoIcon
+#define DIS_DEF         DEFAULTDISABLED | DEFAULTINVISIBLE | DYNAMICVISIBILITY
+#define VIS_DEF         COMMANDWELLONLY
+
+
+CMDS_SECTION guidWixVsPkgPkg
+
+	MENUS_BEGIN
+		// NewMenu                              Relative to Group                       Priority    Type        Name                    Text
+	MENUS_END
+
+	NEWGROUPS_BEGIN
+		// NewGroup                             Parent Group                            Priority
+	guidWixVsPkgCmdSet:MyMenuGroup,    guidSHLMainMenu:IDM_VS_MENU_TOOLS,    0x0600;
+	NEWGROUPS_END
+
+	BUTTONS_BEGIN
+	// Command                    Parent Group                Priority    Image            Type    Visibility
+	guidWixVsPkgCmdSet:cmdidMyCommand,    guidWixVsPkgCmdSet:MyMenuGroup,    0x0100,        guidWixVsPkgCmdSet:bmpPic1,    BUTTON,    ,            "My Command Name";
+	guidWixVsPkgCmdSet:cmdidMyTool,    guidSHLMainMenu:IDG_VS_WNDO_OTRWNDWS1,    0x0100,        guidWixVsPkgCmdSet:bmpPic2,    BUTTON,    ,            "My Tool Window";
+		// Those commands are not defined as shared command, so they use our package CLSID
+		// as the command set GUID. Also, by specifying blank for the FLAGS, this command is
+		// default visible and enabled. Other valid values for FLAGS are the following:
+		//    DEFAULTDISABLED, DEFAULTINVISIBLE, DYNAMICVISIBILITY, TEXTCHANGES
+		// These values for FLAGS can be or'ed together, e.g. "DEFAULTINVISIBLE | DYNAMICVISIBILITY"
+		// If you do not want an image next to your command, set the image to "guidOfficeIcon:msotcidNoIcon"
+
+	BUTTONS_END
+
+	BITMAPS_BEGIN
+		// Bitmap                          Bitmap Index, Bitmap Index, ...
+	guidWixVsPkgCmdSet:IDB_MENU_IMAGES,    bmpPic1, bmpPic2, bmpPicSmile, bmpPicX, bmpPicArrows;
+	BITMAPS_END
+
+CMDS_END
+
+CMDUSED_SECTION
+CMDUSED_END
+
+CMDPLACEMENT_SECTION
+	// Command                             Group                                Priority
+CMDPLACEMENT_END
+
+VISIBILITY_SECTION
+	// Command                          GUID when visible
+VISIBILITY_END
+
+//////////////////////////////////////////////////////////////////////////////
+// KEYBINDINGS_SECTION
+//
+// This sections defines the keystroke mappings for the commands.
+//
+// The Keystate field is done using the following:
+//    A = Alt, S = Shift, C = Control, W = Windows Key
+//
+// Example of the Keystate assignment, if you want a two key combination
+// of Ctrl-X, Ctrl-Shift-C then the syntax would be :
+//
+//	'x':C:'c':CS
+//
+//////////////////////////////////////////////////////////////////////////////
+
+KEYBINDINGS_SECTION
+	// Command                		when available  		emulation   			keystate
+KEYBINDINGS_END
+

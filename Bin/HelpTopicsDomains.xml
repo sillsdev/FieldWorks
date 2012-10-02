@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<HelpTopicsDomains>
+	<LanguageExplorer label="Language Explorer">
+		<HelpTopicPaths resourceKey="SIL.FieldWorks.XWorks.LexText.HelpTopicPaths" assemblyName="LexTextDll.dll" />
+		<HelpTopicPaths resourceKey="SIL.FieldWorks.Resources.HelpTopicPaths" assemblyName="FwResources.dll" chmFileKey="FLExHelpFile" />
+	</LanguageExplorer>
+	<TranslationEditor label="Translation Editor">
+		<HelpTopicPaths resourceKey="SIL.FieldWorks.TE.HelpTopicPaths" assemblyName="TeResources.dll" />
+		<HelpTopicPaths resourceKey="SIL.FieldWorks.Resources.HelpTopicPaths" assemblyName="FwResources.dll" />
+	</TranslationEditor>
+</HelpTopicsDomains>

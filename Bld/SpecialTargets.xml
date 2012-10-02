@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Include file for most NAnt build files. Handling of special targets. -->
+<!-- Include this file at the very end of your build file if you want to make use of these features -->
+<project name="Targets" default="all" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- Special targets that set properties used later on -->
+	<target name="debug" description="Prepare for a debug build. This is the default.">
+		<property name="build-type" value="d"/>
+		<property name="debug" value="true"/>
+		<property name="config" value="Debug"/>
+		<property name="bld-debug" value="true"/>
+		<property name="bld-bounds" value="false"/>
+		<property name="bld-release" value="false"/>
+		<property name="dir.outputBase" value="${dir.fwoutput}\${config}"/>
+		<property name="dir.buildOutputInterop" value="${dir.outputBase}"/>
+	</target>
+
+	<target name="bounds" description="Prepare for a bounds build.">
+		<property name="build-type" value="b"/>
+		<property name="debug" value="true"/>
+		<property name="config" value="Bounds"/>
+		<property name="bld-debug" value="false"/>
+		<property name="bld-bounds" value="true"/>
+		<property name="bld-release" value="false"/>
+		<property name="cl.compiler" value="nmcl"/>
+		<property name="link.linker" value="nmlink"/>
+		<property name="cl.xtraopts" value="/NMbcOn /NMtcOn"/>
+		<property name="link.xtraopts" value='/NMbcOn /NMtcOn /LIBPATH:"C:\Program Files\Common Files\Compuware\NMShared"'/>
+		<property name="dir.outputBase" value="${dir.fwoutput}\${config}"/>
+		<property name="dir.buildOutputInterop" value="${dir.outputBase}"/>
+	</target>
+
+	<target name="release" description="Prepare for a release build.">
+		<property name="build-type" value="r"/>
+		<property name="debug" value="false"/>
+		<property name="config" value="Release"/>
+		<property name="bld-debug" value="false"/>
+		<property name="bld-bounds" value="false"/>
+		<property name="bld-release" value="true"/>
+		<property name="dir.outputBase" value="${dir.fwoutput}\${config}"/>
+		<property name="dir.buildOutputInterop" value="${dir.outputBase}"/>
+	</target>
+
+	<target name="ContinuousBuildTests" description="Prepare to run acceptance tests on Dallas continuous build machine.">
+		<property name="ContinuousBuildTestsActive" value="true"/>
+	</target>
+
+	<target name="profile" description="Prepare for a profile build. We consider profile a special release build.">
+		<property name="build-type" value="p"/>
+		<property name="debug" value="false"/>
+		<property name="config" value="Release"/>
+		<property name="bld-debug" value="false"/>
+		<property name="bld-bounds" value="false"/>
+		<property name="bld-release" value="true"/>
+		<property name="dir.outputBase" value="${dir.fwoutput}\${config}"/>
+		<property name="dir.buildOutputInterop" value="${dir.outputBase}"/>
+	</target>
+
+	<target name="Debug" depends="debug" description="This corresponds to the configuration in VS"/>
+	<target name="Bounds" depends="bounds" description="This corresponds to the configuration in VS"/>
+	<target name="Release" depends="release" description="This corresponds to the configuration in VS"/>
+
+	<target name="forcetests" description="Force the tests to run even if nothing changed">
+		<property name="forcetests" value="true"/>
+	</target>
+
+	<target name="showTargetsRun" description="Show the targets that were run, during a build.">
+		<property name="showTargetsRunInReport" value="true"/>
+	</target>
+
+	<target name="build" description="Do a build">
+		<property name="target" value="build"/>
+		<property name="build-action" value="i"/>
+		<property name="clean" value="false"/>
+		<property name="doTest" value="false"/>
+	</target>
+	<target name="test" description="Build and run all tests">
+		<property name="target" value="test"/>
+		<property name="build-action" value="i"/>
+		<property name="clean" value="false"/>
+		<property name="doTest" value="true"/>
+	</target>
+	<target name="noremove" description="Doesn't delete the output directories">
+		<property name="target" value="test"/>
+		<property name="build-action" value="i register"/>
+		<property name="clean" value="false"/>
+		<property name="doTest" value="true"/>
+		<property name="deleteOutput" value="false"/>
+	</target>
+	<target name="buildtest" description="Build, including tests but don't run them">
+		<property name="target" value="buildtest"/>
+		<property name="build-action" value="i"/>
+		<property name="clean" value="false"/>
+		<property name="doTest" value="false"/>
+	</target>
+	<target name="clean" description="Delete all output">
+		<property name="target" value="clean"/>
+		<property name="build-action" value="ec"/>
+		<property name="clean" value="true"/>
+		<property name="nobuild" value="true"/>
+		<property name="doTest" value="false"/>
+	</target>
+	<target name="register" description="Register all output files">
+		<property name="target" value="${target} register"/>
+		<property name="build-action" value="${build-action} register"/>
+		<property name="clean" value="false"/>
+	</target>
+	<target name="unregister" description="Unregister all output files">
+		<property name="target" value="${target} unregister"/>
+		<property name="build-action" value="${build-action} unregister"/>
+		<property name="clean" value="false"/>
+		<property name="nobuild" value="true"/>
+	</target>
+	<target name="cc" description="Does a cc for C++ builds. Should be last before target">
+		<property name="build-action" value="cc"/>
+	</target>
+	<target name="skipLelaDBs" description="Sets property, so the two Lela-Teli DBs are not created.">
+		<property name="doLelaDBs" value="false"/>
+	</target>
+	<target name="performance" description="Allows doing a Bounds 'performance analysis'">
+		<property name="cpp-extra-params" value="${cpp-extra-params} performance"/>
+		<property name="cl.xtraopts" value="/NMttOn /NMtcOn"/>
+		<property name="link.xtraopts" value="/NMttOn /NMtcOn"/>
+	</target>
+	<target name="verbose" description="Displays more information when compiling etc.">
+		<property name="verbose" value="true"/>
+	</target>
+	<target name="acceptance" description="Builds and runs acceptance tests.">
+		<property name="doAcceptance" value="true"/>
+	</target>
+	<target name="runAllTests" description="Sets flag so all NUnit tests will be run">
+		<property name="runAllTests" value="true"/>
+	</target>
+	<target name="nofilecache" description="Disables usage of the file cache">
+		<property name="usefilecache" value="false"/>
+	</target>
+	<target name="nunitreport" description="Build an HTML report file of unit and acceptance test results">
+		<uptodate property="report.uptodate">
+			<sourcefiles basedir="${dir.fwoutput}\${config}">
+				<include name="*-results.xml"/>
+			</sourcefiles>
+			<targetfiles>
+				<include name="${dir.fwoutput}\${config}\NUnit-report.html"/>
+			</targetfiles>
+		</uptodate>
+		<if test="${(not report.uptodate)}">
+			<nunitreport xslfile="${nant::get-base-directory()}\tasks\NUnit.Report\NUnitSummary.xsl"
+				out="${dir.fwoutput}\${config}\NUnit-report.html">
+				<fileset basedir="${dir.fwoutput}\${config}">
+					<include name="*-results.xml"/>
+					<exclude name="AT*.xml" />
+					<exclude name="TestFrameworkTests*-results.xml" />
+				</fileset>
+			</nunitreport>
+			<copy todir="${dir.fwoutput}\${config}">
+				<fileset basedir="${nant::get-base-directory()}\tasks\NUnit.Report">
+					<include name="*.gif"/>
+					<include name="sort.htc"/>
+				</fileset>
+			</copy>
+			<fileset id="ATestResults" basedir="${dir.fwoutput}\${config}">
+				<include name="AT*-results.xml"/>
+				<include name="TestFrameworkTests*-results.xml" />
+			</fileset>
+			<if test="${fileset::has-files('ATestResults')}">
+				<!-- nunitreport doesn't support if attribute -->
+				<nunitreport xslfile="${nant::get-base-directory()}\tasks\NUnit.Report\NUnitSummary.xsl"
+					out="${dir.fwoutput}\${config}\AcceptanceTests-report.html">
+					<fileset refid="ATestResults"/>
+				</nunitreport>
+			</if>
+		</if>
+	</target>
+	<target name="nunitreport-text" description="Outputs a summary of unit and acceptance test results">
+		<fileset id="sort.htc">
+			<include name="${nant::get-base-directory()}\tasks\NUnit.Report\sort.htc"/>
+		</fileset>
+		<!-- This checks if we have any *-results.xml files -->
+		<uptodate property="report.uptodate">
+			<sourcefiles basedir="${dir.fwoutput}\${config}">
+				<include name="*-results.xml"/>
+			</sourcefiles>
+			<!-- we could compare against NUnit-report.txt, but here we really want to display the
+				results every time if we have test results.-->
+			<targetfiles refid="sort.htc"/>
+		</uptodate>
+		<if test="${(not report.uptodate)}">
+			<!-- now we compare against NUnit-report.txt to see if we have to regenerate the report file -->
+			<uptodate property="reportfile.uptodate">
+				<sourcefiles basedir="${dir.fwoutput}\${config}">
+					<include name="*-results.xml"/>
+				</sourcefiles>
+				<targetfiles basedir="${dir.fwoutput}\${config}">
+					<include name="NUnit-report.txt"/>
+				</targetfiles>
+			</uptodate>
+			<nunitreport xslfile="${nant::get-base-directory()}\tasks\NUnit.Report\NUnitTextSummary.xsl"
+				out="${dir.fwoutput}\${config}\NUnit-report.txt" verbose="${verbose}"
+				unless="${reportfile.uptodate}">
+				<fileset basedir="${dir.fwoutput}\${config}">
+					<include name="*-results.xml"/>
+					<exclude name="AT*.xml" />
+					<exclude name="TestFrameworkTests*-results.xml" />
+				</fileset>
+			</nunitreport>
+			<echo message="UNIT TEST RESULTS:"/>
+			<concatex file="${dir.fwoutput}\${config}\NUnit-report.txt"/>
+
+			<!-- now report any acceptance test results -->
+			<fileset id="ATestResults" basedir="${dir.fwoutput}\${config}">
+				<include name="AT*-results.xml"/>
+				<include name="TestFrameworkTests*-results.xml" />
+			</fileset>
+			<!-- compare sort.htc with AT*-results files. We do this to test if AT* files exist -->
+			<uptodate property="ATnonexist">
+				<sourcefiles refid="ATestResults"/>
+				<targetfiles refid="sort.htc"/>
+			</uptodate>
+			<if test="${not ATnonexist}">
+				<nunitreport xslfile="${nant::get-base-directory()}\tasks\NUnit.Report\NUnitTextSummary.xsl"
+					out="${dir.fwoutput}\${config}\AcceptanceTests-report.txt">
+					<fileset refid="ATestResults"/>
+				</nunitreport>
+				<echo message=""/>
+				<echo message="ACCEPTANCE TEST RESULTS:"/>
+				<concatex file="${dir.fwoutput}\${config}\AcceptanceTests-report.txt"/>
+			</if>
+		</if>
+		<tstamp/>
+	</target>
+	<target name="circrefs" description="Test for circular references">
+		<chkrefs/>
+	</target>
+
+	<!-- -->
+	<target name="regfree" description="Create manifest file to run exe without registering">
+		<regfree executable="${executable}">
+			<dlls basedir="${dir.outputBase}">
+				<include name="FwCellar.dll"/>
+				<include name="FwKernel.dll"/>
+				<include name="Views.dll"/>
+				<include name="Language.dll"/>
+				<include name="DbAccess.dll"/>
+				<include name="DbServices.dll"/>
+			</dlls>
+			<fragments basedir="${dir.fwdistfiles}">
+				<include name="*.fragment.manifest"/>
+			</fragments>
+		</regfree>
+	</target>
+
+	<!-- Special target for compiling from within Visual Studio -->
+	<!-- usage: Add external Tool and pass as command line argument something like:
+		 -buildfile:FieldWorks.build VSCompile -D:sln="$(SolutionDir)\$(SolutionFileName)" -->
+	<target name="VSCompile" description="called from a compile from Visual Studio">
+		<echo message="sln=${sln}"/>
+		<regex pattern="(?'vspath'.*)\\(?'vstarget'\w+)\.?\w*$" input="${sln}"/>
+		<property name="external-buildfile" value="false"/>
+		<if test="${property::exists('vspath')}">
+			<!-- project not directly related to FieldWorks -->
+			<nant buildfile="${vspath}\build.build" target="${target}" if="${file:exists(vspath + '\build.build')}"/>
+		</if>
+		<if test="${property::exists('vstarget')" unless="${external-buildfile}">
+			<property name="target" value="buildtest"/>
+			<call target="${vstarget}-nodep" cascade="false"/>
+		</if>
+		<if test="${not property::exists('vstarget')}">
+			<fail message="No project"/>
+		</if>
+	</target>
+
+	<target name="create-nantschema"
+		 description="Creates the nant XML schema for all NAnt, NAntContrib and FW tasks">
+		<!-- It doesn't really matter what URL we specify - main purpose is to identify the schema,
+			 so it doesn't matter if the schema can't be found at that location. -->
+		<nantschema output="${fwroot}\bin\nant\schema\fwnant.xsd"
+			  target-ns="http://fieldworks.sil.org/nant/fwnant.xsd"/>
+	</target>
+
+	<target name="endreportfailure" description="Called at end of any build when errors occured">
+		<property name="failure" value="true"/>
+		<call target="endreport" cascade="false"/>
+	</target>
+	<target name="endreportsuccess" description="Called at end of any build when build succeeded. It might happen that we ignored errors, so we still want to report those.">
+		<property name="failure" value="false"/>
+		<call target="endreport" cascade="false"/>
+	</target>
+	<target name="endreport" description="Called at end of any build. Errors, failures, or success is reported, as is appropriate.">
+		<tstamp />
+		<!-- Report success, if it was a success. -->
+		<if test="${not property::exists('fw-build-error') and not property::exists('fw-test-error') and not property::exists('fw-acceptancetest-error')}">
+			<if test="${failure}">
+				<echo message="**********************************************************"/>
+				<echo message="WARNING: There was at least one error somewhere while"/>
+				<echo message="building configuration ${config}."/>
+				<echo message="**********************************************************"/>
+			</if>
+			<if test="${not failure}">
+				<echo message="**********************************************************"/>
+				<!-- Only one of these next two will be done. -->
+				<echo message="Build and tests succeeded!" if="${doTest}"/>
+				<echo message="Build succeeded!" unless="${doTest}"/>
+				<echo message="**********************************************************"/>
+			</if>
+		</if>
+		<if test="${property::exists('fw-targets-run')}">
+			<echo message="**********************************************************"/>
+			<echo message="The following major projects were built:"/>
+			<echo message="${fw-targets-run}"/>
+			<echo message="**********************************************************"/>
+		</if>
+		<if test="${property::exists('fw-build-error')}">
+			<echo message="**********************************************************"/>
+			<echo message="WARNING: There was at least one error somewhere while"/>
+			<echo message="building configuration ${config}."/>
+			<echo message="${fw-build-error}"/>
+			<echo message="**********************************************************"/>
+			<fail message="Build failed"/>
+		</if>
+		<if test="${property::exists('fw-test-error')}">
+			<echo message="**********************************************************"/>
+			<echo message="WARNING: At least one test failed in configuration "/>
+			<echo message="${config} in following projects:"/>
+			<echo message="${fw-test-error}"/>
+			<echo message="**********************************************************"/>
+			<fail message="Unit tests failed"/>
+		</if>
+		<if test="${property::exists('fw-acceptancetest-error')}">
+			<echo message="**********************************************************"/>
+			<echo message="WARNING: At least one acceptance test failed in "/>
+			<echo message="configuration ${config} in following projects:"/>
+			<echo message="${fw-acceptancetest-error}"/>
+			<echo message="**********************************************************"/>
+			<fail message="Acceptance tests failed"/>
+		</if>
+		<if test="${property::exists('debug-test-error')}">
+			<echo message="**********************************************************"/>
+			<echo message="WARNING: At least one test failed in the overnight debug build."/>
+			<echo message="${debug-test-error}"/>
+			<echo message="**********************************************************"/>
+			<fail message="Debug unit tests failed"/>
+		</if>
+		<if test="${property::exists('release-test-error')}">
+			<echo message="**********************************************************"/>
+			<echo message="WARNING: At least one test failed in the overnight release build."/>
+			<echo message="${release-test-error}"/>
+			<echo message="**********************************************************"/>
+			<fail message="Release unit tests failed"/>
+		</if>
+		<if test="${failure}">
+			<fail message="Unspecified failure"/>
+		</if>
+	</target>
+</project>

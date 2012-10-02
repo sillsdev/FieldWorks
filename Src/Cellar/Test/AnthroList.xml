@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE AnthroList6001 SYSTEM "FwDatabase.dtd">
+<AnthroList6001>
+<CmPossibilityList>
+<DateCreated5><Time val="2000-01-05 18:00:00.000"/></DateCreated5>
+<DateModified5><Time val="2000-01-05 18:00:00.000"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<DisplayOption8><Integer val="1"/></DisplayOption8>
+<ItemClsid8><Integer val="26"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<HelpFile8><Uni>abcǞǞC̜̅XYZ˘GAP ̆QED𝆹𝅥</Uni></HelpFile8>
+<Name5>
+<AUni ws="en">Anthropology Categories</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Anth</AUni>
+</Abbreviation8>
+<Possibilities8>
+<CmAnthroItem id="IDA2D0D29-97AE-49CD-A752-9F748D64DF63">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<UnderColor7><Integer val="8323199"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Living objects or beings</AUni>
+<AUni ws="utp">Objets vivants ou Ãªtres</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">92</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnthroItem id="I79867AA3-7E68-4EED-9595-6258082AAEE9">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="12176"/></BackColor7>
+<UnderColor7><Integer val="9461856"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Plants</AUni>
+<AUni ws="utp">Plantes</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">93</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnthroItem id="IB92CFE36-D27E-4C48-A415-21A8396BF81C">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="65535"/></BackColor7>
+<UnderColor7><Integer val="12079"/></UnderColor7>
+<UnderStyle7><Integer val="4"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Plants (general types)</AUni>
+<AUni ws="utp">Plantes (types gÃ©nÃ©raux)</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">94</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I4366FBFA-42B4-454C-8834-415992439564">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="6303632"/></BackColor7>
+<UnderColor7><Integer val="8323199"/></UnderColor7>
+<Name7>
+<AUni ws="en">Trees</AUni>
+<AUni ws="utp">Arbres</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">95</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IDB0818BC-DF04-412A-A941-60A887C7E6DB">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="65535"/></BackColor7>
+<UnderColor7><Integer val="13631439"/></UnderColor7>
+<Name7>
+<AUni ws="en">Plants that are not trees</AUni>
+<AUni ws="utp">Plantes qui ne sont pas d'arbres</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">96</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IB6E996D3-3AA6-4C70-B4AA-0365787D0B4C">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="3092271"/></BackColor7>
+<UnderColor7><Integer val="16776960"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Fruit parts of plants</AUni>
+<AUni ws="utp">Parties fructueuses de plantes</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">97</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I2E3930E4-C855-492F-A78C-EAA005371418">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="8355711"/></BackColor7>
+<UnderColor7><Integer val="65280"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Non-fruit parts of plants</AUni>
+<AUni ws="utp">Parties non-fructueuses de plantes</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">98</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IBA227843-6B8A-4891-B1E1-D26A3A9F9A3E">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="9474192"/></BackColor7>
+<UnderColor7><Integer val="16760976"/></UnderColor7>
+<UnderStyle7><Integer val="4"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Wood and wood products</AUni>
+<AUni ws="utp">Bois et produits de bois</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">99</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I008B2D33-3D86-4CD8-846A-A9226AF76C98">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="12632111"/></BackColor7>
+<UnderColor7><Integer val="16711935"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Grasses</AUni>
+<AUni ws="utp">Herbes</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">100</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I89C021DC-9CD4-43BA-A6D2-1DE90860848B">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="16748736"/></BackColor7>
+<UnderColor7><Integer val="12620031"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Herbs</AUni>
+<AUni ws="utp">(fines) Herbes</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">101</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="ID095F3D4-0C85-46EB-8759-EE8552B1A432">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="16711680"/></BackColor7>
+<UnderColor7><Integer val="8355584"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Ferns</AUni>
+<AUni ws="utp">FougÃ¨res</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">102</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IC7276263-5AC1-425E-9B13-AF5F4A8A4BB6">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="13631439"/></BackColor7>
+<UnderColor7><Integer val="32639"/></UnderColor7>
+<Name7>
+<AUni ws="en">Mosses, fungus, and algae</AUni>
+<AUni ws="utp">Mousses, fongus et algues</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">103</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+</SubPossibilities7>
+</CmAnthroItem>
+<CmAnthroItem id="I68352FB6-63B0-41BD-9732-BF197CE69E76">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="16736303"/></BackColor7>
+<UnderColor7><Integer val="8323199"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Animals</AUni>
+<AUni ws="utp">Animaux</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">104</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnthroItem id="IF33F2E5D-7393-4382-BC65-A40A27B388B5">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="12032"/></BackColor7>
+<UnderColor7><Integer val="8323072"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Animals</AUni>
+<AUni ws="utp">Animaux</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">105</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IE37F52B7-CCEE-492A-A846-7A465B1EB54F">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="16760832"/></BackColor7>
+<UnderColor7><Integer val="9486591"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Birds</AUni>
+<AUni ws="utp">Oiseaux</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">106</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="ID41A009B-96E3-48ED-B547-CAE59D0D31B0">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="12032"/></BackColor7>
+<UnderColor7><Integer val="13631439"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Insects</AUni>
+<AUni ws="utp">Insectes</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">107</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IEA62A827-F338-45FC-B6E0-00A45E737E9F">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="16711680"/></BackColor7>
+<UnderColor7><Integer val="8323199"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Reptiles and other 'creeping things'</AUni>
+<AUni ws="utp">Reptiles et d'autres animaux qui rampent par terre</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">108</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I449296D6-28C5-4ED0-AC21-0114A68320F4">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="13631439"/></BackColor7>
+<UnderColor7><Integer val="12620031"/></UnderColor7>
+<UnderStyle7><Integer val="2"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Fishes and other sea creatures</AUni>
+<AUni ws="utp">Poissons et d'autres animaux marins</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">109</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+</SubPossibilities7>
+</CmAnthroItem>
+<CmAnthroItem id="I9356F81E-ECFB-4864-BB25-5E10BD8346E0">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="65535"/></BackColor7>
+<UnderColor7><Integer val="65535"/></UnderColor7>
+<UnderStyle7><Integer val="4"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Body, body parts, and body products</AUni>
+<AUni ws="utp">Corps, parties de corps et produits de corps</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">110</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnthroItem id="I75305EF0-0BB0-452E-96E1-B7545F0925DC">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="24831"/></BackColor7>
+<UnderColor7><Integer val="12632256"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Body</AUni>
+<AUni ws="utp">Corps</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">111</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I0CE22CD9-712B-458E-AD11-16F1D64D0BF1">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="49407"/></BackColor7>
+<UnderColor7><Integer val="16711935"/></UnderColor7>
+<UnderStyle7><Integer val="2"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Parts of the body</AUni>
+<AUni ws="utp">Parties du corps</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">112</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I77EA29D8-7745-436E-9743-359B3D88B006">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="8323072"/></BackColor7>
+<UnderColor7><Integer val="16777152"/></UnderColor7>
+<Name7>
+<AUni ws="en">Physiological products of the body</AUni>
+<AUni ws="utp">Produits physiologiques du corps</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">113</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+</SubPossibilities7>
+</CmAnthroItem>
+<CmAnthroItem id="I048000AB-1EBE-46EB-B29F-26DC2463DC45">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<UnderColor7><Integer val="12079"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">People</AUni>
+<AUni ws="utp">Gens</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">114</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnthroItem id="IF6BC42EF-D09D-451D-AC36-98F2233194DA">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="3092271"/></BackColor7>
+<UnderColor7><Integer val="65535"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Human beings</AUni>
+<AUni ws="utp">Etres humains</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">115</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IA91E0F2E-E773-41C4-9688-6DF52F00BBC3">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="9449263"/></BackColor7>
+<UnderColor7><Integer val="49407"/></UnderColor7>
+<UnderStyle7><Integer val="2"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Males</AUni>
+<AUni ws="utp">MÃ¢les</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">116</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I5BE68A84-BA55-4758-B7C8-6944745B0FF4">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="6328367"/></BackColor7>
+<UnderColor7><Integer val="3092271"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Females</AUni>
+<AUni ws="utp">Femelles</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">117</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="IF0ABB0E0-DBCF-412F-99ED-304CF06CDB66">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="3092271"/></BackColor7>
+<UnderColor7><Integer val="8355711"/></UnderColor7>
+<Name7>
+<AUni ws="en">Children</AUni>
+<AUni ws="utp">Enfants</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">118</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I150F5F10-665B-4438-AC14-409E598EE58A">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="49407"/></BackColor7>
+<UnderColor7><Integer val="37119"/></UnderColor7>
+<UnderStyle7><Integer val="2"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Persons for whom there is affectionate concern</AUni>
+<AUni ws="utp">Gens pour qui il y a un souci affectueux</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">119</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+</SubPossibilities7>
+</CmAnthroItem>
+<CmAnthroItem id="I776EFBDD-4F30-4DC1-8A06-4E238D02C0ED">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<UnderColor7><Integer val="13631439"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Kinship terms</AUni>
+<AUni ws="utp">Termes de parentÃ©</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">120</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnthroItem id="IB4443EC4-9A1F-4FE3-A8B4-483CCED880FC">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="8355711"/></BackColor7>
+<UnderColor7><Integer val="16760832"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">General terms denoting relation by blood</AUni>
+<AUni ws="utp">Termes gÃ©nÃ©raux qui dÃ©notent des relations sanguines</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">121</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I04F231CD-BC48-41D2-92E0-03E6351E5526">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="32512"/></BackColor7>
+<UnderColor7><Integer val="16748736"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Kinship relations involving successive generations</AUni>
+<AUni ws="utp">Relations de parentÃ© de gÃ©nÃ©rations successives</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">122</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I1B8FD4DC-4FD7-4649-8B85-E1AC5B57D2B8">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="8323199"/></BackColor7>
+<UnderColor7><Integer val="49296"/></UnderColor7>
+<UnderStyle7><Integer val="2"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Kinship relations of the same generation</AUni>
+<AUni ws="utp">Relations de parentÃ© de la mÃªme gÃ©nÃ©ration</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">123</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+<CmAnthroItem id="I9E4FD65E-0446-4B7D-BA8B-342A3C2AF986">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="12176"/></BackColor7>
+<UnderColor7><Integer val="12632256"/></UnderColor7>
+<UnderStyle7><Integer val="3"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Kinship relations based on marriage</AUni>
+<AUni ws="utp">Relations de parentÃ© par alliance</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">124</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+</SubPossibilities7>
+</CmAnthroItem>
+<CmAnthroItem id="I79D4A864-4598-4789-AE3A-5E3D551D399A">
+<DateCreated7><Time val="2001-10-06 22:50:09.347"/></DateCreated7>
+<DateModified7><Time val="2001-10-06 22:50:09.347"/></DateModified7>
+<ForeColor7><Integer val="16777215"/></ForeColor7>
+<BackColor7><Integer val="9449263"/></BackColor7>
+<UnderColor7><Integer val="9502719"/></UnderColor7>
+<UnderStyle7><Integer val="1"/></UnderStyle7>
+<Name7>
+<AUni ws="en">Viruses and bacteria</AUni>
+<AUni ws="utp">Virus et bactÃ©ries</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">125</AUni>
+</Abbreviation7>
+</CmAnthroItem>
+</SubPossibilities7>
+</CmAnthroItem>
+</Possibilities8>
+</CmPossibilityList>
+</AnthroList6001>

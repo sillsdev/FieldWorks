@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="TestLanguage"
+	ProjectGUID="{CFCBEA18-3091-45FC-9407-C8C1303D2363}"
+	RootNamespace="TestLanguage"
+	SccProjectName="Perforce Project"
+	SccLocalPath="."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\Bin\mklg-tst.bat DONTRUN"
+				ReBuildCommandLine="..\..\..\Bin\mklg-tst.bat DONTRUN cc"
+				CleanCommandLine="..\..\..\Bin\mklg-tst.bat DONTRUN ec"
+				Output="..\..\..\Output\debug\TestLanguage.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\Bin\mklg-tst.bat DONTRUN r"
+				ReBuildCommandLine="..\..\..\Bin\mklg-tst.bat DONTRUN r cc"
+				CleanCommandLine="..\..\..\Bin\mklg-tst.bat DONTRUN r ec"
+				Output="..\..\..\Output\release\TestLanguage.exe -v"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
+			>
+			<File
+				RelativePath="Collection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="testLanguage.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc"
+			>
+			<File
+				RelativePath="RenderEngineTestBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestLangDef.h"
+				>
+			</File>
+			<File
+				RelativePath="testLanguage.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgCollatingEngine.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgCollation.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgFontManager.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgIcuCharPropEngine.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgIcuCollator.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgTsDataObject.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgTsStringPlusWss.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgWritingSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgWritingSystemFactory.h"
+				>
+			</File>
+			<File
+				RelativePath="TestLgWritingSystemFactoryBuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="TestRegexMatcher.h"
+				>
+			</File>
+			<File
+				RelativePath="TestRomRenderEngine.h"
+				>
+			</File>
+			<File
+				RelativePath="TestUniscribeEngine.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
+		</Filter>
+		<File
+			RelativePath="testLanguage.mak"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

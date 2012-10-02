@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+<!-- Copy test file, so we can avoid using FW's Utils. -->
+		<copy file="${fwroot}\Src\LexText\GAFAWS\GAFAWSAnalysis\XML\TestA1.xml" todir="${fwroot}\Output\${config}"/>
+		<attrib file="${fwroot}\Output\${config}\TestA1.xml" readonly="false"/>
+  </pre-build>
+</include>

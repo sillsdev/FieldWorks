@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="wixdll" default="wixdll.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	wixdll.build - Builds the Wix project (wix.dll).
+	2005.09.12 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- Wix directories -->
+  <property name="wixdll.dir.cab" value="${dir.src.wixdll}\Cab" readonly="true" />
+  <property name="wixdll.dir.cabInterop" value="${wixdll.dir.cab}\Interop" readonly="true" />
+  <property name="wixdll.dir.clrInterop" value="${dir.src.wixdll}\CLR\Interop" readonly="true" />
+  <property name="wixdll.dir.data" value="${dir.src.wixdll}\Data" readonly="true" />
+  <property name="wixdll.dir.exceptions" value="${dir.src.wixdll}\Exceptions" readonly="true" />
+  <property name="wixdll.dir.fileSystem" value="${dir.src.wixdll}\FileSystem" readonly="true" />
+  <property name="wixdll.dir.fileSystemInterop" value="${wixdll.dir.fileSystem}\Interop" readonly="true" />
+  <property name="wixdll.dir.msi" value="${dir.src.wixdll}\Msi" readonly="true" />
+  <property name="wixdll.dir.msiInterop" value="${wixdll.dir.msi}\Interop" readonly="true" />
+  <property name="wixdll.dir.serialize" value="${dir.src.wixdll}\Serialize" readonly="true" />
+  <property name="wixdll.dir.xsd" value="${dir.src.wixdll}\Xsd" readonly="true" />
+
+  <!-- Wix files -->
+  <property name="wixdll.file.messagesCs" value="${dir.build.wixdll}\Messages.cs" readonly="true" />
+  <property name="wixdll.file.messagesResources" value="${dir.build.wixdll}\messages.resources" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="wixdll.build" description="Peforms a full rebuild (clean then build)" depends="wixdll.clean, wixdll.inc" />
+
+  <!-- Clean -->
+  <target name="wixdll.clean" description="Cleans the build">
+	<delete dir="${dir.build.wixdll}" failonerror="false" if="${directory::exists(dir.build.wixdll)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+		<include name="wix.pdb" />
+		<include name="wix.xml" />
+		<include name="wix.xsd" />
+		<include name="wixloc.xsd" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="wixdll.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the xsd files to the target directory -->
+	<copy todir="${dir.target.wix}">
+	  <fileset basedir="${wixdll.dir.xsd}">
+		<include name="wix.xsd" />
+		<include name="wixloc.xsd" />
+	  </fileset>
+	</copy>
+
+	<!-- Flatten all of the xml/xsd files -->
+	<!--
+	  These files are case-sensitive because they will get embedded into the assembly. However, NAnt does
+	  not respect the case-sensitivity in the XML, but rather uses the case of the files on the file system.
+	  Since our source control system does not necessarily use the correct case either, we'll be explicit here
+	  and use strings instead of files in the foreach. That way the casing is respected.
+	-->
+	<foreach item="String" property="flattenxml.source" delim=";" in="${wixdll.dir.data}\actions.xml;${wixdll.dir.xsd}\actions.xsd;${wixdll.dir.xsd}\libraries.xsd;${wixdll.dir.data}\smalltables.xml;${wixdll.dir.data}\tables.xml;${wixdll.dir.xsd}\tables.xsd;${wixdll.dir.xsd}\objects.xsd;${wixdll.dir.xsd}\wix.xsd">
+	  <do>
+		<property name="flattenxml.target" value="${dir.build.wixdll}\${path::get-file-name(flattenxml.source)}" />
+		<call target="flattenXml" />
+	  </do>
+	</foreach>
+
+	<!-- Compile the messages.xml into the Message.cs class -->
+	<if test="${not file::up-to-date(path::combine(wixdll.dir.data, 'messages.xml'), wixdll.file.messagesCs)}">
+	  <exec program="${tool.msggen}">
+		<arg value="-nologo" />
+		<arg value="${wixdll.dir.data}\messages.xml" />
+		<arg value="${wixdll.file.messagesCs}" />
+		<arg value="${wixdll.file.messagesResources}" />
+	  </exec>
+	</if>
+
+	<!-- Build the wix.dll -->
+	<csc
+	  target="library"
+	  output="${dir.target.wix}\wix.dll"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  doc="${dir.target.wix}\wix.xml"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <nowarn>
+		<!-- Missing XML comment for publicly visible type or member 'x' -->
+		<warning number="1591" />
+	  </nowarn>
+	  <sources basedir="${dir.src.wixdll}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="${wixdll.file.messagesCs}" />
+		<include name="*.cs" />
+		<include name="Cab\*.cs" />
+		<include name="Cab\Interop\*.cs" />
+		<include name="CLR\Interop\*.cs" />
+		<include name="Exceptions\*.cs" />
+		<include name="FileSystem\*.cs" />
+		<include name="FileSystem\Interop\*.cs" />
+		<include name="Msi\*.cs" />
+		<include name="Msi\Interop\*.cs" />
+		<include name="Serialize\*.cs" />
+	  </sources>
+	  <resources failonempty="true" basedir="${dir.build.wixdll}" prefix="Microsoft.Tools.WindowsInstallerXml.Data">
+		<include name="actions.xml" />
+		<include name="messages.resources" />
+		<include name="smalltables.xml" />
+		<include name="tables.xml" />
+	  </resources>
+	  <resources failonempty="true" basedir="${dir.build.wixdll}" prefix="Microsoft.Tools.WindowsInstallerXml.Xsd">
+		<include name="actions.xsd" />
+		<include name="libraries.xsd" />
+		<include name="objects.xsd" />
+		<include name="outputs.xsd" />
+		<include name="tables.xsd" />
+		<include name="wix.xsd" />
+	  </resources>
+	</csc>
+  </target>
+
+</project>

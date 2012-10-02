@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LanguageDefinition SYSTEM "LanguageDefinition.dtd">
+<LanguageDefinition>
+  <LgWritingSystem id="pig">
+	<Name24>
+	  <AUni ws="en">Pig Latin</AUni>
+	</Name24>
+	<Description24>
+	  <AStr ws="en">
+		<Run ws="en"/>
+	  </AStr>
+	</Description24>
+	<RightToLeft24>
+	  <Boolean val="false"/>
+	</RightToLeft24>
+	<DefaultSerif24>
+	  <Uni>SILDoulos PigLatinDemo</Uni>
+	</DefaultSerif24>
+	<DefaultSansSerif24>
+	  <Uni>SILDoulos PigLatinDemo</Uni>
+	</DefaultSansSerif24>
+	<DefaultMonospace24>
+	  <Uni>SILDoulos PigLatinDemo</Uni>
+	</DefaultMonospace24>
+	<ICULocale24>
+	  <Uni>pig</Uni>
+	</ICULocale24>
+	<KeyboardType24>
+	  <Uni>standard</Uni>
+	</KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30>
+		  <Integer val="1033"/>
+		</WinLCID30>
+		<WinCollation30>
+		  <Uni>Latin1_General_CI_AI</Uni>
+		</WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <LocaleName>Piggy</LocaleName>
+</LanguageDefinition>

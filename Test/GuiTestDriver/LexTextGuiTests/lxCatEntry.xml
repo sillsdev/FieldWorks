@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+ <bug id="6914" desc="View not initialized"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<on-application args="-db $projectName" run="ok" on-fail="assert">
+
+<!--Tests Lexicon/Categorized Entries, goes to Dictionary to make sure entries are there, then Lexicon Edit to delete them-->
+<!--Assumes Kalaba Database-->
+<!--Assumes dialog box pops up when "Categoried Entry" clicked-->
+
+<!-- Go to View/Lexicon/Categorized Entry -->
+   <click select="menubar/view/lexicon/categorized-entry"/>
+
+<!-- Click "OK" on Information dialog box-->
+   <on-dialog until="999999" title="Information">
+	 <click wait="500" path="$ok"/>
+   </on-dialog>
+
+<model select="categorized-entry[@role='view']">
+
+<!-- select "Daily Life" in center column-->
+   <click wait="3000" select="tree" path="5 - Daily life"/>
+   <click select="tree" path="5 - Daily life" dx="-15"/>
+<!-- select "Food"-->
+   <click select="tree" path="5.2 - Food"/>
+   <click select="tree" path="5.2 - Food" dx="-15"/>
+
+<!-- select "Stimulant"-->
+   <click select="tree" path="5.2.6 - Stimulant"/>
+   <click select="tree" path="5.2.6 - Stimulant" dx="-15"/>
+
+<!-- fill in "Vernacular" line-->
+   <click select="domain/vernacular" dx="20"/>
+   <insert>{HOME}+{END}stimulant</insert>
+   <insert>~</insert>
+
+<!-- enter "chocolate" in word list-->
+   <var id="row" set="1"/>
+   <click select="list/record/word"/>
+   <insert>chocolate</insert>
+
+<!-- enter definition for chocolate-->
+   <click select="list/record/definition"/>
+   <insert>Love is biochemically no different than consuming large quantities of chocolate</insert>
+   <insert>~</insert> <bug id="6913" desc="Crash after first entery"/>
+
+<!-- enter "coffee" in word list-->
+   <var id="row" set="2"/>
+   <click select="list/record/word"/>
+   <insert>coffee</insert>
+
+<!-- enter definition for coffee-->
+   <click select="list/record/definition"/>
+   <insert>evil evil evil. ick. bleah.</insert>
+   <insert>~</insert>
+
+</model>
+
+<!-- Go to View/Lexicon/Lexicon Edit -->
+   <click select="menubar/view/lexicon/lexicon-edit"/>
+
+<model select="lexicon-edit[@role='view']">
+
+<!-- Make sure the headword is sorted up -->
+   <click select="entries/col/header" path="Headword"/>
+   <click select="//toolbar/first-record"/>
+   <var id="row" set="1"/>
+   <var id="col" set="1"/>
+   <glimpse id="biTheBi" select="entries/record/col" prop="value" expect="-bi" on-fail="skip"/>
+   <if log="all">
+	  <condition of="$biTheBi" is="false"/>
+	  <then>
+		 <click select="entries/col/header" path="Headword"/>
+		 <click select="//toolbar/first-record"/>
+	  </then>
+   </if>
+
+</model>
+
+<!-- Go to View/Lexicon/Dictionary -->
+   <click select="menubar/view/lexicon/dictionary"/>
+
+<model select="dictionary[@role='view']">
+
+   <var id="ind" set="2"/>
+   <var id="row" set="1"/>
+   <var id="col" set="1"/>
+<!-- see if dictionary entries are correct-->
+   <glimpse id="word1" select="entries/entry/para/string" prop="value" expect="chocolate"/>
+   <var id="col" set="2"/>
+	<glimpse id="def1" select="entries/entry/para/string" prop="value" expect="  Love is biochemically no different than consuming large quantities of chocolate (sem. domains: 5.2.6 - Stimulant.) "/>
+   <var id="ind" set="3"/>
+   <var id="col" set="1"/>
+	<glimpse id="word2" select="entries/entry/para/string" prop="value" expect="coffee"/>
+   <var id="col" set="2"/>
+	<glimpse id="def2" select="entries/entry/para/string" prop="value" expect="  evil evil evil. ick. bleah. (sem. domains: 5.2.6 - Stimulant.) "/>
+
+</model>
+
+<!-- Go to View/Lexicon/Browse -->
+   <click select="menubar/view/lexicon/browse"/>
+
+<model select="browse[@role='view']">
+
+<!-- check and delete new entry 1-->
+   <var id="row" set="2"/>
+   <var id="col" set="1"/>
+   <glimpse id="lexeme1" select="entries/record/col" prop="value" expect="chocolate"/>
+   <click select="entries/record"/>
+   <click select="//toolbar/delete"/>
+   <insert>d</insert>
+
+<!-- check and delete new entry 2-->
+   <glimpse id="lexeme2" select="entries/record/col" prop="value" expect="coffee"/>
+   <click select="entries/record"/>
+   <click select="//toolbar/delete"/>
+   <insert>d</insert>
+
+</model>
+
+<!-- Go to View/Lists/Semantic Domains -->
+   <click select="menubar/view/lists/semantic-domains"/>
+
+<model select="list[@role='view']">
+
+<!--check Vernacular -->
+   <var id="ind" set="*"/>
+   <var id="fld" set="Name"/>
+   <var id="row" set="3"/>
+   <glimpse id="vern" select="item/multi/text" prop="value" expect="stimulant"/>
+
+</model>
+
+  </on-application>
+</accil>

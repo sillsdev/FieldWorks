@@ -1,0 +1,212 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{7C7936AB-1C76-4CC1-8278-CC290FCBBCB8}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>ScrFDOTests</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.FDO.Scripture</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\ScrFDOTests.XML</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+	<UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDOTests, Version=5.3.0.27391, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <Private>False</Private>
+	</Reference>
+	<Reference Include="nmock, Version=1.0.2641.18182, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Bin\nmock\nmock.dll</HintPath>
+	</Reference>
+	<Reference Include="ProjectUnpacker, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ScrFDO, Version=5.3.0.29588, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ScrUtilsInterfacesTests, Version=5.3.0.27137, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SharedScrUtilsTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\..\Output\debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\..\Output\debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\..\Output\debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils">
+	  <Name>FwUtils</Name>
+	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="nunit.framework">
+	  <Name>nunit.framework</Name>
+	  <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="ScriptureUtils">
+	  <Name>ScriptureUtils</Name>
+	  <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="ScrUtilsInterfaces">
+	  <Name>ScrUtilsInterfaces</Name>
+	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="TestUtils">
+	  <Name>TestUtils</Name>
+	  <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="App.config" />
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<EmbeddedResource Include="EncTest.map" />
+	<Compile Include="FdoScriptureTests.cs" />
+	<Compile Include="FilteredSequenceTests.cs" />
+	<Compile Include="ParaNodeMapTests.cs" />
+	<Compile Include="FilteredScrBooksTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrBookTests.cs" />
+	<Compile Include="ScrChecksDataSourceTests.cs" />
+	<Compile Include="ScrFdoTestBase.cs" />
+	<Compile Include="ScrFootnoteTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrImportFileInfoTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrImportSetTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrInMemoryFdoCache.cs" />
+	<Compile Include="ScrInMemoryFdoTestBase.cs" />
+	<Compile Include="ScrMappingListTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrSectionTests.cs" />
+	<Compile Include="ScrSfFileListTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrTxtParaTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScrVerseTests.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SCTextEnumTests.cs" />
+	<Compile Include="StFootnoteTests.cs" />
+	<Compile Include="StTextTests.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+<!--test general tool shortcuts-->
+<!--assumes original Kalaba and keyman activated-->
+
+	<bug id="LT-7944" desc="^x doesnt work in Text/Edit/Baseline" />
+	<bug id="LT-2693" />
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <!--Shortcut open file-->
+  <insert>^o</insert>
+
+  <model select="open-project[@role='dialog']">
+  <on-dialog title="Open Project">
+   <glimpse wait="1000" select="choose/label"/>
+   <click select="cancel"/>
+  </on-dialog>
+  </model>
+
+  <!--save project (can't check it!)-->
+  <insert>^s</insert>
+
+  <!--print project (commented out until can get to print to PDF)-->
+  <!--insert>^p</insert-->
+
+  <!--go to Texts/Edit-->
+  <click select="menubar/view/texts-words/interlinear-texts"/>
+
+  <model select="interlinear-texts[@role='view']">
+
+<!-- click Edit tab-->
+   <click select="text/baseline/tab"/>
+
+<!-- click Edit area-->
+   <click select="text/baseline/line"/>
+
+  <!-- cut "pus"-->
+  <insert>{HOME}</insert>
+  <insert>+^{RIGHT}</insert>
+  <!--insert wait="200">^x</insert LT-7944-->
+  <insert wait="200">^c</insert>
+  <insert wait="200">{DELETE}</insert>
+
+  <!--check cut-->
+  <glimpse wait="200" id="checkcut" select="text/baseline/line" prop="value" expect="yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+
+  <!-- paste "pus"-->
+  <insert wait="200">^v</insert>
+
+  <!--check paste-->
+  <glimpse wait="200" id="checkpaste1" select="text/baseline/line" prop="value" expect="pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+
+  <!-- copy "pus"-->
+  <insert>+{HOME}</insert>
+  <insert wait="200">^c</insert>
+
+  <!--check copy-->
+  <glimpse wait="200" id="checkcopy" select="text/baseline/line" prop="value" expect="pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+
+  <!-- paste "pus"-->
+  <insert>^{RIGHT}</insert>
+  <insert wait="200">^v</insert>
+
+  <!--check paste-->
+  <glimpse wait="200" id="checkpaste2" select="text/baseline/line" prop="value" expect="pus yalola pus nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+
+  <!-- delete "pus"-->
+  <insert>+^{LEFT}</insert>
+  <insert wait="200">{BKSP}</insert>
+
+  <!-- undo most recent-->
+  <insert wait="200">^z</insert>
+
+  <!--check undo-->
+  <glimpse wait="500" id="checkundo" select="text/baseline/line" prop="value" expect="pus yalola pus nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+
+  <!-- redo most recent undo-->
+  <insert wait="500">^y</insert>
+
+  <!--check redo-->
+  <glimpse wait="500" id="checkredo" select="text/baseline/line" prop="value" expect="pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira."/>
+
+  <!--close app-->
+  <insert wait="1000">%(FX)</insert>
+  <glimpse wait="2000" select="texts/title" prop="name" expect="Texts" on-pass="assert"/>
+
+</model>
+
+  </on-application>
+</accil>

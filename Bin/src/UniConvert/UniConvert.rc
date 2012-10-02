@@ -1,0 +1,164 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOG DISCARDABLE  0, 0, 310, 217
+STYLE DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "UniConvert"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "&Start",IDOK,101,197,50,14
+	PUSHBUTTON      "C&lose",IDCANCEL,159,197,50,14
+	GROUPBOX        "&Working Directory",IDC_STATIC,7,7,296,31
+	COMBOBOX        IDC_COMBO_DIR,13,19,243,58,CBS_DROPDOWN |
+					CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "",IDC_BUTTON_BROWSE1,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					262,19,14,12
+	GROUPBOX        "&Control File",IDC_STATIC,7,44,296,31
+	COMBOBOX        IDC_COMBO_CONTROL,13,56,243,58,CBS_DROPDOWN |
+					CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "",IDC_BUTTON_BROWSE2,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					262,56,14,12
+	CONTROL         "",IDC_BUTTON_EDIT1,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					282,56,14,12
+	GROUPBOX        "&Input File",IDC_STATIC,7,84,296,31
+	COMBOBOX        IDC_COMBO_INPUT,13,96,243,58,CBS_DROPDOWN |
+					CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "",IDC_BUTTON_BROWSE3,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					262,96,14,12
+	CONTROL         "",IDC_BUTTON_EDIT2,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					282,96,14,12
+	GROUPBOX        "&Output File",IDC_STATIC,7,119,296,31
+	COMBOBOX        IDC_COMBO_OUTPUT,13,131,243,58,CBS_DROPDOWN |
+					CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "",IDC_BUTTON_BROWSE4,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					262,131,14,12
+	CONTROL         "",IDC_BUTTON_EDIT3,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					282,131,14,12
+	GROUPBOX        "&Error Log File",IDC_STATIC,7,159,296,31
+	COMBOBOX        IDC_COMBO_ERROR,13,171,243,58,CBS_DROPDOWN |
+					CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "",IDC_BUTTON_BROWSE5,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					262,171,14,12
+	CONTROL         "",IDC_BUTTON_EDIT4,"Button",BS_OWNERDRAW | WS_TABSTOP,
+					282,171,14,12
+END
+
+IDD_PROGRESS DIALOGEX 0, 0, 215, 41
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",0x0,14,17,
+					186,11,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+	GROUPBOX        "Converting",IDC_BOX,6,4,203,31
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	IDD_MAIN, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 303
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 211
+	END
+
+	IDD_PROGRESS, DIALOG
+	BEGIN
+		LEFTMARGIN, 6
+		RIGHTMARGIN, 209
+		VERTGUIDE, 14
+		VERTGUIDE, 200
+		TOPMARGIN, 4
+		BOTTOMMARGIN, 35
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BUTTON              BITMAP  DISCARDABLE     "Button.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON    DISCARDABLE     "UniConvert.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

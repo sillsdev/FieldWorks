@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Module Id="YourModule" Guid="PUT-GUID-HERE" Language="1033" Version="0.0.0.0">
+	<Package Id="????????-????-????-????-????????????" Description="Description of your module" Comments="This will appear in the file summary stream." Manufacturer="Your Company" InstallerVersion="200" Compressed="yes" />
+
+	<Directory Id="TARGETDIR" Name="SourceDir">
+	  <Directory Id="MergeRedirectFolder">
+
+		<Component Id="ModuleComponent" Guid="PUT-GUID-HERE">
+		  <!-- TODO: Insert your files, registry keys, and other resources here. -->
+		</Component>
+
+	  </Directory>
+	</Directory>
+  </Module>
+</Wix>

@@ -1,0 +1,288 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{1C027178-008E-48AB-B588-01F59B1C5406}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>FwTasks</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Bounds|AnyCPU' ">
+	<OutputPath>bin\Bounds\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\FwTasks.xml</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>bin\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\FwTasks.xml</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>obj\FwTasks.xml</DocumentationFile>
+	<DebugSymbols>false</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="FileCache, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\tasks\FileCache.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="IDLImporter">
+	  <Name>IDLImporter</Name>
+	  <HintPath>..\..\..\IDLImporter.dll</HintPath>
+	</Reference>
+	<Reference Include="LocalFileCache, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\tasks\LocalFileCache.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="NAnt.Contrib.Tasks, Version=0.85.1791.0, Culture=neutral">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\NAnt.Contrib.Tasks.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.Core">
+	  <Name>NAnt.Core</Name>
+	  <HintPath>..\..\bin\NAnt.Core.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.DotNetTasks">
+	  <Name>NAnt.DotNetTasks</Name>
+	  <HintPath>..\..\bin\NAnt.DotNetTasks.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.NUnit, Version=0.85.2478.0, Culture=neutral">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\NAnt.NUnit.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.NUnit2Tasks, Version=0.85.2478.0, Culture=neutral">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\NAnt.NUnit2Tasks.dll</HintPath>
+	</Reference>
+	<Reference Include="NAnt.VisualCppTasks">
+	  <Name>NAnt.VisualCppTasks</Name>
+	  <HintPath>..\..\bin\NAnt.VisualCppTasks.dll</HintPath>
+	</Reference>
+	<Reference Include="nunit.framework, Version=2.2.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\NUnit\bin\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="nunit.util, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\nunit.util.dll</HintPath>
+	</Reference>
+	<Reference Include="RemoteFileCache, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\tasks\RemoteFileCache.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="SettingsProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\bin\tasks\SettingsProvider.dll</HintPath>
+	  <Private>True</Private>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="AssemblyLinkerTaskEx.cs" />
+	<Compile Include="CacheNewFiles.cs" />
+	<Compile Include="CircularReferencesTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ClWorkaround.cs" />
+	<Compile Include="COMRegisterTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConcatTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CopyAsmRefsTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CopyFromCache.cs" />
+	<Compile Include="CopyReferencesTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DbVersionTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DelReferencesTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FilesCached.cs" />
+	<Compile Include="FwBaseTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FwInitProject.cs" />
+	<Compile Include="FwRootTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FwSandcastleTask.cs" />
+	<Compile Include="GetTypeLibTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IdlImpTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ImportRegistryTask.cs" />
+	<Compile Include="MakeMSMFileListsTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MidlTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NAntTaskEx.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NUnit2ExTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="NUnit2ExTaskWorkaround.cs" />
+	<Compile Include="PropertyDeleteTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="RegFreeCreator.cs" />
+	<Compile Include="RegFreeTask.cs" />
+	<Compile Include="ResGenTaskEx.cs" />
+	<Compile Include="SetEnvTask.cs" />
+	<Compile Include="UserFunctions.cs" />
+	<Compile Include="VersionExTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WriteRegistryTask.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlAssembly.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="XmlAssemblyCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<None Include="build.build" />
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

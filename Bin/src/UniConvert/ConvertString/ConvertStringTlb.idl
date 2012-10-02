@@ -1,0 +1,38 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2000, SIL International. All rights reserved.
+
+File: ConvertString.idl
+Responsibility: Darrell Zook
+Last reviewed:
+
+	Defines ObjectViewer interfaces.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+
+#include "Common.idh"
+
+
+DeclareLibrary(ObjectViewerLib, 1.0, "SIL ConvertString", 5C2D3023-994A-11d3-A19E-00E029272DB4)
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	#include "ConvertStringTlb.idh"
+
+
+	DeclareCoClass(CsConvertAToW, 5C2D3020-994A-11d3-A19E-00E029272DB4)
+	{
+		interface ICsConvertAToW;
+	};
+
+	DeclareCoClass(CsConvertWToA, 5C2D3021-994A-11d3-A19E-00E029272DB4)
+	{
+		interface ICsConvertWToA;
+	};
+
+	DeclareCoClass(CsConvertWToW, 5C2D3022-994A-11d3-A19E-00E029272DB4)
+	{
+		interface ICsConvertWToW;
+	};
+};

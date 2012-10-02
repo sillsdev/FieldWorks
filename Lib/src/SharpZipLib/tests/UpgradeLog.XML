@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SharpZipLibTests">
+</Property><Property Name="Solution File" Value="C:\Projects\FW60\Lib\src\SharpZipLib\tests\SharpZipLibTests.sln">
+</Property><Property Name="Date" Value="Thursday, August 13, 2009">
+</Property><Property Name="Time" Value="16:58 PM">
+</Property></Properties><Event ErrorLevel="0" Project="SharpZipLibTests" Source="SharpZipLibTests.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="SharpZipLibTests" Source="SharpZipLibTests.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="SharpZipLibTests.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="SharpZipLibTests.sln" Description="Converted">
+</Event></UpgradeLog>

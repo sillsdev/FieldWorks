@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="sf">
+	<FxtDocumentDescription dataLabel="Wordforms" formatLabel="SFM" defaultExtension="db" filter="Standard Format files (*.db)|*.db|All files (*.*)|*.*">
+Export the wordforms and associated information to a standard format file. This is slow due to producing the counts.
+	</FxtDocumentDescription>
+<!-- Output: wordform, glosses, category, no in corpus , user analyses, parser analyses
+\wKal nihimbilira
+\gEng I see
+\gEng I perceive
+\gEng I understand
+\ps verb
+\fc 3
+\uc 1
+\pc 1
+-->
+
+	<class name="LangProject">
+		<group objProperty="WordformInventoryOA">
+			<objVector objProperty="WordformsOC"/>
+		</group>
+	</class>
+
+	<class name="WfiWordform">
+		<multilingualStringElement name="w" simpleProperty="Form" ws="all vernacular"/>
+		<progress progressIncrement="true"/>
+		<objVector objProperty="AnalysesOC"/>
+		<element name="fc">
+			<string simpleProperty="FullConcordanceCount"/>
+		</element>
+		<element name="uc">
+			<string simpleProperty="UserCount"/>
+		</element>
+		<element name="pc">
+			<string simpleProperty="ParserCount"/>
+		</element>
+		<newLine/>
+	</class>
+
+	<class name="WfiAnalysis">
+		<objVector objProperty="MeaningsOC"/>
+		<objAtomic objProperty="CategoryRA"/>
+	</class>
+
+	<class name="WfiGloss">
+		<multilingualStringElement name="g" simpleProperty="Form" ws="all analysis"/>
+	</class>
+
+	<class name="PartOfSpeech">
+		<element name="ps">
+			<string simpleProperty="Name" ws="analysis"/>
+		</element>
+	</class>
+
+</template>

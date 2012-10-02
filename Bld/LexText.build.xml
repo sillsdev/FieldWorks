@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<!-- This file is included in WordWorks_xWroks.build.xml -->
+<project name="LexText" default="LexTextExe" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- ********************************************************************************** -->
+	<!-- Add super target here -->
+	<!-- -->
+	<target name="remakelt" description="Completely rebuilds LexText.">
+		<property name="remakeSfx" value="lt"/>
+		<call target="remakeFOO" cascade="false"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- -->
+	<target name="LexTextExe" description="Build LexText EXE project."
+		depends="FlexDePlugin,LexTextDll,xWorks,xCore,FDO,Framework,Utils,FwControls,COMInterfaces,FwCoreDlgs,xCoreInterfaces,RootSite,
+		DnbXCoreAdapterLibrary,xCoreOpenSourceAdapter,ITextDll,LexEdDll,MorphologyEditorDll,ParserUI,FieldWorksLink,Discourse">
+		<call target="LexTextExe-nodep" cascade="false"/>
+	</target>
+	<target name="LexTextExe-nodep" description="Build LexTextExe project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\LexTextExe"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="FlexDePlugin" description="Build FlexDePlugin project."
+		depends="BasicUtils,FwCoreDlgs,FwUtils,Reporting,xCoreInterfaces,XMLUtils,xWorks">
+		<call target="FlexDePlugin-nodep" cascade="false"/>
+	</target>
+	<target name="FlexDePlugin-nodep" description="Build FlexDePlugin project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\FlexDePlugin"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="LexTextDll" description="Build LexText DLL project."
+		depends="RootSite,xCoreInterfaces,xWorks,xCore,FDO,Framework,FwUtils,Utils,FwControls,COMInterfaces,
+		FwCoreDlgs,ParserServiceClasses,ParserCore,DetailControls,XMLViews,XMLUtils,ParserUI,LexTextControls,
+		MessageBoxExLib,Reporting,ITextDll">
+		<call target="LexTextDll-nodep" cascade="false"/>
+	</target>
+	<target name="LexTextDll-nodep" description="Build LexTextDll project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\LexTextDll"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ITextDll" description="Build ITextDll project."
+		depends="xWorks,xCore,FDO,FdoUi, Reporting,RootSite,xCoreInterfaces,FwResources,
+		XMLViews,FxtDll,Framework,Utils,XMLUtils,FwControls,LexTextControls,COMInterfaces,ScrUtilsInterfaces,ScrFDO,ScrControls,
+		FwCoreDlgs,Widgets,LexTextControls,Filters,SimpleRootSite,DetailControls,FwUtils, ParserCore, ParserServiceClasses,SharedScrUtils">
+		<call target="ITextDll-nodep" cascade="false"/>
+	</target>
+	<target name="ITextDll-nodep" description="Build ITextDll project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\Interlinear"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Discourse" description="Build Discourse project."
+			depends="ITextDll">
+		<call target="Discourse-nodep" cascade="false"/>
+	</target>
+	<target name="Discourse-nodep" description="Build Discourse project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\Discourse"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="LexEdDll" description="Build xWorks project."
+			depends="xWorks,xCore,FDO,Framework,Utils,FwControls,COMInterfaces,FdoUi,FdoUiLowLevel,MessageBoxExLib,Filters,
+			FwCoreDlgs,LexTextControls,RootSite,xCoreInterfaces,XMLUtils,DetailControls,Utils,SimpleRootSite,mkfwk,mkvw,mkdba,mkcel,mklg,
+			Widgets,PhonEnvValidator,FwUtils,ParserServiceClasses,ParserCore,MGA,XMLViews,FwResources,Sfm2Xml,MorphologyEditorDll">
+		<call target="LexEdDll-nodep" cascade="false"/>
+	</target>
+	<target name="LexEdDll-nodep" description="Build LexEdDll project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\Lexicon"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="MorphologyEditorDll" description="Build Morphology Editor DLL project."
+		depends="xWorks,xCore,FDO,FdoUi,Framework,Utils,FwControls,COMInterfaces,FwCoreDlgs,
+			LexTextControls,FwResources,Filters,RootSite,xCoreInterfaces,XMLViews,XMLUtils,
+			DetailControls,SimpleRootSite,PhonEnvValidator,DetailControls,Sfm2Xml,Widgets,
+			FwUtils,EncConvertersDlls,ParserServiceClasses,ParserCore,MGA,FwCoreDlgs,
+			EncConvertersDlls,ITextDll">
+		<call target="MorphologyEditorDll-nodep" cascade="false"/>
+	</target>
+	<target name="MorphologyEditorDll-nodep" description="Build MorphologyEditorDll project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\LexText\Morphology"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add internal project targets here. These should not be called outside of this project. -->
+	<!-- -->
+	<target name="remakelt-internal" description="Completely rebuilds LexText - don't call directly">
+		<property name="fw-remake-internal-error" value="true"/>
+		<call target="remakelt-internal-core" cascade="false"/>
+		<property name="fw-remake-internal-error" value="false"/>
+	</target>
+	<target name="remakelt-internal-core" description="Allows for replacing two 'call' task with one 'depends'."
+		 depends="requiredTestDatabases,LexTextExe"/>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add project includes here -->
+	<!-- -->
+	<!-- -->
+</project>

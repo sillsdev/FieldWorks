@@ -1,0 +1,1890 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	Windows Installer standard table definitions.
+-->
+<tableDefinitions xmlns="http://schemas.microsoft.com/wix/2003/04/tables">
+	<tableDefinition name="_SummaryInformation">
+		<columnDefinition name="PropertyId" type="number" length="2" primaryKey="yes"/>
+		<columnDefinition name="Value" type="localized" length="255" escapeIdtCharacters="yes"/>
+	</tableDefinition>
+	<tableDefinition name="_Validation">
+		<columnDefinition name="Table" type="string" length="32" primaryKey="yes"
+				category="identifier" description="Name of table"/>
+		<columnDefinition name="Column" type="string" length="32" primaryKey="yes"
+				category="identifier" description="Name of column"/>
+		<columnDefinition name="Nullable" type="string" length="4"
+				set="Y;N" description="Whether the column is nullable"/>
+		<columnDefinition name="MinValue" type="number" length="4" nullable="yes"
+				minValue="-2147483647" maxValue="2147483647" description="Minimum value allowed"/>
+		<columnDefinition name="MaxValue" type="number" length="4" nullable="yes"
+				minValue="-2147483647" maxValue="2147483647" description="Maximum value allowed"/>
+		<columnDefinition name="KeyTable" type="string" length="255" nullable="yes"
+				category="identifier" description="For foreign key, Name of table to which data must link"/>
+		<columnDefinition name="KeyColumn" type="number" length="2" nullable="yes"
+				minValue="1" maxValue="32" description="Column to which foreign key connects"/>
+		<columnDefinition name="Category" type="string" length="32" nullable="yes"
+				set="Text;Formatted;Template;Condition;Guid;Path;Version;Language;Identifier;Binary;UpperCase;LowerCase;Filename;Paths;AnyPath;WildCardFilename;RegPath;KeyFormatted;CustomSource;Property;Cabinet;Shortcut;URL" description="String category"/>
+		<columnDefinition name="Set" type="string" length="255" nullable="yes"
+				category="text" description="Set of values that are permitted"/>
+		<columnDefinition name="Description" type="string" length="255" nullable="yes"
+				category="text" description="Description of column"/>
+	</tableDefinition>
+	<tableDefinition name="ActionText">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Name of action to be described."/>
+		<columnDefinition name="Description" type="localized" length="0" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Localized description displayed in progress dialog and log when action is executing."/>
+		<columnDefinition name="Template" type="localized" length="0" nullable="yes" escapeIdtCharacters="yes" modularize="property"
+				category="template" description="Optional localized format template used to format action data records for display during action execution."/>
+	</tableDefinition>
+	<tableDefinition name="AdminExecuteSequence">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Name of action to invoke, either in the engine or the handler DLL."/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" localizable="yes"
+				category="condition" description="Optional expression which skips the action if evaluates to expFalse.If the expression syntax is invalid, the engine will terminate, returning iesBadActionData."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Number that determines the sort order in which the actions are to be executed.  Leave blank to suppress action."/>
+	</tableDefinition>
+	<tableDefinition name="Condition">
+		<columnDefinition name="Feature_" type="string" length="38" primaryKey="yes"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Reference to a Feature entry in Feature table."/>
+		<columnDefinition name="Level" type="number" length="2" primaryKey="yes"
+				minValue="0" maxValue="32767" description="New selection Level to set in Feature table if Condition evaluates to TRUE."/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" localizable="yes"
+				category="condition" description="Expression evaluated to determine if Level in the Feature table is to change."/>
+	</tableDefinition>
+	<tableDefinition name="AdminUISequence">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Name of action to invoke, either in the engine or the handler DLL."/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" localizable="yes"
+				category="condition" description="Optional expression which skips the action if evaluates to expFalse.If the expression syntax is invalid, the engine will terminate, returning iesBadActionData."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Number that determines the sort order in which the actions are to be executed.  Leave blank to suppress action."/>
+	</tableDefinition>
+	<tableDefinition name="AdvtExecuteSequence">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Name of action to invoke, either in the engine or the handler DLL."/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" localizable="yes"
+				category="condition" description="Optional expression which skips the action if evaluates to expFalse.If the expression syntax is invalid, the engine will terminate, returning iesBadActionData."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Number that determines the sort order in which the actions are to be executed.  Leave blank to suppress action."/>
+	</tableDefinition>
+	<tableDefinition name="AdvtUISequence">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Name of action to invoke, either in the engine or the handler DLL."/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" localizable="yes"
+				category="condition" description="Optional expression which skips the action if evaluates to expFalse.If the expression syntax is invalid, the engine will terminate, returning iesBadActionData."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Number that determines the sort order in which the actions are to be executed.  Leave blank to suppress action."/>
+	</tableDefinition>
+	<tableDefinition name="AppId">
+		<columnDefinition name="AppId" type="string" length="38" primaryKey="yes" symbol="yes"
+				category="guid"/>
+		<columnDefinition name="RemoteServerName" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted"/>
+		<columnDefinition name="LocalService" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="ServiceParameters" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="DllSurrogate" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="ActivateAtStorage" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1"/>
+		<columnDefinition name="RunAsInteractiveUser" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1"/>
+	</tableDefinition>
+	<tableDefinition name="AppSearch">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="The property associated with a Signature"/>
+		<columnDefinition name="Signature_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Signature;RegLocator;IniLocator;DrLocator;CompLocator" keyColumn="1" category="identifier" description="The Signature_ represents a unique file signature and is also the foreign key in the Signature,  RegLocator, IniLocator, CompLocator and the DrLocator tables."/>
+	</tableDefinition>
+	<tableDefinition name="Property">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Name of property, uppercase if settable by launcher or loader."/>
+		<columnDefinition name="Value" type="localized" length="0" escapeIdtCharacters="yes"
+				category="text" description="String value for property.  Never null or empty."/>
+		<columnDefinition name="Admin" type="number" length="2" nullable="yes" unreal="yes"/>
+		<columnDefinition name="Secure" type="number" length="2" nullable="yes" unreal="yes"/>
+		<columnDefinition name="Hidden" type="number" length="2" nullable="yes" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="BBControl">
+		<columnDefinition name="Billboard_" type="string" length="50" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Billboard" keyColumn="1" category="identifier" description="External key to the Billboard table, name of the billboard."/>
+		<columnDefinition name="BBControl" type="string" length="50" primaryKey="yes" symbol="yes"
+				category="identifier" description="Name of the control. This name must be unique within a billboard, but can repeat on different billboard."/>
+		<columnDefinition name="Type" type="string" length="50"
+				category="identifier" description="The type of the control."/>
+		<columnDefinition name="X" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Horizontal coordinate of the upper left corner of the bounding rectangle of the control."/>
+		<columnDefinition name="Y" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Vertical coordinate of the upper left corner of the bounding rectangle of the control."/>
+		<columnDefinition name="Width" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Width of the bounding rectangle of the control."/>
+		<columnDefinition name="Height" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Height of the bounding rectangle of the control."/>
+		<columnDefinition name="Attributes" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="A 32-bit word that specifies the attribute flags to be applied to this control."/>
+		<columnDefinition name="Text" type="localized" length="50" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="A string used to set the initial text contained within a control (if appropriate)."/>
+		<columnDefinition name="SourceFile" type="object" length="0" nullable="yes" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="Billboard">
+		<columnDefinition name="Billboard" type="string" length="50" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Name of the billboard."/>
+		<columnDefinition name="Feature_" type="string" length="38"
+				keyTable="Feature" keyColumn="1" category="identifier" description="An external key to the Feature Table. The billboard is shown only if this feature is being installed."/>
+		<columnDefinition name="Action" type="string" length="50" nullable="yes"
+				category="identifier" description="The name of an action. The billboard is displayed during the progress messages received from this action."/>
+		<columnDefinition name="Ordering" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="A positive integer. If there is more than one billboard corresponding to an action they will be shown in the order defined by this column."/>
+	</tableDefinition>
+	<tableDefinition name="Feature">
+		<columnDefinition name="Feature" type="string" length="38" primaryKey="yes" symbol="yes"
+				category="identifier" description="Primary key used to identify a particular feature record."/>
+		<columnDefinition name="Feature_Parent" type="string" length="38" nullable="yes"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Optional key of a parent record in the same table. If the parent is not selected, then the record will not be installed. Null indicates a root item."/>
+		<columnDefinition name="Title" type="localized" length="64" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Short text identifying a visible feature item."/>
+		<columnDefinition name="Description" type="localized" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Longer descriptive text describing a visible feature item."/>
+		<columnDefinition name="Display" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="Numeric sort order, used to force a specific display ordering."/>
+		<columnDefinition name="Level" type="number" length="2"
+				minValue="0" maxValue="32767" description="The install level at which record will be initially selected. An install level of 0 will disable an item and prevent its display."/>
+		<columnDefinition name="Directory_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Directory" keyColumn="1" category="upperCase" description="The name of the Directory that can be configured by the UI. A non-null value will enable the browse button."/>
+		<columnDefinition name="Attributes" type="number" length="2"
+				set="0;1;2;4;5;6;8;9;10;16;17;18;20;21;22;24;25;26;32;33;34;36;37;38;48;49;50;52;53;54" description="Feature attributes"/>
+	</tableDefinition>
+	<tableDefinition name="Binary">
+		<columnDefinition name="Name" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Unique key identifying the binary data."/>
+		<columnDefinition name="Data" type="object" length="0"
+				category="binary" description="The unformatted binary data."/>
+	</tableDefinition>
+	<tableDefinition name="BindImage">
+		<columnDefinition name="File_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="The index into the File table. This must be an executable file."/>
+		<columnDefinition name="Path" type="string" length="255" nullable="yes" modularize="property"
+				category="paths" description="A list of ;  delimited paths that represent the paths to be searched for the import DLLS. The list is usually a list of properties each enclosed within square brackets [] ."/>
+	</tableDefinition>
+	<tableDefinition name="File">
+		<columnDefinition name="File" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token, must match identifier in cabinet.  For uncompressed files, this field is ignored."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the file."/>
+		<columnDefinition name="FileName" type="localized" length="255"
+				category="filename" description="File name used for installation, may be localized.  This may contain a &quot;short name|long name&quot; pair."/>
+		<columnDefinition name="FileSize" type="number" length="4"
+				minValue="0" maxValue="2147483647" description="Size of file in bytes (long integer)."/>
+		<columnDefinition name="Version" type="string" length="72" nullable="yes" modularize="companionFile"
+				keyTable="File" keyColumn="1" category="version" description="Version string for versioned files;  Blank for unversioned files."/>
+		<columnDefinition name="Language" type="string" length="20" nullable="yes"
+				category="language" description="List of decimal language Ids, comma-separated if more than one."/>
+		<columnDefinition name="Attributes" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="Integer containing bit flags representing file attributes (with the decimal value of each bit position in parentheses)"/>
+		<columnDefinition name="Sequence" type="number" length="4"
+				minValue="1" maxValue="2147483647" description="Sequence with respect to the media images; order must track cabinet order."/>
+		<columnDefinition name="Assembly" type="string" length="5" unreal="yes"/>
+		<columnDefinition name="AssemblyManifest" type="string" length="72" unreal="yes"/>
+		<columnDefinition name="AssemblyApplication" type="string" length="72" unreal="yes"/>
+		<columnDefinition name="Directory_" type="string" length="72" unreal="yes"/>
+		<columnDefinition name="DiskId" type="number" length="2" unreal="yes"/>
+		<columnDefinition name="Source" type="object" length="0" nullable="yes" unreal="yes"/>
+		<columnDefinition name="ProcessorArchitecture" type="string" length="20" unreal="yes"/>
+		<columnDefinition name="PatchGroup" type="number" length="4" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="CCPSearch">
+		<columnDefinition name="Signature_" type="string" length="72" primaryKey="yes"
+				keyTable="Signature;RegLocator;IniLocator;DrLocator;CompLocator" keyColumn="1" category="identifier" description="The Signature_ represents a unique file signature and is also the foreign key in the Signature,  RegLocator, IniLocator, CompLocator and the DrLocator tables."/>
+	</tableDefinition>
+	<tableDefinition name="CheckBox">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="A named property to be tied to the item."/>
+		<columnDefinition name="Value" type="string" length="64" nullable="yes" modularize="property"
+				category="formatted" description="The value string associated with the item."/>
+	</tableDefinition>
+	<tableDefinition name="Class">
+		<columnDefinition name="CLSID" type="string" length="38" primaryKey="yes" symbol="yes"
+				category="guid" description="The CLSID of an OLE factory."/>
+		<columnDefinition name="Context" type="string" length="32" primaryKey="yes" symbol="yes"
+				category="identifier" description="The numeric server context for this server. CLSCTX_xxxx"/>
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Required foreign key into the Component Table, specifying the component for which to return a path when called through LocateComponent."/>
+		<columnDefinition name="ProgId_Default" type="string" length="255" nullable="yes"
+				keyTable="ProgId" keyColumn="1" category="text" description="Optional ProgId associated with this CLSID."/>
+		<columnDefinition name="Description" type="localized" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Localized description for the Class."/>
+		<columnDefinition name="AppId_" type="string" length="38" nullable="yes"
+				keyTable="AppId" keyColumn="1" category="guid" description="Optional AppID containing DCOM information for associated application (string GUID)."/>
+		<columnDefinition name="FileTypeMask" type="string" length="255" nullable="yes"
+				category="text" description="Optional string containing information for the HKCRthis CLSID) key. If multiple patterns exist, they must be delimited by a semicolon, and numeric subkeys will be generated: 0,1,2..."/>
+		<columnDefinition name="Icon_" type="string" length="72" nullable="yes" modularize="icon"
+				keyTable="Icon" keyColumn="1" category="identifier" description="Optional foreign key into the Icon Table, specifying the icon file associated with this CLSID. Will be written under the DefaultIcon key."/>
+		<columnDefinition name="IconIndex" type="number" length="2" nullable="yes"
+				minValue="-32767" maxValue="32767" description="Optional icon index."/>
+		<columnDefinition name="DefInprocHandler" type="string" length="32" nullable="yes"
+				category="filename" set="1;2;3" description="Optional default inproc handler.  Only optionally provided if Context=CLSCTX_LOCAL_SERVER.  Typically &quot;ole32.dll&quot; or &quot;mapi32.dll&quot;"/>
+		<columnDefinition name="Argument" type="string" length="255" nullable="yes"
+				category="formatted" description="optional argument for LocalServers."/>
+		<columnDefinition name="Feature_" type="string" length="38"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Required foreign key into the Feature Table, specifying the feature to validate or install in order for the CLSID factory to be operational."/>
+		<columnDefinition name="Attributes" type="number" length="2" nullable="yes"
+				maxValue="32767" description="Class registration attributes."/>
+	</tableDefinition>
+	<tableDefinition name="Component">
+		<columnDefinition name="Component" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key used to identify a particular component record."/>
+		<columnDefinition name="ComponentId" type="string" length="38" nullable="yes"
+				category="guid" description="A string GUID unique to this component, version, and language."/>
+		<columnDefinition name="Directory_" type="string" length="72" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Required key of a Directory table record. This is actually a property name whose value contains the actual path, set either by the AppSearch action or with the default setting obtained from the Directory table."/>
+		<columnDefinition name="Attributes" type="number" length="2"
+				description="Remote execution option, one of irsEnum"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" modularize="condition" localizable="yes"
+				category="condition" description="A conditional statement that will disable this component if the specified condition evaluates to the 'True' state. If a component is disabled, it will not be installed, regardless of the 'Action' state associated with the component."/>
+		<columnDefinition name="KeyPath" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="File;Registry;ODBCDataSource" keyColumn="1" category="identifier" description="Either the primary key into the File table, Registry table, or ODBCDataSource table. This extract path is stored when the component is installed, and is used to detect the presence of the component and to return the path to it."/>
+	</tableDefinition>
+	<tableDefinition name="ComponentGroup" unreal="yes">
+		<columnDefinition name="ComponentGroup" type="string" length="0" primaryKey="yes" symbol="yes" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="Icon">
+		<columnDefinition name="Name" type="string" length="72" primaryKey="yes" symbol="yes" modularize="icon"
+				category="identifier" description="Primary key. Name of the icon file."/>
+		<columnDefinition name="Data" type="object" length="0"
+				category="binary" description="Binary stream. The binary icon data in PE (.DLL or .EXE) or icon (.ICO) format."/>
+	</tableDefinition>
+	<tableDefinition name="ProgId">
+		<columnDefinition name="ProgId" type="string" length="255" primaryKey="yes"
+				category="text" description="The Program Identifier. Primary key."/>
+		<columnDefinition name="ProgId_Parent" type="string" length="255" nullable="yes"
+				keyTable="ProgId" keyColumn="1" category="text" description="The Parent Program Identifier. If specified, the ProgId column becomes a version independent prog id."/>
+		<columnDefinition name="Class_" type="string" length="38" nullable="yes"
+				keyTable="Class" keyColumn="1" category="guid" description="The CLSID of an OLE factory corresponding to the ProgId."/>
+		<columnDefinition name="Description" type="localized" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Localized description for the Program identifier."/>
+		<columnDefinition name="Icon_" type="string" length="72" nullable="yes" modularize="icon"
+				keyTable="Icon" keyColumn="1" category="identifier" description="Optional foreign key into the Icon Table, specifying the icon file associated with this ProgId. Will be written under the DefaultIcon key."/>
+		<columnDefinition name="IconIndex" type="number" length="2" nullable="yes"
+				minValue="-32767" maxValue="32767" description="Optional icon index."/>
+	</tableDefinition>
+	<tableDefinition name="ComboBox">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="A named property to be tied to this item. All the items tied to the same property become part of the same combobox."/>
+		<columnDefinition name="Order" type="number" length="2" primaryKey="yes"
+				minValue="1" maxValue="32767" description="A positive integer used to determine the ordering of the items within one list. The integers do not have to be consecutive."/>
+		<columnDefinition name="Value" type="string" length="64" modularize="property"
+				category="formatted" description="The value string associated with this item. Selecting the line will set the associated property to this value."/>
+		<columnDefinition name="Text" type="localized" length="64" nullable="yes" modularize="property" escapeIdtCharacters="yes"
+				category="formatted" description="The visible text to be assigned to the item. Optional. If this entry or the entire column is missing, the text is the same as the value."/>
+	</tableDefinition>
+	<tableDefinition name="CompLocator">
+		<columnDefinition name="Signature_" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="The table key. The Signature_ represents a unique file signature and is also the foreign key in the Signature table."/>
+		<columnDefinition name="ComponentId" type="string" length="38"
+				category="guid" description="A string GUID unique to this component, version, and language."/>
+		<columnDefinition name="Type" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="A boolean value that determines if the registry value is a filename or a directory location."/>
+	</tableDefinition>
+	<tableDefinition name="Complus">
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the ComPlus component."/>
+		<columnDefinition name="ExpType" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="ComPlus component attributes."/>
+	</tableDefinition>
+	<tableDefinition name="Directory">
+		<columnDefinition name="Directory" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Unique identifier for directory entry, primary key. If a property by this name is defined, it contains the full path to the directory."/>
+		<columnDefinition name="Directory_Parent" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Reference to the entry in this table specifying the default parent directory. A record parented to itself or with a Null parent represents a root of the install tree."/>
+		<columnDefinition name="DefaultDir" type="localized" length="255"
+				category="defaultDir" description="The default sub-path under parent's path."/>
+	</tableDefinition>
+	<tableDefinition name="Control">
+		<columnDefinition name="Dialog_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Dialog" keyColumn="1" category="identifier" description="External key to the Dialog table, name of the dialog."/>
+		<columnDefinition name="Control" type="string" length="50" primaryKey="yes" symbol="yes"
+				category="identifier" description="Name of the control. This name must be unique within a dialog, but can repeat on different dialogs. "/>
+		<columnDefinition name="Type" type="string" length="20"
+				category="identifier" description="The type of the control."/>
+		<columnDefinition name="X" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Horizontal coordinate of the upper left corner of the bounding rectangle of the control."/>
+		<columnDefinition name="Y" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Vertical coordinate of the upper left corner of the bounding rectangle of the control."/>
+		<columnDefinition name="Width" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Width of the bounding rectangle of the control."/>
+		<columnDefinition name="Height" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="Height of the bounding rectangle of the control."/>
+		<columnDefinition name="Attributes" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="A 32-bit word that specifies the attribute flags to be applied to this control."/>
+		<columnDefinition name="Property" type="string" length="72" nullable="yes" modularize="column"
+				category="identifier" description="The name of a defined property to be linked to this control. "/>
+		<columnDefinition name="Text" type="localized" length="0" nullable="yes" modularize="property" escapeIdtCharacters="yes"
+				category="formatted" description="A string used to set the initial text contained within a control (if appropriate)."/>
+		<columnDefinition name="Control_Next" type="string" length="50" nullable="yes"
+				keyTable="Control" keyColumn="2" category="identifier" description="The name of an other control on the same dialog. This link defines the tab order of the controls. The links have to form one or more cycles!"/>
+		<columnDefinition name="Help" type="localized" length="50" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="The help strings used with the button. The text is optional. "/>
+		<columnDefinition name="SourceFile" type="object" length="0" nullable="yes" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="Dialog">
+		<columnDefinition name="Dialog" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Name of the dialog."/>
+		<columnDefinition name="HCentering" type="number" length="2"
+				minValue="0" maxValue="100" description="Horizontal position of the dialog on a 0-100 scale. 0 means left end, 100 means right end of the screen, 50 center."/>
+		<columnDefinition name="VCentering" type="number" length="2"
+				minValue="0" maxValue="100" description="Vertical position of the dialog on a 0-100 scale. 0 means top end, 100 means bottom end of the screen, 50 center."/>
+		<columnDefinition name="Width" type="number" length="2"
+				minValue="0" maxValue="32767" description="Width of the bounding rectangle of the dialog."/>
+		<columnDefinition name="Height" type="number" length="2"
+				minValue="0" maxValue="32767" description="Height of the bounding rectangle of the dialog."/>
+		<columnDefinition name="Attributes" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="A 32-bit word that specifies the attribute flags to be applied to this dialog."/>
+		<columnDefinition name="Title" type="localized" length="128" nullable="yes" modularize="property" escapeIdtCharacters="yes"
+				category="formatted" description="A text string specifying the title to be displayed in the title bar of the dialog's window."/>
+		<columnDefinition name="Control_First" type="string" length="50"
+				keyTable="Control" keyColumn="2" category="identifier" description="Defines the control that has the focus when the dialog is created."/>
+		<columnDefinition name="Control_Default" type="string" length="50" nullable="yes"
+				keyTable="Control" keyColumn="2" category="identifier" description="Defines the default control. Hitting return is equivalent to pushing this button."/>
+		<columnDefinition name="Control_Cancel" type="string" length="50" nullable="yes"
+				keyTable="Control" keyColumn="2" category="identifier" description="Defines the cancel control. Hitting escape or clicking on the close icon on the dialog is equivalent to pushing this button."/>
+	</tableDefinition>
+	<tableDefinition name="ControlCondition">
+		<columnDefinition name="Dialog_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Dialog" keyColumn="1" category="identifier" description="A foreign key to the Dialog table, name of the dialog."/>
+		<columnDefinition name="Control_" type="string" length="50" primaryKey="yes"
+				keyTable="Control" keyColumn="2" category="identifier" description="A foreign key to the Control table, name of the control."/>
+		<columnDefinition name="Action" type="string" length="50" primaryKey="yes"
+				set="Default;Disable;Enable;Hide;Show" description="The desired action to be taken on the specified control."/>
+		<columnDefinition name="Condition" type="string" length="255" primaryKey="yes" modularize="condition" localizable="yes"
+				category="condition" description="A standard conditional statement that specifies under which conditions the action should be triggered."/>
+	</tableDefinition>
+	<tableDefinition name="ControlEvent">
+		<columnDefinition name="Dialog_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Dialog" keyColumn="1" category="identifier" description="A foreign key to the Dialog table, name of the dialog."/>
+		<columnDefinition name="Control_" type="string" length="50" primaryKey="yes" symbol="yes"
+				keyTable="Control" keyColumn="2" category="identifier" description="A foreign key to the Control table, name of the control"/>
+		<columnDefinition name="Event" type="string" length="50" primaryKey="yes" symbol="yes" modularize="property"
+				category="formatted" description="An identifier that specifies the type of the event that should take place when the user interacts with control specified by the first two entries."/>
+		<columnDefinition name="Argument" type="string" length="255" primaryKey="yes" symbol="yes" modularize="controlEventArgument" localizable="yes"
+				category="formatted" description="A value to be used as a modifier when triggering a particular event."/>
+		<columnDefinition name="Condition" type="string" length="255" primaryKey="yes" symbol="yes" nullable="yes" modularize="condition" localizable="yes"
+				category="condition" description="A standard conditional statement that specifies under which conditions an event should be triggered."/>
+		<columnDefinition name="Ordering" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="2147483647" description="An integer used to order several events tied to the same control. Can be left blank."/>
+	</tableDefinition>
+	<tableDefinition name="CreateFolder">
+		<columnDefinition name="Directory_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Primary key, could be foreign key into the Directory table."/>
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table."/>
+	</tableDefinition>
+	<tableDefinition name="CustomAction">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, name of action, normally appears in sequence table unless private use."/>
+		<columnDefinition name="Type" type="number" length="2"
+				minValue="1" maxValue="32767" description="The numeric custom action type, consisting of source location, code type, entry, option flags."/>
+		<columnDefinition name="Source" type="string" length="72" nullable="yes" modularize="column"
+				category="customSource" description="The table reference of the source of the code."/>
+		<columnDefinition name="Target" type="string" length="255" nullable="yes" modularize="property" escapeIdtCharacters="yes" localizable="yes"
+				category="formatted" description="Excecution parameter, depends on the type of custom action"/>
+	</tableDefinition>
+	<tableDefinition name="DrLocator">
+		<columnDefinition name="Signature_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="The Signature_ represents a unique file signature and is also the foreign key in the Signature table."/>
+		<columnDefinition name="Parent" type="string" length="72" primaryKey="yes" nullable="yes" symbol="yes" modularize="column"
+				category="identifier" description="The parent file signature. It is also a foreign key in the Signature table. If null and the Path column does not expand to a full path, then all the fixed drives of the user system are searched using the Path."/>
+		<columnDefinition name="Path" type="string" length="255" primaryKey="yes" nullable="yes" symbol="yes" modularize="property"
+				category="anyPath" description="The path on the user system. This is a either a subpath below the value of the Parent or a full path. The path may contain properties enclosed within [ ] that will be expanded."/>
+		<columnDefinition name="Depth" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="The depth below the path to which the Signature_ is recursively searched. If absent, the depth is assumed to be 0."/>
+	</tableDefinition>
+	<tableDefinition name="DuplicateFile">
+		<columnDefinition name="FileKey" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key used to identify a particular file entry"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the duplicate file."/>
+		<columnDefinition name="File_" type="string" length="72" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Foreign key referencing the source file to be duplicated."/>
+		<columnDefinition name="DestName" type="localized" length="255" nullable="yes"
+				category="filename" description="Filename to be given to the duplicate file."/>
+		<columnDefinition name="DestFolder" type="string" length="72" nullable="yes" modularize="column"
+				category="identifier" description="Name of a property whose value is assumed to resolve to the full pathname to a destination folder."/>
+	</tableDefinition>
+	<tableDefinition name="Environment">
+		<columnDefinition name="Environment" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Unique identifier for the environmental variable setting"/>
+		<columnDefinition name="Name" type="localized" length="255"
+				category="text" description="The name of the environmental value."/>
+		<columnDefinition name="Value" type="localized" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The value to set in the environmental settings."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table referencing component that controls the installing of the environmental value."/>
+	</tableDefinition>
+	<tableDefinition name="Error">
+		<columnDefinition name="Error" type="number" length="2" primaryKey="yes" symbol="yes"
+				minValue="0" maxValue="32767" description="Integer error number, obtained from header file IError(...) macros."/>
+		<columnDefinition name="Message" type="localized" length="0" nullable="yes" escapeIdtCharacters="yes" useCData="yes" modularize="property"
+				category="template" description="Error formatting template, obtained from user ed. or localizers."/>
+	</tableDefinition>
+	<tableDefinition name="EventMapping">
+		<columnDefinition name="Dialog_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Dialog" keyColumn="1" category="identifier" description="A foreign key to the Dialog table, name of the Dialog."/>
+		<columnDefinition name="Control_" type="string" length="50" primaryKey="yes"
+				keyTable="Control" keyColumn="2" category="identifier" description="A foreign key to the Control table, name of the control."/>
+		<columnDefinition name="Event" type="string" length="50" primaryKey="yes"
+				category="identifier" description="An identifier that specifies the type of the event that the control subscribes to."/>
+		<columnDefinition name="Attribute" type="string" length="50"
+				category="identifier" description="The name of the control attribute, that is set when this event is received."/>
+	</tableDefinition>
+	<tableDefinition name="Extension">
+		<columnDefinition name="Extension" type="string" length="255" primaryKey="yes" symbol="yes"
+				category="text" description="The extension associated with the table row."/>
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Required foreign key into the Component Table, specifying the component for which to return a path when called through LocateComponent."/>
+		<columnDefinition name="ProgId_" type="string" length="255" nullable="yes"
+				keyTable="ProgId" keyColumn="1" category="text" description="Optional ProgId associated with this extension."/>
+		<columnDefinition name="MIME_" type="string" length="64" nullable="yes"
+				keyTable="MIME" keyColumn="1" category="text" description="Optional Context identifier, typically &quot;type/format&quot; associated with the extension"/>
+		<columnDefinition name="Feature_" type="string" length="38"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Required foreign key into the Feature Table, specifying the feature to validate or install in order for the CLSID factory to be operational."/>
+	</tableDefinition>
+	<tableDefinition name="MIME">
+		<columnDefinition name="ContentType" type="string" length="64" primaryKey="yes"
+				category="text" description="Primary key. Context identifier, typically &quot;type/format&quot;."/>
+		<columnDefinition name="Extension_" type="string" length="255"
+				keyTable="Extension" keyColumn="1" category="text" description="Optional associated extension (without dot)"/>
+		<columnDefinition name="CLSID" type="string" length="38" nullable="yes"
+				category="guid" description="Optional associated CLSID."/>
+	</tableDefinition>
+	<tableDefinition name="FeatureComponents">
+		<columnDefinition name="Feature_" type="string" length="38" primaryKey="yes"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Foreign key into Feature table."/>
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into Component table."/>
+	</tableDefinition>
+	<tableDefinition name="Merge" unreal="yes">
+		<columnDefinition name="Id" type="string" length="72" symbol="yes" unreal="yes"/>
+		<columnDefinition name="Language" type="number" length="2" unreal="yes"/>
+		<columnDefinition name="Directory_" type="string" nullable="yes" length="72" unreal="yes"/>
+		<columnDefinition name="SourceFile" type="object" length="0" unreal="yes"/>
+		<columnDefinition name="DiskId" type="number" length="2" unreal="yes"/>
+		<columnDefinition name="FileCompression" type="number" length="2" unreal="yes"/>
+		<columnDefinition name="HasFiles" type="number" length="2" unreal="yes"/>
+		<columnDefinition name="ConfigurationData" type="string" length="255" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="FileSFPCatalog">
+		<columnDefinition name="File_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="File associated with the catalog"/>
+		<columnDefinition name="SFPCatalog_" type="string" length="255" primaryKey="yes"
+				keyTable="SFPCatalog" keyColumn="1" category="filename" description="Catalog associated with the file"/>
+	</tableDefinition>
+	<tableDefinition name="SFPCatalog">
+		<columnDefinition name="SFPCatalog" type="string" length="255" primaryKey="yes"
+				category="filename" description="File name for the catalog."/>
+		<columnDefinition name="Catalog" type="object" length="0"
+				category="binary" description="SFP Catalog"/>
+		<columnDefinition name="Dependency" type="string" length="0" nullable="yes" modularize="property"
+				category="formatted" description="Parent catalog - only used by SFP"/>
+	</tableDefinition>
+	<tableDefinition name="Font">
+		<columnDefinition name="File_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Primary key, foreign key into File table referencing font file."/>
+		<columnDefinition name="FontTitle" type="string" length="128" nullable="yes"
+				category="text" description="Font name."/>
+	</tableDefinition>
+	<tableDefinition name="XmlFile">
+		<columnDefinition name="XmlFile" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="File" type="localized" length="255"
+				category="formatted" description="The .XML file in which to write the information"/>
+		<columnDefinition name="ElementPath" type="localized" length="96" modularize="property"
+				category="formatted" description="The .XML file element to modify."/>
+		<columnDefinition name="Name" type="localized" length="128" modularize="property" nullable="yes"
+				category="formatted" description="The .XML file node to set/add in the element."/>
+		<columnDefinition name="Value" type="localized" length="255" modularize="property" nullable="yes"
+				category="formatted" description="The value to be written."/>
+		<columnDefinition name="Flags" type="number" length="4"
+				minValue="0" maxValue="65536" description="Flags"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table referencing component that controls the installing of the .XML value."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				description="Order to execute the XML modifications."/>
+	</tableDefinition>
+	<tableDefinition name="IniFile">
+		<columnDefinition name="IniFile" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="FileName" type="localized" length="255"
+				category="filename" description="The .INI file name in which to write the information"/>
+		<columnDefinition name="DirProperty" type="string" length="72" nullable="yes" modularize="column"
+				category="identifier" description="Foreign key into the Directory table denoting the directory where the .INI file is."/>
+		<columnDefinition name="Section" type="localized" length="96" modularize="property"
+				category="formatted" description="The .INI file Section."/>
+		<columnDefinition name="Key" type="localized" length="128" modularize="property"
+				category="formatted" description="The .INI file key below Section."/>
+		<columnDefinition name="Value" type="localized" length="255" modularize="property" escapeIdtCharacters="yes"
+				category="formatted" description="The value to be written."/>
+		<columnDefinition name="Action" type="number" length="2"
+				set="0;1;3" description="The type of modification to be made, one of iifEnum"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table referencing component that controls the installing of the .INI value."/>
+	</tableDefinition>
+	<tableDefinition name="IniLocator">
+		<columnDefinition name="Signature_" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="The table key. The Signature_ represents a unique file signature and is also the foreign key in the Signature table."/>
+		<columnDefinition name="FileName" type="string" length="255"
+				category="filename" description="The .INI file name."/>
+		<columnDefinition name="Section" type="string" length="96"
+				category="text" description="Section name within in file (within square brackets in INI file)."/>
+		<columnDefinition name="Key" type="string" length="128"
+				category="text" description="Key value (followed by an equals sign in INI file)."/>
+		<columnDefinition name="Field" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="The field in the .INI line. If Field is null or 0 the entire line is read."/>
+		<columnDefinition name="Type" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="2" description="An integer value that determines if the .INI value read is a filename or a directory location or to be used as is w/o interpretation."/>
+	</tableDefinition>
+	<tableDefinition name="InstallExecuteSequence">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Name of action to invoke, either in the engine or the handler DLL."/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" localizable="yes"
+				category="condition" description="Optional expression which skips the action if evaluates to expFalse.If the expression syntax is invalid, the engine will terminate, returning iesBadActionData."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Number that determines the sort order in which the actions are to be executed.  Leave blank to suppress action."/>
+	</tableDefinition>
+	<tableDefinition name="InstallUISequence">
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Name of action to invoke, either in the engine or the handler DLL."/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" localizable="yes"
+				category="condition" description="Optional expression which skips the action if evaluates to expFalse.If the expression syntax is invalid, the engine will terminate, returning iesBadActionData."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Number that determines the sort order in which the actions are to be executed.  Leave blank to suppress action."/>
+	</tableDefinition>
+	<tableDefinition name="IsolatedComponent">
+		<columnDefinition name="Component_Shared" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Key to Component table item to be isolated"/>
+		<columnDefinition name="Component_Application" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Key to Component table item for application"/>
+	</tableDefinition>
+	<tableDefinition name="LaunchCondition">
+		<columnDefinition name="Condition" type="string" length="255" primaryKey="yes" localizable="yes"
+				category="condition" description="Expression which must evaluate to TRUE in order for install to commence."/>
+		<columnDefinition name="Description" type="localized" length="255" escapeIdtCharacters="yes"
+				category="formatted" description="Localizable text to display when condition fails and install must abort."/>
+	</tableDefinition>
+	<tableDefinition name="ListBox">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="A named property to be tied to this item. All the items tied to the same property become part of the same listbox."/>
+		<columnDefinition name="Order" type="number" length="2" primaryKey="yes"
+				minValue="1" maxValue="32767" description="A positive integer used to determine the ordering of the items within one list..The integers do not have to be consecutive."/>
+		<columnDefinition name="Value" type="string" length="64" modularize="property"
+				category="formatted" description="The value string associated with this item. Selecting the line will set the associated property to this value."/>
+		<columnDefinition name="Text" type="localized" length="64" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="The visible text to be assigned to the item. Optional. If this entry or the entire column is missing, the text is the same as the value."/>
+	</tableDefinition>
+	<tableDefinition name="ListView">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="A named property to be tied to this item. All the items tied to the same property become part of the same listview."/>
+		<columnDefinition name="Order" type="number" length="2" primaryKey="yes"
+				minValue="1" maxValue="32767" description="A positive integer used to determine the ordering of the items within one list..The integers do not have to be consecutive."/>
+		<columnDefinition name="Value" type="string" length="64" modularize="property"
+				category="formatted" description="The value string associated with this item. Selecting the line will set the associated property to this value."/>
+		<columnDefinition name="Text" type="localized" length="64" nullable="yes" escapeIdtCharacters="yes" modularize="property"
+				category="formatted" description="The visible text to be assigned to the item. Optional. If this entry or the entire column is missing, the text is the same as the value."/>
+		<columnDefinition name="Binary_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Binary" keyColumn="1" category="identifier" description="The name of the icon to be displayed with the icon. The binary information is looked up from the Binary Table."/>
+	</tableDefinition>
+	<tableDefinition name="LockPermissions">
+		<columnDefinition name="LockObject" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Foreign key into Registry or File table"/>
+		<columnDefinition name="Table" type="string" length="32" primaryKey="yes"
+				category="identifier" set="Directory;File;Registry" description="Reference to another table name"/>
+		<columnDefinition name="Domain" type="string" length="255" primaryKey="yes" nullable="yes" modularize="property"
+				category="formatted" description="Domain name for user whose permissions are being set. (usually a property)"/>
+		<columnDefinition name="User" type="string" length="255" primaryKey="yes" modularize="property"
+				category="formatted" description="User for permissions to be set.  (usually a property)"/>
+		<columnDefinition name="Permission" type="number" length="4" nullable="yes"
+				minValue="-2147483647" maxValue="2147483647" description="Permission Access mask.  Full Control = 268435456 (GENERIC_ALL = 0x10000000)"/>
+	</tableDefinition>
+	<tableDefinition name="Media">
+		<columnDefinition name="DiskId" type="number" length="2" primaryKey="yes" symbol="yes"
+				minValue="1" maxValue="32767" description="Primary key, integer to determine sort order for table."/>
+		<columnDefinition name="LastSequence" type="number" length="4"
+				minValue="0" maxValue="2147483647" description="File sequence number for the last file for this media."/>
+		<columnDefinition name="DiskPrompt" type="localized" length="64" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Disk name: the visible text actually printed on the disk.  This will be used to prompt the user when this disk needs to be inserted."/>
+		<columnDefinition name="Cabinet" type="string" length="255" nullable="yes"
+				category="cabinet" description="If some or all of the files stored on the media are compressed in a cabinet, the name of that cabinet."/>
+		<columnDefinition name="VolumeLabel" type="string" length="32" nullable="yes"
+				category="text" description="The label attributed to the volume."/>
+		<columnDefinition name="Source" type="string" length="72" nullable="yes"
+				category="property" description="The property defining the location of the cabinet file."/>
+		<columnDefinition name="CompressionLevel" type="string" length="50" nullable="yes" unreal="yes"/>
+		<columnDefinition name="Layout" type="object" length="0" nullable="yes" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="MoveFile">
+		<columnDefinition name="FileKey" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key that uniquely identifies a particular MoveFile record"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="If this component is not &quot;selected&quot; for installation or removal, no action will be taken on the associated MoveFile entry"/>
+		<columnDefinition name="SourceName" type="localized" length="255" nullable="yes"
+				category="text" description="Name of the source file(s) to be moved or copied.  Can contain the '*' or '?' wildcards."/>
+		<columnDefinition name="DestName" type="localized" length="255" nullable="yes"
+				category="filename" description="Name to be given to the original file after it is moved or copied.  If blank, the destination file will be given the same name as the source file"/>
+		<columnDefinition name="SourceFolder" type="string" length="72" nullable="yes" modularize="column"
+				category="identifier" description="Name of a property whose value is assumed to resolve to the full path to the source directory"/>
+		<columnDefinition name="DestFolder" type="string" length="72" modularize="column"
+				category="identifier" description="Name of a property whose value is assumed to resolve to the full path to the destination directory"/>
+		<columnDefinition name="Options" type="number" length="2"
+				minValue="0" maxValue="1" description="Integer value specifying the MoveFile operating mode, one of imfoEnum"/>
+	</tableDefinition>
+	<tableDefinition name="MsiAssembly">
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into Component table."/>
+		<columnDefinition name="Feature_" type="string" length="38"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Foreign key into Feature table."/>
+		<columnDefinition name="File_Manifest" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Foreign key into the File table denoting the manifest file for the assembly."/>
+		<columnDefinition name="File_Application" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Foreign key into File table, denoting the application context for private assemblies. Null for global assemblies."/>
+		<columnDefinition name="Attributes" type="number" length="2" nullable="yes"
+				description="Assembly attributes"/>
+	</tableDefinition>
+	<tableDefinition name="MsiAssemblyName">
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into Component table."/>
+		<columnDefinition name="Name" type="string" length="255" primaryKey="yes"
+				category="text" description="The name part of the name-value pairs for the assembly name."/>
+		<columnDefinition name="Value" type="string" length="255"
+				category="text" description="The value part of the name-value pairs for the assembly name."/>
+	</tableDefinition>
+	<tableDefinition name="MsiDigitalCertificate">
+		<columnDefinition name="DigitalCertificate" type="string" length="72" primaryKey="yes"
+				category="identifier" description="A unique identifier for the row"/>
+		<columnDefinition name="CertData" type="object" length="0"
+				category="binary" description="A certificate context blob for a signer certificate"/>
+	</tableDefinition>
+	<tableDefinition name="MsiDigitalSignature">
+		<columnDefinition name="Table" type="string" length="32" primaryKey="yes"
+				set="Media" description="Reference to another table name (only Media table is supported)"/>
+		<columnDefinition name="SignObject" type="string" length="72" primaryKey="yes"
+				category="text" description="Foreign key to Media table"/>
+		<columnDefinition name="DigitalCertificate_" type="string" length="72"
+				keyTable="MsiDigitalCertificate" keyColumn="1" category="identifier" description="Foreign key to MsiDigitalCertificate table identifying the signer certificate"/>
+		<columnDefinition name="Hash" type="object" length="0" nullable="yes"
+				category="binary" description="The encoded hash blob from the digital signature"/>
+	</tableDefinition>
+	<tableDefinition name="MsiFileHash">
+		<columnDefinition name="File_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Primary key, foreign key into File table referencing file with this hash"/>
+		<columnDefinition name="Options" type="number" length="2"
+				minValue="0" maxValue="32767" description="Various options and attributes for this hash."/>
+		<columnDefinition name="HashPart1" type="number" length="4"
+				description="Size of file in bytes (long integer)."/>
+		<columnDefinition name="HashPart2" type="number" length="4"
+				description="Size of file in bytes (long integer)."/>
+		<columnDefinition name="HashPart3" type="number" length="4"
+				description="Size of file in bytes (long integer)."/>
+		<columnDefinition name="HashPart4" type="number" length="4"
+				description="Size of file in bytes (long integer)."/>
+	</tableDefinition>
+	<tableDefinition name="MsiPatchCertificate">
+		<columnDefinition name="PatchCertificate" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Primary key. A unique identifier for the row."/>
+		<columnDefinition name="DigitalCertificate_" type="string" length="72" primaryKey="yes"
+				keyTable="MsiDigitalCertificate" keyColumn="1" category="identifier" description="Foreign key to MsiDigitalCertificate table identifying the signer certificate."/>
+	</tableDefinition>
+	<tableDefinition name="MsiPatchHeaders">
+		<columnDefinition name="StreamRef" type="string" length="38" primaryKey="yes"
+				category="identifier" description="Primary key. A unique identifier for the row."/>
+		<columnDefinition name="Header" type="object" length="0"
+				category="binary" description="Binary stream. The patch header, used for patch validation."/>
+	</tableDefinition>
+	<tableDefinition name="PatchMetadata">
+		<columnDefinition name="Company" type="string" length="72" primaryKey="yes" nullable="yes"
+				category="identifier" description="Primary key. The name of the company."/>
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Primary key. The name of the property."/>
+		<columnDefinition name="Value" type="string" length="0"
+				category="text" description="Non-null, non-empty value of the metadata property."/>
+	</tableDefinition>
+	<tableDefinition name="MsiPatchMetadata">
+		<columnDefinition name="Company" type="string" length="72" primaryKey="yes" nullable="yes"
+				/>
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes"
+				/>
+		<columnDefinition name="Value" type="localized" length="0"
+				/>
+	</tableDefinition>
+	<tableDefinition name="MsiPatchOldAssemblyFile">
+		<columnDefinition name="File_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Foreign key into File table. Patch-only table."/>
+		<columnDefinition name="Assembly_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="MsiPatchOldAssemblyName" keyColumn="1" category="identifier" description="Foreign key into MsiPatchOldAssemblyName table."/>
+	</tableDefinition>
+	<tableDefinition name="MsiPatchOldAssemblyName">
+		<columnDefinition name="Assembly" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="A unique identifier for the row."/>
+		<columnDefinition name="Name" type="string" length="255" primaryKey="yes"
+				category="text" description="The name part of the name-value pairs for the assembly name. This represents the old name for the assembly."/>
+		<columnDefinition name="Value" type="string" length="255"
+				category="text" description="The value part of the name-value pairs for the assembly name. This represents the old name for the assembly."/>
+	</tableDefinition>
+	<tableDefinition name="PatchSequence">
+		<columnDefinition name="PatchFamily" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Primary key. The name of the family for the patch."/>
+		<columnDefinition name="Target" type="string" length="72" primaryKey="yes" nullable="yes"
+				category="text" description="Primary key. Determines product code filtering for family."/>
+		<columnDefinition name="Sequence" type="string" length="72" nullable="yes"
+				category="text" description="Sequence information in version (x.x.x.x) format."/>
+		<columnDefinition name="Supersede" type="number" length="4" nullable="yes"
+				description="Indicates that this patch supersedes earlier patches."/>
+	</tableDefinition>
+	<tableDefinition name="MsiPatchSequence">
+		<columnDefinition name="PatchFamily" type="string" length="72" primaryKey="yes"
+				/>
+		<columnDefinition name="ProductCode" type="string" length="38" primaryKey="yes" nullable="yes"
+				/>
+		<columnDefinition name="Sequence" type="string" length="72"
+				/>
+		<columnDefinition name="Attributes" type="number" length="4" nullable="yes"
+				/>
+	</tableDefinition>
+	<tableDefinition name="ODBCAttribute">
+		<columnDefinition name="Driver_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="ODBCDriver" keyColumn="1" category="identifier" description="Reference to ODBC driver in ODBCDriver table"/>
+		<columnDefinition name="Attribute" type="string" length="40" primaryKey="yes"
+				category="text" description="Name of ODBC driver attribute"/>
+		<columnDefinition name="Value" type="localized" length="255" nullable="yes"
+				category="formatted" description="Value for ODBC driver attribute"/>
+	</tableDefinition>
+	<tableDefinition name="ODBCDriver">
+		<columnDefinition name="Driver" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized.internal token for driver"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Reference to associated component"/>
+		<columnDefinition name="Description" type="string" length="255"
+				category="text" description="Text used as registered name for driver, non-localized"/>
+		<columnDefinition name="File_" type="string" length="72" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Reference to key driver file"/>
+		<columnDefinition name="File_Setup" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Optional reference to key driver setup DLL"/>
+	</tableDefinition>
+	<tableDefinition name="ODBCDataSource">
+		<columnDefinition name="DataSource" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized.internal token for data source"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Reference to associated component"/>
+		<columnDefinition name="Description" type="string" length="255"
+				category="text" description="Text used as registered name for data source"/>
+		<columnDefinition name="DriverDescription" type="string" length="255"
+				category="text" description="Reference to driver description, may be existing driver"/>
+		<columnDefinition name="Registration" type="number" length="2"
+				minValue="0" maxValue="1" description="Registration option: 0=machine, 1=user, others t.b.d."/>
+	</tableDefinition>
+	<tableDefinition name="ODBCSourceAttribute">
+		<columnDefinition name="DataSource_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="ODBCDataSource" keyColumn="1" category="identifier" description="Reference to ODBC data source in ODBCDataSource table"/>
+		<columnDefinition name="Attribute" type="string" length="32" primaryKey="yes" symbol="yes"
+				category="text" description="Name of ODBC data source attribute"/>
+		<columnDefinition name="Value" type="localized" length="255" nullable="yes"
+				category="formatted" description="Value for ODBC data source attribute"/>
+	</tableDefinition>
+	<tableDefinition name="ODBCTranslator">
+		<columnDefinition name="Translator" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized.internal token for translator"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Reference to associated component"/>
+		<columnDefinition name="Description" type="string" length="255"
+				category="text" description="Text used as registered name for translator"/>
+		<columnDefinition name="File_" type="string" length="72" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Reference to key translator file"/>
+		<columnDefinition name="File_Setup" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Optional reference to key translator setup DLL"/>
+	</tableDefinition>
+	<tableDefinition name="Patch">
+		<columnDefinition name="File_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token, foreign key to File table, must match identifier in cabinet."/>
+		<columnDefinition name="Sequence" type="number" length="4" primaryKey="yes"
+				minValue="0" maxValue="2147483647" description="Primary key, sequence with respect to the media images; order must track cabinet order."/>
+		<columnDefinition name="PatchSize" type="number" length="4"
+				minValue="0" maxValue="2147483647" description="Size of patch in bytes (long integer)."/>
+		<columnDefinition name="Attributes" type="number" length="2"
+				minValue="0" maxValue="32767" description="Integer containing bit flags representing patch attributes"/>
+		<columnDefinition name="Header" type="object" length="0" nullable="yes"
+				category="binary" description="Binary stream. The patch header, used for patch validation."/>
+		<columnDefinition name="StreamRef_" type="string" length="38" nullable="yes"
+				category="identifier" description="Identifier. Foreign key to the StreamRef column of the MsiPatchHeaders table."/>
+	</tableDefinition>
+	<tableDefinition name="PatchPackage">
+		<columnDefinition name="PatchId" type="string" length="38" primaryKey="yes"
+				category="guid" description="A unique string GUID representing this patch."/>
+		<columnDefinition name="Media_" type="number" length="2"
+				minValue="0" maxValue="32767" description="Foreign key to DiskId column of Media table. Indicates the disk containing the patch package."/>
+	</tableDefinition>
+	<tableDefinition name="PublishComponent">
+		<columnDefinition name="ComponentId" type="string" length="38" primaryKey="yes" symbol="yes"
+				category="guid" description="A string GUID that represents the component id that will be requested by the alien product."/>
+		<columnDefinition name="Qualifier" type="string" length="255" primaryKey="yes" symbol="yes"
+				category="text" description="This is defined only when the ComponentId column is an Qualified Component Id. This is the Qualifier for ProvideComponentIndirect."/>
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" modularize="column" symbol="yes"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table."/>
+		<columnDefinition name="AppData" type="localized" length="0" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="This is localisable Application specific data that can be associated with a Qualified Component."/>
+		<columnDefinition name="Feature_" type="string" length="38"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Foreign key into the Feature table."/>
+	</tableDefinition>
+	<tableDefinition name="RadioButton">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="A named property to be tied to this radio button. All the buttons tied to the same property become part of the same group."/>
+		<columnDefinition name="Order" type="number" length="2" primaryKey="yes"
+				minValue="1" maxValue="32767" description="A positive integer used to determine the ordering of the items within one list..The integers do not have to be consecutive."/>
+		<columnDefinition name="Value" type="string" length="64" modularize="property" escapeIdtCharacters="yes"
+				category="formatted" description="The value string associated with this button. Selecting the button will set the associated property to this value."/>
+		<columnDefinition name="X" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="The horizontal coordinate of the upper left corner of the bounding rectangle of the radio button."/>
+		<columnDefinition name="Y" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="The vertical coordinate of the upper left corner of the bounding rectangle of the radio button."/>
+		<columnDefinition name="Width" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="The width of the button."/>
+		<columnDefinition name="Height" type="localizedNumber" length="2"
+				minValue="0" maxValue="32767" description="The height of the button."/>
+		<columnDefinition name="Text" type="localized" length="64" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="The visible title to be assigned to the radio button."/>
+		<columnDefinition name="Help" type="localized" length="50" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="The help strings used with the button. The text is optional."/>
+	</tableDefinition>
+	<tableDefinition name="Registry">
+		<columnDefinition name="Registry" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="Root" type="number" length="2"
+				minValue="-1" maxValue="3" description="The predefined root key for the registry value, one of rrkEnum."/>
+		<columnDefinition name="Key" type="localized" length="255" modularize="property"
+				category="regPath" description="The key for the registry value."/>
+		<columnDefinition name="Name" type="localized" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The registry value name."/>
+		<columnDefinition name="Value" type="localized" length="0" nullable="yes" modularize="property" escapeIdtCharacters="yes"
+				category="formatted" description="The registry value."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table referencing component that controls the installing of the registry value."/>
+	</tableDefinition>
+	<tableDefinition name="RegLocator">
+		<columnDefinition name="Signature_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="The table key. The Signature_ represents a unique file signature and is also the foreign key in the Signature table. If the type is 0, the registry values refers a directory, and _Signature is not a foreign key."/>
+		<columnDefinition name="Root" type="number" length="2"
+				minValue="0" maxValue="3" description="The predefined root key for the registry value, one of rrkEnum."/>
+		<columnDefinition name="Key" type="string" length="255" modularize="property" localizable="yes"
+				category="regPath" description="The key for the registry value."/>
+		<columnDefinition name="Name" type="string" length="255" nullable="yes" modularize="property" localizable="yes"
+				category="formatted" description="The registry value name."/>
+		<columnDefinition name="Type" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="18" description="An integer value that determines if the registry value is a filename or a directory location or to be used as is w/o interpretation."/>
+	</tableDefinition>
+	<tableDefinition name="RemoveFile">
+		<columnDefinition name="FileKey" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key used to identify a particular file entry"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the file to be removed."/>
+		<columnDefinition name="FileName" type="localized" length="255" nullable="yes"
+				category="wildCardFilename" description="Name of the file to be removed."/>
+		<columnDefinition name="DirProperty" type="string" length="72" modularize="column"
+				category="identifier" description="Name of a property whose value is assumed to resolve to the full pathname to the folder of the file to be removed."/>
+		<columnDefinition name="InstallMode" type="number" length="2"
+				set="1;2;3" description="Installation option, one of iimEnum."/>
+	</tableDefinition>
+	<tableDefinition name="RemoveIniFile">
+		<columnDefinition name="RemoveIniFile" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="FileName" type="localized" length="255"
+				category="filename" description="The .INI file name in which to delete the information"/>
+		<columnDefinition name="DirProperty" type="string" length="72" nullable="yes"
+				category="identifier" description="Foreign key into the Directory table denoting the directory where the .INI file is."/>
+		<columnDefinition name="Section" type="localized" length="96" modularize="property"
+				category="formatted" description="The .INI file Section."/>
+		<columnDefinition name="Key" type="localized" length="128" modularize="property"
+				category="formatted" description="The .INI file key below Section."/>
+		<columnDefinition name="Value" type="localized" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The value to be deleted. The value is required when Action is iifIniRemoveTag"/>
+		<columnDefinition name="Action" type="number" length="2"
+				set="2;4" description="The type of modification to be made, one of iifEnum."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table referencing component that controls the deletion of the .INI value."/>
+	</tableDefinition>
+	<tableDefinition name="RemoveRegistry">
+		<columnDefinition name="RemoveRegistry" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="Root" type="number" length="2"
+				minValue="-1" maxValue="3" description="The predefined root key for the registry value, one of rrkEnum"/>
+		<columnDefinition name="Key" type="localized" length="255" modularize="property"
+				category="regPath" description="The key for the registry value."/>
+		<columnDefinition name="Name" type="localized" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The registry value name."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table referencing component that controls the deletion of the registry value."/>
+	</tableDefinition>
+	<tableDefinition name="ReserveCost">
+		<columnDefinition name="ReserveKey" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key that uniquely identifies a particular ReserveCost record"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Reserve a specified amount of space if this component is to be installed."/>
+		<columnDefinition name="ReserveFolder" type="string" length="72" nullable="yes" modularize="column"
+				category="identifier" description="Name of a property whose value is assumed to resolve to the full path to the destination directory"/>
+		<columnDefinition name="ReserveLocal" type="number" length="4"
+				minValue="0" maxValue="2147483647" description="Disk space to reserve if linked component is installed locally."/>
+		<columnDefinition name="ReserveSource" type="number" length="4"
+				minValue="0" maxValue="2147483647" description="Disk space to reserve if linked component is installed to run from the source location."/>
+	</tableDefinition>
+	<tableDefinition name="SelfReg">
+		<columnDefinition name="File_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="File" keyColumn="1" category="identifier" description="Foreign key into the File table denoting the module that needs to be registered."/>
+		<columnDefinition name="Cost" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="The cost of registering the module."/>
+	</tableDefinition>
+	<tableDefinition name="Actions" unreal="yes">
+		<columnDefinition name="SequenceTable" type="string" length="72" primaryKey="yes" symbol="yes" unreal="yes"/>
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes" symbol="yes" unreal="yes"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" unreal="yes" localizable="yes"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes" unreal="yes"/>
+		<columnDefinition name="Before" type="string" length="72" nullable="yes" unreal="yes"/>
+		<columnDefinition name="After" type="string" length="72" nullable="yes" unreal="yes"/>
+		<columnDefinition name="Suppress" type="number" length="2" nullable="yes" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="SuppressAction" unreal="yes">
+		<columnDefinition name="SequenceTable" type="string" length="72" primaryKey="yes" unreal="yes"/>
+		<columnDefinition name="Action" type="string" length="72" primaryKey="yes" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="SecureObjects">
+		<columnDefinition name="SecureObject" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token in Table"/>
+		<columnDefinition name="Table" type="string" length="32" primaryKey="yes"
+				category="text" description="Table SecureObject should be securing"/>
+		<columnDefinition name="Domain" type="string" length="255" primaryKey="yes" nullable="yes" modularize="property"
+				category="text" description="Domain half of user account to secure"/>
+		<columnDefinition name="User" type="string" length="255" primaryKey="yes" modularize="property"
+				category="text" description="Username half of user account to secure"/>
+		<columnDefinition name="Permission" type="number" length="4" nullable="yes"
+				minValue="-2147483647" maxValue="2147483647" description="Permissions to grant to User"/>
+	</tableDefinition>
+	<tableDefinition name="ServiceControl">
+		<columnDefinition name="ServiceControl" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="Name" type="localized" length="255" modularize="property"
+				category="formatted" description="Name of a service. /, \, comma and space are invalid"/>
+		<columnDefinition name="Event" type="number" length="2"
+				minValue="0" maxValue="187" description="Bit field:  Install:  0x1 = Start, 0x2 = Stop, 0x8 = Delete, Uninstall: 0x10 = Start, 0x20 = Stop, 0x80 = Delete"/>
+		<columnDefinition name="Arguments" type="localized" length="255" nullable="yes" modularize="property"
+				category="formatted" description="Arguments for the service.  Separate by [~]."/>
+		<columnDefinition name="Wait" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="Boolean for whether to wait for the service to fully start"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Required foreign key into the Component Table that controls the startup of the service"/>
+	</tableDefinition>
+	<tableDefinition name="ServiceInstall">
+		<columnDefinition name="ServiceInstall" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="Name" type="string" length="255" modularize="property"
+				category="formatted" description="Internal Name of the Service"/>
+		<columnDefinition name="DisplayName" type="localized" length="255" nullable="yes" escapeIdtCharacters="yes" modularize="property"
+				category="formatted" description="External Name of the Service"/>
+		<columnDefinition name="ServiceType" type="number" length="4"
+				minValue="-2147483647" maxValue="2147483647" description="Type of the service"/>
+		<columnDefinition name="StartType" type="number" length="4"
+				minValue="0" maxValue="4" description="Type of the service"/>
+		<columnDefinition name="ErrorControl" type="number" length="4"
+				minValue="-2147483647" maxValue="2147483647" description="Severity of error if service fails to start"/>
+		<columnDefinition name="LoadOrderGroup" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="LoadOrderGroup"/>
+		<columnDefinition name="Dependencies" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="Other services this depends on to start.  Separate by [~], and end with [~][~]"/>
+		<columnDefinition name="StartName" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="User or object name to run service as"/>
+		<columnDefinition name="Password" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="password to run service with.  (with StartName)"/>
+		<columnDefinition name="Arguments" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="Arguments to include in every start of the service, passed to WinMain"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Required foreign key into the Component Table that controls the startup of the service"/>
+		<columnDefinition name="Description" type="localized" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Description of service."/>
+	</tableDefinition>
+	<tableDefinition name="Shortcut">
+		<columnDefinition name="Shortcut" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token."/>
+		<columnDefinition name="Directory_" type="string" length="72" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Foreign key into the Directory table denoting the directory where the shortcut file is created."/>
+		<columnDefinition name="Name" type="localized" length="128"
+				category="filename" description="The name of the shortcut to be created."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table denoting the component whose selection gates the the shortcut creation/deletion."/>
+		<columnDefinition name="Target" type="string" length="72" modularize="property"
+				category="shortcut" description="The shortcut target. This is usually a property that is expanded to a file or a folder that the shortcut points to."/>
+		<columnDefinition name="Arguments" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The command-line arguments for the shortcut."/>
+		<columnDefinition name="Description" type="localized" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="The description for the shortcut."/>
+		<columnDefinition name="Hotkey" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="The hotkey for the shortcut. It has the virtual-key code for the key in the low-order byte, and the modifier flags in the high-order byte. "/>
+		<columnDefinition name="Icon_" type="string" length="72" nullable="yes" modularize="icon"
+				keyTable="Icon" keyColumn="1" category="identifier" description="Foreign key into the File table denoting the external icon file for the shortcut."/>
+		<columnDefinition name="IconIndex" type="number" length="2" nullable="yes"
+				minValue="-32767" maxValue="32767" description="The icon index for the shortcut."/>
+		<columnDefinition name="ShowCmd" type="number" length="2" nullable="yes"
+				set="1;3;7" description="The show command for the application window.The following values may be used."/>
+		<columnDefinition name="WkDir" type="string" length="72" nullable="yes" modularize="column"
+				category="identifier" description="Name of property defining location of working directory."/>
+		<columnDefinition name="DisplayResourceDLL" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The Formatted string providing the full path to the language neutral file containing the MUI Manifest."/>
+		<columnDefinition name="DisplayResourceId" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="The display name index for the shortcut. This must be a non-negative number."/>
+		<columnDefinition name="DescriptionResourceDLL" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The Formatted string providing the full path to the language neutral file containing the MUI Manifest."/>
+		<columnDefinition name="DescriptionResourceId" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="The description name index for the shortcut. This must be a non-negative number."/>
+	</tableDefinition>
+	<tableDefinition name="Signature">
+		<columnDefinition name="Signature" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="The table key. The Signature represents a unique file signature."/>
+		<columnDefinition name="FileName" type="string" length="255"
+				category="text" description="The name of the file. This may contain a &quot;short name|long name&quot; pair."/>
+		<columnDefinition name="MinVersion" type="string" length="20" nullable="yes"
+				category="text" description="The minimum version of the file."/>
+		<columnDefinition name="MaxVersion" type="string" length="20" nullable="yes"
+				category="text" description="The maximum version of the file."/>
+		<columnDefinition name="MinSize" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="The minimum size of the file."/>
+		<columnDefinition name="MaxSize" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="The maximum size of the file. "/>
+		<columnDefinition name="MinDate" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="The minimum creation date of the file."/>
+		<columnDefinition name="MaxDate" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="The maximum creation date of the file."/>
+		<columnDefinition name="Languages" type="string" length="255" nullable="yes"
+				category="language" description="The languages supported by the file."/>
+	</tableDefinition>
+	<tableDefinition name="TextStyle">
+		<columnDefinition name="TextStyle" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Name of the style. The primary key of this table. This name is embedded in the texts to indicate a style change."/>
+		<columnDefinition name="FaceName" type="string" length="32"
+				category="text" description="A string indicating the name of the font used. Required. The string must be at most 31 characters long."/>
+		<columnDefinition name="Size" type="number" length="2"
+				minValue="0" maxValue="32767" description="The size of the font used. This size is given in our units (1/12 of the system font height). Assuming that the system font is set to 12 point size, this is equivalent to the point size."/>
+		<columnDefinition name="Color" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="16777215" description="A long integer indicating the color of the string in the RGB format (Red, Green, Blue each 0-255, RGB = R + 256*G + 256^2*B)."/>
+		<columnDefinition name="StyleBits" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="15" description="A combination of style bits."/>
+	</tableDefinition>
+	<tableDefinition name="TypeLib">
+		<columnDefinition name="LibID" type="string" length="38" primaryKey="yes" symbol="yes"
+				category="guid" description="The GUID that represents the library."/>
+		<columnDefinition name="Language" type="number" length="2" primaryKey="yes" symbol="yes"
+				minValue="0" maxValue="32767" description="The language of the library."/>
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Required foreign key into the Component Table, specifying the component for which to return a path when called through LocateComponent."/>
+		<columnDefinition name="Version" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="16777215" description="The version of the library. The minor version is in the lower 8 bits of the integer. The major version is in the next 16 bits. "/>
+		<columnDefinition name="Description" type="localized" length="128" nullable="yes" escapeIdtCharacters="yes"
+				category="text"/>
+		<columnDefinition name="Directory_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Optional. The foreign key into the Directory table denoting the path to the help file for the type library."/>
+		<columnDefinition name="Feature_" type="string" length="38"
+				keyTable="Feature" keyColumn="1" category="identifier" description="Required foreign key into the Feature Table, specifying the feature to validate or install in order for the type library to be operational."/>
+		<columnDefinition name="Cost" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="2147483647" description="The cost associated with the registration of the typelib. This column is currently optional."/>
+	</tableDefinition>
+	<tableDefinition name="UIText">
+		<columnDefinition name="Key" type="string" length="72" primaryKey="yes"
+				category="identifier" description="A unique key that identifies the particular string."/>
+		<columnDefinition name="Text" type="localized" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="The localized version of the string."/>
+	</tableDefinition>
+	<tableDefinition name="Upgrade">
+		<columnDefinition name="UpgradeCode" type="string" length="38" primaryKey="yes"
+				category="guid" description="The UpgradeCode GUID belonging to the products in this set."/>
+		<columnDefinition name="VersionMin" type="string" length="20" primaryKey="yes" nullable="yes"
+				category="text" description="The minimum ProductVersion of the products in this set.  The set may or may not include products with this particular version."/>
+		<columnDefinition name="VersionMax" type="string" length="20" primaryKey="yes" nullable="yes"
+				category="text" description="The maximum ProductVersion of the products in this set.  The set may or may not include products with this particular version."/>
+		<columnDefinition name="Language" type="string" length="255" primaryKey="yes" nullable="yes"
+				category="language" description="A comma-separated list of languages for either products in this set or products not in this set."/>
+		<columnDefinition name="Attributes" type="number" length="4" primaryKey="yes"
+				minValue="0" maxValue="2147483647" description="The attributes of this product set."/>
+		<columnDefinition name="Remove" type="string" length="255" nullable="yes"
+				category="formatted" description="The list of features to remove when uninstalling a product from this set.  The default is &quot;ALL&quot;."/>
+		<columnDefinition name="ActionProperty" type="string" length="72"
+				category="upperCase" description="The property to set when a product in this set is found."/>
+	</tableDefinition>
+	<tableDefinition name="User">
+		<columnDefinition name="User" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Component_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="text" description="Foreign key, Component used to determine install state"/>
+		<columnDefinition name="Name" type="string" length="255" modularize="property"
+				category="formatted" description="User name"/>
+		<columnDefinition name="Domain" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="User domain"/>
+		<columnDefinition name="Password" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="User password"/>
+		<columnDefinition name="Attributes" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="65535" description="Attributes describing how to create the user"/>
+	</tableDefinition>
+	<tableDefinition name="UserGroup">
+		<columnDefinition name="User_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="User" keyColumn="1" category="identifier" description="User to be joined to a Group."/>
+		<columnDefinition name="Group_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Group" keyColumn="1" category="identifier" description="User to be joined to a Group."/>
+	</tableDefinition>
+	<tableDefinition name="Group">
+		<columnDefinition name="Group" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Component_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="text" description="Foreign key, Component used to determine install state"/>
+		<columnDefinition name="Name" type="string" length="255" modularize="property"
+				category="formatted" description="Group name"/>
+		<columnDefinition name="Domain" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="Group domain"/>
+	</tableDefinition>
+	<tableDefinition name="Verb">
+		<columnDefinition name="Extension_" type="string" length="255" primaryKey="yes"
+				keyTable="Extension" keyColumn="1" category="text" description="The extension associated with the table row."/>
+		<columnDefinition name="Verb" type="string" length="32" primaryKey="yes"
+				category="text" description="The verb for the command."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="32767" description="Order within the verbs for a particular extension. Also used simply to specify the default verb."/>
+		<columnDefinition name="Command" type="localized" length="255" nullable="yes" modularize="property"
+				category="formatted" description="The command text."/>
+		<columnDefinition name="Argument" type="localized" length="255" nullable="yes" modularize="property"
+				category="formatted" description="Optional value for the command arguments."/>
+	</tableDefinition>
+	<!-- Merge Module -->
+	<tableDefinition name="ModuleAdminExecuteSequence">
+		<columnDefinition name="Action" type="string" length="64" primaryKey="yes" modularize="column"
+				category="identifier" description="Action to insert"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Standard Sequence number"/>
+		<columnDefinition name="BaseAction" type="string" length="64" nullable="yes" modularize="column"
+				keyTable="ModuleAdminExecuteSequence" keyColumn="1" category="identifier" description="Base action to determine insert location."/>
+		<columnDefinition name="After" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="Before (0) or After (1)"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" modularize="condition" localizable="yes"
+				category="condition"/>
+	</tableDefinition>
+	<tableDefinition name="ModuleAdminUISequence">
+		<columnDefinition name="Action" type="string" length="64" primaryKey="yes" modularize="column"
+				category="identifier" description="Action to insert"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Standard Sequence number"/>
+		<columnDefinition name="BaseAction" type="string" length="64" nullable="yes" modularize="column"
+				keyTable="ModuleAdminUISequence" keyColumn="1" category="identifier" description="Base action to determine insert location."/>
+		<columnDefinition name="After" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="Before (0) or After (1)"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" modularize="condition" localizable="yes"
+				category="condition"/>
+	</tableDefinition>
+	<tableDefinition name="ModuleAdvtExecuteSequence">
+		<columnDefinition name="Action" type="string" length="64" primaryKey="yes" modularize="column"
+				category="identifier" description="Action to insert"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Standard Sequence number"/>
+		<columnDefinition name="BaseAction" type="string" length="64" nullable="yes" modularize="column"
+				keyTable="ModuleAdvtExecuteSequence" keyColumn="1" category="identifier" description="Base action to determine insert location."/>
+		<columnDefinition name="After" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="Before (0) or After (1)"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" modularize="condition" localizable="yes"
+				category="condition"/>
+	</tableDefinition>
+	<tableDefinition name="ModuleAdvtUISequence">
+		<columnDefinition name="Action" type="string" length="64" primaryKey="yes" modularize="column"
+				category="identifier" description="Action to insert"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Standard Sequence number"/>
+		<columnDefinition name="BaseAction" type="string" length="64" nullable="yes" modularize="column"
+				keyTable="ModuleAdvtUISequence" keyColumn="1" category="identifier" description="Base action to determine insert location."/>
+		<columnDefinition name="After" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="Before (0) or After (1)"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" modularize="condition" localizable="yes"
+				category="condition"/>
+	</tableDefinition>
+	<tableDefinition name="ModuleComponents">
+		<columnDefinition name="Component" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Component contained in the module."/>
+		<columnDefinition name="ModuleID" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="ModuleSignature" keyColumn="1" category="identifier" description="Module containing the component."/>
+		<columnDefinition name="Language" type="localizedNumber" length="2" primaryKey="yes"
+				keyTable="ModuleSignature" keyColumn="2" description="Default language ID for module (may be changed by transform)."/>
+	</tableDefinition>
+	<tableDefinition name="ModuleSignature">
+		<columnDefinition name="ModuleID" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Module identifier (String.GUID)."/>
+		<columnDefinition name="Language" type="localizedNumber" length="2" primaryKey="yes"
+				description="Default decimal language of module."/>
+		<columnDefinition name="Version" type="string" length="32"
+				category="version" description="Version of the module."/>
+		<columnDefinition name="ModuleGuid" type="string" length="38" unreal="yes"/>
+	</tableDefinition>
+	<tableDefinition name="ModuleConfiguration">
+		<columnDefinition name="Name" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Unique identifier for this row."/>
+		<columnDefinition name="Format" type="number" length="2"
+				minValue="0" maxValue="3" description="Format of this item."/>
+		<columnDefinition name="Type" type="string" length="72" nullable="yes"
+				category="identifier" description="Additional type information for this item."/>
+		<columnDefinition name="ContextData" type="localized" length="0" nullable="yes"
+				category="text" description="Additional context information about this item."/>
+		<columnDefinition name="DefaultValue" type="localized" length="0" nullable="yes"
+				category="text" description="Default value for this item."/>
+		<columnDefinition name="Attributes" type="number" length="4" nullable="yes"
+				minValue="0" maxValue="3" description="Additional type-specific attributes."/>
+		<columnDefinition name="DisplayName" type="localized" length="72" nullable="yes"
+				category="text" description="A short human-readable name for this item."/>
+		<columnDefinition name="Description" type="localized" length="0" nullable="yes"
+				category="text" description="A human-readable description."/>
+		<columnDefinition name="HelpLocation" type="string" length="0" nullable="yes"
+				category="text" description="Filename or namespace of the context-sensitive help for this item."/>
+		<columnDefinition name="HelpKeyword" type="string" length="0" nullable="yes"
+				category="text" description="Keyword index into the HelpLocation for this item."/>
+	</tableDefinition>
+	<tableDefinition name="ModuleDependency">
+		<columnDefinition name="ModuleID" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="ModuleSignature" keyColumn="1" category="identifier" description="Module requiring the dependency."/>
+		<columnDefinition name="ModuleLanguage" type="localizedNumber" length="2" primaryKey="yes"
+				keyTable="ModuleSignature" keyColumn="2" description="Language of module requiring the dependency."/>
+		<columnDefinition name="RequiredID" type="string" length="72" primaryKey="yes"
+				description="String.GUID of required module."/>
+		<columnDefinition name="RequiredLanguage" type="localizedNumber" length="2" primaryKey="yes"
+				description="LanguageID of the required module."/>
+		<columnDefinition name="RequiredVersion" type="string" length="32" nullable="yes"
+				category="version" description="Version of the required version."/>
+	</tableDefinition>
+	<tableDefinition name="ModuleExclusion">
+		<columnDefinition name="ModuleID" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="ModuleSignature" keyColumn="1" category="identifier" description="String.GUID of module with exclusion requirement."/>
+		<columnDefinition name="ModuleLanguage" type="localizedNumber" length="2" primaryKey="yes"
+				keyTable="ModuleSignature" keyColumn="2" description="LanguageID of module with exclusion requirement."/>
+		<columnDefinition name="ExcludedID" type="string" length="72" primaryKey="yes"
+				description="String.GUID of excluded module."/>
+		<columnDefinition name="ExcludedLanguage" type="localizedNumber" length="2" primaryKey="yes"
+				description="Language of excluded module."/>
+		<columnDefinition name="ExcludedMinVersion" type="string" length="32" nullable="yes"
+				category="version" description="Minimum version of excluded module."/>
+		<columnDefinition name="ExcludedMaxVersion" type="string" length="32" nullable="yes"
+				category="version" description="Maximum version of excluded module."/>
+	</tableDefinition>
+	<tableDefinition name="ModuleIgnoreTable">
+		<columnDefinition name="Table" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Table name to ignore during merge operation."/>
+	</tableDefinition>
+	<tableDefinition name="ModuleInstallExecuteSequence">
+		<columnDefinition name="Action" type="string" length="64" primaryKey="yes" modularize="column"
+				category="identifier" description="Action to insert"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Standard Sequence number"/>
+		<columnDefinition name="BaseAction" type="string" length="64" nullable="yes" modularize="column"
+				keyTable="ModuleInstallExecuteSequence" keyColumn="1" category="identifier" description="Base action to determine insert location."/>
+		<columnDefinition name="After" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="Before (0) or After (1)"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" modularize="condition" localizable="yes"
+				category="condition"/>
+	</tableDefinition>
+	<tableDefinition name="ModuleInstallUISequence">
+		<columnDefinition name="Action" type="string" length="64" primaryKey="yes" modularize="column"
+				category="identifier" description="Action to insert"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				minValue="-4" maxValue="32767" description="Standard Sequence number"/>
+		<columnDefinition name="BaseAction" type="string" length="64" nullable="yes" modularize="column"
+				keyTable="ModuleInstallUISequence" keyColumn="1" category="identifier" description="Base action to determine insert location."/>
+		<columnDefinition name="After" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="1" description="Before (0) or After (1)"/>
+		<columnDefinition name="Condition" type="string" length="255" nullable="yes" modularize="condition" localizable="yes"
+				category="condition"/>
+	</tableDefinition>
+	<tableDefinition name="ModuleSubstitution">
+		<columnDefinition name="Table" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Table containing the data to be modified."/>
+		<columnDefinition name="Row" type="string" length="0" primaryKey="yes" modularize="semicolonDelimited"
+				category="text" description="Row containing the data to be modified."/>
+		<columnDefinition name="Column" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Column containing the data to be modified."/>
+		<columnDefinition name="Value" type="localized" length="0" nullable="yes"
+				category="text" description="Template for modification data."/>
+	</tableDefinition>
+	<tableDefinition name="Certificate">
+		<columnDefinition name="Certificate" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyColumn="1" category="identifier" description="Identifier for the certificate in the package."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				category="identifier" description="Foreign key into the Component table used to determine install state"/>
+		<columnDefinition name="Name" type="string" length="255"
+				category="formatted" description="Name to be used for the Certificate."/>
+		<columnDefinition name="StoreLocation" type="number" length="2"
+				minValue="1" maxValue="2" description="Location of the target certificate store (CurrentUser == 1, LocalMachine == 2)"/>
+		<columnDefinition name="StoreName" type="string" length="64"
+				category="formatted" description="Name of the target certificate store"/>
+		<columnDefinition name="Attributes" type="number" length="4"
+				category="identifier" description="Attributes of the certificate"/>
+		<columnDefinition name="CertificateData" type="string" length="0" nullable="yes" modularize="property"
+				category="formatted" description="Property or key to Binary or path"/>
+		<columnDefinition name="PFXPassword" type="string" length="0" nullable="yes" modularize="property"
+				category="formatted" description="Hidden property to a pfx password"/>
+	</tableDefinition>
+	<tableDefinition name="CertificateHash">
+		<columnDefinition name="Certificate_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyColumn="1" category="identifier" description="Foreign key to certificate in Certificate table."/>
+		<columnDefinition name="Hash" type="string" length="0" nullable="yes"
+			category="text" description="Base64 encoded SHA1 hash of certificate populated at run-time."/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebSiteCertificates">
+		<columnDefinition name="Web_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="IIsWebSite" keyColumn="1" category="identifier" description="The index into the IIsWebSite table."/>
+		<columnDefinition name="Certificate_" type="string" length="72" primaryKey="yes" modularize="column"
+				keyTable="Certificate" keyColumn="1" category="text" description="The index into the Certificate table."/>
+	</tableDefinition>
+	<tableDefinition name="IIsAppPool">
+		<columnDefinition name="AppPool" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token for apppool"/>
+		<columnDefinition name="Name" type="string" length="72"
+				category="formatted" description="Name to be used for the IIs AppPool."/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column" nullable="yes"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the app pool"/>
+		<columnDefinition name="Attributes" type="number" length="2"
+				description="Attributes of the AppPool"/>
+		<columnDefinition name="User_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="User" keyColumn="1" category="identifier" description="User account to run the app pool as"/>
+		<columnDefinition name="RecycleMinutes" type="number" length="2" nullable="yes"
+				description="Number of minutes between recycling app pool"/>
+		<columnDefinition name="RecycleRequests" type="number" length="2" nullable="yes"
+				description="Number of requests between recycling app pool"/>
+		<columnDefinition name="RecycleTimes" type="string" length="72" nullable="yes"
+				description="Times to recycle app pool (comma delimited - i.e. 1:45,13:30)"/>
+		<columnDefinition name="IdleTimeout" type="number" length="2" nullable="yes"
+				description="Amount of idle time before shutting down"/>
+		<columnDefinition name="QueueLimit" type="number" length="2" nullable="yes"
+				description="Reject requests after queue gets how large"/>
+		<columnDefinition name="CPUMon" type="string" length="72" nullable="yes"
+				description="CPUMon is a comma delimeted list of the following format: &lt;percent CPU usage&gt;,&lt;refress minutes&gt;,&lt;Action&gt;. The values for Action are 1 (Shutdown) and 0 (No Action)."/>
+		<columnDefinition name="MaxProc" type="number" length="2" nullable="yes"
+				description="Maximum number of processes to use"/>
+		<columnDefinition name="VirtualMemory" type="number" length="4" nullable="yes"
+				description="Amount of virtual memory (in KB) that a worker process can use before the worker process recycles. The maximum value supported for this field is 4,294,967 KB."/>
+		<columnDefinition name="PrivateMemory" type="number" length="4" nullable="yes"
+				description="Amount of private memory (in KB) that a worker process can use before the worker process recycles. The maximum value supported for this field is 4,294,967 KB."/>
+	</tableDefinition>
+	<tableDefinition name="Perfmon">
+		<columnDefinition name="Component_" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="Component used to determine install state"/>
+		<columnDefinition name="File" type="string" length="72" primaryKey="yes" modularize="property"
+				category="formatted" description="Name of .INI file"/>
+		<columnDefinition name="Name" type="string" length="72" primaryKey="yes"
+				category="text" description="Service name in registry"/>
+	</tableDefinition>
+	<tableDefinition name="FileShare">
+		<columnDefinition name="FileShare" type="string" length="255" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized identifier"/>
+		<columnDefinition name="ShareName" type="string" length="255"
+				category="formatted" description="The actual share name used"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key into the Component table used to determine install state"/>
+		<columnDefinition name="Description" type="string" length="255" nullable="yes"
+				category="text" description="Description string displayed for the file share"/>
+		<columnDefinition name="Directory_" type="string" length="72" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Foreign key referencing directory that the share is created on"/>
+		<columnDefinition name="User_" type="string" length="72" modularize="column" nullable="yes"
+				keyTable="User" keyColumn="1" category="identifier" description="Foreign key, User to give access permissions to"/>
+		<columnDefinition name="Permissions" type="number" length="4" nullable="yes"
+				description="Permissions int, as on EXPLICIT_ACCESS.grfAccessPermissions in MSDN"/>
+	</tableDefinition>
+	<tableDefinition name="FileSharePermissions">
+		<columnDefinition name="FileShare_" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="FileShare that these premissions are to be applied to."/>
+		<columnDefinition name="User_" type="string" length="72" primaryKey="yes" modularize="column"
+				category="identifier" description="User that these premissions are to apply to."/>
+		<columnDefinition name="Permissions" type="number" length="4"
+				description="Permissions int, as on EXPLICIT_ACCESS.grfAccessPermissions in MSDN"/>
+	</tableDefinition>
+	<tableDefinition name="IIsMimeMap">
+		<columnDefinition name="MimeMap" type="string" length="72" primaryKey="yes" modularize="column"
+			category="identifier" description="Primary key, non-localized token for Mime Map definitions"/>
+		<columnDefinition name="ParentType" type="number" length="2"
+			set="1" description="Type of parent: 1=vdir"/>
+		<columnDefinition name="ParentValue" type="string" length="72" modularize="column"
+			category="identifier" description="Name of the parent value."/>
+		<columnDefinition name="MimeType" type="string" length="72"
+			category="text" description="Mime-type covered by the MimeMap."/>
+		<columnDefinition name="Extension" type="string" length="72"
+			category="text" description="Extension covered by the MimeMap."/>
+	</tableDefinition>
+	<tableDefinition name="IIsProperty">
+		<columnDefinition name="Property" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Unique name of the IIsProperty"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+			  keyTable="Component" keyColumn="1" category="identifier" description="Component that the property is linked to" />
+		<columnDefinition name="Attributes" type="number" length="2"
+				description="Attributes of the IIsProperty (unused)"/>
+		<columnDefinition name="Value" type="string" length="72" nullable="yes"
+				description="Value of the IIsProperty"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebDirProperties">
+		<columnDefinition name="DirProperties" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token for Web Properties"/>
+		<columnDefinition name="Access" type="number" length="2" nullable="yes"
+				description="Access rights to the web server"/>
+		<columnDefinition name="Authorization" type="number" length="2" nullable="yes"
+				description="Authorization policy to web server (anonymous access, NTLM, etc)"/>
+		<columnDefinition name="AnonymousUser_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="User" keyColumn="1" category="identifier" description="Foreign key, User used to log into database"/>
+		<columnDefinition name="IIsControlledPassword" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether IIs is allowed to set the AnonymousUser_ password"/>
+		<columnDefinition name="LogVisits" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether IIs tracks all access to the directory"/>
+		<columnDefinition name="Index" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether IIs searches the directory"/>
+		<columnDefinition name="DefaultDoc" type="string" length="255" nullable="yes"
+				category="text" description="Comma delimited list of file names to act as a default document"/>
+		<columnDefinition name="AspDetailedError" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether detailed ASP errors are sent to browser"/>
+		<columnDefinition name="HttpExpires" type="string" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Value to set the HttpExpires attribute to for a Web Dir in the metabase"/>
+		<columnDefinition name="CacheControlMaxAge" type="number" length="4" nullable="yes"
+				description="Integer value specifying the cache control maximum age value."/>
+		<columnDefinition name="CacheControlCustom" type="string" length="255" nullable="yes" escapeIdtCharacters="yes"
+				category="text" description="Custom HTTP 1.1 cache control directives."/>
+		<columnDefinition name="NoCustomError" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether IIs will return custom errors for this directory."/>
+		<columnDefinition name="AccessSSLFlags" type="number" length="2" nullable="yes"
+				description="Specifies AccessSSLFlags IIS metabase property."/>
+		<columnDefinition name="AuthenticationProviders" type="string" length="255" nullable="yes"
+				category="text" description="Comma delimited list, in order of precedence, of Windows authentication providers that IIS will attempt to use: NTLM, Kerberos, Negotiate, and others."/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebAddress">
+		<columnDefinition name="Address" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Web_" type="string" length="72" modularize="column"
+				keyTable="IIsWebSite" keyColumn="1" category="identifier" description="Foreign key referencing Web that uses the address."/>
+		<columnDefinition name="IP" type="string" length="255" nullable="yes"
+				category="text" description="String representing IP address (#.#.#.#) or NT machine name (fooserver)"/>
+		<columnDefinition name="Port" type="string" length="72" modularize="property"
+				category="formatted" description="Port web site listens on"/>
+		<columnDefinition name="Header" type="string" length="255" nullable="yes"
+				category="text" description="Special header information for the web site"/>
+		<columnDefinition name="Secure" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether SSL is used to communicate with web site"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebSite">
+		<columnDefinition name="Web" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Component_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the web site"/>
+		<columnDefinition name="Description" type="string" length="255" nullable="yes"
+				category="formatted" description="Description displayed in IIS MMC applet"/>
+		<columnDefinition name="ConnectionTimeout" type="number" length="2" nullable="yes"
+				description="Time connection is maintained without activity (in seconds)"/>
+		<columnDefinition name="Directory_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Foreign key referencing directory that the web site points at"/>
+		<columnDefinition name="State" type="number" length="2" nullable="yes"
+				set="0;1;2" description="Sets intial state of web site"/>
+		<columnDefinition name="Attributes" type="number" length="2" nullable="yes"
+				set="2" description="Control the install behavior of web site"/>
+		<columnDefinition name="KeyAddress_" type="string" length="72" modularize="column"
+				keyTable="IIsWebAddress" keyColumn="1" category="identifier" description="Foreign key referencing primary address for the web site"/>
+		<columnDefinition name="DirProperties_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebDirProperties" keyColumn="1" category="identifier" description="Foreign key referencing possible security information for the web site"/>
+		<columnDefinition name="Application_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebApplication" keyColumn="1" category="identifier" description="Foreign key referencing possible ASP application for the web site."/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				description="Allows ordering of web site install"/>
+		<columnDefinition name="Log_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebLog" keyColumn="1" description="Foreign key reference to IIsWebLog data"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebApplication">
+		<columnDefinition name="Application" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token for ASP Application"/>
+		<columnDefinition name="Name" type="localized" length="255" nullable="yes"
+				category="formatted" description="Name of application in IIS MMC applet"/>
+		<columnDefinition name="Isolation" type="number" length="2"
+				set="0;1;2" description="Isolation level for ASP Application: 0 == Low, 2 == Medium, 1 == High"/>
+		<columnDefinition name="AllowSessions" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether application may maintain session state"/>
+		<columnDefinition name="SessionTimeout" type="number" length="2" nullable="yes"
+				description="Time session state is maintained without user interaction"/>
+		<columnDefinition name="Buffer" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether application buffers its output"/>
+		<columnDefinition name="ParentPaths" type="number" length="2" nullable="yes"
+				set="0;1" description="What is this for anyway?"/>
+		<columnDefinition name="DefaultScript" type="string" length="26" nullable="yes"
+				category="text" set="VBScript;JScript" description="Default scripting language for ASP applications"/>
+		<columnDefinition name="ScriptTimeout" type="number" length="2" nullable="yes"
+				description="Time ASP application page is permitted to process"/>
+		<columnDefinition name="ServerDebugging" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether to allow ASP server-side script debugging"/>
+		<columnDefinition name="ClientDebugging" type="number" length="2" nullable="yes"
+				set="0;1" description="Specifies whether to allow ASP client-side script debugging"/>
+		<columnDefinition name="AppPool_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsAppPool" keyColumn="1" category="identifier" description="App Pool this application should run under"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebApplicationExtension">
+		<columnDefinition name="Application_" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				keyTable="IIsWebApplication" keyColumn="1" category="identifier" description="Foreign key referencing possible ASP application for the web site"/>
+		<columnDefinition name="Extension" type="string" length="255" primaryKey="yes" nullable="yes" symbol="yes"
+				category="text" description="Primary key, Extension that should be registered for this ASP application"/>
+		<columnDefinition name="Verbs" type="string" length="255" nullable="yes"
+				category="text" description="Comma delimited list of HTTP verbs the extension should be registered with"/>
+		<columnDefinition name="Executable" type="string" length="255" modularize="property"
+				category="formatted" description="Path to extension (usually file property: [#file])"/>
+		<columnDefinition name="Attributes" type="number" length="2" nullable="yes"
+				set="1;4;5" description="Attributes for extension: 1 == Script, 4 == Check Path Info"/>
+	</tableDefinition>
+	<tableDefinition name="IIsFilter">
+		<columnDefinition name="Filter" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Name" type="string" length="72"
+				description="Name of the ISAPI Filter in IIS"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the filter"/>
+		<columnDefinition name="Path" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="Path to filter (usually file property: [#file])"/>
+		<columnDefinition name="Web_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebSite" keyColumn="1" category="identifier" description="Foreign key referencing web site that loads the filter (NULL == global filter"/>
+		<columnDefinition name="Description" type="string" length="255" nullable="yes"
+				category="formatted" description="Description displayed in IIS MMC applet"/>
+		<columnDefinition name="Flags" type="number" length="2"
+				description="What do all these numbers mean?"/>
+		<columnDefinition name="LoadOrder" type="number" length="2" nullable="yes"
+				description="-1 == last in order, 0 == first in order, # == place in order"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebDir">
+		<columnDefinition name="WebDir" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the virtual directory"/>
+		<columnDefinition name="Web_" type="string" length="72" modularize="column"
+				keyTable="IIsWebSite" keyColumn="1" category="identifier" description="Foreign key referencing web site that controls the virtual directory"/>
+		<columnDefinition name="Path" type="string" length="255" modularize="property"
+				category="formatted" description="Name of web directory displayed in IIS MMC applet"/>
+		<columnDefinition name="DirProperties_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebDirProperties" keyColumn="1" category="identifier" description="Foreign key referencing possible security information for the virtual directory"/>
+		<columnDefinition name="Application_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebApplication" keyColumn="1" category="identifier" description="Foreign key referencing possible ASP application for the virtual directory"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebError">
+		<columnDefinition name="ErrorCode" type="number" length="2" primaryKey="yes"
+				minValue="400" maxValue="599" description="HTTP status code indicating error."/>
+		<columnDefinition name="SubCode" type="number" length="4" primaryKey="yes"
+				description="HTTP sub-status code indicating error."/>
+		<columnDefinition name="ParentType" type="number" length="2" primaryKey="yes"
+				set="1" description="Type of parent: 1=vdir, 2=web"/>
+		<columnDefinition name="ParentValue" type="string" length="72" modularize="column" primaryKey="yes"
+				category="identifier" description="Name of the parent value."/>
+		<columnDefinition name="File" type="string" length="255" nullable="yes"
+				category="formatted" description="Path to file for this custom error (usually file property: [#file]).  Must be null if URL is not null."/>
+		<columnDefinition name="URL" type="string" length="255" nullable="yes"
+				category="formatted" description="URL for this custom error.  Must be null if File is not null."/>
+	</tableDefinition>
+	<tableDefinition name="IIsHttpHeader">
+		<columnDefinition name="HttpHeader" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="ParentType" type="number" length="2" primaryKey="yes" symbol="yes"
+				set="1" description="Type of parent: 1=vdir, 2=web"/>
+		<columnDefinition name="ParentValue" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Name of the parent value."/>
+		<columnDefinition name="Name" type="string" length="255"
+				category="text" description="Name of the HTTP Header"/>
+		<columnDefinition name="Value" type="string" length="255" nullable="yes"
+				category="formatted" description="URL for this custom error.  Must be null if File is not null."/>
+		<columnDefinition name="Attributes" type="number" length="2"
+				minValue="0" maxValue="0" description="Attributes for HTTP Header: none"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				description="Order to add the HTTP Headers."/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebServiceExtension">
+		<columnDefinition name="WebServiceExtension" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the WebServiceExtension handler"/>
+		<columnDefinition name="File" type="string" length="255" modularize="property"
+				category="formatted" description="Path to handler (usually file property: [#file])"/>
+		<columnDefinition name="Description" type="localized" length="255" nullable="yes" modularize="property" escapeIdtCharacters="yes"
+				category="formatted" description="Description displayed in WebServiceExtension Wizard"/>
+		<columnDefinition name="Group" type="string" length="255" nullable="yes" modularize="property"
+				category="formatted" description="String used to identify groups of extensions."/>
+		<columnDefinition name="Attributes" type="number" length="1"
+				minValue="0" maxValue="1" description="Attributes for WebServiceExtension: 1 = Allow, 2 = UIDeletable"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebVirtualDir">
+		<columnDefinition name="VirtualDir" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key referencing Component that controls the virtual directory"/>
+		<columnDefinition name="Web_" type="string" length="72" modularize="column"
+				keyTable="IIsWebSite" keyColumn="1" category="identifier" description="Foreign key referencing web site that controls the virtual directory"/>
+		<columnDefinition name="Alias" type="string" length="255" modularize="property"
+				category="formatted" description="Name of virtual directory displayed in IIS MMC applet"/>
+		<columnDefinition name="Directory_" type="string" length="72" modularize="column"
+				keyTable="Directory" keyColumn="1" category="identifier" description="Foreign key referencing directory that the virtual directory points at"/>
+		<columnDefinition name="DirProperties_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebDirProperties" keyColumn="1" category="identifier" description="Foreign key referencing possible security information for the virtual directory"/>
+		<columnDefinition name="Application_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="IIsWebApplication" keyColumn="1" category="identifier" description="Foreign key referencing possible ASP application for the virtual directory"/>
+	</tableDefinition>
+	<tableDefinition name="IIsWebLog">
+		<columnDefinition name="Log" type="string" length="72" primaryKey="yes" symbol="yes" modularize="column"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Format" type="string" length="255" modularize="column"
+				category="text" description="Type of log format"/>
+	</tableDefinition>
+	<tableDefinition name="SqlString">
+		<columnDefinition name="String" type="string" length="72" modularize="column" primaryKey="yes"
+				category="identifier" description="Id for the SqlString" />
+		<columnDefinition name="SqlDb_" type="string" length="72" modularize="column"
+				keyTable="SqlDatabase" keyColumn="1" category="identifier" description="Foreign key, SQL Server key"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key, Component used to determine install state"/>
+		<columnDefinition name="SQL" type="string" length="0"
+				category="formatted" description="SQL query to execute" escapeIdtCharacters="yes"/>
+		<columnDefinition name="User_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="User" keyColumn="1" category="identifier" description="Foreign key, User used to log into database"/>
+		<columnDefinition name="Attributes" type="number" length="2"
+				set="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31" description="1 == execute on install, 2 == execute on uninstall, 4 == continue on error, 8 == rollback on install, 16 == rollback on uninstall"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				description="Order to execute SQL Queries in"/>
+	</tableDefinition>
+	<tableDefinition name="SqlScript">
+		<columnDefinition name="Script" type="string" length="72" primaryKey="yes"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="SqlDb_" type="string" length="72" modularize="column"
+				keyTable="SqlDatabase" keyColumn="1" category="identifier" description="Foreign key, SQL Server key"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key, Component used to determine install state"/>
+		<columnDefinition name="ScriptBinary_" type="string" length="72" modularize="column"
+				keyTable="Binary" keyColumn="1" category="identifier" description="Foreign key, Binary stream that contains SQL Script to execute"/>
+		<columnDefinition name="User_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="User" keyColumn="1" category="identifier" description="Foreign key, User used to log into database"/>
+		<columnDefinition name="Attributes" type="number" length="2"
+				set="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31" description="1 == execute on install, 2 == execute on uninstall, 4 == continue on error, 8 == rollback on install, 16 == rollback on uninstall"/>
+		<columnDefinition name="Sequence" type="number" length="2" nullable="yes"
+				description="Order to execute SQL Queries in"/>
+	</tableDefinition>
+	<tableDefinition name="SqlDatabase">
+		<columnDefinition name="SqlDb" type="string" length="72" primaryKey="yes" modularize="column" symbol="yes"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Server" type="string" length="255" nullable="yes"
+				category="formatted" description="Primary key, name of server running SQL Server"/>
+		<columnDefinition name="Instance" type="string" length="255" nullable="yes"
+				category="formatted" description="Primary key, name of SQL Server instance"/>
+		<columnDefinition name="Database" type="string" length="255"
+				category="formatted" description="Primary key, name of database in a SQL Server"/>
+		<columnDefinition name="Component_" type="string" length="72" modularize="column" nullable="yes"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key, Component used to determine install state "/>
+		<columnDefinition name="User_" type="string" length="72" nullable="yes" modularize="column"
+				keyTable="User" keyColumn="1" category="identifier" description="Foreign key, User used to log into database"/>
+		<columnDefinition name="FileSpec_" type="string" length="72" nullable="yes"
+				modularize="column"/>
+		<columnDefinition name="FileSpec_Log" type="string" length="72" nullable="yes"
+				/>
+		<columnDefinition name="Attributes" type="number" length="2" nullable="yes"
+				minValue="0" maxValue="127" description="1 == create on install, 2 == drop on uninstall, 4 == continue on error, 8 == drop on install, 16 == create on uninstall, 32 == confirm update existing table, 64 == create on reinstall"/>
+	</tableDefinition>
+	<tableDefinition name="SqlFileSpec">
+		<columnDefinition name="FileSpec" type="string" length="72" primaryKey="yes" modularize="column" symbol="yes"
+				category="identifier" description="Primary key, non-localized token"/>
+		<columnDefinition name="Name" type="string" length="255" nullable="yes"
+				category="text" description="Logical name of filespec"/>
+		<columnDefinition name="Filename" type="string" length="255" modularize="property"
+				category="formatted" description="Filename to use (path must exist)"/>
+		<columnDefinition name="Size" type="string" length="72" nullable="yes" modularize="property"
+				category="formatted" description="Initial size for file"/>
+		<columnDefinition name="MaxSize" type="string" length="72" nullable="yes" modularize="property"
+				category="formatted" description="Maximum size for file"/>
+		<columnDefinition name="GrowthSize" type="string" length="72" nullable="yes" modularize="property"
+				category="formatted" description="Size file should grow when necessary"/>
+	</tableDefinition>
+	<tableDefinition name="CustomTables" unreal="yes">
+		<columnDefinition name="TableName" type="string" length="31" primaryKey="yes" symbol="yes" unreal="yes"
+				/>
+		<columnDefinition name="ColumnCount" type="number" length="2" unreal="yes"
+				/>
+		<columnDefinition name="ColumnNames" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="ColumnTypes" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="PrimaryKeys" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="MinValues" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="MaxValues" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="KeyTables" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="KeyColumns" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="Categories" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="Sets" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="Descriptions" type="string" length="0" unreal="yes"
+				/>
+		<columnDefinition name="Modularizations" type="string" length="0" unreal="yes"
+				/>
+	</tableDefinition>
+	<tableDefinition name="EnsureTables" unreal="yes">
+		<columnDefinition name="TableName" type="string" length="31" unreal="yes"
+				/>
+	</tableDefinition>
+	<tableDefinition name="RowData" unreal="yes">
+		<columnDefinition name="TableName" type="string" length="31" primaryKey="yes" unreal="yes"
+				/>
+		<columnDefinition name="FieldCount" type="number" length="2" unreal="yes"
+				/>
+		<columnDefinition name="FieldData" type="string" length="0" unreal="yes"
+				/>
+	</tableDefinition>
+	<tableDefinition name="ServiceConfig">
+		<columnDefinition name="ServiceName" type="string" length="72" nullable="no" primaryKey="yes"
+				category="formatted" description="Primary key, non-localized token"/>
+		<columnDefinition name="Component_" type="string" length="72" nullable="no" modularize="column"
+				keyTable="Component" keyColumn="1" category="identifier" description="Foreign key, Component used to determine install state "/>
+		<columnDefinition name="NewService" type="number" length="1" nullable="no"
+				minValue="0" maxValue="1" description="Whether the affected service is being installed or already exists."/>
+		<columnDefinition name="FirstFailureActionType" type="string" length="32" nullable="no"
+				category="text" description="First failure action type for configured service to take."/>
+		<columnDefinition name="SecondFailureActionType" type="string" length="32" nullable="no"
+				category="text" description="Second failure action type for configured service to take."/>
+		<columnDefinition name="ThirdFailureActionType" type="string" length="32" nullable="no"
+				category="text" description="Third failure action type for configured service to take."/>
+		<columnDefinition name="ResetPeriodInDays" type="number" length="4" nullable="yes"
+				category="integer" minValue="0" description="Period after which to reset the failure count for the service."/>
+		<columnDefinition name="RestartServiceDelayInSeconds" type="number" length="4" nullable="yes"
+				category="integer" minValue="0" description="Period after which to restart the service after a given failure."/>
+		<columnDefinition name="ProgramCommandLine" type="string" length="255" nullable="yes"
+				category="text" description="Command line for program to run if failure action is RUN_COMMAND."/>
+		<columnDefinition name="RebootMessage" type="string" length="255" nullable="yes"
+				category="text" description="Message to show to users when rebooting if failure action is REBOOT."/>
+	</tableDefinition>
+	<tableDefinition name="Properties">
+		<columnDefinition name="Name" type="string" length="72" primaryKey="yes" nullable="no"
+				category="text" description="Primary key, non-localized token"/>
+		<columnDefinition name="Value" type="string" length="0" nullable="no"
+				category="text" description="Value of the property"/>
+	</tableDefinition>
+	<tableDefinition name="ImageFamilies">
+		<columnDefinition name="Family" type="string" length="8" primaryKey="yes" nullable="no"
+				category="text" description="Primary key"/>
+		<columnDefinition name="MediaSrcPropName" type="string" length="72" nullable="yes"
+				category="text"/>
+		<columnDefinition name="MediaDiskId" type="number" length="0" nullable="yes"
+				category="integer"/>
+		<columnDefinition name="FileSequenceStart" type="number" length="4" nullable="yes"
+				minValue="1" maxValue="214743647" category="integer"/>
+		<columnDefinition name="DiskPrompt" type="string" length="128" nullable="yes"
+				category="text"/>
+		<columnDefinition name="VolumeLabel" type="string" length="32" nullable="yes"
+				category="text"/>
+	</tableDefinition>
+	<tableDefinition name="UpgradedImages">
+		<columnDefinition name="Upgraded" type="string" length="13" primaryKey="yes" nullable="no"
+				category="text" description="Primary key"/>
+		<columnDefinition name="MsiPath" type="string" length="255" nullable="no"
+				category="text"/>
+		<columnDefinition name="PatchMsiPath" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="SymbolPaths" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="Family" type="string" length="8" nullable="no"
+				keyTable="ImageFamilies" keyColumn="1" category="text" description="Foreign key, Family to which this image belongs"/>
+	</tableDefinition>
+	<tableDefinition name="UpgradedFilesToIgnore">
+		<columnDefinition name="Upgraded" type="string" length="13" primaryKey="yes" nullable="no"
+				keyTable="UpgradedImages" keyColumn="1" category="text" description="Foreign key, Upgraded image"/>
+		<columnDefinition name="FTK" type="string" length="255" primaryKey="yes" nullable="no" modularize="column"
+				keyTable="File" keyColumn="1" category="text" description="Foreign key, File to ignore"/>
+	</tableDefinition>
+	<tableDefinition name="UpgradedFiles_OptionalData">
+		<columnDefinition name="Upgraded" type="string" length="13" primaryKey="yes" nullable="no"
+				keyTable="UpgradedImages" keyColumn="1" category="text" description="Foreign key, Upgraded image"/>
+		<columnDefinition name="FTK" type="string" length="255" primaryKey="yes" nullable="no" modularize="column"
+				keyTable="File" keyColumn="1" category="text" description="Foreign key, File to ignore"/>
+		<columnDefinition name="SymbolPaths" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="AllowIgnoreOnPatchError" type="number" length="0" nullable="yes"
+				category="integer"/>
+		<columnDefinition name="IncludeWholeFile" type="number" length="0" nullable="yes"
+				category="integer"/>
+	</tableDefinition>
+	<tableDefinition name="TargetImages">
+		<columnDefinition name="Target" type="string" length="13" primaryKey="yes" nullable="no"
+				category="text"/>
+		<columnDefinition name="MsiPath" type="string" length="255" nullable="no"
+				category="text"/>
+		<columnDefinition name="SymbolPaths" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="Upgraded" type="string" length="13" nullable="no"
+				keyTable="UpgradedImages" keyColumn="1" category="text" description="Foreign key, Upgraded image"/>
+		<columnDefinition name="Order" type="number" length="0" nullable="no"
+				category="integer"/>
+		<columnDefinition name="ProductValidateFlags" type="string" length="16" nullable="yes"
+				category="text"/>
+		<columnDefinition name="IgnoreMissingSrcFiles" type="number" length="0" nullable="no"
+				category="integer"/>
+	</tableDefinition>
+	<tableDefinition name="TargetFiles_OptionalData">
+		<columnDefinition name="Target" type="string" length="13" primaryKey="yes" nullable="no"
+				keyTable="TargetImages" keyColumn="1" category="text" description="Foreign key, Target image"/>
+		<columnDefinition name="FTK" type="string" length="255" primaryKey="yes" nullable="no" modularize="column"
+				keyTable="File" keyColumn="1" category="text" description="Foreign key, File to ignore"/>
+		<columnDefinition name="SymbolPaths" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="IgnoreOffsets" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="IgnoreLengths" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="RetainOffsets" type="string" length="255" nullable="yes"
+				category="text"/>
+	</tableDefinition>
+	<tableDefinition name="FamilyFileRanges">
+		<columnDefinition name="Family" type="string" length="8" primaryKey="yes" nullable="no"
+				keyTable="ImageFamilies" keyColumn="1" category="text" description="Foreign key, Family"/>
+		<columnDefinition name="FTK" type="string" length="255" primaryKey="yes" nullable="no" modularize="column"
+				keyTable="File" keyColumn="1" category="text" description="Foreign key, File to ignore"/>
+		<columnDefinition name="RetainOffsets" type="string" length="128" nullable="no"
+				category="text"/>
+		<columnDefinition name="RetainLengths" type="string" length="128" nullable="no"
+				category="text"/>
+	</tableDefinition>
+	<tableDefinition name="ExternalFiles">
+		<columnDefinition name="Family" type="string" length="8" primaryKey="yes" nullable="no"
+				keyTable="ImageFamilies" keyColumn="1" category="text" description="Foreign key, Family"/>
+		<columnDefinition name="FTK" type="string" length="255" primaryKey="yes" nullable="no" modularize="column"
+				keyTable="File" keyColumn="1" category="text" description="Foreign key, File to ignore"/>
+		<columnDefinition name="FilePath" type="string" length="255" primaryKey="yes" nullable="no"
+				category="text"/>
+		<columnDefinition name="SymbolPaths" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="IgnoreOffsets" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="IgnoreLengths" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="RetainOffsets" type="string" length="255" nullable="yes"
+				category="text"/>
+		<columnDefinition name="Order" type="number" length="0" nullable="no"
+				category="integer"/>
+	</tableDefinition>
+	<tableDefinition name="MsiDriverPackages">
+		<columnDefinition name="Component" type="string" length="255" primaryKey="yes" modularize="column"
+				description="Name of the component that represents the driver package"/>
+		<columnDefinition name="Flags" type="number" length="4"
+				minValue="0" maxValue="31" description="Flags for installing and uninstalling driver packages"/>
+		<columnDefinition name="Sequence" type="number" length="4" nullable="yes"
+				minValue="0" description="Order in which the driver packages are processed"/>
+	</tableDefinition>
+	<tableDefinition name="UI" unreal="yes">
+		<columnDefinition name="UI" type="string" length="0" primaryKey="yes" symbol="yes"/>
+	</tableDefinition>
+</tableDefinitions>

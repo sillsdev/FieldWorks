@@ -1,0 +1,507 @@
+<VisualStudioProject>
+	<CSHARP
+		ProjectType = "Local"
+		ProductVersion = "7.10.3077"
+		SchemaVersion = "2.0"
+		ProjectGuid = "{A0A82600-B8B1-4E6C-8B8C-248587175210}"
+	>
+		<Build>
+			<Settings
+				ApplicationIcon = ""
+				AssemblyKeyContainerName = ""
+				AssemblyName = "sconce"
+				AssemblyOriginatorKeyFile = ""
+				DefaultClientScript = "JScript"
+				DefaultHTMLPageLayout = "Grid"
+				DefaultTargetSchema = "IE50"
+				DelaySign = "false"
+				OutputType = "Library"
+				PreBuildEvent = ""
+				PostBuildEvent = ""
+				RootNamespace = "Microsoft.Tools.WindowsInstallerXml.VisualStudioInfrastructure"
+				RunPostBuildEvent = "OnBuildSuccess"
+				StartupObject = ""
+			>
+				<Config
+					Name = "Debug"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "true"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "DEBUG;TRACE;VS_2003"
+					DocumentationFile = "bin\Debug\sconce.xml"
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					NoStdLib = "false"
+					NoWarn = "1591"
+					Optimize = "false"
+					OutputPath = "bin\Debug\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "true"
+					WarningLevel = "4"
+				/>
+				<Config
+					Name = "Release"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "true"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "TRACE;VS_2003"
+					DocumentationFile = "bin\Release\sconce.dll"
+					DebugSymbols = "false"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					NoStdLib = "false"
+					NoWarn = "1591"
+					Optimize = "true"
+					OutputPath = "bin\Release\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "true"
+					WarningLevel = "4"
+				/>
+			</Settings>
+			<References>
+				<Reference
+					Name = "System"
+					AssemblyName = "System"
+					HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\System.dll"
+				/>
+				<Reference
+					Name = "system.drawing"
+					AssemblyName = "System.Drawing"
+					HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\system.drawing.dll"
+				/>
+				<Reference
+					Name = "system.windows.forms"
+					AssemblyName = "System.Windows.Forms"
+					HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\system.windows.forms.dll"
+				/>
+				<Reference
+					Name = "system.xml"
+					AssemblyName = "System.Xml"
+					HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\system.xml.dll"
+				/>
+				<Reference
+					Name = "Microsoft.VisualStudio.Shell.Interop"
+					AssemblyName = "Microsoft.VisualStudio.Shell.Interop"
+					HintPath = "..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.Shell.Interop.dll"
+				/>
+				<Reference
+					Name = "Microsoft.VisualStudio.OLE.Interop"
+					AssemblyName = "Microsoft.VisualStudio.OLE.Interop"
+					HintPath = "..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.OLE.Interop.dll"
+				/>
+				<Reference
+					Name = "Microsoft.VisualStudio.Designer.Interfaces"
+					AssemblyName = "Microsoft.VisualStudio.Designer.Interfaces"
+					HintPath = "..\..\..\dtools\lib\x86\VSIP\Microsoft.VisualStudio.Designer.Interfaces.dll"
+				/>
+			</References>
+		</Build>
+		<Files>
+			<Include>
+				<File
+					RelPath = "AddFileDialogType.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "AssemblyInfo.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "BuildableProjectConfiguration.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "BuildAction.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "BuildOperation.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "BuildSettings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "CloneableCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "CommandStatus.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ConfigurationProvider.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "DirtyableObject.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "DisplayNameAttribute.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "DocumentInfo.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ErrorUtility.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "EventListenerCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "FileChangeNotificationSuspender.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "FileNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "FileNodeProperties.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "FolderFirstComparer.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "FolderNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "FolderNodeProperties.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "GeneralPropertyPage.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Hierarchy.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "HierarchyImages.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "IDirtyable.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "LaunchPad.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "LocalizedCategoryAttribute.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "LocalizedDescriptionAttribute.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "LocalizedDisplayNameAttribute.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ManagedResourceManager.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "NativeMethods.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "NativeResourceManager.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Node.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "NodeCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "NodeProperties.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Package.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "PackageContext.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "PackageSettings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "PackageUtility.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Project.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectConfiguration.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectConfigurationCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectDocumentsTracker.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectFactory.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectFileXmlWriter.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectNodeProperties.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ProjectSerializer.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "PropertyGridPropertyDescriptor.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "PropertyGridTypeDescriptor.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "PropertyPage.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "PropertyPageSettings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ReferenceFileNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ReferenceFileNodeCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ReferenceFileNodeProperties.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ReferenceFolderNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ResourceId.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ResourceId.cs.pp"
+					BuildAction = "None"
+				/>
+				<File
+					RelPath = "RunningDocumentTable.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "SconceStrings.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "ServiceProvider.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "SolutionExplorerIcons.bmp"
+					BuildAction = "EmbeddedResource"
+				/>
+				<File
+					RelPath = "SortedCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "String.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Strings.resx"
+					BuildAction = "EmbeddedResource"
+				/>
+				<File
+					RelPath = "TextNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Tracer.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VirtualFolderNode.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsBuildStatusEventListenerCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsCfgProviderEventListenerCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsCommand.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsCommand2K.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsGuids.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsHelperMethods.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsHierarchyEventListenerCollection.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsLogicalView.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsMenus.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsMessageBoxResult.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "VsOpenFileDialogFlags.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "wixver.cs"
+					Link = "..\..\inc\wixver.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "XmlHelperMethods.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+			</Include>
+		</Files>
+	</CSHARP>
+</VisualStudioProject>

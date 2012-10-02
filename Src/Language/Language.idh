@@ -1,0 +1,2801 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 1999, 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: Language.idh
+Responsibility: John Thomson
+Last reviewed: Mid June, 2000. Several changes suggested, not yet all made or reviewed.
+
+Description:
+	The Language classes provide specifications and implementations of how text in various
+	(language) writing systems behaves.
+
+	Note: Language.idh is included in FwKernelTlb.idl. This is how it becomes available to C#
+	programs. Therefore, to make a new or modified interface available without remakefw,
+	you must cc mkfwk-nodep, than do a clean COMInterfaces-nodep, then build COMInterfaces-nopdep.
+
+	The root (document) class is the WritingSystem class. Logically there ought
+	possibly to be a LgLanguage class which owns a number of writing systems; but a Language
+	has no computationally interesting behavior until it is encoded in a writing system, and it
+	is useful to be able to install an writing system in isolation. We therefore decided not to
+	implement Language as a distinct class, but just to have the WritingSystem class
+	provide some basic documentation about its language.
+
+	The language writing system class has a number of "engines." Each of these implements an
+	interface for one area of functionality related to text manipulation.
+
+	Note that writing systems as described in this document are not intended to model the
+	linguistically interesting aspects of these concepts. They are specifically intended to
+	model those aspects needed so that the computer can correctly manipulate data in the
+	particular writing system.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+// Indentation is as if all this were embedded in a library declaration.
+
+	//:>****************************************************************************************
+	//:>		Forward declarations
+	//:>****************************************************************************************
+	interface IRenderEngine;
+	interface ILgCharacterPropertyEngine;
+	interface ILgStringConverter;
+	interface ILgTokenizer;
+	interface ILgSpellCheckFactory;
+	interface ILgSpellChecker;
+	interface ILgCollatingEngine;
+	interface ILgSearchEngine;
+	interface ICollation;
+	interface IWritingSystem;
+	interface ILgWritingSystemFactory;
+	interface ILgTsStringPlusWss;
+	interface ILgTsDataObject;
+	interface ILgTextServices;
+
+	//:>****************************************************************************************
+	//:>		Enumerations
+	//:>****************************************************************************************
+
+	// Main types of characters, as defined by Unicode and used by the character
+	// property engine.
+	typedef [v1_enum] enum LgGeneralCharCategory
+	{
+		kccLu, // = Letter, Uppercase
+		kccLl, // = Letter, Lowercase
+		kccLt, // = Letter, Titlecase (e.g., Dz digraph as single code point)
+		kccLm, // = Letter, Modifier
+		kccLo, // = Letter, Other
+
+		kccMn, // = Mark, Non-Spacing
+		kccMc, // = Mark, Spacing Combining
+		kccMe, // = Mark, Enclosing
+
+		kccNd, // = Number, Decimal Digit
+		kccNl, // = Number, Letter
+		kccNo, // = Number, Other
+
+		kccZs, // = Separator, Space
+		kccZl, // = Separator, Line
+		kccZp, // = Separator, Paragraph
+
+		kccCc, // = Other, Control
+		kccCf, // = Other, Format
+		kccCs, // = Other, Surrogate
+		kccCo, // = Other, Private Use
+		kccCn, // = Other, Not Assigned
+
+		kccPc, // = Punctuation, Connector
+		kccPd, // = Punctuation, Dash
+		kccPs, // = Punctuation, Open
+		kccPe, // = Punctuation, Close
+		kccPi, // = Punctuation, Initial quote (may behave like Ps or Pe depending
+			   //				  on usage)
+		kccPf, // = Punctuation, Final quote (may behave like Ps or Pe depending
+			   //				  on usage)
+		kccPo, // = Punctuation, Other
+
+		kccSm, // = Symbol, Math
+		kccSc, // = Symbol, Currency
+		kccSk, // = Symbol, Modifier
+		kccSo, // = Symbol, Other
+	} LgGeneralCharCategory;  // Hungarian: cc
+
+	// Unicode Bidirectional Categories, used by character property engine
+	typedef [v1_enum] enum LgBidiCategory
+	{
+		// Strong
+		kbicL,   // Left-Right; most alphabetic chars, etc.
+		kbicLRE, // Left-Right Embedding
+		kbicLRO, // Left-Right Override
+		kbicR,   // Right-Left; Hebrew and its punctuation
+		kbicAL,  // Right-Left Arabic
+		kbicRLE, // Right-Left Embedding
+		kbicRLO, // Right-Left Override
+		kbicPDF, // Pop Directional Format
+
+		// Weak
+		kbicEN,  //	European Number
+		kbicES,  //	European Number Separator
+		kbicET,  //	European Number Terminator
+		kbicAN,  //	Arabic Number
+		kbicCS,  //	Common Number Separator
+
+		// Separators:
+		kbicNSM, // Non-Spacing Mark
+		kbicBN,  // Boundary Neutral
+		kbicB,   //	Paragraph Separator
+		kbicS,   //	Segment Separator
+
+		// Neutrals:
+		kbicWS,  //	Whitespace
+		kbicON,  //	Other Neutrals ; All other characters: punctuation, symbols
+	} LgBidiCategory;  // Hungarian: bic
+
+	// Line Breaking Character classes defined by Unicode.
+	typedef [v1_enum] enum LgLBP
+	{
+				 // '*' indicates normative property
+		klbpAI,  //  0   Ambiguous (Alphabetic or Ideographic)
+		klbpAL,  //  1   Ordinary Alphabetic
+		klbpB2,  //  2   Break Opportunity Before and After
+		klbpBA,  //  3   Break Opportunity After
+		klbpBB,  //  4   Break Opportunity Before
+		klbpBK,  //  5 * Mandatory Break
+		klbpCB,  //  6 * Contingent Break Opportunity
+		klbpCL,  //  7   Closing
+		klbpCM,  //  8 * Combining Marks
+		klbpCR,  //  9 * Carriage Return
+		klbpEX,  // 10   Exclamation
+		klbpGL,  // 11 * Non-breaking ("Glue")
+		klbpHY,  // 12   Hyphen
+		klbpID,  // 13   Ideographic
+		klbpIN,  // 14   Inseparable
+		klbpIS,  // 15   Infix Separator (Numeric)
+		klbpLF,  // 16 * Line Feed
+		klbpNS,  // 17   Non Starter
+		klbpNU,  // 18   Numeric
+		klbpOP,  // 19   Opening
+		klbpPO,  // 20   Postfix (Numeric)
+		klbpPR,  // 21   Prefix (Numeric)
+		klbpQU,  // 22   Ambiguous Quotation
+		klbpSA,  // 23   Complex Context
+		klbpSG,  // 24 * Surrogates
+		klbpSP,  // 25 * Space
+		klbpSY,  // 26   Symbols Allowing Breaks
+		klbpXX,  // 27   Unknown (used for unassigned characters)
+		klbpZW   // 28 * Zero Width Space
+	} LgLBP;  // Hungarian lbp
+
+	// Character decomposition tags
+	typedef [v1_enum] enum LgDecompMapTag
+	{
+		kdtNoTag,
+		kdtFont,
+		kdtNoBreak,
+		kdtInitial,
+		kdtMedial,
+		kdtFinal,
+		kdtIsolated,
+		kdtCircle,
+		kdtSuper,
+		kdtSub,
+		kdtVertical,
+		kdtWide,
+		kdtNarrow,
+		kdtSmall,
+		kdtSquare,
+		kdtFraction,
+		kdtCompat
+	} LgDecompMapTag;	// Hungarian dt
+
+	// XML tags
+	typedef [v1_enum] enum LgXMLTag
+	{
+		kxmlInvalid,
+		kxmlChardefs,
+		kxmlDef,
+		kxmlUdata,
+		kxmlLinebrk
+	} LgXMLTag;		// Hungarian xml
+
+	/*******************************************************************************************
+		Interface ICollation
+		Groups the information needed to actually define and apply a collation.
+
+		ENHANCE (JohnT/SteveMc/??): Two basic approaches to defining collations are supported:
+		the native Windows collation designators supported by SQL Server, and ICU a Unicode
+		collation service provided by open source code written by IBM.  Are other approaches
+		also needed?  Should these be split into subclasses?
+
+		@h3{When to implement}
+		Clients should not implement this interface. A standard implementation is in
+		Language.dll.
+
+		@h3{When to use}
+		Use this class when you need the collation information.
+
+		@h3{How to obtain an instance}
+		Normally, use the get_Collation method of an ${WritingSystem}.
+		You can also create one directly using CLSID_Collation.  In this case you will
+		usually install it immediately in some WritingSystem.
+
+		@h3{Hungarian: coll}
+	*******************************************************************************************/
+	DeclareInterface(Collation, Unknown, A07E405B-2D7C-4025-B66C-48894144BB88)
+	{
+		// Get the name in the given writing system.  Return S_FALSE if the given writing system
+		// does not have a name assigned.
+		[propget] HRESULT Name(
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+		// Set the name in the given writing system.
+		[propput] HRESULT Name(
+			[in] int ws,
+			[in] BSTR bstr);
+		// Get the number of writing systems that the name is stored in.
+		[propget] HRESULT NameWsCount(
+			[out, retval] int * pcws);
+		// Return the first cws writing systems that the name is stored in.
+		// NOTE: Used to be [propget], but that's not quite true with caller provided memory
+		// for  array, because a [propget] needs a [retval] which would require int**.
+		// Therefore I renamed the method to get_ and removed the [propget] (EberhardB).
+		HRESULT get_NameWss(
+			[in] int cws,
+			[out,size_is(cws)] int * prgws);
+
+		// Get the collation database id for use as an identifier.
+		[propget] HRESULT Hvo(
+			[out, retval] int * phvo);
+
+		// Get the Windows LCID (locale identifier).
+		[propget] HRESULT WinLCID(
+			[out, retval] int * pnCode);
+		// Set the Windows LCID (locale identifier).  This clears any IcuResourceName or
+		// IcuResourceText.
+		[propput] HRESULT WinLCID(
+			[in] int nCode);
+		// Get the Windows collation designator.
+		[propget] HRESULT WinCollation(
+			[out, retval] BSTR * pbstr);
+		// Set the Windows collation designator.  This clears any IcuResourceName or
+		// IcuResourceText.
+		[propput] HRESULT WinCollation(
+			[in] BSTR bstr);
+
+		// Get the ICU resource name.
+		[propget] HRESULT IcuResourceName(
+			[out, retval] BSTR * pbstr);
+		// Set the ICU resource name.  This clears any WinLCID or WinCollation value.
+		[propput] HRESULT IcuResourceName(
+			[in] BSTR bstr);
+		// Get the ICU resource text.
+		[propget] HRESULT IcuResourceText(
+			[out, retval] BSTR * pbstr);
+		// Set the ICU resource text.  This clears any WinLCID or WinCollation value.
+		[propput] HRESULT IcuResourceText(
+			[in] BSTR bstr);
+
+		// Check whether this collation needs to be written to persistent storage,
+		// either because it is newly created, or it has changed since being loaded.
+		[propget] HRESULT Dirty(
+			[out, retval] ComBool * pf);
+		// Indicate whether this collation needs to be written to persistent storage,
+		// either because it is newly created, or it has changed since being loaded.
+		[propput] HRESULT Dirty(
+			[in] ComBool fDirty);
+
+		// Write the collation to the stream in standard FieldWorks XML format.  Indent the
+		// number of spaces given by cchIndent, which may be zero.
+		HRESULT WriteAsXml(
+			[in] IStream * pstrm,
+			[in] int cchIndent);
+		// Write the pertinent data to the IStorage object to allow a read-only copy of this
+		// collation to be reconstituted later.
+		HRESULT Serialize(
+			[in] IStorage * pstg);
+		// Read the pertinent data from the IStorage object to initialize a read-only copy of
+		// the collation serialized earlier.
+		HRESULT Deserialize(
+			[in] IStorage * pstg);
+		// Get the ICU Rules.
+		[propget] HRESULT IcuRules(
+			[out, retval] BSTR * pbstr);
+		// Set the ICU Rules.
+		[propput] HRESULT IcuRules(
+			[in] BSTR bstr);
+
+		// Get the language writing system factory used with this collation object.
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+		// Set the language writing system factory to use with this collation object.
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+
+		// Initialize the ICU collating rules from the data for the given ICU locale.
+		HRESULT LoadIcuRules(
+			[in] BSTR bstrBaseLocale);
+	};
+
+	/*******************************************************************************************
+		Interface IWritingSystem
+		An WritingSystem represents one way of writing data in a particular language
+		(or dialect). It has a number of engines which implement various aspects of writing
+		system behavior.
+
+		ENHANCE: May need some more 'documentation' type attributes, such as
+		an author, region, country--what exactly is useful?
+
+		@h3{When to implement}
+		Clients should not implement this interface. A standard implementation is in
+		Language.dll.
+
+		@h3{When to use}
+		Use this class when you need to get one of the engines or other bits of information
+		it stores about an writing system. In some cases, if you need only one engine, it is
+		simpler to ask the ${LgWritingSystemFactory} for it in a single step.
+
+		Don't use an IWritingSystem when you just need to identify an writing system, but
+		don't actually need any of the engines. Use the integer which stands for the writing
+		system.
+
+		@h3{How to obtain an instance}
+		Normally, use the get_Engine method of an ${LgWritingSystemFactory}. This will create
+		and writing system with all default engines if one does not already exist. To avoid
+		this, use get_EngineOrNull instead.
+
+		You can also create one directly using CLSID_WritingSystem. In this case you will
+		usually install it in the writing system factory and provide suitable engines for all
+		functions.
+
+		@h3{Hungarian: ws or wseng}
+		(Note: use wseng when you need to distinguish the interface/object from the writing
+		system's integer code, which uses ws as its Hungarian.)
+	*******************************************************************************************/
+	DeclareInterface(WritingSystem, Unknown, CA33DE76-A3AC-4b63-B4FC-0FD9DA005A9B)
+	{
+		// Get the writing system integer that identifies this writing system to classes which
+		// don't actually need to use its methods
+		[propget] HRESULT WritingSystem(
+			[out, retval] int * pws);
+
+		// Get the number of writing systems that the name is stored in.
+		[propget] HRESULT NameWsCount(
+			[out, retval] int * pcws);
+		// Return the first cws writing systems that the name is stored in.
+		// NOTE: Used to be [propget], but that's not quite true with caller provided memory
+		// for  array, because a [propget] needs a [retval] which would require int**.
+		// Therefore I renamed the method to get_ and removed the [propget] (EberhardB).
+		HRESULT get_NameWss(
+			[in] int cws,
+			[out,size_is(cws)] int * prgws);
+
+		// Get the name in the given writing system.  Return S_FALSE if the given writing system
+		// does not have a name assigned.
+		[propget] HRESULT Name(
+			[in] int ws,
+			[out, retval] BSTR * pbstrName);
+		// Set the name in the given writing system.
+		[propput] HRESULT Name(
+			[in] int ws,
+			[in] BSTR bstrName);
+
+		// Get the locale assigned to this writing system.
+		[propget] HRESULT Locale(
+			[out, retval] int * pnLocale);
+		// Set the locale for this writing system.
+		[propput] HRESULT Locale(
+			[in] int nLocale);
+
+		// Get a string converter that can convert data in the other writing system into yours.
+		// ENHANCE JohnT: there are at least two purposes for this: (a) the other data may be in
+		// an writing system superseded by this one, and we want to update it; (b) we are doing
+		// collating based on this writing system, and encountered data in the other. Do we need
+		// to distinguish these cases by different methods? For example, they may have rather
+		// different requirements for guaranteeing a correct result.
+		//
+		// Note: not yet implemented.
+		[propget] HRESULT ConverterFrom(
+			[in] int ws,
+			[out, retval] ILgStringConverter ** ppstrconv);
+
+		// Get a converter that can convert data in this writing system into a
+		// 'normalized' form.
+		//
+		// TODO 1440(JohnT): Decide what operations may assume data is normalized, and how to
+		// make sure they always in fact get normalized data. Is there actually a need to
+		// normalize?
+		//
+		// Note: not yet implemented.
+		[propget] HRESULT NormalizeEngine(
+			[out, retval] ILgStringConverter ** ppstrconv);
+
+		// Get a tokenizer that can find words in a string.
+		//
+		// Note: not yet implemented.
+		[propget] HRESULT WordBreakEngine(
+			[out, retval] ILgTokenizer ** pptoker);
+
+		// Get the name of the spelling dictionary to use for this writing system.
+		// Currently returns a generally-useful default, unless explicitly set to empty
+		// to prevent this.
+		[propget] HRESULT SpellCheckDictionary(
+			[out, retval] BSTR *pbstr);
+		// Set the name of the spelling dictionary to use for this writing system.
+		// Eventually we plan to persist this fully; for now, it is useful only for setting
+		// to null to disable it for this session.
+		[propput] HRESULT SpellCheckDictionary(
+			[in] BSTR bstr);
+
+		// Get a search engine for searching text in this writing system.
+		// (It is typically writing system dependent only in regard to user-defined character
+		// classes.)
+		// ENHANCE JohnT: is the search engine sufficiently writing-system dependent to belong
+		// in the WS interface instead?
+		//
+		// Note: not yet implemented.
+		[propget] HRESULT SearchEngine(
+			[out, retval] ILgSearchEngine ** ppsrcheng);
+
+		// This is obsolete and will soon be removed.
+		HRESULT CompileEngines();
+
+		// Check whether this language writing system needs to be written to persistent storage,
+		// either because it is newly created, or it has changed since being loaded.
+		[propget] HRESULT Dirty(
+			[out, retval] ComBool * pf);
+		// Indicate whether this language writing system needs to be written to persistent
+		// storage, either because it is newly created, or it has changed since being loaded.
+		[propput] HRESULT Dirty(
+			[in] ComBool fDirty);
+
+		// Get the language writing system factory used with this writing system object.
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+		// Set the language writing system factory to use with this writing system object.
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+
+		// Write the writing system to the stream in standard FieldWorks XML format.  Indent the
+		// number of spaces given by cchIndent, which may be zero.
+		HRESULT WriteAsXml(
+			[in] IStream * pstrm,
+			[in] int cchIndent);
+
+		// Write the pertinent data to the IStorage object to allow a copy of this writing
+		// system to be reconstituted later.
+		HRESULT Serialize(
+			[in] IStorage * pstg);
+		// Read the pertinent data from the IStorage object to initialize a read-only copy of
+		// writing system serialized earlier.
+		HRESULT Deserialize(
+			[in] IStorage * pstg);
+
+		//:> Methods from OldWritingSystem (was WritingSystem when this was called LgEncoding)
+
+		// Get the primary direction, used for complex embedding; may have fragments like
+		// numbers that go the other way internally.
+		[propget] HRESULT RightToLeft(
+			[out, retval] ComBool * pfRightToLeft);
+		// Set the primary direction, used for complex embedding; may have fragments like
+		// numbers that go the other way internally.
+		[propput] HRESULT RightToLeft(
+			[in] ComBool fRightToLeft);
+		// Get the engine used to render text with the specified properties. At present only
+		// font, bold, and italic properties are significant.
+		// Font name may be '<default serif>' which produces a renderer suitable for the default
+		// serif font.
+		[propget] HRESULT Renderer(
+			[in] IVwGraphics * pvg,
+			[out, retval] IRenderEngine ** ppreneng);
+
+		// Get the "serif font variation" string which is used, for instance, to specify
+		// Graphite features.
+		[propget] HRESULT FontVariation(
+			[out, retval] BSTR * pbstr);
+		// Set the "serif font variation" string which is used, for instance, to specify
+		// Graphite features.
+		[propput] HRESULT FontVariation(
+			[in] BSTR bstr);
+
+		// Get the "sans serif font variation" string which is used, for instance, to specify
+		// Graphite features.
+		[propget] HRESULT SansFontVariation(
+			[out, retval] BSTR * pbstr);
+		// Set the "sans serif font variation" string which is used, for instance, to specify
+		// Graphite features.
+		[propput] HRESULT SansFontVariation(
+			[in] BSTR bstr);
+
+		// Get the "body font variation" string which is used, for instance, to specify
+		// Graphite features.
+		[propget] HRESULT BodyFontFeatures(
+			[out, retval] BSTR * pbstr);
+		// Set the "body font variation" string which is used, for instance, to specify
+		// Graphite features.
+		[propput] HRESULT BodyFontFeatures(
+			[in] BSTR bstr);
+
+		// Get the default serif font; usually used for the main body of text in a document.
+		[propget] HRESULT DefaultSerif(
+			[out, retval] BSTR * pbstr);
+		// Set the default serif font; usually used for the main body of text in a document.
+		[propput] HRESULT DefaultSerif(
+			[in] BSTR bstr);
+
+		// Get the default sans-serif font, often used for headings and other prominent text.
+		[propget] HRESULT DefaultSansSerif(
+			[out, retval] BSTR * pbstr);
+		// Set the default sans-serif font, often used for headings and other prominent text.
+		[propput] HRESULT DefaultSansSerif(
+			[in] BSTR bstr);
+
+		// Get the default font used for body text in publications.
+		[propget] HRESULT DefaultBodyFont(
+			[out, retval] BSTR * pbstr);
+		// Set the default font used for body text in publications.
+		[propput] HRESULT DefaultBodyFont(
+			[in] BSTR bstr);
+
+		// Get the default monospace font, often used for program code, sample text the user
+		// would type in, or to make simple tables by lining things up.
+		// Don't assume it is absolutely "monospace"; combining diacritics and
+		// surrogate pairs may still interfere with alignment of different lines, or
+		// there may not be a true monospace font available, in which case some other
+		// choice will be made.
+		[propget] HRESULT DefaultMonospace(
+			[out, retval] BSTR * pbstr);
+		// Set the default monospace font, often used for program code, sample text the user
+		// would type in, or to make simple tables by lining things up.
+		// Don't assume it is absolutely "monospace"; combining diacritics and
+		// surrogate pairs may still interfere with alignment of different lines, or
+		// there may not be a true monospace font available, in which case some other
+		// choice will be made.
+		[propput] HRESULT DefaultMonospace(
+			[in] BSTR bstr);
+
+		// Get a string containing the Valid Characters for the writing system.
+		[propget] HRESULT ValidChars(
+			[out, retval] BSTR * pbstr);
+		// Return a string containing the Valid Characters for the writing system.
+		[propput] HRESULT ValidChars(
+			[in] BSTR bstr);
+
+		// Gets a string containing the XML chunk that defines a list of matched pairs
+		// for the writing system (e.g. {}).
+		[propget] HRESULT MatchedPairs(
+			[out, retval] BSTR * pbstr);
+		// Sets a string containing the XML chunk that defines a list of matched pairs
+		// for the writing system (e.g. {}).
+		[propput] HRESULT MatchedPairs(
+			[in] BSTR bstr);
+
+		// Gets a string containing the XML chunk that defines a list of punctuation
+		// patterns for the writing system (e.g. {}).
+		[propget] HRESULT PunctuationPatterns(
+			[out, retval] BSTR * pbstr);
+		// Sets a string containing the XML chunk that defines a list of punctuation
+		// patterns for the writing system.
+		[propput] HRESULT PunctuationPatterns(
+			[in] BSTR bstr);
+
+		// Gets a string containing the XML chunk that defines capitalization information
+		// for the writing system.
+		[propget] HRESULT CapitalizationInfo(
+			[out, retval] BSTR * pbstr);
+		// Sets a string containing the XML chunk that defines the quotation marks
+		// for the writing system.
+		[propput] HRESULT CapitalizationInfo(
+			[in] BSTR bstr);
+
+		// Sets a string containing the XML chunk that defines capitalization information
+		// for the writing system.
+		[propget] HRESULT QuotationMarks(
+			[out, retval] BSTR * pbstr);
+		// Sets a string containing the XML chunk that defines the quotation marks
+		// for the writing system.
+		[propput] HRESULT QuotationMarks(
+			[in] BSTR bstr);
+
+		// Get an indication of whether this writing system uses KeyMan for its keyboard input.
+		// TODO 1437(JohnT): implement a proper IME; when we do we may possibly remove
+		// these methods and store the information in the engine.
+		[propget] HRESULT KeyMan(
+			[out, retval] ComBool * pfKeyMan);
+		// Set whether this writing system uses KeyMan for its keyboard input.
+		[propput] HRESULT KeyMan(
+			[in] ComBool fKeyMan);
+		// Get the name to display in UI widgets.
+		[propget] HRESULT UiName(
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+
+		// Get the number of collations defined for this writing system.
+		[propget] HRESULT CollationCount(
+			[out, retval] int * pccoll);
+		// Get the collation at the given (zero-based) index.
+		[propget] HRESULT Collation(
+			[in] int icoll,
+			[out, retval] ICollation ** ppcoll);
+		[propputref] HRESULT Collation(
+			[in] int icoll,
+			[in] ICollation * pcoll);
+
+		// Remove the collation at the given (zero-based) index.
+		HRESULT RemoveCollation(
+			[in] int icoll);
+		// Store the collation for the given (zero-based) index.
+
+		// Get the abbreviation in the given writing system.  Return S_FALSE if the given
+		// writing system does not have an abbreviation assigned.
+		[propget] HRESULT Abbr(
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+		// Set the abbreviation for the given writing system.
+		[propput] HRESULT Abbr(
+			[in] int ws,
+			[in] BSTR bstr);
+		// Get the number of writing systems that an abbreviation is stored in.
+		[propget] HRESULT AbbrWsCount(
+			[out, retval] int * pcws);
+		// Return the first cws writing systems that an abbreviation is stored in.
+		// NOTE: Used to be [propget], but that's not quite true with caller provided memory
+		// for  array, because a [propget] needs a [retval] which would require int**.
+		// Therefore I renamed the method to get_ and removed the [propget] (EberhardB).
+		HRESULT get_AbbrWss(
+			[in] int cws,
+			[out,size_is(cws)] int * prgws);
+
+		// Get a description of the writing system: this would typically be used in a tooltip
+		// or status bar to give extra information about a particular writing system.
+		[propget] HRESULT Description(
+			[in] int ws,
+			[out, retval] ITsString ** pptss);
+		// Set a description of the writing system: this would typically be used in a tooltip
+		// or status bar to give extra information about a particular writing system.
+		[propput] HRESULT Description(
+			[in] int ws,
+			[in] ITsString * ptss);
+		// Get the number of writing systems that the description is stored in.
+		// Try don't transfer
+		[propget] HRESULT DescriptionWsCount(
+			[out, retval] int * pcws);
+		// Return the first cws writing systems that the description is stored in.
+		// Try don't transfer
+		// NOTE: Used to be [propget], but that's not quite true with caller provided memory
+		// for  array, because a [propget] needs a [retval] which would require int**.
+		// Therefore I renamed the method to get_ and removed the [propget] (EberhardB).
+		HRESULT get_DescriptionWss(
+			[in] int cws,
+			[out,size_is(cws)] int * prgws);
+
+		// Get the current default collating engine
+		[propget] HRESULT CollatingEngine(
+			[out, retval] ILgCollatingEngine ** ppcoleng);
+		// Get the engine used to find character properties, including figuring out where line
+		// breaks are allowed.
+		[propget] HRESULT CharPropEngine(
+			[out, retval] ILgCharacterPropertyEngine ** pppropeng);
+		// Set tracing for current and future Graphite engines.
+		HRESULT SetTracing(
+			[in] int n);
+		// Apply any changes to the chrp before it is used for real: currently,
+		// interpret the magic font names.
+		HRESULT InterpretChrp(
+			[in, out] LgCharRenderProps * pchrp);
+
+		// Get the ICU Locale.
+		[propget] HRESULT IcuLocale(
+			[out, retval] BSTR * pbstr); // en_GB_EURO
+		// Get the ICU Local with split name.
+		[propput] HRESULT IcuLocale(
+			[in] BSTR bstr); // en_GB_EURO
+
+		HRESULT GetIcuLocaleParts(
+			[out] BSTR * pbstrLanguage,
+			[out] BSTR * pbstrScript,
+			[out] BSTR * pbstrCountry,
+			[out] BSTR * pbstrVariant);
+		// Put the ICU Local.
+		// Note this updates the database but does nothing to ICU source files.
+		// Any change to this locale name means you also need to update the ICU
+		// source files and recompile the .DAT file.
+
+		// Get the Legacy Mapping name.
+		[propget] HRESULT LegacyMapping(
+			[out, retval] BSTR * pbstr); // "SIL IPA93<>UNICODE"
+		// Put the Legacy Mapping name.
+		[propput] HRESULT LegacyMapping(
+			[in] BSTR bstr); // "SIL IPA93<>UNICODE"
+		// A Keyman keyboard name that should be used to invoke the appropriate
+		// Keyman keyboard if the writing sytem requires it. Leave as empty string
+		// for non-Keyman IMs.
+		[propget] HRESULT KeymanKbdName(
+			[out, retval] BSTR * pbstr);
+		[propput] HRESULT KeymanKbdName(
+			[in] BSTR bstr);
+
+		// The following methods don't access stored variables, but provide convenient
+		// access to ICU functions for returning names for the locale designated by the
+		// stored IcuLocale.
+		// Get the system name for the locale from ICU.
+		// Get the system name for the language from ICU.
+		[propget] HRESULT LanguageName(
+			[out, retval] BSTR * pbstr);
+		// Get the system name for the script from ICU.
+		[propget] HRESULT ScriptName(
+			[out, retval] BSTR * pbstr);
+		// Get the system name for the country from ICU.
+		[propget] HRESULT CountryName(
+			[out, retval] BSTR * pbstr);
+		// Get the system name for the variant from ICU.
+		[propget] HRESULT VariantName(
+			[out, retval] BSTR * pbstr);
+		// Get the system abbreviation for the language from ICU.
+		[propget] HRESULT LanguageAbbr(
+			[out, retval] BSTR * pbstr);
+		// Get the system abbreviation for the script from ICU.
+		[propget] HRESULT ScriptAbbr(
+			[out, retval] BSTR * pbstr);
+		// Get the system abbreviation for the country from ICU.
+		[propget] HRESULT CountryAbbr(
+			[out, retval] BSTR * pbstr);
+		// Get the system abbreviation for the variant from ICU.
+		[propget] HRESULT VariantAbbr(
+			[out, retval] BSTR * pbstr);
+
+		// Call this when your program wants to save the (dirty) writing system to persistent
+		// memory.  If the dirty bit is not set, nothing is done.
+		// @param pode Pointer to the factory's database connection object, or NULL if a
+		//				database is not used for persistence.
+		HRESULT SaveIfDirty(
+			[in] IOleDbEncap * pode);
+
+		// This installs the language for ICU use.  It uses the ICU locale value of the writing
+		// system, which must be set before calling this method.
+		//
+		// @param fForce Flag that we want to reinstall the language even if it has already been
+		//               installed.
+		HRESULT InstallLanguage(ComBool fForce);
+
+		// Get the LastModified timestamp.
+		[propget] HRESULT LastModified(
+			[out, retval] DATE * pdate);
+		// Put the LastModified timestamp.
+		[propput] HRESULT LastModified(
+			[in] DATE date);
+
+		// The current input language. By default this is derived from Locale, but it can be
+		// overridden temporarily (for one session). Note that this is not persisted.
+		[propget] HRESULT CurrentInputLanguage(
+			[out, retval] int * pnLangId);
+		// Set the current (temporary) LangId for this writing system.
+		[propput] HRESULT CurrentInputLanguage(
+			[in] int nLangId);
+	};
+
+	//:>****************************************************************************************
+	//:>	These are the interfaces for the engines--the code that actually does the work.
+	//:>****************************************************************************************
+
+	/*******************************************************************************************
+		Interface ILgInputMethodEditor
+		Functions related to special ways of typing for exotic writing systems.
+		The ${#Setup} method is called before the user types something and may do things at the
+		system level (such as setting the current system IME or Keyman file) to change what is
+		received through WM_CHAR. The other methods allow post-processing of what is received
+		through WM_CHAR.
+
+		@h3{When to implement}
+		Clients should not normally implement this interface. Standard implementations are in
+		Language.dll. If you have a very unusual input method requirement, you could make your
+		own implementation.
+
+		Note: current FieldWorks code is @i{not} using this approach to typing. Check out
+		@HTTP{intranet.sil.org/softwaredev/project_status.htm} to see if there are any plans.
+
+		@h3{When to use}
+		Most programmers will not use this interface directly. It is used by the Views
+		subsystem and controls that accept typing in vernacular scripts.
+
+		@h3{How to obtain an instance}
+		At present, you can't. Eventually OldWritingSystem will implement a method. Some
+		implemenations may also be available through CoCreateInstance.
+
+		@h3{Hungarian: ime}
+
+	*******************************************************************************************/
+	DeclareInterface(LgInputMethodEditor, Unknown, 17aebfe0-c00a-11d2-8078-0000c0fb81b5)
+	{
+		// Get the system ready to use this input method; for example, switch Keyman to the
+		// proper table.
+		HRESULT Setup();
+
+		// Given something the user typed, following any preprocessing that happens
+		// automatically as a result of Setup (e.g., Keyman processing), do any further
+		// processing required to actually replace the selected part of the string with  what
+		// the user typed.
+		// The default implementation just replaces characters from ichMin to ichLim with
+		// those from bstrInput, then sets *pichModMin to ichMin, and *pichModLim and
+		// *pichIP both to ichMin + BstrLen(bstrInput).
+		// @param bstrInput What the user typed.
+		// @param pttpInput Text properties desired for new text
+		// @param ptsbOld Original, unedited text, gets modified by this method
+		// @param ichMin Range in old ptsbOld to replace
+		// @param ichLim Range in old ptsbOld to replace
+		// @param pichModMin Range in modified ptsbOld that is different from before
+		// @param pichModLim Range in modified ptsbOld that is different from before
+		// @param pichIP Position of insertion point in modified string
+		// @return The result is the modified string represented by ptsbOld.
+		// @exception E_INVALIDARG ichMin/Lim is not a valid range within ptsbOld
+		[local, restricted] HRESULT Replace(
+			[in] BSTR bstrInput,
+			[in] ITsTextProps * pttpInput,
+			[in] ITsStrBldr * ptsbOld,
+			[in] int ichMin,
+			[in] int ichLim,
+			[out] int * pichModMin,
+			[out] int * pichModLim,
+			[out] int * pichIP);
+
+		// The user pressed a certain number of backspaces. Delete an appropriate amount of
+		// the string represented by the input string builder, indicating exactly what changed.
+		// Also, if there were not enough characters to delete, indicate how many backspaces
+		// were left over.
+		// @param pichStart start position (delete characters before here)
+		// @param cactBackspace number of backspaces pressed
+		// @param ptsbOld the text being edited; gets changed by this call
+		// @param pichModMin range in output text affected
+		// @param pichModLim range in output text affected
+		// @param pichIP position of IP in modified string
+		// @param pcactBsRemaining Number not handled, caller should apply to previous run or
+		// string
+		HRESULT Backspace(
+			[in] int pichStart,
+			[in] int cactBackspace,
+			[in] ITsStrBldr * ptsbOld,
+			[out] int * pichModMin,
+			[out] int * pichModLim,
+			[out] int * pichIP,
+			[out] int * pcactBsRemaining);
+
+		// The user pressed a certain number of delete forward characters. Compute the effect on
+		// ptsbInOut
+		// Also, if there were not enough characters to delete, indicate how many backspaces
+		// were left over.
+		// @param pichStart start position (delete characters after here)
+		// @param cactDelForward number of DF pressed
+		// @param ptsbInOut the text being edited; gets changed by this call
+		// @param pichModMin range in output text affected
+		// @param pichModLim range in output text affected
+		// @param pichIP position of IP in modified string
+		// @param pcactDfRemaining Number not handled, caller should apply to next run or string
+		HRESULT DeleteForward(
+			[in] int pichStart,
+			[in] int cactDelForward,
+			[in] ITsStrBldr * ptsbInOut,
+			[out] int * pichModMin,
+			[out] int * pichModLim,
+			[out] int * pichIP,
+			[out] int * pcactDfRemaining);
+
+		// Return true if input method considers an IP at the specified index reasonable.
+		// Note that really useful IPs should also satisfy the Renderer; see
+		// ${ILgSegment#IsValidInsertionPoint}.
+		HRESULT IsValidInsertionPoint(
+			[in] int ich,
+			[in] ITsString * ptss,
+			[out, retval] BOOL * pfValid);
+	};
+
+	/*******************************************************************************************
+		Interface ILgFontManager
+		Obtain a list of the (TrueType) fonts that are available on the system, and handle
+		simple queries about font availability.
+
+		Note: the font manager may load the available fonts once, and use this cached list
+		to answer subsequent queries. To be sure the answer to a query is current, call
+		RefreshFontList.
+
+		@h3{When to implement}
+		Clients should not implement this interface. There is a standard implementation in
+		Language.dll.
+
+		@h3{When to use}
+		Use this interface when you need to know whether a given font is available on the
+		system, or to get a list of available fonts.
+
+		@h3{How to obtain an instance}
+		Use CoCreateInstance, CLSID_LgFontManager. Or use the CreateInstance() method of a
+		smart pointer.
+
+		@h3{Hungarian: fm}
+	*******************************************************************************************/
+	DeclareInterface(LgFontManager, Unknown, 10894680-F384-11d3-B5D1-00400543A266)
+	{
+		// Is the given font available?
+		HRESULT IsFontAvailable(
+			[in] BSTR bstrName,
+			[out, retval] ComBool * pfAvail);
+
+		// Is the given font available?
+		HRESULT IsFontAvailableRgch(
+			[in] int cch,
+			[in] OLECHAR * prgchName,
+			[out, retval] ComBool * pfAvail);
+
+		// Get the list of available fonts delimited by L'\0'.
+		HRESULT AvailableFonts(
+			[out] BSTR * pbstrNames);
+
+		// Update the list of fonts (by re-reading from the OS).
+		HRESULT RefreshFontList();
+	};
+
+
+	//:>****************************************************************************************
+	//:>	CoClass definitions.
+	//:>****************************************************************************************
+
+	#ifndef NO_COCLASSES
+	DeclareCoClass(LgInputMethodEditor, F74151C0-ABC0-11d3-BC29-00A0CC3A40C6)
+	{
+		interface ILgInputMethodEditor;
+	};
+
+	DeclareCoClass(LgFontManager, 70553ED0-F437-11d3-B5D1-00400543A266)
+	{
+		interface ILgFontManager;
+	};
+	#endif // !NO_COCLASSES
+
+	// Flags used to specify variations on how to collate.
+	// Default is all listed options off.
+	// Except where noted, options are orthogonal and may be ORed together for combined
+	// effect.
+	// Unrecognized options are ignored. This allows for forwards compatibility: as we
+	// introduce new options, older engines will continue to work but ignore them.
+	// (An unrecognized option is any bit not used by any of the options defined here.)
+	typedef [v1_enum] enum LgCollatingOptions
+	{
+		fcoDefault = 0,
+		fcoIgnoreCase = 1,
+		fcoDontIgnoreVariant = 2,
+		fcoLim // max valid value.
+	} LgCollatingOptions; // Hungarian colopt
+
+	/*******************************************************************************************
+		Interface ILgCollatingEngine
+		A collating engine knows how to compare strings in the same writing system.
+
+		@h3{When to implement}
+		Clients should not normally implement this interface. There are standard implementations
+		in Language.dll. A new implementation might possibly be made for a language with very
+		unusual collating requirements, if none of the standard implementations can be
+		configured to suit.
+
+		@h3{When to use}
+		Use this interface when you need to know whether a given string collates before or after
+		another, or to create a list of keys that can be simply compared in order to sort a
+		larger list.
+
+		@h3{How to obtain an instance}
+		Obtain a collating engine from the writing system using
+		${WritingSystem#get_CollatingEngine}. Obtain a default Unicode collater from
+		${LgWritingSystemFactory#get_DefaultCollater}.
+
+		@h3{Hungarian: coleng}
+	*******************************************************************************************/
+	DeclareInterface(LgCollatingEngine, Unknown, DB78D60B-E43E-4464-B8AE-C5C9A00E2C04)
+	{
+		// Get a sort key which may be compared to any other sort key produced by this
+		// object via a simple BSTR comparison. This is especially useful in large-scale
+		// sorting, where the work to generate the key only needs to be done once per key
+		[propget] HRESULT SortKey(
+			[in] BSTR bstrValue,
+			[in] LgCollatingOptions colopt,
+			[out, retval] BSTR * pbstrKey);
+
+		// Get a sort key which may be compared to any other sort key produced by this
+		// object via a simple wcscmp comparison. This is especially useful in large-scale
+		// sorting, where the work to generate the key only needs to be done once per key
+
+		// @param cchMaxOut Available space in output buffer. If 0, the method just sets
+		// *pchKey to the number required.
+		// @exception ERROR_INSUFFICIENT_BUFFER if not enough space in output buffer (gives
+		// needed amount in *pcchOut).
+		[restricted] HRESULT SortKeyRgch(
+			[in, size_is(cchIn)] const OLECHAR * pch,
+			[in] int cchIn,
+			[in] LgCollatingOptions colopt,
+			[in] int cchMaxOut,
+			[out, size_is(cchMaxOut)] OLECHAR * pchKey,
+			[out] int * pcchOut);
+
+		// Return in *pnVal (<0, 0, or >0) depending on whether the first string is
+		// (less than, equal, or greater than) the second string passed. This in principle
+		// creates a SortKey for each string using the SortKey method, then compares them.
+		// Any actual implementation promises to give the same results as doing that.
+		// However, the actual implementation may be more efficient than that, saving time
+		// when only a single comparison is to be made involving each string.
+		HRESULT Compare(
+			[in] BSTR bstrValue1,
+			[in] BSTR bstrValue2,
+			[in] LgCollatingOptions colopt,
+			[out, retval] int * pnVal);
+
+		// Get the language writing system factory used with this collating engine object.
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+		// Set the language writing system factory to use with this collating engine object.
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+
+		// The next two methods are required by C# which doesn't know that BSTRs can be anything
+		// but NUL-terminated UTF-16 strings.
+
+		// Get a sort key which may be compared to any other sort key produced by this
+		// object via a simple BSTR comparison. This is especially useful in large-scale
+		// sorting, where the work to generate the key only needs to be done once per key
+		[propget] HRESULT SortKeyVariant(
+			[in] BSTR bstrValue,
+			[in] LgCollatingOptions colopt,
+			[out, retval] VARIANT * psaKey);		// will be a "safearray".
+
+		// Return in *pnVal (<0, 0, or >0) depending on whether the first string is
+		// (less than, equal, or greater than) the second string passed. This in principle
+		// creates a SortKey for each string using the SortKey method, then compares them.
+		// Any actual implementation promises to give the same results as doing that.
+		// However, the actual implementation may be more efficient than that, saving time
+		// when only a single comparison is to be made involving each string.
+		HRESULT CompareVariant(
+			[in] VARIANT saValue1,			// "safearray"
+			[in] VARIANT saValue2,			// "safearray"
+			[in] LgCollatingOptions colopt,
+			[out, retval] int * pnVal);
+
+		// Initialize the collating engine to the given locale.
+		HRESULT Open(
+			[in] BSTR bstrLocale);
+
+		// Close and free the currently open collating engine, if any.
+		HRESULT Close();
+
+		// ENHANCE JohnT: we should have an Rgch version of Compare().
+	};
+
+	/*******************************************************************************************
+		Interface ILgCharacterPropertyEngine
+		This interface provides information about character properties and converting between
+		characters.
+
+		Note the use of int rather than OLECHAR throughout for character codes. This allows
+		for the possibility of characters not in plane 0, though the current base implementation
+		considers all characters outside plane 0 to be unassigned.
+
+		In general, routines which take a single character as input return E_INVALIDARG if the
+		character is outside the extended Unicode range (i.e., it could not be represented as
+		two surrogate pair characters).
+
+		@h3{When to implement}
+		Clients should not normally implement this interface. There are standard implementations
+		in Language.dll.
+
+		@h3{When to use}
+		Use this interface when you need to know properties of characters, such as whether a
+		character is a letter, how it behaves in the Unicode bidi algorithm, how it combines
+		with other characters, whether it is a symbol, separator, etc, its case, how it
+		might decompose, and so forth. A particularly important use is to determine possible
+		line break positions in a string.
+
+		@h3{How to obtain an instance}
+		Obtain a collating engine from the writing system using
+		${WritingSystem#get_CharPropEngine}. Obtain a default Unicode char props engine from
+		${LgWritingSystemFactory#get_UnicodeCharProps}.
+
+		@h3{Hungarian: propeng}
+	*******************************************************************************************/
+	DeclareInterface(LgCharacterPropertyEngine, Unknown, 7C8B7F40-40C8-47f7-B10B-45372415778D)
+	{
+		// Get the exact character category as defined in the Unicode standard.
+		// See @HTTP{www.unicode.org/Public/UNIDATA/UnicodeData.html#General%20Category}
+		[propget] HRESULT GeneralCategory(
+			[in] int ch,
+			[out, retval] LgGeneralCharCategory * pcc);
+
+		// Get the Bidi category of a character as defined in the Unicode standard.
+		// See @HTTP{www.unicode.org/Public/UNIDATA/UnicodeData.html#Bidirectional%20Category}
+		// See @HTTP{www.unicode.org/unicode/reports/tr9/} for the full algorithm
+		[propget] HRESULT BidiCategory(
+			[in] int ch,
+			[out, retval] LgBidiCategory * pbic);
+
+		// Return true if Unicode general category starts with L. See ${#get_GeneralCategory}
+		// If this returns true, exactly one of ${#get_IsUpper}, ${#get_IsLower},
+		// ${#get_IsTitle}, ${#get_IsModifier}, or ${#get_IsOtherLetter} will return true.
+		[propget] HRESULT IsLetter(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if character is considered to be part of a word (by default, this
+		// corresponds to Unicode general category Mc, Mn, and categories starting with L.
+		// ENHANCE: Eventually, this method may need to be altered or replaced to acocunt
+		// for the reality that some languages have context rules to determine whether a
+		// character is word-forming or not (e.g., apostrophes).
+		// See ${#get_GeneralCategory}
+		[propget] HRESULT IsWordForming(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category starts with P. See ${#get_GeneralCategory}
+		[propget] HRESULT IsPunctuation(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category starts with N. See ${#get_GeneralCategory}
+		[propget] HRESULT IsNumber(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category starts with Z. See ${#get_GeneralCategory}
+		[propget] HRESULT IsSeparator(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category starts with S. See ${#get_GeneralCategory}
+		[propget] HRESULT IsSymbol(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category starts with M. See ${#get_GeneralCategory}
+		[propget] HRESULT IsMark(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category starts with C. See ${#get_GeneralCategory}
+		[propget] HRESULT IsOther(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+
+		// Return true if Unicode general category is Lu. See ${#get_GeneralCategory}
+		[propget] HRESULT IsUpper(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category is Ll. See ${#get_GeneralCategory}
+		// In languages without case all characters are considered lower case.
+		[propget] HRESULT IsLower(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category is Lt. See ${#get_GeneralCategory}
+		// This refers to "Title case" characters, typically a single code point standing for
+		// two letters, where the first is upper case and the second is lower.
+		// Unicode general category Lt, typically digraph with first upper
+		[propget] HRESULT IsTitle(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category is Lm. See ${#get_GeneralCategory}
+		[propget] HRESULT IsModifier(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category is Lo. See ${#get_GeneralCategory}
+		[propget] HRESULT IsOtherLetter(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		// Return true if Unicode general category is Ps. See ${#get_GeneralCategory}
+		// Signifies opening punctuation, like left paren
+		// ENHANCE JohnT: Should opening include Pi, Initial quote?
+		[propget] HRESULT IsOpen(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category is Pe. See ${#get_GeneralCategory}
+		// Signifies closing punctuation, like right paren.
+		// ENHANCE JohnT: should we also include Pf, final quote?
+		[propget] HRESULT IsClose(  // Unicode general category Pe,
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+		// Return true if Unicode general category is Pc. See ${#get_GeneralCategory}
+		// Signifies  middle of a word, like hyphen.
+		// ENHANCE JohnT: should we also include Pd, dash
+		[propget] HRESULT IsWordMedial(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		// Return true if Unicode general category is Cc. See ${#get_GeneralCategory}
+		[propget] HRESULT IsControl(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		// Convert a character to lower case if it is Lu or Lt; otherwise return it unchanged.
+		// ENHANCE JohnT: should we convert characters that are not Lu or Lt but for which
+		// UnicodeData.txt specifies a case conversion?
+		//
+		// See ${#ToLower} to convert an entire string, or to make use of Unicode muli-character
+		// conversions.
+		// @exception E_INVALIDARG if passed invalid Unicode code point, including one half
+		// of a surrogate pair.
+		[propget] HRESULT ToLowerCh(
+				  [in] int ch,
+				  [out, retval] int * pch);
+		// Convert a character to upper case if it is Ll or Lt; otherwise return it unchanged.
+		// ENHANCE JohnT: should we convert characters that are not Ll or Lt but for which
+		// UnicodeData.txt specifies a case conversion?
+		//
+		// See ${#ToUpper} to convert an entire string, or to make use of Unicode muli-character
+		// conversions.
+		// @exception E_INVALIDARG if passed invalid Unicode code point, including one half
+		// of a surrogate pair.
+		[propget] HRESULT ToUpperCh(
+				  [in] int ch,
+				  [out, retval] int * pch);
+		// Convert a character to title case if it is Lu or Ll; otherwise return it unchanged.
+		// Usually this is the same as converting it to upper case.
+		// ENHANCE JohnT: should we convert characters that are not Lu or Ll but for which
+		// UnicodeData.txt specifies a case conversion?
+		//
+		// See ${#ToTitle} to convert an entire string, or to make use of Unicode muli-character
+		// conversions.
+		// @exception E_INVALIDARG if passed invalid Unicode code point, including one half
+		// of a surrogate pair.
+		[propget] HRESULT ToTitleCh(
+				  [in] int ch,
+				  [out, retval] int * pch);
+
+		// Convert a string to lower case. Characters that are not Lu or Lt pass through
+		// unchanged.  Note that the output may be longer than the input! This function, unlike
+		// ${#get_ToLowerCh}, will apply multi-character conversions if Unicode specifies them.
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		HRESULT ToLower(
+				  [in] BSTR bstr,
+				  [out, retval] BSTR * pbstr);
+		// Convert a string to upper case. Characters that are not Ll or Lt pass through
+		// unchanged.  Note that the output may be longer than the input! This function, unlike
+		// ${#get_ToUpperCh}, will apply multi-character conversions if Unicode specifies them.
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		HRESULT ToUpper(
+				  [in] BSTR bstr,
+				  [out, retval] BSTR * pbstr);
+		// Convert a string to title case. Characters that are not Lu or Ll pass through
+		// unchanged.  Note that the output may be longer than the input!  This function, unlike
+		// ${#get_ToUpperCh}, will apply multi-character conversions if Unicode specifies them.
+		// Note that this is not usually useful, because if you want title case, you usually
+		// want to convert only the first non-punctuation character, or perhaps the first of
+		// each word.  However, this at least provides a way to get at multi-character
+		// conversions by passing a single character input string.
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		HRESULT ToTitle(
+				  [in] BSTR bstr,
+				  [out, retval] BSTR * pbstr);
+
+		// Convert a string to lower case. Characters that are not Lu or Lt pass through
+		// unchanged.  Note that the output may be longer than the input! This function, unlike
+		// ${#get_ToLowerCh}, will apply multi-character conversions if Unicode specifies them.
+		// If cchOut is zero, just return the length needed.
+		// @exception E_FAIL if cchOut is non-zero and too small
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		[restricted] HRESULT ToLowerRgch(
+				  [in, size_is(cchIn)] OLECHAR * prgchIn,
+				  [in] int cchIn,
+				  [out, size_is(cchOut)] OLECHAR * prgchOut,
+				  [in] int cchOut,
+				  [out] int * pcchRet);
+		// Convert a string to upper case. Characters that are not Ll or Lt pass through
+		// unchanged.  Note that the output may be longer than the input! This function, unlike
+		// ${#get_ToUpperCh}, will apply multi-character conversions if Unicode specifies them.
+		// If cchOut is zero, just return the length needed.
+		// @exception E_FAIL if cchOut is non-zero and too small
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		[restricted] HRESULT ToUpperRgch(
+				  [in, size_is(cchIn)] OLECHAR * prgchIn,
+				  [in] int cchIn,
+				  [out, size_is(cchOut)] OLECHAR * prgchOut,
+				  [in] int cchOut,
+				  [out] int * pcchRet);
+		// Convert a string to title case. Characters that are not Lu or Ll pass through
+		// unchanged.  Note that the output may be longer than the input! This function, unlike
+		// ${#get_ToUpperCh}, will apply multi-character conversions if Unicode specifies them.
+		// Note that this is not usually useful, because if you want title case, you usually
+		// want to convert only the first non-punctuation character, or perhaps the first of
+		// each word.  However, this at least provides a way to get at multi-character
+		// conversions by passing a single character input string.
+		// If cchOut is zero, just return the length needed.
+		// @exception E_FAIL if cchOut is non-zero and too small
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		[restricted] HRESULT ToTitleRgch(
+				  [in, size_is(cchIn)] OLECHAR * prgchIn,
+				  [in] int cchIn,
+				  [out, size_is(cchOut)] OLECHAR * prgchOut,
+				  [in] int cchOut,
+				  [out] int * pcchRet);
+
+		// Returns true if the specified code point is a member of the specified user defined
+		// class of code points. Nathan thinks we should restrict class names to a single
+		// character to make patterns containing them more readable. Example \C\Vxyz for all
+		// words containing a consonant, followed by a vowel, followed by xyz.
+		//
+		// Not yet implemented, and may not be, as it is not clear that this is the right place
+		// to store user defined character classes.
+		[propget] HRESULT IsUserDefinedClass(
+			[in] int ch,
+			[in] int chClass,
+			[out, retval] ComBool * pfRet);
+
+		// Converts a string into another string in which all characters are replaced with their
+		// sound alike equivalent. For example, if for this language s and z where specified to
+		// sound alike, we could take s as the generic form and convert all z's to this form.
+		// Note that we need to support the possibility that 0 (empty code point) and x and y
+		// sound alike which means that all x's and 's and y's will be ignored when testing for
+		// sound alikeness.
+		//
+		// ENHANCE JohnT: Should this be a separate engine? Does it belong to the spelling
+		// engine?
+		// ENHANCE Development(JohnT): enhance the specification so it can specify sound-alikes.
+		//
+		// Not yet implemented, and may never be.
+		[propget] HRESULT SoundAlikeKey(
+			[in] BSTR bstrValue,
+			[out, retval] BSTR * pbstrKey);
+
+		// Get the official Unicode character name (character database field 1).
+		// Will also produce a somewhat helpful descriptive string for surrogate halves and
+		// PUA characters, though officially they have no name.
+		// (Warning: obtaining this for the first character in each page will be somewhat slow,
+		// and will use up something like 10K of RAM).
+		// @exception E_INVALIDARG if character input is not valid Unicode.
+		[propget] HRESULT CharacterName(
+			[in] int ch,
+			[out, retval] BSTR * pbstrName);
+
+		// Get the decomposition of this character (Unicode char database field 5).
+		// Empty string if it does not decompose.
+		// @exception E_INVALIDARG if character input is not valid Unicode.
+		[propget] HRESULT Decomposition(
+			[in] int ch,
+			[out, retval] BSTR * pbstr);
+		// Get the decomposition of this character (Unicode char database field 5).
+		// Empty string if it does not decompose.
+		// @exception E_INVALIDARG if character input is not valid Unicode.
+		[restricted] HRESULT DecompositionRgch(
+			[in] int ch,
+			[in] int cchMax,
+			[out] OLECHAR * prgch,
+			[out] int * pcch,
+			[out] ComBool * pfHasDecomp);
+
+		// Get the recursive canonical decomposition of a character. Empty string if it does
+		// not decompose at all.
+		// @exception E_INVALIDARG if character input is not valid Unicode.
+		[propget] HRESULT FullDecomp(
+			[in] int ch,
+			[out, retval] BSTR * pbstrOut);
+		// Get the recursive canonical decomposition of a character. The character itself if it
+		// does not decompose at all.
+		// @exception E_INVALIDARG if character input is not valid Unicode.
+		[restricted] HRESULT FullDecompRgch(
+			[in] int ch,
+			[in] int cchMax,
+			[out] OLECHAR * prgch,
+			[out] int * pcch,
+			[out] ComBool * pfHasDecomp);
+
+		// Get the character's value as a number.(Field 8 in
+		// @HTTP{www.unicode.org/Public/UNIDATA/UnicodeData.html}).
+		// @exception E_INVALIDARG if character input is not valid Unicode.
+		// @exception E_UNEXPECTED if the character is not
+		// one of the Nd, Nl, or No types, or if it is one of those types but the
+		// Unicode database gives no numeric value for it.
+		// Currently also if the character represents a fraction.
+		// @end
+		// ENHANCE JohnT: is there a more useful behavior for the fraction case?
+		// Would it be better to return 0 for all cases where we don't know a useful answer?
+		[propget] HRESULT NumericValue(
+			[in] int ch,
+			[out, retval] int * pn);
+
+		// Get the character's combining class (Unicode char database field 3; see
+		// @HTTP{www.unicode.org/Public/UNIDATA/UnicodeData.html#Canonical%20Combining%20Classes})
+		// @exception E_INVALIDARG if character input is not valid Unicode.
+		[propget] HRESULT CombiningClass(
+			[in] int ch,
+			[out, retval] int * pn);
+
+		// Get any comment recorded about this character (Unicode char database field 11).
+		// Note: currently this is not implemented to obtain the rather uninteresting comments
+		// recorded in the standard UnicodeDatabase file. It will give interesting answers only
+		// if a comment is provided in the specification for this writing system.
+		[propget] HRESULT Comment(
+			[in] int ch,
+			[out, retval] BSTR * pbstr);
+
+		// Get line breaking properties (from enumeration LgLBP) for an array of characters.
+		// This passes an array in, and an array with the same number of elements out, to
+		// improve efficiency when properties are required for a string of characters.
+		// See @HTTP{www.unicode.org/unicode/reports/tr14/}.
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		[restricted] HRESULT GetLineBreakProps(
+			[in, size_is(cchIn)] const OLECHAR * prgchIn,
+			[in] int cchIn,
+			[out, size_is(cchIn)] byte * prglbOut);
+
+		// Get line break status (from combinations of values in enumeration LgLineBreakStatus)
+		// of each character in the input array.
+		// @exception E_INVALIDARG if characters in input are not valid Unicode.
+		[restricted] HRESULT GetLineBreakStatus(
+			[in, size_is(cb)] const byte * prglbpIn,
+			[in] int cb,
+			[out, size_is(cb)] byte * prglbsOut);
+
+		// This combines the functions of ${#GetLineBreakProps} and ${#GetLineBreakStatus},
+		// plus the ability to skip part of the string, and stop at break characters.
+		//
+		// The first two arguments define an array of characters as for ${#GetLineBreakProps}.
+		// The output is basically what would be produced by passing the output of
+		// that method as input to GetLineBreakStatus, with two exceptions:
+		//
+		// 1. We only want line break status info for characters from ichMin to ichLim.
+		// (A larger array is passed in because we may need to look at preceding characters
+		// to confidently know whether we can break after the char at ichMin.)
+		//
+		// 2. If we detect a character which forces a line or segment break in the range
+		// ichMin..ichLim, we stop and do not return any info about subsequent characters.
+		//
+		// Also, we set *pichBreak to the index of the break character.
+		// *pichBreak is set to -1 if we don't find a break character.
+		// Break characters are things like CR, LF, TAB, or the embedded object character.
+		[restricted] HRESULT GetLineBreakInfo(
+			[in, size_is(cchIn)] const OLECHAR * prgchIn,
+			[in] int cchIn,
+			[in] int ichMin,
+			[in] int ichLim,
+			[out, size_is(ichLim - ichMin)] byte * prglbsOut,
+			[out] int * pichBreak);
+
+		// Strip diacritics. Specifically, removes all characters that have the property Lm on
+		// Mn.  Note that this will not comvert a single code point that includes a diacritic to
+		// its unmodified equivalent. It is usually desireable to first perform normalization
+		// (form D or KD) before stripping diacritics.
+		HRESULT StripDiacritics(
+			  [in] BSTR bstr,
+			  [out, retval] BSTR * pbstr);
+		// Strip diacritics. Specifically, removes all characters that have the property Lm or
+		// Mn.  Note that this will not comvert a single code point that includes a diacritic to
+		// its unmodified equivalent. It is usually desireable to first perform normalization
+		// (form D or KD) before stripping diacritics.
+		[restricted] HRESULT StripDiacriticsRgch(
+			[in, size_is(cchIn)] OLECHAR * prgchIn,
+			[in] int cchIn,
+			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
+			[in] int cchMaxOut,
+			[out] int * pcchOut);
+
+		// Perform compatibility normalization of the input string, that is, every character
+		// which  has a compatibility decomposition is decomposed (recursively). This is
+		// Normalization Form KD (NFKD) as defined by Unicode TR 15.
+		[restricted] HRESULT NormalizeKdRgch(
+			[in, size_is(cchIn)] OLECHAR * prgchIn,
+			[in] int cchIn,
+			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
+			[in] int cchMaxOut,
+			[out] int * pcchOut);
+
+		// Perform normalization of the input string, that is, every character
+		// which  has a decomposition is decomposed (recursively). This is
+		// Normalization Form D (NFD) as defined by Unicode TR 15.
+		HRESULT NormalizeD(
+			  [in] BSTR bstr,
+			  [out, retval] BSTR * pbstr);
+		// Perform compatibility normalization of the input string, that is, every character
+		// which  has a compatibility decomposition is decomposed (recursively). This is
+		// Normalization Form D (NFD) as defined by Unicode TR 15.
+		[restricted] HRESULT NormalizeDRgch(
+			[in, size_is(cchIn)] OLECHAR * prgchIn,
+			[in] int cchIn,
+			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
+			[in] int cchMaxOut,
+			[out] int * pcchOut);
+
+		// Returns the locale of the engine.  See put_Locale for more notes.
+		[propget] HRESULT Locale(
+			[out, retval] int * pnLocale);
+
+		// Assigns the locale of the engine.  The locale affects the ICU functions called for
+		// line breaking and changing cases.  Note that the locale is read in using the
+		// Microsoft format we've been using for the rest of FieldWorks, as opposed to the ICU
+		// format (which it's translated into inside the class implementation).
+		[propput] HRESULT Locale(
+			[in] int nLocale);
+
+		// Gets the text that the LineBreakBefore and LineBreakAfter functions are using.  This
+		// function is included for completion.
+		HRESULT GetLineBreakText(
+			[in] int cchMax,
+			[out] OLECHAR * prgchOut,
+			[out] int * pcchOut);
+		// Sets the text for the LineBreakBefore and the LineBreakAfter functions to use.
+		[propput] HRESULT LineBreakText(
+			[in, size_is(cchMax)] OLECHAR * prgchIn,
+			[in] int cchMax);
+
+
+		// Finds the nearest line break immediately before the given index (ichIn).  The
+		// function returns not only a location but the weight of the line break (currently not
+		// implemented).  See http://www.unicode.org/unicode/reports/tr14/ for more information
+		// on line breaking properties.
+		HRESULT LineBreakBefore(
+			[in] int ichIn,
+			[out] int * pichOut,
+			[out] LgLineBreak * plbWeight);
+
+		// Finds the nearest line break immediately after the given index (ichIn).  The function
+		// returns not only a location but the weight of the line break (currently not
+		// implemented).  See http://www.unicode.org/unicode/reports/tr14/ for more information
+		// on line breaking properties.
+		HRESULT LineBreakAfter(
+			[in] int ichIn,
+			[out] int * pichOut,
+			[out] LgLineBreak * plbWeight);
+	};
+
+	/*******************************************************************************************
+		Interface ILgSearchEngine
+		Knows how to search for a pattern in a string. Also how to throw up a dialog for
+		asking what to search for.
+		ENHANCE JohnT: does throwing up the dialog belong here? That is a UI function...
+		ENHANCE JohnT: does a search engine belong in the Language component?
+
+		@h3{When to implement}
+		We expect that the standard implementations will be all you need.
+
+		@h3{When to use}
+		Use this interface to search for a pattern in a string.
+
+		@h3{How to obtain an instance}
+		Currently you can't. No implementations have been attempted.
+
+		@h3{Hungarian: srcheng}
+	*******************************************************************************************/
+	DeclareInterface(LgSearchEngine, Unknown, 0D224001-03C7-11d3-8078-0000C0FB81B5)
+	{
+		// Set up the search engine with a specified pattern.
+		// ENHANCE JohnT: do we need "match whole words only"? Does sound-alike make sense
+		// otherwise?
+		// ENHANCE: define wild card syntax to use. (Should they be characters at all? Should we
+		// mark pattern characters with a different writing system and display them specially,
+		// e.g., <start word>?)
+		// ESCES needs at least the following wild card capabilities:
+		//	- word begin, end
+		//	- string begin, end. The size of string is up to the caller of FindString,
+		//		typically a paragraph.
+		//	- predefined character classes: punctuation, white space, letter, symbol, number,
+		//		the various types of letter defined for character classification.
+		//	- user-defined character classes (e.g., consonants, low vowels)
+		//		(The find dialog should allow these to be edited.)
+		//	- occurrence specifications (optional, 0 or more, 1 or more, range)
+		// ENHANCE: for a replace method, we would also need wild cards to mark start and end
+		// of substring for use in the output. This can also be useful in the find pattern,
+		// to say "what I found earlier must occur again"--e.g. for vowel harmony.
+		HRESULT SetPattern(
+			[in] BSTR bstrPattern,
+			[in] ComBool fIgnoreCase,
+			[in] ComBool fIgnoreModifiers,
+			[in] ComBool fUseSoundAlike,
+			[in] ComBool fUseWildCards);
+
+		// Set the replacement string/pattern. Required only if replacing.
+		// ENHANCE JohnT: should this be an optional argument to SetPattern? Or, should this
+		// method have all the arguments of SetPattern as well?
+		HRESULT SetReplacePattern(
+			[in] BSTR bstrPattern);
+
+		// Throw up a dialog which requests from the user, in an appropriate form for the
+		// specified writing system, a search pattern. The information requested is that
+		// provided by the SetPattern method.
+		HRESULT ShowPatternDialog(
+			[in] BSTR bstrTitle,  // To show in dialog--Clarify: in title bar?
+			[in] IWritingSystem * pwse,	// WS to use for display; if NULL, use default ws
+			[in] ComBool fForReplace,   // If true, include replace with field
+			[out, retval] ComBool * pfGoAhead); // true to proceed with search, false to cancel
+
+		// Search for a string.
+		// ENHANCE JohnT: probably a similar method FindStringRgch, probably also FindStringTss
+		HRESULT FindString(
+			[in] BSTR bstrSource,
+			[in] int ichFirst,  // start searching here
+			[out] int * ichMinFound,
+			[out] int * ichLimFound,
+			[out, retval] ComBool * pfFound);
+
+		// Find a substring and indicate what should replace it, if the client decides to
+		// go ahead. Answers S_OK if found, S_FALSE if not found, possibly ERROR codes.
+		// (Inconsistent with FindString, but keeps it down to one OUT param for VB.)
+		// ENHANCE JohnT: should we change FindString to return S_OK/S_FALSE to conform?
+		// Should we have this method just return the replacement string (for the last
+		// thing found by FindString)?
+		HRESULT FindReplace(
+			[in] BSTR bstrSource,
+			[in] int ichFirst,  // start searching here
+			[out] int * ichMinFound,
+			[out] int * ichLimFound,
+			[out, retval] BSTR * pbstrReplacement);  // (maybe deduced from pattern)
+
+		// ENHANCE JohnT: should we have more methods to read results of last Find, such as
+		// substrings matched by parts of the pattern?
+
+		// ENHANCE JohnT: should we have rgch versions of find and replace?
+
+	};
+
+	/*******************************************************************************************
+		Interface ILgStringConverter
+		Knows how to convert strings from one writing system to another (or similar functions).
+		Hungarian: strconv
+
+		ENHANCE JohnT: this class implements the main method of Ken's IStringConvert interface,
+		but not its initialization approach; this engine must be initializable from a moniker.
+		Is there a way we can capture the commonality?
+
+		Note also: NRSI is interested in implementing string converters, but have identified
+		a need for a different interface based that is more stream like. This allows a client
+		to "pull" as much output as needed, and the converter to process only as much text
+		as needed. It also allows converters to be conveniently chained together for a more
+		complex conversion. Thus, we may end up with a quite different interface.
+
+		A further complication is the need to apply conversions to only the CDATA parts of
+		XML files, or even to apply different conversions to different elements. This area
+		requires considerable further design work.
+
+		@h3{When to implement}
+		Implement this interface if you need to plug in a custom string converter for one of
+		the components that use such converters. First check out the standard implementations.
+
+		@h3{When to use}
+		Use this interface to make systematic changes to strings.
+
+		@h3{How to obtain an instance}
+		Currently you can't. No implementations have been attempted.
+
+		@h3{Hungarian: srcheng}
+	*******************************************************************************************/
+	DeclareInterface(LgStringConverter, Unknown, 0D224002-03C7-11d3-8078-0000C0FB81B5)
+	{
+		// Convert a string.
+		// ENHANCE JohnT: how will we handle strings that can't be converted without user
+		// intervention?  Does this method fail, and some other process picks up the unconverted
+		// strings?  What if parts of the string can be converted but others can't?
+		// Is this method allowed to UI? Should there be explicit control of that? Should it
+		// instead have a call-back to ask what to do about ambiguities?
+		HRESULT ConvertString(
+			[in] BSTR bstrIn,
+			[out,retval] BSTR * pbstrOut);
+
+		// Convert a string.
+		// ENHANCE JohnT: another idea is that if the buffer is too small or NULL, it sets
+		// pcchOut to the required size and fills in as much as will fit. An error is not
+		// reported, so the client must be careful to check that *pcchOut is <= cchMax.
+		// There should be some way for the client to just find out how big a buffer is
+		// needed.
+		// ENHANCE JohnT: Ken's interface calls this method ConvertStrngCP, I think.
+		// @exception E_BUFFER_TOO_SMALL if the output buffer won't hold the output
+		[restricted] HRESULT ConvertStringRgch(
+			[in, size_is(cch)] const OLECHAR * prgch,
+			[in] int cch,
+			[in] int cchMax,
+			[out, size_is(cchMax)] OLECHAR * prgchOut,
+			[out] int * pcchOut);
+	};
+
+	/*******************************************************************************************
+		Interface ILgTokenizer
+		Knows how to find some kind of 'tokens' in the input string.
+
+		@h3{When to implement}
+		Implement this interface if you need to plug in a special tokenizer for your language.
+		First check out the standard implementations to see if one can be customized.
+
+		@h3{When to use}
+		Use this interface to break strings up into smaller pieces. Particular implementations
+		are optimized for certain kinds of tokens (and ways of specifying tokens).
+
+		@h3{How to obtain an instance}
+		Currently you can't. No implementations have been attempted.
+
+		@h3{Hungarian: toker}
+	*******************************************************************************************/
+	DeclareInterface(LgTokenizer, Unknown, 0D224003-03C7-11d3-8078-0000C0FB81B5)
+	{
+		// Get the next token of whatever kind this tokenizer supports from the input string.
+		// Set *pichMin to the offset of the first character of the token, and *pichLim
+		// to the offset of the first character after the token.
+		// @param cch specifies the number of characters in the input string
+		// @param prgchInput points to the text to tokenize.
+		// If it has more than cch characters, the rest will be ignored.
+		// ENHANCE JohnT: should we pass an ichMin?
+		// @exception E_FAIL if no more tokens available. Also set *pichMin and *pichLim to -1.
+		[restricted] HRESULT GetToken(
+			[in, size_is(cch)] OLECHAR * prgchInput,
+			[in] int cch,
+			[out] int * pichMin,
+			[out] int * pichLim);
+
+		// Get the start of the first token that begins at or after offset
+		// ichFirst in the input string bstrInput.
+		// Characters before ichFirst are not examined; the result is as if the string
+		// began at ichFirst.
+		// @exception E_FAIL if no token found
+		[propget] HRESULT TokenStart(
+			[in] BSTR bstrInput,
+			[in] int ichFirst,
+			[out, retval] int *pichMin);
+		// Get the end of the first token that BEGINS at or after ichFirst.
+		// Note: ichFirst may be the result obtained from a previous call to TokenStart,
+		// rather than the value passed to TokenStart, but to obtain the limit of the same
+		// token it must not be larger than that. In other words, this method does NOT
+		// find the first end-of-token at or after ichFirst: it must find a complete token
+		// starting there.
+		// @exception E_FAIL if no token found
+		[propget] HRESULT TokenEnd(
+			[in] BSTR bstrInput,
+			[in] int ichFirst,
+			[out, retval] int *pichLim);
+		// ENHANCE JohnT: should we also have a method that returns the token itself as a
+		// newly allocated BSTR?
+	};
+
+	// Standard MS Word spell checker options
+	// Many implementations will ignore some of these
+	// ENHANCE JohnT: any others we need?
+	typedef [v1_enum] enum LgSpellCheckOptions
+	{
+		fsplcNil                   = 0x00000,
+		fsplcSuggestFromUserDict   = 0x00001,
+		fsplcIgnoreAllCaps         = 0x00002,
+		fsplcIgnoreMixedDigits     = 0x00004,
+		fsplcIgnoreRomanNumerals   = 0x00008,
+		fsplcFindUncappedSentences = 0x00010,
+		fsplcFindMissingSpaces     = 0x00020,
+		fsplcFindRepeatWord        = 0x00040,
+		fsplcFindExtraSpaces       = 0x00080,
+		fsplcFindSpacesBeforePunc  = 0x00100,
+		fsplcFindSpacesAfterPunc   = 0x00200,
+		fsplcFindInitialNumerals   = 0x00800,
+		fsplcQuickSuggest          = 0x02000,
+		fsplcUseAllOpenUdr         = 0x04000,
+		fsplcSglStepSugg           = 0x10000,
+		fsplcIgnoreSingleLetter    = 0x20000,
+	} LgSpellCheckOptions;
+
+	// Standard MS Word spell checker result codes. Most implementations
+	// will not generate all of these.
+	typedef [v1_enum] enum LgSpellCheckResults
+	{
+		scrsNoErrors                    =  0,  /* All buffer processed. */
+		scrsUnknownInputWord            =  1,  /* Unknown word. */
+		scrsReturningChangeAlways       =  2,  /* Returning a Change Always word. */
+		scrsReturningChangeOnce         =  3,  /* Returning a Change Once word. */
+		scrsInvalidHyphenation          =  4,  /* Error in hyphenation point. */
+		scrsErrorCapitalization         =  5,  /* Cap pattern not valid. */
+		scrsWordConsideredAbbreviation  =  6,  /* Word is considered an abbreviation. */
+		scrsHyphChangesSpelling         =  7,  /* Word changes spelling when not hyphenated. */
+		scrsNoMoreSuggestions           =  8,  /* All methods used. */
+		scrsMoreInfoThanBufferCouldHold =  9,  /* More return data than fit in buffer. */
+		scrsNoSentenceStartCap          = 10,  /* Start of sentence was not capitalized. */
+		scrsRepeatWord                  = 11,  /* Repeat word found. */
+		scrsExtraSpaces                 = 12,  /* Too many spaces for context.*/
+		scrsMissingSpace                = 13,  /* Too few spaces between words or sentences. */
+		scrsInitialNumeral              = 14,  /* Word starts with numeral &
+												  fsplcFindInitialNumerals set. */
+	} LgSpellCheckResults;
+
+	/*******************************************************************************************
+		Interface ILgSpellChecker
+		Knows how to check spelling and related functions.
+		Loosely based on the ISpellCheckerWideChar interface which Shon implemented in the
+		Santa Fe prototype for access to MS Word spelling checkers. The intent is that this
+		interface could be easily implemented using that; but this interface assumes that
+		writing system-dependent initialization info is provided independent of the client.
+
+		ENHANCE JohnT: How should we handle customization? Should the possibility of a "user
+		dictionary" be explicit in the interface, or is that just something that some
+		implementations provide? Some of our spelling checkers will probably allow the
+		user to add directly to the main dictionary (e.g., if it is their own WFI).
+
+		@h3{When to implement}
+		Usually you will use a standard implementation of this interface. If none of them can
+		be customized to suit your language you could consider programming a new one (and
+		perhaps adding it to the list of standard ones, if it is custimizable).
+
+		@h3{When to use}
+		Use this interface when you need to implement spelling checking.
+
+		@h3{How to obtain an instance}
+		Currently you can't. No implementations have been attempted. Eventually you will obtain
+		one from ${ILgSpellCheckFactory#get_Checker}
+
+		@h3{Hungarian: spchk}
+	*******************************************************************************************/
+	DeclareInterface(LgSpellChecker, Unknown, 0D224006-03C7-11d3-8078-0000C0FB81B5)
+	{
+		// Initialize the checker with a custom dictionary file path.
+		HRESULT Init(
+			[in] LPCOLESTR pszwCustom);
+
+		// Set a combination of the options in LgSpellCheckOptions
+		HRESULT SetOptions(
+			[in] int grfsplc);
+
+		// Check the specified input buffer. *pscrs gets a member of the LgSpellCheckResults
+		// enumeration above. If a problem is found, pbstrBad contains the text to show to the
+		// user as the wrong word, and pichMinBad/pichLimBad indicate where it is.  If the
+		// checker has previously been told to "change always" the problem word, pbstrSuggest
+		// contains the previously decided replacement.
+		// ENHANCE JohnT: clarify: can all LgSpellCheckResults values occur on this method?  Do
+		// any others result in a pbstrSuggest?  Do we expect our spell checkers to note the
+		// various grammatical errors such as sentence start capitalization? Surely "no more
+		// suggestions" and "more info than buffer can hold" don't apply here?  When should
+		// "change once" be used? Should it give the first suggestion along with "unknown word"?
+		HRESULT Check(
+			[in, size_is(cchw)] const OLECHAR * prgchw,
+			[in] int cchw,
+			[out] int * pichMinBad,
+			[out] int * pichLimBad,
+			[out] BSTR * pbstrBad,
+			[out] BSTR * pbstrSuggest,
+			[out] int * pscrs);
+
+		// Get a suggestion for the given word. Repeated calls obtain other suggestions;
+		// Call once with fFirst set true, then call with fFirst false until you want no more
+		// suggestions or until the method answers false.
+		// ENHANCE JohnT: is this in fact how the interface is supposed to be used? What if the
+		// most recent call was for a different word, but fFirst is not true?
+		HRESULT Suggest(
+			[in, size_is(cchw)] const OLECHAR * prgchw,
+			[in] int cchw,
+			[in] ComBool fFirst,
+			[out] BSTR *pbstrSuggest);
+
+		// Ignore all subsequent occurrences of the argument word (for the lifetime of this
+		// spelling check object, or until FlushIgnoreList is called).
+		HRESULT IgnoreAll(
+			[in] LPCOLESTR pszw);
+
+		// Record that the user wants pszwDst to be the preferred replacement for pszwSrc.
+		// Henceforth, when pszwSrc is detected as a spelling error, pszwDst will be the
+		// suggestion, and the result code for Check will be scrsReturningChangeAlways.
+		// If fAll is true this happens for all subsequent occurrences of pszwSrc (for the
+		// lifetiem of this object, or until FlushChangeList is called); if false,
+		// it happens only for the next single occurrence (and the result code will be
+		// scrsReturningChangeOnce).
+		// ENHANCE JohnT: is fAll useful? I have never seen a spelling dialog with an option
+		// that corresponds to change once.
+		HRESULT Change(
+			[in] LPCOLESTR pszwSrc,
+			[in] LPCOLESTR pszwDst,
+			ComBool fAll);
+
+		// Add the specified string to the user dictionary. It should never again be
+		// reported as a spelling error, either by this checker, or any new one that is
+		// subsequently initialized from the same user dictionary.
+		// Fails if a user dictionary was not specified or that capability is not supported.
+		// Some engines may in fact add the word to a master dictionary (e.g, the WFI).
+		// ENHANCE JohnT: clarify: what is the behavior if another checker has previously been
+		// created using the same dictionary? Will it notice the change? Do we care?
+		HRESULT AddToUser(
+			[in] LPCOLESTR pszw);
+
+		// Discard any requests that have been made for words to be ignored.
+		HRESULT FlushIgnoreList();
+		// Discard any requests that have been made for words to be automatically
+		// changed. (ENHANCE JohnT: clarify: what on earth does fAll mean here!!)
+		HRESULT FlushChangeList(
+			[in] ComBool fAll);
+	};
+
+	/*******************************************************************************************
+		Interface ILgSpellCheckFactory
+
+		Since ISpellCheckers are transient objects good for one spell check, this is the
+		persistent object that gets stored in the writing system.
+
+		Hungarian: spchk
+	*******************************************************************************************/
+	DeclareInterface(LgSpellCheckFactory, Unknown, FC1C0D01-0483-11d3-8078-0000C0FB81B5)
+	{
+		// Get a checker object ready to be used for one spell-check session.
+		[propget] HRESULT Checker(
+			[out, retval] ILgSpellChecker ** ppspchk);
+	};
+
+	/*******************************************************************************************
+		Interface ILgNumericEngine
+		Knows how to convert numbers to and from binary.
+
+		ENHANCE JohnT: do we need something analogous to Locales? For example, Australia, US
+		and Great Britain all use English, but use different date and currency
+		conventions. They don't actually do numbers differently, but other similar
+		situations could require that.
+
+		ENHANCE JohnT: do we need similar routines for doubles? Do they have language-specific
+		formats?
+
+		ENHANCE JohnT: do we need a similar engine (or part of this?) for currencies and dates?
+
+		ENHANCE JohnT: do we need this at all? Or can we just record a locale in the writing
+		system and use standard system number formatting?
+
+		@h3{When to implement}
+		Only if you need a number representation that can't be done with any of the standard
+		approaches.
+
+		@h3{When to use}
+		Use this interface when you need to convert numbers to and from binary in a language-
+		dependent way.
+
+		@h3{How to obtain an instance}
+		If we decide to proceed with this notion, there will need to be a method on writing
+		system to return one. For now the only way is to create one using CoCreateInstance,
+		with CLSID_LgNumericEngine. This creates a very simple engine that does decimal
+		numbers but can be customized as to which characters it uses for decimal separator,
+		thousands separator, exponential notation, and minus. You must QueryInterface
+		for ISimpleInit and pass an initialization string to set up the special characters.
+		For example,
+
+		@code{
+		IClassInitMonikerPtr acim;
+		qcim.CreateInstance(CLSID_LgNumericEngine);
+		CheckHr(qcim->InitNew((BYTE*)L"-.,E", 4 * isizeof(wchar)));
+		ILgNumericEnginePtr qnumeng;
+		CheckHr(qcim->QueryInterface(IID_ILgNumericEngine, (void **)&qnumeng));
+		}
+
+		@h3{Hungarian: numeng}
+	*******************************************************************************************/
+	DeclareInterface(LgNumericEngine, Unknown, FC1C0D04-0483-11d3-8078-0000C0FB81B5)
+	{
+		// Get the default string version of an integer, e.g., 123456, -654321
+		[propget] HRESULT IntToString(
+			[in] int n,
+			[out, retval] BSTR * bstr);
+		// Get a string representation of an integer using commas or the equivalent,
+		// e.g., 12,345,678
+		[propget] HRESULT IntToPrettyString(
+			[in] int n,
+			[out, retval] BSTR * bstr);
+
+		// Get a binary integer corresponding to anything IntToString could output
+		// Can handle leading and trailing white space.
+		// ENHANCE JohnT: should it also handle output of IntToPrettyString?
+		// @exception E_FAIL if result will not fit in 32 bit signed int, or if any
+		// characters are not used up in the string (except white space).
+		[propget] HRESULT StringToInt(
+			[in] BSTR bstr,
+			[out, retval] int * pn);
+
+		// Get a binary integer corresponding to anything IntToString could output
+		// Can handle leading white space; trailing is handled using pichUnused.
+		// ENHANCE JohnT: should it also handle output of IntToPrettyString?
+		// @param pichUnused Set to the index of the first character not processed, that is,
+		// not recognized as part of a number.
+		// @exception E_FAIL if result will not fit in 32 bit signed int
+		[restricted] HRESULT StringToIntRgch(
+			[in, size_is(cch)] OLECHAR * prgch,
+			[in] int cch,
+			[out] int * pn,
+			[out] int * pichUnused);
+
+		// ENHANCE JohnT: should we have hex or other base output?
+
+		// Get the default string representation of a double, e.g., 1234.56, -6543.21
+		[propget] HRESULT DblToString(
+			[in] double dbl,
+			[in] int cchFracDigits, // number of digits after decimal
+			[out, retval] BSTR * bstr);
+
+		// Get a string version of a double with commas or the equivalent, e.g., 12,345,678.9
+		[propget] HRESULT DblToPrettyString(
+			[in] double dbl,
+			[in] int cchFracDigits, // number of digits after decimal
+			[out, retval] BSTR * bstr);
+
+		// Get a string representation of a double in exp notation, e.g., 1.2345E3
+		[propget] HRESULT DblToExpString(
+			[in] double dbl,
+			[in] int cchFracDigits, // number of digits after decimal
+			[out, retval] BSTR * bstr);
+
+		// Get a double from a string (anything DblToString or DblToExpString could output)
+		// Can handle leading and trailing white space.
+		// ENHANCE JohnT: should it also handle output of IntToPrettyString?
+		// @exception E_FAIL if any characters are not used up in the string (except white
+		// space).
+		[propget] HRESULT StringToDbl(
+			[in] BSTR bstr,
+			[out, retval] double * pdbl);
+
+		// Get a double from a string (anything DblToString or DblToExpString could output)
+		// Can handle leading white space; trailing is handled using pichUnused.
+		// @param pichUnused Set to the index of the first character not processed, that is,
+		// not recognized as part of a number.
+		[restricted] HRESULT StringToDblRgch(
+			[in, size_is(cch)] OLECHAR * prgch,
+			[in] int cch,
+			[out] double * pdbl,
+			[out] int * pichUnused);
+	};
+
+	/*******************************************************************************************
+		Interface ILgWritingSystemFactory
+		Knows how to find an writing system engine from an writing system integer or an ICU
+		Locale string.
+
+		Note: to avoid spurious memory leak warnings, put the following in the shut-down code
+		of your application, after you are sure no more writing systems are needed:
+
+		@code{
+		ILgWritingSystemFactoryPtr qwsf;
+		qwsf.CreateInstance(CLSID_LgWritingSystemFactory);
+		qwsf->Shutdown();
+		}
+
+		@h3{When to implement}
+		Never implement this interface. The only instance is and must be the one implemented by
+		Language.DLL.
+
+		@h3{When to use}
+		Use this interface when you need to obtain writing systems and their engines.
+
+		@h3{How to obtain an instance}
+		Use CoCreateInstance (or an equivalent smart pointer approach) with
+		CLSID_LgWritingSystemFactory.
+
+		@h3{Hungarian: wsf}
+	*******************************************************************************************/
+	DeclareInterface(LgWritingSystemFactory, Unknown, ABF7CC21-43CB-4AFC-AF6B-361E2D825930)
+	{
+		// Get the actual writing system object for a given ICU Locale string.
+		// The current implementation returns any existing writing system for that ICU Locale,
+		// or creates one with default settings if one is not already known.
+		// (Use ${#get_EngineOrNull} to avoid automatic creation of a new engine.)
+		[propget] HRESULT Engine(
+			[in] BSTR bstrIcuLocale,
+			[out, retval] IWritingSystem ** ppwseng);
+
+		// Get the actual writing system object for a given code, or returns NULL if one does
+		// not already exist.
+		// (Use ${#get_Engine} if you prefer to have an writing system created automatically if
+		// one does not already exist.)
+		[propget] HRESULT EngineOrNull(
+			[in] int ws,
+			[out, retval] IWritingSystem ** ppwseng);
+		// Install a new writing system (it will be registered under its own
+		// proper writing system code).
+		HRESULT AddEngine(
+			[in] IWritingSystem * pwseng);
+		// Remove an writing system, if one is present for this ws. No error is reported if not
+		// found.
+		HRESULT RemoveEngine(
+			[in] int ws);
+
+		// Get an writing system ID from an ICULocale, or 0 if no such writing system exists.
+		// Return S_FALSE if the writing system does not exist.
+		HRESULT GetWsFromStr(
+			[in] BSTR bstr,
+			[out, retval] int * pwsId);
+		// Get the ICULocale for the writing system if it exists, or NULL if it doesn't.
+		// Return S_FALSE if the writing system does not exist.
+		HRESULT GetStrFromWs(
+			[in] int wsId,
+			[out, retval] BSTR * pbstr);
+
+		// Get the number of writing systems currently installed in the system
+		[propget] HRESULT NumberOfWs(
+			[out, retval] int * pcws);
+		// Get the list of writing systems currrently installed in the system.
+		HRESULT GetWritingSystems(
+			[out, size_is(cws)] int * rgws,
+			[in] int cws);
+
+		// Returns a singleton character property engine for pure Unicode character
+		// properties.
+		[propget] HRESULT UnicodeCharProps(
+			[out, retval] ILgCharacterPropertyEngine ** pplcpe);
+		// Get the default collater for the specified writing system.
+		[propget] HRESULT DefaultCollater(
+			[in] int ws,
+			[out, retval] ILgCollatingEngine ** ppcoleng);
+		// Get the char prop engine for a particular WS
+		[propget] HRESULT CharPropEngine(
+			[in] int ws,
+			[out, retval] ILgCharacterPropertyEngine ** pplcpe);
+		// Get the renderer for a particular WS
+		[propget] HRESULT Renderer(
+			[in] int ws,
+			[in] IVwGraphics * pvg,
+			[out, retval] IRenderEngine ** ppre);
+		// Get the renderer for a particular Chrp
+		[propget] HRESULT RendererFromChrp(
+		// should be [in, ref] possibly?
+			[in, out] LgCharRenderProps * pchrp,
+			[out, retval] IRenderEngine ** ppre);
+		// Call this when your program no longer wants to use writing systems, typically
+		// as the program shuts down. Not using it will cause some bogus memory
+		// leaks. Using it before that will mean that new writing system and related object
+		// instances get made, replacing any already created. Basically this function
+		// releases the factory's reference counts on Writing system objects, allowing them
+		// to be destructed if your code has also released all its references to them.
+		//If the WSF was created using an OleDbEncap, this must be called exactly once per call
+		//to LgWritingSystemFactoryBuilder::GetWritingSystemFactory or
+		//LgWritingSystemFactoryBuilder::GetWritingSystemFactoryNew.
+		HRESULT Shutdown();
+
+		// Call this to clear the writing system cache. This causes writing systems to be
+		// reloaded when they are used. This is used during a FullRefresh.
+		HRESULT Clear();
+
+		// Call this when your program wants to save the current set of writing systems to
+		// persistent memory.
+		HRESULT SaveWritingSystems();
+
+		// Write the pertinent data to the IStorage object to allow a read-only copy of this
+		// factory to be reconstituted later.  Use the ILgWritingSystemFactoryBuilder interface
+		// to deserialize it.
+		HRESULT Serialize(
+			[in] IStorage * pstg);
+
+		// Get the default user interface writing system.
+		[propget] HRESULT UserWs(
+			[out, retval] int * pws);
+		// Set the default user interface writing system. This should usually be done very early in
+		// the lifecycle of the WSF.
+		[propput] HRESULT UserWs(
+			[in] int ws);
+
+		// When true, this bypasses the normal operation of updating the language definition xml
+		// file and calling InstallLanguage to update the ICU files.
+		// This provides a way for some simple tests to be run prior to the InstallLanguage
+		// program being compiled. The default is false.
+		[propget] HRESULT BypassInstall(
+			[out, retval] ComBool * pfBypass);
+		[propput] HRESULT BypassInstall(
+			[in] ComBool fBypass);
+
+		// Add a new engine with the given code and ICU Locale string.  If an engine with those
+		// values already exists, nothing is done.  This is similar to AddEngine(), but provides
+		// explicit values for the collation attributes and database ids (ws and hvoColl).
+		HRESULT AddWritingSystem(
+			[in] int ws,
+			[in] BSTR bstrIcuLocale);
+
+		// Check whether this factory has been shut down by a call to Shutdown().
+		[propget] HRESULT IsShutdown(
+			[out, retval] ComBool * pfIsShutDown);
+	};
+
+	/*******************************************************************************************
+		Interface ILgWritingSystemFactoryBuilder
+		Knows how to create an writing system factory linked to a language project database.
+
+		@h3{How to obtain an instance}
+		Use CoCreateInstance (or an equivalent smart pointer approach) with
+		CLSID_LgWritingSystemFactoryBuilder.
+
+		@h3{Hungarian: wsfb}
+	*******************************************************************************************/
+	DeclareInterface(LgWritingSystemFactoryBuilder, Unknown, 8AD52AF0-13A8-4d28-A1EE-71924B36989F)
+	{
+		// Get the factory associated with the given database. Use existing connection.
+		// @param pode Pointer to an existing database connection
+		// @param pfistLog Pointer to a stream for logging errors.
+		// @param ppwsf Address of a pointer for returning a factory which is linked to the
+		// given database.
+		// Note: This was added so that the writing system factory doesn't create a separate
+		// connection to the database. Multiple connections mess up numerous things that
+		// assume a single connection such as restore, changing writing systems,
+		// synchronization, etc.  The disadvantage of this is that now DbAccess is required
+		// whenever Language is required, even though the code may not actually use this method.
+		HRESULT GetWritingSystemFactory(
+			[in] IOleDbEncap * pode,
+			[in] IStream * pfistLog,
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+		// Get the factory associated with the given database. Make a new connection.
+		// This creates a new connection to the database and holds it until the writing system
+		// factory is deleted.
+		// @param bstrServer Name of the machine running the database server.
+		// @param bstrDatabase Name of the database containing the WritingSystem information.
+		// @param pfistLog Pointer to a stream for logging errors.
+		// @param ppwsf Address of a pointer for returning a factory which is linked to the
+		// given database.
+		HRESULT GetWritingSystemFactoryNew(
+			[in] BSTR bstrServer,
+			[in] BSTR bstrDatabase,
+			[in] IStream * pfistLog,
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+		// Create a read-only (no database connection, no registry connection) language
+		// writing system factory from the serialized data in the IStorage object.
+		HRESULT Deserialize(
+			[in] IStorage * pstg,
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+		// Call this when program is shutting down, and you want to ensure that all factories
+		// are shut down properly to release any memory they consumed.  Note that all writing
+		// system factories are unusable after this, although pointers to them may still be
+		// valid.
+		HRESULT ShutdownAllFactories();
+	};
+
+/*----------------------------------------------------------------------------------------------
+	ILgTsStringPlusWss is an interface for storing and retrieving a TsString together with all
+	of the writing systems actually used by the TsString.  This is useful primarily for
+	clipboard operations.
+
+	Hungarian: tsswss
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(LgTsStringPlusWss, Unknown, 71C8D1ED-49B0-40ef-8423-92B0A5F04B89)
+{
+	// Retrieve the string stored in this object, adding writing systems to the writing system
+	// factory as needed.
+	[propget] HRESULT String(
+		[in] ILgWritingSystemFactory * pwsf,
+		[out, retval] ITsString ** pptss);
+	// Retrieve the string stored in this object, using the specified writing system in all
+	// runs of the string.
+	[propget] HRESULT StringUsingWs(
+		[in] int newWs,
+		[out, retval] ITsString ** pptss);
+	// Store the string in this object, storing all of the related writing systems as well.
+	[propputref] HRESULT String(
+		[in] ILgWritingSystemFactory * pwsf,
+		[in] ITsString * ptss);
+
+	// Retrieve the text of the string stored in this object, without worrying about writing
+	// systems or other properties.
+	[propget] HRESULT Text(
+		[out, retval] BSTR * pbstr);
+
+	// Retrieve the writing system factory containing writing systems stored for this string.
+	[propget] HRESULT WritingSystemFactory(
+		[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+	// Store the string and writing systems factory in serialized form.
+	HRESULT Serialize(
+		[in] IStorage * pstg);
+
+	// Initialize the string and writing systems factory from the serialized data.
+	HRESULT Deserialize(
+		[in] IStorage * pstg);
+};
+
+/*******************************************************************************************
+	Interface ILgTsDataObject
+
+	This class provides an IDataObject wrapper around a TsString object.  This facilitates
+	passing TsString data via the clipboard or "drag and drop".
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Whenever you want to put a TsString on the clipboard you should create a ILgTsDataObject
+
+	@h3{Hungarian: tsdo}
+*******************************************************************************************/
+DeclareInterface(LgTsDataObject, Unknown, 56CD4356-C349-4927-9E3D-CC0CF0EFF04E)
+{
+
+	// Initialize the LgTsDataObject with its internal ILgTsStringPlusWss value.
+	HRESULT Init([in] ILgTsStringPlusWss * ptsswss);
+
+	// Obtain the clipboard type registered for TsString data ("CF_TsString").
+	HRESULT GetClipboardType([out] UINT * type);
+};
+
+/*******************************************************************************************
+	Interface ILgKeymanHandler
+
+	An interface that manages Keyman, being able to invoke a keyboard, find out which
+	one is active, find out which keyboards are available, return the windows message that
+	Keyman sends when a keyboard is selected, and so forth.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Whenever you want to manipulate or query Keyman
+
+	@h3{Hungarian: lkh}
+*******************************************************************************************/
+DeclareInterface(LgKeymanHandler, Unknown, D43F4C58-5E24-4b54-8E4D-F0233B823678)
+{
+
+	// Initialize the Keyboard handler. Set fForce to re-initialize even if already
+	// initialized, for example, if a keyboard has been added or removed.
+	// All data is static, so it is only necessary to call this for one instance.
+	// Actually, it is not strictly necessary to call it at all, as other methods will
+	// do so if necessary.
+	HRESULT Init(
+		[in] ComBool fForce);
+
+	// Obtain the number of keyboard layouts currently avaiable.
+	[propget] HRESULT NLayout(
+		[out, retval] int * pclayout);
+	// Obtain the ith layout name.
+	[propget] HRESULT Name(
+		[in] int ilayout,
+		[out, retval] BSTR * pbstrName);
+	// Get/Set the active keyboard.
+	[propget] HRESULT ActiveKeyboardName(
+		[out, retval] BSTR * pbstrName);
+	[propput] HRESULT ActiveKeyboardName(
+		[in] BSTR bstrName);
+	// Return the windows message (obtained from RegisterWindowsMessage("WM_KMSELECTLANG").
+	[propget] HRESULT KeymanWindowsMessage(
+		[out, retval] int * pwm);
+	// Enhance JohnT: might be useful to add GetKeymanVersion, StartKeyman.
+};
+
+/*******************************************************************************************
+	Interface ILgTextServices
+
+	Provide access to TSF functionality wrapped in easy-to-call methods.
+
+	@h3{When to implement}
+	Clients should not implement this interface. There is a standard implementation in
+	Language.dll.
+
+	@h3{When to use}
+	When TSF related functionality is needed, especially from C# code which does not have
+	a built-in access path.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance, CLSID_LgTextServices. Or use the CreateInstance() method of a
+	smart pointer.
+
+	@h3{Hungarian: lts}
+*******************************************************************************************/
+DeclareInterface(LgTextServices, Unknown, 03D86B2C-9FB3-4E33-9B23-6C8BFC18FB1E)
+{
+	// Set the system keyboard and TSF language.
+	HRESULT SetKeyboard(
+		[in] int nLcid,
+		[in] BSTR bstrKeymanKbd,
+		[in, out] int * pnActiveLangId,
+		[in, out] BSTR * pbstrActiveKeymanKbd,
+		[in, out] ComBool * pfSelectLangPending
+		);
+};
+
+/*******************************************************************************************
+	Interface ILgCodePageEnumerator
+
+	An interface that allows retrieving a list of the code pages installed on the system,
+	with names suitable for displaying in a combo box.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Whenever you want to retrieve a list of available code pages.
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(LgCodePageEnumerator, Unknown, 62811E4D-5572-4f76-B71F-9F17238338E1)
+{
+
+	// Initialize enumerator. This default initializer gives all known code pages.
+	// We may eventually have others that allow them to be limited.
+	HRESULT Init();
+
+	// Get the next code page. When there are no more, sets pnId to 0 and pbstrName to null.
+	HRESULT Next(
+		[out] int * pnId,
+		[out] BSTR * pbstrName);
+};
+
+/*******************************************************************************************
+	Interface ILgLanguageEnumerator
+
+	An interface that allows retrieving a list of the languages installed on the system,
+	with names suitable for displaying in a combo box.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	Whenever you want to retrieve a list of available languages.
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(LgLanguageEnumerator, Unknown, 76470164-E990-411d-AF66-42A7192E4C49)
+{
+
+	// Initialize enumerator. This default initializer gives all installed languages.
+	// We may eventually have others that allow them to be limited.
+	HRESULT Init();
+
+	// Get the next language. When there are no more, sets pnId to 0 and pbstrName to null.
+	// For a language unsupported by the OS, it returns the id along with E_FAIL.
+	HRESULT Next(
+		[out] int * pnId,
+		[out] BSTR * pbstrName);
+};
+
+/*******************************************************************************************
+	Interface ILgIcuConverterEnumerator
+
+	An interface that allows retrieving a list of the converters that ICU supports.
+	Eventually it may also support creating converters, though our preferred approach is
+	to use the SilEncConverters30 interface.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	To retrieve a list of available converters.
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(LgIcuConverterEnumerator, Unknown, 34D4E39C-C3B6-413e-9A4E-4457BBB02FE8)
+{
+	// Get the count of available converters.
+	[propget] HRESULT Count(
+		[out, retval] int * pcconv);
+
+	// Get the nth converter name.
+	[propget] HRESULT ConverterName(
+		[in] int iconv,
+		[out,retval] BSTR * pbstrName);
+
+	// Get the ID string that identifies the converter to ICU.
+	[propget] HRESULT ConverterId(
+		[in] int iconv,
+		[out,retval] BSTR * pbstrName);
+
+};
+
+/*******************************************************************************************
+	Interface ILgIcuTransliteratorEnumerator
+
+	An interface that allows retrieving a list of the transliterators that ICU supports.
+	Eventually it may also support creating transliterators, though our preferred approach is
+	to use the SilEncConverters30 interface.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	To retrieve a list of available converters.
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(LgIcuTransliteratorEnumerator, Unknown, B26A6461-582C-4873-B3F5-673104D1AC37)
+{
+	// Get the count of available converters.
+	[propget] HRESULT Count(
+		[out, retval] int * pctrans);
+
+	// Get the nth converter name.
+	[propget] HRESULT TransliteratorName(
+		[in] int itrans,
+		[out,retval] BSTR * pbstrName);
+
+	// Get the ID string that identifies the transliterator to ICU.
+	[propget] HRESULT TransliteratorId(
+		[in] int iconv,
+		[out,retval] BSTR * pbstrName);
+};
+
+/*******************************************************************************************
+	Interface ILgLocaleEnumerator
+
+	An interface that allows retrieving a list of the available ICU locales on the system.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	To retrieve a list of available locales.
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(LgIcuLocaleEnumerator, Unknown, 00C88119-F57D-4e7b-A03B-EDB0BC3B57EE)
+{
+	// Get the count of available converters.
+	[propget] HRESULT Count(
+		[out, retval] int * pclocale);
+
+	// Get the nth locale name. (ICU getName.)
+	[propget] HRESULT Name(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+	// Get the nth locale language identifier. (ICU getLanguage.)
+	[propget] HRESULT Language(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+	// Get the nth locale country. (ICU getCountry.)
+	[propget] HRESULT Country(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+	// Get the nth locale variant. (ICU getVariant.)
+	[propget] HRESULT Variant(
+		[in] int iloc,
+		[out, retval] BSTR * pbstrName);
+
+	// Get the display name of the locale represented by this enumerator.
+	// The display name will be in the selected locale if it is non-empty;
+	// pass null or an empty string to get the system default locale.
+	[propget] HRESULT DisplayName(
+		[in] int iloc,
+		[in] BSTR bstrLocaleName,
+		[out, retval] BSTR * pbstrName);
+
+};
+
+/*******************************************************************************************
+	Interface ILgIcuResourceBundle
+
+	An interface that represents an instance of an ICU ResourceBundle object.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	To retrieve information from ICU resources; this is useful for things like enumerating
+	the countries and locales known to the system.
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(LgIcuResourceBundle, Unknown, 4518189C-E545-48b4-8653-D829D1ECB778)
+{
+	// Initialize the root resource bundle. The path may be null to use the standard
+	// FieldWorks ICU data directory.
+	HRESULT Init(
+		[in] BSTR bstrPath,
+		[in] BSTR locale);
+
+	// Get the key of the bundle. (Icu getKey.)
+	[propget] HRESULT Key(
+		[out, retval] BSTR * pbstrKey);
+
+	// Get the 'string' of the bundle. (Icu getString.)
+	[propget] HRESULT String(
+		[out, retval] BSTR * pbstrString);
+
+	// Get the name of the bundle. (Icu getName.) Note that the Key and String of the
+	// bundle are often more useful.
+	[propget] HRESULT Name(
+		[out, retval] BSTR * pbstrName);
+
+	// Get another resource bundle for a subsection of this one. (Icu get.)
+	// If the resource does not exist, this sets pprb to NULL.
+	[propget] HRESULT GetSubsection(
+		[in] BSTR bstrSectionName,
+		[out, retval] ILgIcuResourceBundle ** pprb);
+
+	// Determine whether the bundle has more sub-resources accessible through get_Next.
+	// (Icu hasNext.)
+	[propget] HRESULT HasNext(
+		[out, retval] ComBool * pfHasNext);
+
+	// Get the 'next' subsection and advance. The first call to this retrieves the first
+	// item. Call only while HasNext returns true. (Icu getNext.)
+	[propget] HRESULT Next(
+		[out, retval] ILgIcuResourceBundle ** pprb);
+
+	// Get the size of the bundle. (Icu getSize.)
+	[propget] HRESULT Size(
+		[out, retval] int * pcrb);
+
+	// Get the ith string. (Icu getStringEx.)
+	[propget] HRESULT StringEx(
+		[in] int irb,
+		[out, retval] BSTR * pbstr);
+};
+
+/*******************************************************************************************
+	Interface ILgIcuLocking
+
+	An interface that allows C# objects to perform necessary locking of ICU resources
+	prior to calling functions that use more direct marshalling. The idea is that code that
+	calls ICU via C# marshalling and code that calls it via one of our COM interfaces
+	must both ensure thread locking on a single access point. This provides it.
+
+	@h3{When to implement}
+	The standard implementation should ALWAYS be used.
+
+	@h3{When to use}
+	Call the Lock() routine before any access to ICU, and be SURE (use try..finally) to
+	call the matching Unlock() whatever happens!
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(LgIcuLocking, Unknown, 2DA5312D-59C0-4b1d-BE44-FEB375175FF7)
+{
+	HRESULT Lock();
+
+	HRESULT Unlock();
+}
+
+/*******************************************************************************************
+	Interface IRegexMatcher
+
+	An interface that allows C# objects to perform regular expression searches using ICU.
+
+	@h3{When to implement}
+	The standard implementation should be used.
+
+	@h3{When to use}
+	To search a string for a pattern.
+
+	@h3{Hungarian: lcpe}
+*******************************************************************************************/
+DeclareInterface(RegexMatcher, Unknown, EFBC723F-7FF7-4078-A730-56A62F967BCC)
+{
+	// Initialize the pattern to be searched. This must be done before calling other
+	// methods.
+	HRESULT Init(
+		[in] BSTR bstrPattern,
+		[in] ComBool fMatchCase);
+	// This oddly named method is named for the one in the real RegexMatcher. It sets the
+	// input that will be searched.
+	HRESULT Reset(
+		[in] BSTR bstrInput);
+	// This finds the first occurrence of the pattern in the input (starting at ich),
+	// if any, and returns a boolean indicating whether it was found. The match may start
+	// exactly at ich.
+	HRESULT Find(
+		[in] int ich,
+		[out, retval] ComBool * pfFound);
+	// Obtain the start of the indexed group. 0 obtains the start of the entire match;
+	// 1 obtains the part matched by the first () group, and so forth. Using an out-of-range
+	// index returns -1. (It does not produce a bad HRESULT.)
+	[propget] HRESULT Start(
+		[in] int igroup,
+		[out, retval] int * pich);
+	// Returns the end of the indicated group. Following the ICU terminology here...
+	// in our jargon it would be the limit of the group, that is, the index of the character
+	// AFTER the last one matched.
+	[propget] HRESULT End(
+		[in] int igroup,
+		[out, retval] int * pich);
+	// Get any error message from a prior operation.
+	[propget] HRESULT ErrorMessage(
+		[out, retval] BSTR * pbstrMsg);
+}
+
+#ifndef NO_COCLASSES
+/*************************************************************************************//*:Ignore
+	CoClass definitions.
+***********************************************************************************************/
+	DeclareCoClass(RegexMatcherWrapper, E82C13F8-D2B2-4de4-990A-AE6C39E65BA5)
+	{
+		interface IRegexMatcher;
+	};
+
+	DeclareCoClass(LgIcuLocking, 870A4044-E09D-4703-8182-A152785C87D0)
+	{
+		interface ILgIcuLocking;
+	};
+
+	// A collater which takes a code page and uses the OS capabilities to compare strings
+	DeclareCoClass(LgSystemCollater, 8D9C5BE3-03A8-11d3-8078-0000C0FB81B5)
+	{
+		interface ILgCollatingEngine;
+	};
+
+	// A collater based on Unicode Techinical Report 10.
+	DeclareCoClass(LgUnicodeCollater, 8D9C5BE4-03A8-11d3-8078-0000C0FB81B5)
+	{
+		interface ILgCollatingEngine;
+	};
+
+	// A collating engine that wraps the ICU collator.
+	DeclareCoClass(LgIcuCollator, B076595F-EB05-4056-BF69-382B28521B10)
+	{
+		interface ILgCollatingEngine;
+	};
+
+	// The *new* standrad character property engine, which gives answers based purely on
+	// Unicode (thanks to ICU).
+	DeclareCoClass(LgIcuCharPropEngine, 7CD09B42-A981-4b3b-9815-C06654CF1F7D)
+	{
+		interface ILgCharacterPropertyEngine;
+	};
+
+	// An implementation which looks for overrides in an LgCharPropSpec, and falls back
+	// to the default engine above if none is found for a particular character.
+	DeclareCoClass(LgCharPropOverrideEngine, 3BCA8781-182D-11d3-8078-0000C0FB81B5)
+	{
+		interface ILgCharacterPropertyEngine;
+	};
+
+	// A Tokenizer that finds word breaks by looking for white space.
+	// Compiler must initialize by calling its put_WritingSystem method.
+	DeclareCoClass(LgCPWordTokenizer, 0D224004-03C7-11d3-8078-0000C0FB81B5)
+	{
+		interface ILgTokenizer;
+	};
+
+	// An implementation based on locating the word form inventory for the writing system
+	// and checking whether instances are in it.
+	DeclareCoClass(LgWfiSpellChecker, FC1C0D03-0483-11d3-8078-0000C0FB81B5)
+	{
+		interface ILgSpellCheckFactory;
+	};
+
+	// An implementation based on MS-Word, using the Word dictionary for a major language.
+	DeclareCoClass(LgMSWordSpellChecker, 3BCA8782-182D-11d3-8078-0000C0FB81B5)
+	{
+		interface ILgSpellCheckFactory;
+	};
+
+	// A default implementation of the numeric converter interface based on knowing a
+	// negative character, a thousands separator, a decimal separator, and an exponent char.
+	// ENHANCE: should we further customize with a list of characters to use for the ten digits?
+	DeclareCoClass(LgNumericEngine, FC1C0D08-0483-11d3-8078-0000C0FB81B5)
+	{
+		interface ILgNumericEngine;
+	};
+
+	DeclareCoClass(LgWritingSystemFactory, D96B7867-EDE6-4c0d-80C6-B929300985A6)
+	{
+		interface ILgWritingSystemFactory;
+	};
+
+	DeclareCoClass(LgWritingSystemFactoryBuilder, 25D66955-3AE2-4b44-A6B1-0206EA5FE264)
+	{
+		interface ILgWritingSystemFactoryBuilder;
+	};
+
+	DeclareCoClass(Collation, D91E218D-0522-4992-89A3-19DBAA63DC57)
+	{
+		interface ICollation;
+	};
+
+	DeclareCoClass(WritingSystem, 93887846-4A63-4daf-A995-A312C301515E)
+	{
+		interface IWritingSystem;
+	};
+
+	// An implementation that combines a TsString and the set of WritingSystems which it
+	// references.  This is used for clipboard operations.
+	DeclareCoClass(LgTsStringPlusWss, 5289A9D3-E8D9-48f4-9AF7-E6014AA1E09C)
+	{
+		interface ILgTsStringPlusWss;
+	};
+
+	// This class provides an IDataObject wrapper around a TsString object.  This facilitates
+	// passing TsString data via the clipboard or "drag and drop".
+	DeclareCoClass(LgTsDataObject, 1C0BB7A2-BADB-452b-ABA3-8E60C122A670)
+	{
+		interface ILgTsDataObject;
+	};
+
+	DeclareCoClass(LgKeymanHandler, 740C334A-76E7-4d78-AB39-48BEAE304DEC)
+	{
+		interface ILgKeymanHandler;
+	};
+	DeclareCoClass(LgTextServices, 2752634F-60F2-4065-B480-091A67C6033B)
+	{
+		interface ILgTextServices;
+	};
+	DeclareCoClass(LgCodePageEnumerator, EF50E852-BA89-4014-A337-D1EF44AF0F35)
+	{
+		interface ILgCodePageEnumerator;
+	};
+	DeclareCoClass(LgLanguageEnumerator, 0629A66A-3877-40de-A27C-14BD51952BCF)
+	{
+		interface ILgLanguageEnumerator;
+	};
+	DeclareCoClass(LgIcuConverterEnumerator, 7583B4F0-9FA5-46df-A18B-B84DD12583CE)
+	{
+		interface ILgIcuConverterEnumerator;
+	};
+	DeclareCoClass(LgIcuTransliteratorEnumerator, CC9CE163-8DA6-4f6a-B387-5F77CD683434)
+	{
+		interface ILgIcuTransliteratorEnumerator;
+	};
+	DeclareCoClass(LgIcuResourceBundle, 38B24B19-6CAB-4745-84DF-229EA8999D24)
+	{
+		interface ILgIcuResourceBundle;
+	};
+	DeclareCoClass(LgIcuLocaleEnumerator, 96C82FB7-B30A-4320-B1E7-A31951C0A30B)
+	{
+		interface ILgIcuLocaleEnumerator;
+	};
+#endif /*!NO_COCLASSES*/

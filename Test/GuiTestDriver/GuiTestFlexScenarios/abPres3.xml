@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- This script requires the Doulos SIL IPA font and Keyman keyboard IME -->
+<!-- Changes the IPA font size to 12 -->
+<!-- Adds /t_ environment to -d -->
+<!-- Adds /l_ environment to -li -->
+
+<accil on-fail="assert">
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+   <var id="projectName" set="&quot;English IPA&quot;"/>
+
+  <on-application run="ok" args="-db  $projectName"  on-fail="assert">
+
+  <!--  3.	Examine Lexicon: Go to Lexicon / Lexicon Edit  -->
+   <click select="menubar/view/lexicon/lexicon-edit"/>
+
+  <!--  a.	Notice font of vernacular is hard to read.  To fix:  -->
+  <!--  i.	Format / Styles  -->
+   <click select="menubar/format/styles"/>
+
+  <on-dialog title="Styles">
+  <!--  1.	Normal style  -->
+	 <click path="34:Normal"/>
+  <!--  2.	Font tab  -->
+	 <click path="9:Styles:[2]/37:Font"/>
+  <!--  3.	Click on EnglishIPA  -->
+	 <click path="9:Styles:[2]/60:Styles:/9:Font/$NL;9:Writing systems:[2]/34:English (IPA)"/>
+  <!--  4.	Change Size to 12  -->
+	 <click path="9:Styles:[2]/60:Styles:/9:Font/$NL;9:Attributes/20:Attributes/9:Size:[2]/46:Size:/9:Size:/42:Size:"/>
+	 <insert wait="1000">12</insert>
+  <!--  5.	Click on OK  -->
+	 <click path="$ok"/>
+  </on-dialog>
+
+<model select="lexicon-edit[@role='view']">
+
+   <!--  b.	Click on -d PAST  -->
+   <var id="row" set="*"/> <!-- make it find the row -->
+   <var id="col" set="1"/>
+   <click select="entries/record/col" path="/value:-d"/>
+
+  <!--  i.	Add environment for id allomorph of / t _  -->
+   <click wait="1000" select="entry/slice/environments/text"/>
+   <insert wait="500">/ t _</insert>
+
+ <!--  ii.	Notice red squiggly. That's because the underscore in IPA keyboard is not underscore.    -->
+  <!--  1.	Change writing system to English  -->
+   <insert wait="200">{HOME}+{END}{BS}</insert> <!-- delete / t _ -->
+
+  <!--  2.	Change IPA underscore to regular underscore  -->
+   <click side="right" select="entry/slice/environments/label"/>
+   <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment Slash -->
+   <insert wait="200"> t </insert>
+   <click side="right" select="entry/slice/environments/label"/>
+   <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment bar -->
+   <var id="ind" set="*"/>
+   <click select="entry/slice/lexeme-form/data"/><!-- needs to commit the text -->
+   <!--  c.	Go to -li entry.  -->
+   <var id="row" set="*"/> <!-- make it find the row -->
+   <var id="col" set="1"/>
+   <click select="entries/record/col" path="/value:-li"/>
+
+  <!--  i.	Add environment of / l _ for the i allomorph  -->
+   <click wait="1000" side="right" select="entry/slice/environments/label"/>
+   <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment Slash -->
+   <insert wait="200"> l </insert>
+   <click side="right" select="entry/slice/environments/label"/>
+   <insert wait="200">{DOWN}~</insert><!-- choose Insert Environment bar -->
+   <click select="entry/slice/lexeme-form/data"/><!-- needs to commit the text -->
+
+</model>
+
+</on-application>
+</accil>

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Targets related to installers. This file is included in FieldWorks.build -->
+<project name="WixInstaller" default="all" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<target name="installer" description="Builds the WIX installer"
+			depends="copy-sampleDatabases,IcuData,localize">
+		<tstamp/>
+		<call target="BuildFwInstaller" cascade="false"/>
+		<tstamp/>
+	</target>
+
+	<target name="WixDeleteAllOutput">
+		<echo message="Deleting all WIX output..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="*.msi"/>
+				<include name="*.cab"/>
+				<include name="*.md5"/>
+				<include name="*.msm"/>
+				<include name="*.wixobj"/>
+				<include name="*.log"/>
+				<include name="*.mmp.wxs"/>
+				<include name="ProcessedFiles.wxs"/>
+				<include name="ProcessedMergeModules.wxs"/>
+				<include name="ProcessedProperties.wxs"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting all WIX output."/>
+	</target>
+
+	<target name="PreprocessWixMergeMods">
+		<echo message="Deleting previous WIX merge module preprocessed source files..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="*.mmp.wxs"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting WIX merge module preprocessed source files."/>
+		<echo message="Preprocessing WIX merge module source files..."/>
+		<exec workingdir="${fwroot}\Installer" program="WScript.exe" commandline="${fwroot}\Installer\ProcessWixMMs.js ${config}"
+			  failonerror="false" resultproperty="ProcessWixMMsResult" />
+		<if test="${int::parse(ProcessWixMMsResult) != 0}">
+			<if test="${int::parse(ProcessWixMMsResult) == -1}">
+				<fail message="Error while preprocessing WIX MM files. See Installer\ProcessWixMMs.log for details."/>
+			</if>
+		</if>
+		<echo message="...Done preprocessing WIX merge module source files."/>
+	</target>
+
+	<target name="CommonWixMergeMods" depends="PreprocessWixMergeMods">
+		<echo message="Starting to build common WIX merge modules."/>
+		<echo message="Deleting previous common WIX merge modules and MM object files..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="EcFolderACLs.msm"/>
+				<include name="EcFolderACLs.mmp.wixobj"/>
+				<include name="EC_GAC_30.msm"/>
+				<include name="EC_GAC_30.mmp.wixobj"/>
+				<include name="ICU040.msm"/>
+				<include name="ICU040.mmp.wixobj"/>
+				<include name="ICUECHelp.msm"/>
+				<include name="ICUECHelp.mmp.wixobj"/>
+				<include name="Managed Install Fix.msm"/>
+				<include name="Managed Install Fix.mmp.wixobj"/>
+				<include name="PerlEC.msm"/>
+				<include name="PerlEC.wixobj"/>
+				<include name="PythonEC.msm"/>
+				<include name="PythonEC.mmp.wixobj"/>
+				<include name="SetPath.msm"/>
+				<include name="SetPath.mmp.wixobj"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting WIX merge module output."/>
+		<echo message="Compiling common WIX merge module source files..."/>
+		<candle out="${fwroot}\Installer\" exedir="${fwroot}\bin" suppresswarning="1044">
+			<sources basedir="${fwroot}\Installer">
+				<include name="EcFolderACLs.mmp.wxs" />
+				<include name="EC_GAC_30.mmp.wxs" />
+				<include name="ICU040.mmp.wxs" />
+				<include name="ICUECHelp.mmp.wxs" />
+				<include name="Managed Install Fix.mmp.wxs" />
+				<include name="PerlEC.mmp.wxs" />
+				<include name="PythonEC.mmp.wxs" />
+				<include name="SetPath.mmp.wxs" />
+			</sources>
+		</candle>
+		<echo message="...Done compiling WIX merge module source files."/>
+		<echo message="Linking files for EcFolderACLs.msm..."/>
+		<light out="${fwroot}\Installer\EcFolderACLs.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="EcFolderACLs.mmp.wixobj"/>
+				<include name="wixca.wixlib"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for EcFolderACLs.msm."/>
+		<echo message="Linking files for EC_GAC_30.msm..."/>
+		<light out="${fwroot}\Installer\EC_GAC_30.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="EC_GAC_30.mmp.wixobj"/>
+				<include name="wixca.wixlib"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for EC_GAC_30.msm."/>
+		<echo message="Linking files for ICU040.msm..."/>
+		<light out="${fwroot}\Installer\ICU040.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="ICU040.mmp.wixobj"/>
+				<include name="wixca.wixlib"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for ICU040.msm."/>
+		<echo message="Linking files for ICUECHelp.msm..."/>
+		<light out="${fwroot}\Installer\ICUECHelp.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="ICUECHelp.mmp.wixobj"/>
+				<include name="wixca.wixlib"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for ICUECHelp.msm."/>
+		<echo message="Linking files for Managed Install Fix.msm..."/>
+		<light out="${fwroot}\Installer\Managed Install Fix.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="Managed Install Fix.mmp.wixobj"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for Managed Install Fix.msm."/>
+		<echo message="Linking files for PerlEC.msm..."/>
+		<light out="${fwroot}\Installer\PerlEC.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="PerlEC.mmp.wixobj"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for PerlEC.msm."/>
+		<echo message="Linking files for PythonEC.msm..."/>
+		<light out="${fwroot}\Installer\PythonEC.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="PythonEC.mmp.wixobj"/>
+				<include name="wixca.wixlib"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for PythonEC.msm."/>
+		<echo message="Linking files for SetPath.msm..."/>
+		<light out="${fwroot}\Installer\SetPath.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="SetPath.mmp.wixobj"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for SetPath.msm."/>
+		<echo message="Finished building WIX merge modules."/>
+	</target>
+
+	<target name="FwWixPreprocess">
+		<echo message="Starting to preprocess FW WIX sources."/>
+		<echo message="Deleting previous WIX preprocessed source files and compiled objects..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="ProcessedFiles.wxs"/>
+				<include name="ProcessedMergeModules.wxs"/>
+				<include name="ProcessedProperties.wxs"/>
+				<include name="ProcessedFiles.wixobj"/>
+				<include name="ProcessedMergeModules.wixobj"/>
+				<include name="ProcessedProperties.wixobj"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting WIX preprocessed source files and compiled objects."/>
+		<echo message="Preprocessing Properties..."/>
+		<exec workingdir="${fwroot}\Installer" program="WScript.exe" commandline="${fwroot}\Installer\ProcessProperties.js" />
+		<echo message="Preprocessing Files..."/>
+		<exec workingdir="${fwroot}\Installer" program="WScript.exe" commandline="${fwroot}\Installer\ProcessFiles.js ${config}"
+			  failonerror="false" resultproperty="ProcessWixFilesResult" />
+		<if test="${int::parse(ProcessWixFilesResult) != 0}">
+			<if test="${int::parse(ProcessWixFilesResult) == -1}">
+				<fail message="Error while preprocessing WIX files. See Installer\ProcessFiles.log for details."/>
+			</if>
+		</if>
+		<echo message="Preprocessing Merge Modules..."/>
+		<exec workingdir="${fwroot}\Installer" program="WScript.exe" commandline="${fwroot}\Installer\ProcessMergeModules.js" />
+		<echo message="Finished preprocessing FW WIX sources."/>
+	</target>
+
+	<target name="FwWixCompile" depends="FwWixPreprocess">
+		<echo message="Starting to compile FW WIX sources."/>
+		<echo message="Deleting previous FW WIX compiled objects..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="Actions.wixobj" />
+				<include name="CopyFiles.wixobj" />
+				<include name="Environment.wixobj" />
+				<include name="Features.wixobj" />
+				<include name="FW.wixobj" />
+				<include name="FwUI.wixobj" />
+				<include name="ProcessedFiles.wixobj" />
+				<include name="ProcessedMergeModules.wixobj" />
+				<include name="ProcessedProperties.wixobj" />
+				<include name="Registry.wixobj" />
+				<include name="Shortcuts.wixobj" />
+			</fileset>
+		</delete>
+		<echo message="...Done deleting FW WIX compiled objects."/>
+		<echo message="Compiling FW WIX installer source files..."/>
+		<candle out="${fwroot}\Installer\" exedir="${fwroot}\bin" suppresswarning="1044">
+			<sources basedir="${fwroot}\Installer">
+				<include name="Actions.wxs" />
+				<include name="CopyFiles.wxs" />
+				<include name="Environment.wxs" />
+				<include name="Features.wxs" />
+				<include name="FW.wxs" />
+				<include name="FwUI.wxs" />
+				<include name="ProcessedFiles.wxs" />
+				<include name="ProcessedMergeModules.wxs" />
+				<include name="ProcessedProperties.wxs" />
+				<include name="Registry.wxs" />
+				<include name="Shortcuts.wxs" />
+			</sources>
+		</candle>
+		<echo message="Finished compiling FW WIX sources."/>
+	</target>
+
+	<target name="BuildFwInstaller" depends="FwWixCompile,CommonWixMergeMods">
+		<echo message="Starting to link FW WIX installer."/>
+		<echo message="Deleting previous FW WIX linker output..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="SetupFW.msi"/>
+				<include name="*.cab"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting FW WIX linker output."/>
+		<echo message="Linking FW WIX installer files..."/>
+		<light out="${fwroot}\Installer\SetupFW.msi" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="wixca.wixlib"/>
+				<include name="Actions.wixobj"/>
+				<include name="CopyFiles.wixobj"/>
+				<include name="Environment.wixobj"/>
+				<include name="Features.wixobj"/>
+				<include name="FW.wixobj"/>
+				<include name="FwUI.wixobj"/>
+				<include name="ProcessedMergeModules.wixobj"/>
+				<include name="ProcessedFiles.wixobj"/>
+				<include name="ProcessedProperties.wixobj"/>
+				<include name="Registry.wixobj"/>
+				<include name="Shortcuts.wixobj"/>
+			</sources>
+		</light>
+		<echo message="Finished building FW WIX installer."/>
+	</target>
+
+	<target name="EcWixMergeMods" depends="PreprocessWixMergeMods">
+		<echo message="Starting to build EC WIX merge modules."/>
+		<echo message="Deleting previous EC WIX merge modules and MM object files..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="MS KB908002 Fix.msm"/>
+				<include name="MS KB908002 Fix.mmp.wixobj"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting WIX merge module output."/>
+		<echo message="Compiling EC WIX merge module source files..."/>
+		<candle out="${fwroot}\Installer\" exedir="${fwroot}\bin" suppresswarning="1044">
+			<sources basedir="${fwroot}\Installer">
+				<include name="MS KB908002 Fix.mmp.wxs" />
+			</sources>
+		</candle>
+		<echo message="...Done compiling WIX merge module source files."/>
+		<echo message="Linking files for MS KB908002 Fix.msm..."/>
+		<light out="${fwroot}\Installer\MS KB908002 Fix.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="MS KB908002 Fix.mmp.wixobj"/>
+			</sources>
+		</light>
+		<echo message="...Done linking files for MS KB908002 Fix.msm."/>
+		<echo message="Finished building EC WIX merge modules."/>
+	</target>
+
+	<target name="EcWixPreprocess">
+		<echo message="Starting to preprocess EC WIX sources."/>
+		<echo message="Deleting previous WIX preprocessed source files and compiled objects..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="EcProcessedMergeModules.wxs"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting WIX preprocessed source files and compiled objects."/>
+		<echo message="Preprocessing EC Merge Modules..."/>
+		<exec workingdir="${fwroot}\Installer" program="WScript.exe" commandline="${fwroot}\Installer\EcProcessMergeModules.js" />
+		<echo message="Finished preprocessing EC WIX sources."/>
+	</target>
+
+	<target name="EcWixCompile" depends="EcWixPreprocess">
+		<echo message="Starting to compile EC WIX sources."/>
+		<echo message="Deleting previous EC WIX compiled objects..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="EC.wixobj"/>
+				<include name="EcActions.wixobj"/>
+				<include name="EcFeatures.wixobj"/>
+				<include name="EcUI.wixobj"/>
+				<include name="EcProcessedMergeModules.wixobj"/>
+				<include name="EcFiles.wixobj"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting EC WIX compiled objects."/>
+		<echo message="Compiling EC WIX installer source files..."/>
+		<candle out="${fwroot}\Installer\" exedir="${fwroot}\bin" suppresswarning="1044">
+			<sources basedir="${fwroot}\Installer">
+				<include name="EC.wxs" />
+				<include name="EcActions.wxs" />
+				<include name="EcFeatures.wxs" />
+				<include name="EcUI.wxs" />
+				<include name="EcProcessedMergeModules.wxs" />
+				<include name="EcFiles.wxs" />
+			</sources>
+		</candle>
+		<echo message="Finished compiling FW WIX sources."/>
+	</target>
+
+	<target name="BuildEcInstaller" depends="EcWixCompile,CommonWixMergeMods,EcWixMergeMods">
+		<echo message="Starting to link EC WIX installer."/>
+		<echo message="Deleting previous EC WIX linker output..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="SetupEC.msi"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting EC WIX linker output."/>
+		<echo message="Linking EC WIX installer files..."/>
+		<light out="${fwroot}\Installer\SetupEC.msi" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="Ec.wixobj"/>
+				<include name="EcActions.wixobj"/>
+				<include name="EcFeatures.wixobj"/>
+				<include name="EcUI.wixobj"/>
+				<include name="EcProcessedMergeModules.wixobj"/>
+				<include name="EcFiles.wixobj"/>
+			</sources>
+		</light>
+		<echo message="Finished building EC WIX installer."/>
+	</target>
+
+</project>

@@ -1,0 +1,43 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="FwNantAddin2" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+	<Setting Name="ToolbarPos" Type="System.Drawing.Point" Scope="User">
+	  <Value Profile="(Default)">0, 0</Value>
+	</Setting>
+	<Setting Name="ToolbarVisible" Type="System.Boolean" Scope="User">
+	  <Value Profile="(Default)">True</Value>
+	</Setting>
+	<Setting Name="ToolbarState" Type="System.Int32" Scope="User">
+	  <Value Profile="(Default)">0</Value>
+	</Setting>
+	<Setting Name="ToolbarRowIndex" Type="System.Int32" Scope="User">
+	  <Value Profile="(Default)">0</Value>
+	</Setting>
+	<Setting Name="BuildCommands" Type="System.Collections.Specialized.StringCollection" Scope="User">
+	  <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;test all&lt;/string&gt;
+  &lt;string&gt;remakefw&lt;/string&gt;
+  &lt;string&gt;restoreTLP&lt;/string&gt;
+  &lt;string&gt;build TeExe&lt;/string&gt;
+  &lt;string&gt;register build all&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+	</Setting>
+	<Setting Name="AddinEnabled" Type="System.Boolean" Scope="User">
+	  <Value Profile="(Default)">False</Value>
+	</Setting>
+	<Setting Name="BuildFile" Type="System.String" Scope="User">
+	  <Value Profile="(Default)">bld\FieldWorks.build</Value>
+	</Setting>
+	<Setting Name="BaseDirectories" Type="System.Collections.Specialized.StringCollection" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="FirstTime" Type="System.Boolean" Scope="User">
+	  <Value Profile="(Default)">True</Value>
+	</Setting>
+	<Setting Name="NantPath" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+  </Settings>
+</SettingsFile>

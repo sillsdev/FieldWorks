@@ -1,0 +1,181 @@
+.TH RXP 1 "RXP release 1.4.7"
+.SH NAME
+rxp - XML parser program
+.SH SYNOPSIS
+.B rxp
+[
+.B \-abemnNRsStvVx
+] [
+.B -o b|p|0|1|2|3|i|d
+] [
+.B U 0|1|2
+] [
+.B -c
+.I encoding
+] [
+.I url
+]
+.SH DESCRIPTION
+.B rxp
+reads and parses XML from the
+.I url
+(or standard input if none is provided) and writes it to standard
+output, optionally expanding entities, defaulting attributes, and
+translating to a different output encoding.
+
+.B rxp
+accepts XML 1.0 and 1.1, and the corresponding versions of XML
+namespaces.  It implements the Oasis XML catalog specification.
+
+Common option combinations are
+.B -Nxs
+to check a document for well-formedness and namespace well-formedness,
+and
+.B -VNxs
+to also check for DTD-validity.
+.SH OPTIONS
+.TP
+.B -a
+Insert declared default values for omitted attributes.
+.TP
+.B -v
+Be verbose.
+.TP
+.B -V
+Validate the document.  Repeating this option will make the program
+treat validity errors as well-formedness errors, and exit
+after the first validity error (otherwise a warning will be printed for
+each one).
+.TP
+.B -d
+Read the whole DTD (internal and external parts) regardless of any
+standalone declaration.  Otherwise a declaration "standalone='yes'"
+will prevent the external part from being read (unless validation
+is selected).
+.TP
+.B -N
+Enable XML namespace support.  The document will be checked for
+correct namespace syntax, and if \f3-b\f1 is specified  qualified
+element and attribute names will be displayed with their URIs.
+.TP
+.B -R
+The value of this flag is a time limit in seconds, after which the
+program will abort.  This is to protect against denial-of-service
+attacks using malicious documents.
+.TP
+.B -S
+Keep track of xml:space attributes.  This will only affect output when
+\f3-b\f1 is specified.
+.TP
+.B -e
+Obsolete, do not use.
+.TP
+.B -E
+Do not expand entity references (opposite of old \f3-e\f1 flag)
+.TP
+.B -s
+Be silent (that is, suppress output).  Useful for benchmarking or if you just
+want to see the error messages.
+.TP
+.B -b
+Print output as "bits".
+.TP
+.B -n
+Treat the input as normalised SGML rather than XML.  Not intended
+for general use.
+.TP
+.B -o
+If this flag is \f3p\f1, output is in the default (plain) format. If it
+is \f3b\f1, output is printed as "bits" (equivalent to
+\f3-b\f1).    If it
+is \f30\f1, output is suppressed (equivalent to \f3-s\f1).  If it is
+\f31\f1, \f32\f1 or \f33\f1, output is in first, second or third
+canonical form.
+If it is \f3i\f1, output is a dump of the document's infoset.
+If it is \f3d\f1, output is in a form suitable for use with "diff";
+in particular attributes are sorted into alphabetical order.
+.TP
+.B -m
+Merge PCData across entity references.  This will only affect the output when
+\f3-b\f1 is specified.
+.TP
+.B -t
+Read in the input as a tree, rather than bits.  Should make no difference
+to the output.
+.TP
+\f3-u \f2base_uri\f1
+Use the specified base URI when resolving system identifiers.
+.TP
+.B -U
+This flag controls Unicode normalization checking and is only relevant
+when parsing XML 1.1 documents.
+If it is \f30\f1, no checking is done.
+If it is \f31\f1,
+.B rxp
+checks that the document is fully normalized as defined by the W3C character
+model.
+If it is \f32\f1, the document is checked and any unknown characters
+(which may be ones corresponding to a newer version of Unicode than
+.B rxp
+knows about) will also cause an error.
+.TP
+.B -x
+Strict XML mode.  This suppresses some warnings (eg entity redefinitions)
+but treats all XML well-formedness errors as fatal.
+This flag implies the \f3-a\f1 flag, and sets
+the output encoding to UTF-8 unless the \f3-c\f1 flag is given.  It
+sets the output format to first canonical form unless the \f3-o\f1,
+\f3-b\f1 or \f3-s\f1 flag is given.
+.TP
+\f3-c \f2encoding\f1
+Produce output in the specified character encoding.  Known encodings
+include \f3ISO-8859-1\f1, \f3UTF-8\f1, \f3ISO-10646-UCS\f1 and \f3UTF-16\f1.
+16-bit encoding names my be suffixed with \f3-B\f1 or \f3-L\f1 to
+specify big- or little-endian byte order (the default is the host
+byte order).  If no \f3-c\f1 or \f3-x\f1 option is given, output is in
+the same encoding as the input document.
+.TP
+\f3-D \f2name\f1 \f2sysid\f1
+Force use of the document type specified by \f2sysid\f1.  The root element name
+for validation is \f2name\f1.  Any DTD in the document is ignored.  This flag
+does not imply validation; use \f3-V\f1 if required.
+.TP
+.B -i
+Do xml:id processing.  Attributes named xml:id are recognised as IDs even if not
+declared.
+.TP
+.B -I
+The same as \f3-i\f1, but in addition xml:id attributes are checked for uniqueness.
+.TP
+.B -z
+Use a shorter format for error messages.  Particularly useful when using
+the parser in Emacs compilation mode, so that Emacs can find the
+error location.
+.SH EXIT STATUS
+If the \f3-V\f1 flag is given, and the document is well-formed but
+not valid, 2 is returned.  If the document is not well-formed, or a
+system error occurs, 1 is returned.  Otherwise 0 is returned.
+Since the parser can expand external entities even when not validating,
+it treats certain errors which are technically validity errors
+as well-formedness errors.  If \f3-x\f1 is not specified, some
+well-formedness errors produce only warnings and do not affect the
+exit status.
+.SH ENVIRONMENT
+If the environment variable
+.B XML_CATALOG_FILES
+is set, XML catalog processing is enabled.
+The variable should be set to a space-separated list of catalog
+files.  The variable
+.B XML_CATALOG_PREFER
+may be set to \f3public\f1 or \f3system\f1 to
+set the initial mode for catalog processing; the default is \f3system\f1.
+
+If the variable
+.B RXPURL is set, it is used as the URL of the document to parse.  This may
+be useful in CGI scripts and the like to avoid shell parsing of a
+user-supplied argument.
+
+The variable
+.B http_proxy
+can be used to specify a proxy for HTTP connections.  The syntax
+is \f3hostname[:port]\f1.

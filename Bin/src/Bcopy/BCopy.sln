@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCopy", "BCopy.csproj", "{A49A949D-4FE1-464A-9244-5689002328BA}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{A49A949D-4FE1-464A-9244-5689002328BA}.Debug.ActiveCfg = Debug|.NET
+		{A49A949D-4FE1-464A-9244-5689002328BA}.Debug.Build.0 = Debug|.NET
+		{A49A949D-4FE1-464A-9244-5689002328BA}.Release.ActiveCfg = Release|.NET
+		{A49A949D-4FE1-464A-9244-5689002328BA}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

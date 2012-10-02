@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Sections, Symbols and References in the Windows Installer XML (WiX) toolset.</title>
+</head>
+<body>
+<h1><a href='http://blogs.msdn.com/robmen/archive/2004/05/11/129613.aspx'>Sections, Symbols and References in the Windows Installer XML (WiX) toolset.</a></h1>
+
+<P>Thus far, it seems everyone has been creating one single .wxs source file for their entire MSI or MSM file.&nbsp; This is understandable, since the "Getting Started" topic in the WiX.chm only shows one .wxs file per MSI and MSM.&nbsp; And if you started learning WiX by trying to decompile an existing MSI or MSM, dark will only generate a single .wxs source file for your MSI or MSM file.&nbsp; But the real power of the WiX toolset only becomes apparent when you break up your setup into different <I>sections</I> then let the <I>symbols</I> and <I>references</I> tie your source files back into a cohesive package.</P>
+<P>I'll start by showing you the WiX source code then I'll try to explain what it does.&nbsp; Let's assume we have a file called "product.wxs" that looks like this:</P><PRE>&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+&nbsp;&nbsp; &lt;Product Id='00000000-0000-0000-0000-000000000000' Name='MyProduct' Language='1033'
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Version='0.0.0.0' Manufacturer='My Corporation'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Package Description='My Product' Comments='My Product That Is Just An Example'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; InstallerVersion='200' Compressed='yes' /&gt;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Media Id='1' Cabinet='product.cab' EmbedCab='yes' /&gt;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Directory Id='TARGETDIR' Name='SourceDir'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Directory Id='ProgramFilesFolder' Name='PFiles'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Directory Id='MyDirectory' Name='MyDir' LongName='My Directory' /&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Directory&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Directory&gt;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Feature Id='MyFeature' Title='My Product Feature' Level='1'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ComponentRef Id='MyComponent' /&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Feature&gt;
+&nbsp;&nbsp; &lt;/Product&gt;
+&lt;/Wix&gt;
+</PRE>
+<P>What I've defined above is the skeleton of a MSI product.&nbsp; At the top is the required &lt;Product/&gt; and &lt;Package/&gt; elements that provide the identification information for this package to the Windows Installer.&nbsp; Then I provide the &lt;Media/&gt; element that defines how any file Resources that are a part of this package should be laid out.&nbsp; In this case, I want all the files compressed into a single cabinet and that cabinet stored as a stream inside the MSI file.&nbsp; Next, I provide my bare bones Directory tree.&nbsp; Finally, this package is finished off with a very simple Feature tree with one Feature containing one Component.</P>
+<P>"Hey, wait!&nbsp; Where's the Component definition for 'MyComponent'?" you might ask.&nbsp; Before I can answer that very important question I need to add a couple more examples files.&nbsp; First, let's add another WiX source file called "fragment.wxs" that looks like this:</P><PRE>&lt;?xml version="1.0"?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+&nbsp;&nbsp; &lt;Fragment Id='MyFragment'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;DirectoryRef Id='MyDirectory'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Component Id='MyComponent' Guid='00000000-0000-0000-0000-00000000000' DiskId='1'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;File Id='MyFile' Name='myfile.txt' LongName='My File.txt' src='present.txt'/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Component&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/DirectoryRef&gt;
+&nbsp;&nbsp; &lt;/Fragment&gt;
+&lt;/Wix&gt;
+</PRE>
+<P>If we skip the &lt;Fragment/&gt; element the rest of the WiX code should look pretty familiar.&nbsp; I've defined a Component named "MyComponent" (with a bogus GUID) in the "MyDirectory" Directory and noted that any files contained by this Component will be a part of the Media with Disk Id labeled 1.&nbsp; Then I declare that the Component contains a single text file.&nbsp; For good measure, let's say that there is a file called "present.txt" that looks a lot like this:</P><PRE>Each day is a gift.&nbsp; That's why we call it the present.
+</PRE>
+<P>Before (finally) explaining in detail how this all works, let's first prove that it works.&nbsp; Here is the output from my compilation and linking.</P><PRE>C:\example&gt;candle.exe product.wxs fragment.wxs
+Microsoft (R) Windows Installer Xml Compiler version 2.0.1621.0
+Copyright (C) Microsoft Corporation 2003. All rights reserved.
+product.wxs
+fragment.wxs
+
+C:\example&gt;light.exe product.wixobj fragment.wixobj -o product.msi
+Microsoft (R) Windows Installer Xml Linker version 2.0.1621.0
+Copyright (C) Microsoft Corporation 2003. All rights reserved.
+
+
+C:\example&gt;
+</PRE>
+<P>No output from the light means there were no errors so you should now have a "product.msi" file sitting in the same directory with all your other files.&nbsp; You can install that MSI and see it show up in your Add/Remove Programs if you like, but trust me this all works.</P>
+<P>"But how did it work?"</P>
+<P>Well, when candle compiles your source code it creates an object file (.wixobj) that has zero or more <I>sections</I> in it.&nbsp; The elements that are children of the &lt;Wix/&gt; element (namely: &lt;Product/&gt;, &lt;Module/&gt;, and &lt;Fragment/&gt;) define a new section.&nbsp; So in the example above, product.wxs defines one section and fragment.wxs defines another.</P>
+<P>Sections contain data and <I>references</I>.&nbsp; Most of the data in the section is information that will end up in the final package (MSI file).&nbsp; Some of the data is just information needed by the linker or binder to build the package.&nbsp; For example, the &lt;File/&gt; element shown above contains the necessary information to define a file Resource in the package as well as the "src" attribute that tells the binder where to find the physical file on disk so that the file can be put into a cabinet and inserted into the package.&nbsp; Finally, the data in the section is used to define all of the <I>symbols</I> for the section.</P>
+<P>A symbol is the unique identifier for a WiX element in your .wxs source file.&nbsp; In general, the symbol for an element maps to the primary key columns of the MSI table the WiX element represents.&nbsp; For example, the &lt;File/&gt; element's "Id" attribute in WiX maps to the MSI File table's File column which is the primary key column.&nbsp; It is pretty safe to assume that all "Id" attributes in the WiX schema represent symbols.&nbsp; If I was to take a stab at the symbols defined in the example source files above, I think this would be the list:</P><PRE><B>product.wxs</B>
+Product:00000000-0000-0000-0000-000000000000
+Media:1
+Directory:TARGETDIR
+Directory:ProgramFilesFolder
+Directory:MyDirectory
+Feature:MyFeature
+
+<B>fragment.wxs</B>
+Fragment:MyFragment
+Componet:MyComponent
+File:MyFile
+</PRE>
+<P>Of course, I might be missing one or two, but hopefully you get the idea of what the compiler thinks is a symbol.&nbsp; If you really want to know for sure, take a look at the tables.xml file for the columns marked "symbol='yes'".</P>
+<P>Symbols exist to be referenced.&nbsp; References, the only thing other than data in a section, point at symbols in the current section or other sections.&nbsp; The compiler creates references to symbols when necessary and stores the references at the top of the section in the object file.&nbsp; Obviously elements like &lt;ComponentRef/&gt; or &lt;DirectoryRef/&gt; create references to Components and Directories respectively, but the compiler will create references in other cases as well.&nbsp; For example, the &lt;Component/&gt; element's "DiskId" attribute creates reference to a &lt;Media/&gt; element's "Id" attribute.&nbsp; Since, the .wixobj file contains the references I can easily list them here for you:</P><PRE><B>product.wixobj</B>
+&lt;reference table="Component" symbol="MyComponent" /&gt;
+
+<B>fragment.wixobj</B>
+&lt;reference table="Directory" symbol="MyDirectory" /&gt;
+&lt;reference table="Media" symbol="1" /&gt;
+</PRE>
+<P><I>Note: I have purposely skipped over the complex reference discussion here, but I'll come back to that in some future blog entry.</I></P>
+<P>Thus far, I've only talked about the compiler.&nbsp; Now that we know the basics behind sections, symbols and references we can talk about the details of the linker.&nbsp; This is where the real power of the WiX toolset kicks in.&nbsp; I also believe the linker differentiates the WiX toolset from the other tools I have seen and/or heard of that can build MSI files today.</P>
+<P>The linker starts by processing all of the sections in the provided object files looking for an <I>entry section</I>.&nbsp; Today there are two types of entry sections: products and modules.&nbsp; As you would expect, when the linker encounters a product entry section it knows it is generating a MSI.&nbsp; If the linker encounters a module entry section the linker knows it is creating a MSM file.&nbsp; If the linker comes across two entry sections in the object files, it gives up with an error since the linker cannot generate two outputs at the same time.&nbsp; Consider the entry section to be like the "main()" function in a C or C++ program.&nbsp; That's where the linker starts the programs execution.</P>
+<P>While the entry section is being located, the linker is also building up the table of symbols from every section from the provided object files.&nbsp; If any symbols are found to be duplicated, the linker will give up with an error.&nbsp; In the C/C++ linker, this error condition is very similar to the case where you define the same variable in the same scope.&nbsp; Once all of the sections have been processed and a single entry section is found, the linker starts resolving references starting at the entry section.</P>
+<P>When the current section has a reference that resolves to a symbol in another section the other new section's references are added to the list to be resolved.&nbsp; The process continues until all references are resolved.&nbsp; If a reference cannot be resolved it causs the linker to bail with an error.&nbsp; This error case is similar to the C/C++ linker cannot find a matching function implementation for one of your calls.&nbsp; Also, any sections that are not referenced are ignored.</P>
+<P>It is important to note that sections are the atomic unit of linking.&nbsp; In other words, either all of the information in a section is included in your final output or none of it is included.&nbsp; This fact is important to keep in mind when splitting your source code into Fragments.&nbsp; You only need one symbol in a Fragment to be referenced and the entire contents of the Fragment will be a part of your final output.</P>
+<P>Before wrapping up this blog entry, let's step through the example we've used so far.&nbsp; Remember, up above, we provided light the fragment.wixobj and the product.wixobj object files to link.&nbsp; The linker would load all of the symbols in those two object files (getting a list much like I described above) and figure out that the section created by the &lt;Product/&gt; element is our entry section.</P>
+<P>The linker would then take the only reference in that section (as shown above) and start looking for the symbol "MyComponent" in the Component table.&nbsp; Of course, that reference resolves into our fragment.wixobj.&nbsp; Then the two references from the fragment.wixobj would be resolved.&nbsp; Remember, references from each section must be resolved.&nbsp; In this case, the "MyDirectory" in the Directory table and "1" in the Media table references are resolved by symbols from the entry section.&nbsp; The linker now happily goes along its merry way finishing the linking process using those two sections to build the final MSI file.</P>
+<P>Hopefully this blog entry helps explain some of the inner workings of the WiX toolset so that you can take better advantage of the tools.&nbsp; This write up (or something like it) will be making its way into the WiX documentation so I would appreciate any feedback that makes sections, symbols, and references in the Windows Installer XML toolset make sense.</P>
+<p><i>Copyright © Rob Mensching</i></p>
+
+</body>
+</html>

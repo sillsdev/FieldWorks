@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiTestDriver", "..\GuiTestDriver.csproj", "{73EA2AF9-ED94-46C1-8E74-7813B327C270}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TE_AutoTests", "NAntUnitTests1\TE_AutoTests.csproj", "{4C7CCEC5-BC7F-4B85-89F4-94EC5533825B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{73EA2AF9-ED94-46C1-8E74-7813B327C270} = {73EA2AF9-ED94-46C1-8E74-7813B327C270}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = ..\\GuiTestDriver.csproj
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = ..
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73EA2AF9-ED94-46C1-8E74-7813B327C270}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{73EA2AF9-ED94-46C1-8E74-7813B327C270}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{73EA2AF9-ED94-46C1-8E74-7813B327C270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73EA2AF9-ED94-46C1-8E74-7813B327C270}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C7CCEC5-BC7F-4B85-89F4-94EC5533825B}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{4C7CCEC5-BC7F-4B85-89F4-94EC5533825B}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{4C7CCEC5-BC7F-4B85-89F4-94EC5533825B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C7CCEC5-BC7F-4B85-89F4-94EC5533825B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,108 @@
+#include "TlsOptGenRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+kridTlsOptDlgGen DIALOGEX 0, 0, 378, 188
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	RTEXT           "&Fields in:",kcidTlsOptDlgGenFInL,11,19,32,9
+	COMBOBOX        kcidTlsOptDlgGenFIn,47,17,97,91,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	CONTROL         "List1",kcidTlsOptDlgGenFlds,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					WS_BORDER | WS_TABSTOP,16,33,133,130
+	PUSHBUTTON      "&Modify...",kcidTlsOptDlgGenMod,17,167,50,14
+	RTEXT           "Measurement &units:",IDC_STATIC,185,24,63,12
+	COMBOBOX        kcidTlsOptDlgGenMsr,255,22,69,79,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Miscellaneous settings",IDC_STATIC,176,4,74,8
+	LTEXT           "",IDC_STATIC,255,8,111,1,SS_SUNKEN
+	GROUPBOX        "Data Requirements",IDC_STATIC,7,5,149,182
+END
+
+kridModFldNtcDlg DIALOG DISCARDABLE  0, 0, 180, 80
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Data Requirements Notice"
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL			"", kcidTlsOptDlgIcon,"Static",SS_ICON,5,5,32,32
+	LTEXT           "Changing this field's data settings to ""Required"" will also make this field ""Always visible"" in all data entry views.",
+					IDC_STATIC,43,5,125,24
+	LTEXT           "Do you want to make this change?",IDC_STATIC,43,38,125,8
+	LTEXT           "",IDC_STATIC,4,55,172,1,SS_SUNKEN
+
+	DEFPUSHBUTTON   "&Yes",IDOK,13,60,50,14
+	PUSHBUTTON      "&No",IDCANCEL,65,60,50,14
+	PUSHBUTTON      "Help...",kctidHelp,117,60,50,14
+END
+
+kridModReqDlg DIALOG DISCARDABLE  0, 0, 169, 82
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Data Requirements"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Data for this field is:",IDC_STATIC,11,6,87,9
+	DEFPUSHBUTTON   "OK",IDOK,6,64,50,14
+	PUSHBUTTON      "Cancel",IDCANCEL,60,64,50,14
+	PUSHBUTTON      "Help",kctidHelp,114,64,50,14
+	LTEXT           "",IDC_STATIC,9,57,151,1,SS_SUNKEN
+	CONTROL         "&Not required",kcidTlsOptDlgModNReq,"Button",
+					BS_AUTORADIOBUTTON,13,18,112,9
+	CONTROL         "&Encouraged",kcidTlsOptDlgModEn,"Button",
+					BS_AUTORADIOBUTTON,13,31,112,9
+	CONTROL         "&Required",kcidTlsOptDlgModReq,"Button",
+					BS_AUTORADIOBUTTON,13,44,112,9
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+kcidTlsOptGenModMnu MENU DISCARDABLE
+BEGIN
+	POPUP "TlsOptGenMod"
+	BEGIN
+		MENUITEM "Not required",                kcidTlsOptGenModNReq
+		MENUITEM "Encouraged",                  kcidTlsOptGenModEnc
+		MENUITEM "Required",                    kcidTlsOptGenModReq
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidTlsOptGen                  "General"
+	kstidTlsOptData                 "Data"
+	kstidTlosOptNotRequired         "Not required"
+	kstidTlosOptEncouraged          "Encouraged"
+	kstidTlosOptRequired            "Required"
+	kstidTlosOptSubentries          "Subentries"
+END
+
+// Context help for General dialog controls.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgGenFIn		"Specifies the entry or subentry type for which field data requirements are displayed."
+	kcidTlsOptDlgGenFlds	"Shows the current data requirements for the fields in this list. Select the field for which you want to change the requirement."
+	kcidTlsOptDlgGenMsr		"Changes measurement units in FieldWorks for such things as margins and tabs."
+	kcidTlsOptDlgGenMod		"Opens a dialog so you can change the data requirements for the selected field.  You can also right-click a field name to specify the requirement."
+END
+
+// Context help for Field Settings controls in the dialog for modifying data requirements.
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsOptDlgModReq		"Data is required in the field before you can save the entry."
+	kcidTlsOptDlgModEn		"Data entry is encouraged in the field with a pop-up reminder but you can proceed without data."
+	kcidTlsOptDlgModNReq	" Data is not required in the field before you can save the entry."
+END

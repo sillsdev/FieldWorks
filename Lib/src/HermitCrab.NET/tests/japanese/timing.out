@@ -1,0 +1,799 @@
+()
+(message (
+ <m6508 fname 'C:\DATA\HC\MORPHER\TESTS\JAPANESE\JAPANESE.IN' > ) )
+;$Id: japanese.in 1.2 1994/12/05 14:37:37 Mike_Maxwell Exp $
+(message (
+ <m6508 fname "c:\data\hc\morpher\tests\japanese\japsetup.in" > ) )
+;$Id: japsetup.in 1.9 1995/05/12 16:08:37 Mike_Maxwell Exp $
+;Modified from PC-KIMMO's JAPANESE.RUL to load the startup info, incl. pfeature defs, char tables,
+; strata defs and rules, but not the dictionary (which will be loaded by the file calling this one,
+; since at this point the dict is too large for HC).
+; Japanese Verb Conjugation
+; Data from Problem Book in Phonology, by Halle & Clements, MIT
+; Press, 1983, p. 127.
+; S = alveopalatal sibilant (s-wedge)
+; T = alveolar affricate (ts)
+; & = alveopalatal affricate (c-wedge)
+; /u/ may not be round??
+; r is treated here as a glide phonologically, i.e. [-cons -voc]
+; (based on its behavior in common with /w/ in the assimilation rule;
+; and on its behavior in common with /y/ in the r and y deletion rule)
+(message (
+ <m6502 var_name '*pfeatures*' > ) )
+;Ff from Hyman "Phonology: Theory and Analysis", Holt, Rinehart and Winston, pg. 241-244
+;bilabial =     [-back -high -low +ant -cor]
+;alveolar =     [-back -high -low +ant +cor]
+;alveopalatal = [-back +high -low -ant +cor]
+;velar =        [+back +high -low -ant -cor]
+;glottal =      [-back -high +low -ant -cor]
+;Table1 has surface segments + boundary marker.  The latter appears only in the lexicon.
+(message (
+ <m6501 table_name table1 > ) )
+;Now set the strata (just one):
+(message (
+ <m6502 var_name '*strata*' > ) )
+;...and set their ctables (msg 6550):
+(message (
+ <m6550 sname morphophonemic ctable_name table1 > ) )
+(message (
+ <m6550 sname '*surface*' ctable_name table1 > ) )
+;...and the cyclicity of the morphophonemic stratum (msg 6552):
+(message (
+ <m6552 sname morphophonemic > ) )
+;...and the order of the prules and mrules:
+(message (
+ <m6555 sname morphophonemic > ) )
+(message (
+ <m6556 sname morphophonemic > ) )
+;Load the natural classes:
+(message (
+ <m6541 nat_class_name null > ) )
+(message (
+ <m6541 nat_class_name cons > ) )
+(message (
+ <m6541 nat_class_name vowel > ) )
+(message (
+ <m6541 nat_class_name nonvowel > ) )
+(message (
+ <m6541 nat_class_name unround_vowel > ) )
+(message (
+ <m6541 nat_class_name low_vowel > ) )
+(message (
+ <m6541 nat_class_name nonlow_vowel > ) )
+(message (
+ <m6541 nat_class_name voiced > ) )
+(message (
+ <m6541 nat_class_name voiced_cons > ) )
+(message (
+ <m6541 nat_class_name affricate > ) )
+(message (
+ <m6541 nat_class_name nonvd_strident > ) )
+(message (
+ <m6541 nat_class_name palatalized > ) )
+(message (
+ <m6541 nat_class_name high_vowel > ) )
+(message (
+ <m6541 nat_class_name bm > ) )
+(message (
+ <m6541 nat_class_name n > ) )
+(message (
+ <m6541 nat_class_name dt > ) )
+(message (
+ <m6541 nat_class_name t > ) )
+(message (
+ <m6541 nat_class_name s > ) )
+(message (
+ <m6541 nat_class_name kg > ) )
+(message (
+ <m6541 nat_class_name w > ) )
+(message (
+ <m6541 nat_class_name ry > ) )
+(message (
+ <m6541 nat_class_name rw > ) )
+(message (
+ <m6541 nat_class_name i > ) )
+;-------------PHONOLOGICAL RULES
+;RULE "1 Consonant defaults"  Does not correspond to anything in HC
+;RULE "2 Vowel defaults"  Does not correspond to anything in HC
+; Truncation, A:0
+; according to Alam 1983 this rule deletes a, i, and e
+; LR: ne+anai  ne+itai  mi+anai  mi+itai
+; SR: ne00nai  ne00tai  mi00nai  mi00tai
+;RULE "10 A:0 correspondences"
+; A = a i
+; morpheme boundary is obligatory; counterfed by w-deletion (kaw+itai --> kaitai)
+;RULE "11 Truncation, A:0 <=> V +:0___"
+; [+voc -round] --> 0 / [+voc] + __
+(message (
+ <m6505 rname vowel_deletion > ) )
+; r and y deletion
+; according to Alam 1983, this rule deletes r, s, and y
+; PC-KIMMO splits this into r-deletion and y-deletion; we combine them
+; LR: sin+ru  kas+ru  kaw+ru  kat+ru
+; SR: Sin00u  kas00u  ka000u  kaT00u
+; C:@ due to w:0 rule
+;RULE "13 Deletion, r:0 <=> C(+:0)___"
+; y-deletion
+; LR: ne+yoo  sin+yoo
+; SR: ne0yoo  Sin00oo
+; C:@ due to w:0 rule (this corresponds to ordering before w-deletion -MM)
+;RULE "16 y:0 <=> C: (+:0)__"
+;The HC rule only takes r and y --> 0; if the PC-KIMMO note above re s and y is correct,
+; the rule would be more complex (and probably several rules).  Ordered before t --> T (affrication),
+; because it feeds it (cf. kat+ru --> kaTu)
+; [-cons -voc +cor] --> 0 / [-voc] __
+(message (
+ <m6505 rname r_deletion > ) )
+; w-deletion, w:0
+; LR: kaw+itai  kaw+yoo  kaw+ru
+; SR: ka00itai  ka000oo  ka000u
+; I = i u o
+;RULE "15 w:0 <=> ___(+:0)(C:0)I"
+; [-cons -voc +round] --> 0 / [+voc +low] __ [+voc -low]
+; The environ is my guess, based on the data (-MM)
+(message (
+ <m6505 rname w_deletion > ) )
+; Voicing, t:d
+; LR: sin+ta  yom+ta  yob+ta  tug+0ta
+; SR: Sin0da  yon0da  yon0da  Tu00ida
+; M = b g m n
+;RULE "3 Voicing, t:d <=> M: (+:0)(0:i)___"
+; [-cont +coronal -del_rel] --> [+vd] / [+cons +vd] __
+; I assume this would also happen after other [+vd] Cs.  Must be ordered before epenthesis
+; (see tug+ta --> tuida ex above)
+(message (
+ <m6505 rname td > ) )
+; Velar deletion, K:0
+; LR: wak+0ta  tug+0ta
+; SR: wa00ita  Tu00ida
+;RULE "7 K:0 correspondences"
+; K = k g
+;RULE "8 Velar deletion, K:0 <=> ___(+:0) 0:i t:"
+; In HC, we instead handle this as {k g} --> i / __ t, thereby combining it with PC-KIMMO's rule of
+; epenthesis for the k and g cases
+; (it's a very odd rule, but no odder than k --> 0 / __ 0:i t, with the 0:i being obligatory!)
+; [+cons +back] --> [-cons +voc +sonorant +vd -back +cont ] / __ [+cons +cor]
+; (an odd rule!)  Ordered after td (voicing).
+(message (
+ <m6505 rname ki > ) )
+; Nasalization, B:n
+; LR: yom+ta  yob+ta
+; SR: yon0da  yon0da
+;RULE "4 B:n correspondences"
+; B = b m
+; @:d due to t:d rule
+;RULE "5 Nasalization, B:n <=> ___(+:0) :d"
+; [-cont +vd +ant -cor] --> [+cor +nasal +sonorant] / __ [+cons +cor]
+; May need to be restricted to [+cor +vd] (and ordered wrt voicing); check also wrt features
+; nasal, del_rel etc. in environ
+(message (
+ <m6505 rname 'Bn' > ) )
+; Epenthesis, 0:i
+; LR: kas+0ta wak+0ta  tug+0ta
+; SR: kaS0ita wa00ita  Tu00ida
+; X = s k g
+;RULE "9 Epenthesis, 0:i <=> X(+:0)___t:"
+; In HC, we instead analyze this as 0 --> i / s__t; the {k g} __ t environ is instead treated as
+; k --> i / __+t (see rule ki).  Feeds palatalization.
+; 0 --> [+voc +high -back] / [+cons +strident -del_rel] __ [-cont +cor -vd]
+(message (
+ <m6505 rname epenthesis > ) )
+; Affrication 1, t:&
+; LR: kat+itai
+; SR: ka&0itai
+;RULE "12 Affrication 1, t:& <=> ___(+:0)i"
+; Affication 2, t:T
+; LR: kat+ru  tug+yoo
+; SR: kaT00u  Tug00oo
+;RULE "14 t:T <=> ___(+:0 C)u"
+; These two rules are combined in HC as t --> T, and palatalization takes T --> &
+; (hence ordered before palatalization)
+; [-cont +cor -sonorant] --> [+del_rel] / __ [+voc +high]
+(message (
+ <m6505 rname affrication > ) )
+; Palatalization, s:S
+; LR: kas+itai  kas+0ta  sin+yoo  sin+ta
+; SR: kaS0itai  kaS0ita  Sin00oo  Sin0da
+; @:i due to 0:i rule
+;RULE "6 Palatalization, s:S <=> ___(+:0):i"
+; [+strident -vd] --> [-ant] / __ [+voc +high -back]
+; Fed by affrication (hence we do NOT require the input to be [-del_rel])
+(message (
+ <m6505 rname palatalization > ) )
+; Assimilation, R:t
+; LR: kar+ta  kaw+ta
+; SR: kat0ta  kat0ta
+;RULE "17 R:t correspondences"
+; R = r w
+;RULE "18 Assimilation, R:t <=> ___(+:0)t"
+; Note that we treat /r/ as a glide based on its shared behavior with /w/ in this rule
+; [-cons -voc +ant] --> [+cons -sonorant -vd +cor -cont -strident -high -back] / __ [-cont +cor]
+(message (
+ <m6505 rname assimilation > ) )
+;-------------MORPHOLOGICAL RULES
+(message (
+ <m6505 rname present > ) )
+(message (
+ <m6505 rname negative > ) )
+(message (
+ <m6505 rname volitional > ) )
+(message (
+ <m6505 rname past > ) )
+(message (
+ <m6505 rname inchoative > ) )
+;(trace_morpher_rule message (false true present))
+;(trace_morpher_rule message (true true negative))
+;(trace_morpher_rule message (true true volitional))
+;(trace_morpher_rule message (true true past))
+;(trace_morpher_rule message (true true inchoative))
+;Don't let errors stop us:
+(message (
+ <m6502 var_name '*quit_on_error*' > ) )
+(message (
+ <m6521 fname "c:\data\hc\morpher\tests\japanese\japsetup.in" > ) )
+(message (
+ <m6515 n 11 fname "c:\data\hc\morpher\tests\japanese\japanese.dic" >
+ <m6700  > ) )
+;ff. based on PC-KIMMO's JAPANESE.REC
+; present
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.015
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.042
+Timer: test_derivation: 0.020
+Timer: generate_and_test: 0.070
+Timer: lookup_pshape: 0.024
+Timer: morph_and_lookup_word: 0.115
+(message (word_analysis
+ <lex_entry shape "neru" family '*null*' gloss "sleep-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.014
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.040
+Timer: test_derivation: 0.019
+Timer: generate_and_test: 0.063
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.105
+(message (word_analysis
+ <lex_entry shape "miru" family '*null*' gloss "see-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.017
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.050
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.078
+Timer: morph_and_lookup_word: 0.090
+(message (word_analysis
+ <lex_entry shape "Sinu" family '*null*' gloss "die-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.021
+Timer: unapply_prules: 0.013
+Timer: lookup_pshape: 0.054
+Timer: generate_derivation: 0.076
+Timer: test_derivation: 0.019
+Timer: generate_and_test: 0.099
+Timer: morph_and_lookup_word: 0.131
+(message (word_analysis
+ <lex_entry shape "yomu" family '*null*' gloss "read-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.014
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.020
+Timer: generate_and_test: 0.068
+Timer: morph_and_lookup_word: 0.079
+(message (word_analysis
+ <lex_entry shape "yobu" family '*null*' gloss "call-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.015
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.042
+Timer: test_derivation: 0.023
+Timer: generate_and_test: 0.071
+Timer: morph_and_lookup_word: 0.083
+(message (word_analysis
+ <lex_entry shape "kaTu" family '*null*' gloss "win-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.014
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.048
+Timer: test_derivation: 0.023
+Timer: generate_and_test: 0.075
+Timer: morph_and_lookup_word: 0.086
+(message (word_analysis
+ <lex_entry shape "kasu" family '*null*' gloss "lend-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.015
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.046
+Timer: generate_and_test: 0.095
+Timer: morph_and_lookup_word: 0.106
+(message (word_analysis
+ <lex_entry shape "waku" family '*null*' gloss "boil-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.014
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.047
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.075
+Timer: morph_and_lookup_word: 0.085
+(message (word_analysis
+ <lex_entry shape "Tugu" family '*null*' gloss "pour-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.014
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.051
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.077
+Timer: morph_and_lookup_word: 0.088
+(message (word_analysis
+ <lex_entry shape "karu" family '*null*' gloss "shear-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.056
+Timer: test_derivation: 0.020
+Timer: generate_and_test: 0.080
+Timer: morph_and_lookup_word: 0.092
+(message (word_analysis
+ <lex_entry shape "kau" family '*null*' gloss "buy-PRES" morphing "[?]V PRES" pos 'V' subcat ( ) mrules (present ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+; negative
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.020
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.048
+Timer: test_derivation: 0.047
+Timer: generate_and_test: 0.102
+Timer: morph_and_lookup_word: 0.114
+(message (word_analysis
+ <lex_entry shape "nenai" family '*null*' gloss "sleep-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.021
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.055
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.081
+Timer: morph_and_lookup_word: 0.094
+(message (word_analysis
+ <lex_entry shape "minai" family '*null*' gloss "see-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.027
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.059
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.097
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.147
+(message (word_analysis
+ <lex_entry shape "Sinanai" family '*null*' gloss "die-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.024
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.057
+Timer: test_derivation: 0.028
+Timer: generate_and_test: 0.092
+Timer: lookup_pshape: 0.018
+Timer: morph_and_lookup_word: 0.132
+(message (word_analysis
+ <lex_entry shape "yomanai" family '*null*' gloss "read-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.052
+Timer: test_derivation: 0.051
+Timer: generate_and_test: 0.111
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.154
+(message (word_analysis
+ <lex_entry shape "yobanai" family '*null*' gloss "call-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.056
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.093
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.136
+(message (word_analysis
+ <lex_entry shape "katanai" family '*null*' gloss "win-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.024
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.051
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.087
+Timer: lookup_pshape: 0.026
+Timer: morph_and_lookup_word: 0.135
+(message (word_analysis
+ <lex_entry shape "kasanai" family '*null*' gloss "lend-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.050
+Timer: test_derivation: 0.031
+Timer: generate_and_test: 0.087
+Timer: lookup_pshape: 0.020
+Timer: morph_and_lookup_word: 0.129
+(message (word_analysis
+ <lex_entry shape "wakanai" family '*null*' gloss "boil-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.059
+Timer: generate_derivation: 0.091
+Timer: test_derivation: 0.056
+Timer: generate_and_test: 0.154
+Timer: lookup_pshape: 0.027
+Timer: morph_and_lookup_word: 0.203
+(message (word_analysis
+ <lex_entry shape "Tuganai" family '*null*' gloss "pour-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.023
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.055
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.092
+Timer: lookup_pshape: 0.017
+Timer: morph_and_lookup_word: 0.132
+(message (word_analysis
+ <lex_entry shape "karanai" family '*null*' gloss "shear-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.024
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.052
+Timer: test_derivation: 0.031
+Timer: generate_and_test: 0.090
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.138
+(message (word_analysis
+ <lex_entry shape "kawanai" family '*null*' gloss "buy-NEG" morphing "[?]V NEG" pos 'V' subcat ( ) mrules (negative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+; volitional
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.019
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.048
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.077
+Timer: morph_and_lookup_word: 0.090
+(message (word_analysis
+ <lex_entry shape "netai" family '*null*' gloss "sleep-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.021
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.056
+Timer: test_derivation: 0.047
+Timer: generate_and_test: 0.110
+Timer: morph_and_lookup_word: 0.122
+(message (word_analysis
+ <lex_entry shape "mitai" family '*null*' gloss "see-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.027
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.053
+Timer: test_derivation: 0.029
+Timer: generate_and_test: 0.090
+Timer: lookup_pshape: 0.017
+Timer: morph_and_lookup_word: 0.129
+(message (word_analysis
+ <lex_entry shape "Sinitai" family '*null*' gloss "die-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.026
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.053
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.088
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.130
+(message (word_analysis
+ <lex_entry shape "yomitai" family '*null*' gloss "read-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.028
+Timer: generate_derivation: 0.061
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.096
+Timer: lookup_pshape: 0.022
+Timer: morph_and_lookup_word: 0.143
+(message (word_analysis
+ <lex_entry shape "yobitai" family '*null*' gloss "call-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.032
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.060
+Timer: test_derivation: 0.056
+Timer: generate_and_test: 0.124
+Timer: lookup_pshape: 0.026
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.017
+Timer: lookup_pshape: 0.016
+Timer: morph_and_lookup_word: 0.239
+(message (word_analysis
+ <lex_entry shape "ka&itai" family '*null*' gloss "win-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.058
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.097
+Timer: lookup_pshape: 0.019
+Timer: lookup_pshape: 0.019
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.017
+Timer: morph_and_lookup_word: 0.203
+(message (word_analysis
+ <lex_entry shape "kaSitai" family '*null*' gloss "lend-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.024
+Timer: lookup_pshape: 0.025
+Timer: generate_derivation: 0.058
+Timer: test_derivation: 0.030
+Timer: generate_and_test: 0.096
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.138
+(message (word_analysis
+ <lex_entry shape "wakitai" family '*null*' gloss "boil-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.025
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.052
+Timer: test_derivation: 0.028
+Timer: generate_and_test: 0.088
+Timer: lookup_pshape: 0.025
+Timer: morph_and_lookup_word: 0.138
+(message (word_analysis
+ <lex_entry shape "Tugitai" family '*null*' gloss "pour-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.024
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.053
+Timer: test_derivation: 0.053
+Timer: generate_and_test: 0.115
+Timer: lookup_pshape: 0.040
+Timer: morph_and_lookup_word: 0.180
+(message (word_analysis
+ <lex_entry shape "karitai" family '*null*' gloss "shear-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.027
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.062
+Timer: test_derivation: 0.027
+Timer: generate_and_test: 0.097
+Timer: lookup_pshape: 0.020
+Timer: generate_derivation: 0.118
+Timer: lookup_pshape: 0.068
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.196
+Timer: lookup_pshape: 0.075
+Timer: generate_derivation: 0.248
+Timer: lookup_pshape: 0.127
+Timer: morph_and_lookup_word: 0.318
+(message (word_analysis
+ <lex_entry shape "kaitai" family '*null*' gloss "buy-VOL" morphing "[?]V VOL" pos 'V' subcat ( ) mrules (volitional ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+; past
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.015
+Timer: lookup_pshape: 0.017
+Timer: generate_derivation: 0.041
+Timer: test_derivation: 0.020
+Timer: generate_and_test: 0.067
+Timer: lookup_pshape: 0.025
+Timer: lookup_pshape: 0.017
+Timer: generate_derivation: 0.118
+Timer: morph_and_lookup_word: 0.156
+(message (word_analysis
+ <lex_entry shape "neta" family '*null*' gloss "sleep-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.020
+Timer: generate_and_test: 0.069
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.026
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.155
+Timer: morph_and_lookup_word: 0.194
+(message (word_analysis
+ <lex_entry shape "mita" family '*null*' gloss "see-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.020
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.049
+Timer: test_derivation: 0.046
+Timer: generate_and_test: 0.103
+Timer: lookup_pshape: 0.021
+Timer: morph_and_lookup_word: 0.141
+(message (word_analysis
+ <lex_entry shape "Sinda" family '*null*' gloss "die-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+; Next word should be 2x ambig:
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.017
+Timer: lookup_pshape: 0.023
+Timer: generate_derivation: 0.047
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.074
+Timer: lookup_pshape: 0.069
+Timer: generate_derivation: 0.094
+Timer: test_derivation: 0.024
+Timer: generate_and_test: 0.123
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.047
+Timer: morph_and_lookup_word: 0.190
+(message (word_analysis
+ <lex_entry shape "yonda" family '*null*' gloss "read-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false >
+ <lex_entry shape "yonda" family '*null*' gloss "call-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+; Next word should be 3x ambig:
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.025
+Timer: generate_and_test: 0.073
+Timer: lookup_pshape: 0.065
+Timer: generate_derivation: 0.090
+Timer: lookup_pshape: 0.107
+Timer: generate_derivation: 0.131
+Timer: test_derivation: 0.024
+Timer: generate_and_test: 0.162
+Timer: lookup_pshape: 0.160
+Timer: generate_derivation: 0.186
+Timer: test_derivation: 0.024
+Timer: generate_and_test: 0.216
+Timer: lookup_pshape: 0.019
+Timer: lookup_pshape: 0.038
+Timer: lookup_pshape: 0.057
+Timer: lookup_pshape: 0.074
+Timer: morph_and_lookup_word: 0.307
+(message (word_analysis
+ <lex_entry shape "katta" family '*null*' gloss "win-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false >
+ <lex_entry shape "katta" family '*null*' gloss "shear-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false >
+ <lex_entry shape "katta" family '*null*' gloss "buy-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.021
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.057
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.106
+Timer: lookup_pshape: 0.017
+Timer: lookup_pshape: 0.019
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.017
+Timer: generate_derivation: 0.203
+Timer: lookup_pshape: 0.024
+Timer: lookup_pshape: 0.017
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.017
+Timer: morph_and_lookup_word: 0.371
+(message (word_analysis
+ <lex_entry shape "kaSita" family '*null*' gloss "lend-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.021
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.047
+Timer: test_derivation: 0.024
+Timer: generate_and_test: 0.076
+Timer: lookup_pshape: 0.045
+Timer: lookup_pshape: 0.020
+Timer: lookup_pshape: 0.021
+Timer: generate_derivation: 0.203
+Timer: morph_and_lookup_word: 0.251
+(message (word_analysis
+ <lex_entry shape "waita" family '*null*' gloss "boil-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.019
+Timer: lookup_pshape: 0.026
+Timer: generate_derivation: 0.052
+Timer: test_derivation: 0.023
+Timer: generate_and_test: 0.080
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.018
+Timer: lookup_pshape: 0.017
+Timer: generate_derivation: 0.169
+Timer: morph_and_lookup_word: 0.217
+(message (word_analysis
+ <lex_entry shape "Tuida" family '*null*' gloss "pour-PAST" morphing "[?]V PAST" pos 'V' subcat ( ) mrules (past ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+; inchoative
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.017
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.071
+Timer: lookup_pshape: 0.018
+Timer: morph_and_lookup_word: 0.113
+(message (word_analysis
+ <lex_entry shape "neyoo" family '*null*' gloss "sleep-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.015
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.041
+Timer: test_derivation: 0.045
+Timer: generate_and_test: 0.094
+Timer: lookup_pshape: 0.019
+Timer: morph_and_lookup_word: 0.135
+(message (word_analysis
+ <lex_entry shape "miyoo" family '*null*' gloss "see-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.018
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.071
+Timer: morph_and_lookup_word: 0.084
+(message (word_analysis
+ <lex_entry shape "Sinoo" family '*null*' gloss "die-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.042
+Timer: test_derivation: 0.019
+Timer: generate_and_test: 0.066
+Timer: morph_and_lookup_word: 0.078
+(message (word_analysis
+ <lex_entry shape "yomoo" family '*null*' gloss "read-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.018
+Timer: generate_derivation: 0.042
+Timer: test_derivation: 0.020
+Timer: generate_and_test: 0.069
+Timer: morph_and_lookup_word: 0.080
+(message (word_analysis
+ <lex_entry shape "yoboo" family '*null*' gloss "call-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.039
+Timer: generate_derivation: 0.063
+Timer: test_derivation: 0.055
+Timer: generate_and_test: 0.126
+Timer: morph_and_lookup_word: 0.137
+(message (word_analysis
+ <lex_entry shape "katoo" family '*null*' gloss "win-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.024
+Timer: generate_derivation: 0.048
+Timer: test_derivation: 0.023
+Timer: generate_and_test: 0.076
+Timer: morph_and_lookup_word: 0.089
+(message (word_analysis
+ <lex_entry shape "kasoo" family '*null*' gloss "lend-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.001
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.027
+Timer: generate_derivation: 0.051
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.079
+Timer: morph_and_lookup_word: 0.091
+(message (word_analysis
+ <lex_entry shape "wakoo" family '*null*' gloss "boil-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.003
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.022
+Timer: generate_derivation: 0.045
+Timer: test_derivation: 0.022
+Timer: generate_and_test: 0.073
+Timer: morph_and_lookup_word: 0.084
+(message (word_analysis
+ <lex_entry shape "Tugoo" family '*null*' gloss "pour-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.019
+Timer: generate_derivation: 0.043
+Timer: test_derivation: 0.047
+Timer: generate_and_test: 0.096
+Timer: morph_and_lookup_word: 0.108
+(message (word_analysis
+ <lex_entry shape "karoo" family '*null*' gloss "shear-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+Timer: get_applic_prules: 0.002
+Timer: unapply_prules: 0.016
+Timer: lookup_pshape: 0.017
+Timer: generate_derivation: 0.052
+Timer: test_derivation: 0.021
+Timer: generate_and_test: 0.077
+Timer: morph_and_lookup_word: 0.089
+(message (word_analysis
+ <lex_entry shape "kaoo" family '*null*' gloss "buy-INCH" morphing "[?]V INCH" pos 'V' subcat ( ) mrules (inchoative ) stratum '*surface*' mp_rule_features ( ) oblig_features ( ) pseudo false > ) )
+()
+((
+ <m6521 fname 'C:\DATA\HC\MORPHER\TESTS\JAPANESE\JAPANESE.IN' > ) )

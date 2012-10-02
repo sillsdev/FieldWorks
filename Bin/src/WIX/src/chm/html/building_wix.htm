@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Building WiX</title>
+</head>
+<body>
+<h1>Building WiX</h1>
+
+<p>
+Simply run "make.bat" in the root of the WiX project.  This will build into a release\debug directory by default.  Specifying "make.bat ship" will create ship binaries in release\ship.  If you installed VS.NET to a non standard directory, specify "make.bat debug fullpathto\devenv.com" to build.
+</p>
+
+<p>
+In order to fully build WiX, you must have the following Frameworks and
+SDKs installed:</p>
+<ul>
+<li>NAnt version 0.85 rc3 or higher</li>
+<li>.NET Framework 1.1 and SDK</li>
+<li>.NET Framework 2.0 (SDK is optional)</li>
+<li>PlatformSDK (version 3790.1830 or higher)</li>
+  <ul>
+	<li>Core SDK</li>
+	<li>Web Workshop (IE) SDK</li>
+	<li>Internet Information Server (IIS) SDK</li>
+	<li>Microsoft Data Access Services (MDAC) SDK</li>
+	<li>Microsoft Windows Installer SDK</li>
+  </ul>
+  <li>One of the following Visual Studio 2005 Editions:</li>
+  <ul>
+	<li>Visual C++ Express Edition</li>
+	<li>Professional or higher with Visual C++ installed</li>
+  </ul>
+  <li>HTML Help SDK 1.4 or higher</li>
+</ul>
+
+<p>To build Sconce and Votive, you must have the following SDKs installed:</p>
+<ul>
+  <li>Visual Studio Partner Integration Program (VSIP) SDK 2003</li>
+  <li>VSIP SDK 2003 Extras</li>
+  <li>Both are available at <a href="http://msdn.microsoft.com/vstudio/partners/default.aspx">http://msdn.microsoft.com/vstudio/partners/default.aspx</a></li>
+</ul>
+<p>To install Votive on Visual Studio 2005, you must have the Standard edition or higher.</p>
+
+<P>To successfully build the WiX MSBuild tasks, you need to modify NAnt.exe.config
+	file to support the release version of the .NET Framework (instead of the beta
+	1 release supported in NAnt 0.85 rc3). Make a backup copy of Nant.exe.config
+	and search for the following &lt;framework&gt; element:</P>
+<PRE>&lt;framework
+  name="net-2.0"
+  ...</PRE>
+<P>Replace it with the following element:</P>
+<PRE>&lt;framework
+  name=&quot;net-2.0&quot;
+  family=&quot;net&quot;
+  version=&quot;2.0&quot;
+  description=&quot;Microsoft .NET Framework 2.0&quot;
+  runtimeengine=&quot;&quot;
+  sdkdirectory=&quot;${path::combine(sdkInstallRoot, 'bin')}&quot;
+  frameworkdirectory=&quot;${path::combine(installRoot, 'v2.0.50727')}&quot;
+  frameworkassemblydirectory=&quot;${path::combine(installRoot, 'v2.0.50727')}&quot;
+  clrversion=&quot;2.0.50727&quot;
+&gt;</PRE>
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>LocalFileCache</name>
+	</assembly>
+	<members>
+		<member name="T:SIL.FieldWorks.Tools.Properties.Settings">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Extends the Settings class so that it uses LocalDllSettingsProvider class, thus
+			reading the settings from config file with product name
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.Properties.Resources">
+			<summary>
+			  A strongly-typed resource class, for looking up localized strings, etc.
+			</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.Properties.Resources.ResourceManager">
+			<summary>
+			  Returns the cached ResourceManager instance used by this class.
+			</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.Properties.Resources.Culture">
+			<summary>
+			  Overrides the current thread's CurrentUICulture property for all
+			  resource lookups using this strongly typed resource class.
+			</summary>
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.CachedFile">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Stores information about the original file name and the location it is stored in the
+			file cache.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.CachedFile.m_OriginalName">
+			<summary>The name of the original file</summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.CachedFile.m_CachedFile">
+			<summary>The name of the cached file</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CachedFile.#ctor(System.String,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:CachedFile"/> class.
+			</summary>
+			<param name="originalName">Name of the original file.</param>
+			<param name="cachedFile">Name of the cached file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CachedFile.CopyTo(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copies cached file to specified directory and gives it the original name.
+			</summary>
+			<param name="dir">The target directory.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.CachedFile.OriginalName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the name (without path) of the original file.
+			</summary>
+			<value>The name of the original.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.CachedFile.CachedFileName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the name (and path) of the cached file.
+			</summary>
+			<value>The name of the cached file.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.CacheFileInfo">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CacheFileInfo.#ctor(SIL.FieldWorks.Tools.CachedFile[])">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:CacheFileInfo"/> class.
+			</summary>
+			<param name="files">The files.</param>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.CacheFileInfo.Files">
+			--------------------------------------------------------------------------------
+			<summary>
+			Gets the files.
+			</summary>
+			<value>The files.</value>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.CacheFileInfo.LastAccessed">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Gets the last accessed date.
+			</summary>
+			<value>The last accessed date.</value>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.LocalCacheManager">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.LocalCacheManager.m_Statistics">
+			<summary>Statistics about cache usage</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:CacheManager"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.#ctor(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:LocalCacheManager"/> class.
+			</summary>
+			<param name="fileCachePath">The file cache path.</param>
+			<remarks>This overload of the constructor should only be used for testing.</remarks>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.LocalCacheManager.m_fDisposed">
+			<summary></summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.Finalize">
+			------------------------------------------------------------------------------------
+			<summary>
+			Releases unmanaged resources and performs other cleanup operations before the
+			<see cref="T:SIL.FieldWorks.Tools.CacheManager"/> is reclaimed by garbage collection.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.Dispose">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs application-defined tasks associated with freeing, releasing, or resetting
+			unmanaged resources.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.Dispose(System.Boolean)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Executes in two distinct scenarios.
+			1. If disposing is true, the method has been called directly
+			or indirectly by a user's code via the Dispose method.
+			Both managed and unmanaged resources can be disposed.
+			2. If disposing is false, the method has been called by the
+			runtime from inside the finalizer and you should not reference (access)
+			other managed objects, as they already have been garbage collected.
+			Only unmanaged resources can be disposed.
+			</summary>
+			<param name="disposing">if set to <c>true</c> this method is called from the
+			Dispose() method, if set to <c>false</c> it's called from finalizer.</param>
+			<remarks>
+			If any exceptions are thrown, that is fine.
+			If the method is being done in a finalizer, it will be ignored.
+			If it is thrown by client code calling Dispose,
+			it needs to be handled by fixing the bug.
+			If subclasses override this method, they should call the base implementation.
+			</remarks>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.Initialize">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes this instance.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.Close">
+			------------------------------------------------------------------------------------
+			<summary>
+			Closes this instance.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.Clear">
+			------------------------------------------------------------------------------------
+			<summary>
+			Clears the cache. Mainly used for testing.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.IsCached(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines whether the specified files are cached.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<returns>
+				<c>true</c> if the specified files are cached, <c>false</c> if they are not
+			cached.
+			</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.CacheFile(System.String,System.String[])">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Caches the output file that is the output of the given input files with parameter.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<param name="outFileNames">The output file names.</param>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.CacheFile(System.String,System.String[],System.String[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Caches the files.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<param name="origFileNames">The orig file names.</param>
+			<param name="outFileNames">The out file names.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.GetCachedFiles(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets a cached file.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<returns>The filenames of the cached files, or <c>null</c> if file is not cached.
+			</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.GetHash(System.String[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Calculates the hash values for the given files.
+			</summary>
+			<param name="fileNames">The file names.</param>
+			<returns>The hash value, or <c>null</c> if none of the files exists.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.GetHash(System.String,System.String[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Calculates the hash values for the given files.
+			</summary>
+			<param name="parameters">The parameters.</param>
+			<param name="fileNames">The file names.</param>
+			<returns>The hash value, or <c>null</c> if none of the files exists.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.ComputeHash(System.String)">
+			---------------------------------------------------------------------------------------
+			<summary>
+			Computes the hash value for a file.
+			</summary>
+			<param name="fileName">Name of the file.</param>
+			<returns></returns>
+			---------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.AddCacheMiss">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Increments the cache miss counter. This must be done manually if the IsCached property
+			is used.
+			</summary>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.LocalCacheManager.Purge(System.DateTime)">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Purges any cached items older than the specified date.
+			</summary>
+			<param name="purgeOlderThan">Purge date.</param>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.LocalCacheManager.FileCachePath">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the directory where the file cache stores the files.
+			</summary>
+			<value>The file cache path.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.LocalCacheManager.CacheFileName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the name of the file where the file cache stores data about cached files.
+			</summary>
+			<value>The name of the cache file.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.LocalCacheManager.Statistics">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets the statistics.
+			</summary>
+			<value>The statistics.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.LocalCacheManager.NumberOfCachedObjects">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets the number of cached objects.
+			</summary>
+			<value>The number of cached objects.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.LocalCacheManager.NumberOfFiles">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets the number of files.
+			</summary>
+			<value>The number of files.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.Statistics">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Usage statistics of file cache
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.Statistics.Missed">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.Statistics.Hits">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.Statistics.RemoteHits">
+			<summary>Local miss, but available remotely</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.Statistics.Reset">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Resets the counters
+			</summary>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.FileManager">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.CacheFile(System.String,System.String[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Caches the output files that are the output of the given input files with parameter.
+			</summary>
+			<param name="handle">The handle, retrieved by a call to <c>GetHash</c></param>
+			<param name="outFileNames">The output file names.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.CacheFile(System.String,System.String[],System.String[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Caches the output files.
+			</summary>
+			<param name="handle">The handle.</param>
+			<param name="origFileNames">The original output file names.</param>
+			<param name="outFileNames">The (possibly temporary) output file names.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.EnsureDirectories">
+			------------------------------------------------------------------------------------
+			<summary>
+			Checks the directories and creates them if they don't exist.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.Clear">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Clears all files in the file cache.
+			</summary>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.RemoveFiles(SIL.FieldWorks.Tools.CacheFileInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Removes the files.
+			</summary>
+			<param name="cachedFiles">The cached files.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.GetPathFromFileName(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the name of the path from file.
+			</summary>
+			<param name="fileName">Name of the file.</param>
+			<returns>The path</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.GetFileNameFromHandle(System.String,System.Int32@)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Computes the name and path of the file in the cache. It also creates any
+			subdirectories if necessary.
+			</summary>
+			<param name="handle">The handle.</param>
+			<param name="index">The index.</param>
+			<returns>Path and name of file</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.FileManager.CopyFile(System.String,System.String,System.String,System.Int32@)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copies the file into the file cache.
+			</summary>
+			<param name="handle">The handle.</param>
+			<param name="origFileName">Name of the original file.</param>
+			<param name="fileName">Name of the file (might be temporary name).</param>
+			<param name="index">The index used to produce a unique file name.</param>
+			<returns>Information about the file in the cache.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.FileManager.NumberOfFiles">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the number of files.
+			</summary>
+			<value>The number of files.</value>
+			------------------------------------------------------------------------------------
+		</member>
+	</members>
+</doc>

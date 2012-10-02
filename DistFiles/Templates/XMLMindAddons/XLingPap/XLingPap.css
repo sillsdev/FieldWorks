@@ -1,0 +1,1201 @@
+/***********************
+ XLingPap.css Style sheet for XLingPap for use with XMLMind
+************************/
+
+@property-value appendix-background-color() #D8BFD8; /* #D8BFD8 is thistle */
+@property-value chapter-background-color() #BFD0FF; /* #ADD8E6 is lightblue */
+@property-value citation-background-color() #F09FF0; /* #EE82EE is violet */
+@property-value endnote-background-color() #E0E0E0; /* #C0C0C0 is silver */
+@property-value example-background-color() #F5DEB3; /* #F5DEB3 is wheat */
+@property-value example-indent() 0.25in;
+@property-value generic-background-color() #AFEEEE; /* #AFEEEE is paleturquoise */
+@property-value indented-block() 1.33ex 0.25in 1ex 0.25in; /* top right bottom left */
+@property-value language-background-color() #AFEEEE; /* #AFEEEE is paleturquoise */
+@property-value object-background-color() #F0F0F0; /* a light gray */
+@property-value part-background-color() #BFD0FF; /* #ADD8E6 is lightblue */
+@property-value section-background-color() #BFD0FF; /* #ADD8E6 is lightblue */
+
+
+@property-group isCollapsible( is-collapsed, head-level )
+{
+	collapsible: yes;
+	collapsed: is-collapsed;
+	not-collapsible-head: head-level;
+}
+
+@property-group labelIsPresent(  )
+{
+	content:collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	" "
+	text-field(attribute,label)
+	;
+}
+
+@property-group labelNotPresent( defaultLabel )
+{
+	content:collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	defaultLabel
+	;
+}
+
+@property-group prompt( label )
+{
+	content: label;
+	font-size:small;
+	color: Silver;
+}
+
+@property-group sectionBefore( counter-level, background-color )
+{
+	content: collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	" "
+	counter(counter-level, decimal)
+	" "
+	text-field(attribute, id, columns, 10, font-size, small)
+	;
+	font-weight: bold;
+	font-size:large;
+	background-color:background-color;
+}
+
+@property-group section(  )
+{
+	display:block;
+	property-group: isCollapsible( yes, 1);
+}
+
+abstract[label]:before
+{
+	property-group: labelIsPresent();
+}
+abstract:before
+{
+	property-group: labelNotPresent( " Abstract" );
+}
+abstract
+{
+	display:block;
+	property-group: isCollapsible( yes, 1);
+}
+
+acknowledgements[label]:before
+{
+	property-group: labelIsPresent();
+}
+acknowledgements:before
+{
+	property-group: labelNotPresent( " Acknowledgements" );
+}
+acknowledgements
+{
+	display:block;
+	property-group: isCollapsible( yes, 1);
+}
+
+affiliation {
+	display: block;
+	text-align: center;
+	font-weight: normal;
+	font-size: medium;
+	color: maroon;
+	margin-top: .67ex;
+	margin-bottom: .67ex;
+}
+
+appendix:before
+{
+	content: collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	" "
+	counter(a, upper-alpha)
+	 " "
+	 text_field(attribute, id, columns, 10, font-size, small)
+	 ;
+	font-weight: bold;
+	font-size:large;
+	background-color:appendix-background-color();
+}
+appendix
+{
+	display:block;
+	property-group: isCollapsible( yes, 1);
+}
+
+appendixRef
+{
+	content: set-attribute-button(attribute, app,
+						 unset-attribute, no,
+						 icon, icon(pop-down),
+						 color, black)
+			 label(attribute, app, text-decoration, underline);
+	background-color:appendix-background-color();
+}
+
+article
+{
+	display:inline;
+}
+
+author {
+	display: block;
+	text-align: center;
+	font-weight: normal;
+	font-size: medium;
+	color: maroon;
+	margin-top: .67ex;
+	margin-bottom: .67ex;
+}
+
+backMatter
+{
+	display:block;
+}
+
+blockquote
+{
+	display:block;
+	margin: indented-block();
+}
+
+book
+{
+	display:inline;
+}
+
+br
+{
+	display:inline;
+	padding: 0ex 0ex 0ex 0ex;
+	content:"<br/>\A";
+	font-size:small;
+}
+
+/* caption is in section borrowed from xhtml; see below
+caption {
+	display: table-caption;
+	font-style: italic;
+	/* color: maroon; */
+/*    text-align: concatenate(attr(align));
+	margin-left: 2ex;
+	margin-right: 2ex;
+	margin-top: 2;
+	margin-bottom: 2;
+}
+*/
+/* NB: need a better way to handle chapters and parts */
+chapter:before
+{
+	property-group: sectionBefore( c, section-background-color() );
+}
+chapter
+{
+	property-group: section(  );
+}
+
+chapterBeforePart:before
+{
+	property-group: sectionBefore( c, chapter-background-color() );
+}
+chapterBeforePart
+{
+	property-group: section(  );
+}
+
+chart
+{
+	display:block;
+	margin: indented-block();
+}
+
+citation
+{
+	content: set-attribute-button(attribute, ref,
+						 unset-attribute, no,
+						 icon, icon(pop-down),
+						 color, black)
+			 label(attribute, ref, text-decoration, underline);
+	background-color:citation-background-color();
+}
+
+/* see below in xhtml borrowed section
+col {
+	display: table-cell;
+	border-style: solid;
+	border-width: concatenate(xpath("ancestor::table[1]/@border"));
+	padding: 2;
+}
+*/
+collEd
+{
+	display:inline;
+}
+collEd:after
+{
+	content: " ";
+}
+
+collPage
+{
+	display:inline;
+}
+collPage:after
+{
+	content: ". ";
+}
+
+collTitle
+{
+	display:inline;
+	font-style:italic;
+}
+collTitle:after
+{
+	content: " ";
+}
+
+collVol
+{
+	display:inline;
+}
+collVol:after
+{
+	content: ":";
+}
+
+collection
+{
+	display:inline;
+}
+
+comment
+{
+	display:inline;
+	background-color:Yellow;
+	color:Black;
+}
+
+conference
+{
+	display:inline;
+}
+conference:after
+{
+	content: " ";
+}
+
+conflatedLine
+{
+	display:block;
+}
+
+conflation
+{
+	display:block;
+}
+
+contents[label]:before
+{
+	content:text-field(attribute,label);
+	color:Silver;
+}
+contents:before
+{
+	content:"contents: ";
+	color:Silver;
+}
+contents
+{
+	display:block;
+	content: " showLevel="
+	attr(showLevel)
+	;
+	color:Silver;
+}
+
+date {
+	display: block;
+	text-align: center;
+	font-weight: normal;
+	font-size: medium;
+	color: maroon;
+	margin-top: .67ex;
+	margin-bottom: .67ex;
+}
+
+dd {
+	display: block;
+	margin-left: 4ex;
+}
+
+dissertation
+{
+	display:inline;
+}
+
+dl {
+	display: block;
+	margin-left: 2ex;
+	margin-top: 1.33ex;
+	margin-bottom: 1.33ex;
+}
+
+dt {
+	display: block;
+	font-weight: bold;
+}
+
+endCaption {
+	display: table-caption;
+	font-style: italic;
+	/* color: maroon; */
+	text-align: concatenate(attr(align));
+	margin-left: 2ex;
+	margin-right: 2ex;
+	margin-top: 2;
+	margin-bottom: 2;
+}
+
+endnote:before
+{
+	content: "endnote: "
+	text-field(attribute, id, columns, 10, font-size, small)
+	;
+}
+endnote
+{
+	display:block;
+	background-color:endnote-background-color();
+}
+
+endnoteRef
+{
+	content: set-attribute-button(attribute, ref,
+						 unset-attribute, no,
+						 icon, icon(pop-down),
+						 color, black)
+			 label(attribute, ref, text-decoration, underline);
+	background-color:endnote-background-color();
+}
+
+endnotes[label]:before
+{
+	content: text-field(attribute,label);
+}
+endnotes:before
+{
+	content: "Endnotes";
+}
+endnotes
+{
+	display:block;
+}
+
+example:before
+{
+	content: "("
+	text-field(attribute, num, columns, 10, font-size, small)
+	") "
+	;
+	background-color:example-background-color();
+}
+example
+{
+	display:block;
+	padding-left: 0.25in;
+}
+
+exampleRef[letter]
+{
+	content: "("
+			 set-attribute-button(attribute, letter,
+						 unset-attribute, no,
+						 icon, icon(pop-down),
+						 color, black)
+			 label(attribute, letter, text-decoration, underline)
+			 ")"
+			 ;
+	background-color:example-background-color();
+}
+exampleRef[num]
+{
+	content: "("
+			 set-attribute-button(attribute, num,
+						 unset-attribute, no,
+						 icon, icon(pop-down),
+						 color, black)
+			 label(attribute, num, text-decoration, underline)
+			 ")";
+	background-color:example-background-color();
+}
+
+listInterlinear > free
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+free
+{
+	display:block;
+}
+
+frontMatter
+{
+	display:block;
+}
+
+genericRef:before
+{
+	content: set-attribute-button(attribute, ref,
+						 unset-attribute, no,
+						 icon, icon(pop-down),
+						 color, black)
+			 label(attribute, ref, text-decoration, underline) " ";
+	background-color:generic-background-color();
+}
+genericRef
+{
+	display: inline;
+}
+
+gloss
+{
+	display:inline;
+	color:green;
+	font-family:Serif;
+}
+example gloss:after
+{
+	content:" ";
+}
+
+headerCol {
+	display: table-cell;
+	border-style: solid;
+	border-width: concatenate(xpath("ancestor::table[1]/@border"));
+	padding: 2;
+	font-weight: bold;
+}
+
+headerRow
+{
+		display: table-row;
+}
+
+img {
+	display: inline;
+	content: image-viewport(attribute, src,
+				data-type, anyURI
+				/*,
+						content-width, attr(width),
+							content-height, attr(height)*/
+			  );
+}
+
+institution
+{
+	display:inline;
+}
+institution:after
+{
+	content: " ";
+}
+
+interlinear
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+jPages
+{
+	display:inline;
+}
+jPages:after
+{
+	content: ". ";
+}
+
+jTitle
+{
+	display:inline;
+	font-style:italic;
+}
+jTitle:after
+{
+	content: " ";
+}
+
+jVol
+{
+	display:inline;
+}
+jVol:after
+{
+	content: ":";
+}
+
+langData
+{
+	display:inline;
+	color:Blue;
+	font-family: Arial Unicode MS, sans-serif;
+}
+example langData:after
+{
+	content:" ";
+}
+
+language:before
+{
+	content:"language: "
+	text-field(attribute, id, columns, 10, font-size, small)
+	" "
+	;
+	color:Silver;
+}
+language
+{
+	display:block;
+	padding-left: 0.125in;
+	color:Silver;
+	property-group: isCollapsible( yes, 1);
+}
+
+languages:before
+{
+	content:collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	" Languages: ";
+	color:Silver;
+}
+languages
+{
+	display:block;
+	color:Silver;
+	property-group: isCollapsible( yes, 1);
+}
+
+li
+{
+	display:block;
+}
+
+line
+{
+	display:block;
+}
+
+listInterlinear > lineGroup
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+lineGroup
+{
+	display:block;
+}
+
+lineSet
+{
+	display:block;
+}
+
+lineSetRow
+{
+	display:block;
+}
+
+link
+{
+	display:inline;
+	text-decoration:underline;
+	color:Blue;
+}
+
+listInterlinear:before
+{
+	content: "("
+	text-field(attribute, letter, columns, 15, font-size, small)
+	") "
+	;
+	background-color:example-background-color();
+}
+listInterlinear
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+listSingle:before
+{
+	content: "("
+	text-field(attribute, letter, columns, 15, font-size, small)
+	") "
+	;
+	background-color:example-background-color();
+}
+listSingle
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+listWord:before
+{
+	content: "("
+	text-field(attribute, letter, columns, 15, font-size, small)
+	") "
+	;
+	background-color:example-background-color();
+}
+listWord
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+location
+{
+	display:inline;
+}
+location:after
+{
+	content: ". ";
+}
+
+ms
+{
+	display:inline;
+}
+
+object
+{
+	display:inline;
+	background-color:object-background-color();
+}
+object:after
+{
+	content:text-field(attribute, class, columns, 8, font-size, small);
+}
+
+ol {
+	display: block;
+	margin-left: 2ex;
+	margin-top: 1.33ex;
+	margin-bottom: 1.33ex;
+}
+
+ol > li {
+	margin-left: 2.5ex;
+}
+ol > li:before {
+	display: marker;
+	content: counter(n, decimal) ".";
+/*    font-weight: bold; */
+}
+/* Example of value for style attribute: "list-style-type: lower-roman;" */
+ol[style~=lower-alpha] > li:before {
+	content: counter(n, lower-alpha) ".";
+}
+ol[style~=upper-alpha] > li:before {
+	content: counter(n, upper-alpha) ".";
+}
+ol[style~=lower-roman] > li:before {
+	content: counter(n, lower-roman) ".";
+}
+ol[style~=upper-roman] > li:before {
+	content: counter(n, upper-roman) ".";
+}
+
+p
+{
+	display:block;
+	margin: 1.33ex 0;
+}
+
+paper
+{
+	display:inline;
+}
+
+/* NB: need a better way to handle chapters and parts */
+part:before
+{
+	property-group: sectionBefore( p, part-background-color() );
+}
+part
+{
+	property-group: section(  );
+}
+
+pc
+{
+	display:block;
+}
+
+presentedAt
+{
+	display: block;
+	text-align: center;
+	font-weight: normal;
+	font-size: medium;
+	color: maroon;
+	margin-top: .67ex;
+	margin-bottom: .67ex;
+}
+
+procEd
+{
+	display:inline;
+}
+procEd:after
+{
+	content: " ";
+}
+
+procPage
+{
+	display:inline;
+}
+procPage:after
+{
+	content: ". ";
+}
+
+procTitle
+{
+	display:inline;
+	font-style:italic;
+}
+procTitle:after
+{
+	content: " ";
+}
+
+procVol
+{
+	display:inline;
+}
+procVol:after
+{
+	content: ":";
+}
+
+proceedings
+{
+	display:inline;
+}
+
+published
+{
+	display:inline;
+}
+
+publisher
+{
+	display:inline;
+}
+publisher:after
+{
+	content: ". ";
+}
+
+q:before
+{
+	content:'"';
+}
+q
+{
+	display:inline;
+}
+q:after
+{
+	content:'"';
+}
+
+refAuthor:before
+{
+	content: collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	" name: "
+	text-field(attribute, name, columns, 40)
+	" cite as: "
+	text-field(attribute, citename, columns 15)
+	;
+}
+refAuthor
+{
+	display:block;
+	padding-left: .25in;
+	property-group: isCollapsible( no, 1);
+}
+
+refDate:before
+{
+	content: " ";
+}
+refDate
+{
+	display:inline;
+}
+refDate:after
+{
+	content: ". ";
+}
+
+refTitle
+{
+	display:inline;
+}
+refTitle:after
+{
+	content: ". ";
+}
+
+refWork:before
+{
+	content: text-field(attribute, id, columns 10,
+						background-color, citation-background-color(),
+						font-size, small)
+	;
+}
+
+refWork
+{
+	display:block;
+	padding-left: .25in;
+	text-indent: -.25in;
+}
+
+references[label]:before
+{
+	property-group: labelIsPresent();
+	font-weight:bold;
+	font-size:larger;
+}
+references:before
+{
+	property-group: labelNotPresent( " References" );
+	font-weight:bold;
+	font-size:larger;
+}
+backMatter > references
+{
+	display:block;
+	padding-top: 1ex;
+	property-group: isCollapsible( yes, 1);
+}
+references
+{
+	display:block;
+	padding-top: 1ex;
+	property-group: isCollapsible( no, 1);
+}
+
+row {
+	display: table-row;
+}
+
+section1:before
+{
+	property-group: sectionBefore( n, section-background-color() );
+}
+section1
+{
+	property-group: section(  );
+}
+
+appendix > section2:before
+{
+	property-group: sectionBefore( an, appendix-background-color() );
+}
+section1 > section2:before
+{
+	property-group: sectionBefore( nn, section-background-color() );
+}
+section2
+{
+	property-group: section(  );
+}
+
+section3:before
+{
+	property-group: sectionBefore( nnn, section-background-color() );
+}
+section3
+{
+	property-group: section(  );
+}
+
+section4:before
+{
+	property-group: sectionBefore( nnnn, section-background-color() );
+}
+section4
+{
+	property-group: section(  );
+}
+
+section5:before
+{
+	property-group: sectionBefore( nnnnn, section-background-color() );
+}
+section5
+{
+	property-group: section(  );
+}
+
+section6:before
+{
+	property-group: sectionBefore( nnnnnn, section-background-color() );
+}
+section6
+{
+	property-group: section(  );
+}
+
+sectionRef
+{
+	content: set-attribute-button(attribute, sec,
+						 unset-attribute, no,
+						 icon, icon(pop-down),
+						 color, black)
+			 label(attribute, sec, text-decoration, underline);
+	background-color:section-background-color();
+}
+
+secTitle:before
+{
+	content:" ";
+}
+secTitle
+{
+	font-weight: bold;
+	font-size:large;
+}
+
+series
+{
+	display:inline;
+}
+series:after
+{
+	content: ". ";
+}
+
+single
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+style
+{
+	display:block;
+	padding-left: 0.25in;
+}
+
+styles:before
+{
+	content: collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	" styles: "
+	;
+	color:Silver;
+}
+styles
+{
+	display:block;
+	property-group: isCollapsible( yes, 1);
+}
+
+table {
+	display: table;
+	border-style: solid;
+	border-width: concatenate(attr(border));
+	margin-top: 1.33ex;
+	margin-bottom: 1.33ex;
+}
+
+td {
+	display: table-cell;
+	border-style: solid;
+	border-width: concatenate(xpath("ancestor::table[1]/@border"));
+	padding: 2;
+}
+
+thesis
+{
+	display:inline;
+}
+
+title {
+	display: block;
+	text-align: center;
+	font-weight: bold;
+	font-size: 2em;
+	color: black;
+	margin-top: .67ex;
+	margin-bottom: .67ex;
+}
+
+tr {
+	display: table-row;
+}
+
+tree
+{
+	display:block;
+	margin:example-indent();
+}
+
+ul
+{
+	display:block;
+	margin-left: 2ex;
+	margin-top: 1.33ex;
+	margin-bottom: 1.33ex;
+}
+
+ul > li {
+	margin-left: 2.5ex;
+}
+ul > li:before {
+	display: marker;
+	content:disc;
+	padding-top: .6ex;
+}
+ul > li ul > li:before {
+	content: square;
+}
+ul > li ul > li ul > li:before {
+	content: icon(diamond);
+}
+ul > li ul > li ul > li ul > li:before {
+	content: circle;
+}
+
+url
+{
+	display:inline;
+	text-decoration:underline;
+}
+url:after
+{
+	content: ". ";
+}
+
+version
+{
+	display: block;
+	text-align: center;
+	font-weight: normal;
+	font-size: medium;
+	color: maroon;
+	margin-top: .67ex;
+	margin-bottom: .67ex;
+}
+
+webpage
+{
+	display:inline;
+}
+
+word
+{
+	display:block;
+	padding-left:example-indent();
+}
+
+wrd
+{
+	display:inline;
+}
+wrd:after
+{
+	content:" ";
+}
+/* following borrowed from %XXE_install_dir%/addon/config/xhtml/css */
+@extension "com.xmlmind.xmleditapp.xhtml.table.TableSupport black rgb(238,238,224)";
+
+
+/* using table one above
+table {
+	display: table;
+	/*caption-side: bottom;*/
+/*    border-style: solid;
+	border-width: 1;
+	margin-top: 1.33ex;
+	margin-bottom: 1.33ex;
+} */
+
+caption {
+	display: table-caption;
+	font-style: italic;
+	color: maroon;
+	text-align: center;
+	margin-left: 2ex;
+	margin-right: 2ex;
+	margin-top: 2;
+	margin-bottom: 2;
+}
+
+colgroup {
+	display: table-column-group;
+	collapsed: yes;
+}
+
+col {
+	display: table-column;
+	collapsed: yes;
+}
+
+thead,
+tbody,
+tfoot {
+	display: table-row-group;
+}
+
+tr {
+	display: table-row;
+}
+
+/* td, see above */
+th {
+	display: table-cell;
+	border-style: solid;
+/*    border-width: 1; */
+	border-width: concatenate(xpath("ancestor::table[1]/@border"));
+	padding: 2;
+	font-weight: bold;
+	text-align: inherit;
+}
+
+/*
+ * Make tables collapsible.
+ */
+
+table {
+	collapsible: yes;
+	not-collapsible-head: 1;
+	collapsed-content:  url(xxe-config:common/icons2/table.gif);
+	collapsed-content-align: center;
+}
+
+caption:before {
+	/* Remove if caption-side:bottom */
+	content: collapser() " ";
+}
+
+/*
+ * Partial support for the Transitional DTD.
+ */
+tr[bgcolor] > th,
+tr[bgcolor] > td {
+	background-color: inherit;
+}
+/* "tr > th" is used to make this rule more specific than the above one. */
+table[bgcolor],
+tr[bgcolor],
+tr > th[bgcolor],
+tr > td[bgcolor] {
+	background-color: concatenate(attr(bgcolor));
+}

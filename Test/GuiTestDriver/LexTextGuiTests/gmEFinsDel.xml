@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+<!--test Exception Feature insert and deletes-->
+<!--assumes original Kalaba database-->
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+  <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <!--Go to Grammar/Exception "Features"-->
+	<click select="menubar/view/grammar/exception-features"/>
+
+  <!--insert new feature-->
+	<click select="toolbar/exception-feature"/>
+
+<model select="exception-features[@role='view']">
+
+  <var id="ind" set="*"/>
+  <var id="row" set="1"/> <!-- the english ws -->
+  <click select="edit/slice/name/empty"/>
+  <insert>new entry</insert>
+
+  <!--check success-->
+  <var id="row" set="1"/>
+  <var id="col" set="1"/> <!-- the english ws -->
+  <click select="browse/record/col"/>
+  <glimpse id ="check1" select="browse/record/col" prop="value" expect="new entry"/>
+
+  <!--delete new feature-->
+  <click select="//toolbar/delete"/>
+  <insert>{TAB}</insert>
+  <insert>~</insert>
+
+  <!-- still have to get the cursor off the delete button or the next test fails -->
+  <!-- check show hidden fields -->
+  <click select="edit/show-hidden-fields/check-box"/>
+  <!-- uncheck show hidden fields -->
+  <click wait="1500" select="edit/show-hidden-fields/check-box"/>
+
+</model>
+</on-application>
+</accil>

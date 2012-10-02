@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BrowseFileSpecHelpString" xml:space="preserve">
+	<value>
+Click to browse for the converter table/map
+	</value>
+  </data>
+  <data name="CloseButtonHelpString" xml:space="preserve">
+	<value>
+Click to close this dialog
+  </value>
+  </data>
+  <data name="CodePageHelpString" xml:space="preserve">
+	<value>
+Legacy-encoded data is treated internally to many newer programs as a string of wide characters converted by a certain
+code page. For example, SIL IPA93 font is treated internally as a wide symbol font encoding (aka. code page 42).
+The Annapurna Devanagari font is treated internally as wide characters of the "latin" code page 1252.
+
+EncConverters needs to use the same code page as the calling program when it wants to turn that string of wide
+characters back into a string of narrow bytes for the converter to use. So, if your client program is treating
+the data with the proper code page and EncConverters is using the same code page, then the conversion will work.
+But this configuration option is provided here to allow you to adjust the code page that EncConverters is using
+in case it's not the same as the client program.
+
+For example, if you were looking at SIL IPA 93 data in Word, but not using one of the IPA 93 fonts, Word will handle
+those data internally using the default system code page (1252 for most people). So, if Word is using 1252, then you
+should enter 1252 here so they're using the same value.
+
+By the way, the code page value '0' means to use the default system code page (which is 1252 for most English language
+versions of Windows).
+	</value>
+  </data>
+  <data name="ConverterFileSpecHelpString" xml:space="preserve">
+	<value>
+Enter the file path to the converter table/map.
+	</value>
+  </data>
+  <data name="ConvTypeExpectsHelpString" xml:space="preserve">
+	<value>
+Choose the encoding type for the input to the table/map: either Unicode or Legacy bytes.
+For example, if this is an Unicode encoding converter, then the input will be Legacy bytes.
+	</value>
+  </data>
+  <data name="ConvTypeReturnsHelpString" xml:space="preserve">
+	<value>
+Choose the encoding type for the output of the table/map: either Unicode or Legacy bytes
+For example, if this is an Unicode encoding converter, then the output will be Unicode encoding.
+	</value>
+  </data>
+  <data name="PreviewBoxHelpString" xml:space="preserve">
+	<value>
+This box displays the result of the conversion using the selected converter given some data
+from the client application. You can select different converters in the list above and see the
+results. You can also adjust the Conversion Options (e.g. Direction, etc) and see what effect
+those have on the given data. You can also right-click in this box to change the font so that
+the data is displayed using a particular font.
+	</value>
+  </data>
+  <data name="SaveInRepositoryHelpString" xml:space="preserve">
+	<value>
+Click to add this converter to the system repository permanently.
+	</value>
+  </data>
+  <data name="TestHexDecOutputBoxesHelpString" xml:space="preserve">
+	<value>
+This box shows the decimal or hex values of the characters in the text box above.
+	</value>
+  </data>
+  <data name="TestInputBoxHelpString" xml:space="preserve">
+	<value>
+This box is for entering data which corresponds to the left-hand side of the conversion
+(usually, the non-Unicode/Legacy data).
+
+You can right-click in this box and change the font so that it displays using a particular font.
+
+You can also type Alt+X to convert the preceding character to its 4 (hex) digit Unicode value.
+
+Click the 'Test' button to execute the conversion and see the result in the Output box below
+  </value>
+  </data>
+  <data name="TestOutputBoxHelpString" xml:space="preserve">
+	<value>
+This box shows the result of converting the Input data using the currently configured converter.
+
+You can right-click in this box and change the font so that it displays using a particular font.
+
+You can also type Alt+X to convert the preceding character to its 4 (hex) digit Unicode value.
+	</value>
+  </data>
+</root>

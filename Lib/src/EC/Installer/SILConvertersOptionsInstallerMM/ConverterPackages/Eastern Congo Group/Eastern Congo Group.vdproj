@@ -1,0 +1,597 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:Eastern Congo Group"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_0E9E724CF3634E5EBCD9B2E186F3A1F0"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_1C88956C2F374E19B22925EF980271A1"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_1F1FC73E7CB94A71AA8BD15CFEBA34DC"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_20F360CE2D104011A30F1DA0E13040D4"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_36067FF242F1462FBFDF3BA8215F6C5A"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_4545DE26C21A45B6AAD211B5F37334BE"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_582649E09556417FB880AD8ACD0C7784"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_66400BA929604C0395E25E11FB6EEA29"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_6C2855BD65034EF0814C890239AE9929"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_71757773E7E540CD9E2C481C3E2D615C"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_92500DEE628E41EA86026F689E566090"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_AA1F54CD71024ABEB8D0EA6239B5979E"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_CC53F8E6FD3949069D3AD245D42AC38C"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_CC9E562D87294E6B83D9D3A1E17DBCE7"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_DEF674EA741E4A2B8FA4BDAAC97AD158"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F3366857660A49A586C4B5B3352ABA11"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\Eastern Congo Group.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\Eastern Congo Group.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0E9E724CF3634E5EBCD9B2E186F3A1F0"
+			{
+			"SourcePath" = "8:MapsTables\\BUDU-Unicode.tec"
+			"TargetName" = "8:BUDU-Unicode.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1C88956C2F374E19B22925EF980271A1"
+			{
+			"SourcePath" = "8:MapsTables\\BuduASCII-Unicode.tec.vbs"
+			"TargetName" = "8:BuduASCII-Unicode.tec.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F1FC73E7CB94A71AA8BD15CFEBA34DC"
+			{
+			"SourcePath" = "8:MapsTables\\Mayogo-Unicode.tec"
+			"TargetName" = "8:Mayogo-Unicode.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_20F360CE2D104011A30F1DA0E13040D4"
+			{
+			"SourcePath" = "8:MapsTables\\Mayogo-Unicode.tec.vbs"
+			"TargetName" = "8:Mayogo-Unicode.tec.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_36067FF242F1462FBFDF3BA8215F6C5A"
+			{
+			"SourcePath" = "8:MapsTables\\ECG-Unicode.tec.vbs"
+			"TargetName" = "8:ECG-Unicode.tec.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4545DE26C21A45B6AAD211B5F37334BE"
+			{
+			"SourcePath" = "8:MapsTables\\KomoASCII-Unicode.tec"
+			"TargetName" = "8:KomoASCII-Unicode.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_582649E09556417FB880AD8ACD0C7784"
+			{
+			"SourcePath" = "8:MapsTables\\ECG.xml"
+			"TargetName" = "8:ECG.xml"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_66400BA929604C0395E25E11FB6EEA29"
+			{
+			"SourcePath" = "8:MapsTables\\ECG-Unicode.tec"
+			"TargetName" = "8:ECG-Unicode.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6C2855BD65034EF0814C890239AE9929"
+			{
+			"SourcePath" = "8:MapsTables\\BheleASCII-Unicode.tec.vbs"
+			"TargetName" = "8:BheleASCII-Unicode.tec.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_71757773E7E540CD9E2C481C3E2D615C"
+			{
+			"SourcePath" = "8:MapsTables\\BheleASCII-Unicode.tec"
+			"TargetName" = "8:BheleASCII-Unicode.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_92500DEE628E41EA86026F689E566090"
+			{
+			"SourcePath" = "8:MapsTables\\KomoASCII-Unicode.tec.vbs"
+			"TargetName" = "8:KomoASCII-Unicode.tec.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AA1F54CD71024ABEB8D0EA6239B5979E"
+			{
+			"SourcePath" = "8:MapsTables\\Mayogo-Unicode.map"
+			"TargetName" = "8:Mayogo-Unicode.map"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CC53F8E6FD3949069D3AD245D42AC38C"
+			{
+			"SourcePath" = "8:MapsTables\\BuduASCII-Unicode.tec"
+			"TargetName" = "8:BuduASCII-Unicode.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CC9E562D87294E6B83D9D3A1E17DBCE7"
+			{
+			"SourcePath" = "8:MapsTables\\Komo-Unicode.tec"
+			"TargetName" = "8:Komo-Unicode.tec"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DEF674EA741E4A2B8FA4BDAAC97AD158"
+			{
+			"SourcePath" = "8:MapsTables\\Komo-Unicode.tec.vbs"
+			"TargetName" = "8:Komo-Unicode.tec.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3366857660A49A586C4B5B3352ABA11"
+			{
+			"SourcePath" = "8:MapsTables\\BUDU-Unicode.tec.vbs"
+			"TargetName" = "8:BUDU-Unicode.tec.vbs"
+			"Tag" = "8:"
+			"Folder" = "8:_05A2619444A04154B3E75846445B9C78"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_7D00277650234D5691F9698B2E769635"
+			{
+			"DefaultLocation" = "8:[CommonAppDataFolder]SIL\\SILConverters31"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_05A2619444A04154B3E75846445B9C78"
+					{
+					"Name" = "8:MapsTables"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_20003EA6332041F19EFC7939359F9FD6"
+						"Folders"
+						{
+						}
+					}
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:EastCongoGroup30MergeModule.785FF1F7B2D54B6BAB3EDC73578B7562"
+		"Version" = "8:3.1.0.0"
+		"Title" = "8:Eastern Congo Group"
+		"Subject" = "8:Encoding converters for Eastern Congo Group"
+		"Author" = "8:Bob Eaton"
+		"Keywords" = "8:SILConverters; Encoding Conversion; Eastern Congo Group; EncConverters"
+		"Comments" = "8:Encoding converters used in Eastern Congo Group"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+		}
+	}
+}

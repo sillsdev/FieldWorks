@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="ConvertString"
+	ProjectGUID="{3788F3C1-EE34-4865-BD03-C5E5A81B6A85}"
+	SccProjectName="&quot;$/Bin/src/UniConvert/ConvertString&quot;, VVFAAAAA"
+	SccLocalPath="."
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory=".\Debug"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="mkcvs.bat"
+				ReBuildCommandLine="mkcvs.bat cc"
+				Output="..\..\..\..\output\debug\ConvertString.dll"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="mkcvs.bat r"
+				ReBuildCommandLine="mkcvs.bat r cc"
+				Output="..\..\..\..\output\release\ConvertString.dll"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath=".\ConvertString.cpp">
+			</File>
+			<File
+				RelativePath=".\ConvertString.def">
+			</File>
+			<File
+				RelativePath=".\ConvertStringPs.idl">
+			</File>
+			<File
+				RelativePath=".\ConvertStringTlb.idh">
+			</File>
+			<File
+				RelativePath=".\ConvertStringTlb.idl">
+			</File>
+			<File
+				RelativePath=".\Trie.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath=".\ConvertString.h">
+			</File>
+			<File
+				RelativePath=".\Main.h">
+			</File>
+			<File
+				RelativePath=".\Trie.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

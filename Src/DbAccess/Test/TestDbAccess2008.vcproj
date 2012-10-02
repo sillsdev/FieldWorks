@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="TestDbAccess2008"
+	ProjectGUID="{973A9A83-982E-4506-867C-FFF4F92F714F}"
+	RootNamespace="TestDbAccess"
+	SccProjectName="Perforce Project"
+	SccLocalPath="."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\bin\mkdba-tst.bat DONTRUN"
+				ReBuildCommandLine="..\..\..\bin\mkdba-tst.bat DONTRUN cc"
+				CleanCommandLine="..\..\..\bin\mkdba-tst.bat DONTRUN ec"
+				Output="..\..\..\output\debug\TestDbAccess.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine=""
+				ReBuildCommandLine=""
+				CleanCommandLine=""
+				Output="TestDbAccess.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
+			>
+			<File
+				RelativePath="Collection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="testDbAccess.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc"
+			>
+			<File
+				RelativePath="testDbAccess.h"
+				>
+			</File>
+			<File
+				RelativePath="TestDbAdmin.h"
+				>
+			</File>
+			<File
+				RelativePath="TestMetaDataCache.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestMetaDataCacheXml.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestOleDbCommand.h"
+				>
+			</File>
+			<File
+				RelativePath="TestOleDbEncap.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
+		</Filter>
+		<File
+			RelativePath="testDbAccess.mak"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

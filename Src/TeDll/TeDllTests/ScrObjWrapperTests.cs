@@ -1,0 +1,167 @@
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2006, SIL International. All Rights Reserved.
+// <copyright from='2006' to='2006' company='SIL International'>
+//		Copyright (c) 2006, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Common Public License or the
+//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// </copyright>
+#endregion
+//
+// File: ScrObjWrapperTests.cs
+// Responsibility: TE Team
+// ---------------------------------------------------------------------------------------------
+using System;
+
+using NUnit.Framework;
+
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Scripture;
+using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Test.ProjectUnpacker;
+using SILUBS.SharedScrUtils;
+
+namespace SIL.FieldWorks.TE
+{
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Tests for the ScrObjWrapper class.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	[TestFixture]
+	public class ScrObjWrapperTests : ScrInMemoryFdoTestBase
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called to make the test data for the tests
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected override void CreateTestData()
+		{
+			base.CreateTestData();
+			m_scrInMemoryCache.InitializeScripture();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test that the SO Wrapper can load a Paratext 5 project without crashing.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void LoadParatext5Project()
+		{
+			CheckDisposed();
+
+			ScrObjWrapper wrapper = new ScrObjWrapper();
+			ScrImportSet settings = new ScrImportSet();
+			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(settings);
+			settings.ImportTypeEnum = TypeOfImport.Paratext5;
+			settings.StartRef = new BCVRef(1, 1, 1);
+			settings.EndRef = new BCVRef(66, 22, 21);
+			using (TempSFFileMaker fileMaker = new TempSFFileMaker())
+			{
+				string fileName = fileMaker.CreateFile("EXO",
+					new string[] {@"\mt Exodus", @"\c 1", @"\v 1 This is fun!"});
+				settings.AddFile(fileName, ImportDomain.Main, null, 0);
+
+				wrapper.LoadScriptureProject(settings);
+				Assert.IsFalse(wrapper.BooksPresent.Contains(1));
+				Assert.IsTrue(wrapper.BooksPresent.Contains(2));
+				string sText, sMarker;
+				ImportDomain domain;
+				Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
+				Assert.AreEqual(fileName, wrapper.CurrentFileName);
+				Assert.AreEqual(1, wrapper.CurrentLineNumber);
+				Assert.AreEqual(new BCVRef(2, 1, 0), wrapper.SegmentFirstRef);
+				Assert.AreEqual(new BCVRef(2, 1, 0), wrapper.SegmentLastRef);
+				Assert.AreEqual(2, wrapper.ExternalPictureFolders.Count);
+				Assert.AreEqual(Cache.LangProject.ExternalLinkRootDir,
+					wrapper.ExternalPictureFolders[0]);
+				Assert.AreEqual(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+					wrapper.ExternalPictureFolders[1]);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the Patatext 6 project for annotation-only import with only Scripture project
+		/// set.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void LoadP6ProjectForAnnotationOnlyImportWithOnlyScriptureProjectSet()
+		{
+			CheckDisposed();
+
+			ScrObjWrapper wrapper = new ScrObjWrapper();
+			ScrImportSet settings = new ScrImportSet();
+			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(settings);
+
+			Unpacker.UnPackParatextTestProjects();
+			RegistryData regData = Unpacker.PrepareRegistryForPTData();
+			try
+			{
+				settings.ImportTypeEnum = TypeOfImport.Paratext6;
+				settings.ParatextScrProj = "KAM";
+				settings.StartRef = new BCVRef(1, 1, 1);
+				settings.EndRef = new BCVRef(66, 22, 21);
+				settings.ImportAnnotations = true;
+				settings.ImportBackTranslation = false;
+				settings.ImportTranslation = false;
+				wrapper.LoadScriptureProject(settings);
+				string sText, sMarker;
+				ImportDomain domain;
+				Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
+				Assert.AreEqual(3, wrapper.ExternalPictureFolders.Count);
+				Assert.AreEqual(@"C:\~IWTEST~\KAM\Figures", wrapper.ExternalPictureFolders[0]);
+			}
+			finally
+			{
+				if (regData != null)
+					regData.RestoreRegistryData();
+				Unpacker.RemoveParatextTestProjects();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the P6 project for annotation-only import with only BT project set.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void LoadP6ProjectForAnnotationOnlyImportWithOnlyBTProjectSet()
+		{
+			CheckDisposed();
+
+			ScrObjWrapper wrapper = new ScrObjWrapper();
+			ScrImportSet settings = new ScrImportSet();
+			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(settings);
+
+			Unpacker.UnPackParatextTestProjects();
+			RegistryData regData = Unpacker.PrepareRegistryForPTData();
+			try
+			{
+				settings.ImportTypeEnum = TypeOfImport.Paratext6;
+				settings.ParatextBTProj = "KAM";
+				settings.StartRef = new BCVRef(1, 1, 1);
+				settings.EndRef = new BCVRef(66, 22, 21);
+				settings.ImportAnnotations = true;
+				settings.ImportBackTranslation = false;
+				settings.ImportTranslation = false;
+				wrapper.LoadScriptureProject(settings);
+				string sText, sMarker;
+				ImportDomain domain;
+				Assert.IsTrue(wrapper.GetNextSegment(out sText, out sMarker, out domain));
+				Assert.AreEqual(@"C:\~IWTEST~\KAM\Figures", wrapper.ExternalPictureFolders[0]);
+			}
+			finally
+			{
+				if (regData != null)
+					regData.RestoreRegistryData();
+				Unpacker.RemoveParatextTestProjects();
+			}
+		}
+	}
+}

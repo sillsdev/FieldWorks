@@ -1,0 +1,12 @@
+# Command-line options for re-compiling the Votive.dll
+# so that we can get the Win32 resource file into the
+# assembly.
+
+# This is the release version.
+
+/out:bin\Release\votive.dll
+/win32res:bin\Release\Votive.res
+/debug:pdbonly
+/optimize+
+/resource:obj\Release\Microsoft.Tools.WindowsInstallerXml.VisualStudio.Strings.resources,Microsoft.Tools.WindowsInstallerXml.VisualStudio.Strings.resources
+/r:..\..\sconce\bin\Release\sconce.dll

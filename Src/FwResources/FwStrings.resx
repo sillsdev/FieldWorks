@@ -1,0 +1,1274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidPastePicMultiParaFld" xml:space="preserve">
+	<value>Sorry, for now strings containing pictures can be pasted
+only in multiple-paragraph fields.</value>
+	<comment>Text for exception in EditPaste</comment>
+  </data>
+  <data name="kstidMiscError" xml:space="preserve">
+	<value>Error</value>
+	<comment>used as title for an error message box</comment>
+  </data>
+  <data name="kstidMiscErrorWithMessage" xml:space="preserve">
+	<value>Error: {0}</value>
+	<comment>Displayed in a message box when an exception was caught.</comment>
+  </data>
+  <data name="kstidOutOfMemory" xml:space="preserve">
+	<value>Out of memory.</value>
+	<comment>Displayed in a message box when system/program runs out of memory.</comment>
+  </data>
+  <data name="kstidGotException" xml:space="preserve">
+	<value>Please email this bug report to {0}.
+
+Please insert here your description of how the problem occurred.
+If possible give detailed instructions for making it happen.
+If relevant please attach any files required for making it happen.
+
+------Generated error details follow------
+
+An internal error has been detected in program {1}, Version: {2}
+Details follow:
+
+A programming error ({3}) has been detected in module {4}, {5}.
+Please report this to the developers.
+
+Stack Dump:
+{6}
+</value>
+	<comment>Copied to clipboard when exception is caught.</comment>
+  </data>
+  <data name="kstidSupportEmail" xml:space="preserve">
+	<value>Not_set</value>
+	<comment>Email address. Needs to be set for each program.</comment>
+  </data>
+  <data name="kstidProgError" xml:space="preserve">
+	<value>A programming error has occurred.
+A message with instructions on how to send it to the developers has been copied to the clipboard.
+Paste the contents of the clipboard into a new email message or text file.</value>
+	<comment>Displayed in a message box.</comment>
+  </data>
+  <data name="kstidFatalError" xml:space="preserve">
+	<value>
+
+In order to protect your data, the FieldWorks program needs to close.
+
+You should be able to restart it normally.</value>
+	<comment>Displayed in a message box.</comment>
+  </data>
+  <data name="kstidWindowListHelp" xml:space="preserve">
+	<value>Click on the window you want to switch to.</value>
+	<comment>Displayed for menu window list help</comment>
+  </data>
+  <data name="kstidMoreWindows" xml:space="preserve">
+	<value>&amp;More Windows...</value>
+	<comment>Dynamically displayed menu item</comment>
+  </data>
+  <data name="kstidViewConfigure" xml:space="preserve">
+	<value>&amp;Configure...</value>
+  </data>
+  <data name="kstidStyleChangeError" xml:space="preserve">
+	<value>Sorry, your selection has been lost, due to the complications of renaming your styles.
+Please reapply your style change</value>
+  </data>
+  <data name="kstidInvalidInstallation" xml:space="preserve">
+	<value>FieldWorks software is not installed correctly. Please insert your FieldWorks CD or re-run the Installer and repair your installation.</value>
+  </data>
+  <data name="kstidDefaultParaCharStyleName" xml:space="preserve">
+	<value>Default Paragraph Characters</value>
+	<comment>Displayed in the formatting toolbar styles combobox</comment>
+  </data>
+  <data name="kstidOpenProjError" xml:space="preserve">
+	<value>An error has occured while opening project {0}: {1}</value>
+	<comment>Displayed in a non-fatal error reporting box when an error occurs while opening an existing project ({0}).  {1} is the internal error message.</comment>
+  </data>
+  <data name="kstidNewProjError" xml:space="preserve">
+	<value>An error has occured while creating a new project.</value>
+	<comment>Displayed in a dialog box when an error occurs while creating a new project.</comment>
+  </data>
+  <data name="kstidPageSetupWithViewName" xml:space="preserve">
+	<value>Page Setup - {0}</value>
+	<comment>Title of the Page Setup dialog that also shows the name of the print layout view.</comment>
+  </data>
+  <data name="kstidFileOpenToolTip" xml:space="preserve">
+	<value>Open Project</value>
+	<comment>Tool tip for Open Project toolbar button</comment>
+  </data>
+  <data name="kstidFileSaveToolTip" xml:space="preserve">
+	<value>Save</value>
+	<comment>Tool tip for Save toolbar button</comment>
+  </data>
+  <data name="kstidFilePrintToolTip" xml:space="preserve">
+	<value>Print</value>
+	<comment>Tool tip for Print toolbar button</comment>
+  </data>
+  <data name="kstidEditCutToolTip" xml:space="preserve">
+	<value>Cut</value>
+	<comment>Tool tip for Cut toolbar button</comment>
+  </data>
+  <data name="kstidEditCopyToolTip" xml:space="preserve">
+	<value>Copy</value>
+	<comment>Tool tip for Copy toolbar button</comment>
+  </data>
+  <data name="kstidEditPasteToolTip" xml:space="preserve">
+	<value>Paste</value>
+	<comment>Tool tip for Paste toolbar button</comment>
+  </data>
+  <data name="kstidEditUndoToolTip" xml:space="preserve">
+	<value>Undo</value>
+	<comment>Tool tip for Undo toolbar button</comment>
+  </data>
+  <data name="kstidEditRedoToolTip" xml:space="preserve">
+	<value>Redo</value>
+	<comment>Tool tip for Redo toolbar button</comment>
+  </data>
+  <data name="kstidFormatBoldToolTip" xml:space="preserve">
+	<value>Bold</value>
+	<comment>Tool tip for Bold toolbar button</comment>
+  </data>
+  <data name="kstidFormatItalicToolTip" xml:space="preserve">
+	<value>Italic</value>
+	<comment>Tool tip for Italic toolbar button</comment>
+  </data>
+  <data name="kstidFormatLeftAlignToolTip" xml:space="preserve">
+	<value>Align Left</value>
+	<comment>Tool tip for Left Align toolbar button</comment>
+  </data>
+  <data name="kstidFormatRightAlignToolTip" xml:space="preserve">
+	<value>Align Right</value>
+	<comment>Tool tip for Right Align toolbar button</comment>
+  </data>
+  <data name="kstidFormatCenterToolTip" xml:space="preserve">
+	<value>Center</value>
+	<comment>Tool tip for Center toolbar button</comment>
+  </data>
+  <data name="kstidFormatNumberedListItemToolTip" xml:space="preserve">
+	<value>Numbering</value>
+	<comment>Tool tip for Numbering toolbar button</comment>
+  </data>
+  <data name="kstidFormatBulletedListItemToolTip" xml:space="preserve">
+	<value>Bullets</value>
+	<comment>Tool tip for Bullets toolbar button</comment>
+  </data>
+  <data name="kstidFormatDecreaseIndentToolTip" xml:space="preserve">
+	<value>Decrease Indent</value>
+	<comment>Tool tip for Decrease Indent toolbar button</comment>
+  </data>
+  <data name="kstidFormatIncreaseIndentToolTip" xml:space="preserve">
+	<value>Increase Indent</value>
+	<comment>Tool tip for Increase Indent toolbar button</comment>
+  </data>
+  <data name="kstidFormatBordersToolTip" xml:space="preserve">
+	<value>Borders</value>
+	<comment>Tool tip for Borders toolbar button</comment>
+  </data>
+  <data name="kstidFormatBackgroundColorToolTip" xml:space="preserve">
+	<value>Background Color</value>
+	<comment>Tool tip for Background Color toolbar button</comment>
+  </data>
+  <data name="kstidFormatFontColorToolTip" xml:space="preserve">
+	<value>Font Color</value>
+	<comment>Tool tip for Font Color toolbar button</comment>
+  </data>
+  <data name="kstidZoomPercent50" xml:space="preserve">
+	<value>50%</value>
+  </data>
+  <data name="kstidUndo1Action" xml:space="preserve">
+	<value>Undo 1 Action</value>
+	<comment>Displayed in the Undo/Redo drop down</comment>
+  </data>
+  <data name="kstidUndoMultipleActions" xml:space="preserve">
+	<value>Undo {0} Actions</value>
+	<comment>Displayed in the Undo/Redo drop down</comment>
+  </data>
+  <data name="kstidUndoRedoCancel" xml:space="preserve">
+	<value>Cancel</value>
+	<comment>Displayed in the Undo/Redo drop down</comment>
+  </data>
+  <data name="kstidRedo1Action" xml:space="preserve">
+	<value>Redo 1 Action</value>
+	<comment>Displayed in the Undo/Redo drop down</comment>
+  </data>
+  <data name="kstidRedoMultipleActions" xml:space="preserve">
+	<value>Redo {0} Actions</value>
+	<comment>Displayed in the Undo/Redo drop down</comment>
+  </data>
+  <data name="kstidFormatParaStyleToolTip" xml:space="preserve">
+	<value>Paragraph Style</value>
+	<comment>Tool tip for Paragraph Styles Combo on toolbar</comment>
+  </data>
+  <data name="kstidFormatCharStyleToolTip" xml:space="preserve">
+	<value>Character Style</value>
+	<comment>Tool tip for Character Styles Combo on toolbar</comment>
+  </data>
+  <data name="kstidZoomToolTip" xml:space="preserve">
+	<value>Zoom</value>
+	<comment>Tool tip for Zoom Combo on toolbar</comment>
+  </data>
+  <data name="kstidHelpToolTip" xml:space="preserve">
+	<value>Help</value>
+	<comment>Tool tip for showing help topics</comment>
+  </data>
+  <data name="kstidFormatBordersSurroundToolTip" xml:space="preserve">
+	<value>Borders all Around</value>
+	<comment>Tool tip for format/borders surrounding border tooltip</comment>
+  </data>
+  <data name="kstidFormatBordersTopToolTip" xml:space="preserve">
+	<value>Top Border</value>
+	<comment>Tool tip for format/borders top border tooltip</comment>
+  </data>
+  <data name="kstidFormatBordersBottomToolTip" xml:space="preserve">
+	<value>Bottom Border</value>
+	<comment>Tool tip for format/borders bottom border tooltip</comment>
+  </data>
+  <data name="kstidFormatBordersLeftToolTip" xml:space="preserve">
+	<value>Left Border</value>
+	<comment>Tool tip for format/borders left border tooltip</comment>
+  </data>
+  <data name="kstidFormatBordersRightToolTip" xml:space="preserve">
+	<value>Right Border</value>
+	<comment>Tool tip for format/borders right border tooltip</comment>
+  </data>
+  <data name="kstidFormatBordersNoneToolTip" xml:space="preserve">
+	<value>No Borders</value>
+	<comment>Tool tip for format/borders right border tooltip</comment>
+  </data>
+  <data name="kstidResetParagraphStyleToolTip" xml:space="preserve">
+	<value>Reset Paragraph Style</value>
+	<comment>Tool tip for Reset Paragraph toolbar button</comment>
+  </data>
+  <data name="kstidRemoveCharacterStyleToolTip" xml:space="preserve">
+	<value>Remove Character Style</value>
+	<comment>Tool tip for Reset Character toolbar button</comment>
+  </data>
+  <data name="kstidDropDead" xml:space="preserve">
+	<value>This Alpha version has passed its expiration date. Contact Language Software Development for a current version.</value>
+  </data>
+  <data name="kstidUnknownUndo" xml:space="preserve">
+	<value>Unknown Undo Action</value>
+	<comment>Displayed in the undo dropdown if an undo task is undefined.</comment>
+  </data>
+  <data name="kstidUnknownRedo" xml:space="preserve">
+	<value>Unknown Redo Action</value>
+	<comment>Displayed in the redo dropdown if an redo task is undefined.</comment>
+  </data>
+  <data name="kstidUndoRedoProjectProperties" xml:space="preserve">
+	<value>Project Properties</value>
+	<comment>Displayed in the Undo/Redo drop down</comment>
+  </data>
+  <data name="kstidLoadingProject" xml:space="preserve">
+	<value>Loading Project {0}...</value>
+	<comment>Splash screen message</comment>
+  </data>
+  <data name="kstidNoFilterButtonText" xml:space="preserve">
+	<value>No Filter</value>
+	<comment>The text on the button in the sidebar for turning off all filters</comment>
+  </data>
+  <data name="kstidFilterStatusMsg" xml:space="preserve">
+	<value>Filtered</value>
+	<comment>This text appears in the status bar of the Notes window when filters are on.</comment>
+  </data>
+  <data name="kstidAppCaptionWithProjectName" xml:space="preserve">
+	<value>{0} - {1}</value>
+	<comment>Used for formatting the project name (param 0) and remote server name (param 1) for display in a window caption.</comment>
+  </data>
+  <data name="kstidProjectNameWithRemoteServer" xml:space="preserve">
+	<value>{0} - {1}</value>
+	<comment>Used for formatting the Main window caption with the project name (param 0) and the application name (param 1)</comment>
+  </data>
+  <data name="kstiddbeOldDb" xml:space="preserve">
+	<value>You are trying to open the project '{0}'.  This project was created using an earlier version of FieldWorks.  In order to continue, we need to upgrade the project to the current version.{1}{1}Do you want to upgrade project '{0}' now?</value>
+  </data>
+  <data name="kstiddbeOldDbTime" xml:space="preserve">
+	<value>This process will take a long time.{0}{0} Do you want to continue?</value>
+  </data>
+  <data name="kstiddbeOldDbTtl" xml:space="preserve">
+	<value>Upgrade Project</value>
+  </data>
+  <data name="kstiddbeOldApp" xml:space="preserve">
+	<value>You are trying to open the project '{0}', which was created using a newer version of FieldWorks. This cannot be done.  You need to install the newer version of FieldWorks in order to open this project.</value>
+  </data>
+  <data name="kstiddbeOldAppTtl" xml:space="preserve">
+	<value>Outdated Version of FieldWorks</value>
+  </data>
+  <data name="kstiddbNoUpgradeForDb" xml:space="preserve">
+	<value>The Database Version is an intermediate version, so it can not be upgraded.</value>
+  </data>
+  <data name="kstidOldAppWarningMsg" xml:space="preserve">
+	<value>You are trying to open the project '{0}', which was created using a newer version of FieldWorks. This cannot be done.  You need to install the newer version of FieldWorks in order to open this project.</value>
+	<comment>Message shown when dbVersion is newer than app version</comment>
+  </data>
+  <data name="kstidOldAppWarningCaption" xml:space="preserve">
+	<value>Outdated Version of FieldWorks</value>
+	<comment>Title for msg box shown when dbVersion is newer than app version</comment>
+  </data>
+  <data name="kstidNoUpgradeMsgByDB" xml:space="preserve">
+	<value>The database is an intermediate version, so it can not be upgraded.</value>
+  </data>
+  <data name="kstidNoUpgradeMsgByApp" xml:space="preserve">
+	<value>The application is an intermediate version, so the database can not be upgraded.</value>
+  </data>
+  <data name="kstidNoUpgradeCaption" xml:space="preserve">
+	<value>Cannot Upgrade Database</value>
+	<comment>Title for msg box shown when database was created by intermediate app version</comment>
+  </data>
+  <data name="kstidOldDbVersionMsg" xml:space="preserve">
+	<value>You are trying to open the project '{0}'.  This project was created using an earlier version of FieldWorks.  In order to continue, we need to upgrade the project to the current version.
+
+Do you want to upgrade project '{1}' now?</value>
+	<comment>Message shown when database version is older than app version</comment>
+  </data>
+  <data name="kstidOldDbVersionCaption" xml:space="preserve">
+	<value>Upgrade Project</value>
+	<comment>Title for msg box shown when database version is older than app version</comment>
+  </data>
+  <data name="kstidConversionTimeMsg" xml:space="preserve">
+	<value>This process will take a long time. Do you want to continue?</value>
+	<comment>Message to warn user before starting conversion</comment>
+  </data>
+  <data name="kstidUndoFrame" xml:space="preserve">
+	<value>&amp;Undo {0}</value>
+  </data>
+  <data name="kstidRedoFrame" xml:space="preserve">
+	<value>&amp;Redo {0}</value>
+  </data>
+  <data name="kstidUndoDelete" xml:space="preserve">
+	<value>Delete</value>
+  </data>
+  <data name="kstidUndoTyping" xml:space="preserve">
+	<value>Typing "{0}"</value>
+  </data>
+  <data name="kstidChangeSpellingItem" xml:space="preserve">
+	<value>Change spelling</value>
+  </data>
+  <data name="kstidDrawingError" xml:space="preserve">
+	<value>Drawing Error: {0}.</value>
+  </data>
+  <data name="kstidEditCut" xml:space="preserve">
+	<value>Cut</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidEditDelete" xml:space="preserve">
+	<value>Delete</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidEditPaste" xml:space="preserve">
+	<value>Paste</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidPicsMultiPara" xml:space="preserve">
+	<value>Sorry, for now strings containing pictures can be pasted
+only in multiple-paragraph fields like 'Description'</value>
+	<comment>Message box when trying to insert a picture in a single para field.</comment>
+  </data>
+  <data name="kstidUndoStyleChanges" xml:space="preserve">
+	<value>Style Changes</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidUndoApplyStyle" xml:space="preserve">
+	<value>Apply Style</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidInvalKybd" xml:space="preserve">
+	<value>Invalid keyboard</value>
+  </data>
+  <data name="kstidErrorCreatingPrintRootSite" xml:space="preserve">
+	<value>An error has occurred during the setup required for printing.</value>
+	<comment>This message is for errors that occur during setup, but after the print dialog is displayed and before data is sent to the printer.</comment>
+  </data>
+  <data name="kstidUndoReplace" xml:space="preserve">
+	<value>Replace</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidUndoReplaceAll" xml:space="preserve">
+	<value>Replace All</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidPubPageTooBig" xml:space="preserve">
+	<value>The publication page size is bigger than the paper size.</value>
+	<comment>error message from Page Setup dialog</comment>
+  </data>
+  <data name="kstidMarginsTooBig" xml:space="preserve">
+	<value>The margins are bigger than the publication page size.</value>
+	<comment>error message from Page Setup dialog</comment>
+  </data>
+  <data name="kstidVerticalMarginsAndGutterTooBig" xml:space="preserve">
+	<value>The settings for the top and bottom margins and gutter are too large for the page height.</value>
+	<comment>error message from Page Setup dialog (for top-bound publications)</comment>
+  </data>
+  <data name="kstidVerticalMarginsTooBig" xml:space="preserve">
+	<value>The settings for the top and bottom margins are too large for the page height.</value>
+	<comment>error message from Page Setup dialog (for side-bound publications)</comment>
+  </data>
+  <data name="kstidHorizontalMarginsAndGutterTooBig" xml:space="preserve">
+	<value>The settings for the inside and outside margins and gutter are too large for the page width.</value>
+	<comment>error message from Page Setup dialog (for side-bound publications)</comment>
+  </data>
+  <data name="kstidHorizontalMarginsTooBig" xml:space="preserve">
+	<value>The settings for the inside and outside margins are too large for the page width.</value>
+	<comment>error message from Page Setup dialog (for top-bound publications)</comment>
+  </data>
+  <data name="kstidDeleteProjWarning" xml:space="preserve">
+	<value>Are you sure you want to delete the selected projects?</value>
+	<comment>Warning message when trying to delete a language project</comment>
+  </data>
+  <data name="kstidDeleteProjCaption" xml:space="preserve">
+	<value>Delete Fieldworks Project</value>
+	<comment>Caption for the message box when deleting a language project</comment>
+  </data>
+  <data name="kstidDeleteProjError" xml:space="preserve">
+	<value>An error occured deleting project {0}</value>
+	<comment>Error message when deleting a database fails</comment>
+  </data>
+  <data name="kstidStandardToolBarText" xml:space="preserve">
+	<value>Standard</value>
+	<comment>This is the name of the standard toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidFormatToolBarText" xml:space="preserve">
+	<value>Format</value>
+	<comment>This is the name of the format toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidDirectFormattingToolBarText" xml:space="preserve">
+	<value>Direct Formatting</value>
+	<comment>This is the name of the direct formatting toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidFormatCategory" xml:space="preserve">
+	<value>Format</value>
+	<comment>This is the format category for toolbar items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidStandardCategory" xml:space="preserve">
+	<value>Standard</value>
+	<comment>This is the standard category for toolbar items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidEditCategory" xml:space="preserve">
+	<value>Edit</value>
+	<comment>This is the edit category for toolbar items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidViewCategory" xml:space="preserve">
+	<value>View</value>
+	<comment>This is the view category for toolbar items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidPrintingException" xml:space="preserve">
+	<value>An error has occurred during printing: {0}</value>
+  </data>
+  <data name="kstidFileMenuName" xml:space="preserve">
+	<value>&amp;File</value>
+	<comment>This is the text for the File menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidEditMenuName" xml:space="preserve">
+	<value>&amp;Edit</value>
+	<comment>This is the text for the Edit menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidViewMenuName" xml:space="preserve">
+	<value>&amp;View</value>
+	<comment>This is the text for the View menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidFormatMenuName" xml:space="preserve">
+	<value>F&amp;ormat</value>
+	<comment>This is the text for the Format menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidToolsMenuName" xml:space="preserve">
+	<value>&amp;Tools</value>
+	<comment>This is the text for the Tools menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidWindowMenuName" xml:space="preserve">
+	<value>&amp;Window</value>
+	<comment>This is the text for the Window menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidHelpMenuName" xml:space="preserve">
+	<value>Help</value>
+	<comment>This is the text for the Help menu on the main menu bar.</comment>
+  </data>
+  <data name="kstidNewLangProjMenuName" xml:space="preserve">
+	<value>&amp;New Language Project...</value>
+	<comment>This is the text for the new option on the file menu.</comment>
+  </data>
+  <data name="kstidFileOpenMenuName" xml:space="preserve">
+	<value>&amp;Open</value>
+	<comment>This is the text for the open option on the file menu.</comment>
+  </data>
+  <data name="kstidFileCloseMenuName" xml:space="preserve">
+	<value>&amp;Close</value>
+	<comment>This is the text for the close option on the file menu.</comment>
+  </data>
+  <data name="kstidFileSaveMenuName" xml:space="preserve">
+	<value>&amp;Save</value>
+	<comment>This is the text for the save option on the file menu.</comment>
+  </data>
+  <data name="kstidFileProjMgmtMenuName" xml:space="preserve">
+	<value>Project &amp;Management</value>
+	<comment>This is the text for the project managment option on the file menu.</comment>
+  </data>
+  <data name="kstidFilePageSetupMenuName" xml:space="preserve">
+	<value>Page Set&amp;up...</value>
+	<comment>This is the text for the page setup option on the file menu.</comment>
+  </data>
+  <data name="kstidFilePrintMenuName" xml:space="preserve">
+	<value>&amp;Print...</value>
+	<comment>This is the text for the print option on the file menu.</comment>
+  </data>
+  <data name="kstidFileExitMenuName" xml:space="preserve">
+	<value>E&amp;xit</value>
+	<comment>This is the text for the exit option on the file menu.</comment>
+  </data>
+  <data name="kstidFileProjectPropertiesMenuName" xml:space="preserve">
+	<value>Field&amp;Works Project Properties...</value>
+	<comment>This is the text for the proj. properties option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidFileBackupRestoreMenuName" xml:space="preserve">
+	<value>&amp;Backup and Restore...</value>
+	<comment>This is the text for the backup/restore option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidFileDeleteMenuName" xml:space="preserve">
+	<value>&amp;Delete...</value>
+	<comment>This is the text for the delete project option on the file/project managment menu.</comment>
+  </data>
+  <data name="kstidEditUndoMenuName" xml:space="preserve">
+	<value>&amp;Undo</value>
+	<comment>This is the text for the undo option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditRedoMenuName" xml:space="preserve">
+	<value>&amp;Redo</value>
+	<comment>This is the text for the redo option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditCutMenuName" xml:space="preserve">
+	<value>Cu&amp;t</value>
+	<comment>This is the text for the cut option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditCopyMenuName" xml:space="preserve">
+	<value>&amp;Copy</value>
+	<comment>This is the text for the copy option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditPasteMenuName" xml:space="preserve">
+	<value>&amp;Paste</value>
+	<comment>This is the text for the paste option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditSelectAllMenuName" xml:space="preserve">
+	<value>Select A&amp;ll</value>
+	<comment>This is the text for the select all option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditFindMenuName" xml:space="preserve">
+	<value>&amp;Find...</value>
+	<comment>This is the text for the find option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditFindNextMenuName" xml:space="preserve">
+	<value>Ne&amp;xt Match</value>
+	<comment>This is the text for the next match option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditFindPrevMenuName" xml:space="preserve">
+	<value>Pre&amp;vious Match</value>
+	<comment>This is the text for the prev match option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditReplaceMenuName" xml:space="preserve">
+	<value>R&amp;eplace...</value>
+	<comment>This is the text for the replace option on the edit menu.</comment>
+  </data>
+  <data name="kstidEditDeleteMenuName" xml:space="preserve">
+	<value>&amp;Delete</value>
+	<comment>This is the text for the delete option on the edit menu.</comment>
+  </data>
+  <data name="kstidViewStatusBarMenuName" xml:space="preserve">
+	<value>St&amp;atus Bar</value>
+	<comment>This is the text for the status bar on the view menu.</comment>
+  </data>
+  <data name="kstidViewSideBarMenuName" xml:space="preserve">
+	<value>&amp;Side Bar</value>
+	<comment>This is the text for the side bar on the view menu.</comment>
+  </data>
+  <data name="kstidViewToolBarsMenuName" xml:space="preserve">
+	<value>&amp;Toolbars</value>
+	<comment>This is the text for the toolbar bar on the view menu.</comment>
+  </data>
+  <data name="kstidFormatStyleMenuName" xml:space="preserve">
+	<value>&amp;Style...</value>
+	<comment>This is the text for the styles menu on the format menu.</comment>
+  </data>
+  <data name="kstidViewRemoveCharStyleMenuName" xml:space="preserve">
+	<value>Remove &amp;Character Style</value>
+	<comment>This is the text for the remove character style menu on the format menu.</comment>
+  </data>
+  <data name="kstidRemoveParaStyleMenuName" xml:space="preserve">
+	<value>Reset &amp;Paragraph Style</value>
+	<comment>This is the text for the reset paragraphe style menu on the format menu.</comment>
+  </data>
+  <data name="kstidUserPropertiesMenuName" xml:space="preserve">
+	<value>&amp;User Properties...</value>
+	<comment>This is the text for the user properties menu on the tools menu.</comment>
+  </data>
+  <data name="kstidNewWindowMenuName" xml:space="preserve">
+	<value>&amp;New Window</value>
+	<comment>This is the text for the new window menu on the windows menu.</comment>
+  </data>
+  <data name="kstidWindowCascadeMenuName" xml:space="preserve">
+	<value>&amp;Cascade</value>
+	<comment>This is the text for the cascade menu on the windows menu.</comment>
+  </data>
+  <data name="kstidWindowTileStackedMenuName" xml:space="preserve">
+	<value>&amp;Tile</value>
+	<comment>This is the text for the tile top to bottom (i.e. stacked) menu on the windows menu.</comment>
+  </data>
+  <data name="kstidWindowTileSideBySideMenuName" xml:space="preserve">
+	<value>Tile Side-&amp;By-Side</value>
+	<comment>This is the text for the tile, side-by-side menu on the windows menu.</comment>
+  </data>
+  <data name="kstidDefaultStatusText" xml:space="preserve">
+	<value>For help, press F1.</value>
+	<comment>This is the message displayed in a main window's status bar when there is no other meaningful message to display.</comment>
+  </data>
+  <data name="kstidNewLangProjMsg" xml:space="preserve">
+	<value>Creates a new language project.</value>
+	<comment>This is the status bar message for the new language project menu option.</comment>
+  </data>
+  <data name="kstidFileOpenMsg" xml:space="preserve">
+	<value>Opens another language project.</value>
+	<comment>This is the status bar message for the open menu option.</comment>
+  </data>
+  <data name="kstidFileCloseMsg" xml:space="preserve">
+	<value>Close this window</value>
+	<comment>This is the status bar message for the close menu option.</comment>
+  </data>
+  <data name="kstidFileSaveMsg" xml:space="preserve">
+	<value>Saves changes.</value>
+	<comment>This is the status bar message for the save menu option.</comment>
+  </data>
+  <data name="kstidFileProjectPropertiesMsg" xml:space="preserve">
+	<value>Modify properties of a FieldWorks project.</value>
+	<comment>This is the status bar message for the Fieldworks project properties menu option.</comment>
+  </data>
+  <data name="kstidFileBackupRestoreMsg" xml:space="preserve">
+	<value>Backup or restore a FieldWorks project.</value>
+	<comment>This is the status bar message for the backup and restore menu option.</comment>
+  </data>
+  <data name="kstidFileDeleteMsg" xml:space="preserve">
+	<value>Delete a FieldWorks project.</value>
+	<comment>This is the status bar message for the delete project menu option.</comment>
+  </data>
+  <data name="kstidFilePageSetupMsg" xml:space="preserve">
+	<value>Page Setup for Printing.</value>
+	<comment>This is the status bar message for the page setup menu option.</comment>
+  </data>
+  <data name="kstidFilePrintMsg" xml:space="preserve">
+	<value>Prints current view.</value>
+	<comment>This is the status bar message for the print menu option.</comment>
+  </data>
+  <data name="kstidFileExitMsg" xml:space="preserve">
+	<value>Exits this application.</value>
+	<comment>This is the status bar message for the exit menu option.</comment>
+  </data>
+  <data name="kstidEditUndoMsg" xml:space="preserve">
+	<value>Undoes the most recent change.</value>
+	<comment>This is the status bar message for the undo menu option.</comment>
+  </data>
+  <data name="kstidEditRedoMsg" xml:space="preserve">
+	<value>Redo the most recent undone change.</value>
+	<comment>This is the status bar message for the redo menu option.</comment>
+  </data>
+  <data name="kstidEditCutMsg" xml:space="preserve">
+	<value>Cut text and put it on the clipboard.</value>
+	<comment>This is the status bar message for the cut menu option.</comment>
+  </data>
+  <data name="kstidEditCopyMsg" xml:space="preserve">
+	<value>Copy text to the clipboard.</value>
+	<comment>This is the status bar message for the copy menu option.</comment>
+  </data>
+  <data name="kstidEditPasteMsg" xml:space="preserve">
+	<value>Paste text from the clipboard.</value>
+	<comment>This is the status bar message for the paste menu option.</comment>
+  </data>
+  <data name="kstidEditSelectAllMsg" xml:space="preserve">
+	<value>Select all of the text.</value>
+	<comment>This is the status bar message for the select all menu option.</comment>
+  </data>
+  <data name="kstidEditFindMsg" xml:space="preserve">
+	<value>Opens the Find dialog</value>
+	<comment>This is the status bar message for the find menu option.</comment>
+  </data>
+  <data name="kstidEditFindNextMsg" xml:space="preserve">
+	<value>Find next.</value>
+	<comment>This is the status bar message for the find next menu option.</comment>
+  </data>
+  <data name="kstidEditFindPrevMsg" xml:space="preserve">
+	<value>Find previous.</value>
+	<comment>This is the status bar message for the find previous menu option.</comment>
+  </data>
+  <data name="kstidEditReplaceMsg" xml:space="preserve">
+	<value>Opens the replace dialog.</value>
+	<comment>This is the status bar message for the find and replace menu option.</comment>
+  </data>
+  <data name="kstidEditDeleteMsg" xml:space="preserve">
+	<value>Delete the selection.</value>
+	<comment>This is the status bar message for the delete selection menu option.</comment>
+  </data>
+  <data name="kstidViewStatusBarMsg" xml:space="preserve">
+	<value>Show or hide the Status bar.</value>
+	<comment>This is the status bar message for the view status bar menu option.</comment>
+  </data>
+  <data name="kstidViewSideBarMsg" xml:space="preserve">
+	<value>Show or hide the Side bar.</value>
+	<comment>This is the status bar message for the view side bar menu option.</comment>
+  </data>
+  <data name="kstidFormatStyleMsg" xml:space="preserve">
+	<value>Open a dialog to add, delete, or change styles.</value>
+	<comment>This is the status bar message for the styles menu option.</comment>
+  </data>
+  <data name="kstidRemoveCharStyleMsg" xml:space="preserve">
+	<value>Remove the character style formatting from the current selection.</value>
+	<comment>This is the status bar message for the remove character style formatting menu option.</comment>
+  </data>
+  <data name="kstidRemoveParaStyleMsg" xml:space="preserve">
+	<value>Reset the style of the current paragraph to the default paragraph style.</value>
+	<comment>This is the status bar message for the reset paragraph style formatting menu option.</comment>
+  </data>
+  <data name="kstidUserPropertiesMsg" xml:space="preserve">
+	<value>Modify users and access levels.</value>
+	<comment>This is the status bar message for the user properties menu option.</comment>
+  </data>
+  <data name="kstidNewWindowMsg" xml:space="preserve">
+	<value>Opens another identical second window containing the same data.</value>
+	<comment>This is the status bar message for the new window menu option.</comment>
+  </data>
+  <data name="kstidWindowCascadeMsg" xml:space="preserve">
+	<value>Arranges open windows to be cascade from top left to bottom right.</value>
+	<comment>This is the status bar message for the window cascade menu option.</comment>
+  </data>
+  <data name="kstidWindowTileStackedMsg" xml:space="preserve">
+	<value>Arranges open windows to be equal heights, displayed one on top of the other</value>
+	<comment>This is the status bar message for the tile, stacked menu option.</comment>
+  </data>
+  <data name="kstidWindowTileSideBySideMsg" xml:space="preserve">
+	<value>Arranges open windows to be of equal widths, displayed side-by-side</value>
+	<comment>This is the status bar message for the tile, side-by-side menu option.</comment>
+  </data>
+  <data name="kstidPageWidth" xml:space="preserve">
+	<value>Page Width</value>
+	<comment>This is the text that is shown in the zoom combobox when the zoom is the page width</comment>
+  </data>
+  <data name="kstidWritingSystemItemName" xml:space="preserve">
+	<value>Writing System</value>
+	<comment>Item name for the writing system selector control on the toolbar. Also used as a column header in controls that display a list of multilingual properties.</comment>
+  </data>
+  <data name="kstidWSTooltip" xml:space="preserve">
+	<value>Current Writing System</value>
+	<comment>Text for the writing system selector toolbar tooltip</comment>
+  </data>
+  <data name="kstidWizFinishButtonText" xml:space="preserve">
+	<value>Fi&amp;nish</value>
+	<comment>Text for the Finish buttons on wizards.</comment>
+  </data>
+  <data name="kstidWizForwardButtonText" xml:space="preserve">
+	<value>&amp;Next &gt;</value>
+	<comment>Text for the Next buttons on wizards.</comment>
+  </data>
+  <data name="kstidWizStepLabel" xml:space="preserve">
+	<value>Step {0} of {1}</value>
+	<comment>Text and format of label on wizards indicating what step user is on out of total number of steps.</comment>
+  </data>
+  <data name="kstidOldDbVersionUpdateMsg" xml:space="preserve">
+	<value>The {0} database needs to be updated from version {1} to version {2}.{3}{3}Performing this update could take a while. Do you want to continue with the Update?</value>
+	<comment>Shows the database and dbversion and appversion</comment>
+  </data>
+  <data name="kstidOldDbVersionRemoteMsg" xml:space="preserve">
+	<value>Unable to Update {0} on {1} from version {2} to {3}.{4}You need to update the database on the local machine.</value>
+	<comment>Shows the database and dbversion and appversion and asks to update elsewhere</comment>
+  </data>
+  <data name="kstidInsertPictureError" xml:space="preserve">
+	<value>Unable to Insert Picture</value>
+	<comment>Caption for message box when unable to insert a picture</comment>
+  </data>
+  <data name="kstidInsertSoundFileError" xml:space="preserve">
+	<value>Unable to Insert Sound File</value>
+	<comment>Caption for message box when unable to insert a sound file</comment>
+  </data>
+  <data name="kstidInsertMovieFileError" xml:space="preserve">
+	<value>Unable to Insert Movie File</value>
+	<comment>Caption for message box when unable to insert a movie file</comment>
+  </data>
+  <data name="kstidEncodingConverterInUseError" xml:space="preserve">
+	<value>Cannot remove encoding converter because it is currently in use by a writing system.</value>
+	<comment>Content for message box when an encoding converter is in use by a writing system.</comment>
+  </data>
+  <data name="kstidEncodingConverterInUseErrorCaption" xml:space="preserve">
+	<value>Cannot Remove Encoder</value>
+	<comment>Caption for message box when an encoding converter is in use by a writing system.</comment>
+  </data>
+  <data name="kstidDuplicateStyleError" xml:space="preserve">
+	<value>Cannot add style {0} because a style with this name already exists.</value>
+	<comment>Content for message box when user attempts to add a duplicate style.</comment>
+  </data>
+  <data name="kstidBlankStyleNameError" xml:space="preserve">
+	<value>Cannot add a style with a blank name.</value>
+	<comment>Content for message box when user attempts to add a style with a blank name.</comment>
+  </data>
+  <data name="kstidCreateShortcutLinkDescription" xml:space="preserve">
+	<value>Open {0} in Fieldworks {2}</value>
+	<comment>Shortcut description for a project shortcut created on the desktop. {0} is the project name, {1} is the database name and {2} is the application name.</comment>
+  </data>
+  <data name="kstidCreateShortcutLinkDescriptionAlt" xml:space="preserve">
+	<value>Open {0} ({1}) in Fieldworks {2}</value>
+	<comment>Shortcut description for a project shortcut created on the desktop when the project name and database name are different. {0} is the project name, {1} is the database name and {2} is the application name.</comment>
+  </data>
+  <data name="kstidTrainingAvailable" xml:space="preserve">
+	<value>Training available</value>
+	<comment>Caption for FirstTimeMessage, to advertise training.</comment>
+  </data>
+  <data name="kstidChooserDlgTitle" xml:space="preserve">
+	<value>{0} Chooser</value>
+	<comment>This is the format string for setting the title of the Chooser dialog</comment>
+  </data>
+  <data name="kstidUpdatePageBreakWindowCaption" xml:space="preserve">
+	<value>Calculating page breaks...</value>
+	<comment>This is the text for caption of the progress dialog when updating the page breaks</comment>
+  </data>
+  <data name="kstidUpdatePageBreakButtonText" xml:space="preserve">
+	<value>Stop</value>
+	<comment>This is the text for the stop button on the progress dialog when updating the page breaks</comment>
+  </data>
+  <data name="kstidUpdatePageBreakPageCount" xml:space="preserve">
+	<value>Page {0} of about {1}</value>
+	<comment>This is the format string for displaying the pages that have been done when updating the page breaks</comment>
+  </data>
+  <data name="kstidCreatingStylesCaption" xml:space="preserve">
+	<value>Loading {0} Style Sheet</value>
+	<comment>This is the caption for the progress dialog used when loading factory (default) styles. The argument is a label from the XML file describing the group of styles.</comment>
+  </data>
+  <data name="kstidCreatingStylesStatusMsg" xml:space="preserve">
+	<value>Loading: '{0}' ...</value>
+	<comment>This is the status message for the progress dialog used when loading factory (default) styles. (Creating styles requires up to four passes. The message is for the first pass.)</comment>
+  </data>
+  <data name="kstidUserStyleSuffix" xml:space="preserve">
+	<value>_User</value>
+	<comment>Suffix to add onto a user-defined style in case a new factory style name conflicts with an existing user style.</comment>
+  </data>
+  <data name="kstidDeletingStylesStatusMsg" xml:space="preserve">
+	<value>Removing: '{0}' ...</value>
+	<comment>This is the status message for the progress dialog used when removing factory (default) styles. (Creating styles requires up to four passes. The message is for the third pass.)</comment>
+  </data>
+  <data name="kstidReplacingStylesStatusMsg" xml:space="preserve">
+	<value>Replacing or removing uses of former styles...</value>
+	<comment>This is the status message for the progress dialog used when searching all data for uses of renamed or deleted styles. (Creating styles requires up to four passes. The message is for the fourth pass.)</comment>
+  </data>
+  <data name="kstidUpdatingStylesStatusMsg" xml:space="preserve">
+	<value>Updating: '{0}' ...</value>
+	<comment>This is the status message for the progress dialog used when creating factory (default) styles. (Creating styles requires up to four passes. The message is for the second pass.)</comment>
+  </data>
+  <data name="kstidNoAnalysisWss" xml:space="preserve">
+	<value>FieldWorks project has no current analysis writing systems. Setting default to English. Please check your writing systems.</value>
+	<comment>Message box displayed if count of analysis writing systems is 0.</comment>
+  </data>
+  <data name="kstidNoVernWritingSystems" xml:space="preserve">
+	<value>FieldWorks project has no current vernacular writing systems. Picking an arbitrary default. Please check your writing systems.</value>
+	<comment>Message box displayed if count of vernacular writing systems is 0.</comment>
+  </data>
+  <data name="kstidWarning" xml:space="preserve">
+	<value>Warning</value>
+	<comment>Title for warning message box</comment>
+  </data>
+  <data name="kstidInitWindow" xml:space="preserve">
+	<value>Initializing Window...</value>
+	<comment>Splash screen message</comment>
+  </data>
+  <data name="kstidAllAnal" xml:space="preserve">
+	<value>All Analysis</value>
+  </data>
+  <data name="kstidAllAnalVern" xml:space="preserve">
+	<value>All Analysis and Vernacular</value>
+  </data>
+  <data name="kstidAllPron" xml:space="preserve">
+	<value>All Pronunciation</value>
+  </data>
+  <data name="kstidAllVern" xml:space="preserve">
+	<value>All Vernacular</value>
+  </data>
+  <data name="kstidAllVernAnal" xml:space="preserve">
+	<value>All Vernacular and Analysis</value>
+  </data>
+  <data name="kstidAnalysis" xml:space="preserve">
+	<value>analysis</value>
+  </data>
+  <data name="kstidBestAnal" xml:space="preserve">
+	<value>Best Analysis</value>
+  </data>
+  <data name="kstidBestAnalVern" xml:space="preserve">
+	<value>Best Analysis or Vernacular</value>
+  </data>
+  <data name="kstidBestVern" xml:space="preserve">
+	<value>Best Vernacular</value>
+  </data>
+  <data name="kstidBestVernAnal" xml:space="preserve">
+	<value>Best Vernacular or Analysis</value>
+  </data>
+  <data name="kstidDefaultAnal" xml:space="preserve">
+	<value>Default Analysis</value>
+  </data>
+  <data name="kstidDefaultPron" xml:space="preserve">
+	<value>Default Pronunciation</value>
+  </data>
+  <data name="kstidDefaultVern" xml:space="preserve">
+	<value>Default Vernacular</value>
+  </data>
+  <data name="kstidVernacular" xml:space="preserve">
+	<value>vernacular</value>
+  </data>
+  <data name="kstidNoFilterItemName" xml:space="preserve">
+	<value>No Filter</value>
+	<comment>The name for the no filters menu item</comment>
+  </data>
+  <data name="ksPercentage" xml:space="preserve">
+	<value>{0}%</value>
+	<comment>If there is a different percent character for a culture, then  this needs to get it.</comment>
+  </data>
+  <data name="ksEllipsis" xml:space="preserve">
+	<value>...</value>
+	<comment>ellipsis - mark showing missing words, "more to come", or more info than is displayed.</comment>
+  </data>
+  <data name="kstidScriptureFootnote" xml:space="preserve">
+	<value>Footnote</value>
+  </data>
+  <data name="kstidScriptureSectionIntroduction" xml:space="preserve">
+	<value>Introduction({0})</value>
+  </data>
+  <data name="kstidScriptureIntro" xml:space="preserve">
+	<value>Introduction</value>
+  </data>
+  <data name="kstidScriptureTitle" xml:space="preserve">
+	<value>Title</value>
+  </data>
+  <data name="kstidPaperSizeA4" xml:space="preserve">
+	<value>A4</value>
+	<comment>for list of paper sizes in Page Setup dialog</comment>
+  </data>
+  <data name="kstidPaperSizeA5" xml:space="preserve">
+	<value>A5</value>
+	<comment>for list of paper sizes in Page Setup dialog</comment>
+  </data>
+  <data name="kstidPaperSizeCustom" xml:space="preserve">
+	<value>Custom</value>
+	<comment>for list of paper sizes in Page Setup dialog</comment>
+  </data>
+  <data name="kstidPaperSizeLegalStd" xml:space="preserve">
+	<value>Legal (8.5 x 14)</value>
+	<comment>for list of paper sizes in Page Setup dialog--standard legal size</comment>
+  </data>
+  <data name="kstidPaperSizeLegalPhil" xml:space="preserve">
+	<value>Legal (8.5 x 13)</value>
+	<comment>for list of paper sizes in Page Setup dialog--legal size in the Philippines</comment>
+  </data>
+  <data name="kstidPaperSizeLetter" xml:space="preserve">
+	<value>Letter</value>
+	<comment>for list of paper sizes in Page Setup dialog</comment>
+  </data>
+  <data name="kstidFullPage" xml:space="preserve">
+	<value>Full Page</value>
+	<comment>for list of publication sizes in Page Setup dialog</comment>
+  </data>
+  <data name="kstidTruncatingPaste" xml:space="preserve">
+	<value>The string being pasted has been truncated from {0} to {1} characters
+so as not to exceed the maximum field length of {2} characters.</value>
+  </data>
+  <data name="kstidGutterTooBig" xml:space="preserve">
+	<value>The gutter is too big for the publication page to fit on the selected paper size.</value>
+	<comment>error message from Page Setup dialog</comment>
+  </data>
+  <data name="kstidIncompatibleStyleExists" xml:space="preserve">
+	<value>Style {0} could not be added because an incompatible style with the same name already exists.</value>
+	<comment>Error message when someone adds a style that has been added on another machine that is incompatible (e.g. because of different context, structure, etc).</comment>
+  </data>
+  <data name="kstidParatextLanguageFiles" xml:space="preserve">
+	<value>Paratext Language Files</value>
+	<comment>Used in the Browse for Language File filter accessed from the Valid Characters dialog box</comment>
+  </data>
+  <data name="kstidToolboxLanguageFiles" xml:space="preserve">
+	<value>Toolbox Language Files</value>
+	<comment>Used in the Browse for Language File filter accessed from the Valid Characters dialog box</comment>
+  </data>
+  <data name="kstidCurrentScriptureProject" xml:space="preserve">
+	<value>Current Scripture project</value>
+	<comment>Combo box entry on From Data tab of Valid Characters dialog box</comment>
+  </data>
+  <data name="kstidFileLineRef" xml:space="preserve">
+	<value>Line {0}</value>
+	<comment>Line number label displayed on From Data tab in valid characters dialog box.</comment>
+  </data>
+  <data name="kstidCannotModifyWS" xml:space="preserve">
+	<value>Cannot Modify Writing System</value>
+	<comment>caption for error message box</comment>
+  </data>
+  <data name="kstidErrorModifyingWS" xml:space="preserve">
+	<value>The writing system could not be modified. There is a problem in your language definition. See the
+FieldWorks ReadMe for help in this area.</value>
+  </data>
+  <data name="kstidNotBaseCharErrorMsg" xml:space="preserve">
+	<value>Not Base</value>
+	<comment>Message displayed under a character in the valid chars. dialog when the character is not a valid base character.</comment>
+  </data>
+  <data name="kstidUndefinedCharactersMsg" xml:space="preserve">
+	<value>The following characters are not defined. Therefore, they will not be added to the valid characters list.</value>
+	<comment>Error message when trying add a range of undefined characters in the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidUndefinedCharacterMsg" xml:space="preserve">
+	<value>That character is undefined and cannot be added.</value>
+	<comment>Error message when trying add an undefined character in the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidSectionHeading" xml:space="preserve">
+	<value>{0} (Heading)</value>
+	<comment>{0} is a Scripture reference like 1:1-2:3; compare to kstidScriptureTitle</comment>
+  </data>
+  <data name="kstidUndoFailed" xml:space="preserve">
+	<value>Undo failed.</value>
+	<comment>Error message when a single undo action fails.</comment>
+  </data>
+  <data name="kstidUndoFailureReport" xml:space="preserve">
+	<value>Of the {0} undo actions attempted, only the first {1} succeeded.</value>
+	<comment>Error message when one or more undo actions in a batch fails.</comment>
+  </data>
+  <data name="kstidUILangNotFound" xml:space="preserve">
+	<value>FieldWorks does not recognize '{0}' as a valid user interface language ID. English will be used instead.</value>
+	<comment>Message displayed at startup if the user's version of Windows is not supported in the user interface, or if the user specifies a langauge on the command line (using the 'locale' command-line option) that isn't supported. The parameter is the language id that was not found as part of the FW installation.</comment>
+  </data>
+  <data name="kstidCreateShortcutFilenameRemoteDb" xml:space="preserve">
+	<value>{0} - {1}</value>
+	<comment>Used for formatting the shortcut file name for a remote database, the database name is param 0 and remote server name is param 1.</comment>
+  </data>
+  <data name="kstidPunctCheckWhitespaceChar" xml:space="preserve">
+	<value> </value>
+	<comment>Single character representing a whitespace character (or possibly multiple contiguous whitespace characters) when displayed in the punctuation patterns grid and the punctuation check. Typically, this is the space character (U+0032); for greater visibility, an underscore (_) character could be used.</comment>
+  </data>
+  <data name="kstidUnableToFindEditorialChecks" xml:space="preserve">
+	<value>Unable to find any DLL files containing editorial checks in folder {0}.</value>
+	<comment>Error message when the folder where the editorial checks are supposed to be installed is missing or empty.</comment>
+  </data>
+  <data name="kstidUndoRedoInsertRelatedWord" xml:space="preserve">
+	<value>Insert Related Word</value>
+	<comment>Displayed in the Undo/Redo drop down</comment>
+  </data>
+  <data name="kstidAllFiles" xml:space="preserve">
+	<value>All Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidDefaultStandardFormat" xml:space="preserve">
+	<value>Standard Format Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidAllCCTable" xml:space="preserve">
+	<value>CC Table</value>
+	<comment>Used in the list of file types in file open dialog accessed from Encoding Converters</comment>
+  </data>
+  <data name="kstidAllImage" xml:space="preserve">
+	<value>Image Files</value>
+	<comment>Used in the list of file types in file open dialog accessed from the Picture Properties dialog box</comment>
+  </data>
+  <data name="kstidAllScriptureStandardFormat" xml:space="preserve">
+	<value>Standard Format Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidAllShoeboxDictionaryDatabases" xml:space="preserve">
+	<value>Database Files</value>
+	<comment>Used in the list of file types in file open dialogs</comment>
+  </data>
+  <data name="kstidAllShoeboxScriptureDatabases" xml:space="preserve">
+	<value>Toolbox and Shoebox Databases</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidHTML" xml:space="preserve">
+	<value>HTML Files</value>
+	<comment>Used in the list of file types in file save dialogs</comment>
+  </data>
+  <data name="kstidOpenOffice" xml:space="preserve">
+	<value>Open Office Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidOXES" xml:space="preserve">
+	<value>Open XML for Editing Scripture (OXES) Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidOXESA" xml:space="preserve">
+	<value>Open XML for Exchanging Scripture Annotation (OXESA) Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidPDF" xml:space="preserve">
+	<value>Portable Document Files</value>
+	<comment>Used in the list of file types in file save dialogs</comment>
+  </data>
+  <data name="kstidRichTextFormat" xml:space="preserve">
+	<value>Rich Text Format Files</value>
+	<comment>Used in the list of file types in file save dialogs</comment>
+  </data>
+  <data name="kstidTECkitCompiled" xml:space="preserve">
+	<value>Compiled TECkit Files</value>
+	<comment>Used in the list of file types in file open dialog accessed from Encoding Converters</comment>
+  </data>
+  <data name="kstidTECkitMapping" xml:space="preserve">
+	<value>TECkit Mapping Files</value>
+	<comment>Used in the list of file types in file open dialog accessed from Encoding Converters</comment>
+  </data>
+  <data name="kstidImportMapping" xml:space="preserve">
+	<value>Import Mapping Files</value>
+	<comment>Used in the list of file types in file open dialog accessed from the Import Wizard</comment>
+  </data>
+  <data name="kstidText" xml:space="preserve">
+	<value>Text Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidXHTML" xml:space="preserve">
+	<value>XHTML Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidXML" xml:space="preserve">
+	<value>XML Files</value>
+	<comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
+  <data name="kstidAllAudio" xml:space="preserve">
+	<value>Sound Files</value>
+	<comment>Used in the list of file types in file open dialogs</comment>
+  </data>
+  <data name="kstidAllVideo" xml:space="preserve">
+	<value>Movie Files</value>
+	<comment>Used in the list of file types in file open dialogs</comment>
+  </data>
+  <data name="kstidHTM" xml:space="preserve">
+	<value>HTM Files</value>
+	<comment>Used in the list of file types in file save dialogs</comment>
+  </data>
+  <data name="kstidLIFT" xml:space="preserve">
+	<value>LIFT files</value>
+	<comment>Used in the list of file types in file save dialogs</comment>
+  </data>
+  <data name="kstidUndoPageSetupChanges" xml:space="preserve">
+	<value>Page Setup Changes</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidProjectRenameFailedCaption" xml:space="preserve">
+	<value>Project Rename Failed</value>
+	<comment>Caption of message box displayed if unable to rename a project</comment>
+  </data>
+  <data name="kstidProjectRenameFailedMessage" xml:space="preserve">
+	<value>The project could not be renamed and the original project will be reopened.</value>
+	<comment>Text of message box displayed if unable to rename a project</comment>
+  </data>
+  <data name="kstidProjectRenameFailedVistaInfo" xml:space="preserve">
+	<value>
+
+For Vista, you need to run the application as administrator for project renaming to work.</value>
+	<comment>for Undo</comment>
+  </data>
+  <data name="kstidStyleWsOverideInheritedFromMsg" xml:space="preserve">
+	<value>(Inherited from {0})</value>
+	<comment>Text shown in the styles dialog font tab when a writing system has inherited font properties</comment>
+  </data>
+</root>

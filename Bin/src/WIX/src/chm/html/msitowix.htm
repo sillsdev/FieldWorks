@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Msi Tables to WiX Schema</title>
+</head>
+<body>
+<h1>Msi Tables to WiX Schema</h1>
+
+<p>
+In the WiX schema, its not always entirely obvious how the tables from the Windows Installer schema map to the WiX schema.  Below are some helpful hints on how to figure out the relationships between the two schemas.
+</p>
+
+<h2>DuplicateFile Table</h2>
+<p>
+This is authored using a <a href="wix_xsd_copyfile.htm">CopyFile</a> node nested under a File node.  You only need to set the Id, DestinationFolder, and DestinationName attributes.
+</p>
+
+<h2>LaunchCondition Table</h2>
+<p>
+This is authored using a <a href="wix_xsd_condition.htm">Condition</a> node authored under Fragment or Product.  You only need to set the Message attribute.
+</p>
+
+<h2>LockPermissions Table</h2>
+<p>
+This is authored using <a href="wix_xsd_permission.htm">Permission</a>.
+</p>
+
+<h2>MoveFile Table</h2>
+<p>
+This is authored using a <a href="wix_xsd_copyfile.htm">CopyFile</a> node nested under a Component node.  You will need to set all attributes except Delete.  Set Delete to 'yes' in order to use the msidbMoveFileOptionsMove option.
+</p>
+
+<h2>PublishComponent Table</h2>
+<p>
+The PublishComponent functionality is available in WiX by using a <a href="wix_xsd_category.htm">Category</a>.  Here is a small sample of what a PublishComponent record would look like in MSI, then in WiX notation.
+</p>
+
+<dl>
+<dt>MSI</dt>
+<dd>
+<table>
+<tr><th>ComponentId</th><th>Qualifier</th><th>Component_</th><th>AppData</th><th>Feature_</th></tr>
+<tr><td>{11111111-2222-3333-4444-5555555555555}</td><td>1033</td><td>MyComponent</td><td>Random Data</td><td>MyFeature</td></tr>
+</table>
+</dd>
+</dl>
+
+<dl>
+<dt>WiX</dt>
+<dd>
+<table class="command"><tr><td><pre>
+&lt;Component Id='MyComponent' Guid='87654321-4321-4321-4321-110987654321'&gt;
+	 <b>&lt;Category Id='11111111-2222-3333-4444-5555555555555' AppData='Random Data'
+			   Qualifier='1033'/&gt;</b>
+&lt;/Component&gt;
+.
+.
+.
+&lt;Feature Id='MyFeature' Level='1'&gt;
+	 &lt;ComponentRef Id='MyComponent'/&gt;
+&lt;/Feature&gt;
+</pre></td></tr></table>
+</dd>
+</dl>
+
+<h2>RemoveIniFile</h2>
+<p>
+This is authored using <a href="wix_xsd_inifile.htm">IniFile</a>. Just set the Action attribute to 'removeLine' or 'removeTag' as appropriate.
+</p>
+
+<h2>RemoveRegistry Table</h2>
+<p>
+This is authored using <a href="wix_xsd_registry.htm">Registry</a>.  Simply set the Action attribute to 'remove' or 'removeKey' (as appropriate) in order to get an entry in the RemoveRegistry table.
+</p>
+
+</body>
+</html>

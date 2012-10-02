@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strings>
+  <group id="Misc">
+	<string id="No Records" txt="No Records"/>
+  </group>
+  <group id="ClassNames">
+<!-- Lexicon -->
+	<string id="LexEntry" txt="Entry"/>
+	<string id="LexSense" txt="Sense"/>
+	<string id="ReversalIndex" txt="Reversal Index"/>
+	<string id="ReversalIndexEntry" txt="Reversal Entry"/>
+<!-- Lists -->
+	<string id="CmPossibility" txt="List Item"/>
+<!-- Morphology/Grammar -->
+	<string id="PartOfSpeech" txt="Category (or Part of Speech)"/>
+  </group>
+  <group id="AlternativeTitles">
+<!-- Grammar Browse Views -->
+	<string id="PartOfSpeech-Plural" txt="Categories (or Parts of Speech)"/>
+<!-- Lexicon Views-->
+	<string id="LexEntry-Plural" txt="Entries"/>
+	<string id="LexSense-Plural" txt="Senses"/>
+	<string id="ReversalIndexEntry-Plural" txt="Reversal Entries"/>
+	<string id="ReversalIndex-Plural" txt="Reversals"/>
+<!-- Text Area -->
+	<string id="Text-Plural" txt="Texts"/>
+<!-- Words Area -->
+	<string id="WfiWordform-Plural" txt="Wordforms"/>
+	<string id="WfiAnalysis-Plural" txt="Analyses"/>
+  </group>
+  <group id="DialogTitles">
+	<string id="ConcorderTitle" txt="Concorder"/>
+  </group>
+</strings>

@@ -1,0 +1,160 @@
+<!-- CellarModule.DTD
+
+Document Type Definition for the CELLAR Module MSDE Description files
+
+This documents the content form of the XML files used by the CELLAR Code Generator to maintain the CELLAR Schemas.
+
+Draft: Friday, 16-Jan-98
+Revised: Monday, 9-Feb-98
+Revised by GFS, 10 Feb 1998, to match output of xmlCm views
+2 Apr 98, GFS. Minor tweaks to fit PossibilitiesList output
+16 Apr 98 KRZ Added additional submod types, and added support for ordered and
+	unordered lists, and added stringalt to primitive list
+24 Apr 98, GFS.  Added "templateArgs" for classes built from templates
+27 Apr 98, GFS.  Adjusted case in names of basic object types in % primitive
+	and <conceptualModel> to support new case sensitive SGML declaration for XML
+27 Apr 98 KRZ Added CmDate, CmStringPlain, CmStringPlainAlt
+30 Apr 99 KRZ Numerous changes to bring it up to our Fieldworks current design
+7 May 99 KRZ Added optional inverse, external, and lazyLoad
+12 May 99 KRZ Added readOnly
+14 May 99 KRZ Added Moniker, Unicode, Guid as basic types
+17 May 99 KRZ Added card back into basic values, Added sortBy, basedOn, and index.
+18 May 99 KRZ Changed attrs to props
+20 May 99 KRZ Added Notes and Questions and deleted Example from submodules
+8 Jun 99 KRZ Added abbr as a class attribute
+11 Jun 99 KRZ Added prefix
+16 Jun 99 SRMc Converted from SGML DTD to XML DTD; use rxp to validate instead of spam
+19 Jan 00 KRZ Added attributes to conceptualModel
+10 Feb 00 KRZ Removed Moniker from list of primitive types
+ 1 Mar 00 SRMc Cleaned out a bunch of old stuff that no longer applies.
+	ENTITY accessType, path, clsFiles
+	ELEMENT interface, implement, document
+	ATTLIST members: access, lazyLoad, readOnly, prefix, inverse, inverseClass, enum, bits
+ 1 Feb 01 KRZ Updated to current standards
+-->
+<!-- ******************** Entity Declarations ****************** -->
+<!ENTITY % bool "(true | false)">
+<!ENTITY % string "#PCDATA">
+<!-- Any printable character; constrained by context -->
+<!ENTITY % cardinality "(atomic | seq | col)">
+<!ENTITY % relKind "(reference )">
+<!ENTITY % primitive "(Integer | Boolean | Time | Guid | Image | Numeric | Float |
+		String | MultiString | Unicode | MultiUnicode | EncUnicode | GenDate | Binary )">
+<!ENTITY % submodTypes "(Summary | Description | Usage | Examples | Notes | Questions |
+Organizing.Principle | Implementation.Strategy | Schema.Model | Background | To.Do)">
+<!-- ******************** Element Declarations ****************** -->
+<!ELEMENT CellarModule (comment?, class*, subsystem*)>
+<!ATTLIST CellarModule
+	id CDATA #REQUIRED
+	num CDATA #REQUIRED
+	ver CDATA #REQUIRED
+	verBack CDATA #REQUIRED
+>
+<!-- id:       The name identifying this Cellar module -->
+<!-- num:      A module number unique to all modules -->
+<!-- ver:      The version number of this model -->
+<!-- verBack:  The oldest version number that can be read by this model -->
+<!-- <!ELEMENT name    (%string;)> -->
+<!ELEMENT comment (%string;)>
+<!ELEMENT subsystem (comment?, descr?, (class | subsystem)*)>
+<!ATTLIST subsystem
+	id ID #REQUIRED
+>
+<!ELEMENT include (class | subsystem)>
+<!-- In practice, the content is an external entity reference -->
+<!ELEMENT descr (submod*)>
+<!-- Description (i.e. documentation) -->
+<!ELEMENT submod (p | ul | ol)*>
+<!-- Submodule -->
+<!ATTLIST submod
+	type %submodTypes; #REQUIRED
+>
+<!ELEMENT p (#PCDATA | i | b)*>
+<!-- Paragraph -->
+<!ELEMENT i (#PCDATA | b)*>
+<!-- Italic -->
+<!ELEMENT b (#PCDATA | i)*>
+<!-- Bold -->
+<!ELEMENT ul (li)*>
+<!-- Bulleted list -->
+<!ELEMENT ol (li)*>
+<!-- Numbered list -->
+<!ELEMENT li (#PCDATA | i | b)*>
+<!-- List item -->
+<!-- ********** Class ********** -->
+<!ELEMENT class (comment?, descr?, props?)>
+<!ATTLIST class
+	id ID #REQUIRED
+	mod CDATA #IMPLIED
+	num CDATA #REQUIRED
+	abbr CDATA #REQUIRED
+	depth CDATA #IMPLIED
+	abstract %bool; "false"
+	base IDREF #REQUIRED
+>
+<!-- id:        unique among all classes in all subsystems -->
+<!-- num:       A class number unique to classes in this module. -->
+<!-- abbr:      Hungarian abbreviation 2-6 lowercase letters -->
+<!-- abstract:  "is this an abstract class?" -->
+<!-- base:      id of base (super) class -->
+<!ELEMENT props (owning | rel | basic)*>
+<!-- property definitions -->
+<!-- ********** Owning Properties ********** -->
+<!ELEMENT owning (comment?, descr?)>
+<!ATTLIST owning
+	id CDATA #REQUIRED
+	num CDATA #REQUIRED
+	card %cardinality; "atomic"
+	sortBy CDATA #IMPLIED
+	sig IDREF #REQUIRED
+>
+<!-- id:       non-unique among all attributes in all classes (SGML: NAME) -->
+<!-- num:      A property number unique to this class. -->
+<!-- card:     default atomic -->
+<!-- sortBy:   Specifies a sorting characteristics -->
+<!-- sig:      Name of signature class -->
+<!-- ********** Relational Properties ********** -->
+<!ELEMENT rel (comment?, descr?)>
+<!ATTLIST rel
+	id CDATA #REQUIRED
+	num CDATA #REQUIRED
+	card %cardinality; "atomic"
+	sortBy CDATA #IMPLIED
+	sig IDREF #REQUIRED
+>
+<!-- id:           non-unique among all attributes in all classes (SGML: NAME) -->
+<!-- num:          A property number unique to this class. -->
+<!-- card:         default atomic -->
+<!-- sortBy:       Specifies a sorting characteristics -->
+<!-- sig:          Name of signature class -->
+<!-- ********** Basic Properties ********** -->
+<!ELEMENT basic (comment?, descr?)>
+<!ATTLIST basic
+	id CDATA #REQUIRED
+	num CDATA #REQUIRED
+	min CDATA #IMPLIED
+	max CDATA #IMPLIED
+	big %bool; "false"
+	sig %primitive; "String"
+	prec CDATA #IMPLIED
+	scale CDATA #IMPLIED
+>
+<!-- id:       non-unique among all attributes in all classes (SGML: NAME) -->
+<!-- num:      A property number unique to this class. -->
+<!-- min:      The minimum value for a number. -->
+<!-- max:      The maximum value for a number. -->
+<!-- big:      A string that stores longer text (e.g., a paragraph). -->
+<!-- sig:      default is String -->
+<!-- prec:     The number of digits for a decimal numeric type (both sides of decimal pt. -->
+<!-- scale:    The scale of a numeric type (digits to right of decimal point). -->
+<!-- Verification of a subsystem via rxp is done via:
+
+	rxp -eVs -f file.err %1
+
+where %1 is the name of the subsystem XML file.
+
+(-e          means expand entities, including external entities
+ -V          means to validate
+ -s          means to work silently, without any output other than error reports
+ -f file.err means to write error messages to the specified file)
+-->

@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{1C23DE94-04CC-470A-9D1E-E236E23B9C8A}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks.TE</RootNamespace>
+	<AssemblyName>TeImportExport</AssemblyName>
+	<TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\output\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<DocumentationFile>obj\TeImportExport.XML</DocumentationFile>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=5.5.0.19421, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="COMInterfaces, Version=5.5.0.19430, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Diffview, Version=5.5.0.22431, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Diffview.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO, Version=5.5.0.19441, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Framework, Version=5.5.0.21859, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="fwcontrols, Version=5.5.0.19438, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\fwcontrols.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="fwresources, Version=5.5.0.19421, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\fwresources.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="fwutils, Version=5.5.0.19431, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\fwutils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Interop.SCRIPTUREOBJECTSLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\Interop.SCRIPTUREOBJECTSLib.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ITextDll, Version=5.5.0.22279, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
+	</Reference>
+	<Reference Include="OxesIO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\OxesIO.dll</HintPath>
+	</Reference>
+	<Reference Include="ParatextShared, Version=7.50.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\ParatextShared.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Reporting, Version=1.0.3481.19439, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite, Version=5.5.0.19483, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ScrControls, Version=5.5.0.22233, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\ScrControls.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ScrFDO, Version=5.5.0.21754, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\ScrFDO.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ScrImportComponents, Version=5.5.0.22507, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\ScrImportComponents.dll</HintPath>
+	</Reference>
+	<Reference Include="ScriptureUtils, Version=5.5.0.19446, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ScrUtilsInterfaces, Version=5.5.0.19437, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SimpleRootSite, Version=5.5.0.19449, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="TeDialogs, Version=5.5.0.22461, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\TeDialogs.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="TeEditing, Version=5.5.0.22424, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\TeEditing.dll</HintPath>
+	</Reference>
+	<Reference Include="TeEditorialChecks, Version=5.5.0.22571, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\TeEditorialChecks.dll</HintPath>
+	</Reference>
+	<Reference Include="TeRegistrySettings, Version=5.5.0.22243, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="TeResources, Version=5.5.0.22241, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\TeResources.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Utils, Version=5.5.0.19422, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\Utils.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Widgets, Version=5.5.0.19485, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="xCoreInterfaces, Version=5.5.0.19444, Culture=neutral, processorArchitecture=MSIL">
+	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="XMLUtils, Version=5.5.0.24833, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="ExportDefinitions.cs" />
+	<Compile Include="ExportPtxDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ExportPtxDialog.Designer.cs">
+	  <DependentUpon>ExportPtxDialog.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ExportRtf.cs" />
+	<Compile Include="ExportRtfDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ExportTbxDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ExportTbxDialog.Designer.cs">
+	  <DependentUpon>ExportTbxDialog.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ExportUsfm.cs" />
+	<Compile Include="ExportUsfmDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ExportXhtml.cs" />
+	<Compile Include="ExportXml.cs" />
+	<Compile Include="ExportXmlDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FileNameSchemeCtrl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="ImportDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ImportStyleProxy.cs" />
+	<Compile Include="ImportXmlDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ImportXmlDialog.Designer.cs">
+	  <DependentUpon>ImportXmlDialog.cs</DependentUpon>
+	</Compile>
+	<Compile Include="OxesInfo.cs" />
+	<Compile Include="ParatextLdsFileAccessor.cs" />
+	<Compile Include="ParatextSsfFileAccessor.cs" />
+	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="ScrNoteImportManager.cs" />
+	<Compile Include="ScrObjWrapper.cs" />
+	<Compile Include="StyleProxyListManager.cs" />
+	<Compile Include="TeImportExportFileDialog.cs" />
+	<Compile Include="TeImport.cs" />
+	<Compile Include="ITeImportCallbacks.cs" />
+	<Compile Include="TeImportManager.cs" />
+	<Compile Include="TeImportUi.cs" />
+	<Compile Include="TeXmlImport.cs" />
+	<Compile Include="UsfmStyFileAccessor.cs" />
+	<Compile Include="XmlScrAnnotationClasses\ParagraphCollection.cs" />
+	<Compile Include="XmlScrAnnotationClasses\XmlNoteCategory.cs" />
+	<Compile Include="XmlScrAnnotationClasses\XmlNotePara.cs" />
+	<Compile Include="XmlScrAnnotationClasses\XmlNoteResponse.cs" />
+	<Compile Include="XmlScrAnnotationClasses\XmlScrAnnotationsList.cs" />
+	<Compile Include="XmlScrAnnotationClasses\XmlScrNote.cs" />
+	<Compile Include="XmlScrAnnotationClasses\XmlTextRun.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="ExportPtxDialog.resx">
+	  <DependentUpon>ExportPtxDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ExportRtfDialog.resx">
+	  <DependentUpon>ExportRtfDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ExportTbxDialog.resx">
+	  <DependentUpon>ExportTbxDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ExportUsfmDialog.resx">
+	  <DependentUpon>ExportUsfmDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ExportXmlDialog.resx">
+	  <DependentUpon>ExportXmlDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FileNameSchemeCtrl.resx">
+	  <DependentUpon>FileNameSchemeCtrl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ImportDialog.resx">
+	  <DependentUpon>ImportDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ImportXmlDialog.resx">
+	  <DependentUpon>ImportXmlDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

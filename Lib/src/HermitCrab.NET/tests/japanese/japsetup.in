@@ -1,0 +1,426 @@
+;$Id: japsetup.in 1.18 1997/11/24 17:15:57 Mike_Maxwell Exp $
+;Modified from PC-KIMMO's JAPANESE.RUL to load the startup info, incl. pfeature defs, char tables,
+; strata defs and rules, but not the dictionary (which will be loaded by the file calling this one,
+; since at this point the dict is too large for HC).
+
+; Japanese Verb Conjugation
+; Data from Problem Book in Phonology, by Halle & Clements, MIT
+; Press, 1983, p. 127.
+
+; S = alveopalatal sibilant (s-wedge)
+; T = alveolar affricate (ts)
+; & = alveopalatal affricate (c-wedge)
+; /u/ may not be round??
+; r is treated here as a glide phonologically, i.e. [-cons -voc]
+; (based on its behavior in common with /w/ in the assimilation rule;
+; and on its behavior in common with /y/ in the r and y deletion rule)
+
+(open_language message Japanese)
+
+(morpher_set message
+  (*pfeatures*
+	(voc      (+ -)
+	 cons     (+ -)
+	 sonorant (+ -)
+	 high     (+ -)
+	 low      (+ -)
+	 back     (+ -)
+	 round    (+ -)
+	 vd       (+ -)
+	 nasal    (+ -)
+	 ant      (+ -)
+	 cor      (+ -)
+	 del_rel  (+ -)
+	 strident (+ -)
+	 cont     (+ -)
+	)
+  )
+)
+
+;Ff from Hyman "Phonology: Theory and Analysis", Holt, Rinehart and Winston, pg. 241-244
+;bilabial =     [-back -high -low +ant -cor]
+;alveolar =     [-back -high -low +ant +cor]
+;alveopalatal = [-back +high -low -ant +cor]
+;velar =        [+back +high -low -ant -cor]
+;glottal =      [-back -high +low -ant -cor]
+
+
+;Table1 has surface segments + boundary marker.  The latter appears only in the lexicon.
+(load_char_def_table message
+  <char_table
+  name table1
+  encoding Japanese
+  seg_defs
+	(
+	  (i   (cons - voc + sonorant + high + low - back - round - vd + cont + nasal -))
+	  (e   (cons - voc + sonorant + high - low - back - round - vd + cont + nasal -))
+	  (a   (cons - voc + sonorant + high - low + back + round - vd + cont + nasal -))
+	  (o   (cons - voc + sonorant + high - low - back + round + vd + cont + nasal -))
+	  (u   (cons - voc + sonorant + high + low - back + round + vd + cont + nasal -))
+
+	  (p   (cons + voc - sonorant - back - high - low - ant + cor - vd - del_rel - nasal - strident - cont -))
+	  (t   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel - nasal - strident - cont -))
+	  (k   (cons + voc - sonorant - back + high + low - ant - cor - vd - del_rel - nasal - strident - cont -))
+
+	  (b   (cons + voc - sonorant - back - high - low - ant + cor - vd + del_rel - nasal - strident - cont -))
+	  (d   (cons + voc - sonorant - back - high - low - ant + cor + vd + del_rel - nasal - strident - cont -))
+	  (g   (cons + voc - sonorant - back + high + low - ant - cor - vd + del_rel - nasal - strident - cont -))
+
+	  (s   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel - nasal - strident + cont +))
+	  (S   (cons + voc - sonorant - back - high + low - ant - cor + vd - del_rel - nasal - strident + cont +))
+	  (z   (cons + voc - sonorant - back - high - low - ant + cor + vd + del_rel - nasal - strident + cont +))
+	  (h   (cons + voc - sonorant - back - high - low + ant - cor - vd - del_rel - nasal - strident - cont +))
+
+	  (T   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel + nasal - strident + cont -))
+	  (&   (cons + voc - sonorant - back - high + low - ant - cor + vd - del_rel + nasal - strident + cont -))
+	  (j   (cons + voc - sonorant - back - high + low - ant - cor + vd + del_rel + nasal - strident + cont -))
+
+	  (m   (cons + voc - sonorant + back - high - low - ant + cor - vd + del_rel - nasal + strident - cont -))
+	  (n   (cons + voc - sonorant + back - high - low - ant + cor + vd + del_rel - nasal + strident - cont -))
+
+	  (r   (cons - voc - sonorant + high - low - back - ant + cor + round - vd + cont + nasal -))
+	  (w   (cons - voc - sonorant + high + low - back + ant + cor - round + vd + cont + nasal -))
+	  (y   (cons - voc - sonorant + high + low - back - ant - cor + round - vd + cont + nasal -))
+	)
+	bdry_defs (+)
+  >
+)
+
+
+
+;Now set the strata (just one):
+(morpher_set message
+  (*strata* (morphophonemic)))
+;...and set their ctables (msg 6550):
+(set_stratum message <stratum_setting nm morphophonemic type ctable value table1>)
+(set_stratum message <stratum_setting nm *surface* type ctable value table1>)
+;...and the cyclicity of the morphophonemic stratum (msg 6552):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value noncyclic>)
+;...and the order of the prules and mrules:
+(set_stratum message <stratum_setting nm morphophonemic type prule value linear>)
+(set_stratum message <stratum_setting nm morphophonemic type mrule value linear>)
+
+
+
+;Load the natural classes:
+(load_nat_class message <nat_class name null           features ()>)
+(load_nat_class message <nat_class name cons           features (cons + voc -)>)
+(load_nat_class message <nat_class name vowel          features (cons - voc +)>)
+(load_nat_class message <nat_class name nonvowel       features (voc -)>)
+
+(load_nat_class message <nat_class name unround_vowel  features (voc + round -)>)
+(load_nat_class message <nat_class name low_vowel      features (voc + low +)>)
+(load_nat_class message <nat_class name nonlow_vowel   features (voc + low -)>)
+(load_nat_class message <nat_class name voiced         features (vd +)>)
+(load_nat_class message <nat_class name voiced_cons    features (cons + vd +)>)
+(load_nat_class message <nat_class name affricate      features (del_rel + strident +)>)
+(load_nat_class message <nat_class name nonvd_strident features (strident + vd -)>)
+(load_nat_class message <nat_class name palatalized    features (ant - high +)>)
+(load_nat_class message <nat_class name high_vowel     features (voc + high +)>)
+
+(load_nat_class message <nat_class name bm             features (cont - vd + ant + cor -)>)
+(load_nat_class message <nat_class name n              features (cor + nasal + sonorant +)>)
+(load_nat_class message <nat_class name dt             features (cont - cor + del_rel -)>)
+(load_nat_class message <nat_class name t              features (cons + sonorant - vd - cor + cont - del_rel - strident - high - back -)>)
+(load_nat_class message <nat_class name s              features (cons + strident + del_rel -)>)
+(load_nat_class message <nat_class name kg             features (cons + back +)>)
+(load_nat_class message <nat_class name w              features (cons - voc - round + ant + cor -)>)
+(load_nat_class message <nat_class name ry             features (cons - voc - cor +)>)
+(load_nat_class message <nat_class name rw             features (cons - voc - ant +)>)
+(load_nat_class message <nat_class name i              features (cons - voc + sonorant + cont + vd + back - high +)>)
+
+;-------------PHONOLOGICAL RULES
+;RULE "1 Consonant defaults"  Does not correspond to anything in HC
+;RULE "2 Vowel defaults"  Does not correspond to anything in HC
+
+; Truncation, A:0
+; according to Alam 1983 this rule deletes a, i, and e
+; LR: ne+anai  ne+itai  mi+anai  mi+itai
+; SR: ne00nai  ne00tai  mi00nai  mi00tai
+;RULE "10 A:0 correspondences"
+; A = a i
+; morpheme boundary is obligatory; counterfed by w-deletion (kaw+itai --> kaitai)
+;RULE "11 Truncation, A:0 <=> V +:0___"
+; [+voc -round] --> 0 / [+voc] + __
+(load_morpher_rule message
+  <prule  nm vowel_deletion
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class unround_vowel>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>
+													<bdry rep + ctable table1>)
+									   >
+					>
+				   )
+  >
+)
+
+
+; r and y deletion
+; according to Alam 1983, this rule deletes r, s, and y
+; PC-KIMMO splits this into r-deletion and y-deletion; we combine them
+; LR: sin+ru  kas+ru  kaw+ru  kat+ru
+; SR: Sin00u  kas00u  ka000u  kaT00u
+; C:@ due to w:0 rule
+;RULE "13 Deletion, r:0 <=> C(+:0)___"
+; y-deletion
+; LR: ne+yoo  sin+yoo
+; SR: ne0yoo  Sin00oo
+; C:@ due to w:0 rule (this corresponds to ordering before w-deletion -MM)
+;RULE "16 y:0 <=> C: (+:0)__"
+;The HC rule only takes r and y --> 0; if the PC-KIMMO note above re s and y is correct,
+; the rule would be more complex (and probably several rules).  Ordered before t --> T (affrication),
+; because it feeds it (cf. kat+ru --> kaTu)
+; [-cons -voc +cor] --> 0 / [-voc] __
+(load_morpher_rule message
+  <prule  nm r_deletion
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class ry>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class nonvowel>)>
+					>
+				   )
+  >
+)
+
+
+; w-deletion, w:0
+; LR: kaw+itai  kaw+yoo  kaw+ru
+; SR: ka00itai  ka000oo  ka000u
+; I = i u o
+;RULE "15 w:0 <=> ___(+:0)(C:0)I"
+; [-cons -voc +round] --> 0 / [+voc +low] __ [+voc -low]
+; The environ is my guess, based on the data (-MM)
+(load_morpher_rule message
+  <prule  nm w_deletion
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class w>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class low_vowel>)>
+						  right_environ <ptemp pseq (<simp_cntxt class nonlow_vowel>)>
+					>
+				   )
+  >
+)
+
+
+; Voicing, t:d
+; LR: sin+ta  yom+ta  yob+ta  tug+0ta
+; SR: Sin0da  yon0da  yon0da  Tu00ida
+; M = b g m n
+;RULE "3 Voicing, t:d <=> M: (+:0)(0:i)___"
+; [-cont +coronal -del_rel] --> [+vd] / [+cons +vd] __
+; I assume this would also happen after other [+vd] Cs.  Must be ordered before epenthesis
+; (see tug+ta --> tuida ex above)
+(load_morpher_rule message
+  <prule  nm td
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class dt>)
+		  subrules (<psub out_pseq (<simp_cntxt class voiced>)
+						  left_environ <ptemp pseq (<simp_cntxt class voiced_cons>)>
+					>
+				   )
+  >
+)
+
+
+; Velar deletion, K:0
+; LR: wak+0ta  tug+0ta
+; SR: wa00ita  Tu00ida
+;RULE "7 K:0 correspondences"
+; K = k g
+;RULE "8 Velar deletion, K:0 <=> ___(+:0) 0:i t:"
+; In HC, we instead handle this as {k g} --> i / __ t, thereby combining it with PC-KIMMO's rule of
+; epenthesis for the k and g cases
+; (it's a very odd rule, but no odder than k --> 0 / __ 0:i t, with the 0:i being obligatory!)
+; [+cons +back] --> [-cons +voc +sonorant +vd -back +cont ] / __ [+cons +cor]
+; (an odd rule!)  Ordered after td (voicing).
+(load_morpher_rule message
+  <prule  nm ki
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class kg>)
+		  subrules (<psub out_pseq (<simp_cntxt class i>)
+						  right_environ <ptemp pseq (<simp_cntxt class dt>)>
+					>
+				   )
+  >
+)
+
+
+; Nasalization, B:n
+; LR: yom+ta  yob+ta
+; SR: yon0da  yon0da
+;RULE "4 B:n correspondences"
+; B = b m
+; @:d due to t:d rule
+;RULE "5 Nasalization, B:n <=> ___(+:0) :d"
+; [-cont +vd +ant -cor] --> [+cor +nasal +sonorant] / __ [+cons +cor]
+; May need to be restricted to [+cor +vd] (and ordered wrt voicing); check also wrt features
+; nasal, del_rel etc. in environ
+(load_morpher_rule message
+  <prule  nm Bn
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class bm>)
+		  subrules (<psub out_pseq (<simp_cntxt class n>)
+						  right_environ <ptemp pseq (<simp_cntxt class dt>)>
+					>
+				   )
+  >
+)
+
+
+; Epenthesis, 0:i
+; LR: kas+0ta wak+0ta  tug+0ta
+; SR: kaS0ita wa00ita  Tu00ida
+; X = s k g
+;RULE "9 Epenthesis, 0:i <=> X(+:0)___t:"
+; In HC, we instead analyze this as 0 --> i / s__t; the {k g} __ t environ is instead treated as
+; k --> i / __+t (see rule ki).  Feeds palatalization.
+; 0 --> [+voc +high -back] / [+cons +strident -del_rel] __ [-cont +cor -vd]
+(load_morpher_rule message
+  <prule  nm epenthesis
+		  str (morphophonemic)
+		  in_pseq ()
+		  subrules (<psub out_pseq (<simp_cntxt class i>)
+						  left_environ <ptemp pseq (<simp_cntxt class s>)>
+						  right_environ <ptemp pseq (<simp_cntxt class t>)>
+					>
+				   )
+  >
+)
+
+
+; Affrication 1, t:&
+; LR: kat+itai
+; SR: ka&0itai
+;RULE "12 Affrication 1, t:& <=> ___(+:0)i"
+; Affication 2, t:T
+; LR: kat+ru  tug+yoo
+; SR: kaT00u  Tug00oo
+;RULE "14 t:T <=> ___(+:0 C)u"
+; These two rules are combined in HC as t --> T, and palatalization takes T --> &
+; (hence ordered before palatalization)
+; [-cont +cor -sonorant] --> [+del_rel] / __ [+voc +high]
+(load_morpher_rule message
+  <prule  nm affrication
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class t>)
+		  subrules (<psub out_pseq (<simp_cntxt class affricate>)
+						  right_environ <ptemp pseq (<simp_cntxt class high_vowel>)>
+					>
+				   )
+  >
+)
+
+
+
+; Palatalization, s:S
+; LR: kas+itai  kas+0ta  sin+yoo  sin+ta
+; SR: kaS0itai  kaS0ita  Sin00oo  Sin0da
+; @:i due to 0:i rule
+;RULE "6 Palatalization, s:S <=> ___(+:0):i"
+; [+strident -vd] --> [-ant] / __ [+voc +high -back]
+; Fed by affrication (hence we do NOT require the input to be [-del_rel])
+(load_morpher_rule message
+  <prule  nm palatalization
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class nonvd_strident>)
+		  subrules (<psub out_pseq (<simp_cntxt class palatalized>)
+						  right_environ <ptemp pseq (<simp_cntxt class i>)>
+					>
+				   )
+  >
+)
+
+
+
+
+
+; Assimilation, R:t
+; LR: kar+ta  kaw+ta
+; SR: kat0ta  kat0ta
+;RULE "17 R:t correspondences"
+; R = r w
+;RULE "18 Assimilation, R:t <=> ___(+:0)t"
+; Note that we treat /r/ as a glide based on its shared behavior with /w/ in this rule
+; [-cons -voc +ant] --> [+cons -sonorant -vd +cor -cont -strident -high -back] / __ [-cont +cor]
+(load_morpher_rule message
+  <prule  nm assimilation
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class rw>)
+		  subrules (<psub out_pseq (<simp_cntxt class t>)
+						  right_environ <ptemp pseq (<simp_cntxt class t>)>
+					>
+				   )
+  >
+)
+
+
+;-------------MORPHOLOGICAL RULES
+
+
+(load_morpher_rule message
+  <mrule  nm present
+		  stratum morphophonemic
+		  gl -PRES
+		  side r
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (+ru table1))>
+					>)
+  >
+)
+(load_morpher_rule message
+  <mrule  nm negative
+		  stratum morphophonemic
+		  gl -NEG
+		  side r
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (+anai table1))>
+					>)
+  >
+)
+(load_morpher_rule message
+  <mrule  nm volitional
+		  stratum morphophonemic
+		  gl -VOL
+		  side r
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (+itai table1))>
+					>)
+  >
+)
+(load_morpher_rule message
+  <mrule  nm past
+		  stratum morphophonemic
+		  gl -PAST
+		  side r
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (+ta table1))>
+					>)
+  >
+)
+(load_morpher_rule message
+  <mrule  nm inchoative
+		  stratum morphophonemic
+		  gl -INCH
+		  side r
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (+yoo table1))>
+					>)
+  >
+)
+
+
+
+;(trace_morpher_rule message (false true present))
+;(trace_morpher_rule message (true true negative))
+;(trace_morpher_rule message (true true volitional))
+;(trace_morpher_rule message (true true past))
+;(trace_morpher_rule message (true true inchoative))
+;Don't let errors stop us:
+(morpher_set message (*quit_on_error* false))

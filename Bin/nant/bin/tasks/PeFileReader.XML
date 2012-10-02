@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>PeFileReader</name>
+	</assembly>
+	<members>
+		<member name="T:SIL.FieldWorks.Tools.PeFileProcessor">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Allows reading a PE file and ignore any timestamps and GUIDs that may change between
+			compiles of the same source code.
+			</summary>
+			<remarks>We use a .NET implementation of memory mapped file available from
+			http://www.winterdom.com/dev/dotnet/index.html </remarks>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.#ctor(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:PeFileProcessor"/> class.
+			</summary>
+			<param name="fileName">Name of the file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.Finalize">
+			------------------------------------------------------------------------------------
+			<summary>
+			Releases unmanaged resources and performs other cleanup operations before the
+			<see cref="T:WindowsApplication1.PeFileProcessor"/> is reclaimed by garbage collection.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.Dispose">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs application-defined tasks associated with freeing, releasing, or
+			resetting unmanaged resources.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.Dispose(System.Boolean)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs application-defined tasks associated with freeing, releasing, or
+			resetting unmanaged resources.
+			</summary>
+			<param name="fFromDispose">if set to <c>true</c> called from Dispose() - safe
+			to do stuff with managed objects; if <c>false</c> called from Finalizer - managed
+			objects might already be disposed.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ProcessFile">
+			------------------------------------------------------------------------------------
+			<summary>
+			Process the file
+			</summary>
+			<returns><c>true</c> if it's a PE file, otherwise <c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ProcessMsDosStub">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the MS-DOS Stub (Image Only).
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ProcessCoffFileHeader(System.Int16@)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the COFF File Header (Object and Image).
+			</summary>
+			<param name="nSections">Number of sections</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ProcessOptionalHeader">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the Optional Header (usually Image only)
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ProcessSections(System.Int16)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the Section Table (Section Headers).
+			</summary>
+			<param name="nSections">The number of sections.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ProcessSection(System.Int32,System.Int32)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes one section.
+			</summary>
+			<param name="addressVirtual">The address when loaded.</param>
+			<param name="sizeVirtual">The virtual size (size on disk).</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ProcessDebugInfo">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the debug info.
+			</summary>
+			<remarks>Info about debug info from
+			http://www.debuginfo.com/articles/debuginfomatch.html</remarks>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.ReadName(System.Int32)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Reads the name.
+			</summary>
+			<param name="nLen">The n len.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.PeFileProcessor.OverwriteTimestamp">
+			------------------------------------------------------------------------------------
+			<summary>
+			Overwrites the timestamp.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Tools.PeFileProcessor.Stream">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the stream.
+			</summary>
+			<value>The stream.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.CLIFileProcessor">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Helper class to process CLI part of PE file.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.#ctor(System.IO.Stream,System.IO.BinaryReader,System.IO.BinaryWriter)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:CLIFileProcessor"/> class.
+			</summary>
+			<param name="stream">The stream.</param>
+			<param name="reader">The reader.</param>
+			<param name="writer">The writer.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessCLIHeader(System.Int64)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the CLI header.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessMetaData(System.Int32)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the meta data.
+			</summary>
+			<param name="size">The size.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessStreamHeader(System.Int64,SIL.FieldWorks.Tools.CLIFileProcessor.StreamInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the stream header.
+			</summary>
+			<param name="nMetaDataRoot">The meta data root position.</param>
+			<param name="streamInfo">The stream info.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessStream(SIL.FieldWorks.Tools.CLIFileProcessor.StreamInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the stream.
+			</summary>
+			<param name="streamInfo">The stream info.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessGuidStream(SIL.FieldWorks.Tools.CLIFileProcessor.StreamInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the GUID stream.
+			</summary>
+			<param name="streamInfo">The stream info.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessTildeStream(SIL.FieldWorks.Tools.CLIFileProcessor.StreamInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the #~ stream.
+			</summary>
+			<param name="streamInfo">The stream info.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessModule">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the module.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessTypeRef">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the type ref.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ProcessMethodDef">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the method def.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.CountSetBits(System.UInt64)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Counts the number of bits set to 1.
+			</summary>
+			<param name="value">The value.</param>
+			<returns>Number of bits set to 1</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.CLIFileProcessor.ReadName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Reads the name.
+			</summary>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Tools.ImageDataDirectory">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Represents the ImageDataDirectory element in a PE file
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Tools.ImageDataDirectory.#ctor(System.Int32,System.Int32,System.Int32)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:ImageDataDirectory"/> class.
+			</summary>
+			<param name="virtAddr">The virt addr.</param>
+			<param name="size">The size.</param>
+			<param name="index">The index of the directory</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.ImageDataDirectory.VirtualAddress">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.ImageDataDirectory.Size">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Tools.ImageDataDirectory.Index">
+			<summary></summary>
+		</member>
+	</members>
+</doc>

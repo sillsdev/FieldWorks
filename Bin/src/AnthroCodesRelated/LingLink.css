@@ -1,0 +1,50 @@
+BODY { font-size: 10pt; background: #ffb }
+
+DIV.TitleGroup { text-align: center; margin-bottom: 3em }
+H1.MainTitle { font-size: 180%; margin-bottom: 0em; padding: 0 }
+H2.SubTitle { font-size: 140%; margin-top: 0.3em; padding: 0 }
+
+TABLE.Authors { text-align: center; margin-bottom: 1em }
+
+DIV.SubmoduleBody { margin-left: 3em }
+DIV.SubsubmodBody { margin-left: 2em }
+
+H2 { text-align: center; font-size: 140% }
+
+H3.SubmoduleHeading, H3.StepsSubmoduleHeading {
+	font-size: 100%;
+	margin-top: 1em;
+	margin-bottom: 0.5em
+	}
+H3.StepsSubmoduleHeading {
+	text-align: justify      /* forces example links to right margin */
+	}
+H3.SubsubModHead {
+	font-size: 100%;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em
+	}
+
+P, PRE { margin-top: 0.5em; margin-bottom: 0.5em }
+
+UL, OL { margin-top: 0.5em; margin-bottom: 0.5em }
+
+TABLE { font-size: 100% }
+
+OL.Steps { list-style-type: decimal }                   /* subtasks of a StepsSubmodule */
+OL.Alternatives { list-style-type: upper-alpha }
+UL.ThingsToDo { list-style-type: disc }
+
+P.StepMilestone { font-weight: bold }                /* milestoneStep of a StepInTask */
+
+DIV.TypedInLineNote {
+		margin-left: 1em;
+		margin-right: 1em
+		}
+B.NoteType { font-size: 90% }
+
+SPAN.PopupText { background-color: #eee }
+
+SPAN.PopupBiography {color: blue; border-bottom: 1px dotted blue}
+
+UL.DivisionList { list-style-type: none }  /* list of hot-text division headings */

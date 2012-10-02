@@ -1,0 +1,11 @@
+RXP now attempts to be usable in a threaded environment, though this
+has not been tested yet.
+
+Many static variables have been removed and replaced by fields in
+various structures.  Remaining static variables are initialised at the
+start of the program (by the init_* functions) and not changed
+afterwards, so init_parser() should be called before the threads
+are started.
+
+Parser objects should not be shared between threads.  If namespaces
+are used, each thread should use a separate namespace universe.

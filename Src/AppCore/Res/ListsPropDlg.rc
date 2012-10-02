@@ -1,0 +1,155 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "ListsPropDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "AfAppRes.h"
+#include "..\AfDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridDetailsPropDlg DIALOGEX 0, 0, 220, 206
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	ICON            "",kridDetailsPropTabObjIcon,10,5,20,20
+	LTEXT           "",kridDetailsPropTabBigName,40,10,175,20
+	LTEXT           "",IDC_STATIC,10,30,200,1,SS_SUNKEN
+	LTEXT           "&Abbreviation:",IDC_STATIC,10,40,40,8
+	EDITTEXT        kctidDetailsPropTabAbbr,58,38,153,14,ES_AUTOHSCROLL
+	LTEXT           "",IDC_STATIC,10,58,200,1,SS_SUNKEN
+	LTEXT           "Attributes:",IDC_STATIC,10,63,45,8
+	CONTROL         "&Sort items in this list (by name)",
+					kctidDetailsPropTabSort,"Button",BS_AUTOCHECKBOX |
+					WS_TABSTOP,20,73,114,8
+	CONTROL         "Allow &duplicate item names and abbreviations",
+					kctidDetailsPropTabDup,"Button",BS_AUTOCHECKBOX |
+					WS_TABSTOP,20,86,155,8
+	CONTROL         "Support hierarch&y",kctidDetailsPropTabHeir,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,20,98,89,8
+	LTEXT           "Display ite&ms in the list as:",IDC_STATIC,11,112,98,8
+	COMBOBOX        kctidDetailsPropTabDisp,20,123,88,67,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           "List &Writing system:",IDC_STATIC,11,140,98,8
+	COMBOBOX        kctidDetailsPropTabWS,20,151,161,67,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	LTEXT           " ",IDC_STATIC,11,169,200,1,SS_SUNKEN
+	LTEXT           "Help file &name for this list:",IDC_STATIC,11,173,104,8
+	EDITTEXT        kctidDetailsPropTabHelpF,20,184,140,14,ES_AUTOHSCROLL
+	PUSHBUTTON      "&Browse...",kctidDetailsPropTabBrws,167,184,44,14
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"ListsPropDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""AfAppRes.h""\r\n"
+	"#include ""..\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridDetailsPropDlg, DIALOG
+	BEGIN
+		VERTGUIDE, 11
+		VERTGUIDE, 20
+		VERTGUIDE, 211
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidDetailsPropTabAbbr		"Sets the abbreviation for this topics list."
+	kctidDetailsPropTabSort     "Specifies that items in this topics list be sorted by name."
+	kctidDetailsPropTabDup      "Specifies that this topics list can have items with duplicate names or abbreviations."
+	kctidDetailsPropTabHeir     "Specifies that this topics list can have subitems in a hierarchical structure."
+	kctidDetailsPropTabDisp     "Specifies how list items are displayed in dialogs that use this list. This setting does not affect how these list items are displayed in fields."
+	kctidDetailsPropTabWS		"Specifies the writing system(s) of the items in this list."
+	kctidDetailsPropTabHelpF	"If available, specifies a compiled HTML help file (.chm extension) where topics exist that describe the items in this topics list. When an item from this list is selected in the Chooser dialog, the description is displayed when you click the More>> button."
+	kctidDetailsPropTabBrws     "Opens a dialog so you can find and select the appropriate HTML help file for this topics list."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidListsDetails       "Details"
+	kstidListsDetailsName   "Name"
+	kstidListsDetailsAbbr   "Abbreviation"
+	kstidListsDetailsAN     "Abbreviation - Name"
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidOpenHelp			"Open Help File"
+END
+
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

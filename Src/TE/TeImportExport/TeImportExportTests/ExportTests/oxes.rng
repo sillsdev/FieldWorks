@@ -1,0 +1,4165 @@
+<?xml version="1.0"?>
+<grammar ns="http://www.wycliffe.net/scripture/namespace/version_1.0.8"
+	xmlns="http://relaxng.org/ns/structure/1.0"
+	datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+	xmlns:sch="http://www.ascc.net/xml/schematron" xmlns:jaa="http://www.wycliffe.net/scripture/jaa"
+	xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
+	<!-- namespace jaa used by author for documentation-->
+	<!--
+		<s:ns prefix="s" uri="http://www.ascc.net/xml/schematron"/>
+		<s:ns prefix="a" uri="http://relaxng.org/ns/compatibility/annotations/1.0"/>
+	-->
+	<!-- changed relaxng.org/ns/structure/0.9 to relaxng.org/ns/structure/1.0  -->
+	<!--  key removed as not allowed in 1.0    -->
+	<!-- adding ns  wycliffe.org -->
+	<!-- seg removed -->
+	<!-- milestone, and start and end milestone removed -->
+	<!-- added item and l (for line) need to verify l as I thought we already had that in osis-->
+	<!-- removed all  extensions -->
+	<!-- added l/@type="citation" -->
+	<!-- nesting of sections -->
+	<!-- <p><tr><characterStyles>  -->
+	<!-- <embedded>  -->
+	<jaa:documentation>
+		<jaa:titlePage>
+			<jaa:title>Open XML for Editing Scripture (OXES)</jaa:title>
+			<jaa:copyright>2008 SIL International</jaa:copyright>
+			<jaa:desc>This schema was developed for use in the electronic interchange of modern
+				language Scripture documents. OXES was developed as a subset of OSIS with all
+				extension abilities removed. XSEM was the first XML description of Scripture
+				developed by SIL International. It was released in 2000. OSIS was developed by the
+				Bible Technologies Group which is a collaborative effort of the American Bible
+				Society, the Society of Biblical Literature, the Summer Institute of Linguistics,
+				the United Bible Societies, other Bible Societies and related groups, and individual
+				volunteers around the world. OSIS started with XSEM and TEI. OXES was developed to
+				add back translations, translator notes, consultant notes, and status of
+				translation. OSIS is highly extensible. OXES is restrictive. All options are
+				explicitly named.</jaa:desc>
+			<jaa:desc>Michael Cochran asked me to come up with a way of sharing data between
+				Translation Editor and OurWord. The eventual goal is to have all Scripture editing
+				programs share data. Currently it is difficult to share the back translations and
+				notes. Current programs include:</jaa:desc>
+			<jaa:ul>
+				<jaa:li>Translation Editor and Paratext are Microsoft Windows compatible and are
+					full featured.</jaa:li>
+				<jaa:li>BibleEdit is written to work with the Linux operating system.</jaa:li>
+				<jaa:li>AdaptIt is designed to assist the translator to adapt one translation to a
+					closely related language. AdaptIt memorizes your choices and automatically
+					translates words or phrases that it knows.</jaa:li>
+				<jaa:li>OurWord is designed to support the strategy of translating from a Front
+					Translation and to provide a user-friendly tool for translators who may not have
+					significant computer experience.</jaa:li>
+				<jaa:li>XeTeX and InDesign are specialized typesetting programs for high end
+					publishing.</jaa:li>
+			</jaa:ul>
+			<jaa:desc>With lots of help from the Lord I created a new markup language related to
+				OSIS. A markup language is an artificial language used to describe information about
+				the text. The new markup language is called OXES which stands for Open XML for
+				Editing Scripture. Because OXES is an XML language we can validate that a document
+				conforms to the OXES language specification.</jaa:desc>
+			<jaa:picture>oxes-pix.jpg</jaa:picture>
+			<jaa:desc>I am creating the detailed specification for the OXES language that is
+				specifically designed to handle Scripture texts. Programmers are modifying their
+				programs to read and write OXES documents. In the future translators will be able to
+				share their translations including back translations and notes with other
+				translators and consultants using different programs.</jaa:desc>
+			<jaa:desc>From OXES we can transform the document to multiple outputs from the same
+				input. OXES can be transformed to the traditional printed form (both high quality
+				and draft quality), PDF, HTML for the internet, Crosswire, and Bible Gateway
+				formats. </jaa:desc>
+			<jaa:h2>Developed by</jaa:h2>
+			<jaa:ul>
+				<jaa:respStmt resp="maintainer" id="jaa">
+					<jaa:name>Jim Albright</jaa:name>
+					<jaa:affiliation>SIL International</jaa:affiliation>
+					<jaa:email>jim_albright@sil.org</jaa:email>
+				</jaa:respStmt>
+				<jaa:respStmt resp="contributer" id="esa">
+					<jaa:name>Eric Albright</jaa:name>
+					<jaa:affiliation>SIL International</jaa:affiliation>
+					<jaa:email>eric_albright@sil.org</jaa:email>
+				</jaa:respStmt>
+				<jaa:respStmt resp="contributer" id="tb">
+					<jaa:name>Tom Bogel</jaa:name>
+					<jaa:affiliation>SIL International</jaa:affiliation>
+					<jaa:email>tom_bogle@sil.org</jaa:email>
+				</jaa:respStmt>
+				<jaa:respStmt resp="contributer" id="sm">
+					<jaa:name>Stephen McConnel</jaa:name>
+					<jaa:affiliation>SIL International</jaa:affiliation>
+					<jaa:email>stephen_mcconnel@sil.org</jaa:email>
+				</jaa:respStmt>
+				<jaa:respStmt resp="contributer" id="jw">
+					<jaa:name>John Wickberg</jaa:name>
+					<jaa:affiliation>SIL International</jaa:affiliation>
+					<jaa:email>john_wickberg@sil.org</jaa:email>
+				</jaa:respStmt>
+				<jaa:respStmt resp="contributer" id="jsw">
+					<jaa:name>John Wimbish</jaa:name>
+					<jaa:affiliation>SIL International</jaa:affiliation>
+					<jaa:email>john_wimbish@tsco.org</jaa:email>
+				</jaa:respStmt>
+			</jaa:ul>
+			<jaa:revStmt>
+
+				<jaa:revision who="jaa" when="2008-05-29">adding documentation to schema</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-29">version 1.0.8. making somethings required
+					- general cleanup.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-27">version 1.0.8. text inside of character
+					styles corrected.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-27">version 1.0.7. PHM and JAS corrected.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-26">version 1.0.7. bug fixes.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-16">version 1.0.6. nested character styles
+					allowed, character styles allowed inside of &lt;tr/> and &lt;bt/> not
+					all nesting is supported yet.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-10">version 1.0.5. abandonded</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-07">version 1.0.4</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-07">added @type to &lt;l/> so &lt;l
+					level="1" type="citation"/> instead of &lt;l
+					level="1">&lt;otPassage/>&lt;/l>.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-05">version 1.0.3</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-04">removed extension features (seg and x-).</jaa:revision>
+				<jaa:revision who="jaa" when="2008-05-01">&lt;title type="sub"/> changed to
+					&lt;title type="secondary"/> to better match TE and &lt;title
+					type="tertiary"/>.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-30">version 1.0.2</jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-23">modified &lt;translatorNote/> and
+					&lt;consultantNote/> to be &lt;note type="translatorNote"/> &lt;note
+					type="consultantNote"/> the similar to OW notes.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-23">added @short to hold the heading
+					&lt;title short="Markus"/>.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-23">added &lt;canon/> as major division
+					over all Scripture books, &lt;bookGroup/> is optional, one or more
+					&lt;book/> is required.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-16">added type to section and changing
+					&lt;subsection/> to &lt;section type="sub"/></jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-16">added dateRevised to section
+					&lt;section dateRevised="2007-06-27"/> shows last revision on section this
+					corresponds to \ud for OW.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-11">removed sID from translatorNotes,
+					consultantNotes, as notes are placed inside the text, the sID is the sID of the
+					preceding verse.</jaa:revision>
+				<jaa:revision who="jaa" when="2008-04-09">version 1.0.1 derived from OSIS
+				2.1.1</jaa:revision>
+			</jaa:revStmt>
+		</jaa:titlePage>
+	</jaa:documentation>
+	<start>
+		<element name="oxes">
+			<element name="oxesText">
+				<ref name="oxesTextCT"/>
+			</element>
+		</element>
+	</start>
+
+	<define name="asMilestones">
+		<group>
+			<optional>
+				<attribute name="n">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="oxesID">
+					<ref name="oxesIDType"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="ID"> </attribute>
+			</optional>
+			<ref name="sIDeID"/>
+		</group>
+		<optional>
+			<attribute name="annotateRef">
+				<ref name="annotateRefType"/>
+			</attribute>
+		</optional>
+	</define>
+
+	<define name="globalWithoutType">
+		<group>
+			<optional>
+				<attribute name="script">
+					<ref name="oxesScripts"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="space" ns="http://www.w3.org/XML/1998/namespace"/>
+			</optional>
+			<optional>
+				<attribute name="lang" ns="http://www.w3.org/XML/1998/namespace"/>
+			</optional>
+			<optional>
+				<attribute name="n">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="subType">
+					<ref name="attributeExtension"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="resp">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="oxesID">
+					<ref name="oxesIDType"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="ID"> </attribute>
+			</optional>
+			<optional>
+				<attribute name="editions">
+					<list>
+						<zeroOrMore>
+							<data type="NMTOKEN"/>
+						</zeroOrMore>
+					</list>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="annotateType">
+					<ref name="annotationType"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="annotateWork">
+					<data type="string"/>
+				</attribute>
+			</optional>
+		</group>
+		<optional>
+			<attribute name="annotateRef">
+				<ref name="annotateRefType"/>
+			</attribute>
+		</optional>
+	</define>
+
+	<define name="globalTrBt">
+		<optional>
+			<attribute name="space" ns="http://www.w3.org/XML/1998/namespace"/>
+		</optional>
+		<optional>
+			<attribute name="lang" ns="http://www.w3.org/XML/1998/namespace"/>
+		</optional>
+		<optional>
+			<attribute name="resp">
+				<data type="string"/>
+			</attribute>
+		</optional>
+		<ref name="tr-bt-textCT"/>
+	</define>
+
+	<define name="oxesRefType">
+		<list>
+			<zeroOrMore>
+				<data type="string">
+					<param name="pattern"
+						>(((\p{L}|\p{N}|_)+)((\.(\p{L}|\p{N}|_)+)*)?:)?((\p{L}|\p{N}|_|(\\[^\s]))+)(\.(\p{L}|\p{N}|_|(\\[^\s]))*)*(!((\p{L}|\p{N}|_|(\\[^\s]))+)((\.(\p{L}|\p{N}|_|(\\[^\s]))+)*)?)?(@(cp\[(\p{Nd})*\]|s\[(\p{L}|\p{N})+\](\[(\p{N})+\])?))?(\-((((\p{L}|\p{N}|_|(\\[^\s]))+)(\.(\p{L}|\p{N}|_|(\\[^\s]))*)*)+)(!((\p{L}|\p{N}|_|(\\[^\s]))+)((\.(\p{L}|\p{N}|_|(\\[^\s]))+)*)?)?(@(cp\[(\p{Nd})*\]|s\[(\p{L}|\p{N})+\](\[(\p{N})+\])?))?)?</param>
+				</data>
+			</zeroOrMore>
+		</list>
+	</define>
+
+	<define name="chapterCT">
+		<ref name="asMilestones"/>
+	</define>
+
+	<define name="identifierCT">
+		<group>
+			<data type="string"/>
+			<ref name="globalWithoutType"/>
+			<optional>
+				<attribute name="type">
+					<choice>
+						<value type="string">URN</value>
+						<value type="string">ISSN</value>
+						<value type="string">ISBN</value>
+						<value type="string">SICI</value>
+						<value type="string">OSIS</value>
+						<value type="string">URL</value>
+						<value type="string">LCCN</value>
+						<value type="string">DOI</value>
+						<value type="string">Dewey</value>
+						<value type="string">URI</value>
+					</choice>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="saluteCT">
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<zeroOrMore>
+					<choice>
+						<choice>
+							<element name="a">
+								<ref name="aCT"/>
+							</element>
+							<element name="abbreviation">
+								<ref name="abbreviationCT"/>
+							</element>
+							<element name="date">
+								<ref name="dateCT"/>
+							</element>
+							<element name="nameOfGod">
+								<ref name="divineNameCT"/>
+							</element>
+							<element name="foreign">
+								<ref name="foreignCT"/>
+							</element>
+							<element name="index">
+								<ref name="indexCT"/>
+							</element>
+							<element name="lg">
+								<ref name="lgCT"/>
+							</element>
+							<element name="list">
+								<ref name="listCT"/>
+							</element>
+							<element name="mentioned">
+								<ref name="mentionedCT"/>
+							</element>
+							<element name="note">
+								<ref name="noteCT"/>
+							</element>
+							<element name="p">
+								<ref name="pCT"/>
+							</element>
+							<element name="q">
+								<ref name="qCT"/>
+							</element>
+							<element name="reference">
+								<ref name="referenceCT"/>
+							</element>
+							<element name="speaker">
+								<ref name="speakerCT"/>
+							</element>
+							<element name="verse">
+								<ref name="verseCT"/>
+							</element>
+						</choice>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<!--        <ref name="globalWithType"/>-->
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>salute</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+
+	<define name="sIDeID">
+		<optional>
+			<attribute name="eID">
+				<data type="string"/>
+			</attribute>
+		</optional>
+		<optional>
+			<attribute name="sID">
+				<data type="string"/>
+			</attribute>
+		</optional>
+	</define>
+
+	<define name="oxesIDType">
+		<list>
+			<zeroOrMore>
+				<data type="string">
+					<param name="pattern"
+						>(((\p{L}|\p{N}|_)+)((\.(\p{L}|\p{N}|_)+)*)?:)?((\p{L}|\p{N}|_|(\\[^\s]))+)((\.(\p{L}|\p{N}|_|(\\[^\s]))+)*)?(!((\p{L}|\p{N}|_|(\\[^\s]))+)((\.(\p{L}|\p{N}|_|(\\[^\s]))+)*)?)?</param>
+				</data>
+			</zeroOrMore>
+		</list>
+	</define>
+
+	<define name="speakerCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>sp</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="who">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+	<define name="globalCreator">
+		<group>
+			<optional>
+				<attribute name="space" ns="http://www.w3.org/XML/1998/namespace"/>
+			</optional>
+			<optional>
+				<attribute name="lang" ns="http://www.w3.org/XML/1998/namespace"/>
+			</optional>
+			<optional>
+				<attribute name="n">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="resp">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="ID"> </attribute>
+			</optional>
+		</group>
+		<optional>
+			<ref name="tr-bt-textCT"/>
+		</optional>
+	</define>
+
+	<define name="paragraphsContent">
+		<optional>
+			<element name="chapter">
+				<ref name="chapterCT"/>
+			</element>
+		</optional>
+		<optional>
+			<ref name="verse"/>
+		</optional>
+		<oneOrMore>
+			<choice>
+				<ref name="grp.inline"/>
+				<ref name="tr-bt-textCT"/>
+			</choice>
+		</oneOrMore>
+	</define>
+
+	<define name="globalWithType">
+		<group>
+			<optional>
+				<attribute name="script">
+					<ref name="oxesScripts"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="space" ns="http://www.w3.org/XML/1998/namespace"/>
+			</optional>
+			<optional>
+				<attribute name="lang" ns="http://www.w3.org/XML/1998/namespace"/>
+			</optional>
+			<optional>
+				<attribute name="n">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="subType">
+					<ref name="attributeExtension"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="type">
+					<ref name="attributeExtension"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="resp">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="oxesID">
+					<ref name="oxesIDType"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="ID"> </attribute>
+			</optional>
+			<optional>
+				<attribute name="editions">
+					<list>
+						<zeroOrMore>
+							<data type="NMTOKEN"/>
+						</zeroOrMore>
+					</list>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="annotateType">
+					<ref name="annotationType"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="annotateWork">
+					<data type="string"/>
+				</attribute>
+			</optional>
+		</group>
+		<optional>
+			<attribute name="annotateRef">
+				<ref name="annotateRefType"/>
+			</attribute>
+		</optional>
+		<optional>
+			<ref name="tr-bt-textCT"/>
+		</optional>
+	</define>
+
+	<define name="coverageCT">
+		<group>
+			<data type="string"/>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="oxesScripts">
+		<data type="string">
+			<param name="pattern">([A-Z][a-z]{3}|[A-Za-z0-9]+)</param>
+		</data>
+	</define>
+	<define name="element0">
+		<element>
+			<anyName/>
+			<mixed>
+				<zeroOrMore>
+					<choice>
+						<ref name="element0"/>
+						<attribute>
+							<anyName/>
+						</attribute>
+					</choice>
+				</zeroOrMore>
+			</mixed>
+		</element>
+	</define>
+	<define name="creatorCT">
+		<group>
+			<element name="creator">
+				<data type="string"/>
+				<!-- role is required not optional -->
+				<attribute name="role">
+					<ref name="roleType"/>
+				</attribute>
+				<optional>
+					<attribute name="lang" ns="http://www.w3.org/XML/1998/namespace"/>
+				</optional>
+				<attribute name="ID">
+					<!-- required ID and must be unique -->
+				</attribute>
+			</element>
+		</group>
+	</define>
+
+
+	<!--
+		  <ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+	  -->
+	<define name="oxesGenType">
+		<list>
+			<zeroOrMore>
+				<data type="string">
+					<param name="pattern"
+					>((((\p{L}|\p{N}|_)+)(\.(\p{L}|\p{N}|_))*:)?([^:\s])+)</param>
+				</data>
+			</zeroOrMore>
+		</list>
+	</define>
+	<define name="workCT">
+		<attribute name="oxesWork">
+			<ref name="oxesWorkType"/>
+		</attribute>
+		<element name="title">
+			<ref name="titleCT"/>
+		</element>
+		<oneOrMore>
+			<ref name="creatorCT"/>
+		</oneOrMore>
+	</define>
+
+
+
+
+	<define name="noteCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>note</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithoutType"/>
+				<ref name="unpublishedNotesCT"/>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<value type="string">general</value>
+							<value type="string">citation</value>
+							<value type="string">exegesis</value>
+							<value type="string">translation</value>
+							<value type="string">speaker</value>
+							<value type="string">explanation</value>
+							<value type="string">alternative</value>
+							<value type="string">study</value>
+							<value type="string">allusion</value>
+							<value type="string">variant</value>
+							<value type="string">background</value>
+							<value type="string">liturgical</value>
+							<value type="string">devotional</value>
+							<value type="string">crossReference</value>
+							<value type="string">encoder</value>
+							<!-- added choices for Our Word -->
+							<value type="string">general</value>
+							<!-- nt -->
+							<value type="string">toDo</value>
+							<!-- ntck -->
+							<value type="string">askUNS</value>
+							<!-- ntUns -->
+							<value type="string">reason</value>
+							<!-- ntReas -->
+							<value type="string">suggestionFrontTranslation</value>
+							<!-- ntFT -->
+							<value type="string">definition</value>
+							<!-- ntDef -->
+							<value type="string">oldVersion</value>
+							<!-- ov -->
+							<value type="string">backTranslation</value>
+							<!-- ntBTG -->
+							<value type="string">hints</value>
+							<!-- ntHint -->
+							<value type="string">exegeticalGreek</value>
+							<!-- ntgk Exegetical: -->
+							<value type="string">exegeticalHebrew</value>
+							<!-- nthb Exegetical: -->
+							<value type="string">exegeticalGeneral</value>
+							<!-- ntcn Exegetical: -->
+							<value type="string">translatorNote</value>
+							<!-- from TE -->
+							<value type="string">consultantNote</value>
+							<!-- from TE -->
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="published">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="placement">
+						<choice>
+							<value type="string">interlinear</value>
+							<value type="string">foot</value>
+							<value type="string">inline</value>
+							<value type="string">apparatus</value>
+							<value type="string">left</value>
+							<value type="string">right</value>
+							<value type="string">end</value>
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="oxesRef">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<zeroOrMore>
+					<choice>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+					</choice>
+				</zeroOrMore>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<ref name="tr-bt-textCT"/>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="referencedText">
+							<ref name="referencedTextCT"/>
+						</element>
+						<element name="date">
+							<ref name="dateCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="figure">
+							<ref name="figureCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="inscription">
+							<ref name="inscriptionCT"/>
+						</element>
+						<element name="lg">
+							<ref name="lgCT"/>
+						</element>
+						<element name="list">
+							<ref name="listCT"/>
+						</element>
+						<element name="mentioned">
+							<ref name="mentionedCT"/>
+						</element>
+						<element name="p">
+							<ref name="pCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="rdg">
+							<ref name="rdgCT"/>
+						</element>
+						<element name="rdgGrp">
+							<ref name="rdgGrpCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+					<choice>
+						<element name="table">
+							<ref name="tableCT"/>
+						</element>
+						<element name="title">
+							<ref name="titleCT"/>
+						</element>
+						<element name="verse">
+							<ref name="verseCT"/>
+						</element>
+					</choice>
+
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+
+
+	<define name="oxesWorkType">
+		<data type="string">
+			<!-- added -  -->
+			<param name="pattern">((\p{L}|\p{N}|_)+)((\.(\p{L}|\p{N}|_|\-)+)*)?</param>
+		</data>
+	</define>
+	<define name="tableRole">
+		<choice>
+			<value type="string">data</value>
+			<value type="string">label</value>
+		</choice>
+	</define>
+	<define name="verse">
+		<element name="verse">
+			<ref name="verseCT"/>
+		</element>
+	</define>
+
+	<define name="verseCT">
+		<!-- make verse milestonable only -->
+		<ref name="sIDeID"/>
+		<ref name="globalWithType"/>
+	</define>
+	<define name="aCT">
+		<mixed>
+			<group>
+				<ref name="globalWithType"/>
+				<attribute name="href">
+					<data type="string"/>
+				</attribute>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<element name="index">
+						<ref name="indexCT"/>
+					</element>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+	<define name="referenceCT">
+		<ref name="globalWithoutType"/>
+		<optional>
+			<attribute name="type">
+				<choice>
+					<value type="string">parallel</value>
+					<value type="string">annotateRef</value>
+					<value type="string">source</value>
+				</choice>
+			</attribute>
+		</optional>
+		<optional>
+			<attribute name="oxesRef">
+				<ref name="oxesRefType"/>
+			</attribute>
+		</optional>
+		<optional>
+			<attribute name="canonical">
+				<data type="boolean"/>
+			</attribute>
+		</optional>
+		<ref name="tr-btCT"/>
+	</define>
+
+	<define name="titlePageCT">
+		<element name="title">
+			<ref name="grp.title"/>
+		</element>
+		<!--     <group>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<element name="title">
+				<ref name="titleCT"/>
+			</element>
+			<zeroOrMore>
+				<choice>
+					<choice>
+					   <element name="contributor">
+							<ref name="contributorCT"/>
+						</element>
+					   <element name="creator">
+							<ref name="creatorCT"/>
+						</element>
+					   <element name="subject">
+							<ref name="subjectCT"/>
+						</element>
+					   <element name="date">
+							<ref name="dateCT"/>
+						</element>
+					   <element name="description">
+							<ref name="descriptionCT"/>
+						</element>
+					   <element name="publisher">
+							<ref name="publisherCT"/>
+						</element>
+					   <element name="type">
+							<ref name="typeCT"/>
+						</element>
+					   <element name="format">
+							<ref name="formatCT"/>
+						</element>
+					   <element name="identifier">
+							<ref name="identifierCT"/>
+						</element>
+					   <element name="source">
+							<ref name="sourceCT"/>
+						</element>
+					   <element name="language">
+							<ref name="languageCT"/>
+						</element>
+					   <element name="relation">
+							<ref name="relationCT"/>
+						</element>
+					   <element name="coverage">
+							<ref name="coverageCT"/>
+						</element>
+					   <element name="p">
+							<ref name="pCT"/>
+						</element>
+					   <element name="figure">
+							<ref name="figureCT"/>
+						</element>
+					   <element name="milestone">
+							<ref name="milestoneCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</group>
+	 -->
+	</define>
+
+
+	<define name="divCT">
+		<ref name="sectionCT"/>
+	</define>
+	<define name="indexCT">
+		<group>
+			<optional>
+				<attribute name="TEIform">
+					<value>index</value>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="see">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="level4">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="level3">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="level2">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<attribute name="level1">
+				<data type="string"/>
+			</attribute>
+			<attribute name="index">
+				<data type="string"/>
+			</attribute>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="rdgCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>rdg</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithoutType"/>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<choice>
+								<value type="string">alternate</value>
+								<value type="string">variant</value>
+							</choice>
+							<data type="string"/>
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="witness">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="date">
+							<ref name="dateCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="lg">
+							<ref name="lgCT"/>
+						</element>
+						<element name="list">
+							<ref name="listCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="p">
+							<ref name="pCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+	<define name="rdgGrpCT">
+		<group>
+			<optional>
+				<attribute name="TEIform">
+					<value>rdgGrp</value>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<oneOrMore>
+				<choice>
+					<element name="rdg">
+						<ref name="rdgCT"/>
+					</element>
+				</choice>
+			</oneOrMore>
+		</group>
+	</define>
+	<define name="divineNameCT">
+		<mixed>
+			<group>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+	<define name="attributeExtension">
+		<data type="string">
+			<param name="pattern">([^\s])+</param>
+		</data>
+	</define>
+	<define name="textTypeVersion">
+		<choice>
+			<value type="string">Wycliffe-1.0.1</value>
+			<!-- 2008-04-05 jaa -->
+			<value type="string">Wycliffe-1.0.2</value>
+			<value type="string">Wycliffe-1.0.3</value>
+			<!-- 2008-05-07 jaa -->
+			<value type="string">Wycliffe-1.0.4</value>
+			<value type="string">Wycliffe-1.0.5</value>
+			<value type="string">Wycliffe-1.0.6</value>
+			<value type="string">Wycliffe-1.0.7</value>
+			<value type="string">Wycliffe-1.0.8</value>
+			<value type="string">Wycliffe-1.0.9</value>
+			<value type="string">Wycliffe-1.1.0</value>
+			<value type="string">Wycliffe-1.1.1</value>
+			<value type="string">Wycliffe-1.1.2</value>
+			<value type="string">Wycliffe-1.1.3</value>
+			<value type="string">Wycliffe-1.1.4</value>
+			<value type="string">Wycliffe-1.1.5</value>
+		</choice>
+	</define>
+
+	<define name="sourceCT">
+		<group>
+			<data type="string"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+		</group>
+	</define>
+
+	<define name="oxesTextCT">
+		<group>
+			<optional>
+				<attribute name="TEIform">
+					<value>text</value>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="space" ns="http://www.w3.org/XML/1998/namespace"/>
+			</optional>
+			<attribute name="lang" ns="http://www.w3.org/XML/1998/namespace"/>
+			<optional>
+				<attribute name="subType">
+					<ref name="attributeExtension"/>
+				</attribute>
+			</optional>
+			<attribute name="type">
+				<ref name="textTypeVersion"/>
+			</attribute>
+			<optional>
+				<attribute name="oxesRefWork">
+					<ref name="oxesWorkType"/>
+				</attribute>
+			</optional>
+			<attribute name="oxesIDWork">
+				<ref name="oxesWorkType"/>
+			</attribute>
+			<optional>
+				<attribute name="oxesID">
+					<ref name="oxesIDType"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="ID"> </attribute>
+			</optional>
+			<attribute name="canonical">
+				<data type="boolean"/>
+			</attribute>
+			<optional>
+				<attribute name="annotateRef">
+					<ref name="annotateRefType"/>
+				</attribute>
+			</optional>
+			<choice>
+				<element name="header">
+					<group>
+						<optional>
+							<attribute name="canonical">
+								<data type="boolean"/>
+							</attribute>
+						</optional>
+						<optional>
+							<attribute name="TEIform">
+								<value>teiHeader</value>
+							</attribute>
+						</optional>
+						<zeroOrMore>
+							<element name="revisionDesc">
+								<ref name="revisionDescCT"/>
+							</element>
+						</zeroOrMore>
+						<element name="work">
+							<attribute name="oxesWork">
+								<ref name="oxesWorkType"/>
+							</attribute>
+							<element name="title">
+								<ref name="grp.title"/>
+							</element>
+							<oneOrMore>
+								<ref name="creatorCT"/>
+							</oneOrMore>
+						</element>
+					</group>
+					<zeroOrMore>
+						<element name="workPrefix">
+							<group>
+								<ref name="globalWithoutType"/>
+								<attribute name="oxesWork">
+									<ref name="oxesWorkType"/>
+								</attribute>
+							</group>
+							<attribute name="path">
+								<data type="string">
+									<param name="pattern"
+										>((//((\p{L}|\p{N}|_|-|\.|:)+))(/(\p{L}|\p{N}|_|-|\.|:)+)?(/@(\p{L}|\p{N}|_|-|\.|:)+))</param>
+								</data>
+							</attribute>
+						</element>
+					</zeroOrMore>
+				</element>
+			</choice>
+			<optional>
+				<element name="titlePage">
+					<ref name="titlePageCT"/>
+				</element>
+			</optional>
+			<optional>
+				<element name="front">
+					<ref name="frontCT"/>
+				</element>
+			</optional>
+			<element name="canon">
+				<ref name="canonCT"/>
+			</element>
+			<optional>
+				<element name="back">
+					<ref name="backCT"/>
+				</element>
+			</optional>
+		</group>
+	</define>
+
+	<define name="frontCT">
+		<optional>
+			<choice>
+				<element name="titlePage">
+					<ref name="titlePageCT"/>
+				</element>
+			</choice>
+		</optional>
+		<oneOrMore>
+			<element name="section">
+				<ref name="sectionCT"/>
+			</element>
+		</oneOrMore>
+	</define>
+
+	<define name="backCT">
+		<optional>
+			<choice>
+				<element name="titlePage">
+					<ref name="titlePageCT"/>
+				</element>
+			</choice>
+		</optional>
+		<oneOrMore>
+			<element name="section">
+				<ref name="sectionCT"/>
+			</element>
+		</oneOrMore>
+	</define>
+
+	<define name="nameCTxxxxx">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>name</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithoutType"/>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<value type="string">holiday</value>
+							<value type="string">person</value>
+							<value type="string">geographic</value>
+							<value type="string">nonhuman</value>
+							<value type="string">ritual</value>
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="regular">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+	<define name="headCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>head</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+				<ref name="attribute-align"/>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="date">
+							<ref name="dateCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+	<define name="referencedTextCT">
+		<mixed>
+			<group>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="oxesRef">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="date">
+							<ref name="dateCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="inscription">
+							<ref name="inscriptionCT"/>
+						</element>
+						<element name="list">
+							<ref name="listCT"/>
+						</element>
+						<element name="mentioned">
+							<ref name="mentionedCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+					<choice>
+						<element name="speaker">
+							<ref name="speakerCT"/>
+						</element>
+						<element name="title">
+							<ref name="titleCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+	<define name="listCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>list</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="chapter">
+							<ref name="chapterCT"/>
+						</element>
+						<element name="head">
+							<ref name="headCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="item">
+							<mixed>
+								<group>
+									<optional>
+										<attribute name="TEIform">
+											<value>item</value>
+										</attribute>
+									</optional>
+									<ref name="globalWithType"/>
+									<optional>
+										<attribute name="role">
+											<data type="string"/>
+										</attribute>
+									</optional>
+									<optional>
+										<attribute name="canonical">
+											<data type="boolean"/>
+										</attribute>
+									</optional>
+								</group>
+								<oneOrMore>
+									<optional>
+										<element name="label">
+											<mixed>
+												<group>
+												  <optional>
+												  <attribute name="TEIform">
+												  <value>label</value>
+												  </attribute>
+												  </optional>
+												  <ref name="globalWithType"/>
+												  <optional>
+												  <attribute name="role">
+												  <data type="string"/>
+												  </attribute>
+												  </optional>
+												  <optional>
+												  <attribute name="canonical">
+												  <data type="boolean"/>
+												  </attribute>
+												  </optional>
+												</group>
+												<zeroOrMore>
+												  <choice>
+												  <element name="a">
+												  <ref name="aCT"/>
+												  </element>
+												  <element name="abbreviation">
+												  <ref name="abbreviationCT"/>
+												  </element>
+												  <element name="date">
+												  <ref name="dateCT"/>
+												  </element>
+												  <element name="nameOfGod">
+												  <ref name="divineNameCT"/>
+												  </element>
+												  <element name="foreign">
+												  <ref name="foreignCT"/>
+												  </element>
+												  <element name="index">
+												  <ref name="indexCT"/>
+												  </element>
+												  <element name="lb">
+												  <ref name="lbCT"/>
+												  </element>
+												  <element name="note">
+												  <ref name="noteCT"/>
+												  </element>
+												  <element name="q">
+												  <ref name="qCT"/>
+												  </element>
+												  <element name="reference">
+												  <ref name="referenceCT"/>
+												  </element>
+												  <element name="w">
+												  <ref name="wCT"/>
+												  </element>
+												  </choice>
+												</zeroOrMore>
+											</mixed>
+										</element>
+									</optional>
+									<zeroOrMore>
+										<choice>
+											<element name="a">
+												<ref name="aCT"/>
+											</element>
+											<element name="abbreviation">
+												<ref name="abbreviationCT"/>
+											</element>
+											<element name="date">
+												<ref name="dateCT"/>
+											</element>
+											<element name="nameOfGod">
+												<ref name="divineNameCT"/>
+											</element>
+											<element name="foreign">
+												<ref name="foreignCT"/>
+											</element>
+											<element name="index">
+												<ref name="indexCT"/>
+											</element>
+											<element name="lg">
+												<ref name="lgCT"/>
+											</element>
+											<element name="list">
+												<ref name="listCT"/>
+											</element>
+											<element name="lb">
+												<ref name="lbCT"/>
+											</element>
+											<element name="note">
+												<ref name="noteCT"/>
+											</element>
+											<element name="p">
+												<ref name="pCT"/>
+											</element>
+											<element name="q">
+												<ref name="qCT"/>
+											</element>
+											<element name="reference">
+												<ref name="referenceCT"/>
+											</element>
+											<element name="title">
+												<ref name="titleCT"/>
+											</element>
+											<element name="verse">
+												<ref name="verseCT"/>
+											</element>
+											<element name="w">
+												<ref name="wCT"/>
+											</element>
+										</choice>
+									</zeroOrMore>
+								</oneOrMore>
+							</mixed>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="verse">
+							<ref name="verseCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+	<define name="handCT">
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<zeroOrMore>
+					<choice>
+						<choice>
+							<element name="a">
+								<ref name="aCT"/>
+							</element>
+							<element name="abbreviation">
+								<ref name="abbreviationCT"/>
+							</element>
+							<element name="nameOfGod">
+								<ref name="divineNameCT"/>
+							</element>
+							<element name="foreign">
+								<ref name="foreignCT"/>
+							</element>
+							<element name="index">
+								<ref name="indexCT"/>
+							</element>
+							<element name="note">
+								<ref name="noteCT"/>
+							</element>
+							<element name="reference">
+								<ref name="referenceCT"/>
+							</element>
+						</choice>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>hand</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+
+	<define name="tableCT">
+		<group>
+			<optional>
+				<attribute name="TEIform">
+					<value>table</value>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="rows">
+					<data type="positiveInteger"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="cols">
+					<data type="positiveInteger"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<optional>
+				<element name="row">
+					<ref name="attribute-align"/>
+					<oneOrMore>
+						<element name="head">
+							<ref name="headCT"/>
+						</element>
+					</oneOrMore>
+				</element>
+			</optional>
+			<zeroOrMore>
+				<choice>
+					<element name="row">
+						<group>
+							<optional>
+								<attribute name="TEIform">
+									<value>row</value>
+								</attribute>
+							</optional>
+							<ref name="globalWithType"/>
+							<optional>
+								<attribute name="role">
+									<ref name="tableRole"/>
+								</attribute>
+							</optional>
+							<optional>
+								<attribute name="canonical">
+									<data type="boolean"/>
+								</attribute>
+							</optional>
+						</group>
+						<oneOrMore>
+							<element name="cell">
+								<mixed>
+									<group>
+										<optional>
+											<attribute name="TEIform">
+												<value>cell</value>
+											</attribute>
+										</optional>
+										<ref name="globalWithType"/>
+										<ref name="attribute-align"/>
+										<optional>
+											<attribute name="role">
+												<ref name="tableRole"/>
+											</attribute>
+										</optional>
+										<optional>
+											<attribute name="canonical">
+												<data type="boolean"/>
+											</attribute>
+										</optional>
+									</group>
+									<zeroOrMore>
+										<choice>
+											<element name="a">
+												<ref name="aCT"/>
+											</element>
+											<element name="abbreviation">
+												<ref name="abbreviationCT"/>
+											</element>
+											<element name="closer">
+												<ref name="closingCT"/>
+											</element>
+											<element name="date">
+												<ref name="dateCT"/>
+											</element>
+											<element name="nameOfGod">
+												<ref name="divineNameCT"/>
+											</element>
+											<element name="figure">
+												<ref name="figureCT"/>
+											</element>
+											<element name="foreign">
+												<ref name="foreignCT"/>
+											</element>
+											<element name="index">
+												<ref name="indexCT"/>
+											</element>
+											<element name="inscription">
+												<ref name="inscriptionCT"/>
+											</element>
+											<element name="lb">
+												<ref name="lbCT"/>
+											</element>
+											<element name="lg">
+												<ref name="lgCT"/>
+											</element>
+											<element name="list">
+												<ref name="listCT"/>
+											</element>
+											<element name="note">
+												<ref name="noteCT"/>
+											</element>
+											<element name="p">
+												<ref name="pCT"/>
+											</element>
+											<element name="q">
+												<ref name="qCT"/>
+											</element>
+											<element name="reference">
+												<ref name="referenceCT"/>
+											</element>
+											<element name="salute">
+												<ref name="saluteCT"/>
+											</element>
+											<element name="hand">
+												<ref name="handCT"/>
+											</element>
+											<element name="speaker">
+												<ref name="speakerCT"/>
+											</element>
+											<element name="speech">
+												<ref name="speechCT"/>
+											</element>
+											<element name="table">
+												<ref name="tableCT"/>
+											</element>
+											<element name="title">
+												<ref name="titleCT"/>
+											</element>
+											<element name="verse">
+												<ref name="verseCT"/>
+											</element>
+											<element name="w">
+												<ref name="wCT"/>
+											</element>
+										</choice>
+									</zeroOrMore>
+								</mixed>
+							</element>
+						</oneOrMore>
+					</element>
+				</choice>
+			</zeroOrMore>
+		</group>
+	</define>
+
+	<define name="attribute-align">
+		<optional>
+			<attribute name="align">
+				<choice>
+					<value type="string">center</value>
+					<value type="string">start</value>
+					<value type="string">justify</value>
+					<value type="string">left</value>
+					<value type="string">right</value>
+					<value type="string">end</value>
+				</choice>
+			</attribute>
+		</optional>
+</define>
+
+	<define name="wCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>w</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="xlit">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="src">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="POS">
+						<ref name="oxesGenType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="morph">
+						<ref name="oxesGenType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="lemma">
+						<ref name="oxesGenType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="gloss">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+	<define name="annotationType">
+		<choice>
+			<choice>
+				<value type="string">exposition</value>
+				<value type="string">translation</value>
+				<value type="string">commentary</value>
+				<value type="string">rebuttal</value>
+				<value type="string">sermon</value>
+				<value type="string">meditation</value>
+				<value type="string">outline</value>
+				<value type="string">studyGuide</value>
+			</choice>
+			<data type="string">
+				<param name="pattern">([^\s])+</param>
+			</data>
+		</choice>
+	</define>
+
+	<define name="lbCT">
+		<group>
+			<optional>
+				<attribute name="TEIform">
+					<value>milestone</value>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="contributorCT">
+		<group>
+			<data type="string"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="file-as">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="role">
+					<ref name="roleType"/>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+		</group>
+	</define>
+
+	<define name="closingCT">
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<zeroOrMore>
+					<choice>
+						<choice>
+							<element name="a">
+								<ref name="aCT"/>
+							</element>
+							<element name="abbreviation">
+								<ref name="abbreviationCT"/>
+							</element>
+							<element name="date">
+								<ref name="dateCT"/>
+							</element>
+							<element name="nameOfGod">
+								<ref name="divineNameCT"/>
+							</element>
+							<element name="foreign">
+								<ref name="foreignCT"/>
+							</element>
+							<element name="index">
+								<ref name="indexCT"/>
+							</element>
+							<element name="lg">
+								<ref name="lgCT"/>
+							</element>
+							<element name="list">
+								<ref name="listCT"/>
+							</element>
+							<element name="mentioned">
+								<ref name="mentionedCT"/>
+							</element>
+							<element name="note">
+								<ref name="noteCT"/>
+							</element>
+							<element name="p">
+								<ref name="pCT"/>
+							</element>
+							<element name="q">
+								<ref name="qCT"/>
+							</element>
+							<element name="reference">
+								<ref name="referenceCT"/>
+							</element>
+							<element name="hand">
+								<ref name="handCT"/>
+							</element>
+							<element name="speaker">
+								<ref name="speakerCT"/>
+							</element>
+							<element name="verse">
+								<ref name="verseCT"/>
+							</element>
+						</choice>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>closer</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+
+	<define name="otPassageCT">
+		<optional>
+			<ref name="verse"/>
+		</optional>
+		<oneOrMore>
+			<!--      <ref name="qCT"/>  recursive problem-->
+			<!--       <ref name="tr-bt-textCT"/>-->
+			<ref name="tr-bt-textCT"/>
+			<text/>
+		</oneOrMore>
+	</define>
+
+	<define name="otPassage">
+		<ref name="otPassageCT"/>
+	</define>
+
+	<define name="qCT">
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<zeroOrMore>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<ref name="tr-bt-textCT"/>
+						<element name="otPassage">
+							<ref name="otPassageCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="closer">
+							<ref name="closingCT"/>
+						</element>
+						<element name="date">
+							<ref name="dateCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="inscription">
+							<ref name="inscriptionCT"/>
+						</element>
+						<element name="lb">
+							<ref name="lbCT"/>
+						</element>
+						<element name="lg">
+							<ref name="lgCT"/>
+						</element>
+						<element name="list">
+							<ref name="listCT"/>
+						</element>
+						<element name="mentioned">
+							<ref name="mentionedCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="p">
+							<ref name="pCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+						<element name="salute">
+							<ref name="saluteCT"/>
+						</element>
+						<element name="hand">
+							<ref name="handCT"/>
+						</element>
+						<element name="speaker">
+							<ref name="speakerCT"/>
+						</element>
+						<element name="verse">
+							<ref name="verseCT"/>
+						</element>
+						<element name="w">
+							<ref name="wCT"/>
+						</element>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="level">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="marker">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="oxesRef">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<value type="string">citation</value>
+							<value type="string">block</value>
+							<value type="string">embedded</value>
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="who">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<ref name="globalWithoutType"/>
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>q</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+
+	<define name="lgCT">
+		<group>
+			<ref name="sIDeID"/>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="chapter">
+							<ref name="chapterCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="l">
+							<mixed>
+								<group>
+									<ref name="sIDeID"/>
+									<zeroOrMore>
+										<choice>
+											<element name="a">
+												<ref name="aCT"/>
+											</element>
+											<element name="abbreviation">
+												<ref name="abbreviationCT"/>
+											</element>
+											<element name="chapter">
+												<ref name="chapterCT"/>
+											</element>
+											<element name="date">
+												<ref name="dateCT"/>
+											</element>
+											<element name="nameOfGod">
+												<ref name="divineNameCT"/>
+											</element>
+											<element name="foreign">
+												<ref name="foreignCT"/>
+											</element>
+											<element name="index">
+												<ref name="indexCT"/>
+											</element>
+											<element name="lb">
+												<ref name="lbCT"/>
+											</element>
+											<element name="mentioned">
+												<ref name="mentionedCT"/>
+											</element>
+											<element name="note">
+												<ref name="noteCT"/>
+											</element>
+											<element name="q">
+												<ref name="qCT"/>
+											</element>
+											<element name="reference">
+												<ref name="referenceCT"/>
+											</element>
+											<element name="speaker">
+												<ref name="speakerCT"/>
+											</element>
+											<element name="verse">
+												<ref name="verseCT"/>
+											</element>
+											<element name="w">
+												<ref name="wCT"/>
+											</element>
+										</choice>
+									</zeroOrMore>
+									<optional>
+										<attribute name="canonical">
+											<data type="boolean"/>
+										</attribute>
+									</optional>
+									<optional>
+										<attribute name="level">
+											<data type="positiveInteger"/>
+										</attribute>
+									</optional>
+									<optional>
+										<attribute name="type">
+											<choice>
+												<choice>
+												  <value type="string">refrain</value>
+												  <value type="string">attribution</value>
+												  <value type="string">selah</value>
+												  <value type="string">doxology</value>
+												</choice>
+												<data type="string">
+												  <param name="pattern">([^\s])+</param>
+												</data>
+												<data type="string"/>
+											</choice>
+										</attribute>
+									</optional>
+									<ref name="globalWithoutType"/>
+								</group>
+								<optional>
+									<attribute name="TEIform">
+										<value>l</value>
+									</attribute>
+								</optional>
+							</mixed>
+						</element>
+						<element name="lg">
+							<ref name="lgCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="verse">
+							<ref name="verseCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="type">
+					<choice>
+						<data type="string"/>
+						<data type="string">
+							<param name="pattern">([^\s])+</param>
+						</data>
+						<data type="string"/>
+					</choice>
+				</attribute>
+			</optional>
+			<ref name="globalWithoutType"/>
+			<optional>
+				<attribute name="TEIform">
+					<value>lg</value>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="figureCT">
+		<group>
+			<optional>
+				<attribute name="TEIform">
+					<value>figure</value>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="src">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="size">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="rights">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="oxesRef">
+					<ref name="oxesRefType"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="location">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="catalog">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="alt">
+					<data type="string"/>
+				</attribute>
+			</optional>
+			<zeroOrMore>
+				<choice>
+					<element name="caption">
+						<mixed>
+							<group>
+								<optional>
+									<attribute name="TEIform">
+										<value>figDesc</value>
+									</attribute>
+								</optional>
+								<optional>
+									<attribute name="canonical">
+										<data type="boolean"/>
+									</attribute>
+								</optional>
+								<ref name="globalWithType"/>
+							</group>
+							<zeroOrMore>
+								<choice>
+									<element name="a">
+										<ref name="aCT"/>
+									</element>
+									<element name="abbreviation">
+										<ref name="abbreviationCT"/>
+									</element>
+									<element name="date">
+										<ref name="dateCT"/>
+									</element>
+									<element name="nameOfGod">
+										<ref name="divineNameCT"/>
+									</element>
+									<element name="foreign">
+										<ref name="foreignCT"/>
+									</element>
+									<element name="index">
+										<ref name="indexCT"/>
+									</element>
+									<element name="lb">
+										<ref name="lbCT"/>
+									</element>
+									<element name="note">
+										<ref name="noteCT"/>
+									</element>
+									<element name="q">
+										<ref name="qCT"/>
+									</element>
+									<element name="reference">
+										<ref name="referenceCT"/>
+									</element>
+									<element name="w">
+										<ref name="wCT"/>
+									</element>
+								</choice>
+							</zeroOrMore>
+						</mixed>
+					</element>
+					<element name="index">
+						<ref name="indexCT"/>
+					</element>
+					<element name="note">
+						<ref name="noteCT"/>
+					</element>
+					<element name="reference">
+						<ref name="referenceCT"/>
+					</element>
+				</choice>
+			</zeroOrMore>
+		</group>
+	</define>
+
+	<define name="roleType">
+		<choice>
+			<choice>
+				<value type="string">adp</value>
+				<value type="string">aqt</value>
+				<value type="string">com</value>
+				<value type="string">bkd</value>
+				<value type="string">aft</value>
+				<value type="string">pbl</value>
+				<value type="string">bdd</value>
+				<value type="string">cmm</value>
+				<value type="string">aut</value>
+				<value type="string">cre</value>
+				<value type="string">clb</value>
+				<value type="string">edt</value>
+				<value type="string">ann</value>
+				<value type="string">encoder</value>
+				<value type="string">bjd</value>
+				<value type="string">ill</value>
+				<value type="string">bpd</value>
+				<value type="string">art</value>
+				<value type="string">trl</value>
+				<!-- translator -->
+				<value type="string">backtrl</value>
+				<!-- back translator -->
+				<value type="string">ctg</value>
+				<value type="string">bnd</value>
+				<value type="string">ctb</value>
+				<value type="string">cwt</value>
+				<value type="string">aui</value>
+				<value type="string">ilu</value>
+				<value type="string">bkp</value>
+				<value type="string">csp</value>
+				<!-- consultant  -->
+			</choice>
+			<!-- extension removed -->
+		</choice>
+	</define>
+
+	<define name="publisherCT">
+		<group>
+			<data type="string"/>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="inscriptionCT">
+		<mixed>
+			<group>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="date">
+							<ref name="dateCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+					<choice>
+						<element name="speaker">
+							<ref name="speakerCT"/>
+						</element>
+						<element name="speech">
+							<ref name="speechCT"/>
+						</element>
+						<element name="title">
+							<ref name="titleCT"/>
+						</element>
+					</choice>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+
+	<define name="relationCT">
+		<group>
+			<data type="string"/>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="speechCT">
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<zeroOrMore>
+					<choice>
+						<element name="speech">
+							<ref name="speechCT"/>
+						</element>
+					</choice>
+				</zeroOrMore>
+				<zeroOrMore>
+					<choice>
+						<choice>
+							<element name="a">
+								<ref name="aCT"/>
+							</element>
+							<element name="abbreviation">
+								<ref name="abbreviationCT"/>
+							</element>
+							<element name="chapter">
+								<ref name="chapterCT"/>
+							</element>
+							<element name="closer">
+								<ref name="closingCT"/>
+							</element>
+							<element name="date">
+								<ref name="dateCT"/>
+							</element>
+							<element name="nameOfGod">
+								<ref name="divineNameCT"/>
+							</element>
+							<element name="foreign">
+								<ref name="foreignCT"/>
+							</element>
+							<element name="index">
+								<ref name="indexCT"/>
+							</element>
+							<element name="inscription">
+								<ref name="inscriptionCT"/>
+							</element>
+							<element name="lg">
+								<ref name="lgCT"/>
+							</element>
+							<element name="l">
+								<ref name="lCT"/>
+							</element>
+							<element name="list">
+								<ref name="listCT"/>
+							</element>
+							<element name="mentioned">
+								<ref name="mentionedCT"/>
+							</element>
+							<element name="note">
+								<ref name="noteCT"/>
+							</element>
+							<element name="p">
+								<ref name="pCT"/>
+							</element>
+							<element name="q">
+								<ref name="qCT"/>
+							</element>
+							<element name="reference">
+								<ref name="referenceCT"/>
+							</element>
+							<element name="salute">
+								<ref name="saluteCT"/>
+							</element>
+							<element name="hand">
+								<ref name="handCT"/>
+							</element>
+							<element name="speaker">
+								<ref name="speakerCT"/>
+							</element>
+							<element name="table">
+								<ref name="tableCT"/>
+							</element>
+							<element name="title">
+								<ref name="titleCT"/>
+							</element>
+							<element name="verse">
+								<ref name="verseCT"/>
+							</element>
+						</choice>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="marker">
+						<data type="string"/>
+					</attribute>
+				</optional>
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>speech</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+	<define name="revisionDescCT">
+		<group>
+			<optional>
+				<attribute name="TEIform">
+					<value>revisionDesc</value>
+				</attribute>
+			</optional>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<choice>
+				<notAllowed/>
+				<element name="date">
+					<ref name="dateCT"/>
+				</element>
+			</choice>
+			<oneOrMore>
+				<choice>
+					<element name="p">
+						<ref name="pCT"/>
+					</element>
+				</choice>
+			</oneOrMore>
+		</group>
+	</define>
+
+	<define name="abbreviationCT">
+		<jaa:tag role="inline" dataBucket="false" createdBy="user" usfm="10" id="Abbreviation"
+			userlevel="3" context="general" picture="NLT EST 8.79.1 note"
+			picture2="NLT Introduction" publish="yes" type="inline">
+			<also idref="Note_Background_Paragraph" coords="105,1,400,90" coords2="20,20,105,90"
+				coords3="400,40,500,90" coords4="" coords5=""/>
+			<also2 idref="Paragraph" coords="20,25,415,90"/>
+			<textProperties publishable="true" vernacular="true" nonpublishable="false"
+				verse="false" poetic="false" note="false" crossreference="false" paragraph="false"
+				level_1="false" level_2="false" book="false" level_3="false" level_4="false"
+				level_5="false" chapter="false" nonvernacular="false"/>
+			<jaa:h2>abbreviation</jaa:h2>
+			<jaa:p>Abbreviation identifies an abbreviation (usually in a note or introduction).</jaa:p>
+			<jaa:p>Abbreviations can include the following:</jaa:p>
+			<jaa:ul>
+				<jaa:li>translation names (for example, NIV, TEV)</jaa:li>
+				<jaa:li>dates (for example, BC, AD)</jaa:li>
+				<jaa:li>weights and measures (for example, km, lb)</jaa:li>
+				<jaa:li>manuscripts (for example, LXX)</jaa:li>
+			</jaa:ul>
+			<jaa:usfm>\zabbreviation</jaa:usfm>
+			<jaa:TE>abbreviation</jaa:TE>
+			<jaa:osis>abbr</jaa:osis>
+		</jaa:tag>
+
+	<!--
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<zeroOrMore>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="expansion">
+						<data type="string"/>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>abbr</value>
+				</attribute>
+			</optional>
+		</mixed>
+	-->
+		<optional>
+			<attribute name="expansion">
+				<data type="string"/>
+			</attribute>
+		</optional>
+		<text/>
+	</define>
+
+	<define name="pCT">
+		<jaa:tag role="paragraph" dataBucket="false" createdBy="user" usfm="6" id="Paragraph" userlevel="0" structure="body" use="prose" context="text" picture="TEV MRK 1" picture2="TEV MAT 1.17-20" picture3="NLT ACT 23" publish="yes" type="block">
+		  <jaa:h2>p</jaa:h2>
+			<jaa:usfm>\p, \gp, \ps, \pdi, \pde</jaa:usfm>
+			<jaa:TE>Paragraph</jaa:TE>
+			<jaa:osis>&lt;p/></jaa:osis>
+		<jaa:p><tagName idref="Paragraph"/> identifies a paragraph of prose. It is the most common type of paragraph. A text embedded in another text,  like a letter, prayer, or song is an <tagName idref="Embedded_Text_Paragraph"/></jaa:p>
+		<jaa:p>At publication time, the typesetter can format the first <tagName idref="Paragraph"/> following a section heading with no first line indent.</jaa:p>
+		   <see idref="Paragraph"/>
+			<see idref="Citation_Paragraph"/>
+			<see idref="Inscription_Paragraph"/>
+			<see idref="Paragraph_Continuation"/>
+			<see idref="Intro_Paragraph"/>
+			<see idref="Embedded_Text_Paragraph"/>
+			<see idref="Variant_Paragraph"/>
+			<see idref="Basic_styles"/>
+			<also idref="Section_Head" coords="15,40,275,75"/>
+			<also idref="Chapter_Number" coords="15,75,45,110"/>
+			<also idref="Verse_Number" coords="210,90,220,105" coords2="15,235,35,245"/>
+			<also idref="Note_Marker" coords="200,90,210,105" coords2="150,245,160,260"/>
+			<also idref="Citation_Line1" coords="15,120,275,145" coords2="15,165,275,180"/>
+			<also idref="Citation_Line2" coords="15,145,275,165" coords2="15,180,275,205" coords3="15,205,275,235"/>
+			<also2 idref="Verse_Number"/>
+			<also2 idref="Section_Head"/>
+			<also3 idref="Section_Head"/>
+			<also3 idref="Verse_Number" coords="20,20,40,30" coords2="25,180,50,190" coords3="85,200,100,215"/>
+			<also3 idref="Note_Marker" coords="65,60,80,70" coords2="80,135,95,145"/>
+			<also3 idref="Chapter_Number" coords="20,110,65,145"/>
+			<xsem id="p"/>
+			<osis id="p" status="current"/>
+			<paragraph basedOn="Normal" next="Paragraph" firstLine="8 pt" hanging=""/>
+			<textProperties publishable="true" paragraph="true" vernacular="true" nonpublishable="false" verse="false" poetic="false" note="false" crossreference="false" level_1="false" level_2="false" book="false" level_3="false" level_4="false" level_5="false" chapter="false" nonvernacular="false"/>
+		</jaa:tag>
+
+
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>p</value>
+					</attribute>
+				</optional>
+				<!--  <ref name="globalWithType"/> -->
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<value type="string">continuation</value>
+							<value type="string">inscription</value>
+							<value type="string">userPS</value>
+						</choice>
+					</attribute>
+					<optional>
+						<attribute name="subType">
+							<data type="string">
+								<param name="pattern">\\([^\s])+</param>
+							</data>
+						</attribute>
+					</optional>
+				</optional>
+			</group>
+			<ref name="tr-bt-textCT"/>
+		</mixed>
+	</define>
+
+
+	<define name="typeCT">
+		<group>
+			<data type="string"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="type">
+					<choice>
+						<value type="string">OSIS</value>
+						<data type="string">
+							<param name="pattern">([^\s])+</param>
+						</data>
+					</choice>
+				</attribute>
+			</optional>
+			<ref name="globalWithoutType"/>
+		</group>
+	</define>
+	<define name="dateCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>date</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithoutType"/>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<value type="string">Jewish</value>
+							<value type="string">Julian</value>
+							<value type="string">ISO</value>
+							<value type="string">Islamic</value>
+							<value type="string">Gregorian</value>
+							<value type="string">Chinese</value>
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="event">
+						<choice>
+							<value type="string">edition</value>
+							<value type="string">imprint</value>
+							<value type="string">original</value>
+							<value type="string">eversion</value>
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<element name="a">
+						<ref name="aCT"/>
+					</element>
+					<element name="index">
+						<ref name="indexCT"/>
+					</element>
+					<element name="note">
+						<ref name="noteCT"/>
+					</element>
+					<element name="figure">
+						<ref name="figureCT"/>
+					</element>
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+	<define name="subjectCT">
+		<group>
+			<data type="string"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="type">
+					<choice>
+						<choice>
+							<value type="string">RSWK</value>
+							<value type="string">DDC</value>
+							<value type="string">DBC</value>
+							<value type="string">BILDI</value>
+							<value type="string">FGT</value>
+							<value type="string">NLSH</value>
+							<value type="string">SOG</value>
+							<value type="string">MeSH</value>
+							<value type="string">LCC</value>
+							<value type="string">SWD_RSWK</value>
+							<value type="string">LCSH</value>
+							<value type="string">EUT</value>
+							<value type="string">ATLA</value>
+							<value type="string">UDC</value>
+							<value type="string">SEARS</value>
+							<value type="string">VAT</value>
+						</choice>
+						<data type="string">
+							<param name="pattern">([^\s])+</param>
+						</data>
+					</choice>
+				</attribute>
+			</optional>
+			<ref name="globalWithoutType"/>
+		</group>
+	</define>
+	<define name="formatCT">
+		<group>
+			<data type="string"/>
+			<ref name="globalWithType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+
+	<define name="titleCT">
+		<mixed>
+			<group>
+				<optional>
+					<ref name="tr-bt-textCT"/>
+				</optional>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<value type="string">acrostic</value>
+							<value type="string">chapter</value>
+							<value type="string">continued</value>
+							<value type="string">main</value>
+							<value type="string">parallel</value>
+							<value type="string">parallelPassage</value>
+							<value type="string">psalm</value>
+							<value type="string">runningHead</value>
+							<value type="string">secondary</value>
+							<value type="string">scope</value>
+							<value type="string">series</value>
+							<value type="string">tertiary</value>
+						</choice>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="level">
+						<data type="integer"/>
+					</attribute>
+				</optional>
+			</group>
+		</mixed>
+	</define>
+
+	<define name="foreignCT">
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<zeroOrMore>
+					<choice>
+						<choice>
+							<element name="a">
+								<ref name="aCT"/>
+							</element>
+							<element name="abbreviation">
+								<ref name="abbreviationCT"/>
+							</element>
+							<element name="date">
+								<ref name="dateCT"/>
+							</element>
+							<element name="nameOfGod">
+								<ref name="divineNameCT"/>
+							</element>
+							<element name="foreign">
+								<ref name="foreignCT"/>
+							</element>
+							<element name="index">
+								<ref name="indexCT"/>
+							</element>
+							<element name="note">
+								<ref name="noteCT"/>
+							</element>
+							<element name="reference">
+								<ref name="referenceCT"/>
+							</element>
+							<element name="title">
+								<ref name="titleCT"/>
+							</element>
+						</choice>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>foreign</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+	<define name="descriptionCT">
+		<group>
+			<data type="string"/>
+			<ref name="globalWithoutType"/>
+			<optional>
+				<attribute name="type">
+					<choice>
+						<value type="string">usfm</value>
+						<data type="string">
+							<param name="pattern">([^\s])+</param>
+						</data>
+					</choice>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+	<define name="mentionedCT">
+		<mixed>
+			<group>
+				<optional>
+					<attribute name="TEIform">
+						<value>mentioned</value>
+					</attribute>
+				</optional>
+				<ref name="globalWithType"/>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+			</group>
+			<zeroOrMore>
+				<choice>
+					<element name="a">
+						<ref name="aCT"/>
+					</element>
+					<element name="abbreviation">
+						<ref name="abbreviationCT"/>
+					</element>
+					<element name="date">
+						<ref name="dateCT"/>
+					</element>
+					<element name="nameOfGod">
+						<ref name="divineNameCT"/>
+					</element>
+					<element name="foreign">
+						<ref name="foreignCT"/>
+					</element>
+					<element name="index">
+						<ref name="indexCT"/>
+					</element>
+					<element name="note">
+						<ref name="noteCT"/>
+					</element>
+					<element name="q">
+						<ref name="qCT"/>
+					</element>
+					<element name="reference">
+						<ref name="referenceCT"/>
+					</element>
+
+				</choice>
+			</zeroOrMore>
+		</mixed>
+	</define>
+	<define name="annotateRefType">
+		<list>
+			<zeroOrMore>
+				<choice>
+					<data type="string">
+						<param name="pattern"
+							>(((\p{L}|\p{N}|_)+)((\.(\p{L}|\p{N}|_)+)*)?:)?((\p{L}|\p{N}|_|(\\[^\s]))+)(\.(\p{L}|\p{N}|_|(\\[^\s]))*)*(!((\p{L}|\p{N}|_|(\\[^\s]))+)((\.(\p{L}|\p{N}|_|(\\[^\s]))+)*)?)?(@(cp\[(\p{Nd})*\]|s\[(\p{L}|\p{N})+\](\[(\p{N})+\])?))?(\-((((\p{L}|\p{N}|_|(\\[^\s]))+)(\.(\p{L}|\p{N}|_|(\\[^\s]))*)*)+)(!((\p{L}|\p{N}|_|(\\[^\s]))+)((\.(\p{L}|\p{N}|_|(\\[^\s]))+)*)?)?(@(cp\[(\p{Nd})*\]|s\[(\p{L}|\p{N})+\](\[(\p{N})+\])?))?)?</param>
+					</data>
+					<data type="string">
+						<param name="pattern"
+						>((((\p{L}|\p{N}|_)+)(\.(\p{L}|\p{N}|_))*:)?([^:\s])+)</param>
+					</data>
+				</choice>
+			</zeroOrMore>
+		</list>
+	</define>
+
+	<!-- additional ones  all divs are change to more specific tags -->
+	<define name="book">
+		<ref name="bookCT"/>
+	</define>
+	<define name="bookGroupCT">
+		<optional>
+			<element name="titlePage">
+				<ref name="titlePageCT"/>
+			</element>
+		</optional>
+		<oneOrMore>
+			<element name="book">
+				<ref name="bookCT"/>
+			</element>
+		</oneOrMore>
+	</define>
+
+	<define name="canonCT">
+		<choice>
+			<element name="bookGroup">
+				<ref name="bookGroupCT"/>
+			</element>
+			<oneOrMore>
+				<element name="book">
+					<ref name="bookCT"/>
+				</element>
+			</oneOrMore>
+		</choice>
+	</define>
+
+	<define name="bookCT">
+		<attribute name="ID">
+			<ref name="enum.bookValue"/>
+		</attribute>
+		<optional>
+			<element name="titlePage">
+				<ref name="titlePageCT"/>
+			</element>
+		</optional>
+		<element name="title">
+			<ref name="grp.title"/>
+		</element>
+		<optional>
+			<ref name="introductionCT"/>
+		</optional>
+		<ref name="bookTextCT"/>
+	</define>
+
+	<define name="bookTextCT">
+		<group>
+			<ref name="saluteCT"/>
+		</group>
+		<oneOrMore>
+			<element name="section">
+				<ref name="sectionCT"/>
+			</element>
+		</oneOrMore>
+		<zeroOrMore>
+			<element name="closing">
+				<ref name="closingCT"/>
+			</element>
+		</zeroOrMore>
+	</define>
+
+	<define name="note">
+		<element name="note">
+			<ref name="globalTrBt"/>
+		</element>
+	</define>
+
+	<define name="introductionCT">
+		<element name="introduction">
+			<ref name="sectionCT"/>
+		</element>
+	</define>
+
+
+
+	<define name="tr-bt-textCT">
+		<oneOrMore>
+			<optional>
+				<element name="chapter">
+					<ref name="chapterCT"/>
+				</element>
+			</optional>
+			<optional>
+				<element name="verse">
+					<ref name="verseCT"/>
+				</element>
+			</optional>
+			<optional>
+				<element name="reference">
+					<ref name="referenceCT"/>
+				</element>
+			</optional>
+			<ref name="tr-btCT"/>
+			<optional>
+				<element name="note">
+					<ref name="noteCT"/>
+				</element>
+			</optional>
+			<optional>
+				<element name="figure">
+					<ref name="figureCT"/>
+				</element>
+			</optional>
+			<optional>
+				<element name="verse">
+					<ref name="verseCT"/>
+				</element>
+			</optional>
+			<optional>
+				<element name="chapter">
+					<ref name="chapterCT"/>
+				</element>
+			</optional>
+		</oneOrMore>
+	</define>
+
+	<define name="tr-btCT">
+		<!-- optional to allow for empty paragraph -->
+		<!-- up to one tr and zero or more bt -->
+		<optional>
+			<element name="tr">
+				<optional>
+					<attribute name="xml:lang">
+						<!-- 2 or 3 characters  -->
+						<text/>
+					</attribute>
+				</optional>
+				<oneOrMore>
+					<choice>
+						<text/>
+						<ref name="grp.inline"/>
+					</choice>
+				</oneOrMore>
+			</element>
+		</optional>
+		<optional>
+			<element name="bt">
+				<attribute name="xml:lang">
+					<!-- 2 or 3 characters  -->
+					<text/>
+				</attribute>
+				<optional>
+					<attribute name="status">
+						<choice>
+							<value>unfinished</value>
+							<value>finished</value>
+							<value>checked</value>
+							<value>closed</value>
+						</choice>
+					</attribute>
+				</optional>
+				<text/>
+			</element>
+		</optional>
+	</define>
+
+	<define name="sectionCT">
+		<jaa:tag role="div" dataBucket="false" createdBy="user" usfm="4" id="Section_Head" userlevel="0" structure="heading" context="text" publish="yes" type="block">
+			<jaa:h2>section</jaa:h2>
+			<jaa:p>A book consists of one or more sections. A section may be major, normal (default), minor, or series.</jaa:p>
+			<jaa:p>Sections are not explicitly marked in USFM or TE. Sections are implied as the content from one section head to the next. The type of section is derived from the section head style.</jaa:p>
+			<see idref="Section_Head_Major"/>
+			<see idref="Section_Head_Minor"/>
+			<see idref="Section_Head_List"/>
+			<see idref="Guidelines_Section_Headings"/>
+			<see idref="Basic_styles"/>
+			<also idref="Chapter_Number" coords="10,70,40,110"/>
+			<also idref="Verse_Number" coords="30,160,45,175" coords2="25,230,40,245" coords3="210,85,220,100" coords4="" coords5=""/>
+			<also idref="Note_Marker" coords="200,85,210,105" coords2="150,245,160,265" coords3="" coords4="" coords5=""/>
+			<also idref="Parallel_Passage_Reference" coords="40,60,250,70" coords2="" coords3="" coords4="" coords5=""/>
+			<also idref="Paragraph" coords="45,75,275,120" coords2="10,235,280,260" coords3="" coords4="" coords5=""/>
+			<also idref="Citation_Line1" coords="20,120,245,150" coords2="20,160,250,180" coords3="" coords4="" coords5=""/>
+			<also idref="Citation_Line2" coords="45,155,245,160" coords2="30,180,265,235" coords3="" coords4="" coords5=""/>
+			<jaa:usfm></jaa:usfm>
+			<jaa:TE></jaa:TE>
+			<jaa:osis>div</jaa:osis>
+			<font bold="true"/>
+			<paragraph basedOn="Normal" next="Section_Head" firstLine="" hanging="" spaceBefore="10 pt"/>
+			<textProperties publishable="true" paragraph="true" vernacular="true" level_2="true" nonpublishable="false" verse="false" poetic="false" note="false" crossreference="false" level_1="false" book="false" level_3="false" level_4="false" level_5="false" chapter="false" nonvernacular="false"/>
+		</jaa:tag>
+
+
+
+
+		<sch:pattern name="Element exclusion">
+			<sch:rule context="section">
+				<sch:assert test="not(.//p)">p not allowed in div</sch:assert>
+			</sch:rule>
+		</sch:pattern>
+		<mixed>
+			<group>
+				<ref name="sIDeID"/>
+				<optional>
+					<choice>
+						<element name="titlePage">
+							<ref name="titlePageCT"/>
+						</element>
+					</choice>
+				</optional>
+				<zeroOrMore>
+					<choice>
+						<element name="section">
+							<ref name="sectionCT"/>
+						</element>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="chapter">
+							<ref name="chapterCT"/>
+						</element>
+						<element name="closer">
+							<ref name="closingCT"/>
+						</element>
+						<element name="embedded">
+							<ref name="embeddedCT"/>
+						</element>
+						<element name="figure">
+							<ref name="figureCT"/>
+						</element>
+						<element name="item">
+							<ref name="itemCT"/>
+						</element>
+						<element name="l">
+							<ref name="lCT"/>
+						</element>
+						<element name="lg">
+							<ref name="lgCT"/>
+						</element>
+						<element name="list">
+							<ref name="listCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="p">
+							<ref name="pCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+						<element name="salute">
+							<ref name="saluteCT"/>
+						</element>
+						<element name="speech">
+							<ref name="speechCT"/>
+						</element>
+						<element name="stanzaBreak">
+							<ref name="stanzaBreakCT"/>
+						</element>
+						<element name="table">
+							<ref name="tableCT"/>
+						</element>
+						<element name="title">
+							<ref name="titleCT"/>
+						</element>
+						<element name="verse">
+							<ref name="verseCT"/>
+						</element>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="oxesRef">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="dateRevised">
+						<ref name="dateRevisedCT"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="scope">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<choice>
+								<value type="string">summary</value>
+								<value type="string">imprimatur</value>
+								<value type="string">body</value>
+								<value type="string">glossary</value>
+								<value type="string">paragraph</value>
+								<value type="string">bookGroup</value>
+								<value type="string">majorSection</value>
+								<value type="string">outline</value>
+								<value type="string">bibliography</value>
+								<value type="string">afterword</value>
+								<value type="string">preface</value>
+								<value type="string">publicationData</value>
+								<value type="string">chapter</value>
+								<value type="string">commentary</value>
+								<value type="string">colophon</value>
+								<value type="string">acknowledgement</value>
+								<value type="string">map</value>
+								<value type="string">annotant</value>
+								<value type="string">titlePage</value>
+								<value type="string">subSection</value>
+								<value type="string">index</value>
+								<value type="string">coverPage</value>
+								<value type="string">dedication</value>
+								<value type="string">back</value>
+								<value type="string">front</value>
+								<value type="string">section</value>
+								<value type="string">concordance</value>
+								<value type="string">article</value>
+								<value type="string">gazetteer</value>
+								<value type="string">entry</value>
+								<value type="string">book</value>
+								<value type="string">tableofContents</value>
+								<value type="string">appendix</value>
+								<value type="string">bridge</value>
+								<value type="string">part</value>
+								<value type="string">devotional</value>
+								<value type="string">introduction</value>
+								<value type="string">major</value>
+								<value type="string">minor</value>
+								<value type="string">series</value>
+							</choice>
+						</choice>
+					</attribute>
+				</optional>
+				<!--        <ref name="globalTrBt"/>-->
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>div</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+
+<define name="stanzaBreakCT">
+	<jaa:tag role="line" dataBucket="false" createdBy="user" usfm="7" id="Stanza_Break" userlevel="1" structure="body" use="line" context="text" picture="TEV PSA 55.1-5" picture2="NLT PSA 23" publish="yes" type="block">
+	   <jaa:usfm>\b, \ib</jaa:usfm>
+	   <jaa:TE>Stanza Break</jaa:TE>
+	   <jaa:osis>&lt;lg type='stanza'/></jaa:osis>
+		<jaa:usage restrictedTo="in poetry">
+		<jaa:p>    <tagName idref="Stanza_Break"/> identifies the break (blank line) between stanzas of poetry. <tagName idref="Stanza_Break"/> is only allowed between poetry elements to indicate stanzas.
+					Do not misuse <tagName idref="Stanza_Break"/> to produce extra blank lines. It is only allowed <ew>between</ew> poetry elements to indicate stanzas. The current agreement with publishers says, "No extra space is permitted above or below poetry". The publishers will not pay for publications with extra blank lines.
+		</jaa:p>
+		</jaa:usage>
+		<see idref="Line1"/>
+		<also idref="Section_Head" coords="30,1,300,40"/>
+		<also idref="Chapter_Number" coords="30,40,80,70"/>
+		<also idref="Line1" coords="80,40,300,55" coords2="40,80,300,95" coords3="40,110,300,140" coords4="40,170,300,185" coords5="40,225,300,240"/>
+		<also idref="Line2" coords="80,55,300,80" coords2="40,95,300,110" coords3="40,140,300,170" coords4="40,185,300,210" coords5="40,240,300,270"/>
+		<also idref="Stanza_Break" coords="40,210,300,240"/>
+		<also2 idref="Hebrew_Title" coords="80,1,180,25"/>
+		<also2 idref="Chapter_Number" coords="30,1,75,40"/>
+		<also2 idref="Line1" coords="25,25,300,45" coords2="25,70,300,85" coords3="25,120,300,135" coords4="25,160,300,180" coords5="25,195,300,215"/>
+		<also2 idref="Line2" coords="25,45,300,70" coords2="25,80,300,120" coords3="25,135,300,150" coords4="25,175,300,195" coords5="25,210,300,230"/>
+		<also2 idref="Stanza_Break" coords="25,150,300,160"/>
+		<xsem id="lineGroup"/>
+		<osis id="lg[@type='?stanza?']" status="request"/>
+		<paragraph basedOn="Line1" next="Line1" firstLine="" hanging=""/>
+		<textProperties publishable="true" paragraph="true" vernacular="true" poetic="true" level_1="true" nonpublishable="false" verse="false" note="false" crossreference="false" level_2="false" book="false" level_3="false" level_4="false" level_5="false" chapter="false" nonvernacular="false"/>
+	</jaa:tag>
+
+
+	<!-- empty paragraph -->
+   <optional>
+	   <text/>
+   </optional>
+</define>
+
+	<define name="itemCT">
+		<attribute name="level">
+			<choice>
+				<value>1</value>
+				<value>2</value>
+			</choice>
+		</attribute>
+		<ref name="paragraphsContent"/>
+	</define>
+
+	<define name="dateRevisedCT">
+		<data type="string">
+			<param name="pattern">[0-9]{4}-[0-9]{2}-[0-9]{2}</param>
+		</data>
+	</define>
+
+	<define name="lCT">
+		<!-- line -->
+		<optional>
+			<attribute name="level">
+				<choice>
+					<value>1</value>
+					<value>2</value>
+					<value>3</value>
+				</choice>
+			</attribute>
+		</optional>
+		<optional>
+			<attribute name="type">
+				<choice>
+					<value>salute</value>
+					<value>citation</value>
+					<value>closing</value>
+					<value>doxology</value>
+					<value>refrain</value>
+					<value>attribution</value>
+					<value>selah</value>
+				</choice>
+			</attribute>
+		</optional>
+		<ref name="paragraphsContent"/>
+	</define>
+
+	<define name="standardTextCTxxx">
+		<mixed>
+			<group>
+				<optional>
+					<choice>
+						<element name="titlePage">
+							<ref name="titlePageCT"/>
+						</element>
+					</choice>
+				</optional>
+				<zeroOrMore>
+					<choice>
+						<element name="a">
+							<ref name="aCT"/>
+						</element>
+						<element name="item">
+							<ref name="itemCT"/>
+						</element>
+						<element name="l">
+							<ref name="lCT"/>
+						</element>
+						<element name="abbreviation">
+							<ref name="abbreviationCT"/>
+						</element>
+						<element name="chapter">
+							<ref name="chapterCT"/>
+						</element>
+						<element name="closing">
+							<ref name="closingCT"/>
+						</element>
+						<element name="date">
+							<ref name="dateCT"/>
+						</element>
+						<element name="section">
+							<ref name="divCT"/>
+						</element>
+						<element name="nameOfGod">
+							<ref name="divineNameCT"/>
+						</element>
+						<element name="figure">
+							<ref name="figureCT"/>
+						</element>
+						<element name="foreign">
+							<ref name="foreignCT"/>
+						</element>
+						<element name="index">
+							<ref name="indexCT"/>
+						</element>
+						<element name="inscription">
+							<ref name="inscriptionCT"/>
+						</element>
+						<element name="lb">
+							<ref name="lbCT"/>
+						</element>
+						<element name="lg">
+							<ref name="lgCT"/>
+						</element>
+						<element name="list">
+							<ref name="listCT"/>
+						</element>
+						<element name="mentioned">
+							<ref name="mentionedCT"/>
+						</element>
+						<element name="note">
+							<ref name="noteCT"/>
+						</element>
+						<element name="p">
+							<ref name="pCT"/>
+						</element>
+						<element name="q">
+							<ref name="qCT"/>
+						</element>
+						<element name="reference">
+							<ref name="referenceCT"/>
+						</element>
+						<element name="salute">
+							<ref name="saluteCT"/>
+						</element>
+						<element name="hand">
+							<ref name="handCT"/>
+						</element>
+						<element name="speaker">
+							<ref name="speakerCT"/>
+						</element>
+						<element name="speech">
+							<ref name="speechCT"/>
+						</element>
+						<element name="table">
+							<ref name="tableCT"/>
+						</element>
+						<element name="title">
+							<ref name="titleCT"/>
+						</element>
+						<element name="verse">
+							<ref name="verseCT"/>
+						</element>
+						<element name="w">
+							<ref name="wCT"/>
+						</element>
+					</choice>
+				</zeroOrMore>
+				<optional>
+					<attribute name="canonical">
+						<data type="boolean"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="oxesRef">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="scope">
+						<ref name="oxesRefType"/>
+					</attribute>
+				</optional>
+				<optional>
+					<attribute name="type">
+						<choice>
+							<value type="string">summary</value>
+							<value type="string">imprimatur</value>
+							<value type="string">body</value>
+							<value type="string">glossary</value>
+							<value type="string">paragraph</value>
+							<value type="string">bookGroup</value>
+							<value type="string">majorSection</value>
+							<value type="string">outline</value>
+							<value type="string">bibliography</value>
+							<value type="string">afterword</value>
+							<value type="string">preface</value>
+							<value type="string">publicationData</value>
+							<value type="string">chapter</value>
+							<value type="string">commentary</value>
+							<value type="string">colophon</value>
+							<value type="string">acknowledgement</value>
+							<value type="string">map</value>
+							<value type="string">annotant</value>
+							<value type="string">titlePage</value>
+							<value type="string">subSection</value>
+							<value type="string">index</value>
+							<value type="string">coverPage</value>
+							<value type="string">dedication</value>
+							<value type="string">back</value>
+							<value type="string">front</value>
+							<value type="string">section</value>
+							<value type="string">concordance</value>
+							<value type="string">article</value>
+							<value type="string">gazetteer</value>
+							<value type="string">entry</value>
+							<value type="string">book</value>
+							<value type="string">tableofContents</value>
+							<value type="string">appendix</value>
+							<value type="string">bridge</value>
+							<value type="string">part</value>
+							<value type="string">devotional</value>
+							<value type="string">introduction</value>
+						</choice>
+					</attribute>
+				</optional>
+			</group>
+			<optional>
+				<attribute name="TEIform">
+					<value>div</value>
+				</attribute>
+			</optional>
+		</mixed>
+	</define>
+
+	<define name="unpublishedNotesCT">
+		<optional>
+			<attribute name="status">
+				<choice>
+					<value>0</value>
+					<value>1</value>
+					<value>2</value>
+					<value>3</value>
+					<value>4</value>
+				</choice>
+			</attribute>
+		</optional>
+		<optional>
+			<element name="created">
+				<text/>
+			</element>
+		</optional>
+		<zeroOrMore>
+			<element name="modified">
+				<text/>
+			</element>
+		</zeroOrMore>
+		<zeroOrMore>
+			<element name="resolved">
+				<text/>
+			</element>
+		</zeroOrMore>
+		<zeroOrMore>
+			<element name="notationQuote">
+				<text/>
+			</element>
+		</zeroOrMore>
+		<zeroOrMore>
+			<element name="notationDiscussion">
+				<text/>
+			</element>
+		</zeroOrMore>
+		<zeroOrMore>
+			<element name="notationResolution">
+				<text/>
+			</element>
+		</zeroOrMore>
+		<zeroOrMore>
+			<element name="notationRecommendation">
+				<text/>
+			</element>
+		</zeroOrMore>
+	</define>
+
+	<define name="variantCT">
+		<ref name="characterTextCT"/>
+	</define>
+	<define name="bookTitleInTextCT">
+		<ref name="characterTextCT"/>
+	</define>
+
+	<define name="labelCT">
+		<ref name="characterTextCT"/>
+	</define>
+
+	<define name="ordinalNumberEndingCT">
+		<ref name="characterTextCT"/>
+	</define>
+
+	<define name="quotedTextCT">
+		<ref name="characterTextCT"/>
+	</define>
+
+	<define name="seeInGlossaryCT">
+		<ref name="characterTextCT"/>
+	</define>
+
+	<define name="untranslatedWordCT">
+		<ref name="characterTextCT"/>
+	</define>
+
+	<define name="wordsOfJesusCT">
+		<element name="q">
+			<attribute name="who">
+				<value>Jesus</value>
+			</attribute>
+			<ref name="tr-bt-textCT"/>
+		</element>
+	</define>
+
+	<!-- group phrase -->
+	<define name="grp.phrase">
+		<zeroOrMore>
+			<choice>
+				<element name="abbreviation">
+					<ref name="abbreviationCT"/>
+				</element>
+				<element name="alternateReading">
+					<ref name="alternateReadingCT"/>
+				</element>
+				<element name="alludedText">
+					<ref name="alludedTextCT"/>
+				</element>
+				<element name="bookTitleInText">
+					<ref name="bookTitleInTextCT"/>
+				</element>
+				<element name="emphasis">
+					<ref name="characterTextCT"/>
+				</element>
+				<element name="foreign">
+					<ref name="foreignCT"/>
+				</element>
+				<element name="gloss">
+					<ref name="characterTextCT"/>
+				</element>
+				<element name="hand">
+					<ref name="handCT"/>
+				</element>
+				<element name="inscription">
+					<ref name="inscriptionCT"/>
+				</element>
+				<element name="keyWord">
+					<ref name="characterTextCT"/>
+				</element>
+				<element name="label">
+					<ref name="labelCT"/>
+				</element>
+				<element name="mentioned">
+					<ref name="mentionedCT"/>
+				</element>
+				<element name="nameOfGod">
+					<ref name="divineNameCT"/>
+				</element>
+				<element name="ordinalNumberEnding">
+					<ref name="ordinalNumberEndingCT"/>
+				</element>
+				<element name="otPassage">
+					<ref name="otPassageCT"/>
+				</element>
+				<element name="q">
+					<ref name="qCT"/>
+				</element>
+				<element name="quotedText">
+					<ref name="quotedTextCT"/>
+				</element>
+				<element name="referencedText">
+					<ref name="referencedTextCT"/>
+				</element>
+				<element name="reference">
+					<ref name="referenceCT"/>
+				</element>
+				<element name="seeInGlossary">
+					<ref name="seeInGlossaryCT"/>
+				</element>
+				<element name="soCalled">
+					<ref name="characterTextCT"/>
+				</element>
+				<element name="supplied">
+					<ref name="characterTextCT"/>
+				</element>
+				<element name="title">
+					<ref name="titleCT"/>
+				</element>
+				<element name="untranslatedWord">
+					<ref name="untranslatedWordCT"/>
+				</element>
+				<element name="userCS">
+					<ref name="userCSCT"/>
+				</element>
+				<element name="variant">
+					<ref name="variantCT"/>
+				</element>
+				<element name="wordsOfJesus">
+					<ref name="wordsOfJesusCT"/>
+				</element>
+			</choice>
+		</zeroOrMore>
+	</define>
+
+<define name="userCSCT">
+	<!-- user defined style -->
+	<attribute name="type">
+		<data type="string">
+			<param name="pattern">([^\s])+</param>
+		</data>
+	</attribute>
+</define>
+	<!-- group empty -->
+	<define name="grp.empty">
+		<choice>
+			<element name="chapter">
+				<ref name="chapterCT"/>
+			</element>
+			<element name="verse">
+				<ref name="verseCT"/>
+			</element>
+		</choice>
+	</define>
+
+	<!-- group notes -->
+	<define name="grp.notes">
+		<choice>
+			<element name="note">
+				<ref name="noteCT"/>
+			</element>
+			<element name="comment">
+				<text/>
+			</element>
+		</choice>
+	</define>
+
+	<!-- group inline -->
+	<define name="grp.inline">
+		<zeroOrMore>
+			<choice>
+				<ref name="grp.notes"/>
+				<ref name="grp.phrase"/>
+				<element name="chapter">
+					<ref name="chapterCT"/>
+				</element>
+				<element name="verse">
+					<ref name="verseCT"/>
+				</element>
+			</choice>
+		</zeroOrMore>
+	</define>
+
+	<!-- group title -->
+	<define name="grp.title">
+		<!-- @short holds the running header -->
+		<optional>
+			<attribute name="short"/>
+		</optional>
+		<oneOrMore>
+			<element name="title">
+				<attribute name="type">
+					<choice>
+						<value>main</value>
+						<value>secondary</value>
+						<value>tertiary</value>
+					</choice>
+				</attribute>
+				<ref name="tr-bt-textCT"/>
+			</element>
+		</oneOrMore>
+	</define>
+
+	<define name="enum.bookValue">
+		<choice>
+			<value>GEN</value>
+			<value>EXO</value>
+			<value>LEV</value>
+			<value>NUM</value>
+			<value>DEU</value>
+			<value>JOS</value>
+			<value>JDG</value>
+			<value>RUT</value>
+			<value>1SA</value>
+			<value>2SA</value>
+			<value>1KI</value>
+			<value>2KI</value>
+			<value>1CH</value>
+			<value>2CH</value>
+			<value>EZR</value>
+			<value>NEH</value>
+			<value>EST</value>
+			<value>JOB</value>
+			<value>PSA</value>
+			<value>PRO</value>
+			<value>ECC</value>
+			<value>SNG</value>
+			<value>ISA</value>
+			<value>JER</value>
+			<value>LAM</value>
+			<value>EZK</value>
+			<value>DAN</value>
+			<value>HOS</value>
+			<value>JOL</value>
+			<value>AMO</value>
+			<value>OBA</value>
+			<value>JON</value>
+			<value>MIC</value>
+			<value>NAM</value>
+			<value>HAB</value>
+			<value>ZEP</value>
+			<value>HAG</value>
+			<value>ZEC</value>
+			<value>MAL</value>
+			<value>TOB</value>
+			<value>JDT</value>
+			<value>ESG</value>
+			<value>WIS</value>
+			<value>SIR</value>
+			<value>BAR</value>
+			<value>LJE</value>
+			<value>S3Y</value>
+			<value>SUS</value>
+			<value>BEL</value>
+			<value>1MA</value>
+			<value>2MA</value>
+			<value>3MA</value>
+			<value>4MA</value>
+			<value>1ES</value>
+			<value>2ES</value>
+			<value>MAN</value>
+			<value>PS2</value>
+			<value>ODA</value>
+			<value>PSS</value>
+			<value>JSA</value>
+			<value>JDB</value>
+			<value>TBS</value>
+			<value>SST</value>
+			<value>DNT</value>
+			<value>BLT</value>
+			<value>MAT</value>
+			<value>MRK</value>
+			<value>LUK</value>
+			<value>JHN</value>
+			<value>ACT</value>
+			<value>ROM</value>
+			<value>1CO</value>
+			<value>2CO</value>
+			<value>GAL</value>
+			<value>EPH</value>
+			<value>PHP</value>
+			<value>COL</value>
+			<value>1TH</value>
+			<value>2TH</value>
+			<value>1TI</value>
+			<value>2TI</value>
+			<value>TIT</value>
+			<value>PHM</value>
+			<value>HEB</value>
+			<value>JAS</value>
+			<value>1PE</value>
+			<value>2PE</value>
+			<value>1JN</value>
+			<value>2JN</value>
+			<value>3JN</value>
+			<value>JUD</value>
+			<value>REV</value>
+		</choice>
+	</define>
+	<define name="languageCT">
+		<group>
+			<data type="string"/>
+			<optional>
+				<attribute name="type">
+					<data type="string">
+						<param name="pattern">[a-z]{3}</param>
+						<!-- 3 lower case letters required to match sil standard -->
+					</data>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="use">
+					<choice>
+						<choice>
+							<value type="string">interlinear</value>
+							<value type="string">translation</value>
+							<value type="string">source</value>
+							<value type="string">target</value>
+							<value type="string">original</value>
+							<value type="string">base</value>
+							<value type="string">didactic</value>
+							<value type="string">quotation</value>
+						</choice>
+						<data type="string">
+							<param name="pattern">([^\s])+</param>
+						</data>
+					</choice>
+				</attribute>
+			</optional>
+			<ref name="globalWithoutType"/>
+			<optional>
+				<attribute name="canonical">
+					<data type="boolean"/>
+				</attribute>
+			</optional>
+		</group>
+	</define>
+	<define name="embeddedCT">
+		<oneOrMore>
+			<choice>
+				<element name="p">
+					<ref name="pCT"/>
+				</element>
+				<element name="l">
+					<ref name="lCT"/>
+				</element>
+			</choice>
+		</oneOrMore>
+	</define>
+	<define name="alternateReadingCT">
+		<ref name="characterTextCT"/>
+	</define>
+	<define name="alludedTextCT">
+		<ref name="characterTextCT"/>
+	</define>
+	<define name="characterTextCT">
+		<oneOrMore>
+			<choice>
+				<text/>
+				<ref name="grp.inline"/>
+			</choice>
+		</oneOrMore>
+	</define>
+
+</grammar>

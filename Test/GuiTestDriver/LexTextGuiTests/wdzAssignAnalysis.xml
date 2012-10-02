@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- This tests the Assign Analysis dialog in Words / Analysis -->
+<!--  -->
+
+<accil on-fail="assert">
+   <bug id="lt-8147" desc="Crash clicking Assign Analysis item twice"/>
+   <bug id="lt-7644" desc="Wrong reference numbers in Assign Analysis dialog"/>
+   <bug id="lt-7087" desc="Analysis Usage dialog has inconsistant state until closed"/>
+   <bug id="lt-7045" desc="Focus box tab order broken"/>
+   <bug id="lt-6720" desc="Word Analyses column number in corpus is all zeros"/>
+<!--  -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application args="-db $projectName" run="yes" on-fail="assert">
+
+<!-- Change one analysis to another and see that updates are correct -->
+<!-- Go to Words / Analysis -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+
+<!-- Sort Number in Corpus with highest number at the top -->
+	   <click select="wordforms/col/header" path="Number in Corpus"/>
+	   <click select="wordforms/col/header" path="Number in Corpus"/>
+	   <click select="//toolbar/first-record"/><!-- Select the first record -->
+<!-- Click "na" first one with 4 in corpus -->
+	   <var id="row" set="1"/>
+	   <var id="col" set="1"/>
+	   <click select="wordforms/record/col" path="/value:na" />
+
+<!-- Click Assign Analysis -->
+  <!--click dx="500" select="analyses/assign-analysis"/--><!-- lsDev-Test123 computer -->
+  <click dx="400" select="analyses/assign-analysis" /><!-- lastufkam computer -->
+  <var id="ConcPane0" set="$nl;[2]/9:AnalysisInTwficsOccurrenceList/9:AnalysisInTwficsOccurrenceList/$NL;20:RootSite/24:Table"/>
+  <var id="ConcPaneFrame" set="$nl;[2]/9:GlossInTwficsOccurrenceList/9:GlossInTwficsOccurrenceList/$nl;"/>
+  <var id="ConcPane" set="$ConcPaneFrame;/20:RootSite/24:Table"/>
+
+  <on-dialog name="ConcordanceDlg" title="Analysis Usage">
+	   <!-- check that the word shows up where it is supposed to -->
+	   <click id="analysis1" path="$NL;36:Analysis 1"/>
+	   <glimpse id="noGloss1" path="$ConcPane0" on-pass="assert" on-fail="skip"/>
+	  <click id="em1c" path="$NL;36:em"/>
+	  <glimpse id="em1" path="$ConcPane;/$Col;[2]/$Text;/value:Wapakila 1:1"/>
+	  <click id="in1c" path="$NL;36:in"/>
+	  <glimpse id="in0" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+	  <click id="and1c" path="$NL;36:and"/>
+	  <glimpse id="and0" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+
+	  <click id="analysis2" path="$NL;36:Analysis 2"/>
+	  <glimpse id="noGloss2" path="$ConcPane0" on-pass="assert" on-fail="skip"/>
+	  <click id="and2c" path="$NL;36:e"/>
+	  <glimpse id="and1" path="$ConcPane;/$Col;[2]/$Text;/value:M'munda 6:1"/>
+	  <glimpse id="and2" path="$ConcPane;[2]/$Col;[2]/$Text;/value:M'munda 3:1"/>
+	  <click path="$NL;43:Page down"/>
+	  <click id="with2c" path="$NL;36:with"/>
+	  <glimpse id="with0" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+	  <click id="by2c" path="$NL;36:by"/>
+	   <glimpse id="by0" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+
+	   <click id="analysis3" path="$NL;36:Analysis 3"/>
+	   <glimpse id="noGloss3" path="$ConcPane0" on-pass="assert" on-fail="skip"/>
+	   <click id="and3c" path="$NL;36:and[2]"/>
+	   <glimpse id="and31" path="$ConcPane;/$Col;[2]/$Text;/value:Wapakila 2:1"/>
+	   <click id="with3c" path="$NL;36:with[2]"/>
+	   <glimpse id="with30" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+
+	   <click id="analysis4" path="$NL;36:Analysis 4"/>
+	   <glimpse id="noGloss4" path="$ConcPane0" on-pass="assert" on-fail="skip"/>
+	   <click path="$NL;43:Page down"/>
+	   <click id="and4c" path="$NL;36:and[3]"/>
+	   <glimpse id="and40" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+	   <click id="by4" path="$NL;36:by[2]"/>
+	   <glimpse id="by40" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+
+	   <click id="analysis5" path="$NL;36:Analysis 5"/>
+	   <glimpse id="noGloss5" path="$ConcPane0" on-pass="assert" on-fail="skip"/>
+	   <click id="havec" path="$NL;36:have"/>
+	   <glimpse id="have50" path="$ConcPane" on-pass="assert" on-fail="skip"/>
+
+<!-- change Analysis 2 "e" M'mun3:1 to Analysis 1 "in" -->
+	   <click path="$NL;43:Page up"/>
+	   <click id="clickE" path="$NL;36:e"/>
+	   <click path="$ConcPaneFrame;[3]/43:NAMELESS"/><!-- checkbox control in header -->
+	   <insert wait="200">c</insert><!-- check all -->
+ <!-- uncheck the first occurrance -->
+	   <click id="mun61" path="$ConcPane;/$Col;/40:Picture"/>
+ <!-- check to change "e" M'munda 3:1 to "in" -->
+	   <click path="9:1. Select an analysis to view its current uses in a text.[2]/36:in"/>
+	   <click path="9:Assign/43:Assign"/>
+	   <click path="$close"/>
+  </on-dialog>
+
+  <!-- Add Portuguese gloss "in" since it is only in English and only Port shows in the dialog-->
+  <var id="ind" set="*port"/> <!-- sets $port to the index it finds -->
+  <click id="glossInPort" select="analyses/analysis-seq/word-gloss/data"  path="/value:"/>
+  <insert wait="1000">in</insert><!-- end of  the gloss -->
+
+</model>
+
+<!-- Go to Words / Concordance -->
+	   <click id="gotoConc" select="menubar/view/texts-words/concordance"/>
+
+<model select="concordance[@role='view']">
+
+<!-- Interlinearize Tab -->
+  <click id="InterlinearTab" select="full-context/interlinear/analyze/tab" />
+
+<!-- Configure interlinear to show english word glosses (otherwise it only shows Portugese) -->
+	   <click select="//menubar/tools/configure-interlinear"/>
+  <on-dialog title="Configure Interlinear Lines">
+	 <click path="9:Available lines:[2]/34:Word Gloss"/>
+	 <click path="9:Show >>/43:Show >>"/>
+	 <click path="$nl;[3]/43:Open"/>
+	 <insert wait="200">{DOWN}~</insert><!-- English -->
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!-- Click on combo box, go to "Search in the line:"-->
+  <click select="criteria/search-in/value"/>
+  <insert wait="200">b~</insert>
+  <click select="criteria/for-the-text/value"/>
+   <insert wait="300">{END}+{HOME}</insert>
+   <insert wait="200">na</insert>
+   <click select="criteria/search"/>
+
+  <!-- click the first one so the tabs are captured by the na Word Focus Box -->
+   <var id="row" set="1"/>
+   <var id="col" set="1"/>
+   <click select="results/record/col"/>
+   <var id="row" set="7"/>
+   <click id="lookAtConc" select="results/record/col"/> <!--;/value:M'munda 3:1"/ its the 2nd one-->
+  <insert wait="2000">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">+{HOME}</insert><!-- select the gloss -->
+  <insert wait="300">^{c}</insert><!-- copy it -->
+
+
+</model>
+
+<!--/skip-->
+
+<!-- Go to Words / Analysis -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+ <model select="word-analysis[@role='view']">
+
+ <!-- find na -->
+   <!--click select="//toolbar/find-wordform"/>
+  <on-dialog title="Find Wordform">
+	 <insert wait="500">na</insert>
+	 <click path="$goto"/>
+  </on-dialog-->
+
+  <var id="ind" set="$port"/>
+  <click id="1stGloss" select="analyses/analysis-seq/word-gloss/data" path="/value:in"/>
+  <insert wait="2000">{END}</insert><!-- end of  the gloss -->
+  <insert wait="1000">^{v}</insert><!-- insert copied gloss from the concordance -->
+  <glimpse wait="2000" id="2ndGloss" select="analyses/analysis-seq/word-gloss/data" path="/value:in"/>
+
+<!-- Click Assign Analysis -->
+  <!--click dx="500" select="analyses/assign-analysis"/--><!-- lsDev-Test123 computer -->
+  <click dx="400" select="analyses/assign-analysis" /><!-- lastufkam computer -->
+  <on-dialog name="ConcordanceDlg" title="Analysis Usage">
+   <click id="in" path="$NL;36:in"/>
+   <click path="$close"/>
+  </on-dialog>
+
+  <insert wait="200">^{z}</insert><!-- Undo gloss from the concordance -->
+
+<!-- Undo "manually" -->
+
+</model>
+
+<!-- Go to Words / Concordance -->
+	   <click id="gotoConc2" select="menubar/view/texts-words/concordance"/>
+
+<model select="concordance[@role='view']">
+
+<!-- Interlinearize Tab -->
+  <click id="InterlinearTab2" select="full-context/interlinear/analyze/tab" />
+
+<!-- Click on combo box, go to "Search in the line:"-->
+  <click select="criteria/search-in/value"/>
+  <insert wait="200">b~</insert>
+  <click select="criteria/for-the-text/value"/>
+   <insert wait="300">{END}+{HOME}</insert>
+   <insert wait="200">na</insert>
+   <click select="criteria/search"/>
+
+<!-- Configure interlinear not to show english word glosses -->
+	<click select="//menubar/tools/configure-interlinear"/>
+  <on-dialog title="Configure Interlinear Lines">
+	 <click path="9:Displayed lines:[2]/34:Word Gloss"/>
+	 <insert wait="300">{DOWN}</insert>
+	 <click path="9:&lt;&lt; Hide/43:&lt;&lt; Hide"/>
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!--/skip-->
+
+</model>
+
+<!-- Go to Words / Analysis -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+
+  <!-- find na -->
+   <!--click select="//toolbar/find-wordform"/>
+  <on-dialog title="Find Wordform">
+	 <insert wait="500">na</insert>
+	 <click path="$goto"/>
+  </on-dialog-->
+
+  <var id="ind" set="$port"/>
+  <click id="remGlossInPort" select="analyses/analysis-seq/word-gloss/data"  path="/value:in"/>
+   <insert wait="300">{END}+{HOME}</insert>
+  <insert wait="300">{DELETE}</insert>
+
+<!-- Click Assign Analysis -->
+  <!--click dx="500" select="analyses/assign-analysis"/--><!-- lsDev-Test123 computer -->
+  <click dx="400" select="analyses/assign-analysis" /><!-- lastufkam computer -->
+  <insert wait="500">{DOWN}~</insert>
+  <on-dialog name="ConcordanceDlg" title="Analysis Usage">
+   <click path="$NL;36:in"/>
+   <click path="9:1. Select an analysis to view its current uses in a text.[2]/36:e"/>
+   <click path="9:Assign/43:Assign"/>
+   <click path="$close"/>
+  </on-dialog>
+
+<!-- Sort by Form -->
+  <click select="wordforms/col/header" path="Form" />
+	   <click select="//toolbar/first-record"/><!-- Select the first record -->
+	   <var id="row" set="1"/>
+	   <var id="col" set="1"/>
+	   <click select="wordforms/record/col" />
+
+</model>
+
+ </on-application>
+</accil>

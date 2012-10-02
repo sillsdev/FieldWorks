@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Top-level NAnt build file for FieldWorks. -->
+<project name="FieldWorks" default="all" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<fwroot test="bld\SetupInclude.xml"/>
+	<!-- convert global include file so that we can use the properties defined in there -->
+	<style style="${fwroot}\bld\TransformGlobalInclude.xslt" in="${fwroot}\bld\GlobalInclude.xml" out="${fwroot}\bld\GlobalInclude.build.xml" unless="${file::up-to-date(fwroot + '\bld\GlobalInclude.xml', fwroot + '\bld\GlobalInclude.build.xml')}"/>
+	<include buildfile="GlobalInclude.build.xml"/>
+	<include buildfile="${fwroot}\Bld\SetupInclude.xml"/>
+	<property name="nant.onfailure" value="endreportfailure"/>
+	<property name="nant.onsuccess" value="endreportsuccess"/>
+	<property name="passbyref" value="fw-build-error fw-test-error fw-acceptancetest-error fw-targets-run"/>
+	<!--
+		Set to showTargetsRunInReport property to 'true' to output the C# targets built during run.
+		Otherwise, it should be 'false'.
+	-->
+	<property name="showTargetsRunInReport" value="false"/>
+	<property name="passbyref" value="${passbyref} fw-targets-run" if="${showTargetsRunInReport}"/>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add all projects below -->
+	<!-- -->
+	<target name="all" depends="mkall" description="Build all of the FieldWorks projects."/>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- -->
+	<target name="StopSqlServer">
+		<servicecontroller service="MSSQL$SILFW" action="Stop" machine="${sys.env.COMPUTERNAME}" timeout="30000"/>
+	</target>
+	<!-- -->
+	<target name="UnloadSqlExtend">
+		<property name="connstring" value="Provider=SQLOLEDB;Server=${sys.env.COMPUTERNAME}\SILFW;database=Master;user id=sa;password=inscrutable"/>
+		<sql connstring="${connstring}" delimiter=";" delimstyle="Normal">
+			DBCC DebugProcs (FREE)
+		</sql>
+	</target>
+	<!-- -->
+	<target name="IcuData" description="Unzip icu.zip file">
+		<call target="IcuData-nodep" cascade="false"/>
+	</target>
+	<target name="IcuData-nodep">
+		<!-- Using uptodate is not reliable because it doesn't realize extra files are in actual directory. -->
+		<call target="IcuData-clean" cascade="true"/>
+		<unzip zipfile="${fwroot}\distfiles\Icu40.zip" todir="${fwroot}\distfiles\Icu40"/>
+	</target>
+	<target name="IcuData-clean" description="Deletes ICU files">
+		<!-- Don't put UnloadSqlExtend in depends because build machine needs to call this twice. -->
+		<call target="UnloadSqlExtend" cascade="true"/>
+		<delete verbose="false" failonerror="false">
+			<fileset>
+				<include name="${fwroot}\distfiles\Icu40\*.*"/>
+				<include name="${fwroot}\distfiles\languages\*.xml"/>
+			</fileset>
+		</delete>
+		<delete dir="${fwroot}\distfiles\Icu40\data" verbose="false" failonerror="false"/>
+		<delete dir="${fwroot}\distfiles\Icu40\icudt40l" verbose="false" failonerror="false"/>
+	</target>
+	<!-- -->
+	<target name="FwResources" description="Build FwResources project.">
+		<call target="FwResources-nodep" cascade="false"/>
+	</target>
+	<target name="FwResources-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\FwResources"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="InstallLanguage" description="Build Language Installer project." depends="COMInterfaces,FwUtils,Utils">
+		<call target="InstallLanguage-nodep" cascade="false"/>
+	</target>
+	<target name="InstallLanguage-nodep">
+		<!-- why do we need this here? <call target="UnloadSqlExtend" cascade="false"/> -->
+		<property name="dir.srcProj" value="${fwroot}\Src\LangInst"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="COMInterfaces" description="Build COMInterfaces project." depends="mkvw,mkfwk,BasicUtils">
+		<call target="COMInterfaces-nodep" cascade="false"/>
+	</target>
+	<target name="COMInterfaces-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\COMInterfaces"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Reporting" description="Build Reporting project." depends="FwControls,BasicUtils">
+		<call target="Reporting-nodep"/>
+	</target>
+	<target name="Reporting-nodep" description="Build Reporting project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Utilities\Reporting"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="BasicUtils" description="Build BasicUtils project.">
+		<call target="BasicUtils-nodep" cascade="false"/>
+	</target>
+	<target name="BasicUtils-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Utilities\BasicUtils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Utils" description="Build Utils project." depends="FwResources,BasicUtils">
+		<call target="Utils-nodep" cascade="false"/>
+	</target>
+	<target name="Utils-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\utils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ZipUtils" description="Build Utils project.">
+		<call target="ZipUtils-nodep" cascade="false"/>
+	</target>
+	<target name="ZipUtils-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\ziputils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="FwUtils" description="Build FwUtils project." depends="COMInterfaces,Utils,FwResources">
+		<call target="FwUtils-nodep" cascade="false"/>
+	</target>
+	<target name="FwUtils-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\FwUtils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Design" description="Build Design project.">
+		<call target="Design-nodep" cascade="false"/>
+	</target>
+	<target name="Design-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\Design"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="FwControls" description="Build FwControls project." depends="Design,Utils,COMInterfaces,XMLUtils,FwUtils,ScrUtilsInterfaces,SharedScrUtils">
+		<call target="FwControls-nodep" cascade="false"/>
+	</target>
+	<target name="FwControls-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\FwControls"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ScrUtilsInterfaces" description="Build ScrUtilsInterfaces project." depends="FwResources,Utils,SharedScrUtils">
+		<call target="ScrUtilsInterfaces-nodep" cascade="false"/>
+	</target>
+	<target name="ScrUtilsInterfaces-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\ScrUtilsInterfaces"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ScriptureUtils" description="Build ScriptureUtils project."
+			depends="COMInterfaces,FDO,ProjectUnpacker,Utils,ScrUtilsInterfaces,EncConvertersDlls,register-So,FwResources,SharedScrUtils">
+		<call target="ScriptureUtils-nodep" cascade="false"/>
+	</target>
+	<target name="ScriptureUtils-nodep" description="Build ScriptureUtils project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\ScriptureUtils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ProjectUnpacker" description="Build ProjectUnpacker project." depends="Utils,ZipUtils">
+		<call target="ProjectUnpacker-nodep" cascade="false"/>
+	</target>
+	<target name="ProjectUnpacker-nodep" description="Build ProjectUnpacker project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\ProjectUnpacker"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="TestUtils" description="Build TestUtils project." depends="COMInterfaces,Utils,FwUtils,copy-nmockDll">
+		<call target="TestUtils-nodep" cascade="false"/>
+	</target>
+	<target name="TestUtils-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\TestUtils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="SilUtils" description="Build SilUtils project.">
+		<call target="SilUtils-nodep"/>
+	</target>
+	<target name="SilUtils-nodep" description="Build SilUtils project.">
+		<property name="dir.srcProj" value="${fwroot}\Lib\src\SilUtils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="SharedScrUtils" description="Build SharedScrUtils project.">
+		<call target="SharedScrUtils-nodep"/>
+	</target>
+	<target name="SharedScrUtils-nodep" description="Build SharedScrUtils project."
+			depends="SilUtils">
+		<property name="dir.srcProj" value="${fwroot}\Lib\src\SharedScrUtils"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="FDO" description="Build FDO project."
+			depends="COMInterfaces,TestUtils,FwUtils,XMLUtils,Utils,ZipUtils,
+				XMI2Cellar,PhonEnvValidator,InstallLanguage,copy-nmockDll,FwControls,Reporting,SilUtils,
+				FwResources,ProjectUnpacker,register-So,CacheLight,SharedScrUtils"> <!-- CacheLight needed for tests -->
+		<uptodate property="done">
+			<sourcefiles>
+				<include name="${fwroot}\Src\FDO\FDOGenerate\*.xslt"/>
+			</sourcefiles>
+			<targetfiles>
+				<include name="${dir.nantbuild}\FDO.build"/>
+			</targetfiles>
+		</uptodate>
+		<delete file="${dir.nantbuild}\FDO.build" verbose="true" failonerror="false" if="${not done}"/>
+		<call target="FDO-nodep" cascade="false"/>
+	</target>
+	<target name="FDO-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\FDO"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="FdoUi" description="Build FdoUi project." depends="COMInterfaces,FDO,RootSite,xCoreInterfaces,XMLViews,LexTextControls,Reporting,Widgets,FwResources,FwControls,FdoUiLowLevel,Framework,Filters">
+		<call target="FdoUi-nodep" cascade="false"/>
+	</target>
+	<target name="FdoUi-nodep" description="Build FdoUi project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\FdoUi"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="FdoUiLowLevel" description="Build FdoUi project." depends="xCoreInterfaces,Utils">
+		<call target="FdoUiLowLevel-nodep" cascade="false"/>
+	</target>
+	<target name="FdoUiLowLevel-nodep" description="Build FdoUiLowLevel project.">
+		<property name="dir.srcProj" value="${fwroot}\Src\FdoUi\FdoUiLowLevel"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!--
+	<target name="ComFwDlgs" description="Build ComFwDlgs project." depends="COMInterfaces">
+		<call target="ComFwDlgs-nodep" cascade="false"/>
+	</target>
+	<target name="ComFwDlgs-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\ComFwDlgs"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	   -->
+	<!-- -->
+	<target name="FwPrintLayoutComponents" description="Build FwPrintLayoutComponents project."
+			depends="FwCoreDlgControls,FDO,mkfwk,FwResources,SimpleRootSite,Utils,COMInterfaces, Framework">
+		<call target="FwPrintLayoutComponents-nodep" cascade="false"/>
+	</target>
+	<target name="FwPrintLayoutComponents-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\FwPrintLayoutComponents"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!--COMInterfaces, -->
+	<target name="SideBar" description="Build SideBar project." depends="FwControls,Design,MenuExtender,xCoreInterfaces,Utils,BasicUtils">
+		<call target="SideBar-nodep" cascade="false"/>
+	</target>
+	<target name="SideBar-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\SideBar"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!--FwCoreDlgControls,FwCoreDlgs-->
+	<target name="FwCoreDlgControls" description="Build FwCoreDlgControls project."
+			depends="FwResources,COMInterfaces,Utils,FwUtils,FDO,FwControls,RootSite,xCoreInterfaces">
+		<call target="FwCoreDlgControls-nodep" cascade="false"/>
+	</target>
+	<target name="FwCoreDlgControls-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\FwCoreDlgs\FwCoreDlgControls"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<target name="FwCoreDlgs" description="Build FwCoreDlgs project." depends="RootSite,FwResources,COMInterfaces,FDO,
+		FwControls,Utils,FwUtils,SimpleRootSite,copy-nmockDll,mkgre,
+		FwCoreDlgControls,Widgets,xCoreInterfaces,TestUtils,ensureDistFilesDataFolder,EncConvertersDlls,Filters,
+		XMLUtils,RootSite,FwControls,COMInterfaces,ScrFDO,SharedScrUtils">
+		<!-- TestUtils and ScrFDO is only for tests. -->
+		<call target="FwCoreDlgs-nodep" cascade="false"/>
+	</target>
+	<target name="FwCoreDlgs-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\FwCoreDlgs"/>
+		<call target="IcuData-nodep" cascade="false"/>
+		<call target="vsconvert-convert"/>
+		<call target="IcuData-nodep" cascade="false"/>
+	</target>
+	<target name="SimpleRootSite" description="Build SimpleRootSite project." depends="COMInterfaces,Utils,
+				FwControls,xCoreInterfaces,FwResources,FwUtils,UIAdapterInterfaces,FDO,TestUtils,SilUtils,
+				Reporting,ScrFDO"><!-- ScrFDO is needed for tests -->
+		<!-- Uses TestUtils for tests. -->
+		<call target="SimpleRootSite-nodep" cascade="false"/>
+	</target>
+	<target name="SimpleRootSite-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\SimpleRootSite"/>
+		<call target="vsconvert-convert"/>
+	</target>
+
+	<target name="zook" depends="EncConvertersDlls">
+		<call target="IcuData" cascade="true"/>
+	</target>
+
+
+	<target name="RootSite" description="Build RootSite project." depends="COMInterfaces,Utils,FDO,
+		FwControls,xCoreInterfaces,FwResources,FwUtils,UIAdapterInterfaces,
+		SimpleRootSite,TestUtils, mkcel,mkgre,ScrFDO">
+		<!-- Uses TestUtils and ScrFDO for tests. -->
+		<call target="RootSite-nodep" cascade="false"/>
+	</target>
+	<target name="RootSite-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\RootSite"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="PrintLayout" description="Build PrintLayout project." depends="COMInterfaces,FDO,
+		SimpleRootSite,FwPrintLayoutComponents,Utils,Framework,RootSite,FwResources,ScrFDO,FwUtils,xCoreInterfaces">
+		<!-- Uses ScrFDO for tests -->
+		<call target="PrintLayout-nodep" cascade="false"/>
+	</target>
+	<target name="PrintLayout-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\PrintLayout"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="UIAdapterInterfaces" description="Build UIAdapterInterfaces project." depends="xCoreInterfaces, BasicUtils">
+		<call target="UIAdapterInterfaces-nodep" cascade="false"/>
+	</target>
+	<target name="UIAdapterInterfaces-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\UIAdapterInterfaces"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!-- Framework is dependant on ScriptureUtils only for the tests. We should rewrite our tests
+		to get rid of that dependency. -->
+	<target name="Framework" description="Build Framework project." depends="FwResources,COMInterfaces,copy-nmockDll,
+		FDO,FwControls,FwCoreDlgs,FwCoreDlgControls,SideBar,Utils,RootSite,FwUtils,xCoreInterfaces,mkcel,SimpleRootSite,
+		MenuExtender,UIAdapterInterfaces,CopyUIAdapterFiles,Design,mkmig,TestUtils,SilUtils,
+		Reporting,Widgets,XMLUtils">
+		<!-- ScriptureUtils,ScrFDO,TestUtils are only used for the tests. -->
+		<call target="Framework-nodep" cascade="false"/>
+	</target>
+	<target name="Framework-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Framework"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="CopyUIAdapterFiles" if="${haveTEAdapterLibrary}" description="Copying TE User Interface Adapter Files.">
+		<copyasmrefs todir="${fwroot}\Output\${config}" copyrelated="true" failonerror="false">
+			<!--  overwrite="true" -->
+			<fileset basedir="${fwroot}\DistFiles">
+				<include name="UIAdapters.dll"/>
+			</fileset>
+		</copyasmrefs>
+	</target>
+	<!-- -->
+	<target name="Ethnologue" description="Build Ethnologue database.">
+		<if test="${showTargetsRunInReport}">
+			<property name="appTargName" value="Ethnologue"/>
+			<call target="appendTargetName"/>
+		</if>
+		<call target="Ethnologue-nodep" cascade="false"/>
+	</target>
+	<target name="Ethnologue-nodep">
+		<!-- Only build the database if it hasn't been modified since CreateEthnologue.bat was last modified.
+			 or if we switched branches -->
+		<uptodate property="done">
+			<sourcefiles>
+				<include name="${fwroot}\Ethnologue\CreateEthnologue.bat"/>
+				<include name="${fwroot}\Ethnologue\Src\*.sql"/>
+				<include name="${fwroot}\Ethnologue\Data\*.*"/>
+			</sourcefiles>
+			<targetfiles>
+				<include name="${dir.sqlserverSILFWdata}\Ethnologue.mdf"/>
+			</targetfiles>
+		</uptodate>
+		<if test="${not done or (property::exists('buildEthnologue') and buildEthnologue) or not samebranch}">
+			<property name="databaseName" value="Ethnologue"/>
+			<property name="EthnologueInCache" value="false" unless="${usefilecache}"/>
+			<filescached property="EthnologueInCache" handleproperty="handle" if="${usefilecache}">
+				<files>
+					<!-- if we list those two files here they should also appear in a depends=""
+						for target Ethnologue
+					<include name="${dir.outputBase}\DebugProcs.dll"/>
+					<include name="${dir.outputBase}\FwKernel.dll"/>
+					-->
+					<include name="${fwroot}\Ethnologue\CreateEthnologue.bat"/>
+					<include name="${fwroot}\Ethnologue\Src\*.sql"/>
+					<include name="${fwroot}\Ethnologue\Data\*.*"/>
+				</files>
+			</filescached>
+			<if test="${not EthnologueInCache}">
+				<echo message="not in cache"/>
+				<exec program="cmd.exe" commandline="/c ${fwroot}\Ethnologue\CreateEthnologue.bat ${fwroot}\Ethnologue" workingdir="${fwroot}\Ethnologue"/>
+				<call target="detachDB" if="${usefilecache}"/>
+				<cachenewfiles handle="handle" if="${usefilecache}">
+					<output basedir="${dir.sqlserverSILFWdata}">
+						<include name="Ethnologue.mdf"/>
+						<include name="Ethnologue_log.ldf"/>
+					</output>
+				</cachenewfiles>
+				<call target="attachDB" if="${usefilecache}"/>
+			</if>
+			<if test="${EthnologueInCache}">
+				<echo message="get from cache"/>
+				<call target="detachDB"/>
+				<copyfromcache handle="handle" outputdir="${dir.sqlserverSILFWdata}"/>
+				<call target="attachDB"/>
+			</if>
+		</if>
+	</target>
+	<!-- -->
+	<target name="MenuExtender" description="Menu extension classes" depends="BasicUtils,Utils,xCoreInterfaces">
+		<call target="MenuExtender-nodep" cascade="false"/>
+	</target>
+	<target name="MenuExtender-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\MenuExtender"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="RunAddConverter" description="Build RunAddConverter project." depends="FwCoreDlgs,Framework,
+		COMInterfaces,RootSite,FwControls,xCoreInterfaces,Utils">
+		<call target="RunAddConverter-nodep" cascade="false"/>
+	</target>
+	<target name="RunAddConverter-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Utilities\RunAddConverter"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Widgets" description="Build (C#) Widgets project." depends="COMInterfaces,Utils,xCoreInterfaces,FwResources,RootSite,TestUtils,SimpleRootSite,FDO,Reporting">
+		<!-- TestUtils is only for tests. -->
+		<call target="Widgets-nodep" cascade="false"/>
+	</target>
+	<target name="Widgets-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\Widgets"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="CSharpLinker" description="Build (C#) CSharpLinker project." depends="COMInterfaces,SimpleRootSite,FDO,FdoUi">
+		<call target="CSharpLinker-nodep" cascade="false"/>
+	</target>
+	<target name="CSharpLinker-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\NoteBk\CSharpLinker"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Sfm2Xml" description="Build Sfm2Xml project" depends="EncConvertersDlls,Utils">
+		<call target="Sfm2Xml-nodep" cascade="false"/>
+	</target>
+	<target name="Sfm2Xml-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Utilities\SfmToXml"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="SplitGridView" description="Build the SplitGrid view project."
+		depends="COMInterfaces,FDO,Framework,RootSite,SimpleRootSite,FwControls,BasicUtils">
+		<call target="SplitGridView-nodep" cascade="false"/>
+	</target>
+	<target name="SplitGridView-nodep">
+		<property name="dir.srcProj" value="${fwroot}\Src\Common\Controls\SplitGridView"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="ScrChecks" description="Build ScrChecks project."
+	depends="SharedScrUtils">
+		<call target="ScrChecks-nodep"/>
+	</target>
+	<target name="ScrChecks-nodep" description="Build ScrChecks project." depends="Utils">
+		<property name="dir.srcProj" value="${fwroot}\Lib\src\ScrChecks"/>
+		<call target="vsconvert-convert"/>
+		<copy todir="${fwroot}\DistFiles\Editorial Checks">
+			<fileset basedir="${fwroot}\Output\${config}">
+				<include name="ScrChecks.dll" />
+				<include name="ScrChecks.pdb" />
+			</fileset>
+		</copy>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add project includes here -->
+	<!-- -->
+	<include buildfile="${fwroot}\Bld\XMI.build.xml"/>
+	<include buildfile="${fwroot}\Bld\TE.build.xml"/>
+	<include buildfile="${fwroot}\Bld\WordWorks.build.xml"/>
+	<include buildfile="${fwroot}\Bld\CacheLight.build.xml"/>
+	<include buildfile="${fwroot}\Bld\Samples.build.xml"/>
+	<include buildfile="${fwroot}\Bld\OvernightBuildMachine.build.xml"/>
+	<include buildfile="${fwroot}\Bld\mkall.build.xml"/>
+	<include buildfile="${fwroot}\Bld\remake.build.xml"/>
+	<include buildfile="${fwroot}\Bld\autobuild.build.xml"/>
+	<include buildfile="${fwroot}\Bld\cm.build.xml"/>
+	<include buildfile="${fwroot}\Bld\acceptancetests.build.xml"/>
+	<include buildfile="${fwroot}\Bld\installer.build.xml"/>
+	<property name="noIncludeSpecialTargets" value="true"/>
+	<include buildfile="${VSConvertBuildFile}"/>
+	<include buildfile="${fwroot}\Bld\VSConvert-shared.build.xml"/>
+	<include buildfile="${fwroot}\Bld\Localize.build.xml"/>
+	<include buildfile="${fwroot}\Bld\SpecialTargets.xml"/>
+</project>

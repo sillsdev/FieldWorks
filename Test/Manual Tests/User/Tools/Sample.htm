@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<body>
+<script language="javascript">
+// Load XML
+var xml = new ActiveXObject("Microsoft.XMLDOM")
+xml.async = false
+xml.load("Sample.xml")
+
+// Load the XSL
+var xsl = new ActiveXObject("Microsoft.XMLDOM")
+xsl.async = false
+xsl.load("../XSL/HelpFile.xsl")
+
+// Transform
+document.write(xml.transformNode(xsl))
+</script>
+
+</body>
+</html>

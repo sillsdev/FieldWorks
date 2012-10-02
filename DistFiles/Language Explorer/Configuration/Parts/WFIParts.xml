@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand crafted parts for Wordform inventory related classes. -->
+<PartInventory>
+	<bin class="WfiWordform">
+		<part id="WfiWordform-Detail-Spelling" type="Detail">
+			<slice label="Spelling Status" field="SpellingStatus" editor="enumComboBox" sideEffect="SpellingStatusChanged">
+				<deParams>
+					<stringList group="Linguistics/WFI/SpellingStatus" ids="UndecidedSpellingStatus, CorrectSpellingStatus, IncorrectSpellingStatus"/>
+				</deParams>
+			</slice>
+		</part>
+		<part id="WfiWordform-Detail-HumanApprovedAnalysesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-WfiWordform-HumanApprovedAnalysesSection"/>
+		</part>
+		<part id="WfiWordform-Detail-HumanApprovedAnalyses" type="Detail">
+			<seq field="HumanApprovedAnalyses"/>
+		</part>
+		<!-- HumanNoOpinionAnalysesSection -->
+		<part id="WfiWordform-Detail-HumanNoOpinionAnalysesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-WfiWordform-HumanNoOpinionAnalysesSection"/>
+		</part>
+		<part id="WfiWordform-Detail-HumanNoOpinionAnalyses" type="Detail">
+			<seq field="HumanNoOpinionParses" layout="AsParse"/>
+		</part>
+		<!-- HumanDisapprovedAnalysesSection -->
+		<part id="WfiWordform-Detail-HumanDisapprovedAnalysesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-WfiWordform-HumanDisapprovedAnalysesSection"/>
+		</part>
+		<part id="WfiWordform-Detail-HumanDisapprovedAnalyses" type="Detail">
+			<seq field="HumanDisapprovedParses" layout="AsDisapproved"/>
+		</part>
+		<part id="WfiWordform-Jt-WordformMainSummary" type="jtview">
+			<para>
+				<string field="Form" ws="best vernacular"/>
+			</para>
+		</part>
+	</bin>
+	<bin class="WfiAnalysis">
+		<part id="WfiAnalysis-Detail-PartOfSpeech" type="Detail">
+			<slice field="Category" label="Word Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<!--
+				<part ref=""/>-->
+		<part id="WfiAnalysis-Detail-ParserOpinion" type="Detail">
+				<choice>
+					<where field="ParserStatusIcon" intequals="0">
+						<!-- Only for RBR in his branch<slice label="Parse result" field="ParserStatusIcon" editor="lit" message="Failure" backColor="LightPink"/> -->
+						<slice label="Parse result" field="ParserStatusIcon" editor="lit" message="Failure"/>
+					</where>
+					<where field="ParserStatusIcon" intequals="1">
+						<slice label="Parse result" field="ParserStatusIcon" editor="lit" message="Successful"/>
+					</where>
+					<otherwise>
+						<slice label="Parse result" field="ParserStatusIcon" editor="lit" message="Untested"/>
+					</otherwise>
+				</choice>
+		</part>
+		<!--<part id="WfiAnalysis-Jt-ParserOpinionSummary" type="jtview">
+				<lit>: (Parser Opinion: </lit>
+				<choice>
+					<where field="ParserStatusIcon" intequals="1">
+						<span>
+							<properties>
+								<forecolor value="Green"/>
+								<fontsize value="150%"/>
+							</properties>
+							<lit>+</lit>
+						</span>
+					</where>
+					<where field="ParserStatusIcon" intequals="2">
+						<span>
+							<properties>
+								<forecolor value="Red"/>
+								<fontsize value="150%"/>
+							</properties>
+							<lit>×</lit>
+						</span>
+					</where>
+					<otherwise>-->
+						<!-- Should not be possible, according to the comments in ParserStatusIcon. -->
+						<!--<span>
+							<properties>
+								<forecolor value="Red"/>
+								<fontsize value="150%"/>
+							</properties>
+							<lit>×</lit>
+						</span>
+					</otherwise>
+				</choice>
+				<lit>)</lit>
+		</part>-->
+		<part id="WfiAnalysis-Jt-HumanApprovedSummary" type="jtview">
+			<para>
+				<properties>
+					<fontfamily value="&lt;default sans serif&gt;"/>
+					<forecolor value="ControlDarkDark"/>
+					<bold value="on"/>
+					<fontsize value="90%"/>
+				</properties>
+				<lit>Analysis </lit>
+				<string field="HumanApprovedNumber"/>
+				<!--<part ref="ParserOpinionSummary"/>-->
+			</para>
+		</part>
+		<part id="WfiAnalysis-Jt-HumanNoOpinionSummary" type="jtview">
+			<para>
+				<properties>
+					<fontfamily value="&lt;default sans serif&gt;"/>
+					<forecolor value="ControlDarkDark"/>
+					<bold value="on"/>
+					<fontsize value="90%"/>
+				</properties>
+				<lit>Analysis Candidate </lit>
+				<string field="HumanNoOpinionNumber"/>
+				<!--<part ref="ParserOpinionSummary"/>-->
+			</para>
+		</part>
+		<part id="WfiAnalysis-Jt-HumanDisapprovedSummary" type="jtview">
+			<para>
+				<properties>
+					<fontfamily value="&lt;default sans serif&gt;"/>
+					<forecolor value="ControlDarkDark"/>
+					<bold value="on"/>
+					<fontsize value="90%"/>
+				</properties>
+				<lit>Test Case </lit>
+				<string field="HumanDisapprovedNumber"/>
+				<!--<part ref="ParserOpinionSummary"/>-->
+			</para>
+		</part>
+		<part id="WfiAnalysis-Detail-InterlinearAnal" type="Detail">
+			<slice label="Analysis" field="MorphBundles" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice" menu="mnuDataTree-Help">
+				<deParams editable="true"/>
+			</slice>
+		</part>
+		<part id="WfiAnalysis-Detail-InterlinearParse" type="Detail">
+			<slice label="Analysis" field="MorphBundles" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice" menu="mnuDataTree-Help">
+				<deParams editable="false"/>
+			</slice>
+		</part>
+		<!--<part id="WfiAnalysis-Detail-WordGlossSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-WordGloss" hotlinks="mnuDataTree-WordGloss-Hotlinks" header="true"/>
+		</part>-->
+		<part id="WfiAnalysis-Detail-WordGlosses" type="Detail">
+			<seq field="Meanings"/>
+		</part>
+	</bin>
+	<bin class="WfiGloss">
+		<part id="WfiGloss-Detail-FormAllAnal" type="Detail">
+			<slice field="Form" label="Word Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-WordGlossForm"/>
+		</part>
+		<part id="WfiGloss-Jt-Form" type="jtview">
+			<string field="Form"/>
+		</part>
+	</bin>
+</PartInventory>

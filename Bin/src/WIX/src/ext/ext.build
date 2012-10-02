@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="ext" default="ext.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	ext.build - Builds the extensions
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Includes
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <include buildfile="mmcextension\mmcextension.build" />
+  <include buildfile="netfxextension\netfxextension.build" />
+  <include buildfile="vsextension\vsextension.build" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="ext.build" description="Peforms a full rebuild (clean then build)" depends="ext.clean, ext.inc" />
+
+  <!-- Clean -->
+  <target name="ext.clean" description="Cleans the build" depends="netfxextension.clean, vsextension.clean, mmcextension.clean">
+	<delete dir="${dir.build.ext}" failonerror="false" if="${directory::exists(dir.build.ext)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="ext.inc" description="Performs an incremental build" depends="netfxextension.inc, vsextension.inc, mmcextension.inc" />
+</project>

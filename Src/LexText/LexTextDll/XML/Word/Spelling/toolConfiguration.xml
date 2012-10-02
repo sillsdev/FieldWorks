@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tool label="Spelling" value="spelling" icon="BrowseView">
+	<control assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView">
+		<parameters id="wordList" clerk="words" filterBar="true" editable="false">
+			<columns>
+				<column label="Form" width="60%">
+					<para>
+						<properties>
+							<bold value="off" />
+						</properties>
+						<stringalt class="WfiWordform" field="Form" ws="vernacular" />
+					</para>
+				</column>
+				<column label="Spelled correctly?" width="20%">
+				</column>
+			</columns>
+			<fragments />
+		</parameters>
+	</control>
+</tool>

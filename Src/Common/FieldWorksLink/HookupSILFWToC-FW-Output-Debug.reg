@@ -1,0 +1,12 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\silfw]
+"URL Protocol" = ""
+@="URL:SILFW Protocol"
+
+[HKEY_CLASSES_ROOT\silfw\shell]
+
+[HKEY_CLASSES_ROOT\silfw\shell\open]
+
+[HKEY_CLASSES_ROOT\silfw\shell\open\command]
+@="\"C:\\fw\\output\\debug\\FieldworksLink.exe\" %1"

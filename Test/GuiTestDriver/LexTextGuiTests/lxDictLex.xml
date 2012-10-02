@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Dictionary insert lexical entry and jump to lexicon edit-->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to Lexicon/Dictionary-->
+  <click select="menubar/view/lexicon/dictionary"/>
+
+<!--insert new lexical entry in dictionary-->
+   <click select="toolbar/new-entry"/>
+   <on-dialog title="New Entry">
+	 <insert>aroundhouse</insert>
+	 <click path="9:Gloss:[2]/20:RootSite/$Text"/>
+	 <insert>when you don't like somebody</insert>
+	 <click path="9:Create/43:Create"/>
+   </on-dialog>
+
+<model select="dictionary[@role='view']">
+
+<!--check success-->
+  <var id="ind" set="1"/>
+  <var id="row" set="1"/>
+  <var id="col" set="1"/>
+  <glimpse wait="3000" id="roundhouse" select="entries/entry/para/string" prop="value" expect="aroundhouse"/>
+
+<!--insert new lexical entry in dictionary-->
+   <click select="//toolbar/new-entry"/>
+  <on-dialog title="New Entry">
+   <insert>asidekick</insert>
+   <click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert>ouch</insert>
+   <click path="9:Create/43:Create"/>
+  </on-dialog>
+
+<!--check success-->
+  <var id="ind" set="2"/>
+  <glimpse wait="3000" id="sidekick" select="entries/entry/para/string" prop="value" expect="asidekick"/>
+
+<!--insert new lexical entry in dictionary-->
+   <insert>^e</insert>
+  <on-dialog title="New Entry">
+   <insert>abackkick</insert>
+   <click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert>more ouch</insert>
+   <click path="9:Create/43:Create"/>
+  </on-dialog>
+
+<!--check success-->
+  <var id="ind" set="1"/>
+  <click select="entries/entry/para/string"/>
+  <glimpse wait="3000" id="backkick" select="entries/entry/para/string" prop="value" expect="abackkick"/>
+
+<!-- Delete records-->
+   <click select="//toolbar/delete"/>
+   <insert wait="200">d</insert>
+   <glimpse id="DelRoundhouse" select="entries/entry/para/string" prop="value" expect="aroundhouse"/>
+   <click select="//toolbar/delete"/>
+   <insert wait="200">d</insert>
+   <glimpse id="DelSidekick" select="entries/entry/para/string" prop="value" expect="asidekick"/>
+   <click select="//toolbar/delete"/>
+   <insert wait="200">d</insert>
+   <click select="//toolbar/next-record"/>
+
+   <!-- Click somewhere off the toolbar so the next tests can find a place to click.  -->
+   <click select="//toolbar/first-record"/>
+   <click select="entries/entry/para/string"/>
+
+</model>
+
+ </on-application>
+</accil>

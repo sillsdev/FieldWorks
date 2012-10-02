@@ -1,0 +1,114 @@
+﻿<LexDb xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:user="urn:my-scripts">
+  <Entries5005>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoStemAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="stem" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">an</AUni>
+		  </Form5035>
+		</MoStemAllomorph>
+	  </LexemeForm5002>
+	</LexEntry>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoAffixAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="prefix" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">a</AUni>
+		  </Form5035>
+		</MoAffixAllomorph>
+	  </LexemeForm5002>
+	  <Senses5002>
+		<LexSense>
+		  <Gloss5016>
+			<AUni ws="en">not</AUni>
+		  </Gloss5016>
+		</LexSense>
+	  </Senses5002>
+	</LexEntry>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoAffixAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="suffix" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">a</AUni>
+		  </Form5035>
+		</MoAffixAllomorph>
+	  </LexemeForm5002>
+	</LexEntry>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoStemAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="stem" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">aa</AUni>
+		  </Form5035>
+		</MoStemAllomorph>
+	  </LexemeForm5002>
+	  <Senses5002>
+		<LexSense>
+		  <Gloss5016>
+			<AUni ws="en">lava</AUni>
+		  </Gloss5016>
+		</LexSense>
+	  </Senses5002>
+	</LexEntry>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoStemAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="stem" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">act</AUni>
+		  </Form5035>
+		</MoStemAllomorph>
+	  </LexemeForm5002>
+	</LexEntry>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoStemAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="stem" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">add</AUni>
+		  </Form5035>
+		</MoStemAllomorph>
+	  </LexemeForm5002>
+	</LexEntry>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoStemAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="stem" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">ant</AUni>
+		  </Form5035>
+		</MoStemAllomorph>
+	  </LexemeForm5002>
+	</LexEntry>
+	<LexEntry>
+	  <LexemeForm5002>
+		<MoAffixAllomorph>
+		  <MorphType5035>
+			<Link ws="en" name="prefix" />
+		  </MorphType5035>
+		  <Form5035>
+			<AUni ws="utp">anti</AUni>
+		  </Form5035>
+		</MoAffixAllomorph>
+	  </LexemeForm5002>
+	</LexEntry>
+  </Entries5005>
+</LexDb>

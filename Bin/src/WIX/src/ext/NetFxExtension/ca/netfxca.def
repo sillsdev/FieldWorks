@@ -1,0 +1,7 @@
+; netfxca.def : declares the module parameters for the netfxca.dll
+
+LIBRARY      "netfxca"
+
+EXPORTS
+	SchedNetFx
+	ExecNetFx

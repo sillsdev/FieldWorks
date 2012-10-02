@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests insert, merge and delete gloss-->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+   <bug id="LT-6876" desc="crash merging glosses"/>
+
+	<var id="projectName" set="Kalaba"/>
+	<sound frequency = "500" duration = "500"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Words/Analyses-->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+  <model select="word-analysis[@role='view']">
+
+<!-- select "biliya" in wordforms list-->
+  <click select="//toolbar/first-record"/>
+  <var id="col" set="1"/> <!-- sets Form column for filter and record -->
+  <var id="row" set="1"/> <!-- sets row for records -->
+  <click select="wordforms/record/col" path="/value:biliya"/>
+
+<!-- add gloss-->
+  <var id="ind" set="*ind"/> <!-- assign index to $ind for summary slice Analysis Analysis 1 -->
+  <click select="analyses/analysis-seq/label" path="/value:Analysis 1"/>
+  <click side="right" select="analyses/analysis-seq/label"/>
+  <insert wait="1000">{DOWN 4}</insert>
+  <insert wait="500">~</insert>
+  <var id="ind" set="*ind"/>
+  <click dx="50" select="analyses/analysis-seq/word-gloss/label"/>
+  <insert wait="1000">new gloss</insert>
+
+<!--check if new gloss added-->
+	<glimpse wait="1000" id="glossAdd"  select="analyses/analysis-seq/word-gloss/data" path="/value:new gloss" prop="value" expect="new gloss"/>
+
+<!-- add second gloss-->
+  <var id="ind" set="*"/>
+  <click side="right" select="analyses/analysis-seq/label" path="/value:Analysis 1"/>
+  <insert wait="500">{DOWN 4}</insert>
+  <insert wait="500">~</insert>
+  <var id="ind" set="*ind"/>
+  <click dx="50" select="analyses/analysis-seq/word-gloss/label"/><!-- the first one from top -->
+  <insert wait="500">word</insert>
+  <glimpse wait="1000" id="gloss2Add" select="analyses/analysis-seq/word-gloss/data" path="/value:word" prop="value" expect="word"/>
+
+<!-- merge gloss-->
+  <click side="right" select="analyses/analysis-seq/word-gloss/label"/><!-- the first one from top -->
+  <insert>{DOWN 3}~</insert>
+  <insert>~</insert>
+
+<!--check if gloss merged-->
+  <var id="ind" set="*ind"/>
+	<glimpse wait="1000" id="glossMerge" select="analyses/analysis-seq/word-gloss/data" path="/value:new gloss word" prop="value" expect="new gloss word"/>
+
+<!-- delete gloss-->
+  <click side="right" select="analyses/analysis-seq/word-gloss/label"/><!-- the first one from top -->
+  <insert>{DOWN 3}~</insert>
+  <on-dialog title="Delete Word Gloss">
+	 <click path="$delete"/>
+  </on-dialog>
+
+  <glimpse wait="1000" id="notDeleted" select="analyses/analysis-seq/word-gloss/data" path="/value:new gloss word" prop="value" expect="new gloss word" on-pass="assert"/>
+
+  <click select="wordforms/record/col"/>
+
+  </model>
+
+ </on-application>
+</accil>

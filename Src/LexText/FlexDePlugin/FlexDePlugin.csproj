@@ -1,0 +1,72 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{C66019AE-6781-4FDB-A6E6-54B4C644DE27}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.Pathway</RootNamespace>
+	<AssemblyName>FlexDePlugin</AssemblyName>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+	<SccAuxPath>
+	</SccAuxPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=6.0.1.21065, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="COMInterfaces, Version=6.0.1.21080, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="FDO, Version=6.0.1.21104, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="FwCoreDlgs, Version=6.0.1.21221, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="FwUtils, Version=6.0.1.21482, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="Reporting, Version=1.0.3667.21099, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="System" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+	<Reference Include="Utils, Version=6.0.1.21066, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="xCore, Version=6.0.1.21215, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="xCoreInterfaces, Version=6.0.1.21108, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="XMLUtils, Version=6.0.1.21090, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="xWorks, Version=6.0.1.21937, Culture=neutral, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="FlexDePlugin.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="myFolders.cs" />
+	<Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

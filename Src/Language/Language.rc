@@ -1,0 +1,113 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 1999, 2004 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: Language.rc
+Responsibility:
+Last reviewed: Not yet.
+
+Description:
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+1 TYPELIB LanguageTlb.tlb
+
+#include "afxres.h"
+#include "LangResource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version: bldinc.h holds the current version number and it is created by executing
+// bin\mkverrsc.exe from within the bin\mk*.bat file. The major and minor version
+// numbers are hard-coded in mk*.bat.
+#include "..\..\..\Output\Common\bldinc.h"
+VS_VERSION_INFO VERSIONINFO
+// NOTE: These defines are in bldinc.h.
+// BUILDLVL comes from %BUILD_LEVEL% and defaults to 9 for developer machines, but
+// is set to lower numbers by the build machine.
+ FILEVERSION MAJOR_VERSION,MINOR_VERSION,YEAR,DAY_MONTH_BUILDLVL
+// NOTE: PRODUCTVERSION should be adjusted for each new milestone of the Fieldworks suite
+//  of applications.
+ PRODUCTVERSION 1,0,0,5 // Release 1.0, Milestone 5 (include below in StringFileInfo block)
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE VFT_DLL
+ FILESUBTYPE 0x0L
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904b0"
+		BEGIN
+			VALUE "Comments", "\0"
+			VALUE "CompanyName", "SIL International\0"
+			VALUE "FileDescription", "Fieldworks Language support\0"
+			VALUE "FileVersion", STR_PRODUCT // Uses FILEVERSION.
+			VALUE "InternalName", "Language\0"
+			VALUE "LegalCopyright", COPYRIGHT
+			VALUE "LegalTrademarks", "\0"
+			VALUE "OriginalFilename", "Language.dll\0"
+			VALUE "PrivateBuild", "\0"
+			VALUE "ProductName", "SIL FieldWorks\0"
+			VALUE "ProductVersion", "1,0,0,5\0"
+			VALUE "SpecialBuild", "\0"
+		END
+	END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1200
+	END
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidBufferTooSmall  "The buffer passed to this method was too small to hold the result."
+	kstidFracNumVal		 "Can't report a fractional numeric value"
+	kstidNoNumeric		 "Unicode does not define a numeric value for this character"
+	kstidInvalidUnicode	 "Found an invalid Unicode character or sequence"
+	kstidICUCharName	 "The ICU code retrieving the Unicode character name found an error."
+	kstidICUDecomp		 "The ICU code finding the Unicode decomposition encountered an error."
+	kstidICUNormalize	 "The ICU code normalizing the text found an error."
+	kstidICUCase		 "The ICU function for changing the case found an error."
+	kstidICUBrkInit		 "The ICU function to initialize the BreakIterator returned an error."
+	kstidICUBrkRange	 "The line break asked for was out of range of the given text."
+	kstidLangDefaultCollation "DefaultCollation"
+	kstidUserWs          "en"	// unless and until someone translates all our resources and
+								// fixes up the resulting problems in the code.
+	kstidKeymanInitFailedCaption "Keyman initialization failed"
+	kstidKeymanInitUnexpectedFailMsg "Unexpected Keyman failure"
+	kstidKeymanNotRegisteredMsg "No known version of Keyman is registered."
+	kstidKeymanRootNotRegisteredMsg "Keyman program is not registered correctly."
+	kstidKeymanDllLoadFailureMsg "Failed to load Keyman32.dll"
+END
+
+#include "../Cellar/FwCellarRes.h"
+#include "../Cellar/XmlMsgs.rc"
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidLangDefXmlMsg001 "Missing CharDef code attribute value.\n"
+	kstidLangDefXmlMsg002 "Missing CharDef data attribute value.\n"
+	kstidLangDefXmlMsg003 "Invalid CharDef code attribute value: ""%<0>s"".\n"
+	kstidLangDefXmlMsg004 "Missing Font file attribute value.\n"
+	kstidLangDefXmlMsg005 "Missing LgWritingSystem definition!?\n"
+	kstidLangDefXmlMsg006 "Unbalanced object stack!?\n"
+	kstidLangDefXmlMsg007 "Unbalanced property value stack!?\n"
+	kstidLangDefXmlMsg008 "Cannot put multiple objects in an atomic property.\n"
+	kstidLangDefXmlMsg009 "Cannot open language definition file ""%<0>s""!?\n"
+	kstidLangDefXmlMsg010 "Error accessing language definition file ""%<0>s""!?\n"
+	kstidLangDefXmlMsg011 "XML parser detected an XML syntax error!\n"
+	kstidLangDefXmlMsg012 "Error detected while parsing XML file!\n"
+	kstidLangDefXmlMsg013 "Missing EncodingConverter install attribute value.\n"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidLangDefXmlMsg014 "Problem while opening project"
+	kstidLangDefXmlMsg015 "The %<0>s writing system could not be installed, possibly due to insufficient user privileges.%nThis may affect sorting, special character definitions, and other aspects of the writing system.%n"
+END

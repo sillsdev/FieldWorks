@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+  <!-- LT-2602 -->
+<accil on-fail="assert">
+
+<!--test Grammar Phonemes insert, edit and deletes-->
+<!--assumes original Kalaba database-->
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <!--Go to Lists/Feature Types-->
+  <click select="menubar/view/grammar/phonemes"/>
+
+<model select="phonemes[@role='view']">
+
+  <!-- Make sure the Names are sorted in ascending order -->
+  <var id="row" set="*"/>
+  <var id="col" set="1"/>
+  <glimpse id="order" select="browse/record/col" prop="value" expect="a" on-fail="skip"/>
+  <if><condition of="$order" is="false"/>
+  <then><click select="browse/col/header" path="Name"/></then>
+  </if>
+  <glimpse id="NotOrdered" select="browse/record/col" prop="value" expect="a"/>
+
+  <!--insert new phoneme-->
+  <click select="//toolbar/new-phoneme"/>
+
+  <var id="ind" set="*"/>
+  <click select="edit/slice/name/data"/>
+  <insert>c~</insert>
+  <var id="ind" set="*"/>
+  <click select="edit/slice/representation/data"/>
+  <insert>represent~</insert>
+
+<!--edit-->
+  <click select="browse/col/header" path="Name"/>
+  <var id="row" set="22"/>
+  <click select="browse/record/col"/>
+  <var id="ind" set="*"/>
+  <var id="row" set="1"/>
+  <glimpse id="checkrow" select="edit/slice/name/data" prop="value" expect="c"/>
+  <var id="ind" set="*"/>
+  <click select="edit/slice/description/data"/>
+  <insert wait="1000">{HOME}</insert>
+  <insert wait="100">+{END}</insert>
+  <insert wait="100">errr...c is a letter~</insert>
+
+<!--check edit-->
+  <var id="ind" set="*"/>
+  <click select="edit/slice/name/data"/>
+  <insert wait="1000">{HOME}</insert>
+  <var id="row" set="22"/>
+  <var id="col" set="2"/>
+  <glimpse id="checkedit" select="browse/record/col" prop="value" expect="errr...c is a letter"/>
+  <click select="browse/col/header" path="Name"/>
+
+<!--delete record-->
+  <click select="//toolbar/delete"/>
+  <insert wait="500">d</insert>
+<!-- don't end up with the cursor on the toolbar the next test won't run -->
+  <var id="ind" set="*"/>
+  <var id="row" set="1"/>
+  <click select="edit/slice/name/data"/>
+
+<!--check delete-->
+  <var id="row" set="22"/>
+  <var id="col" set="1"/>
+  <glimpse id="checkdelete" select="browse/record/col" prop="value" expect="c" on-pass="assert"/>
+
+</model>
+
+  </on-application>
+</accil>

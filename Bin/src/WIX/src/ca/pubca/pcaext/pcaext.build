@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="pcaext" default="pcaext.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	pcaext.build - Builds pcaext.dll
+	2005.12.09 fregro Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- pcaext directories -->
+  <property name="pca.dir.wixext.src" value="${dir.src.ca.pubca}\pcaext" readonly="true" />
+  <property name="pca.dir.wixext.data" value="${pca.dir.wixext.src}\Data" readonly="true" />
+  <property name="pca.dir.wixext.xsd" value="${pca.dir.wixext.src}\Xsd" readonly="true" />
+
+  <!-- pcaext files -->
+  <property name="pca.file.messages.cs" value="${dir.build.ext.pca}\Messages.cs" readonly="true" />
+  <property name="pca.file.messages.resources" value="${dir.build.ext.pca}\Messages.resources" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="pcaext.build" description="Peforms a full rebuild (clean then build)" depends="pcaext.clean, pcaext.inc" />
+
+  <!-- Clean -->
+  <target name="pcaext.clean" description="Cleans the build">
+	<delete dir="${dir.build.ext.pca}" failonerror="false" if="${directory::exists(dir.build.ext.pca)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="pcaext.dll" />
+		<include name="pcaext.pdb" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="pcaext.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Flatten all of the xml/xsd files -->
+	<foreach item="File" property="flattenxml.source">
+	  <in>
+		<items>
+		  <include name="${pca.dir.wixext.xsd}\pubca.xsd" />
+		  <include name="${pca.dir.wixext.data}\tables.xml"/>
+		</items>
+	  </in>
+	  <do>
+		<property name="flattenxml.target" value="${dir.build.ext.pca}\${path::get-file-name(flattenxml.source)}" />
+		<call target="flattenXml" />
+	  </do>
+	</foreach>
+
+	<!-- Compile the messages.xml into the Message.cs class -->
+	<if test="${not file::up-to-date(path::combine(pca.dir.wixext.data, 'Messages.xml'), pca.file.messages.cs)}">
+	  <exec program="${tool.msggen}">
+		<arg value="-nologo" />
+		<arg value="${pca.dir.wixext.data}\Messages.xml" />
+		<arg value="${pca.file.messages.cs}" />
+		<arg value="${pca.file.messages.resources}" />
+	  </exec>
+	</if>
+
+	<!-- Build the pcaext.dll -->
+	<csc
+	  target="library"
+	  output="${dir.target.wix}\pcaext.dll"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${pca.dir.wixext.src}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="PcaCompiler.cs" />
+		<include name="${pca.file.messages.cs}" />
+	  </sources>
+	  <resources failonempty="true" basedir="${dir.build.ext.pca}" prefix="Microsoft.Tools.WindowsInstallerXml.Data">
+		<include name="Messages.resources" />
+		<include name="tables.xml" />
+	  </resources>
+	  <resources failonempty="true" basedir="${dir.build.ext.pca}" prefix="Microsoft.Tools.WindowsInstallerXml.Xsd">
+		<include name="pubca.xsd" />
+	  </resources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	</csc>
+  </target>
+
+</project>

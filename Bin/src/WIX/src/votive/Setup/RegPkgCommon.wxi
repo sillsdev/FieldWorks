@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	RegPkgCommon.wxi - VSPackage registration common to both VS2003 and VS2005 support.
+-->
+
+<Include>
+  <!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\Editors\{XML Editor Guid}\Extensions -->
+  <Registry Id="XmlEditorExtensionsWxs$(var.VsVersion)" Root="HKLM" Key="$(var.VsRegPath)\Editors\$(var.XmlEditorGuid)\Extensions" Name="wxs" Value="40" Type="integer">
+	<Registry Id="XmlEditorExtensionsWxi$(var.VsVersion)" Name="wxi" Value="40" Type="integer" />
+	<Registry Id="XmlEditorExtensionsWxl$(var.VsVersion)" Name="wxl" Value="40" Type="integer" />
+  </Registry>
+
+  <!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\InstalledProducts\WiX -->
+  <Registry Id="RegInstalledProducts$(var.VsVersion)" Root="HKLM" Key="$(var.VsRegPath)\InstalledProducts\WiX" Action="createKeyAndRemoveKeyOnUninstall">
+	<Registry Id="RegInstalledProductsPackage$(var.VsVersion)" Name="Package" Value="$(var.WixVsPackageGuid)" Type="string" />
+	<Registry Id="RegInstalledProductsToolsDirectory$(var.VsVersion)" Name="ToolsDirectory" Value="[BinDir]" Type="string" />
+	<Registry Id="RegInstalledProductsUseInterface$(var.VsVersion)" Name="UseInterface" Value="1" Type="integer" />
+  </Registry>
+
+  <!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\NewProjectTemplates\TemplateDirs\<Package GUID>\/1 -->
+  <Registry Id="RegTemplateDirs$(var.VsVersion)" Root="HKLM" Key="$(var.VsRegPath)\NewProjectTemplates\TemplateDirs\$(var.WixVsPackageGuid)" Action="createKeyAndRemoveKeyOnUninstall">
+	<Registry Id="RegTemplateDirsDefault$(var.VsVersion)" Key="/1" Value="#$(var.IDS_PROJECTS_DISPLAYNAME)" Type="string">
+	  <Registry Id="RegTemplateDirsSortPriority$(var.VsVersion)" Name="SortPriority" Value="30" Type="integer" />
+	  <Registry Id="RegTemplateDirsTemplatesDir$(var.VsVersion)" Name="TemplatesDir" Value="[VsTemplatesProjectsDir]" Type="string" />
+	</Registry>
+  </Registry>
+
+  <!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\Packages\<Package GUID> -->
+  <Registry Id="RegPackage$(var.VsVersion)" Root="HKLM" Key="$(var.VsRegPath)\Packages\$(var.WixVsPackageGuid)" Action="createKeyAndRemoveKeyOnUninstall">
+	<Registry Id="RegPackageDefault$(var.VsVersion)" Value="WiX Project Package" Type="string" />
+
+	<Registry Id="RegPackageAssembly$(var.VsVersion)" Name="Assembly" Type="string" />
+	<Registry Id="RegPackageClass$(var.VsVersion)" Name="Class" Value="Microsoft.Tools.WindowsInstallerXml.VisualStudio.WixPackage" Type="string" />
+	<Registry Id="RegPackageCodeBase$(var.VsVersion)" Name="CodeBase" Value="[#votive.dll]" Type="string" />
+	<Registry Id="RegPackageCompanyName$(var.VsVersion)" Name="CompanyName" Value="Microsoft" Type="string" />
+	<Registry Id="RegPackageID$(var.VsVersion)" Name="ID" Value="146" Type="integer" />
+	<Registry Id="RegPackageInprocServer32$(var.VsVersion)" Name="InprocServer32" Value="[SystemFolder]mscoree.dll" Type="string" />
+	<Registry Id="RegPackageMinEdition$(var.VsVersion)" Name="MinEdition" Value="standard" Type="string" />
+	<Registry Id="RegPackageProductName$(var.VsVersion)" Name="ProductName" Value="WiX Project Package" Type="string" />
+	<Registry Id="RegPackageProductVersion$(var.VsVersion)" Name="ProductVersion" Value="2.0" Type="string" />
+
+	<!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\Packages\<Package GUID>\SatelliteDll -->
+	<Registry Id="RegPackagesSatelliteDllDllName$(var.VsVersion)" Key="SatelliteDll" Name="DllName" Value="VotiveUI.dll" Type="string" />
+	<Registry Id="RegPackagesSatelliteDllPath$(var.VsVersion)" Key="SatelliteDll" Name="Path" Value="[VsDir]" Type="string" />
+  </Registry>
+
+  <!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\Projects\<Project GUID> -->
+  <Registry Id="RegProjects$(var.VsVersion)" Root="HKLM" Key="$(var.VsRegPath)\Projects\$(var.WixVsProjectGuid)" Action="createKeyAndRemoveKeyOnUninstall">
+	<Registry Id="RegProjectsDefault$(var.VsVersion)" Value="#$(var.IDS_PROJECTS_DISPLAYNAME)" Type="string" />
+	<Registry Id="RegProjectsDefaultProjectExtensions$(var.VsVersion)" Name="DefaultProjectExtensions" Value=".wixproj" Type="string" />
+	<Registry Id="RegProjectsDisplayName$(var.VsVersion)" Name="DisplayName" Value="#$(var.IDS_PROJECTS_DISPLAYNAME)" Type="string" />
+	<Registry Id="RegProjectsDisplayProjectFileExtensions$(var.VsVersion)" Name="DisplayProjectFileExtensions" Value="#$(var.IDS_PROJECTFILES_FILTER)" Type="string" />
+	<Registry Id="RegProjectsPackage$(var.VsVersion)" Name="Package" Value="$(var.WixVsPackageGuid)" Type="string" />
+	<Registry Id="RegProjectsPossibleProjectExtensions$(var.VsVersion)" Name="PossibleProjectExtensions" Value="wixproj" Type="string" />
+	<Registry Id="RegProjectsProjectTemplatesDir$(var.VsVersion)" Name="ProjectTemplatesDir" Value="[VsTemplatesProjectsDir]" Type="string" />
+	<Registry Id="RegProjectsProjectItemTemplatesDir$(var.VsVersion)" Name="ItemTemplatesDir" Value="[VsTemplatesProjectItemsDir]" Type="string" />
+
+	<!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\Projects\<Project GUID>\AddItemTemplates\TemplateDirs\<Package GUID>\/1 -->
+	<Registry Id="RegProjectsTemplateDirsDefault$(var.VsVersion)" Key="AddItemTemplates\TemplateDirs\$(var.WixVsPackageGuid)\/1" Value="#$(var.IDS_ADDITEM_TEMPLATES_ENTRY)" Type="string">
+	  <Registry Id="RegProjectsTemplateDirsSortPriority$(var.VsVersion)" Name="SortPriority" Value="100" Type="integer" />
+	  <Registry Id="RegProjectsTemplateDirsTemplatesDir$(var.VsVersion)" Name="TemplatesDir" Value="[VsTemplatesProjectItemsDir]" Type="string" />
+	</Registry>
+  </Registry>
+</Include>

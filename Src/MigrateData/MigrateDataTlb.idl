@@ -1,0 +1,27 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2002, SIL International. All rights reserved.
+
+File: MigrateDataTlb.idl
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+Description:
+	Interface descriptions for the MigrateData dll. See MigrateData.idh for a fuller
+	description.
+----------------------------------------------------------------------------------------------*/
+
+/***********************************************************************************************
+	Include files
+***********************************************************************************************/
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+
+#include "Common.idh" // DeclareInterface and similar
+
+DeclareLibrary(DataUpgrader, 1.0, "MigrateData 1.0 Type Library",
+	727A3C6C-E2C3-473b-81FF-E8B34C88BC6E)
+{
+	importlib("DbAccessTlb.tlb");
+
+	#include "MigrateData.idh"
+};

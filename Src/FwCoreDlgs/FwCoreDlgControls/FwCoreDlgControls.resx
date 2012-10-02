@@ -1,0 +1,377 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidMissingRgnAbbr" xml:space="preserve">
+	<value>You must have a region abbreviation if you specify a region name.</value>
+  </data>
+  <data name="kstidMissingVarAbbr" xml:space="preserve">
+	<value>You must have a variant abbreviation if you specify a variant name.</value>
+  </data>
+  <data name="kstidError" xml:space="preserve">
+	<value>Error</value>
+	<comment>Caption for error messages in dialogs</comment>
+  </data>
+  <data name="kstidDupRgnAbbr" xml:space="preserve">
+	<value>The region abbreviation you entered is already in use.</value>
+  </data>
+  <data name="kstidDupVarAbbr" xml:space="preserve">
+	<value>The variant abbreviation you entered is already in use.</value>
+  </data>
+  <data name="kstid_None" xml:space="preserve">
+	<value> None</value>
+	<comment>Used in keyboard control (leading space causes it to be first in a sorted list)</comment>
+  </data>
+  <data name="kstidInvalidKeyboard" xml:space="preserve">
+	<value> Invalid keyboard</value>
+  </data>
+  <data name="kstidUninstalled" xml:space="preserve">
+	<value> -- Not Installed</value>
+  </data>
+  <data name="kstidBuiltIn" xml:space="preserve">
+	<value>Built In</value>
+  </data>
+  <data name="kstidFontFeatures" xml:space="preserve">
+	<value>Font Features...</value>
+  </data>
+  <data name="kstidRegAbbrQuestion" xml:space="preserve">
+	<value>The region abbreviation "{0}" was associated with "{1}". Do you want to change "{0}" to refer to "{2}"?</value>
+	<comment>Used in RegionVariantControl</comment>
+  </data>
+  <data name="kstidRegAbbrReserved" xml:space="preserve">
+	<value>The region abbreviation "{0}" is reserved for "{1}", so it cannot be used here.</value>
+	<comment>Used in RegionVariantControl</comment>
+  </data>
+  <data name="kstidRegNameUsed" xml:space="preserve">
+	<value>The region name "{0}" is already associated with "{1}", so it cannot be used here.</value>
+	<comment>Used in RegionVariantControl</comment>
+  </data>
+  <data name="kstidVarNameUsed" xml:space="preserve">
+	<value>The variant name "{0}" is already associated with "{1}", so it cannot be used here.</value>
+	<comment>Used in RegionVariantControl</comment>
+  </data>
+  <data name="kstidVarAbbrQuestion" xml:space="preserve">
+	<value>The variant abbreviation "{0}" was associated with "{1}". Do you want to change "{0}" to refer to "{2}"?</value>
+  </data>
+  <data name="kstidVarAbbrReserved" xml:space="preserve">
+	<value>The variant abbreviation "{0}" is reserved for "{1}", so it cannot be used here.</value>
+  </data>
+  <data name="kstidFeature" xml:space="preserve">
+	<value>Feature #{0}</value>
+	<comment>Substring {0} MUST occur and will be replaced by integer feature number.</comment>
+  </data>
+  <data name="kstidFeatureValue" xml:space="preserve">
+	<value>Value #{0}</value>
+  </data>
+  <data name="kstidBadMsr" xml:space="preserve">
+	<value>"{0}"  is not a valid measurement.</value>
+  </data>
+  <data name="kstidBadLocales" xml:space="preserve">
+	<value>The following system locales are invalid, so will be omitted from the list of System Languages for keyboard input: {0}</value>
+	<comment>Used when filling a list of System keyboards</comment>
+  </data>
+  <data name="kstidBadLanguageName" xml:space="preserve">
+	<value>FieldWorks is unable to recognize a language name. This item will be omitted from the list of System Languages for keyboard input.</value>
+  </data>
+  <data name="kstidDefaultSettings" xml:space="preserve">
+	<value>&lt;default settings&gt;</value>
+	<comment>Used in writing systems list box</comment>
+  </data>
+  <data name="kstidUnspecified" xml:space="preserve">
+	<value>(unspecified)</value>
+	<comment>Used in Font combo box</comment>
+  </data>
+  <data name="ksAtLeastSpacing" xml:space="preserve">
+	<value>Line spacing at least</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksCenter" xml:space="preserve">
+	<value>Center</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksDoubleSpacing" xml:space="preserve">
+	<value>Double Spacing</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksExactSpacing" xml:space="preserve">
+	<value>Exact Spacing</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksFirstLineHanging" xml:space="preserve">
+	<value>First Line Hanging</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksFirstLineIndent" xml:space="preserve">
+	<value>First Line Indent</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksJustify" xml:space="preserve">
+	<value>Justify</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksLeading" xml:space="preserve">
+	<value>Leading</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksLeft" xml:space="preserve">
+	<value>Left</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksLeftToRight" xml:space="preserve">
+	<value>Left-to-Right</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksNone" xml:space="preserve">
+	<value>None</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksNormalDefaultFontHelpMsg" xml:space="preserve">
+	<value>Specifies the font to be used as a default in all “normal” styles when using this writing system.</value>
+  </data>
+  <data name="ksPlusSpacing" xml:space="preserve">
+	<value>1.5 Line Spacing</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksRight" xml:space="preserve">
+	<value>Right</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksRightToLeft" xml:space="preserve">
+	<value>Right-to-Left</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSingleSpacing" xml:space="preserve">
+	<value>Single Spacing</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSpacingAfter" xml:space="preserve">
+	<value>Spacing After</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSpacingBefore" xml:space="preserve">
+	<value>Spacing Before</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSpecialIndent" xml:space="preserve">
+	<value>Special Indent</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksTrailing" xml:space="preserve">
+	<value>Trailing</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidBulleted" xml:space="preserve">
+	<value>Bulleted</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidNumbered" xml:space="preserve">
+	<value>Numbered</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidAllBorders" xml:space="preserve">
+	<value>All</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidBorder" xml:space="preserve">
+	<value>Border ({0})</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidBorderDetailsWithColor" xml:space="preserve">
+	<value>{0}, {1} pt</value>
+	<comment>Used in Description on the General tab of the Style dialog box for formatting the Color and point size of the border</comment>
+  </data>
+  <data name="kstidBorderDetailsWithoutColor" xml:space="preserve">
+	<value>{0} pt</value>
+	<comment>Used in Description on the General tab of the Style dialog box for formatting the point size of the border</comment>
+  </data>
+  <data name="kstidBottomBorder" xml:space="preserve">
+	<value>Bottom</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidItemSeparator" xml:space="preserve">
+	<value>, </value>
+	<comment>Used in Description on the General tab of the Style dialog box to separate detail items</comment>
+  </data>
+  <data name="kstidItemValueSeparator" xml:space="preserve">
+	<value>: </value>
+	<comment>Used in Description on the General tab of the Style dialog box to separate an item label from its value</comment>
+  </data>
+  <data name="kstidNoBorder" xml:space="preserve">
+	<value>No border</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidNoBulletsorNumbering" xml:space="preserve">
+	<value>No bullets or numbering</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidTopBorder" xml:space="preserve">
+	<value>Top</value>
+	<comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidKeymanInitFailed" xml:space="preserve">
+	<value>Keyman initialization failed</value>
+	<comment>Error message to display if Keyman initialization fails (application may append a colon and specific error details)</comment>
+  </data>
+  <data name="kstidLeadingCheck" xml:space="preserve">
+	<value>L&amp;eading</value>
+	<comment>Used in the Border tab to show leading instead of a simple left or right</comment>
+  </data>
+  <data name="kstidLeftCheck" xml:space="preserve">
+	<value>L&amp;eft</value>
+	<comment>Used in the Border tab to show left instead of leading or trailing</comment>
+  </data>
+  <data name="kstidRightCheck" xml:space="preserve">
+	<value>&amp;Right</value>
+	<comment>Used in the Border tab to show right instead of leading or trailing</comment>
+  </data>
+  <data name="kstidTrailingCheck" xml:space="preserve">
+	<value>T&amp;railing</value>
+	<comment>Used in the Border tab to show trailing instead of a simple left or right</comment>
+  </data>
+  <data name="kstidCharacterStyleText" xml:space="preserve">
+	<value>Character</value>
+  </data>
+  <data name="kstidParagraphStyleText" xml:space="preserve">
+	<value>Paragraph</value>
+  </data>
+  <data name="kstidSchema" xml:space="preserve">
+	<value>Schema</value>
+	<comment>Used for bullets/numbers in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidStartAt" xml:space="preserve">
+	<value>Start at</value>
+	<comment>Used for bullets/numbers in Description on the General tab of the</comment>
+  </data>
+  <data name="kstidTextAfter" xml:space="preserve">
+	<value>Text after</value>
+	<comment>Used for bullets/numbers in Description on the General tab of the</comment>
+  </data>
+  <data name="kstidTextBefore" xml:space="preserve">
+	<value>Text before</value>
+	<comment>Used for bullets/numbers in Description on the General tab of the</comment>
+  </data>
+  <data name="kstidMissingFontFmt" xml:space="preserve">
+	<value>&lt;Missing: {0}&gt;</value>
+  </data>
+  <data name="ksScriptAbbreviationLength" xml:space="preserve">
+	<value>The Script Abbreviation must be exactly 4 characters long.</value>
+  </data>
+  <data name="ksRegionAbbreviationLength" xml:space="preserve">
+	<value>The Region Abbreviation must be exactly 2 or 3 characters long.</value>
+  </data>
+</root>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for if instruction.
+-->
+
+<accil on-fail="assert">
+ <on-application on-fail="assert">
+  <glimpse id="TryDraft" path="button:Draft" on-fail="skip"/>
+  <if>
+   <condition of="TryDraft" is="true"/>
+   <else><click path="tray:Views"/></else>
+  </if>
+  <glimpse id="SeeDraft" path="button:Draft" on-fail="assert">
+   The Draft icon should be visible. Result = '<data/>'.
+  </glimpse>
+  <if>
+   <condition of="SeeDraft" is="true"/>
+   <then><click path="tray:Filters"/></then>
+  </if>
+  <!-- draft is not set correctly in TE, it is visible when it shouldn't be
+  <glimpse id="DraftNotVisible" path="button:Draft" on-pass="assert">
+   The Draft icon should not be visible. Result = '<data/>'.
+  </glimpse>
+  <if--> <!-- "anded" -->
+   <!--condition of="SeeDraft" is="true"/>
+   <condition of="DraftNotVisible" is="false"/>
+   <then>
+	<if>
+	 <condition of="DraftNotVisible" is="equal" to="'False'"/>
+	 <then>
+	  <click path="menu:Format/Style..."/>
+	  <on-dialog name="Style" title="Style" on-fail="assert">
+	   <click wait="1000" path="button:OK" />
+	  </on-dialog>
+	 </then>
+	</if>
+   </then>
+  </if> -->
+ </on-application>
+</accil>

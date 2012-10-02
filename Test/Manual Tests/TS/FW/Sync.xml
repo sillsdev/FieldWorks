@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="sync" num="9.1" abbr="inst" file="FW\Sync.xml">
+<title tag="sync">Synchronization Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Data Notebook and the Topics List Editor are two different applications that will likely be running at the same time, working together.  It is important that the information these two applications have in common remains in synchronization between them in order to avoid user confusion and preserve data integrity. This script tests to make sure the overlapping areas of these two applications keeps the information the same in both applications.</p>
+<p>No Current Specs, See Raid reports 2203 and 1901</p>
+<p name="todo">Think of any additional synchronization concerns</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the word "Synchronization".</p>
+</context>
+
+<case id="sync1" num="1" order="any">
+<title tag="sync1">Project Properties Synchronization</title>
+<context>
+<p>When running TLE and DN for the same project</p>
+</context>
+
+<step name="1.1" link="Bug">
+   Change the Name of the Language Project in DN using the Name text box under File-Properties-Project Properties. Open up the same dialog in TLE.
+   <r>
+<ul>
+<li>The name of the project in TLE should be updated to the new name.</li>
+	  <li>Changing the Name in TLE should also change the name in DN</li>
+</ul>
+</r>
+<p name="bug">Synchronization: Project Name not updated in other application</p>
+<p name="bug">Synchronization: Unable to change project name in other application</p>
+</step>
+
+<step name="1.2" link="Bug">
+  Change some of the settings under the Writing Systems tab (such as checking an unchecked language box or adding a new language). Verify the changes are present in the other application (TLE if the changes were made in DN or vice versa).
+  <r>The two applications should contain the same information.</r>
+  <p name="bug">Synchronization: Checking/Unchecking writing system not updated in other app</p>
+  <p name="bug">Synchronization: Adding new language definition not added to other app</p>
+</step>
+
+<step name="1.3" link="Bug">
+  Change the default folder for external links in DN under the External Links tab. Click OK then open up the same dialog in TLE to verify the changes.
+  <r>The default folder should be updated in TLE to agree with the changes made in DN.</r>
+  <p name="bug">Synchronization: default folder for external links not updated in other app</p>
+</step>
+
+</case>
+
+<case id="sync2" num="2" order="any">
+<title tag="sync2">List Item Synchronization</title>
+<context>
+<p>When running TLE and DN for the same project</p>
+</context>
+
+<step name="2.1" link="Bug">
+ Create an item in TLE. Try to add it to a field in DN.
+ <r>The item should be available to be referenced.</r>
+ <p name="bug">Synchronization: Item created in TLE not able to reference in DN</p>
+</step>
+
+<step name="2.2" link="Bug">
+ Create an item in DN using in-place insertion. View it in TLE.
+ <r>The item should be available to view/edit in TLE</r>
+ <p name="bug">Synchronization: Item created using in-place insertion not present in TLE</p>
+</step>
+
+<step name="2.3" link="Bug">
+ Create an item in DN using the Chooser dialog command Insert Item (may be above/below/subitem).  View it in TLE.
+ <r>The item should be available to view/edit in TLE</r>
+ <p name="bug">Synchronization: Item created in Chooser not present in TLE</p>
+</step>
+
+<step name="2.4" link="Bug">
+ Change the name or abbreviation of an item using the Chooser dialog in DN. View the item in TLE.
+ <r>The item's information should be updated in TLE.</r>
+ <p name="bug">Synchronization: Item edited in Chooser not updated in TLE</p>
+</step>
+
+<step name="2.5" link="Bug">
+ Rearrange the order or change the hierarchy (if applicable) to the list in the Chooser. Check the status of the list in TLE.
+ <r>The items should be updated with respect to order and hierarchy.</r>
+ <p name="bug">Synchronization: rearrangement of items in chooser not updated in TLE</p>
+</step>
+
+<step name="2.6" link="Bug">
+ Delete an item in TLE. Try to add it in DN. (Try deleting in Chooser and viewing in TLE as well).
+ <r>The item should be removed from both applications.</r>
+ <p name="bug">Synchronization: item deleted in TLE still present in DN</p>
+ <p name="bug">Synchronization: item deleted in Chooser still present in TLE</p>
+</step>
+
+<step name="2.7" link="Bug">
+ Change the name and abbreviation of an item in TLE. View an entry that references the item in DN.
+ <r>DN should update the item information.</r>
+ <p name="bug">Synchronization: item edited in TLE not updated in DN</p>
+</step>
+
+</case>
+
+<case id="sync3" num="3" order="any">
+<title tag="sync3">Other Synchronization Issues</title>
+<context>
+<p>When running TLE and DN for the same project</p>
+</context>
+
+<step name="3.1" link="Bug">
+ Change some settings in the Page Setup dialog in DN. Confirm the changes in TLE.
+ <r>
+<ul>
+<li>The changes have been included in TLE</li>
+	<li>Any additional changes in TLE are reflected in DN</li>
+</ul>
+</r>
+ <p name="bug">Synchronization: Page Setup dialog changes not reflected in other app</p>
+</step>
+
+<step name="3.2" link="Bug">
+ Change some settings in the Style dialog in DN. Confirm the changes in TLE.
+ <r>
+<ul>
+<li>The changes have been included in TLE</li>
+	<li>Any additional changes in TLE are reflected in DN</li>
+</ul>
+</r>
+ <p name="bug">Synchronization: Style dialog changes not reflected in other app</p>
+</step>
+
+</case>
+
+
+<update date="Jul-09-02" author="RussD">Test script created.</update>
+
+</test>

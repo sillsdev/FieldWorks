@@ -1,0 +1,158 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "GeneralPropDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "AfAppRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"GeneralPropDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""AfAppRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icons
+//
+
+kridGeneralPropertiesObjIcon       ICON    DISCARDABLE     "LangProj.ico"
+kridGeneralPropertiesNwIcon        ICON    DISCARDABLE     "LangProjNetwork.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+// This dialog used to be in LangProjPropDlg.rc, which no longer exists.
+kridLangProjPropDlg DIALOGEX 0, 0, 258, 254
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+CAPTION "Project Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidOk,102,235,44,15
+	PUSHBUTTON      "Cancel",kctidCancel,154,235,44,15
+	PUSHBUTTON      "Help...",kctidHelp,205,235,44,15
+	CONTROL         "Tab1",kcidLangProjPropDlgTab,"SysTabControl32",
+					TCS_HOTTRACK | TCS_RAGGEDRIGHT | WS_TABSTOP, 9,5,240,226
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidLangProjPropMsgCaption  "Language Project Properties"
+	kstidLangProject			 "Language Project"
+	kstidLngPrjNewWrtSys        "&Define New..."
+END
+
+kridGeneralPropTabDlg DIALOGEX 0, 0, 220, 206
+STYLE WS_CHILD
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif"
+BEGIN
+	ICON            "",kridGeneralPropTabObjIcon,10,5,20,20
+	LTEXT           "",kridGeneralPropTabBigName,40,10,175,20,SS_NOPREFIX	// Avoids &X->_X
+	LTEXT           "",IDC_STATIC,10,30,200,1,SS_SUNKEN
+	LTEXT           "&Name:",IDC_STATIC,10,40,40,8
+	EDITTEXT        kctidGeneralPropTabName,57,38,153,14,ES_AUTOHSCROLL
+	LTEXT           "",IDC_STATIC,10,58,200,1,SS_SUNKEN
+	LTEXT           "Type:",IDC_STATIC,10,63,45,8
+	LTEXT           "",kridGeneralPropTabType,57,63,150,8
+	LTEXT           "Location:",kridGeneralPropTabLocationLabel,10,75,45,8
+	LTEXT           "",kridGeneralPropTabLocation,57,75,150,8
+	LTEXT           "Size:",kridGeneralPropTabSizeLabel,10,87,45,8
+	LTEXT           "",kridGeneralPropTabSize,57,87,150,8
+	LTEXT           "",IDC_STATIC,10,99,200,1,SS_SUNKEN
+	LTEXT           "Date Created:",IDC_STATIC,10,103,45,8
+	LTEXT           "",kridGeneralPropTabCreated,57,103,140,8
+	LTEXT           "Last Modified:",kridGeneralPropTabModifiedLabel,10,115,
+					45,8
+	LTEXT           "",kridGeneralPropTabModified,57,115,140,8
+	LTEXT           "",IDC_STATIC,10,127,200,1,SS_SUNKEN
+	LTEXT           "&Description:",kridGeneralPropTabDescriptionLabel,10,
+					133,45,8
+	EDITTEXT        kctidGeneralPropTabDescription,57,133,153,63,
+					ES_MULTILINE | WS_VSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	// Project properties (common to all applications)
+	kctidGeneralPropTabProjName "Displays/sets the name of this project."
+	// List Name (Topics List Editor only)
+	kctidGeneralPropTabListName "Displays/sets the name of this topics list."
+	// kctidGeneralPropTabName was renamed to kctidGeneralPropTabDnName and moved to NoteBk.rc
+	kctidGeneralPropTabDescription
+							"Displays a description of the open notebook for future reference in this dialog only."
+	kstidGeneralPropTab     "General"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidPropItems			"Items"
+	kstidPropEntries		"Entries"
+	kstidPropProperties		"Properties"
+END
+
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

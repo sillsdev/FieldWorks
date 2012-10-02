@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkVersion", "mkVersion.csproj", "{377B580D-4D4F-4935-B628-B1533E94F27C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = mkVersion.csproj
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{377B580D-4D4F-4935-B628-B1533E94F27C}.Debug.ActiveCfg = Debug|.NET
+		{377B580D-4D4F-4935-B628-B1533E94F27C}.Debug.Build.0 = Debug|.NET
+		{377B580D-4D4F-4935-B628-B1533E94F27C}.Release.ActiveCfg = Release|.NET
+		{377B580D-4D4F-4935-B628-B1533E94F27C}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,50 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
+	<Product UpgradeCode="1092269F-9EA1-419B-8685-90203F83E254" Id="2A458F3A-B88E-416f-997E-F7935489C054" Name='SIL FieldWorks 6.0.4' Language='1033'
+			 Version='6.0.4' Manufacturer='SIL International'>
+		<Package Id='????????-????-????-????-????????????'
+				  Description='FieldWorks 6.0.4 Installer'
+				  Manufacturer='SIL International' InstallerVersion='200' Compressed='yes' />
+		<Condition Message="You need to be an administrator to install this product.">Privileged</Condition>
+		<Condition Message="[ProductName] will only run on Windows 2000 or better. You cannot intall it on this machine.">
+			<![CDATA[(NOT Version9X) OR (NOT VersionNT OR (VersionNT >= 500))]]>
+		</Condition>
+
+		<!-- In InstallUISequence, place ResolveSource after CostInitialize and AppSearch after that,
+			  so that a rerun of the installer will find external cabs that may have been added.
+			  Beware! This might make LaunchConditions fail, although this is not currently used. -->
+		<InstallUISequence>
+			<ResolveSource After="CostInitialize"/>
+			<AppSearch After="ResolveSource"/>
+		</InstallUISequence>
+
+		<!--<Media Id='1' Cabinet='FW.cab' EmbedCab='yes' />
+		<Media Id='2' Cabinet='Flex_M.cab' EmbedCab='no' />
+		<Media Id='3' Cabinet='TE_M.cab' EmbedCab='no' />-->
+		<Media Id='1' Cabinet='FW.cab' EmbedCab='yes' CompressionLevel='high'/>
+		<Media Id='2' Cabinet='Flex_M.cab' EmbedCab='no' CompressionLevel='high'/>
+		<Media Id='3' Cabinet='TE_M.cab' EmbedCab='no' CompressionLevel='high'/>
+
+		<Property Id="FLEX_MOVIES_CAB_FOUND">
+			<DirectorySearch Path="[SourceDir]" Depth="0" Id="FindFlexMoviesCabFile">
+				<FileSearch Name="Flex_M.cab"/>
+			</DirectorySearch>
+		</Property>
+		<Property Id="TE_MOVIES_CAB_FOUND">
+			<DirectorySearch Path="[SourceDir]" Depth="0" Id="FindTeMoviesCabFile">
+				<FileSearch Name="TE_M.cab"/>
+			</DirectorySearch>
+		</Property>
+
+		<FragmentRef Id='FwUI'/>
+		<FragmentRef Id='FilesFragment'/>
+		<FragmentRef Id='FeaturesFragment'/>
+		<FragmentRef Id='RegistryFragment'/>
+		<FragmentRef Id='CopyFilesFragment'/>
+		<FragmentRef Id='EnvironmentVarsFragment'/>
+		<FragmentRef Id='ShortcutsFragment'/>
+		<FragmentRef Id='MergeModulesFragment'/>
+		<FragmentRef Id='ActionsFragment'/>
+		<FragmentRef Id='PropertiesFragment'/>
+	</Product>
+</Wix>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CellarModule id="Cellar" num="0" ver="1" verBack="1">
+<class num="0" mod="Cellar" id="CmObject" abbr="cmo" abstract="true" base="CmObject" depth="0" />
+<class num="7" mod="Cellar" id="CmPossibility" abbr="obj" abstract="false" base="CmObject" depth="1" >
+	<props>
+		<basic num="3" id="Name" sig="MultiUnicode" />
+		<basic num="4" id="Abbreviation" sig="MultiUnicode" />
+	</props>
+</class>
+
+<class num="3" mod="Cellar" id="MoForm" abbr="mf" abstract="false" base="CmObject" depth="1" />
+<class num="4" mod="Cellar" id="MoMorphSynAnalysis" abbr="mf" abstract="false" base="CmObject" depth="1" />
+
+<class num="21" mod="Lex" id="LexSense" abbr="ls" abstract="false" base="CmObject" depth="1" >
+	<props>
+		<basic num="1" id="Gloss" sig="MultiUnicode" />
+		<rel num="16" id="SemanticDomains" card="seq" sig="CmPossibility" />
+		<rel num="11" id="SenseType" card="atomic" sig="CmPossibility" />
+		<rel num="12" id="Status" card="atomic" sig="CmPossibility" />
+	</props>
+</class>
+
+<class num="23" mod="Mo" id="MoStemMsa" abbr="ls" abstract="false" base="MoMorphSynAnalysis" depth="2" >
+	<props>
+		<rel num="11" id="PartOfSpeech" card="atomic" sig="CmPossibility" />
+	</props>
+</class>
+
+<class num="24" mod="Mo" id="MoDerivAffMsa" abbr="ls" abstract="false" base="MoMorphSynAnalysis" depth="2" >
+	<props>
+		<rel num="11" id="FromPartOfSpeech" card="atomic" sig="CmPossibility" />
+		<rel num="12" id="ToPartOfSpeech" card="atomic" sig="CmPossibility" />
+	</props>
+</class>
+
+<class num="22" mod="Lex" id="LexEtymology" abbr="ety" abstract="false" base="CmObject" depth="1" >
+	<props>
+		<basic num="1" id="Comment" sig="MultiBigString" />
+	</props>
+</class>
+
+<class num="2" id="LexEntry" abstract="true" abbr="ent" base="CmObject" depth="1">
+	<props>
+		<basic num="3" id="CitationForm" sig="MultiUnicode" />
+		<owning num="9" id="MorphoSyntaxAnalyses" card="col" sig="MoMorphSynAnalysis" />
+		<owning num="10" id="Senses" card="seq" sig="LexSense" />
+		<owning num="11" id="Etymology" card="atomic" sig="LexEtymology" />
+		<basic num="12" id="Bibliography" sig="MultiString" />
+	</props>
+</class>
+<class num="5" mod="Cellar" id="LexMajorEntry" abbr="mlme" abstract="false" base="LexEntry" depth="2" >
+	<props>
+		<basic num="1" id="Nonsense" sig="Integer" min="0" max="255" />
+	</props>
+</class>
+</CellarModule>

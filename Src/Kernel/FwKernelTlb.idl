@@ -1,0 +1,33 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: TextServTlb.idl
+Responsibility: Jeff Gayle
+Last reviewed:
+
+	Defines Text Services Type Library.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+
+#include "Common.idh"
+
+DeclareLibrary(FwKernelLib, 1.0, "FieldWorks Kernel", F1EF76E0-BE04-11d3-8D9A-005004DEFEC4)
+{
+	#include "FwKernel.idh"
+	#include "TextServ.idh"
+
+	#include "BackupDelegates.idh"	// DbServices DLL stuff
+	#include "DbBackup.idh"
+	#include "DbDisconnect.idh"
+	#include "RemoteWarn.idh"
+
+	#include "DbAccess.idh"			// DbAccess DLL stuff
+
+	#include "Render.idh"			// Language DLL stuff
+	#include "Language.idh"
+};

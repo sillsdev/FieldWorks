@@ -1,0 +1,17 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Milestone\Offsite.xml">
+ <title tag="mstOff">What is an off-site tester?</title>
+ <index>
+  <li>offsite tester</li>
+  <li>testing offsite</li>
+ </index>
+ <definition>
+  <p>You are an offsite tester if you recieve authorization from the Language Software Test Department to receive preliminary FieldWorks software for the purposes of tesing it and report your findings. You need not be a Wycliffe Bible Translators member.</p>
+  <p>Here are some ways that offsite testers are helping out:</p>
+  <ul>
+   <li>Testing FieldWorks software using assigned test scripts.</li>
+   <li>Writing test case descriptions for use in test scripts.</li>
+   <li>Writing validated XML source for test scripts.</li>
+  </ul>
+ </definition>
+</concept>

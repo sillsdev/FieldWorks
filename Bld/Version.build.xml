@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NAnt build file for creating version info for C++ projects build with batch files. -->
+<project name="VersionInfo" default="default" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<style style="${BUILD_ROOT}\bld\TransformGlobalInclude.xslt"
+		in="${BUILD_ROOT}\bld\GlobalInclude.xml"
+		out="${BUILD_ROOT}\bld\GlobalInclude.build.xml"/>
+	<include buildfile="${BUILD_ROOT}\bld\GlobalInclude.build.xml"/>
+	<target name="default">
+		<if test="${not file::up-to-date(BUILD_ROOT + '\src\bldinc.h', BUILD_ROOT + '\Output\common\bldinc.h')}">
+			<versionex output="${BUILD_ROOT}\Output\common\bldinc.h">
+				<sources>
+					<include name="${BUILD_ROOT}\src\bldinc.h"/>
+				</sources>
+			</versionex>
+		</if>
+	</target>
+</project>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Module Id="Old_Cpp_and_MFC_Dlls" Guid="7BEA4581-7374-4EE9-9055-7DE2740D836C" Language="0" Version="1.0">
+	<Package Id="????????-????-????-????-????????????" Keywords="MergeModule, MSI, MFC DLLs" Description="Old C++ and MFC Dlls" Manufacturer="SIL International" InstallerVersion="110" Platforms="Intel" Languages="0" Compressed="yes" SummaryCodepage="1252" />
+	<Directory Id="TARGETDIR" Name="SourceDir">
+	  <Directory Id="CommonFilesFolder" Name="Common">
+		<Directory Id="SIL" Name="SIL">
+		  <Component Id="mfc71u.dll" Guid="22A3ADAA-C4F7-40AD-ADF5-2808F6D02FE5" SharedDllRefCount="yes">
+			<File Id="mfc71u.dll" Name="mfc71u.dll" Checksum="yes" KeyPath="yes" Source="Installer\mfc71u.dll" />
+		  </Component>
+		  <Component Id="msvcp71.dll" Guid="E1110936-5C13-4985-8C74-CFA0E7F5820E" SharedDllRefCount="yes">
+			<File Id="msvcp71.dll" Name="msvcp71.dll" Checksum="yes" KeyPath="yes" Source="Installer\msvcp71.dll" />
+		  </Component>
+		  <Component Id="msvcr71.dll" Guid="09EFC15E-774A-44F3-8162-DD96CBCDD8C9" SharedDllRefCount="yes">
+			<File Id="msvcr71.dll" Name="msvcr71.dll" Checksum="yes" KeyPath="yes" Source="Installer\msvcr71.dll" />
+		  </Component>
+		</Directory>
+	  </Directory>
+	</Directory>
+  </Module>
+</Wix>

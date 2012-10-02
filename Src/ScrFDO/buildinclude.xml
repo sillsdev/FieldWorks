@@ -1,0 +1,6 @@
+﻿<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<post-clean>
+		<delete file="${dir.srcProj}\Scripture.cs" verbose="true" failonerror="false"/>
+	</post-clean>
+</include>

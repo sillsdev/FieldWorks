@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+  VSDetect.wxs - WiX fragment for Visual Studio AppSearches.
+-->
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Fragment>
+
+	<!-- Visual Studio .NET 2003 -->
+	<?ifdef VsVersion?>
+	<?undef VsVersion?>
+	<?endif ?>
+	<?define VsVersion = "7.1"?>
+	<?include SetVsRegPath.wxi?>
+	<Property Id="DEVENV_2003_COMP">
+	  <ComponentSearch Id="SearchForDevEnv2003Component" Guid="153B059B-B2F4-4B54-9AC3-32BE38E470E1" Type="file" />
+	</Property>
+	<Property Id="DEVENV_2003_PATH">
+	  <RegistrySearch Id="SearchForDevEnv2003Path" Root="HKLM" Key="$(var.VsRegPath)\Setup\VS" Name="EnvironmentPath" Type="raw" />
+	</Property>
+
+	<!-- Visual Studio 2005 -->
+	<?ifdef VsVersion?>
+	<?undef VsVersion?>
+	<?endif ?>
+	<?define VsVersion = "8.0"?>
+	<?include SetVsRegPath.wxi?>
+	<Property Id="DEVENV_2005_COMP">
+	  <ComponentSearch Id="SearchForDevEnv2005Component" Guid="320DB690-7979-4015-BD78-A16D7279043B" Type="file" />
+	</Property>
+	<Property Id="DEVENV_2005_PATH">
+	  <RegistrySearch Id="SearchForDevEnv2005Path" Root="HKLM" Key="$(var.VsRegPath)\Setup\VS" Name="EnvironmentPath" Type="raw" />
+	</Property>
+
+	<CustomAction Id="CA_DevEnv2003Setup" Property="DEVENV_2003_PATH" ExeCommand="/setup" Return="ignore" />
+	<CustomAction Id="CA_DevEnv2003ExpSetup" Property="DEVENV_2003_PATH" ExeCommand="/setup /rootsuffix Exp" Return="ignore" />
+	<CustomAction Id="CA_DevEnv2005Setup" Property="DEVENV_2005_PATH" ExeCommand="/setup" Return="ignore" />
+	<CustomAction Id="CA_DevEnv2005ExpSetup" Property="DEVENV_2005_PATH" ExeCommand="/setup /rootsuffix Exp" Return="ignore" />
+
+	<CustomAction Id="CA_ErrVsNotInstalled" Error="[ProductName] requires Visual Studio" />
+
+	<!--
+	Because there are some "global" settings - like setting the Open verb on a file extension - that can't
+	live side-by-side, these custom actions set the DEVENV_LATEST_PATH property to the path to the latest
+	version of Visual Studio for use in Verb/@Target.
+	-->
+	<CustomAction Id="CA_SetDevEnvLatest2003" Property="DEVENV_LATEST_PATH" Value="[DEVENV_2003_PATH]" />
+	<CustomAction Id="CA_SetDevEnvLatest2005" Property="DEVENV_LATEST_PATH" Value="[DEVENV_2005_PATH]" />
+
+	<InstallExecuteSequence>
+	  <Custom Action="CA_SetDevEnvLatest2003" Before="CostInitialize"><![CDATA[DEVENV_2003_PATH AND NOT DEVENV_2005_PATH]]></Custom>
+
+	  <Custom Action="CA_SetDevEnvLatest2005" Before="CostInitialize"><![CDATA[DEVENV_2005_PATH]]></Custom>
+	</InstallExecuteSequence>
+
+  </Fragment>
+</Wix>

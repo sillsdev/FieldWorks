@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblSpecs.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblSpecs.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblSpecs.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 104</value>
+  </data>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>22, 16</value>
+  </metadata>
+  <data name="lblSpecs.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblSpecs.Size" type="System.Drawing.Size, System.Drawing">
+	<value>119, 13</value>
+  </data>
+  <data name="lblSpecs.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblSpecs.Text" xml:space="preserve">
+	<value>Converter &amp;Mapping File:</value>
+  </data>
+  <data name="&gt;&gt;lblSpecs.Name" xml:space="preserve">
+	<value>lblSpecs</value>
+  </data>
+  <data name="&gt;&gt;lblSpecs.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSpecs.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblSpecs.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="lblConversion.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblConversion.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblConversion.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 151</value>
+  </data>
+  <data name="lblConversion.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblConversion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>90, 13</value>
+  </data>
+  <data name="lblConversion.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="lblConversion.Text" xml:space="preserve">
+	<value>&amp;Conversion Type:</value>
+  </data>
+  <data name="&gt;&gt;lblConversion.Name" xml:space="preserve">
+	<value>lblConversion</value>
+  </data>
+  <data name="&gt;&gt;lblConversion.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblConversion.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblConversion.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="lblName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 11</value>
+  </data>
+  <data name="lblName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>179, 13</value>
+  </data>
+  <data name="lblName.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblName.Text" xml:space="preserve">
+	<value>Converter &amp;Name (for your reference):</value>
+  </data>
+  <data name="&gt;&gt;lblName.Name" xml:space="preserve">
+	<value>lblName</value>
+  </data>
+  <data name="&gt;&gt;lblName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblName.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="lblConverter.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblConverter.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblConverter.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 57</value>
+  </data>
+  <data name="lblConverter.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblConverter.Size" type="System.Drawing.Size, System.Drawing">
+	<value>83, 13</value>
+  </data>
+  <data name="lblConverter.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="lblConverter.Text" xml:space="preserve">
+	<value>C&amp;onverter Type:</value>
+  </data>
+  <data name="&gt;&gt;lblConverter.Name" xml:space="preserve">
+	<value>lblConverter</value>
+  </data>
+  <data name="&gt;&gt;lblConverter.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblConverter.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblConverter.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="cboConversion.HelpString" xml:space="preserve">
+	<value>Specifies the encoding of the data before and after conversion.</value>
+  </data>
+  <data name="cboConversion.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboConversion.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 168</value>
+  </data>
+  <data name="cboConversion.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cboConversion.Size" type="System.Drawing.Size, System.Drawing">
+	<value>224, 21</value>
+  </data>
+  <data name="cboConversion.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;cboConversion.Name" xml:space="preserve">
+	<value>cboConversion</value>
+  </data>
+  <data name="&gt;&gt;cboConversion.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboConversion.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboConversion.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="txtName.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="txtName.HelpString" xml:space="preserve">
+	<value>Specifies a descriptive name for the encoding converter.</value>
+  </data>
+  <data name="txtName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 28</value>
+  </data>
+  <data name="txtName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="txtName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>334, 20</value>
+  </data>
+  <data name="txtName.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;txtName.Name" xml:space="preserve">
+	<value>txtName</value>
+  </data>
+  <data name="&gt;&gt;txtName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtName.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="btnMapFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="btnMapFile.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 9pt, style=Bold</value>
+  </data>
+  <data name="btnMapFile.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnMapFile.Location" type="System.Drawing.Point, System.Drawing">
+	<value>313, 121</value>
+  </data>
+  <data name="btnMapFile.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnMapFile.Size" type="System.Drawing.Size, System.Drawing">
+	<value>24, 20</value>
+  </data>
+  <data name="btnMapFile.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="btnMapFile.Text" xml:space="preserve">
+	<value>...</value>
+  </data>
+  <data name="btnMapFile.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;btnMapFile.Name" xml:space="preserve">
+	<value>btnMapFile</value>
+  </data>
+  <data name="&gt;&gt;btnMapFile.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnMapFile.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnMapFile.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="txtMapFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="txtMapFile.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 121</value>
+  </data>
+  <data name="txtMapFile.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="txtMapFile.Size" type="System.Drawing.Size, System.Drawing">
+	<value>294, 20</value>
+  </data>
+  <data name="txtMapFile.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="txtMapFile.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;txtMapFile.Name" xml:space="preserve">
+	<value>txtMapFile</value>
+  </data>
+  <data name="&gt;&gt;txtMapFile.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtMapFile.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtMapFile.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="cboConverter.HelpString" xml:space="preserve">
+	<value>Specifies what type of converter it is. The type specified changes the contents of the next dropdown list.</value>
+  </data>
+  <data name="cboConverter.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboConverter.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 74</value>
+  </data>
+  <data name="cboConverter.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cboConverter.Size" type="System.Drawing.Size, System.Drawing">
+	<value>224, 21</value>
+  </data>
+  <data name="cboConverter.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;cboConverter.Name" xml:space="preserve">
+	<value>cboConverter</value>
+  </data>
+  <data name="&gt;&gt;cboConverter.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboConverter.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboConverter.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="cboSpec.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="cboSpec.HelpString" xml:space="preserve">
+	<value>Specifies the actual encoding converter.</value>
+  </data>
+  <data name="cboSpec.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboSpec.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 120</value>
+  </data>
+  <data name="cboSpec.MaxDropDownItems" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="cboSpec.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cboSpec.Size" type="System.Drawing.Size, System.Drawing">
+	<value>334, 21</value>
+  </data>
+  <data name="cboSpec.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="&gt;&gt;cboSpec.Name" xml:space="preserve">
+	<value>cboSpec</value>
+  </data>
+  <data name="&gt;&gt;cboSpec.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboSpec.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboSpec.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="btnModify.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 196</value>
+  </data>
+  <data name="btnModify.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnModify.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="btnModify.Text" xml:space="preserve">
+	<value>Modify...</value>
+  </data>
+  <data name="&gt;&gt;btnModify.Name" xml:space="preserve">
+	<value>btnModify</value>
+  </data>
+  <data name="&gt;&gt;btnModify.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnModify.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnModify.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="btnMore.Location" type="System.Drawing.Point, System.Drawing">
+	<value>251, 72</value>
+  </data>
+  <data name="btnMore.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnMore.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="btnMore.Text" xml:space="preserve">
+	<value>More...</value>
+  </data>
+  <data name="&gt;&gt;btnMore.Name" xml:space="preserve">
+	<value>btnMore</value>
+  </data>
+  <data name="&gt;&gt;btnMore.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnMore.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnMore.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>342, 260</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Name" xml:space="preserve">
+	<value>helpProvider1</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>CnvtrPropertiesCtrl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

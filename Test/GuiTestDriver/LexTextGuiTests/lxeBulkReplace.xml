@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+  <!-- Tests "Find and Replace" function in Bulk Edit Entries -->
+  <!--  Assumes original Kalaba database-->
+  <!--  -->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+  <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Lexicon/Bulk Edit Entries -->
+	 <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+<!-- Set all combo boxes to "show all" -->
+	<click select="toolbar/no-filters"/>
+
+<model select="bulk-edit-entries[@role='view']">
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/tab"/>
+	<click select="bulk-replace/setup"/>
+
+  <!-- Bulk Replace Dialog-->  <var id="frdMore" set="9:NAMELESS/60:NAMELESS[*]/9:Replace/9:NAMELESS"/>
+  <var id="frdFormat" set="$frdMore;[2]/9:Format/43:Format"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	  <glimpse id="bMore" path="$frdMore;/$more" on-fail="skip"/>
+	  <if><condition of="$bMore" is="true"/>
+	  <then><click path="$frdMore;/$more"/></then>
+	  </if>
+	  <!-- <keyboard ShortcutKey="Alt+m"/> -->
+	  <click path="$frdFormat"/>
+	  <!-- <keyboard ShortcutKey="Alt+o"/> -->
+	  <insert wait="300">W</insert>
+	  <insert wait="300">k</insert>
+	  <insert wait="500">ni</insert>
+	  <insert wait="300">{TAB}</insert>
+	  <click path="$frdFormat"/>
+	  <!-- insert wait="300">%o</insert shortcut to Format bug: LT-4802 -->
+	  <insert wait="300">W</insert>
+	  <insert wait="300">k</insert>
+	  <insert wait="300">nila</insert>
+	  <!-- note: Match writing system is automajically checked -->
+	  <click path="$frdMore;/$ok"/>
+	</on-dialog>
+
+<!-- click "Apply" -->
+	<click select="bulk-replace/apply"/>
+
+<!-- check for success -->
+	<var id="col" set="1"/>
+	<click select="entries/col/filter"/>
+	<insert wait="1000">f</insert>
+	<insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+		<insert>nila</insert>
+		<click path="$ok"/>
+	</on-dialog>
+
+	<var id="row" set="3"/>
+	<var id="col" set="2"/>
+	<glimpse id="replace1" select="entries/record/col" prop="value" expect="nila"/>
+	<var id="row" set="4"/>
+	<glimpse id="checkEnd1" select="entries/record/col" prop="value" expect="nila" on-pass="assert"/>
+
+<!-- Go to Find and Replace dialog -->
+	<click select="bulk-replace/setup"/>
+
+<!-- enter words to find and replace -->
+	<on-dialog name="Find and Replace" title="Bulk Replace Setup">
+	 <insert>nila</insert>
+	 <insert>{TAB}</insert>
+	 <insert>ni</insert>
+	 <insert>~</insert>
+	</on-dialog>
+
+<!-- click "Apply" and check again -->
+	<click select="bulk-replace/apply"/>
+
+	<var id="row" set="3"/>
+	<glimpse id="replace2" select="entries/record/col" prop="value" expect="ni"/>
+	<var id="row" set="4"/>
+	<glimpse id="checkEnd2" select="entries/record/col" prop="value" expect="ni" on-pass="assert"/>
+
+<!-- reset combo box to show all -->
+	<click select="//toolbar/no-filters"/>
+<!-- select the List Choice tab -->
+	<click select="list-choice/tab"/>
+
+</model>
+
+  </on-application>
+</accil>

@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!-- ********************************************************** -->
+	<!-- ************************ commands ******************** -->
+	<!-- ********************************************************** -->
+	<commands>
+		<command id="CmdConcorder" label="Concorder..." message="ViewConcorder"/>
+	</commands>
+	<!-- ********************************************************** -->
+	<!-- ************************ lists *********************** -->
+	<!-- ********************************************************** -->
+	<lists/>
+	<!-- ******************************************************** -->
+	<!-- ************************ menus *********************** -->
+	<!-- ******************************************************** -->
+	<menubar/>
+	<!-- ********************************************************** -->
+	<!-- ************************ menuAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<menuAddOn>
+		<menu id="Tools">
+			<item command="CmdConcorder"/>
+		</menu>
+	</menuAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ contextMenus *********************** -->
+	<!-- ********************************************************** -->
+	<contextMenus/>
+	<!-- ********************************************************** -->
+	<!-- ************************ sidebar *********************** -->
+	<!-- ********************************************************** -->
+	<sidebar/>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbars *********************** -->
+	<!-- ********************************************************** -->
+	<toolbars/>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbarsAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<toolbarsAddOn/>
+	<!-- ********************************************************** -->
+	<!-- ************************ resources ********************* -->
+	<!-- ********************************************************** -->
+	<resources/>
+	<!-- ********************************************************** -->
+	<!-- ************************ listeners *********************** -->
+	<!-- ********************************************************** -->
+	<listeners>
+		<listener assemblyPath="RBRExtensions.dll" class="RBRExtensions.ConcorderDlgListener">
+			<parameters>
+				<clerks>
+					<clerk id="rbrSourceSenses">
+						<recordList owner="LexDb" property="AllSenses"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrSensesUsedByPOS">
+						<recordList owner="PartOfSpeech" property="AllSenseClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrPOSUsedByMSAs">
+						<recordList owner="PartOfSpeech" property="AllMSAClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrPOSUsedByEntries">
+						<recordList owner="PartOfSpeech" property="AllEntryClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrPOSUsedByMLAnalyses">
+						<recordList owner="PartOfSpeech" property="AllMLAnalysesClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrPOSUsedByAnalyses">
+						<recordList owner="PartOfSpeech" property="AllAnalysesClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrPOSUsedByWordforms">
+						<recordList owner="PartOfSpeech" property="AllWordformClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrPOSUsedBySentences">
+						<recordList owner="PartOfSpeech" property="AllSentenceClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrPOSUsedByCompoundRules">
+						<recordList owner="PartOfSpeech" property="AllCompoundRuleClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrEntries">
+						<recordList owner="LexDb" property="Entries"/>
+						<filters/>
+						<sortMethods>
+							<!--
+							<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+							<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss"/>
+							-->
+						</sortMethods>
+					</clerk>
+					<clerk id="rbrSenseUsedBySentences">
+						<recordList owner="LexSense" property="AllSentenceClientIDs"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrSourceWordforms">
+						<recordList owner="WordformInventory" property="Wordforms"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+					<clerk id="rbrSourceAllomorphs">
+						<recordList owner="LexDb" property="AllAllomorphsList"/>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+				</clerks>
+				<sourcecontrols>
+					<!-- All done: srcSense -->
+					<control id="srcSense" label="Sense">
+						<parameters id="sourceSenseList" clerk="rbrSourceSenses" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+							<columns>
+								<column label="Senses" editable="false" width="100%">
+									<span>
+										<properties>
+											<editable value="false"/>
+										</properties>
+										<string field="FullReferenceName"/>
+									</span>
+								</column>
+							</columns>
+						</parameters>
+						<targetcontrols>
+							<control id="Sentences">
+								<parameters id="targetSentence_SenseList" editable="false" clerk="rbrSenseUsedBySentences" convertDummiesSelected="true" filterBar="false" ShowOwnerShortname="true">
+									<columns>
+										<column label="Ref" width="15%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string class="CmBaseAnnotation" field="Reference" ws="best vernoranal"/>
+											</span>
+										</column>
+										<column label="Occurrence" width="85%" multipara="true">
+											<concpara min="BeginOffset" lim="EndOffset" align="144000">
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<obj class="CmBaseAnnotation" field="BeginObject" layout="empty">
+													<string class="StTxtPara" field="Contents"/>
+												</obj>
+											</concpara>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+						</targetcontrols>
+					</control>
+					<control id="srcAllomorph" label="Allomorph">
+						<parameters id="sourceAllomorphList" clerk="rbrSourceAllomorphs" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+							<columns>
+								<column label="Allomorphs" editable="false" width="100%">
+									<span>
+										<properties>
+											<editable value="false"/>
+										</properties>
+										<string field="LongNameTSS"/>
+									</span>
+								</column>
+							</columns>
+						</parameters>
+						<targetcontrols>
+							<control id="Sentences">
+							</control>
+							<!--
+							<control id="Analyses">
+							</control>
+							<control id="Ad hoc Rules">
+							</control>
+							-->
+						</targetcontrols>
+					</control>
+					<control id="srcEntry" label="Entry">
+						<parameters id="sourceEntryList" clerk="rbrEntries" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+							<columns>
+								<column label="Entries" editable="false" width="100%">
+									<span>
+										<properties>
+											<editable value="false"/>
+										</properties>
+										<string field="HeadWord"/>
+									</span>
+								</column>
+							</columns>
+						</parameters>
+						<targetcontrols>
+							<control id="Sentences">
+							</control>
+							<!--
+							<control id="Analyses">
+							</control>
+							-->
+						</targetcontrols>
+					</control>
+					<control id="srcWordform" label="Wordform">
+						<parameters id="sourceWordformList" clerk="rbrSourceWordforms" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+							<columns>
+								<column label="Wordforms" editable="false" width="100%">
+									<span>
+										<properties>
+											<editable value="false"/>
+										</properties>
+										<string field="Form" ws="vernacular"/>
+									</span>
+								</column>
+							</columns>
+						</parameters>
+						<targetcontrols>
+							<control id="Sentences">
+							</control>
+							<!--
+							<control id="Analyses">
+							</control>
+							-->
+						</targetcontrols>
+					</control>
+					<!--
+					<control id="srcGrammaticalFunction" label="Grammatical Info.">
+						<targetcontrols>
+							<control id="Senses">
+							</control>
+						</targetcontrols>
+						<targetcontrols>
+							<control id="Analyses">
+							</control>
+						</targetcontrols>
+						<targetcontrols>
+							<control id="Sentences">
+							</control>
+						</targetcontrols>
+					</control>
+					<control id="srcAnalysis" label="Analysis">
+						<targetcontrols>
+							<control id="Sentences">
+							</control>
+						</targetcontrols>
+					</control>
+					<control id="srcEnvironment" label="Environment">
+						<targetcontrols>
+							<control id="Allomorphs">
+							</control>
+						</targetcontrols>
+					</control>
+					<control id="srcWordLevelGloss" label="Word-level Gloss">
+						<targetcontrols>
+							<control id="Sentences">
+							</control>
+						</targetcontrols>
+					</control>-->
+					<!-- These are all Tree View controls, but we need a dummy node to get the label. -->
+					<!-- All done: srcGrammaticalCategory -->
+					<control id="srcGrammaticalCategory" label="Grammatical Category">
+						<targetcontrols>
+							<control id="Grammatical Info.">
+								<parameters id="targetMSA_POSList" clerk="rbrPOSUsedByMSAs" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+									<columns>
+										<column label="Grammatical Info." editable="false" width="100%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="LongNameTs"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<control id="Senses">
+								<parameters id="targetSense_POSList" clerk="rbrSensesUsedByPOS" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+									<columns>
+										<column label="Senses" editable="false" width="100%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="FullReferenceName"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<control id="Entries">
+								<parameters id="targetEntry_POSList" clerk="rbrPOSUsedByEntries" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+									<columns>
+										<column label="Entries" editable="false" width="100%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="HeadWord"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<control id="Analyses: morpheme level">
+								<parameters id="targetMLAnalysis_POSList" clerk="rbrPOSUsedByMLAnalyses" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+									<columns>
+										<column label="Analyses" editable="false" width="100%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="ShortNameTSS"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<control id="Analyses: analysis level">
+								<parameters id="targetAnalysis_POSList" clerk="rbrPOSUsedByAnalyses" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+									<columns>
+										<column label="Analyses" editable="false" width="100%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="ShortNameTSS"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<control id="Wordforms">
+								<parameters id="targetWordform_POSList" clerk="rbrPOSUsedByWordforms" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+									<columns>
+										<column label="Wordforms" editable="false" width="100%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="ShortNameTSS"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<control id="Sentences">
+								<parameters id="targetSentence_POSList" editable="false" clerk="rbrPOSUsedBySentences" convertDummiesSelected="true" filterBar="false" ShowOwnerShortname="true">
+									<columns>
+										<column label="Ref" width="15%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string class="CmBaseAnnotation" field="Reference" ws="best vernoranal"/>
+											</span>
+										</column>
+										<column label="Occurrence" width="85%" multipara="true">
+											<concpara min="BeginOffset" lim="EndOffset" align="144000">
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<obj class="CmBaseAnnotation" field="BeginObject" layout="empty">
+													<string class="StTxtPara" field="Contents"/>
+												</obj>
+											</concpara>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+							<control id="Compound Rules">
+								<parameters id="targetCompoundRule_POSList" clerk="rbrPOSUsedByCompoundRules" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+									<columns>
+										<column label="Compound Rules" editable="false" width="100%">
+											<span>
+												<properties>
+													<editable value="false"/>
+												</properties>
+												<string field="Name" ws="$ws=analysis"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+						</targetcontrols>
+					</control>
+					<!--
+					<control id="srcAcademicDomain" label="Academic Domain">
+					</control>
+					<control id="srcAnthropologyCategory" label="Anthropology Category">
+					</control>
+					<control id="srcMorphemeType" label="Morpheme Type">
+					</control>
+					<control id="srcSemanticDomain" label="Semantic Domain">
+					</control>
+					<control id="srcSenseStatus" label="Sense Status">
+					</control>
+					<control id="srcSenseType" label="Sense Type">
+					</control>
+					<control id="srcStatus" label="Status">
+					</control>
+					<control id="srcUsages" label="Usages">
+					</control>
+					-->
+				</sourcecontrols>
+			</parameters>
+		</listener>
+	</listeners>
+	<!-- ********************************************************** -->
+	<!-- ************************ virtual property declarations *********************** -->
+	<!-- ********************************************************** -->
+	<virtuals>
+		<virtual modelclass="LexDb" virtualfield="AllAllomorphsList" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllSenseClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllMSAClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllEntryClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllMLAnalysesClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllAnalysesClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllWordformClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllSentenceClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="PartOfSpeech" virtualfield="AllCompoundRuleClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="WfiAnalysis" virtualfield="ShortNameTSS" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.TSStringPropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="WfiWordform" virtualfield="ShortNameTSS" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.TSStringPropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="MoMorphSynAnalysis" virtualfield="AllSenseClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+		<virtual modelclass="LexSense" virtualfield="AllSentenceClientIDs" computeeverytime="true">
+			<dynamicloaderinfo assemblyPath="FDO.dll" class="SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler"/>
+		</virtual>
+	</virtuals>
+	<!-- ********************************************************** -->
+	<!-- ************************ defaultProperties ********************* -->
+	<!-- ********************************************************** -->
+	<defaultProperties/>
+	<!-- ********************************************************** -->
+	<!-- ************************ clerks *********************** -->
+	<!-- ********************************************************** -->
+	<clerks/>
+	<!-- ********************************************************** -->
+	<!-- ************************ tools *********************** -->
+	<!-- ********************************************************** -->
+	<tools/>
+</root>

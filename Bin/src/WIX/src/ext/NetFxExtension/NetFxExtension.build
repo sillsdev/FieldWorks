@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="netfxextension" default="netfxextension.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	netfxextension.build - Builds the NetFxExtension project
+  </description>
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- extension directories -->
+  <property name="netfxextension.ca.dir.src" value="${dir.src.ext}\NetFxExtension\ca" readonly="true" />
+  <property name="netfxextension.wixext.dir.src" value="${dir.src.ext}\NetFxExtension\wixext" readonly="true" />
+  <property name="netfxextension.wixlib.dir.src" value="${dir.src.ext}\NetFxExtension\wixlib" readonly="true" />
+
+  <!-- targets -->
+  <property name="file.target.netfxcadll" value="${dir.target.wix}\netfxca.dll" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="netfxextension.build" description="Peforms a full rebuild (clean then build)" depends="netfxextension.clean, netfxextension.inc" />
+
+  <!-- Clean -->
+  <target name="netfxextension.clean" description="Cleans the build">
+	<delete dir="${dir.build.ext.netfxextension}" failonerror="false" if="${directory::exists(dir.build.ext.netfxextension)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="WixNetFxExtension.dll" />
+		<include name="WixNetFxExtension.pdb" />
+		<include name="netfxca.dll" />
+		<include name="netfxca.pdb" />
+		<include name="netfx.wixlib" />
+		<include name="netfx.xsd" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <target name="NetFxExtension.clean" description="Another clean call">
+	<call target="netfxextension.clean"/>
+  </target>
+
+  <!-- Inc -->
+  <target name="netfxextension.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<fileset id="compileCpp.fileset.sources" basedir="${netfxextension.ca.dir.src}">
+	  <include name="netfxca.cpp" />
+	  <include name="dllmain.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.ext.netfxextension}" />
+	<property name="compileCpp.file.precomp.h" value="${netfxextension.ca.dir.src}\precomp.h" />
+	<property name="compileCpp.additionalOptions" value="-I&quot;${dir.src.ca.wcautil}&quot;" />
+	<property name="compileCpp.file.rc" value="${netfxextension.ca.dir.src}\netfxca.rc" />
+	<property name="makeNativeDll.file.target" value="${file.target.netfxcadll}" />
+	<property name="makeNativeDll.file.def" value="${netfxextension.ca.dir.src}\netfxca.def" />
+	<property name="makeNativeDll.additionalLibs" value="&quot;${file.target.wcautil}&quot; &quot;${file.target.dutil}&quot; &quot;${dir.platformsdk.lib}\msi.lib&quot; &quot;${dir.platformsdk.lib}\activeds.lib&quot; &quot;${dir.platformsdk.lib}\adsiid.lib&quot; &quot;${dir.platformsdk.lib}\crypt32.lib&quot; &quot;${dir.platformsdk.lib}\netapi32.lib&quot;" />
+
+	<!-- Make scaexec.dll -->
+	<call target="makeNativeDll" />
+
+	<!-- Copy the xsd file to the target directory -->
+	<copy file="${netfxextension.wixext.dir.src}\Xsd\netfx.xsd" todir="${dir.target.wix}" />
+
+	<!-- Flatten all of the xml/xsd files -->
+	<foreach item="File" property="flattenxml.source">
+	  <in>
+		<items>
+		  <include name="${netfxextension.wixext.dir.src}\Data\tables.xml" />
+		  <include name="${netfxextension.wixext.dir.src}\Xsd\netfx.xsd" />
+		</items>
+	  </in>
+	  <do>
+		<property name="flattenxml.target" value="${dir.build.ext.netfxextension}\${path::get-file-name(flattenxml.source)}" />
+		<call target="flattenXml" />
+	  </do>
+	</foreach>
+
+	<!-- Pull in the wix tools NAnt tasks -->
+	<loadtasks assembly="${file.nanttasks}" />
+
+	<!-- Build the wixlib -->
+	<candle out="${dir.build.ext.netfxextension}\netfx.wixobj" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <defines>
+		<define name="caerrwxi" value="${file.target.caerr.wxi}" />
+		<define name="netfxdll" value="${file.target.netfxcadll}" />
+	  </defines>
+	  <sources basedir="${netfxextension.wixlib.dir.src}">
+		<include name="NetFxExtension.wxs" />
+	  </sources>
+	</candle>
+	<lit out="${dir.target.wix}\netfx.wixlib" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <sources basedir="${dir.build.ext.netfxextension}">
+		<include name="netfx.wixobj" />
+	  </sources>
+	</lit>
+
+	<csc
+	  target="library"
+	  output="${dir.target.wix}\WixNetFxExtension.dll"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${netfxextension.wixext.dir.src}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="NetFxCompiler.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <!-- Embed the xml/xsd files into the assembly -->
+	  <resources failonempty="true" basedir="${dir.build.ext.netfxextension}" prefix="Microsoft.Tools.WindowsInstallerXml.Extensions.Xsd">
+		<include name="netfx.xsd" />
+	  </resources>
+	  <resources failonempty="true" basedir="${dir.build.ext.netfxextension}" prefix="Microsoft.Tools.WindowsInstallerXml.Extensions.Data">
+		<include name="tables.xml" />
+	  </resources>
+	</csc>
+  </target>
+
+</project>

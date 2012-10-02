@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+	 <var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<on-application args="-db $projectName" run="ok" on-fail="assert">
+
+<!--Tests Analyses of Wordforms in Words-->
+<!--Assumes Kalaba Database-->
+<!--Assumes triangle in Words/Form points up-->
+<!--Assumes states:
+The summaries are the bold text lines in the right pane.
+Count in order from the top.
+When the user changes opinion, the candidate summary text gets the last index number of all summaries. If there are 5 summaries, the moved section will be the 5th one.
+All other summaries are counted in order. Re-opinioned candidates become the first after the header summary, but still take the last index. The others in the still take the indicies they'd have if the one didn't move.
+-->
+
+  <var id="approved"  set="Analysis "/>
+  <var id="unknown"  set="Analysis Candidate "/>
+  <var id="disapproved"  set="Test Case "/>
+
+   <var id="idUa" set="2"/><!-- User Analyses column index -->
+   <var id="idPa" set="3"/><!-- Predicted Analyses column index -->
+
+  <!-- Go to menu bar/View/Words/Analyses -->
+	   <click select="menubar/view/texts-words/word-analyses"/>
+
+  <!-- Set all columns to "Show All"-->
+	 <click select="toolbar/no-filters"/>
+	 <click select="toolbar/first-record"/>
+
+<model select="word-analysis[@role='view']">
+
+	 <var id="row" set="1"/>
+	 <var id="col" set="1"/>
+	 <glimpse wait="500" id="wdFirstRecHead"  select="wordforms/record/col" prop="value" expect="biliya" on-fail="skip"/>
+
+	<!-- make sure the word forms are sorted in ascending order -->
+	<if><condition of="$wdFirstRecHead" is="false"/>
+	<then>
+	   <click select="wordforms/col/header" path="Form"/>
+	   <click select="//toolbar/first-record"/>
+	</then>
+	</if>
+
+<!-- Replace Word Gloss and Number in Corpus with User Analyses and Predicted Analyses. -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">w</insert><!-- remove Word Gloss column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">n</insert><!-- remove Number in Corpus column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">u</insert><!-- add User Analyses column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">p</insert><!-- add Predicted Analyses column -->
+
+<!-- Click on biliya, then check value in User Analysis pane-->
+   <click select="//toolbar/first-record"/>
+
+<!-- Check that  there is 1 "Predicted Analysis" for biliya -->
+	 <var id="col" set="3"/>
+<glimpse id="g1"  select="wordforms/record/col" prop="value" expect="1"/>
+<!-- Check that  there is 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g2" select="wordforms/record/col" prop="value" expect="1"/>
+ <var id="ind" set="3"/>
+<glimpse id="g3" select="analyses/analysis-seq/label" prop="value" expect="$approved;1"/>
+
+<!-- Then change it to disapproved from approved-->
+ <click select="analyses/analysis-seq/label"/>
+ <click select="analyses/analysis-seq/drop"/>
+ <insert wait="500">{DOWN 3}</insert>
+ <insert wait="100">{RIGHT}{UP}~</insert>
+ <var id="ind" set="5"/>
+<glimpse wait="500" id="g4" select="analyses/test-case-seq/label" prop="value" expect="$disapproved;1"/>
+<!-- Check that  there are 0 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g5" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 1 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g6" select="wordforms/record/col" prop="value" expect="1"/>
+
+<!-- Then change it to approved from disapproved-->
+ <click select="analyses/test-case-seq/label"/>
+ <click select="analyses/test-case-seq/drop"/>
+ <insert wait="500">{DOWN}{RIGHT}</insert>
+ <insert wait="500">{UP}{DOWN}~</insert> <!-- a trick to eliminate randomness -->
+ <var id="ind" set="3"/>
+<glimpse wait="500" id="g7" select="analyses/analysis-seq/label" prop="value" expect="$approved;1"/>
+<!-- Check that  there is 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g8" select="wordforms/record/col" prop="value" expect="1"/>
+<!-- Check that  there is 1 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g9" select="wordforms/record/col" prop="value" expect="1"/>
+
+
+<!-- Click on Form combo box, go to "filter for"-->
+	 <var id="col" set="1"/>
+   <click select="wordforms/col/filter/drop"/>
+   <insert>f</insert>
+   <insert>~</insert>
+
+<!-- in dialog box, enter word to search for "deyullikko"-->
+  <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>deyullikko</insert>
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!-- Click on deyullikko, then check value in User Analysis pane-->
+   <click select="wordforms/record/col"/>
+
+<!-- Check that  there is 1 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse wait="500" id="g10" select="wordforms/record/col" prop="value" expect="1"/>
+<!-- Check that  there is 0 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g11" select="wordforms/record/col" prop="value" expect="0"/>
+ <var id="ind" set="4"/>
+<glimpse id="g12" select="analyses/candidate-seq/label" prop="value" expect="$unknown;1"/>
+
+<!-- Then change it to approved from unknown-->
+ <click select="analyses/candidate-seq/label"/>
+ <click select="analyses/candidate-seq/drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}</insert>
+ <insert wait="100">{UP}{DOWN}~</insert>
+ <var id="ind" set="3"/>
+<glimpse wait="500" id="g13" select="analyses/analysis-seq/label" prop="value" expect="$approved;1"/>
+<!-- Check that  there are 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g14" select="wordforms/record/col" prop="value" expect="1"/>
+<!-- Check that  there is 1 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g15" select="wordforms/record/col" prop="value" expect="1"/>
+
+<!-- Then change it to disapproved from approved-->
+ <click select="analyses/analysis-seq/label"/>
+ <click select="analyses/analysis-seq/drop"/>
+ <insert wait="500">{DOWN 3}</insert>
+ <insert wait="100">{RIGHT}{UP}~</insert>
+ <var id="ind" set="5"/>
+<glimpse wait="500" id="g16" select="analyses/test-case-seq/label" prop="value" expect="$disapproved;1"/>
+<!-- Check that  there is 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g17" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 1 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g18" select="wordforms/record/col" prop="value" expect="1"/>
+
+<!-- Then change it to unknown from disapproved-->
+ <click select="analyses/test-case-seq/label"/>
+ <click select="analyses/test-case-seq/drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}{UP 2}~</insert>
+ <var id="ind" set="4"/>
+<glimpse wait="500" id="g19" select="analyses/test-case-seq/label" prop="value" expect="$unknown;1"/>
+<!-- Check that  there is 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g20" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 1 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g21" select="wordforms/record/col" prop="value" expect="1"/>
+
+
+<!-- Click on Form combo box, go to "filter for"-->
+	 <var id="col" set="1"/>
+   <click select="wordforms/col/filter/drop"/>
+   <insert>f</insert>
+   <insert>~</insert>
+
+<!-- in dialog box, enter word to search for "hesyla"-->
+  <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>hesyla</insert>
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!-- Click on hesyla, then check value in User Analysis pane-->
+   <click select="wordforms/record/col"/>
+
+<!-- Check that  there are 0 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse wait="500" id="g22" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g23" select="wordforms/record/col" prop="value" expect="1"/>
+ <var id="ind" set="3"/>
+<glimpse id="g24" select="analyses/analysis-seq/label" prop="value" expect="$approved;1"/>
+
+<!-- Then change it to unknown from approved -->
+ <click select="analyses/analysis-seq/label"/>
+ <click select="analyses/analysis-seq/drop"/>
+ <insert wait="500">{DOWN 3}{RIGHT}</insert>
+ <insert wait="100">{UP 2}~</insert>
+ <var id="ind" set="4"/>
+<glimpse wait="500" id="g25" select="analyses/candidate-seq/label" prop="value" expect="$unknown;1"/>
+<!-- Check that  there are 0 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g26" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 0 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g27" select="wordforms/record/col" prop="value" expect="0"/>
+
+<!-- Then change it to disapproved from unknown -->
+ <click select="analyses/candidate-seq/label"/>
+ <click select="analyses/candidate-seq/drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}{UP}~</insert>
+ <var id="ind" set="5"/>
+<glimpse wait="500" id="g28" select="analyses/test-case-seq/label" prop="value" expect="$disapproved;1"/>
+<!-- Check that  there is 0 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g29" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 0 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g30" select="wordforms/record/col" prop="value" expect="0"/>
+
+<!-- Then change it to approved from disapproved-->
+ <click select="analyses/test-case-seq/label"/>
+ <click select="analyses/test-case-seq/drop"/>
+ <insert wait="500">{DOWN}{RIGHT}</insert>
+ <insert wait="500">{UP}{DOWN}~</insert>
+ <var id="ind" set="3"/>
+<glimpse wait="500" id="g31" select="analyses/analysis-seq/label" prop="value" expect="$approved;1"/>
+<!-- Check that  there is 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g32" select="wordforms/record/col" prop="value" expect="1"/>
+<!-- Check that  there is 0 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g33" select="wordforms/record/col" prop="value" expect="0"/>
+
+
+<!-- in dialog box, enter word to search for "timipaltira"-->
+<!-- Click on Form combo box, go to "filter for"-->
+	 <var id="col" set="1"/>
+   <click select="wordforms/col/filter/drop"/>
+   <insert>f</insert>
+   <insert>~</insert>
+
+<!-- in dialog box, enter word to search for "timipaltira"-->
+  <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>timipaltira</insert>
+	 <click path="$ok"/>
+  </on-dialog>
+
+<!-- Click on timipaltira, then check value in User Analysis pane-->
+   <click select="wordforms/record/col"/>
+
+<!-- Check that  there are 2 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse wait="500" id="g34" select="wordforms/record/col" prop="value" expect="2"/>
+<!-- Check that  there are 0 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g35" select="wordforms/record/col" prop="value" expect="0"/>
+ <var id="ind" set="4"/>
+<glimpse id="g36" select="analyses/candidate-seq/label"/>
+ <var id="ind" set="5"/>
+<glimpse id="g37" select="analyses/candidate-seq/label"/>
+ <var id="ind" set="4"/>
+<glimpse id="g38" select="analyses/candidate-seq/label" prop="value" expect="$unknown;1"/>
+ <var id="ind" set="5"/>
+<glimpse id="g39" select="analyses/candidate-seq/label" prop="value" expect="$unknown;2"/>
+
+<!-- Then change second one to approved from unknown -->
+ <click select="analyses/candidate-seq/label"/>
+ <click select="analyses/candidate-seq/drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}</insert>
+ <insert wait="100">{UP}{DOWN}</insert>
+ <insert wait="100">~</insert>
+
+
+ <var id="ind" set="3"/>
+<glimpse wait="500" id="g40" select="analyses/analysis-seq/label" prop="value" expect="$approved;1"/>
+ <var id="ind" set="5"/>
+<glimpse id="g41" select="analyses/candidate-seq/label" prop="value" expect="$unknown;1"/>
+<!-- Check that  there are 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g42" select="wordforms/record/col" prop="value" expect="1"/>
+<!-- Check that  there is 2 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g43" select="wordforms/record/col" prop="value" expect="2"/>
+
+<!-- Then change first one to disapproved from unknown -->
+ <click select="analyses/candidate-seq/label"/>
+ <click select="analyses/candidate-seq/drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}{UP}~</insert>
+ <var id="ind" set="6"/>
+<glimpse wait="500" id="g44" select="analyses/test-case-seq/label" prop="value" expect="$disapproved;1"/>
+ <var id="ind" set="3"/>
+<glimpse id="g45" select="analyses/analysis-seq/label" prop="value" expect="$approved;1"/>
+<!-- Check that  there are 1 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g46" select="wordforms/record/col" prop="value" expect="1"/>
+<!-- Check that  there is 2 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g47" select="wordforms/record/col" prop="value" expect="2"/>
+
+<!-- Then change second one to unknown from approved -->
+ <click select="analyses/analysis-seq/label"/>
+ <click select="analyses/analysis-seq/drop"/>
+ <insert wait="500">{DOWN 3}{RIGHT}</insert>
+ <insert wait="100">{UP 2}~</insert>
+ <var id="ind" set="4"/>
+<glimpse wait="500" id="g48" select="analyses/candidate-seq/label" prop="value" expect="$unknown;1"/>
+ <var id="ind" set="6"/>
+<glimpse id="g49" select="analyses/test-case-seq/label" prop="value" expect="$disapproved;1"/>
+<!-- Check that  there is 0 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g50" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 2 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g51" select="wordforms/record/col" prop="value" expect="2"/>
+
+<!-- Then change first one to unknown from disapproved -->
+ <click select="analyses/test-case-seq/label"/>
+ <click select="analyses/test-case-seq/drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}</insert>
+ <insert wait="100">{UP 2}~</insert>
+<insert wait="500">{F5}</insert><!-- refresh so the numbering comes out right -->
+ <var id="ind" set="4"/>
+<glimpse wait="1000" id="g52" select="analyses/candidate-seq/label" prop="value" expect="$unknown;1"/>
+ <var id="ind" set="5"/>
+<glimpse id="g53" select="analyses/candidate-seq/label" prop="value" expect="$unknown;2"/>
+<!-- Check that  there is 0 "User Analysis" -->
+	 <var id="col" set="2"/>
+<glimpse id="g54" select="wordforms/record/col" prop="value" expect="0"/>
+<!-- Check that  there is 2 "Predicted Analysis" -->
+	 <var id="col" set="3"/>
+<glimpse id="g55" select="wordforms/record/col" prop="value" expect="2"/>
+
+
+<!-- Restore Word Gloss and Number in Corpus. -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="100">u</insert><!-- remove User Analyses column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="100">p</insert><!-- remove Predicted Analyses column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="100">w</insert><!-- add Word Gloss column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="100">n</insert><!-- add Number in Corpus column -->
+
+	<!-- make sure the word forms are sorted in ascending order -->
+	 <click select="//toolbar/no-filters"/>
+	 <click select="//toolbar/first-record"/>
+	 <var id="row" set="1"/>
+	 <var id="col" set="1"/>
+	 <glimpse wait="1000" id="fisrtWrd" select="wordforms/record/col" prop="value" expect="biliya" on-fail="skip"/>
+	<if><condition of="$fisrtWrd" is="false"/>
+	<then>
+	   <click select="wordforms/col/header" path="Form"/>
+	   <click select="//toolbar/first-record"/>
+	</then>
+	</if>
+	 <var id="row" set="1"/>
+	 <var id="col" set="1"/>
+	 <glimpse wait="1000" id="notRestored" select="wordforms/record/col" prop="value" expect="biliya"/>
+ <var id="ind" set="3"/>
+	 <click select="analyses/analysis-seq/label"/><!-- click to get cursor off the toolbar so next test will run -->
+
+</model>
+
+  </on-application>
+</accil>

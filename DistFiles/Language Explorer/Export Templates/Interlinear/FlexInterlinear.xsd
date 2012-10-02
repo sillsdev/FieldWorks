@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="document" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:simpleType name="itemTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="txt"/>
+			<xs:enumeration value="cf"/>
+			<xs:enumeration value="hn"/>
+			<xs:enumeration value="variantTypes"/>
+			<xs:enumeration value="gls"/>
+			<xs:enumeration value="msa"/>
+			<xs:enumeration value="pos"/>
+			<xs:enumeration value="title"/>
+			<xs:enumeration value="description"/>
+			<xs:enumeration value="punct"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="item" nillable="true">
+	<xs:complexType>
+	  <xs:simpleContent>
+		<xs:extension base="xs:string">
+		  <xs:attribute name="type" type="itemTypes" use="required"/>
+		  <xs:attribute name="lang" type="xs:string" use="required"/>
+		</xs:extension>
+	  </xs:simpleContent>
+	</xs:complexType>
+		<xs:keyref name="dummy" refer="langId">
+			<xs:selector xpath="."/>
+			<xs:field xpath="@lang"/>
+		</xs:keyref>
+	</xs:element>
+	<xs:simpleType name="morphTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="particle"/>
+			<xs:enumeration value="infix"/>
+			<xs:enumeration value="prefix"/>
+			<xs:enumeration value="simulfix"/>
+			<xs:enumeration value="suffix"/>
+			<xs:enumeration value="suprafix"/>
+			<xs:enumeration value="circumfix"/>
+			<xs:enumeration value="clitic"/>
+			<xs:enumeration value="enclitic"/>
+			<xs:enumeration value="proclitic"/>
+			<xs:enumeration value="bound root"/>
+			<xs:enumeration value="root"/>
+			<xs:enumeration value="bound stem"/>
+			<xs:enumeration value="stem"/>
+			<xs:enumeration value="infixing interfix"/>
+			<xs:enumeration value="prefixing interfix"/>
+			<xs:enumeration value="suffixing interfix"/>
+			<xs:enumeration value="phrase"/>
+			<xs:enumeration value="discontiguous phrase"/>
+		</xs:restriction>
+	   </xs:simpleType>
+  <xs:element name="document">
+	  <xs:complexType>
+		<xs:sequence>
+			<xs:element name="interlinear-text">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="item" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="paragraphs" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="paragraph" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="phrases" minOccurs="1" maxOccurs="1">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="phrase" minOccurs="0" maxOccurs="unbounded">
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="words" minOccurs="1" maxOccurs="1">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="word" minOccurs="0" maxOccurs="unbounded">
+																						<xs:complexType>
+																							<xs:sequence>
+																								<xs:element ref="item" minOccurs="0" maxOccurs="unbounded" />
+																								<xs:element name="morphemes" minOccurs="0" maxOccurs="1">
+																									<xs:complexType>
+																										<xs:sequence>
+																											<xs:element name="morph" minOccurs="0" maxOccurs="unbounded">
+																												<xs:complexType>
+																													<xs:sequence>
+																														<xs:element ref="item" minOccurs="0" maxOccurs="unbounded" />
+																													</xs:sequence>
+																													<xs:attribute name="type" type="morphTypes" />
+																												</xs:complexType>
+																											</xs:element>
+																										</xs:sequence>
+																									</xs:complexType>
+																								</xs:element>
+																							</xs:sequence>
+																						</xs:complexType>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element ref="item" minOccurs="0" maxOccurs="unbounded" />
+																	</xs:sequence>
+																</xs:complexType>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="languages" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="language" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:attribute name="lang" type="xs:string" />
+											<xs:attribute name="font" type="xs:string" />
+											<xs:attribute name="vernacular" type="xs:string" />
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	  <xs:key name="langId">
+		  <xs:selector xpath="interlinear-text/languages/language"/>
+		  <xs:field xpath="@lang"/>
+	  </xs:key> </xs:element>
+</xs:schema>

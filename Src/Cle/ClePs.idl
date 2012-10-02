@@ -1,0 +1,17 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: ClePs.idl
+Responsibility: John Thomson
+Last reviewed:
+
+	Defines Research Notebook interfaces for proxy / stub generation.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+import "FwKernelPs.idl";
+
+#include "Common.idh"
+
+#define NO_COCLASSES 1
+#include "Cle.idh"

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="testAfLib"
+	ProjectGUID="{1331AF86-8BAE-4AC9-9459-866E2E25595E}"
+	RootNamespace="testAfLib"
+	SccProjectName="Perforce Project"
+	SccLocalPath="."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="Win32Proj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="..\..\..\Output\Debug"
+			IntermediateDirectory="..\..\..\Obj\Debug"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\Bin\mkaflib-tst.bat DONTRUN"
+				ReBuildCommandLine="..\..\..\Bin\mkaflib-tst.bat DONTRUN cc"
+				CleanCommandLine="..\..\..\Bin\mkaflib-tst.bat DONTRUN ec"
+				Output="..\..\..\output\debug\testAfLib.exe"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\Bin\mkaflib-tst.bat DONTRUN r"
+				ReBuildCommandLine="..\..\..\Bin\mkaflib-tst.bat DONTRUN r cc"
+				CleanCommandLine="..\..\..\Bin\mkaflib-tst.bat DONTRUN r ec"
+				Output="..\..\..\output\release\testAfLib.exe -v"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
+			>
+			<File
+				RelativePath="Collection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="MockApp.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc"
+			>
+			<File
+				RelativePath="MockApp.h"
+				>
+			</File>
+			<File
+				RelativePath="testAfLib.h"
+				>
+			</File>
+			<File
+				RelativePath="TestFwFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="TestGetNormalizedClipboardData.h"
+				>
+			</File>
+			<File
+				RelativePath="TestPossList.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
+		</Filter>
+		<File
+			RelativePath="testAfLib.mak"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

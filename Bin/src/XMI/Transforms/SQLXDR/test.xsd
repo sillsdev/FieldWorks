@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:sql="urn:schemas-microsoft-com:mapping-schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--Ownership hierarchy done explicitly?
+	Identify keys upfront for better performance?-->
+	<xs:element name="LexDb" sql:relation="LexDb_">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Entries" sql:is-constant="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="LexMajorEntry" maxOccurs="unbounded" sql:relation="LexMajorEntry_">
+								<xs:annotation>
+									<xs:appinfo>
+										<sql:relationship parent="LexDb_" parent-key="ID" child="LexMajorEntry_" child-key="Owner$"/>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:element>
+							<xs:element ref="LexMinorEntry" maxOccurs="unbounded" sql:relation="LexMinorEntry_">
+								<xs:annotation>
+									<xs:appinfo>
+										<sql:relationship parent="LexDb_" parent-key="ID" child="LexMinorEntry_" child-key="Owner$"/>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:element>
+							<!--Don't need to include abstract superclasses. This does pose a problem however with non-abstract superclasses because the instances of the subclasses will show up twice xs:element ref="LexEntry" sql:relation="LexEntry_" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:appinfo>
+										<sql:relationship parent="LexDb" parent-key="ID" child="LexEntry_" child-key="Owner$"/>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:element-->
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:byte" use="required" sql:field="ID"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LexEntry" sql:relation="LexEntry_">
+		<xs:complexType>
+			<xs:attribute name="id" type="xs:byte" use="required" sql:field="ID"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LexMajorEntry" sql:relation="LexMajorEntry_">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Senses" sql:is-constant="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="LexSense" maxOccurs="unbounded" sql:relation="LexSense_">
+								<xs:annotation>
+									<xs:appinfo>
+										<sql:relationship parent="LexMajorEntry_" parent-key="ID" child="LexSense_" child-key="Owner$"/>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:byte" use="required" sql:field="ID"/>
+			<!--LexMajorEntry_Senses-->
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LexMinorEntry" sql:relation="LexMinorEntry_">
+		<xs:complexType>
+			<xs:attribute name="id" type="xs:byte" use="required" sql:field="ID"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LexSense" sql:relation="LexSense_" sql:key-fields="Id" sql:max-depth="2">
+		<xs:complexType>
+			<xs:sequence>
+				<!--Reference attributes How do we do them?-->
+				<xs:element name="AnthroCodes" sql:is-constant="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CmAnthroItem" maxOccurs="unbounded" sql:relation="LexSense_AnthroCodes">
+								<xs:annotation>
+									<xs:appinfo>
+										<sql:relationship parent="LexSense_" parent-key="Id" child="LexSense_AnthroCodes" child-key="Src"/>
+									</xs:appinfo>
+								</xs:annotation>
+								<xs:complexType>
+								<xs:attribute name="id" sql:field="Dst"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+				<xs:element ref="Definition" sql:relation="LexSense_Definition">
+					<xs:annotation>
+						<xs:appinfo>
+							<sql:relationship parent="LexSense_" parent-key="ID" child="LexSense_Definition" child-key="Obj"/>
+						</xs:appinfo>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Gloss" sql:relation="LexSense_Gloss">
+					<xs:annotation>
+						<xs:appinfo>
+							<sql:relationship parent="LexSense_" parent-key="ID" child="LexSense_Gloss" child-key="Obj"/>
+						</xs:appinfo>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Senses" sql:is-constant="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="LexSense" maxOccurs="unbounded" sql:relation="LexSense_">
+								<xs:annotation>
+									<xs:appinfo>
+										<sql:relationship parent="LexSense_" parent-key="ID" child="LexSense_" child-key="Owner$"/>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:byte" use="required" sql:field="ID"/>
+			<!--LexSense_Senses-->
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Definition" sql:relation="LexSense_Definition">
+		<xs:complexType>
+			<xs:attribute name="enc" type="xs:byte" use="required" sql:field="Enc"/>
+			<xs:attribute name="txt" type="xs:string" use="required" sql:field="Txt"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Gloss" sql:relation="LexSense_Gloss">
+		<xs:complexType>
+			<xs:attribute name="enc" type="xs:byte" use="required" sql:field="Enc"/>
+			<xs:attribute name="txt" type="xs:string" use="required" sql:field="Txt"/>
+		</xs:complexType>
+	</xs:element>
+	<!--xs:element name="CmAnthroItem" sql:relation="CmAnthroItem_">
+		<xs:complexType>
+			<xs:attribute name="id" type="xs:byte" use="required" sql:field="Id"/>
+		</xs:complexType>
+	</xs:element-->
+</xs:schema>

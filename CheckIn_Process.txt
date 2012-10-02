@@ -1,0 +1,52 @@
+This file, CheckIn_History.txt, and Ancient_CheckIn_History.txt are used to manage the
+FieldWorks check-in process, and also to record a history of the changes made to the project.
+
+Please read this file for details on how to check changes in to Perforce.
+
+Changes that are less than two months old can be found in CheckIn_History.txt.
+The CheckIn_History.txt file is used to manage the FieldWorks check-in process.
+
+Changes that are more than two months old can be found in Ancient_CheckIn_History.txt.
+
+The check-in process is:
+------------------------------------------------------------------------------------------------
+1. Check out the file CheckIn_History.txt. If someone else has it checked out, contact the
+person and ask him (or her) to let you know when he is done.
+
+2. Get latest version and merge your changes.
+
+3. Run the RemakeFw.bat process to check that everything builds.
+
+4. Do a quick "smoke" test: run the program you have been working on and make sure that nothing
+is obviously broken.
+
+5. If you have modified code in shared directories (such as AppCore, any lib directory, or the
+source of any DLL), do a similar smoke test on each of the other applications. Currently this
+includes FwNotebook.exe, FwListEditor.exe, WorldPad.exe, WLC.exe (this will be going away soon,
+but currently must be run before TE.exe will display views properly), TE.exe, FwLexEd.exe, and FwMorphologyModelEditor.exe.
+
+6. Write a brief comment (one or two lines is usually enough) indicating what you changed.
+Append this (with date) to the file (fw\CheckIn_History.txt). Copy this comment to use as the
+PerForce Check-in comment.
+
+7. Check in all your changes as a single changelist if possible. Or if checking in multiple change
+lists, submit last the one that actually contains the CheckIn_History.txt file.
+
+8. If anyone has requested notification when you are done, now is the time!
+
+If it turns out that substantial work is needed to get your code working again after
+integration, you should undo your check-out of this file. This allows others to check-in while
+you are working on integration. That may require further integration, but hopefully the process
+converges soon.
+
+The goals of this process are:
+
+1. Ensure as far as possible that checked-in code compiles correctly and basically works. (Hence
+the requirement to integrate and test.)
+
+2. Ensure that someone working on integration doesn't have to start over because of other
+check-ins. (Hence the requirement to have a single file which only one person may check out.)
+
+3. Have a single place to go to find out who has made check-ins recently, in what sequence, and
+what they were trying to do. (Hence adding comments to the CheckIn_History.txt file.
+It is possible to deduce some of this information from Perforce records, but it is difficult and slow.)

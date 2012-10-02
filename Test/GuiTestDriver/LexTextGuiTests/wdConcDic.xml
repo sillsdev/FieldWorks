@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Find in dictionary from concordance-->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+
+	<var id="projectName" set="Mutsun"/>
+	<sound frequency = "500" duration = "500"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Words/concordance-->
+  <click select="menubar/view/texts-words/concordance"/>
+  <insert>{ENTER}</insert> <!-- in case there's a nag window left by another test -->
+
+  <model wait="5000" select="concordance[@role='view']">
+
+<!-- Show the baseline tab, find in dictionary -->
+   <click select="full-context/interlinear/baseline/tab"/>
+
+<!--filter for "nihimbilira" in wordforms list-->
+  <click select="criteria/for-the-text/value"/>
+	<insert>{END}+{HOME}</insert>
+	<insert>nihimbilira</insert>
+   <click select="criteria/search"/>
+
+<!-- select "nihimbilira" in wordforms list-->
+   <var id="row" set="1"/>
+   <var id="col" set="1"/>
+   <click select="results/record/col"/>
+
+   <click select="//toolbar/find-in-dictionary"/>
+
+<!--check dictionary entry success-->
+	<on-dialog wait="2000" title="Dictionary Entry">
+	 <glimpse id="entryCheck" path="grp:Root/grp:Div/text:Paragraph" prop="value" expect="*himbilira  1) trans.  to.see   2) trans.  to.understand "/>
+	 <click path="$close"/>
+   </on-dialog>
+
+<!-- get the cursor off the bar -->
+	 <click select="results/record/col"/>
+
+  </model>
+
+ </on-application>
+</accil>

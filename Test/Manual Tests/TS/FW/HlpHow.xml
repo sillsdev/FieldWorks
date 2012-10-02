@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="hlphow" num="2.9.3" abbr="hphw" file="FW\HlpHow.xml">
+<title tag="hlphow">Help-How Do I Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>This menu item brings up a help topic which lists the tasks that can be done with the application (e.g., the Research Notebook Editor) This is actually a hierarchy of tasks, from generic to specific tasks. These help modules primarily talk about how to perform the task using the application; they have links to more generically written modules that talk about the theory behind the task in non-computer terms. By browsing through this topic, the user can get an overview of the major uses of the application, and hopefully get started quickly in using it in a meaningful manner.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/HelpMenu/HelpMenu.html#Help-How Do I" type="doc">Help-How Do I</link>
+</p>
+</introduction>
+<context>
+<p>The goal for testing this help is to check the correctness, consistency and structure of the help file. Though the step may apply to all members of one kind or another, it is not always possible to test each one. Do so randomly if all can not be done as time and probability permit. The first words of the bug report title should be a noun phrase containing the words "Help-How".</p>
+</context>
+
+<case id="hphwAct" num="0" order="any">
+<title tag="hphwAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.1" link="Bug">Click Help-How Do I.
+   <r>
+<ul>
+<li>The Help-How Do I dialog launches</li>
+<li>The Table of Contents is a list of general application tasks.</li>
+<li>All general tasks listed can be performed (perhaps with qualification) in this application.</li>
+</ul>
+</r>
+<p name="bug">Help-How dialog fails to launch</p>
+<p name="bug">Help-How TOC topic may seem inadequate to user</p>
+<p name="bug">Help-How TOC topic is not a task of this application</p>
+</step>
+
+</case>
+
+<case id="hphwToc" num="1" order="any">
+<title tag="hphwToc">Exercise Table of Contents</title>
+<context>
+<p>When the Table of Contents (TOC) is displayed (click the TOC tab):</p>
+</context>
+
+<step name="1.1" link="Bug">Double-click each topic in the Table of Contents.
+   <r>
+<ul>
+<li>The selected topic title icon changes to an open icon in the TOC</li>
+<li>The selected topic appears in the main window</li>
+</ul>
+</r>
+<p name="bug">Help-How selected topic icon is not "open"</p>
+<p name="bug">Help-How selection fails to appear</p>
+<p name="bug">Help-How selection brings up wrong topic</p>
+</step>
+<step name="1.2" link="Bug">Click each link on each Topic page.
+   <r>
+<ul>
+<li>The link brings up its associated topic in the main window</li>
+<li>The associated topic title icon in the TOC changes to an open icon</li>
+</ul>
+</r>
+<p name="bug">Help-How link topic icon is not "open" in TOC</p>
+<p name="bug">Help-How link topic fails to appear</p>
+<p name="bug">Help-How link brings up wrong topic</p>
+</step>
+
+</case>
+
+<case id="hphwInd" num="2" order="any">
+<title tag="hphwInd">Exercise Index</title>
+<context>
+<p>When the Index is displayed (click the index tab):</p>
+</context>
+
+<step name="2.1" link="Bug">Inspect the Index for the following results.
+   <r>
+<ul>
+<li>Each index item is something the user can likely understand</li>
+<li>Each is relevant to the use of the application (no words like "the")</li>
+<li>Some items reflect commonly used terms that are no longer "modern" (like directory for folder)</li>
+</ul>
+</r>
+<p name="bug">Help-How index item &lt;name&gt; is obscure</p>
+<p name="bug">Help-How index item &lt;name&gt; is not relevant</p>
+<p name="bug">Help-How index item &lt;name&gt; has a common unindexed name</p>
+</step>
+<step name="2.2" link="Bug">Double-click each index item.
+   <r>
+<ul>
+<li>The item brings up its associated topic in the main window</li>
+<li>If not, a choice list appears with related topic titles</li>
+</ul>
+</r>
+<p name="bug">Help-How index item topic fails to appear</p>
+<p name="bug">Help-How index choice list fails to appear</p>
+</step>
+<step name="2.3" link="Bug">When an index choice list is up, inspect it.
+   <r>
+<ul>
+<li>The list has no duplicate topics</li>
+<li>The list is to long</li>
+</ul>
+</r>
+<p name="bug">Help-How index choice list has duplicates</p>
+<p name="bug">Help-How index choice list is too long</p>
+</step>
+<step name="2.4" link="Bug">When an index choice list is up, select each topic. (it will have to be brought up again to select again)
+   <r>
+<ul>
+<li>The choice list disappears</li>
+<li>The correct selected topic appears in the main window</li>
+</ul>
+</r>
+<p name="bug">Help-How index choice remains after selection</p>
+<p name="bug">Help-How index choice list selection fails to appear</p>
+<p name="bug">Help-How index choice list selection displays wrong topic</p>
+</step>
+<step name="2.5" link="Bug">After an item is selected, click on the TOC tab.
+   <r>
+<ul>
+<li>The TOC tree is expanded along a path to the level of the topic</li>
+<li>The current topic title in the Table of Contents has an "open" icon</li>
+</ul>
+</r>
+<p name="bug">Help-How index topic is not located in the TOC</p>
+<p name="bug">Help-How index topic title in TOC is not "open"</p>
+</step>
+
+</case>
+
+<case id="hphwSrh" num="3" order="any">
+<title tag="hphwSrh">Exercise Search</title>
+<context>
+<p>When the Search dialog is displayed (click search tab):</p>
+</context>
+
+<step name="3.1" link="Bug">Enter, cut, copy or paste to create a search text. Keep the text simple and something that can be found in many places in the help topics.
+   <r>
+<ul>
+<li>The search produces a long scrollable list of topics</li>
+<li>Some search words not used in the index get few "hits" or too many</li>
+<li>Good search words that get several "hits" are already in the index</li>
+</ul>
+</r>
+<p name="bug">Help-How search fails to list all matching topics</p>
+<p name="bug">Help-How search lists more topics than actually match</p>
+<p name="bug">Help-How search hits only on indexed words</p>
+<p name="bug">Help-How search &lt;phrase&gt; needs to be in index</p>
+</step>
+<step name="3.2" link="Bug">Click on a topic in the search list.
+   <r>
+<ul>
+<li>The topic is displayed in the main window</li>
+<li>Each occurance of the search text is highlighted</li>
+</ul>
+</r>
+<p name="bug">Help-How selected search topic fails to appear</p>
+<p name="bug">Help-How search text not highlighted in selected topic</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Oct-05-01" author="MikeL">Put guts in from spec!</update>
+
+</test>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xml" type="configured" datatype="ExportedDictionary" xslt="Configured.xsl">
+	<FxtDocumentDescription dataLabel="Configured Dictionary" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*">
+Export to XML following the configuration of the dictionary view, and any current filters and sorts.  (This works only in the dictionary view.)
+	</FxtDocumentDescription>
+</template>

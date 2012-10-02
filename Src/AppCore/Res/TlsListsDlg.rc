@@ -1,0 +1,144 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "TlsListsDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "AfAppRes.h"
+#include "..\AfDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"TlsListsDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""AfAppRes.h""\r\n"
+	"#include ""..\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTlsListsDlg DIALOGEX 0, 0, 192, 178
+STYLE DS_MODALFRAME | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE |
+	WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+CAPTION "Topics Lists"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "&Select a list:",IDC_STATIC,9,6,44,10
+	CONTROL         "List1",kcidTlsListsLst,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP,8,17,115,132
+	PUSHBUTTON      "OK",kctidOk,133,17,53,15
+	PUSHBUTTON      "&Edit List...",kcidTlsListsMod,133,35,53,15
+	PUSHBUTTON      "&Properties...",kcidTlsListsProp,133,55,53,15
+	PUSHBUTTON      "&Add...",kcidTlsListsAdd,8,155,34,15
+	PUSHBUTTON      "&Copy",kcidTlsListsCopy,51,155,33,15
+	PUSHBUTTON      "&Delete...",kcidTlsListsDel,91,155,31,15
+	PUSHBUTTON      "Help...",kctidHelp,133,155,53,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridTlsListsDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 8
+		VERTGUIDE, 133
+		VERTGUIDE, 186
+		BOTTOMMARGIN, 173
+		HORZGUIDE, 155
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsListsDel         "For user-created topics lists only, deletes the list from the FieldWorks project."
+	kcidTlsListsProp        "Opens the Topics List Properties dialog so you can specify the attributes of the selected topics list."
+	kcidTlsListsLst         "Displays all topics lists defined for the open FieldWorks project."
+	kstidTlsListsCpyLst     "Copy of "
+	kstidTlsListsAddLst     "New List"
+	kstidTlsLstsDetails     "Details"
+	kstidTlsLstsList        "List"
+	kstidTlsLstsItems       "Items"
+	kstidListsPropMsgCaption "Topics List Properties"
+	kstidTlsLstsNameExist   "There is already a list with this Name.  Please choose a different Name."
+	kstidTlsLstsNameExistC  "Name already exists"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidTlsListsAdd         "Adds a new topics list and opens the Topics List Properties dialog for the new list."
+	kcidTlsListsCopy        "Copies the selected topics list and opens the Topics List Properties dialog for the new topics list."
+	kcidTlsListsMod         "Opens the Topics List Editor so you can edit the selected topics list."
+	kstidTlsListsDel        "Delete List"
+	kstidTlsListsDMsg       "This deletion is permanent and cannot be reversed with Undo.\nAre you sure you want to delete this list?"
+	kstidTlsListsNotDel		"Cannot Delete"
+	kstidTlsListsNotDelMsg  "The list cannot be deleted because it is being used by the %<0>s custom field. \nYou need to delete the custom field before you can delete this list."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

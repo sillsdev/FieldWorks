@@ -1,0 +1,172 @@
+// $ANTLR 2.7.7 (20060930): idl.g -> IDLTokenTypes.txt$
+IDL    // output token vocab name
+V1_ENUM="v1_enum"=4
+INT3264="__int3264"=5
+INT64="__int64"=6
+SEMI(";")=7
+LBRACKET("[")=8
+RBRACKET("]")=9
+LITERAL_module="module"=10
+LBRACE("{")=11
+RBRACE("}")=12
+LITERAL_import="import"=13
+COMMA(",")=14
+LITERAL_library="library"=15
+LITERAL_coclass="coclass"=16
+LITERAL_uuid="uuid"=17
+LITERAL_version="version"=18
+LPAREN("(")=19
+RPAREN(")")=20
+LITERAL_async_uuid="async_uuid"=21
+LITERAL_local="local"=22
+LITERAL_object="object"=23
+LITERAL_pointer_default="pointer_default"=24
+LITERAL_endpoint="endpoint"=25
+LITERAL_odl="odl"=26
+LITERAL_optimize="optimize"=27
+LITERAL_proxy="proxy"=28
+LITERAL_aggregatable="aggregatable"=29
+LITERAL_appobject="appobject"=30
+LITERAL_bindable="bindable"=31
+LITERAL_control="control"=32
+LITERAL_custom="custom"=33
+LITERAL_default="default"=34
+LITERAL_defaultbind="defaultbind"=35
+LITERAL_defaultcollelem="defaultcollelem"=36
+LITERAL_defaultvtable="defaultvtable"=37
+LITERAL_displaybind="displaybind"=38
+LITERAL_dllname="dllname"=39
+LITERAL_dual="dual"=40
+LITERAL_entry="entry"=41
+LITERAL_helpcontext="helpcontext"=42
+LITERAL_helpfile="helpfile"=43
+LITERAL_helpstring="helpstring"=44
+LITERAL_helpstringdll="helpstringdll"=45
+LITERAL_hidden="hidden"=46
+LITERAL_id="id"=47
+LITERAL_idempotent="idempotent"=48
+LITERAL_immediatebind="immediatebind"=49
+LITERAL_lcid="lcid"=50
+LITERAL_licensed="licensed"=51
+LITERAL_message="message"=52
+LITERAL_nonbrowsable="nonbrowsable"=53
+LITERAL_noncreatable="noncreatable"=54
+LITERAL_nonextensible="nonextensible"=55
+LITERAL_oleautomation="oleautomation"=56
+LITERAL_restricted="restricted"=57
+LITERAL_importlib="importlib"=58
+LITERAL_interface="interface"=59
+LITERAL_dispinterface="dispinterface"=60
+COLON(":")=61
+SCOPEOP("::")=62
+LITERAL_const="const"=63
+ASSIGN("=")=64
+STAR("*")=65
+OR("|")=66
+XOR("^")=67
+AND("&")=68
+LSHIFT("<<")=69
+RSHIFT(">>")=70
+PLUS("+")=71
+MINUS("-")=72
+DIV("/")=73
+MOD("%")=74
+TILDE("~")=75
+LITERAL_TRUE="TRUE"=76
+LITERAL_true="true"=77
+LITERAL_FALSE="FALSE"=78
+LITERAL_false="false"=79
+LITERAL_typedef="typedef"=80
+LITERAL_native="native"=81
+LITERAL_context_handle="context_handle"=82
+LITERAL_handle="handle"=83
+LITERAL_pipe="pipe"=84
+LITERAL_transmit_as="transmit_as"=85
+LITERAL_wire_marshal="wire_marshal"=86
+LITERAL_represent_as="represent_as"=87
+LITERAL_user_marshal="user_marshal"=88
+LITERAL_public="public"=89
+LITERAL_switch_type="switch_type"=90
+LITERAL_signed="signed"=91
+LITERAL_unsigned="unsigned"=92
+LITERAL_octet="octet"=93
+LITERAL_any="any"=94
+LITERAL_void="void"=95
+LITERAL_byte="byte"=96
+LITERAL_wchar_t="wchar_t"=97
+LITERAL_handle_t="handle_t"=98
+INT("an integer value")=99
+HEX("a hexadecimal value value")=100
+LITERAL_ref="ref"=101
+LITERAL_unique="unique"=102
+LITERAL_ptr="ptr"=103
+LITERAL_small="small"=104
+LITERAL_short="short"=105
+LITERAL_long="long"=106
+LITERAL_int="int"=107
+LITERAL_hyper="hyper"=108
+LITERAL_char="char"=109
+LITERAL_float="float"=110
+LITERAL_double="double"=111
+LITERAL_boolean="boolean"=112
+LITERAL_struct="struct"=113
+LITERAL_union="union"=114
+LITERAL_switch="switch"=115
+LITERAL_case="case"=116
+LITERAL_enum="enum"=117
+LITERAL_sequence="sequence"=118
+LT_("<")=119
+GT(">")=120
+LITERAL_string="string"=121
+RANGE("..")=122
+LITERAL_readonly="readonly"=123
+LITERAL_attribute="attribute"=124
+LITERAL_exception="exception"=125
+LITERAL_callback="callback"=126
+LITERAL_broadcast="broadcast"=127
+LITERAL_ignore="ignore"=128
+LITERAL_propget="propget"=129
+LITERAL_propput="propput"=130
+LITERAL_propputref="propputref"=131
+LITERAL_uidefault="uidefault"=132
+LITERAL_usesgetlasterror="usesgetlasterror"=133
+LITERAL_vararg="vararg"=134
+LITERAL_in="in"=135
+LITERAL_out="out"=136
+LITERAL_retval="retval"=137
+LITERAL_defaultvalue="defaultvalue"=138
+LITERAL_optional="optional"=139
+LITERAL_requestedit="requestedit"=140
+LITERAL_iid_is="iid_is"=141
+LITERAL_range="range"=142
+LITERAL_size_is="size_is"=143
+LITERAL_max_is="max_is"=144
+LITERAL_length_is="length_is"=145
+LITERAL_first_is="first_is"=146
+LITERAL_last_is="last_is"=147
+LITERAL_switch_is="switch_is"=148
+LITERAL_source="source"=149
+LITERAL_raises="raises"=150
+LITERAL_context="context"=151
+LITERAL_SAFEARRAY="SAFEARRAY"=152
+OCTAL=153
+LITERAL_L="L"=154
+STRING_LITERAL("a string literal")=155
+CHAR_LITERAL("a character literal")=156
+FLOAT("an floating point value")=157
+IDENT("an identifer")=158
+LITERAL_cpp_quote="cpp_quote"=159
+LITERAL_midl_pragma_warning="midl_pragma_warning"=160
+QUESTION("?")=161
+DOT(".")=162
+NOT("!")=163
+QUOTE("double quotes")=164
+WS_("white space")=165
+PREPROC_DIRECTIVE("a preprocessor directive")=166
+SL_COMMENT("a comment")=167
+ML_COMMENT("a comment")=168
+ESC("an escape sequence")=169
+VOCAB("an escaped character value")=170
+DIGIT("a digit")=171
+OCTDIGIT("an octal digit")=172
+HEXDIGIT("a hexadecimal digit")=173

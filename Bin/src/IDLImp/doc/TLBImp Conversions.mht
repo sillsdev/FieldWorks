@@ -1,0 +1,548 @@
+MIME-Version: 1.0
+Content-Location: file:///C:/2B664A33/TLBImpConversions.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="us-ascii"
+
+<html xmlns:o=3D"urn:schemas-microsoft-com:office:office"
+xmlns:w=3D"urn:schemas-microsoft-com:office:word"
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<meta name=3DProgId content=3DWord.Document>
+<meta name=3DGenerator content=3D"Microsoft Word 10">
+<meta name=3DOriginator content=3D"Microsoft Word 10">
+<link rel=3DFile-List href=3D"TLBImpConversions_files/filelist.xml">
+<title>TLBImp Conversions</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Eberhard Beilharz</o:Author>
+  <o:LastAuthor>Eberhard Beilharz</o:LastAuthor>
+  <o:Revision>4</o:Revision>
+  <o:TotalTime>3154</o:TotalTime>
+  <o:Created>2002-07-30T18:21:00Z</o:Created>
+  <o:LastSaved>2002-08-22T17:48:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>383</o:Words>
+  <o:Characters>2189</o:Characters>
+  <o:Company>JAARS, Inc.</o:Company>
+  <o:Lines>18</o:Lines>
+  <o:Paragraphs>5</o:Paragraphs>
+  <o:CharactersWithSpaces>2567</o:CharactersWithSpaces>
+  <o:Version>10.3501</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:View>Print</w:View>
+  <w:Zoom>BestFit</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:553679495 -2147483648 8 0 66047 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:3750980;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1480202654 67698689 67698691 67698693 67698689 67698=
+691 67698693 67698689 67698691 67698693;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=3DEN-US style=3D'tab-interval:.5in'>
+
+<div class=3DSection1>
+
+<h1><span class=3DSpellE>TLBImp</span> Conversions</h1>
+
+<p class=3DMsoNormal>Library name <span style=3D'font-family:Wingdings;mso-=
+ascii-font-family:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+namespace name</p>
+
+<p class=3DMsoNormal>Can be overridden by custom attribute <br>
+<span class=3DGramE><span style=3D'font-family:"Courier New"'>custom(</span=
+></span><span
+style=3D'font-family:"Courier New"'>0F21F359-AB84-41e8-9A78-36D110E6D2F9, &=
+quot;<span
+class=3DSpellE>Acme.WidgetLib</span>&quot;)<o:p></o:p></span></p>
+
+<p class=3DMsoNormal>Module <span style=3D'font-family:Wingdings;mso-ascii-=
+font-family:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+public class</p>
+
+<p class=3DMsoNormal>Constants outside of a module <span style=3D'font-fami=
+ly:Wingdings;
+mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:sym=
+bol;
+mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbol;mso-s=
+ymbol-font-family:
+Wingdings'>&agrave;</span></span> not imported</p>
+
+<p class=3DMsoNormal>Constants inside of a module <span style=3D'font-famil=
+y:Wingdings;
+mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:sym=
+bol;
+mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbol;mso-s=
+ymbol-font-family:
+Wingdings'>&agrave;</span></span> public const</p>
+
+<p class=3DMsoNormal>Structures <span style=3D'font-family:Wingdings;mso-as=
+cii-font-family:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+metadata</p>
+
+<p class=3DMsoNormal>Field of a <span class=3DSpellE>struct</span> which is=
+ a
+reference type <span style=3D'font-family:Wingdings;mso-ascii-font-family:T=
+ahoma;
+mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wi=
+ngdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+<span class=3DSpellE>IntPtr</span>, <span class=3DSpellE>ComConversionLossA=
+ttribute</span></p>
+
+<p class=3DMsoNormal><span class=3DSpellE>Enum</span> <span style=3D'font-f=
+amily:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> <span class=3DSpel=
+lE>enum</span></p>
+
+<p class=3DMsoNormal><span class=3DSpellE>Typedef</span> <span style=3D'fon=
+t-family:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> not imported</p>
+
+<p class=3DMsoNormal>Use of <span class=3DSpellE>typedef&#8217;ed</span> ty=
+pe <span
+style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-=
+family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+use of underlying type, <span class=3DSpellE>ComAliasNameAttribute</span></=
+p>
+
+<h2>Interfaces (interface)</h2>
+
+<p class=3DMsoNormal><span class=3DSpellE>Uuid</span> attribute <span
+style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-=
+family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+<span class=3DSpellE>Guid</span> attribute</p>
+
+<p class=3DMsoNormal>Derived from <span class=3DSpellE>IUnknown</span> <span
+style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-=
+family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+add <span class=3DSpellE><span class=3DGramE>InterfaceType</span></span><sp=
+an
+class=3DGramE>(</span><span class=3DSpellE>ComInterfaceType.InterfaceIsIUnk=
+nown</span>)
+attribute, unless dual interface</p>
+
+<p class=3DMsoNormal>Inherited interface <span style=3D'font-family:Wingdin=
+gs;
+mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:sym=
+bol;
+mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbol;mso-s=
+ymbol-font-family:
+Wingdings'>&agrave;</span></span> add all methods of base interface first,
+preceded by new</p>
+
+<h2>Classes (<span class=3DSpellE>coclass</span>)</h2>
+
+<p class=3DMsoNormal><span class=3DSpellE>Coclass</span> <span style=3D'fon=
+t-family:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> class</p>
+
+<p class=3DMsoNormal><span class=3DSpellE>Coclass</span> <span style=3D'fon=
+t-family:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> interface <span
+class=3DSpellE>coclass</span> name + <span class=3DSpellE>CoClassAttribute<=
+/span>,
+IID of default interface</p>
+
+<p class=3DMsoNormal><span class=3DSpellE>Uuid</span> attribute <span
+style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-=
+family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+<span class=3DSpellE>Guid</span> attribute</p>
+
+<p class=3DMsoNormal><span class=3DSpellE>Coclass</span> name <span
+style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-=
+family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+class name + &#8220;Class&#8221;</p>
+
+<p class=3DMsoNormal><span class=3DSpellE>Coclass</span>, no <span class=3D=
+SpellE>noncreatable</span>
+attribute present <span style=3D'font-family:Wingdings;mso-ascii-font-famil=
+y:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+default constructor</p>
+
+<p class=3DMsoNormal>Id attribute of interface method <span style=3D'font-f=
+amily:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> <span class=3DSpel=
+lE>DispIdAttribute</span>
+on class method</p>
+
+<p class=3DMsoNormal>If a collision occurs between name and <span class=3DS=
+pellE>DispIds</span>,
+the interface name and an underscore is added to the name of each colliding
+member. Where the names of members collide, the first interface listed in t=
+he <span
+class=3DSpellE>coclass</span> statement remains unchanged.</p>
+
+<p class=3DMsoNormal><span class=3DSpellE>DispId</span> collisions: <span
+class=3DSpellE>DispIds</span> to members of the <span class=3DSpellE>coclas=
+s&#8217;s</span>
+default interface, none to conflicting class members. However, the import
+process always assigns <span class=3DSpellE>DispIds</span> to members of the
+interface.</p>
+
+<h2>Members</h2>
+
+<p class=3DMsoNormal><span class=3DGramE>Id(</span>0) <span style=3D'font-f=
+amily:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> <span class=3DSpel=
+lE>DefaultMemberAttribute</span></p>
+
+<p class=3DMsoNormal>BSTR <span style=3D'font-family:Wingdings;mso-ascii-fo=
+nt-family:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+string</p>
+
+<p class=3DMsoNormal>DATE <span style=3D'font-family:Wingdings;mso-ascii-fo=
+nt-family:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+<span class=3DSpellE>DateTime</span></p>
+
+<p class=3DMsoNormal>[<span class=3DGramE>out</span>, <span class=3DSpellE>=
+retval</span>]
+<span style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi=
+-font-family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+return value</p>
+
+<p class=3DMsoNormal>[<span class=3DSpellE><span class=3DGramE>propget</spa=
+n></span>]
+<span style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi=
+-font-family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+property with getter</p>
+
+<p class=3DMsoNormal>[<span class=3DSpellE><span class=3DGramE>propput</spa=
+n></span>]
+or [<span class=3DSpellE>propputref</span>] <span style=3D'font-family:Wing=
+dings;
+mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:sym=
+bol;
+mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbol;mso-s=
+ymbol-font-family:
+Wingdings'>&agrave;</span></span> property with setter</p>
+
+<p class=3DMsoNormal>[<span class=3DSpellE><span class=3DGramE>propput</spa=
+n></span>]
+and [<span class=3DSpellE>propputref</span>] <span style=3D'font-family:Win=
+gdings;
+mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:sym=
+bol;
+mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbol;mso-s=
+ymbol-font-family:
+Wingdings'>&agrave;</span></span> property with setter and <span class=3DSp=
+ellE>let_propertyname</span></p>
+
+<p class=3DMsoNormal>[<span class=3DGramE>in</span>] <span style=3D'font-fa=
+mily:Wingdings;
+mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:sym=
+bol;
+mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbol;mso-s=
+ymbol-font-family:
+Wingdings'>&agrave;</span></span> --</p>
+
+<p class=3DMsoNormal>[<span class=3DGramE>in</span>, out] <span style=3D'fo=
+nt-family:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> ref</p>
+
+<p class=3DMsoNormal>[<span class=3DGramE>out</span>] <span style=3D'font-f=
+amily:
+Wingdings;mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-cha=
+r-type:
+symbol;mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbo=
+l;
+mso-symbol-font-family:Wingdings'>&agrave;</span></span> out</p>
+
+<h2>Events</h2>
+
+<p class=3DMsoNormal>Described here ms-help://MS.VSCC/MS.MSDNQTR.2002JAN.10=
+33/cpguide/html/cpcontlbimpmemberconversion.htm#cpcontlbimpmemberconversion=
+anchor3</p>
+
+<h1>Other necessary conversions</h1>
+
+<p class=3DMsoNormal>[<span class=3DGramE>in</span>, <span class=3DSpellE>s=
+ize_is</span>(c)]
+<span class=3DSpellE>int</span> a[] <span style=3D'font-family:Wingdings;
+mso-ascii-font-family:Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:sym=
+bol;
+mso-symbol-font-family:Wingdings'><span style=3D'mso-char-type:symbol;mso-s=
+ymbol-font-family:
+Wingdings'>&agrave;</span></span> [in, <span class=3DSpellE>MarshalAs</span=
+>(<span
+class=3DSpellE>UnmanagedType.LPArray</span>)] int32[]a</p>
+
+<p class=3DMsoNormal>[in, out, <span class=3DSpellE>size_is</span>(*pc)] <s=
+pan
+class=3DSpellE>int</span>** pa <span style=3D'font-family:Wingdings;mso-asc=
+ii-font-family:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+[in, out, <span class=3DSpellE>MarshalAs</span>(<span class=3DSpellE>Unmana=
+gedType.LPArray</span>,
+<span class=3DSpellE>SizeParamIndex</span>=3D0] <span class=3DSpellE>int</s=
+pan>[] pa</p>
+
+<p class=3DMsoNormal>HANDLE <span style=3D'font-family:Wingdings;mso-ascii-=
+font-family:
+Tahoma;mso-hansi-font-family:Tahoma;mso-char-type:symbol;mso-symbol-font-fa=
+mily:
+Wingdings'><span style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingd=
+ings'>&agrave;</span></span>
+unsigned <span class=3DSpellE>int</span> <span class=3DSpellE>oder</span> I=
+ntPtr?</p>
+
+<p class=3DMsoNormal><span class=3DSpellE>PreserveSig</span>: Custom attrib=
+ute with
+UUID {842883D3-DC67-45cf-B968-E763D37A7A19} set to true: <span
+style=3D'mso-bidi-font-size:10.0pt;font-family:"Courier New"'>[<span class=
+=3DGramE><span
+style=3D'color:blue'>custom</span>(</span><span style=3D'color:red;backgrou=
+nd:yellow;
+mso-highlight:yellow'>&quot;842883D3-DC67-45cf-B968-E763D37A7A19&quot;</spa=
+n>, <span
+style=3D'color:red;background:yellow;mso-highlight:yellow'>&quot;true&quot;=
+</span>))]<o:p></o:p></span></p>
+
+<p class=3DMsoNormal>Method that returns an array, example: [<span class=3D=
+SpellE>propget</span>]
+HRESULT <span class=3DSpellE><span class=3DGramE>NameEncodings</span></span=
+><span
+class=3DGramE>(</span><span class=3DSpellE>int</span> <span class=3DSpellE>=
+cenc</span>,
+[out, <span class=3DSpellE>size_is</span>(<span class=3DSpellE>cenc</span>)=
+, <span
+class=3DSpellE>retval</span>] <span class=3DSpellE>int</span> * <span class=
+=3DSpellE>prgenc</span>)
+<span style=3D'font-family:Wingdings;mso-ascii-font-family:Tahoma;mso-hansi=
+-font-family:
+Tahoma;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
+style=3D'mso-char-type:symbol;mso-symbol-font-family:Wingdings'>&agrave;</s=
+pan></span>
+return void and pass array as out parameter (Reason: space for the array ha=
+s to
+be allocated by the caller &#8211; at least that is how it is done in exist=
+ing
+FW code)</p>
+
+</div>
+
+</body>
+
+</html>

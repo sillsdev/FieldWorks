@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="IDLGrammar"
+	ProjectGUID="{7D9BCC74-4BFA-4579-87C4-AF4913362398}"
+	RootNamespace="IDLGrammar"
+	SccProjectName="Perforce Project"
+	SccLocalPath="..\..\..\.."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="nmake /NOLOGO /F idl.mak OUTDIR=&quot;$(ProjectDir).&quot; all "
+				ReBuildCommandLine="nmake /NOLOGO /F idl.mak OUTDIR=&quot;$(ProjectDir).&quot; rebuild "
+				CleanCommandLine="nmake /NOLOGO /F idl.mak OUTDIR=&quot;$(ProjectDir).&quot; clean "
+				Output="IDL Grammar"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="nmake /NOLOGO /F idl.mak OUTDIR=&quot;$(ProjectDir).&quot; all "
+				ReBuildCommandLine="nmake /NOLOGO /F idl.mak OUTDIR=&quot;$(ProjectDir).&quot; rebuild "
+				CleanCommandLine="nmake /NOLOGO /F idl.mak OUTDIR=&quot;$(ProjectDir).&quot; clean "
+				Output="IDL Grammar"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\idh.g"
+			>
+		</File>
+		<File
+			RelativePath="idl.g"
+			>
+		</File>
+		<File
+			RelativePath="idl.mak"
+			>
+		</File>
+		<File
+			RelativePath=".\SurveyorTags.g"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GAFAWSData>
+  <WordRecords>
+	<WordRecord WRID="x118">
+	  <Stem MIDREF="mStem"/>
+	  <Suffixes>
+		<Affix MIDREF="x114"/>
+	  </Suffixes>
+	</WordRecord>
+	<WordRecord WRID="x130">
+	  <Prefixes>
+		<Affix MIDREF="x124"/>
+		<Affix MIDREF="x125"/>
+		<Affix MIDREF="x126"/>
+		<Affix MIDREF="x127"/>
+	  </Prefixes>
+	  <Stem MIDREF="mStem"/>
+	</WordRecord>
+	<WordRecord WRID="x131">
+	  <Prefixes>
+		<Affix MIDREF="x124"/>
+		<Affix MIDREF="x125"/>
+		<Affix MIDREF="x126"/>
+		<Affix MIDREF="x127"/>
+	  </Prefixes>
+	  <Stem MIDREF="mStem"/>
+	  <Suffixes>
+		<Affix MIDREF="x129"/>
+	  </Suffixes>
+	</WordRecord>
+  </WordRecords>
+  <Morphemes>
+	<Morpheme MID="mStem" type="s"/>
+	<Morpheme MID="x109" type="pfx"/>
+	<Morpheme MID="x110" type="pfx"/>
+	<Morpheme MID="x114" type="sfx"/>
+	<Morpheme MID="x124" type="pfx"/>
+	<Morpheme MID="x125" type="pfx"/>
+	<Morpheme MID="x126" type="pfx"/>
+	<Morpheme MID="x127" type="pfx"/>
+	<Morpheme MID="x128" type="sfx"/>
+	<Morpheme MID="x129" type="sfx"/>
+  </Morphemes>
+  <Classes>
+	<PrefixClasses/>
+	<SuffixClasses/>
+  </Classes>
+  <Challenges/>
+</GAFAWSData>

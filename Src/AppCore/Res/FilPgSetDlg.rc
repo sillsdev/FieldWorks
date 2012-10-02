@@ -1,0 +1,275 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "FilPgSetDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "AfAppRes.h"
+#include "..\AfDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridFilPgSetDlg DIALOGEX 0, 0, 275, 230
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+	WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+CAPTION "Page Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "&Left:",IDC_STATIC,11,21,13,10
+	EDITTEXT        kcidFilPgSetMLE,28,19,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetMLS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,66,23,11,
+					10
+	LTEXT           "&Right:",IDC_STATIC,88,21,20,10
+	EDITTEXT        kcidFilPgSetMRE,114,19,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetMRS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,153,23,
+					11,10
+	LTEXT           "&Top:",IDC_STATIC,11,43,16,10
+	EDITTEXT        kcidFilPgSetMTE,28,42,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetMTS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,69,41,11,
+					10
+	LTEXT           "&Bottom:",IDC_STATIC,88,43,24,10
+	EDITTEXT        kcidFilPgSetMBE,114,42,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetMBS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,152,43,
+					11,10
+
+	GROUPBOX        "From Edge",IDC_STATIC,181,11,86,45
+
+	LTEXT           "H&eader:",IDC_STATIC,188,24,28,9
+	EDITTEXT        kcidFilPgSetEHE,219,22,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetEHS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,259,23,
+					11,10
+	LTEXT           "&Footer:",IDC_STATIC,188,40,24,10
+	EDITTEXT        kcidFilPgSetEFE,219,38,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetEFS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,259,40,
+					11,10
+
+	LTEXT           "Margins",IDC_STATIC,5,4,29,8
+	LTEXT           "",IDC_STATIC,35,8,232,1,SS_SUNKEN
+
+	LTEXT           "Paper",IDC_STATIC,7,63,22,10
+	LTEXT           "",IDC_STATIC,30,67,237,1,SS_SUNKEN
+
+	LTEXT           "Si&ze:",IDC_STATIC,12,73,27,8
+	COMBOBOX        kcidFilPgSetSize,12,83,84,52,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	RTEXT           "&Width:",IDC_STATIC,107,74,24,10
+	EDITTEXT        kcidFilPgSetWE,137,72,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetWS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,176,72,
+					11,10
+	RTEXT           "Hei&ght:",IDC_STATIC,107,93,25,11
+	EDITTEXT        kcidFilPgSetHE,137,91,43,12,ES_AUTOHSCROLL
+	CONTROL         "",kcidFilPgSetHS,"msctls_updown32",UDS_ALIGNRIGHT |
+					UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,174,92,
+					11,10
+	CONTROL         "&Portrait",kcidFilPgSetPort,"Button",BS_AUTORADIOBUTTON |
+					WS_TABSTOP,219,74,44,8
+	CONTROL         "L&andscape",kcidFilPgSetLand,"Button",
+					BS_AUTORADIOBUTTON | WS_TABSTOP,219,93,47,8
+
+	CONTROL         1701,kridFilPgSetPort,"Static",SS_BITMAP,203,71,11,15,
+					WS_EX_TRANSPARENT
+	CONTROL         1702,IDC_STATIC,"Static",SS_BITMAP,201,92,15,10
+
+	LTEXT           "Header and footer",IDC_STATIC,6,112,61,8
+	LTEXT           "",IDC_STATIC,70,117,197,1,SS_SUNKEN
+
+	CONTROL         "&Show header on first page.",kcidFilPgSetShowHdr,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,12,123,103,10
+
+	LTEXT           "Hea&der:",IDC_STATIC,12,139,28,10,NOT WS_GROUP
+	EDITTEXT        kcidFilPgSetHdE,42,138,225,20,ES_AUTOHSCROLL
+
+	LTEXT           "F&ooter:",IDC_STATIC,12,164,28,10,NOT WS_GROUP
+	EDITTEXT        kcidFilPgSetFtE,42,163,225,20,ES_AUTOHSCROLL
+
+	LTEXT           "Format selected text:",IDC_STATIC,12,190,140,17,NOT WS_GROUP
+	PUSHBUTTON      "",kcidFilPgSetFont,85,188,16,15,BS_BITMAP
+
+	LTEXT           "Insert:",IDC_STATIC,145,190,140,24,NOT WS_GROUP
+	PUSHBUTTON      "",kcidFilPgSetPgNum,175,188,16,15,BS_BITMAP
+	PUSHBUTTON      "",kcidFilPgSetTotPg,194,188,16,15,BS_BITMAP
+	PUSHBUTTON      "",kcidFilPgSetDate, 213,188,16,15,BS_BITMAP
+	PUSHBUTTON      "",kcidFilPgSetTime, 232,188,16,15,BS_BITMAP
+	PUSHBUTTON      "",kcidFilPgSetTitle,251,188,16,15,BS_BITMAP
+
+	LTEXT           "",IDC_STATIC,7,207,260,1,SS_SUNKEN
+
+	PUSHBUTTON      "OK",kctidOk,                  79,212,44,15
+	PUSHBUTTON      "Cancel",kctidCancel,         127,212,44,15
+	PUSHBUTTON      "Defa&ult...",kcidFilPgSetDef,175,212,44,15
+	PUSHBUTTON      "Help...",kctidHelp,          223,212,44,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridFilPgSetPort        BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgPort.bmp"
+kridFilPgSetLand        BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgLand.bmp"
+kridFilPgSetFont        BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgFont.bmp"
+kridFilPgSetPgNum       BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgPgNum.bmp"
+kridFilPgSetTotPg       BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgTotPg.bmp"
+kridFilPgSetDate        BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgDate.bmp"
+kridFilPgSetTime        BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgTime.bmp"
+kridFilPgSetTitle       BITMAP  DISCARDABLE     "../../AppCore/Res/FilPgSetDlgTit.bmp"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"FilPgSetDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""AfAppRes.h""\r\n"
+	"#include ""..\\AfDef.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridFilPgSetDlg, DIALOG
+	BEGIN
+		BOTTOMMARGIN, 250
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidFilPgSetHdE         "Specifies text for the header."
+	kcidFilPgSetFtE         "Specifies text for the footer."
+	kcidFilPgSetMLE         "Specifies the width of the left margin."
+	kcidFilPgSetShowHdr		"If selected, prints the header also on the first page."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidFilPgSetLand        "Selects landscape page orientation."
+	kcidFilPgSetMLS         "Increases or decreases the left margin."
+	kcidFilPgSetMTS         "Increases or decreases the top margin."
+	kcidFilPgSetMRS         "Increases or decreases the right margin."
+	kcidFilPgSetMBS         "Increases or decreases the bottom margin."
+	kcidFilPgSetEHS         "Increases or decreases the distance of the header from the top paper edge."
+	kcidFilPgSetEFS         "Increases or decreases the distance of the footer from the bottom paper edge."
+	kcidFilPgSetWE          "Sets a custom paper width."
+	kcidFilPgSetWS          "Increases or decreases the custom paper width."
+	kcidFilPgSetHE          "Sets a custom paper height."
+	kcidFilPgSetHS          "Increases or decreases the custom paper height."
+	kcidFilPgSetSize        "Selects a standard paper size."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kcidFilPgSetMTE         "Specifies the height of the top margin."
+	kcidFilPgSetMRE         "Specifies the width of the right margin."
+	kcidFilPgSetMBE         "Specifies the height of the bottom margin."
+	kcidFilPgSetEHE         "Specifies header distance from the top paper edge."
+	kcidFilPgSetEFE         "Specifies footer distance from the bottom paper edge."
+	kcidFilPgSetFont        "Opens a dialog to change the font features of selected header or footer characters."
+	kcidFilPgSetPgNum       "Inserts a code to print the page number."
+	kcidFilPgSetTotPg       "Inserts a code to print the number of pages in the document."
+	kcidFilPgSetDate        "Inserts a code to print the printing date."
+	kcidFilPgSetTime        "Inserts a code to print the printing time."
+	kcidFilPgSetTitle       "Inserts a document name using information in the Name box on the Properties dialog for the open application."
+	kcidFilPgSetDef         "Opens a dialog for restoring all default settings."
+	kcidFilPgSetPort        "Selects portrait page orientation."
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFilPgSetDlgPgLtrStr "Letter 8 1/2 x 11 in"
+	kstidFilPgSetDlgPgLglStr "Legal 8 1/2 x 14 in"
+	kstidFilPgSetDlgPgA4Str "A4 210 x 297 mm"
+	kstidFilPgSetDlgPgB5Str "B5"
+	kstidFilPgSetDlgPgCuStr "Custom size"
+	kstidFilPgSetDlgPage    "&[page]"
+	kstidFilPgSetDlgPages   "&[pages]"
+	kstidFilPgSetDefaultHeaderFmt   "%<0>s %<1>s"
+	kstidFilPgSetDefaultFooter      "&[page],print date (&[date])"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kstidFilPgSetDlgDate    "&[date]"
+	kstidFilPgSetDlgTime    "&[time]"
+	kstridFilPgSetDlgDefQ   "Do you want to return the Page Setup to its default values?"
+	kstridFilPgSetDlgDefT   "Page Setup Defaults"
+	kstridFilPgSetDlgLRMar  "The Left and Right Margin values are too high; there is not sufficient room for text to print.\nPlease adjust the values to allow at least two inches of width for the text."
+	kstridFilPgSetDlgTBMar  "The Top and Bottom Margin values are too high; there is not sufficient room for text to print.\nPlease adjust the values to allow at least two inches of height for the text."
+	kstridFilPgSetDlgEHMar  "The header will not fit in the space allowed.\nEither increase the top margin, decrease the From Edge distance,\nor decrease the size of the font."
+	kstridFilPgSetDlgEFMar  "The footer will not fit in the space allowed.\nEither increase the bottom margin, decrease the From Edge distance,\nor decrease the size of the font."
+	kstidAdjustHeader       "Adjust Header"
+	kstidAdjustFooter       "Adjust Footer"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

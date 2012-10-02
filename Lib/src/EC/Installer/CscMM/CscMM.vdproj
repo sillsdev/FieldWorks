@@ -1,0 +1,258 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:CscMM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_22819BAE8E384F3FA7636AF0C7E4F789"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F260B741F672456881FD4ACC0E806C94"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\CscMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\CscDotMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_22819BAE8E384F3FA7636AF0C7E4F789"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Consistent Spelling Checker 304.dot"
+			"TargetName" = "8:Consistent Spelling Checker 304.dot"
+			"Tag" = "8:"
+			"Folder" = "8:_E226E49C67E94BB0A7CB12EF5A82A3F2"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{1525181F-901A-416C-8A58-119130FE478E}:_C4838C9D7C664B9AADF92844085E4F24"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_56E1BC9B81D54999B11C973074378343"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_0D4A6F4DFBD2441991AC62BB365DD78D"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_D84C6CD2BE58457A8B264553FE964D42"
+							{
+							"Name" = "8:Help"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_588D941CE519476A9665B2B9E5B5B76B"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+			"{994432C3-9487-495D-8656-3E829A8DBDDE}:_E226E49C67E94BB0A7CB12EF5A82A3F2"
+			{
+			"DefaultLocation" = "8:[AppDataFolder]Microsoft\\Templates"
+			"Name" = "8:Word DOT Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:WORD_DOT_FOLDER"
+				"Folders"
+				{
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+			"{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_F260B741F672456881FD4ACC0E806C94"
+			{
+			"UseDynamicProperties" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"SourcePath" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\Jump2TbxMergeModule.msm"
+			"LanguageId" = "3:1033"
+			"Exclude" = "11:FALSE"
+			"Folder" = "8:"
+			"Feature" = "8:"
+			"IsolateTo" = "8:"
+			}
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:CscMergeModule.34B6C3D2C69942758689B50BD49ADEE6"
+		"Version" = "8:3.0.4.0"
+		"Title" = "8:CscMergeModule"
+		"Subject" = "8:Document Template for doing spelling corrections using EncConverters in MS Word"
+		"Author" = "8:SIL"
+		"Keywords" = "8:SILConverters; Spell Fixing in MS Word"
+		"Comments" = "8:Consistent Spelling Checker Macro Word document template"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B7710FA4DFAC46E0B3C005443180CEE7"
+			{
+			"Name" = "8:Help for the Consistent Spelling Checker"
+			"Arguments" = "8:"
+			"Description" = "8:Help information for the Consistent Spelling Checker MS Word document template"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_22819BAE8E384F3FA7636AF0C7E4F789"
+			"Folder" = "8:_D84C6CD2BE58457A8B264553FE964D42"
+			"WorkingFolder" = "8:_E226E49C67E94BB0A7CB12EF5A82A3F2"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

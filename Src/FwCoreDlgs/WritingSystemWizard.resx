@@ -1,0 +1,1516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="panSteps.Size" type="System.Drawing.Size, System.Drawing">
+	<value>110, 428</value>
+  </data>
+  <data name="&gt;&gt;panSteps.Name" xml:space="preserve">
+	<value>panSteps</value>
+  </data>
+  <data name="&gt;&gt;panSteps.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panSteps.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;panSteps.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="lblSteps.Location" type="System.Drawing.Point, System.Drawing">
+	<value>494, 437</value>
+  </data>
+  <data name="lblSteps.Size" type="System.Drawing.Size, System.Drawing">
+	<value>59, 13</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblSteps.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="lblSteps.Text" xml:space="preserve">
+	<value>Step 1 of 4</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.Name" xml:space="preserve">
+	<value>lblSteps</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblSteps.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_btnBack.HelpString" xml:space="preserve">
+	<value>Takes you back to the previous step.</value>
+  </data>
+  <data name="m_btnBack.Location" type="System.Drawing.Point, System.Drawing">
+	<value>240, 474</value>
+  </data>
+  <data name="m_btnBack.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_btnBack.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.Name" xml:space="preserve">
+	<value>m_btnBack</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnBack.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_btnCancel.HelpString" xml:space="preserve">
+	<value>Closes this wizard without saving any changes you have made.</value>
+  </data>
+  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>400, 474</value>
+  </data>
+  <data name="m_btnCancel.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
+	<value>m_btnCancel</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_btnNext.HelpString" xml:space="preserve">
+	<value>Takes you to the next step (Next) or saves settings and exits the wizard (Finish).</value>
+  </data>
+  <data name="m_btnNext.Location" type="System.Drawing.Point, System.Drawing">
+	<value>315, 474</value>
+  </data>
+  <data name="m_btnNext.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_btnNext.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.Name" xml:space="preserve">
+	<value>m_btnNext</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnNext.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_btnHelp.HelpString" xml:space="preserve">
+	<value>Displays more information to help you use this wizard.</value>
+  </data>
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>480, 474</value>
+  </data>
+  <data name="m_btnHelp.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+	<value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="tabPage1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="languageSetup.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="languageSetup.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="languageSetup.Size" type="System.Drawing.Size, System.Drawing">
+	<value>408, 388</value>
+  </data>
+  <data name="languageSetup.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;languageSetup.Name" xml:space="preserve">
+	<value>languageSetup</value>
+  </data>
+  <data name="&gt;&gt;languageSetup.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.LanguageSetup, FwControls, Version=5.5.0.26418, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;languageSetup.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;languageSetup.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="lblIdentifyLanguage.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblIdentifyLanguage.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblIdentifyLanguage.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblIdentifyLanguage.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="lblIdentifyLanguage.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblIdentifyLanguage.Size" type="System.Drawing.Size, System.Drawing">
+	<value>384, 16</value>
+  </data>
+  <data name="lblIdentifyLanguage.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblIdentifyLanguage.Text" xml:space="preserve">
+	<value>Identify the language associated with the new writing system</value>
+  </data>
+  <data name="&gt;&gt;lblIdentifyLanguage.Name" xml:space="preserve">
+	<value>lblIdentifyLanguage</value>
+  </data>
+  <data name="&gt;&gt;lblIdentifyLanguage.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblIdentifyLanguage.Parent" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;lblIdentifyLanguage.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 25</value>
+  </data>
+  <data name="tabPage1.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>425, 423</value>
+  </data>
+  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+	<value>Pg. 1</value>
+  </data>
+  <data name="tabPage1.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
+	<value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="tabPage2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="lblRegionVariantInfo.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblRegionVariantInfo.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblRegionVariantInfo.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblRegionVariantInfo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 104</value>
+  </data>
+  <data name="lblRegionVariantInfo.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+	<value>No</value>
+  </data>
+  <data name="lblRegionVariantInfo.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblRegionVariantInfo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>336, 16</value>
+  </data>
+  <data name="lblRegionVariantInfo.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblRegionVariantInfo.Text" xml:space="preserve">
+	<value>Region and variant information</value>
+  </data>
+  <data name="lblRegionVariantInfo.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfo.Name" xml:space="preserve">
+	<value>lblRegionVariantInfo</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfo.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfo.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfo.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="lblMoreInfoDesc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblMoreInfoDesc.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 232</value>
+  </data>
+  <data name="lblMoreInfoDesc.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblMoreInfoDesc.Size" type="System.Drawing.Size, System.Drawing">
+	<value>384, 40</value>
+  </data>
+  <data name="lblMoreInfoDesc.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="lblMoreInfoDesc.Text" xml:space="preserve">
+	<value>If you need to distinguish this writing system from another for the same language, provide at least one Script, Region, or Variant name that is different. Select from the lists provided or enter a new item.</value>
+  </data>
+  <data name="lblMoreInfoDesc.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;lblMoreInfoDesc.Name" xml:space="preserve">
+	<value>lblMoreInfoDesc</value>
+  </data>
+  <data name="&gt;&gt;lblMoreInfoDesc.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMoreInfoDesc.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;lblMoreInfoDesc.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_regionVariantControl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 272</value>
+  </data>
+  <data name="m_regionVariantControl.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_regionVariantControl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>392, 136</value>
+  </data>
+  <data name="m_regionVariantControl.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="m_regionVariantControl.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_regionVariantControl.Name" xml:space="preserve">
+	<value>m_regionVariantControl</value>
+  </data>
+  <data name="&gt;&gt;m_regionVariantControl.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.RegionVariantControl, FwCoreDlgControls, Version=5.5.0.28349, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_regionVariantControl.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_regionVariantControl.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="btnAdvanced.HelpString" xml:space="preserve">
+	<value>Opens / Closes the advanced section.</value>
+  </data>
+  <data name="btnAdvanced.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="btnAdvanced.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnAdvanced.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 200</value>
+  </data>
+  <data name="btnAdvanced.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="btnAdvanced.Size" type="System.Drawing.Size, System.Drawing">
+	<value>80, 23</value>
+  </data>
+  <data name="btnAdvanced.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="btnAdvanced.Text" xml:space="preserve">
+	<value>Advanced</value>
+  </data>
+  <data name="&gt;&gt;btnAdvanced.Name" xml:space="preserve">
+	<value>btnAdvanced</value>
+  </data>
+  <data name="&gt;&gt;btnAdvanced.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAdvanced.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;btnAdvanced.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="chkUsesIPA.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+	<value>System</value>
+  </data>
+  <data name="chkUsesIPA.HelpString" xml:space="preserve">
+	<value>Helps you set up this writing system to use the International Phonetic Alphabet. </value>
+  </data>
+  <data name="chkUsesIPA.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="chkUsesIPA.Location" type="System.Drawing.Point, System.Drawing">
+	<value>32, 160</value>
+  </data>
+  <data name="chkUsesIPA.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="chkUsesIPA.Size" type="System.Drawing.Size, System.Drawing">
+	<value>360, 24</value>
+  </data>
+  <data name="chkUsesIPA.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="chkUsesIPA.Text" xml:space="preserve">
+	<value>This writing system uses the International Phonetic Alphabet (IPA).</value>
+  </data>
+  <data name="&gt;&gt;chkUsesIPA.Name" xml:space="preserve">
+	<value>chkUsesIPA</value>
+  </data>
+  <data name="&gt;&gt;chkUsesIPA.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkUsesIPA.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;chkUsesIPA.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="lblRegionVariantInfoDesc.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblRegionVariantInfoDesc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblRegionVariantInfoDesc.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 128</value>
+  </data>
+  <data name="lblRegionVariantInfoDesc.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblRegionVariantInfoDesc.Size" type="System.Drawing.Size, System.Drawing">
+	<value>376, 32</value>
+  </data>
+  <data name="lblRegionVariantInfoDesc.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="lblRegionVariantInfoDesc.Text" xml:space="preserve">
+	<value>FieldWorks can pre-select some settings for you if your writing system uses the International Phonetic Alphabet (IPA).</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfoDesc.Name" xml:space="preserve">
+	<value>lblRegionVariantInfoDesc</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfoDesc.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfoDesc.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;lblRegionVariantInfoDesc.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_ShortWsName.HelpString" xml:space="preserve">
+	<value>Specifies an abbreviation to identify the writing system.. Editable.</value>
+  </data>
+  <data name="m_ShortWsName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>110, 72</value>
+  </data>
+  <data name="m_ShortWsName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_ShortWsName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>100, 20</value>
+  </data>
+  <data name="m_ShortWsName.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_ShortWsName.Name" xml:space="preserve">
+	<value>m_ShortWsName</value>
+  </data>
+  <data name="&gt;&gt;m_ShortWsName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_ShortWsName.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;m_ShortWsName.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <metadata name="lblAbbrev.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblAbbrev.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblAbbrev.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblAbbrev.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 74</value>
+  </data>
+  <data name="lblAbbrev.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblAbbrev.Size" type="System.Drawing.Size, System.Drawing">
+	<value>69, 13</value>
+  </data>
+  <data name="lblAbbrev.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="lblAbbrev.Text" xml:space="preserve">
+	<value>&amp;Abbreviation:</value>
+  </data>
+  <data name="&gt;&gt;lblAbbrev.Name" xml:space="preserve">
+	<value>lblAbbrev</value>
+  </data>
+  <data name="&gt;&gt;lblAbbrev.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAbbrev.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;lblAbbrev.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <metadata name="lblWsAbbrevInstructions.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblWsAbbrevInstructions.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblWsAbbrevInstructions.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="lblWsAbbrevInstructions.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblWsAbbrevInstructions.Size" type="System.Drawing.Size, System.Drawing">
+	<value>384, 32</value>
+  </data>
+  <data name="lblWsAbbrevInstructions.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblWsAbbrevInstructions.Text" xml:space="preserve">
+	<value>The abbreviation is used to identify the writing system in multilingual fields and in other places where a short name for the writing system is required.</value>
+  </data>
+  <data name="&gt;&gt;lblWsAbbrevInstructions.Name" xml:space="preserve">
+	<value>lblWsAbbrevInstructions</value>
+  </data>
+  <data name="&gt;&gt;lblWsAbbrevInstructions.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblWsAbbrevInstructions.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;lblWsAbbrevInstructions.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <metadata name="lblWritingSystemAbbrev.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblWritingSystemAbbrev.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblWritingSystemAbbrev.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblWritingSystemAbbrev.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="lblWritingSystemAbbrev.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblWritingSystemAbbrev.Size" type="System.Drawing.Size, System.Drawing">
+	<value>264, 16</value>
+  </data>
+  <data name="lblWritingSystemAbbrev.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblWritingSystemAbbrev.Text" xml:space="preserve">
+	<value>Writing system abbreviation</value>
+  </data>
+  <data name="&gt;&gt;lblWritingSystemAbbrev.Name" xml:space="preserve">
+	<value>lblWritingSystemAbbrev</value>
+  </data>
+  <data name="&gt;&gt;lblWritingSystemAbbrev.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblWritingSystemAbbrev.Parent" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;lblWritingSystemAbbrev.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 25</value>
+  </data>
+  <data name="tabPage2.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>425, 423</value>
+  </data>
+  <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+	<value>Pg. 2</value>
+  </data>
+  <data name="tabPage2.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Name" xml:space="preserve">
+	<value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Parent" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="tabPage3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 56</value>
+  </data>
+  <data name="label1.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>384, 17</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+	<value>Please press the help button for more information.</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="lblFontDesc.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblFontDesc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblFontDesc.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 132</value>
+  </data>
+  <data name="lblFontDesc.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblFontDesc.Size" type="System.Drawing.Size, System.Drawing">
+	<value>408, 32</value>
+  </data>
+  <data name="lblFontDesc.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="lblFontDesc.Text" xml:space="preserve">
+	<value>Choose the default fonts to use for data in this writing system. It is fine to use the same font more than once.</value>
+  </data>
+  <data name="&gt;&gt;lblFontDesc.Name" xml:space="preserve">
+	<value>lblFontDesc</value>
+  </data>
+  <data name="&gt;&gt;lblFontDesc.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFontDesc.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;lblFontDesc.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_defaultFontsControl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 160</value>
+  </data>
+  <data name="m_defaultFontsControl.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_defaultFontsControl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>288, 152</value>
+  </data>
+  <data name="m_defaultFontsControl.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontsControl.Name" xml:space="preserve">
+	<value>m_defaultFontsControl</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontsControl.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=5.5.0.28349, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontsControl.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontsControl.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="radioRTL.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+	<value>System</value>
+  </data>
+  <data name="radioRTL.HelpString" xml:space="preserve">
+	<value>Specifies the direction in which the writing system is written.</value>
+  </data>
+  <data name="radioRTL.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="radioRTL.Location" type="System.Drawing.Point, System.Drawing">
+	<value>155, 386</value>
+  </data>
+  <data name="radioRTL.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="radioRTL.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 24</value>
+  </data>
+  <data name="radioRTL.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="radioRTL.Text" xml:space="preserve">
+	<value>right-to-left</value>
+  </data>
+  <data name="&gt;&gt;radioRTL.Name" xml:space="preserve">
+	<value>radioRTL</value>
+  </data>
+  <data name="&gt;&gt;radioRTL.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;radioRTL.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;radioRTL.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="radioLTR.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+	<value>System</value>
+  </data>
+  <data name="radioLTR.HelpString" xml:space="preserve">
+	<value>Specifies the direction in which the writing system is written.</value>
+  </data>
+  <data name="radioLTR.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="radioLTR.Location" type="System.Drawing.Point, System.Drawing">
+	<value>22, 386</value>
+  </data>
+  <data name="radioLTR.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="radioLTR.Size" type="System.Drawing.Size, System.Drawing">
+	<value>104, 24</value>
+  </data>
+  <data name="radioLTR.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="radioLTR.Text" xml:space="preserve">
+	<value>left-to-right</value>
+  </data>
+  <data name="&gt;&gt;radioLTR.Name" xml:space="preserve">
+	<value>radioLTR</value>
+  </data>
+  <data name="&gt;&gt;radioLTR.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;radioLTR.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;radioLTR.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="lblDirectionDesc.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblDirectionDesc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblDirectionDesc.Location" type="System.Drawing.Point, System.Drawing">
+	<value>22, 348</value>
+  </data>
+  <data name="lblDirectionDesc.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblDirectionDesc.Size" type="System.Drawing.Size, System.Drawing">
+	<value>384, 32</value>
+  </data>
+  <data name="lblDirectionDesc.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="lblDirectionDesc.Text" xml:space="preserve">
+	<value>FieldWorks currently supports left-to-right and right-to-left writing systems.  Please select the appropriate direction:</value>
+  </data>
+  <data name="&gt;&gt;lblDirectionDesc.Name" xml:space="preserve">
+	<value>lblDirectionDesc</value>
+  </data>
+  <data name="&gt;&gt;lblDirectionDesc.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDirectionDesc.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;lblDirectionDesc.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="lblDirection.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblDirection.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblDirection.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblDirection.Location" type="System.Drawing.Point, System.Drawing">
+	<value>11, 330</value>
+  </data>
+  <data name="lblDirection.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblDirection.Size" type="System.Drawing.Size, System.Drawing">
+	<value>136, 16</value>
+  </data>
+  <data name="lblDirection.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="lblDirection.Text" xml:space="preserve">
+	<value>Direction</value>
+  </data>
+  <data name="&gt;&gt;lblDirection.Name" xml:space="preserve">
+	<value>lblDirection</value>
+  </data>
+  <data name="&gt;&gt;lblDirection.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDirection.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;lblDirection.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <metadata name="lblDefaultFonts.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblDefaultFonts.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblDefaultFonts.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblDefaultFonts.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 116</value>
+  </data>
+  <data name="lblDefaultFonts.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblDefaultFonts.Size" type="System.Drawing.Size, System.Drawing">
+	<value>136, 16</value>
+  </data>
+  <data name="lblDefaultFonts.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblDefaultFonts.Text" xml:space="preserve">
+	<value>Fonts</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultFonts.Name" xml:space="preserve">
+	<value>lblDefaultFonts</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultFonts.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultFonts.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultFonts.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_localeMenuButton.HelpString" xml:space="preserve">
+	<value>Specifies a similar writing system in order to inherit sort order and keyboard properties.</value>
+  </data>
+  <data name="m_localeMenuButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAACBJREFUKFNjYCAT
+		/Afqw4WxGolNMV67kTUQ5UiQBjoCAN8FD/GwrhGZAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="m_localeMenuButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="m_localeMenuButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_localeMenuButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 76</value>
+  </data>
+  <data name="m_localeMenuButton.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_localeMenuButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>208, 23</value>
+  </data>
+  <data name="m_localeMenuButton.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_localeMenuButton.Text" xml:space="preserve">
+	<value>None</value>
+  </data>
+  <data name="&gt;&gt;m_localeMenuButton.Name" xml:space="preserve">
+	<value>m_localeMenuButton</value>
+  </data>
+  <data name="&gt;&gt;m_localeMenuButton.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=5.5.0.28349, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_localeMenuButton.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;m_localeMenuButton.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <metadata name="lblSimilarWSDesc.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblSimilarWSDesc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblSimilarWSDesc.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 24</value>
+  </data>
+  <data name="lblSimilarWSDesc.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblSimilarWSDesc.Size" type="System.Drawing.Size, System.Drawing">
+	<value>400, 32</value>
+  </data>
+  <data name="lblSimilarWSDesc.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblSimilarWSDesc.Text" xml:space="preserve">
+	<value>You can base the new writing system on a similar one, for example, the writing system of a national or regional language.</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWSDesc.Name" xml:space="preserve">
+	<value>lblSimilarWSDesc</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWSDesc.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWSDesc.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWSDesc.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <metadata name="lblSimilarWS.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblSimilarWS.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblSimilarWS.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblSimilarWS.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="lblSimilarWS.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblSimilarWS.Size" type="System.Drawing.Size, System.Drawing">
+	<value>232, 16</value>
+  </data>
+  <data name="lblSimilarWS.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblSimilarWS.Text" xml:space="preserve">
+	<value>Similar Writing System</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWS.Name" xml:space="preserve">
+	<value>lblSimilarWS</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWS.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWS.Parent" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;lblSimilarWS.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="tabPage3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 25</value>
+  </data>
+  <data name="tabPage3.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="tabPage3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>425, 423</value>
+  </data>
+  <data name="tabPage3.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="tabPage3.Text" xml:space="preserve">
+	<value>Pg. 3</value>
+  </data>
+  <data name="tabPage3.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Name" xml:space="preserve">
+	<value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Parent" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <metadata name="tabPage4.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 64</value>
+  </data>
+  <data name="label2.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>392, 40</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+	<value>If you need to use Keyman, choose the Keyman keyboard in the lower list. In this case the choice in the upper list only affects what language will appear in the system Language Bar when you are using this writing system.</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="lblFinishOrBack.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblFinishOrBack.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblFinishOrBack.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 384</value>
+  </data>
+  <data name="lblFinishOrBack.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblFinishOrBack.Size" type="System.Drawing.Size, System.Drawing">
+	<value>376, 32</value>
+  </data>
+  <data name="lblFinishOrBack.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="lblFinishOrBack.Text" xml:space="preserve">
+	<value>Click Finish to complete setting up the new writing system, or Back if you need to alter any selections.</value>
+  </data>
+  <data name="&gt;&gt;lblFinishOrBack.Name" xml:space="preserve">
+	<value>lblFinishOrBack</value>
+  </data>
+  <data name="&gt;&gt;lblFinishOrBack.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFinishOrBack.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;lblFinishOrBack.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="lblConverterDesc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblConverterDesc.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 232</value>
+  </data>
+  <data name="lblConverterDesc.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblConverterDesc.Size" type="System.Drawing.Size, System.Drawing">
+	<value>400, 48</value>
+  </data>
+  <data name="lblConverterDesc.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="lblConverterDesc.Text" xml:space="preserve">
+	<value>If you will be importing legacy (8-bit or MBCS) data into FieldWorks, select the appropriate encoding converter from the list below. You can register additional converters (and experiment to see which works) by clicking "More..."</value>
+  </data>
+  <data name="&gt;&gt;lblConverterDesc.Name" xml:space="preserve">
+	<value>lblConverterDesc</value>
+  </data>
+  <data name="&gt;&gt;lblConverterDesc.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblConverterDesc.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;lblConverterDesc.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="btnEncodingConverterNew.HelpString" xml:space="preserve">
+	<value>Opens a dialog box for adding, modifying, deleting, and testing encoding converters.</value>
+  </data>
+  <data name="btnEncodingConverterNew.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnEncodingConverterNew.Location" type="System.Drawing.Point, System.Drawing">
+	<value>192, 288</value>
+  </data>
+  <data name="btnEncodingConverterNew.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="btnEncodingConverterNew.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnEncodingConverterNew.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="btnEncodingConverterNew.Text" xml:space="preserve">
+	<value>More...</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverterNew.Name" xml:space="preserve">
+	<value>btnEncodingConverterNew</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverterNew.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverterNew.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;btnEncodingConverterNew.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="cbEncodingConverter.HelpString" xml:space="preserve">
+	<value>Specifies the encoding converter for importing data which uses this writing system.</value>
+  </data>
+  <data name="cbEncodingConverter.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cbEncodingConverter.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 288</value>
+  </data>
+  <data name="cbEncodingConverter.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cbEncodingConverter.Size" type="System.Drawing.Size, System.Drawing">
+	<value>168, 21</value>
+  </data>
+  <data name="cbEncodingConverter.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.Name" xml:space="preserve">
+	<value>cbEncodingConverter</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.26418, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;cbEncodingConverter.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="lblEncodingConverter.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblEncodingConverter.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblEncodingConverter.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 208</value>
+  </data>
+  <data name="lblEncodingConverter.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblEncodingConverter.Size" type="System.Drawing.Size, System.Drawing">
+	<value>176, 16</value>
+  </data>
+  <data name="lblEncodingConverter.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblEncodingConverter.Text" xml:space="preserve">
+	<value>Encoding converter</value>
+  </data>
+  <data name="&gt;&gt;lblEncodingConverter.Name" xml:space="preserve">
+	<value>lblEncodingConverter</value>
+  </data>
+  <data name="&gt;&gt;lblEncodingConverter.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblEncodingConverter.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;lblEncodingConverter.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_KeyboardControl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 104</value>
+  </data>
+  <data name="m_KeyboardControl.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_KeyboardControl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>288, 88</value>
+  </data>
+  <data name="m_KeyboardControl.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.Name" xml:space="preserve">
+	<value>m_KeyboardControl</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.KeyboardControl, FwCoreDlgControls, Version=5.5.0.28349, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;m_KeyboardControl.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <metadata name="lblKeyboardDesc.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblKeyboardDesc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblKeyboardDesc.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 32</value>
+  </data>
+  <data name="lblKeyboardDesc.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblKeyboardDesc.Size" type="System.Drawing.Size, System.Drawing">
+	<value>392, 32</value>
+  </data>
+  <data name="lblKeyboardDesc.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblKeyboardDesc.Text" xml:space="preserve">
+	<value>If you can use the keyboard of a standard system language, choose it in the first list and leave the Keyman keyboard "None."</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboardDesc.Name" xml:space="preserve">
+	<value>lblKeyboardDesc</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboardDesc.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboardDesc.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboardDesc.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <metadata name="lblKeyboard.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblKeyboard.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblKeyboard.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblKeyboard.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 8</value>
+  </data>
+  <data name="lblKeyboard.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblKeyboard.Size" type="System.Drawing.Size, System.Drawing">
+	<value>100, 16</value>
+  </data>
+  <data name="lblKeyboard.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblKeyboard.Text" xml:space="preserve">
+	<value>Keyboard</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboard.Name" xml:space="preserve">
+	<value>lblKeyboard</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboard.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboard.Parent" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;lblKeyboard.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="tabPage4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 25</value>
+  </data>
+  <data name="tabPage4.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="tabPage4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>425, 423</value>
+  </data>
+  <data name="tabPage4.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="tabPage4.Text" xml:space="preserve">
+	<value>Pg. 4</value>
+  </data>
+  <data name="tabPage4.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.Name" xml:space="preserve">
+	<value>tabPage4</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.Parent" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabPage4.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="tabSteps.Location" type="System.Drawing.Point, System.Drawing">
+	<value>125, 2</value>
+  </data>
+  <data name="tabSteps.Size" type="System.Drawing.Size, System.Drawing">
+	<value>433, 452</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.Name" xml:space="preserve">
+	<value>tabSteps</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabSteps.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>562, 504</value>
+  </data>
+  <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="$this.StepNames" xml:space="preserve">
+	<value>Language ID</value>
+  </data>
+  <data name="$this.StepNames1" xml:space="preserve">
+	<value>Writing System</value>
+  </data>
+  <data name="$this.StepNames2" xml:space="preserve">
+	<value>Appearance</value>
+  </data>
+  <data name="$this.StepNames3" xml:space="preserve">
+	<value>Input</value>
+  </data>
+  <data name="$this.StepPanelWidth" type="System.Int32, mscorlib">
+	<value>110</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Writing System Wizard</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Name" xml:space="preserve">
+	<value>helpProvider1</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>WritingSystemWizard</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.WizardDialog, FwControls, Version=5.5.0.26418, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+</root>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- Delete Fieldworks Project -->
+		<click select="menubar/file/project-management/delete-fieldWorks-project"/>
+
+		<on-dialog title="Delete Fieldworks Project" until="10000" on-fail="skip">
+			<glimpse id="project_found" path="9:NAMELESS/34:MALAY PARATEXT 6 RESTORE TEST" on-fail="skip"/>
+			<if>
+				<condition of="$project_found" is="true"/>
+				<then>
+					<click path="9:NAMELESS/34:MALAY PARATEXT 6 RESTORE TEST"/>
+					<click path="9:Delete/43:Delete"/>
+					<click path="$Yes"/>
+					<click path="$Close"/>
+				</then>
+				<else>
+					<click path="$Close"/>
+				</else>
+			</if>
+		</on-dialog>
+
+		<!-- ========================================================================== -->
+
+		<!-- Backup And Restore project -->
+		<click select="menubar/file/project-management/backup-and-restore"/>
+
+		<on-dialog title="Backup and Restore" until="10000">
+			<click path="9:Tab1/37:Restore"/>
+			<insert>{TAB 4}</insert>
+			<insert>C:\fw\Test\GuiTestDriver\TeTestInstall\RestoreAndTestWithThisTeProject\</insert>
+			<insert>{TAB 2}</insert>
+
+			<click path="9:Project:[2]/9:Project:/41:Project:"/>
+			<var id="CheckPath" set="9:Project:[2]/9:Project:/41:Project:"/>
+			<var id="ExpectedValue" set="MALAY PARATEXT 6 RESTORE TEST"/>
+			<include from="IncLangProjComboBox.xml"/>
+			<insert>{TAB 3}</insert>
+
+			<click path="9:Start Restore/43:Start Restore"/>
+		</on-dialog>
+
+		<on-dialog title="Restore Options" until="10000" on-fail="skip">
+			<click path="9:Replace the current version with the backup version./45:Replace the current version with the backup version."/>
+			<click path="9:Restore/43:Restore"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

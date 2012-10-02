@@ -1,0 +1,551 @@
+<?xml version="1.0"?>
+<!--
+/*----------------------------------------------------------------------------------------------
+Copyright 2001, SIL International. All rights reserved.
+
+File: buildfw.wsf
+Responsibility: Jeff Gayle
+Last reviewed: Not yet.
+
+Description: Builds FieldWorks, creates installer, produces cd burnable images
+
+----------------------------------------------------------------------------------------------*/
+-->
+<package>
+	<job id="main">
+	<script language="JScript" src="globconst.js" />
+	<script language="JScript" src="misc.js" />
+	<script language="JScript" src="rptobj.js" />
+	<script language="JScript" src="file.js" />
+	<script language="JScript" src="objweb.js" />
+	<script language="JScript" src="db.js" />
+	<script language="JScript" src="sccs.js" />
+	<script language="JScript" src="bld.js" />
+	<script language="JScript" src="mail.js" />
+
+	<script language="JScript"><![CDATA[
+	function displayUsage(rptObj)
+	{
+		rpt.closeLog(); // forget logging the usage message
+
+		rptObj.echoIt("Usage: bldfw fw_source_root output_root [options]");
+		rptObj.echoIt("Options:");
+		rptObj.echoIt("\t-bbuildlevel, [0-8]");
+		rptObj.echoIt("\t-lversion label");
+		rptObj.echoIt("\t-dbuild option");
+		rptObj.echoIt("Recognized build options :");
+		rptObj.echoIt("\tnodebugbld");
+		rptObj.echoIt("\tnoreleasebld");
+		rptObj.echoIt("\tnoboundsbld");
+// TODO: JeffG - create no builds option		rptObj.echoIt("\tnobuilds");
+		rptObj.echoIt("\tnoautotest");
+		rptObj.echoIt("\tnorefreshsrc");
+		rptObj.echoIt("\tnocreatedbs");
+		rptObj.echoIt("\tcopymsde");
+		rptObj.echoIt("\tnoinstallbldr");
+		rptObj.echoIt("\tdebug");
+		rptObj.echoIt("\tnoftpupload");
+		rptObj.echoIt("\tnocreatedoc");
+		rptObj.echoIt("\ttestrefresh - only run refresh source section");
+		rptObj.echoIt("\ttestdoc - only run doc create section");
+		rptObj.echoIt("\ttestdb - only run create database section");
+		WScript.Quit();
+	}
+
+
+	//
+	//	MAIN CODE
+	//
+	/*------------------------------------------------------------------------------------------
+
+	------------------------------------------------------------------------------------------*/
+	function Main()
+	{
+		// Create some commonly used objects.
+		var shellObj = new ActiveXObject("WScript.Shell");
+		var fso = new ActiveXObject("Scripting.FileSystemObject");
+
+		//
+		// Create the Report object.
+		//
+		var rptObj = new Report(fso.BuildPath(fso.GetAbsolutePathName(".\\"),
+			"overnitebld.log"));
+
+		// Get the command line arguments
+		if (WScript.Arguments.Length < 2)
+		{
+			displayUsage(rptObj);
+		}
+
+		var nodebugbld = false;
+		var noreleasebld = false;
+		var noboundsbld = false;
+		var noautotest = false;
+		var norefreshsrc = false;
+		var nocreatedbs = false;
+		var copymsde = false;
+		var noinstallbldr = false;
+		var noftpupload = false;
+		var nocreatedoc = false;
+		var testrefresh = false;
+		var testdoc = false;
+		var testdb = false;
+	//TODO:JeffG	var nobuilds = false;
+
+		// Assume the first two arguments are the build root and output root.
+		var	strBldFldr, strOutputFldr, bldLevel, strVSSLabel;
+		strBldFldr = WScript.Arguments.Item(0);
+		strOutputFldr = WScript.Arguments.Item(1);
+		for (iArgs = 2; iArgs < WScript.Arguments.Length; iArgs++)
+		{
+			var strArg = WScript.Arguments.Item(iArgs);
+			if (strArg.charAt(0) != "-")
+			{
+				rptObj.echoIt("Options must be preceeded by a \"-\".");
+				WScript.Quit();
+			}
+
+			var cmd = strArg.charAt(1);
+			cmd = cmd.toLowerCase();
+			if (cmd == "b")
+			{
+				bldLevel = parseInt(strArg.substr(2));
+				if (bldLevel < 0 || bldLevel > 8)
+				{
+					rptObj.echoIt("ERROR: Build level must be an integer between 0 and 8.");
+					WScript.Quit();
+				}
+
+				rptObj.echoItVerbose("Build level set to " + bldLevel);
+				//TODO: JeffG - Make sure this is working.
+			}
+			else if (cmd == "l")
+			{
+				strVSSLabel = strArg.substr(2);
+				rptObj.echoItVerbose("Applying label " + strVSSLabel);
+			}
+			else if (cmd == "d")
+			{
+				var strVar = strArg.substr(2);
+				strVar = strVar.toLowerCase();
+				eval(strVar + "= true;");
+				rptObj.echoItVerbose("Defining " + strVar);
+			}
+			else
+			{
+				rptObj.echoIt("ERROR: Invalid argument, \"" + strArg + "\"");
+				WScript.Quit();
+			}
+		}
+
+		// Set special test modes.
+		if (testrefresh)
+		{
+			nodebugbld = true;
+			noreleasebld = true;
+			noboundsbld = true;
+			noautotest = true;
+			norefreshsrc = false;
+			nocreatedbs = true;
+			copymsde = true;
+			noinstallbldr = true;
+			noftpupload = true;
+			nocreatedoc = true;
+		}
+
+		if (testdoc)
+		{
+			nodebugbld = true;
+			noreleasebld = true;
+			noboundsbld = true;
+			noautotest = true;
+			norefreshsrc = true;
+			nocreatedbs = true;
+			copymsde = true;
+			noinstallbldr = true;
+			noftpupload = true;
+			nocreatedoc = false;
+		}
+
+		if (testdb)
+		{
+			nodebugbld = true;
+			noreleasebld = true;
+			noboundsbld = true;
+			noautotest = true;
+			norefreshsrc = true;
+			nocreatedbs = false;
+			copymsde = true;
+			noinstallbldr = true;
+			noftpupload = true;
+			nocreatedoc = true;
+		}
+
+		rptObj.echoItVerbose("Setting up build system");
+
+		// Set the build level as an environment variable
+		rptObj.echoItVerbose("Setting env vars.");
+
+		var env = shellObj.Environment("Process");
+		env.Item("BUILD_LEVEL") = bldLevel;
+
+		// Set the BUILD_ROOT environment variable for the make process.
+		env.Item("FWROOT") = strBldFldr;
+
+		//
+		// Recreate the source tree
+		//
+		if (!norefreshsrc)
+		{
+			rptObj.reportProgress("Recreating source tree and some output folders...");
+			// Delete the existing system
+			try
+			{
+				// Recreate the build root.
+				rptObj.echoItVerbose("Removing the build root...");
+				file_DeleteFolder(strBldFldr);
+				fso.CreateFolder (strBldFldr);
+
+				//TODO: JeffG - Move these somewhere appropiate.
+				rptObj.echoItVerbose("Removing the overnite files...");
+				file_DeleteFile(fso.BuildPath(strOutputFldr, "overnite.tst"));
+
+				rptObj.echoItVerbose("Done clearing out source tree");
+
+			} catch (err)
+			{
+				rptObj.reportFailure("Unable to recreate source tree, " +
+					err.description, true);
+				exitScript();
+			}
+
+			//
+			// Get the latest source.
+			//
+			rptObj.echoItVerbose("About to check for refresh");
+			rptObj.reportProgress("Getting latest source from SourceSafe...");
+			try
+			{
+				sccs_VSSGetBuildSrc("\\\\Elmer\\FW\\VSS\\srcsafe.ini", "$/", strBldFldr,
+					strVSSLabel, rptObj)
+			} catch (err)
+			{
+				rptObj.reportFailure("Get latest failed from SourceSafe, " +
+					err.description, true);
+				exitScript();
+			}
+			rptObj.reportProgress("Finished getting latest source.");
+		}
+
+
+		//
+		// Build debug version.
+		//
+		if (!nodebugbld)
+		{
+			bld_buildFW(strBldFldr, rptObj, "Debug", "d register");
+			// If everything built OK in the debug build, run the tests without TrueCoverage.
+			// REIVEW: JeffG - Shouldn't this use RunProg and use exceptions?
+			rptObj.echoItVerbose("About to check for noautotest");
+noautotest = true;
+			if (!noautotest)
+			{
+				// Create a directory for log files.
+				var strLogFolder  =  fso.BuildPath(strBldFldr, "TestLog\\Log");
+				file_MakeSureFolderExists(strLogFolder);
+				rptObj.reportProgress("Running automated test without TrueCoverage...");
+				shellObj.Run(fso.BuildPath(strBldFldr, "bin\\runtest.exe") + " overnite.tst");
+			}
+		}
+
+		//
+		// Create databases.	Do before bounds build so the *.tsc file dialog will not
+		//						come up on loadxml.exe call. Do before release build as the sql
+		//						file generated by the release build is bogus.
+		//
+		rptObj.echoItVerbose("About to check for createdb");
+		if (!nocreatedbs)
+		{
+			rptObj.reportProgress("Building databases...");
+			// Build the TestLangProj database.
+			rptObj.reportProgress("Building TestLangProj...");
+			rptObj.closeLog();
+			try
+			{
+
+				BuildDB("TestLangProj", "TestLangProj",
+					fso.BuildPath(strBldFldr, "Output\\Common\\NewLangProj.sql"),
+					fso.BuildPath(strBldFldr, "bin\\GetFWDBs.sql"),
+					fso.BuildPath(strBldFldr, "Output\\SampleData"),
+					fso.BuildPath(strBldFldr, "test\\testlangproj.xml"),
+					fso.BuildPath(strBldFldr, "bin\\loadxml.exe"), rptObj.strLogFileName,
+						strBldFldr);
+			} catch (err)
+			{
+				rptObj.reopenLog(); // Re-open the log file for appending.
+				rptObj.reportFailure("Failed to build database, " + err.description, false);
+			}
+
+			// Build the Tuwali database.
+			// Build the Greek database.
+			rptObj.reopenLog();
+			}
+		//
+		// Build release version.
+		//
+		rptObj.echoItVerbose("About to check for relbld");
+		if (!noreleasebld)
+		{
+			bld_buildFW(strBldFldr, rptObj, "Release", "r");
+		}
+
+
+		//
+		// Build Bounds Checker version.
+		//
+		rptObj.echoItVerbose("About to check for boundsbld");
+		if (!noboundsbld)
+		{
+			bld_buildFW(strBldFldr, rptObj, "Bounds Checker", "b register regps");
+
+			//TODO: Remove the following assignment when ready to start the tests again.
+			noautotest = true;
+			if (!noautotest)
+			{
+				//
+				//If everything built OK, run the tests using TrueCoverage.
+				//
+				// REVIEW (JeffG) Could make this somehow include all files found in a particular directory
+				// so this script file would not need editing to add a new test.
+				rptObj.reportProgress("Running tests using TrueCoverage...");
+				rptObj.closeLog();	// Close so the external process can append to the log file.
+				// Create the install output folders.
+				var strArgStr = "/B /S " +
+					fso.BuildPath(rptObj.strLogFileName, "TrueCoverage.tcs") + " " +
+					fso.BuildPath(strBldFldr, "bin\\runtest.exe") + " overnite.tst";
+				try
+				{
+					misc_RunExtProg("tcdev", strArgStr, "errorLevel", rptObj, null);
+				} catch (err)
+				{
+					rptObj.reopenLog();// Re-open the log file for appending.
+					rptObj.reportFailure("TrueCoverage tests Failed.", false);
+				}
+				rptObj.reopenLog();
+			}
+		}
+
+
+		//
+		//	If everything built and passed the tests, copy everything to output
+		//
+		// Copy the output of the build
+		rptObj.reportProgress("Copying build output...");
+		var strDalyBuildFldr = fso.BuildPath(strOutputFldr, file_GetDalyBuildFolderName());
+		file_DeleteFolder(strDalyBuildFldr);
+		rptObj.echoItVerbose("Copying files from " + fso.BuildPath(strBldFldr, "Output") +
+			" to " + strDalyBuildFldr);
+		fso.CopyFolder(fso.BuildPath(strBldFldr, "Output"), strDalyBuildFldr, true);
+
+		// Copy FW source
+		rptObj.reportProgress("Copying source code...");
+		var strSrcFolder = fso.BuildPath(strDalyBuildFldr, "Code");
+		file_DeleteFolder(strSrcFolder);
+		rptObj.echoItVerbose("Copying files from " + fso.BuildPath(strBldFldr, "src") +
+			" to " + fso.BuildPath(strDalyBuildFldr, "Code"));
+		fso.CopyFolder(fso.BuildPath(strBldFldr, "src"),
+			fso.BuildPath(strDalyBuildFldr, "Code"), true);
+
+
+		// Copy the results of automated testing.
+		//TODO: Remove the following assignment when we are running the tests,
+		// check the args to copyFolder.
+		noautotest = true;
+		if (!noautotest)
+		{
+			// Copy the Test code
+			rptObj.reportProgress("Copying test code...", null);
+			if (fso.FolderExists(fso.BuildPath(strBldFldr, "Test")))
+				fso.CopyFolder(fso.BuildPath(strBldFldr, "Test"),
+					fso.BuildPath(strDalyBuildFldr,"Code\\Test"));
+
+			// Copy the Bounds checker files.
+			rptObj.reportProgress("Copying Bounds Checker files...", null);
+			fso.CopyFile(fso.BuildPath(strBldFldr, "TestLog\\Log\\BoundsChecker.bce"),
+				strDalyBuildFldr + "\\");
+			fso.CopyFolder(fso.BuildPath(strBldFldr,"TestLog\\Log\\TrueCoverage.tsc"),
+				strDalyBuildFldr + "\\");
+		}
+
+		// Copy the overnitebld.log file in the root directory.
+		rptObj.echoItVerbose("Copying overnitebld.log file to " + strDalyBuildFldr + "\\");
+		fso.CopyFile(rptObj.strLogFileName, strDalyBuildFldr + "\\", true);
+
+
+		//
+		// Copy the *.mdf and *.ldf files from the output\sampledata.
+		//
+		// REVIEW: JeffG - Does this need a try/catch blk around it?
+		rptObj.reportProgress("Copying the build databases...");
+		var strSampleDataOutDir = fso.BuildPath(strOutputFldr, "SampleData");
+		rptObj.echoItVerbose("Deleting " + strSampleDataOutDir);
+		file_DeleteFolder(strSampleDataOutDir);
+		rptObj.echoItVerbose("Creating " + strSampleDataOutDir);
+		fso.CreateFolder(strSampleDataOutDir);
+		var strSampleDataSrcDir = fso.BuildPath(strBldFldr, "Output\\SampleData");
+		rptObj.echoItVerbose("Copying databases from " + strSampleDataSrcDir +
+			" to " + strSampleDataOutDir);
+		fso.CopyFile(fso.BuildPath(strSampleDataSrcDir, "*.mdf"), strSampleDataOutDir + "\\");
+		fso.CopyFile(fso.BuildPath(strSampleDataSrcDir, "*.ldf"), strSampleDataOutDir + "\\");
+
+
+		//
+		// Create the Install Directories. These directories are used by InstallBuilder
+		// to create the distribution CDRom.
+		//
+		rptObj.reportProgress("Creating Install directories...", null);
+		var strDbgInstFldr, strRelInstFldr;
+		strDbgInstFldr = fso.BuildPath(strDalyBuildFldr, "Install_Debug");
+		strRelInstFldr = fso.BuildPath(strDalyBuildFldr, "Install_Release");
+		// The following needed just for WP
+		var strWPDbgInstFldr, strWPRelInstFldr;
+		strWPDbgInstFldr = fso.BuildPath(strDalyBuildFldr, "WPInstall_Debug");
+		strWPRelInstFldr = fso.BuildPath(strDalyBuildFldr, "WPInstall_Release");
+		try
+		{
+			file_DeleteFolder(strDbgInstFldr);
+			fso.CreateFolder (strDbgInstFldr);
+			file_DeleteFolder(strRelInstFldr);
+			fso.CreateFolder (strRelInstFldr);
+
+			// The following needed just for WP
+			file_DeleteFolder(strWPDbgInstFldr);
+			fso.CreateFolder (strWPDbgInstFldr);
+			file_DeleteFolder(strWPRelInstFldr);
+			fso.CreateFolder (strWPRelInstFldr);
+			rptObj.echoItVerbose("Done clearing out old install folders");
+		} catch (err)
+		{
+			rptObj.reportFailure("Unable to create install folders, " + err.description, true);
+			exitScript();
+		}
+
+		//
+		//	Copy files to be added to the root of the distributed CDRom.
+		//
+		rptObj.reportProgress("Copying files to be delivered on the cdrom...");
+		var strDelFilesSrcDir = fso.BuildPath(strBldFldr, "DelFiles");
+		rptObj.echoItVerbose("Copying file from " + strDelFilesSrcDir +
+			" to " + strDbgInstFldr);
+		fso.CopyFile(fso.BuildPath(strDelFilesSrcDir, "*.*"), strDbgInstFldr + "\\", true);
+		rptObj.echoItVerbose("Copying file from " + strDelFilesSrcDir +
+			" to " + strRelInstFldr);
+		fso.CopyFile(fso.BuildPath(strDelFilesSrcDir, "*.*"), strRelInstFldr + "\\", true);
+
+
+		//
+		// Run the InstallBuilder program for the Debug and Release version.
+		//
+		rptObj.echoItVerbose("About to check noinstallbldr");
+		if (!noinstallbldr)
+		{
+			// TODO: JeffG - Make the install script use the data in daly output folder so
+			// installer can build from the daly copy of the source.
+
+			// Build FW installer for the debug build version.
+			bld_installer(strBldFltr, strDbgInstFldr, rptObj, "FWInstaller\\fieldworks.wse",
+				"debug", "FieldWorks");
+
+			// Build FW installer for the release build version.
+			bld_installer(strBldFltr, strRelInstFldr, rptObj, "FWInstaller\\fieldworks.wse",
+				"release", "FieldWorks");
+
+			// Build WP installer for the debug build version.
+			bld_installer(strBldFltr, strWPDbgInstFldr, rptObj, "WPInstaller\\worldpad.wse",
+				"debug", "WorldPad");
+
+			// Build WP installer for the release build version.
+			bld_installer(strBldFltr, strWPRelInstFldr, rptObj, "WPInstaller\\worldpad.wse",
+				"release", "WorldPad");
+
+			// Upload the setup.exe generated for the debug build to the intranet site.
+			if (!noftpupload)
+			{
+				rptObj.reportProgress("FTP copy to intranet...");
+				try
+				{
+					misc_UploadSetup(strDbgInstFldr,
+						"/www_root/intranet/Softwaredev/test_downloads", "setup.exe", rptObj);
+				} catch (err)
+				{
+					rptObj.reopenLog();// Re-open the log file for appending.
+					rptObj.reportFailure("Unable FTP Upload file, " + err.description, false);
+				}
+			}
+
+		}
+
+		//
+		// Finish up.
+		//
+		// Reset the FWROOT environment variable.
+		env.Item("FWROOT") = "";
+		rptObj.reportProgress("Everything Build Correctly, exiting.");
+
+		// TODO: JeffG - should we really have exectued the above give the stuff left to come?
+		//
+		// Now build the code documentation web site with Surveyor.
+		//
+		if (!nocreatedoc)
+		{
+			objweb_createObjWeb(strBldFldr);
+			copyObjWeb(strOutputFldr);
+		}
+	}
+
+	/*------------------------------------------------------------------------------------------
+
+	------------------------------------------------------------------------------------------*/
+	function exitScript(rptObj)
+	{
+		// Reset the FWROOT environment variable.
+		var shellObj = new ActiveXObject("WScript.Shell");
+		var env = shellObj.Environment("Process");
+		env.Item("FWROOT") = "";
+		rptObj.closeLog();
+		WScript.Quit();
+	}
+	////////////////////////////////////////////////////////////////////////////////////////////
+	// Begin the main execution.
+	////////////////////////////////////////////////////////////////////////////////////////////
+	try
+	{
+		Main();
+		WScript.Quit();
+	} catch (err)
+	{
+		WScript.Echo("Unhandled exception, check for spelling errors: " +
+			err.description, true);
+		exitScript();
+
+	}
+
+	]]></script>
+
+	<!--
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Other Jobs for running components separately
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	</job>
+	<job id="runobjweb">
+	<script language="JScript" src="misc.js" />
+	<script language="JScript" src="file.js" />
+	<script language="JScript">
+		strBldFldr = WScript.Arguments.Item(0);
+		strOutputFldr = WScript.Arguments.Item(1);
+		objweb_createObjWeb(strBldFldr);
+		copyObjWeb(strOutputFldr);
+	</script>
+	</job>
+</package>

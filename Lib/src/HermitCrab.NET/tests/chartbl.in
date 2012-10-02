@@ -1,0 +1,235 @@
+;Test loading of char def tables
+;Open a new language for testing purposes (msg 6510):
+(open_language message Phonology Test Language)
+;Don't let abort make us quit:
+(morpher_set message (*quit_on_error* false))
+;First we try to load a char def table without first having set the var
+; *pfeatures*.  That should give error msg 6020:
+(load_char_def_table message
+	<char_table
+	name tablex
+  encoding test encoding
+	seg_defs
+		(
+			(a   (cons - voc + high - low + back + round - vd +))
+		)
+	>
+)
+;Then we set the *pfeatures* var, which should result in msg 6502:
+(morpher_set message
+  (*pfeatures*
+		(voc     (+ -)
+		 cons    (+ -)
+		 high    (+ -)
+		 low     (+ -)
+		 back    (+ -)
+		 round   (+ -)
+		 vd      (+ -)
+		 poa     (bilabial alveolar velar)
+		 asp     (+ -)
+		 del_rel (+ -)
+		)
+	)
+)
+;Then a load_char_def_table command, which should result in msg 6501:
+(load_char_def_table message
+  <char_table
+  name table1
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd +))
+	  (i   (cons - voc + high + low - back - round - vd +))
+	  (u   (cons - voc + high + low - back + round + vd +))
+	  ("u  (cons - voc + high + low - back - round + vd +))
+	  (-i  (cons - voc + high + low - back + round - vd +))
+	  (p   (cons + voc - poa bilabial vd - asp -))
+	  (t   (cons + voc - poa alveolar vd - asp - del_rel -))
+	  (k   (cons + voc - poa velar    vd - asp -))
+	  (ts  (cons + voc - poa alveolar vd - asp - del_rel +))
+	  (ph  (cons + voc - poa bilabial vd - asp +))
+	  (th  (cons + voc - poa alveolar vd - asp + del_rel -))
+	  (kh  (cons + voc - poa velar    vd - asp +))
+	  (tsh (cons + voc - poa alveolar vd - asp + del_rel +))
+	  (b   (cons + voc - poa bilabial vd + ))
+	  (d   (cons + voc - poa alveolar vd + ))
+	  (g   (cons + voc - poa velar    vd + ))
+	)
+  >
+)
+;Then a show_char_def_table command for a table which has not yet been
+; loaded.  It should output the error msg 6004:
+(show_char_def_table pretty_print foobar)
+;Likewise for deleting a table which has not been loaded, we should again
+; get error msg 6004:
+(del_char_def_table message foobar)
+;Then a show_char_def_table command for a table which HAS been loaded.
+; It should output the char def table we just loaded:
+(show_char_def_table pretty_print table1)
+;Then another load_char_def_table command, should give msg 6501:
+(load_char_def_table message
+  <char_table
+  name table2
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd +))
+	  (i   (cons - voc + high + low - back - round - vd +))
+	  (u   (cons - voc + high + low - back + round + vd +))
+	  ("u  (cons - voc + high + low - back - round + vd +))
+	  (-i  (cons - voc + high + low - back + round - vd +))
+	  (p   (cons + voc - poa bilabial vd - ))
+	  (t   (cons + voc - poa alveolar vd - del_rel -))
+	  (k   (cons + voc - poa velar    vd - ))
+	  (ts  (cons + voc - poa alveolar vd - del_rel +))
+	  (b   (cons + voc - poa bilabial vd + ))
+	  (d   (cons + voc - poa alveolar vd + ))
+	  (g   (cons + voc - poa velar    vd + ))
+	)
+
+	bdry_defs (+ # ! . $xyz)
+  >
+)
+;Then a show_char_def_table command for the table which was just loaded.
+; It should output the char def table:
+(show_char_def_table pretty_print table2)
+
+;While we're at it, we're going to test the assignment of ctables to strata.
+; So define some strata (msg m6502):
+(morpher_set message
+  (*strata* (morphophonemic allophonic)))
+;And assign ctables to the strata (m6550)
+(set_stratum message <stratum_setting nm morphophonemic type ctable value table1>)
+(set_stratum message <stratum_setting nm allophonic type ctable value table2>)
+;Now show the allophonic stratum (m6558):
+(show_stratum message allophonic)
+;Set the morphophonemic stratum to some non-default values (cyclic, m6551):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value cyclic>)
+;Show it (m6557):
+(show_stratum message morphophonemic)
+;Add a template (msg 6565):
+(set_stratum message <stratum_setting nm morphophonemic type templates
+					  value (<affix_template nm verb r_pos (V) slots ((nonesuch ed_rz) (evidential))>)>)
+;Show the stratum again; the template should appear:
+(show_stratum message morphophonemic)
+;Get rid of the template again (msg 6565 again):
+(set_stratum message <stratum_setting nm morphophonemic type templates value ()>)
+;Show the stratum again; the template should be gone:
+(show_stratum message morphophonemic)
+
+;Set linearly ordered prules (m6555):
+(set_stratum message <stratum_setting nm morphophonemic type prule value linear>)
+;Show the stratum (m6559):
+(show_stratum message morphophonemic)
+;...and linearly ordered mrules (m6556):
+(set_stratum message <stratum_setting nm morphophonemic type mrule value linear>)
+;Show the stratum (m6563):
+(show_stratum message morphophonemic)
+;Set prules back to default (=simultaneous, m6553):
+(set_stratum message <stratum_setting nm morphophonemic type prule value simultaneous>)
+;Show the stratum (m6561):
+(show_stratum message morphophonemic)
+;Do the same with allophonic stratum, but leaving it noncyclic.
+; First set linearly ordered prules (m6555):
+(set_stratum message <stratum_setting nm allophonic type prule value linear>)
+;Show the stratum (m6560):
+(show_stratum message allophonic)
+;...and linearly ordered mrules (m6556):
+(set_stratum message <stratum_setting nm allophonic type mrule value linear>)
+;Show the stratum (m6564):
+(show_stratum message allophonic)
+;Set prules back to default (=simultaneous, m6553):
+(set_stratum message <stratum_setting nm allophonic type prule value simultaneous>)
+;Show the stratum (m6562):
+(show_stratum message allophonic)
+
+;Then a del_char_def_table command for table1.  Since this table is used,
+; we'll get two error msgs, the last one being 6054:
+(del_char_def_table message table1)
+;Ensure that table1 is still there:
+(show_char_def_table pretty_print table1)
+
+;Check that del_char_def_table works correctly when a table is not used.
+; First load a new table (6501):
+(load_char_def_table message
+	<char_table
+	name table3
+  encoding test encoding
+	seg_defs
+		(
+			(a   (cons - voc + high - low + back + round - vd +))
+		)
+	>
+)
+;Then delete it (msg 6509):
+(del_char_def_table message table3)
+
+;Now we'll load a new version of table2, msg 6520:
+(load_char_def_table message
+	<char_table
+	name table2
+  encoding test encoding
+	seg_defs
+		(
+			(a   (cons - voc + high - low + back + round - vd +))
+		)
+	>
+)
+;Show the table, to ensure the changes took effect:
+(show_char_def_table pretty_print table2)
+;Now we'll load a table with a bad fvalue (the last one),
+; which should give us err msg 6010:
+(load_char_def_table message
+	<char_table
+	name table2
+  encoding test encoding
+	seg_defs
+		(
+			(a   (cons - voc + high - low + back + round - vd x))
+		)
+	>
+)
+;Now we'll load a table with a bad fname (the last one),
+; which should again give us err msg 6010:
+(load_char_def_table message
+	<char_table
+	name table2
+  encoding test encoding
+	seg_defs
+		(
+			(a   (cons - voc + high - low + back + round - voiced +))
+		)
+	>
+)
+;Now we'll try to load a char table with a segment that's too long
+; (20 characters is the limit).  Error msg 6305:
+(load_char_def_table message
+	<char_table
+  encoding test encoding
+	name table2
+	seg_defs
+		(
+			(a23456789012345678901   (cons - voc + high - low + back + round - vd +))
+		)
+	>
+)
+;Finally, we'll try to load a char table with too many boundaries (32 is the
+; global limit--since this table has 33, it will easily push us over the limit).
+; Error msg 6304:
+(load_char_def_table message
+	<char_table
+	name table2
+  encoding test encoding
+	seg_defs
+		(
+			(a   (cons - voc + high - low + back + round - vd +))
+		)
+	bdry_defs (b1  b2  b3  b4  b5  b6  b7  b8  b9  b10
+					   b11 b12 b13 b14 b15 b16 b17 b18 b19 b20
+					   b21 b22 b23 b24 b25 b26 b27 b28 b29 b30
+			 b31 b32 b33
+			  )
+  >
+)
+;Done; morpher will now terminate
+(terminate_morpher x)

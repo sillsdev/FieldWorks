@@ -1,0 +1,22 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Milestone\SilIntranet.xml">
+ <title tag="mstIntra">What is the SIL Intranet?</title>
+ <index>
+  <li>Intranet</li>
+  <li>SIL Intranet</li>
+ </index>
+ <definition>
+  <p>The SIL Internet primarily serves Wycliffe Bible Translators members. You must be registered to use this site.</p>
+<p>On the <img uri="sil.gif" alt="SIL Logo"/> SIL Internet site you will find:</p>
+  <ul>
+   <li>References</li>
+   <li>Policies and Standards</li>
+   <li>Departments</li>
+   <li>Public Sites</li>
+   <li>Weather at some SIL locations</li>
+  </ul>
+ </definition>
+ <seeAlso>
+  <li><link uri="..\Starting\Connect.xml" type="module">Connecting to the SIL Intranet</link></li>
+ </seeAlso>
+</concept>

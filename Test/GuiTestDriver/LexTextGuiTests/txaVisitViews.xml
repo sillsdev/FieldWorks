@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Visits the texts tool views. -->
+
+<accil on-fail="assert">
+ <!-- found bug="LT-4959"/-->
+
+<var id="projectName" set="Kalaba"/>
+<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+<on-application run="ok" args="-db $projectName" on-fail="assert">
+
+   <model select="menubar/view/texts-words/*">
+	 <click path="$guiPath"/>
+
+	 <!-- not all views have tabs, so skip if there arn't any -->
+	 <model select="/fwuiml/$nodeName;[@role='view']//tab" on-fail="skip">
+	   <click path="$guiPath"/>
+	   <var id="title" select="../dialog/@name"/>
+	   <var id="action" select="../dialog/@dismiss"/>
+	   <if><condition of="$title" is="'#NoSelection#'"/>
+		   <else>
+			 <on-dialog wait="500" until="1000" title="$title" on-fail="skip">
+				 <click path="$action"/>
+			 </on-dialog>
+		   </else>
+	   </if>
+	 </model>
+
+   </model>
+
+   <!-- click interlinear-texts/info/tab since Text Chart persists and has a nag window other tests don't expect -->
+   <click select="menubar/view/texts-words/interlinear-texts"/>
+   <on-dialog wait="500" until="3000" title="New Feature" on-fail="skip">
+	   <click path="$ok"/>
+   </on-dialog>
+   <click select="interlinear-texts[@role='view']/text/info/tab"/>
+
+</on-application>
+</accil>

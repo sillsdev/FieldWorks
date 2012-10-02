@@ -1,0 +1,276 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{D71043A0-1871-461E-875F-3CEF13929EB9}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>..\..\..</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>FwCoreDlgControls</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.FwCoreDlgControls</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\FwCoreDlgControls.XML</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls">
+	  <Name>FwControls</Name>
+	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources">
+	  <Name>FwResources</Name>
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils">
+	  <Name>FwUtils</Name>
+	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SimpleRootSite, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Web">
+	  <Name>System.Web</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="xCoreInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs" />
+	<Compile Include="FwBulletsPreview.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwFontAttributes.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwFontAttributes.Designer.cs">
+	  <DependentUpon>FwFontAttributes.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwFontTab.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwFontTab.Designer.cs">
+	  <DependentUpon>FwFontTab.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwGeneralTab.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwGeneralTab.Designer.cs">
+	  <DependentUpon>FwGeneralTab.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwInheritablePropComboBox.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="IFontDialog.cs" />
+	<Compile Include="IStylesTab.cs" />
+	<Compile Include="StyleInfo.cs" />
+	<Compile Include="StyleLists\BaseStyleListHelper.cs" />
+	<Compile Include="DefaultFontsControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FontFeaturesButton.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="FwBorderTab.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwBorderTab.Designer.cs">
+	  <DependentUpon>FwBorderTab.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwBulletsTab.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwBulletsTab.Designer.cs">
+	  <DependentUpon>FwBulletsTab.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwCoreDlgControls.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>FwCoreDlgControls.resx</DependentUpon>
+	</Compile>
+	<Compile Include="FwParagraphTab.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwParagraphTab.Designer.cs">
+	  <DependentUpon>FwParagraphTab.cs</DependentUpon>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="KeyboardControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="LocaleMenuButton.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="RegionVariantControl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="StyleLists\StyleComboListHelper.cs" />
+	<Compile Include="StyleLists\StyleListBoxHelper.cs" />
+	<Compile Include="StyleLists\StyleListItem.cs" />
+	<Compile Include="StyleLists\StyleListViewHelper.cs" />
+	<Compile Include="UpDownMeasureControl.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<EmbeddedResource Include="DefaultFontsControl.resx">
+	  <DependentUpon>DefaultFontsControl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FontFeaturesButton.resx">
+	  <DependentUpon>FontFeaturesButton.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwBorderTab.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FwBorderTab.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwBulletsTab.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FwBulletsTab.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwCoreDlgControls.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>FwCoreDlgControls.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwFontAttributes.resx">
+	  <DependentUpon>FwFontAttributes.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwFontTab.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FwFontTab.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwGeneralTab.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FwGeneralTab.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwParagraphTab.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FwParagraphTab.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="KeyboardControl.resx">
+	  <DependentUpon>KeyboardControl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LocaleMenuButton.resx">
+	  <DependentUpon>LocaleMenuButton.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="RegionVariantControl.resx">
+	  <DependentUpon>RegionVariantControl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UpDownMeasureControl.resx">
+	  <DependentUpon>UpDownMeasureControl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

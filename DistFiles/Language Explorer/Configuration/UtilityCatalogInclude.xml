@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<utilityCatalog>
+	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.HomographResetter"/>
+	<utility assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.ParserAnalysisRemover"/>
+	<utility assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.ExecuteSQLScript"/>
+	<!--utility assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.SampleCitationFormTransducer"/--><!--dangerous, requires Python, obsolete, put in Bulk Edit-->
+</utilityCatalog>

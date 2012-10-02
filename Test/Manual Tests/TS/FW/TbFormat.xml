@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbfrm" num="3.2" abbr="tfr" file="FW\TbFormat.xml">
+ <title tag="tbfrm">Format Toolbar Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>Format toolbar icons include those for selecting text styles, writing systems, fonts, font size, font style, justification, lists, indenting, borders and color.</p>
+   <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html" type="doc">Format Toolbar</link>
+</p>
+  </introduction>
+  <context>
+<p>Most icons are tested separately. A few that perform inverse operations like in and out-dent are best tested together. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Format Toolbar".</p>
+<p>For more detailed tests of functionality, use the respective tests available in other test scripts.</p>
+  </context>
+ <case id="tfrBsc" num="0" order="any">
+  <title tag="tfrBsc">Basic Format Toolbar</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.0">
+<link uri="../StdCtrls/TlbButton.xml" type="module">Toolbar Button Tests</link> to test this toolbar's basic functionality. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/FormattingToolbar.html" type="doc">Definition of Format Toolbar</link> to compare appearance.
+   <r>Toolbar icons and controls should be enabled. Report any failures as suggested using "Format Toolbar &lt;control name&gt;" as the name of the control.</r>
+  </step>
+ </case>
+
+ <case id="tfrStyle" num="1" order="any">
+  <title tag="tfrStyle">Style Combo Box</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="1.1" link="Bug">
+<link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> to test the Style combo box control - shortcut &lt;Ctrl&gt;&lt;Shift&gt;&lt;S&gt;.
+   <r>List items are those supplied by the application as well as created by the user. Item selection defaults to style of structured text selected. Report any failures as suggested using "Format Toolbar Style combo box" as the name of the control.</r>
+   <p name="bug">Format toolbar style combo box does not show selected text style</p>
+   <p name="note">If the format toolbar is not displayed &lt;Ctrl&gt;&lt;Shift&gt;&lt;S&gt; should open the Style dialog</p>
+  </step>
+  <step name="1.2" link="Bug">Select some structured text. Click on the Style combo box and select one of the styles.
+   <r>If the style selected was a paragraph style, the paragraph(s) containing the structured text is changed to reflect the new paragraph style. Otherwise, the style is a character style and is only applied to the selected text.</r>
+   <p name="bug">Format toolbar style item &lt;item&gt; does nothing</p>
+  </step>
+  <step name="1.3" link="Bug">Select some structured text of a uniform style.
+   <r>The character style of the selected text is displayed. If the character style is the default style, the paragraph style of the selected text is displayed.</r>
+   <p name="bug">Format toolbar style shows selection incorrectly</p>
+  </step>
+ </case>
+
+ <case id="tfrWS" num="2" order="any">
+  <title tag="tfrWS">Writing System Combo Box</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="2.1" link="Bug">
+<link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> to test the Writing System combo box control - there is no shortcut.
+   <r>List items are those supplied by the application as well as created by the user. Item selection defaults to the writing system of application text selected. Report any failures as suggested using "Format Toolbar Writing System combo box" as the name of the control.</r>
+   <p name="bug">Format toolbar Writing System combo box does not show selected text writing system</p>
+  </step>
+  <step name="2.2" link="Bug">Select some application text. Click on the Writing System combo box and select one of the writing systems.
+   <r>The writing system of the selected text is changed. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar writing system item &lt;item&gt; does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrFont" num="3" order="any">
+  <title tag="tfrFont">Font Combo Box</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="3.1" link="Bug">
+<link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> to test the Font combo box control - there is no shortcut.
+   <r>List items are those supplied by the application. Item selection defaults to the font of application text selected. Report any failures as suggested using "Format Toolbar Font combo box" as the name of the control.</r>
+   <p name="bug">Format toolbar Font combo box does not show selected text Font</p>
+  </step>
+  <step name="3.2" link="Bug">Select some application text. Click on the Font combo box and select one of the fonts.
+   <r>The font of the selected text is changed. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar font item &lt;item&gt; does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrSize" num="4" order="any">
+  <title tag="tfrSize">Size Combo Box</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="4.1" link="Bug">
+<link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> to test the Size combo box control - there is no shortcut.
+   <r>List items are those supplied by the application. Item selection defaults to the size of application text selected. Report any failures as suggested using "Format Toolbar Size combo box" as the name of the control.</r>
+   <p name="bug">Format toolbar Size combo box does not show selected text size</p>
+  </step>
+  <step name="4.2" link="Bug">Select some application text. Click on the Size combo box and select one of the fonts.
+   <r>The size of the selected text is changed. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar size item &lt;item&gt; does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrBold" num="5" order="any">
+  <title tag="tfrBold">Bold Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="5.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the Bold icon control - shortcut &lt;Ctrl&gt;&lt;B&gt;.
+   <r>Report any failures as suggested using "Format Toolbar Bold Icon" as the name of the control.</r>
+  </step>
+  <step name="5.2" link="Bug">Select some application text. Click on the Bold Icon.
+   <r>The selected text becomes bold if it was not and normal if it was bold. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Bold Icon does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrItalic" num="6" order="any">
+  <title tag="tfrItalic">Italic Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="6.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the Italic icon control - shortcut &lt;Ctrl&gt;&lt;I&gt;.
+   <r>Report any failures as suggested using "Format Toolbar Italic Icon" as the name of the control.</r>
+  </step>
+  <step name="6.2" link="Bug">Select some application text. Click on the Italic Icon.
+   <r>The selected text becomes italic if it was not and normal if it was italic. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Italic Icon does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrLeftJust" num="7" order="any">
+  <title tag="tfrLeftJust">Left Justify Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="7.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the Left Justify icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Left Justify Icon" as the name of the control.</r>
+  </step>
+  <step name="7.2" link="Bug">Select some application text. Click on the Left Justify Icon.
+   <r>The selected text becomes left justified if it was not and normal if it was left justified . This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Left Justify Icon does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrCenter" num="8" order="any">
+  <title tag="tfrCenter">Center Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="8.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the Center icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Center Icon" as the name of the control.</r>
+  </step>
+  <step name="8.2" link="Bug">Select some application text. Click on the Center Icon.
+   <r>The selected text becomes centered if it was not and normal if it was centered . This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar center Icon does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrRightJust" num="9" order="any">
+  <title tag="tfrRightJust">Right Justify Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="9.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the Right Justify icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Right Justify Icon" as the name of the control.</r>
+  </step>
+  <step name="9.2" link="Bug">Select some application text. Click on the Right Justify Icon.
+   <r>The selected text becomes right justified if it was not and normal if it was right justified. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Right Justify Icon does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrNList" num="10" order="any">
+  <title tag="tfrNList">Numbered List Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="10.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the Numbered List icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Numbered List Icon" as the name of the control.</r>
+  </step>
+  <step name="10.2" link="Bug">Select some application text. Click on the Numbered List Icon.
+   <r>The selected text becomes a numbered list if it was not and normal if it was a numbered list. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Numbered List Icon does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrBList" num="11" order="any">
+  <title tag="tfrBList">Bulleted List Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="11.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> to test the Bulleted List icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Bulleted List Icon" as the name of the control.</r>
+  </step>
+  <step name="11.2" link="Bug">Select some application text. Click on the Bulleted List Icon.
+   <r>The selected text becomes a bulleted list if it was not and normal if it was a bulleted list. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Bulleted List Icon does nothing</p>
+  </step>
+
+ </case>
+
+<case id="tfrOutdent" num="12" order="any">
+  <title tag="tfrOutdent">Decrease Indent Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="12.1">
+<link uri="../StdCtrls/TlbButton.xml" type="module">Toolbar Button Tests</link> to test the Decrease Indent icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Decrease Indent Icon" as the name of the control.</r>
+  </step>
+  <step name="12.2" link="Bug">Select some application text. Click on the Decrease Indent Icon.
+   <r>The selected text decreases indentation. This can be done multiple times until there is no indentation. This may cause the text to be rendered in a different way.</r>
+   <p name="bug">Format toolbar Decrease Indent Icon does nothing</p>
+  </step>
+
+ </case>
+
+ <case id="tfrIndent" num="13" order="any">
+  <title tag="tfrIndent">Increase Indent Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="13.1">
+<link uri="../StdCtrls/TlbButton.xml" type="module">Toolbar Button Tests</link> to test the Increase Indent icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Increase Indent Icon" as the name of the control.</r>
+  </step>
+  <step name="13.2" link="Bug">Select some application text. Click on the Increase Indent Icon.
+   <r>The selected text is indented from its previous position. Multiple indents are allowed. This may cause the text to be rendered in a different way.</r>
+   <p name="bug">Format toolbar Indent Icon does nothing</p>
+  </step>
+
+ </case>
+
+ <case id="tfrBorder" num="14" order="any">
+  <title tag="tfrBorder">Border Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="14.1">
+<link uri="../StdCtrls/Toggle.xml" type="module">Toggle Tests</link> and <link uri="../StdCtrls/ListBox.xml" type="module">Combo Box Tests</link> to test the Border icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Border Icon" as the name of the control.</r>
+  </step>
+  <step name="14.2" link="Bug">Select some application text. Click on the Border Icon.
+   <r>The selected text becomes bordered if it was not and normal if it was bordered. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Border Icon does nothing</p>
+  </step>
+
+  <step name="14.3" link="Bug">Click on the down arrow for the combo box to show all the Border Icons. Test each one.
+  <r>
+<ul>
+<li>Each border icon adds a border to the side of the paragraph that the icon represents if not depressed.</li>
+	<li>Each depressed border icon, when pressed, will remove the associated border for the paragraph.</li>
+	<li>The most recently pressed border icon becomes the default border icon (the one shown on toolbar).</li>
+</ul>
+  </r>
+   <p name="bug">
+</p>
+   <p name="note">The "No border" icon, the one that has no borders, can never be depressed (acts as a reset button).</p>
+  </step>
+
+ </case>
+ <case id="tfrBackgrnd" num="15" order="any">
+  <title tag="tfrBackgrnd">Background Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="15.1">
+<link uri="../StdCtrls/ColorPal.xml" type="module">Color Pallet Tests</link> to test the Background icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Background Icon" as the name of the control.</r>
+  </step>
+  <step name="15.2" link="Bug">Select some application text. Click on the Background Icon.
+   <r>The selected text background becomes colored if it was not and normal if it was colored. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Background Icon does nothing</p>
+  </step>
+
+ </case>
+ <case id="tfrFontClr" num="16" order="any">
+  <title tag="tfrFontClr">Font Color Icon</title>
+  <context>
+<p>When the Format toolbar is displayed</p>
+</context>
+  <step name="16.1">
+<link uri="../StdCtrls/ColorPal.xml" type="module">Color Pallet Tests</link> to test the Font Color icon control - there is no shortcut.
+   <r>Report any failures as suggested using "Format Toolbar Font Color Icon" as the name of the control.</r>
+  </step>
+  <step name="16.2" link="Bug">Select some application text. Click on the Font Color Icon.
+   <r>The selected text becomes colored if it was not and normal if it was colored. This usually means the text will be rendered in a visually different way.</r>
+   <p name="bug">Format toolbar Font Color Icon does nothing</p>
+  </step>
+
+ </case>
+ <update date="Jan-09-01" author="MikeL">Test created.</update>
+ <update date="May-31-02" author="JoelC">Checked up to specs.</update>
+ <update date="Jul-10-02" author="RussD">Minor updates.</update>
+
+
+</test>

@@ -1,0 +1,240 @@
+ Conceptual model history (changes to visio models should also be noted):
+
+Nov 9 99 LHayashi
+	Change to MoStemMsi
+		Added pExceptionFeatures: FeatureStructure AND description.
+
+	Change to MoDerivationalAffixMsi
+		Changed name from pFromFeatures to pFromMsFeatures
+		Changed name from pToFeatures to pToMsFeatures
+		Added pFromExceptionFeatures: FeatureStructure AND description.
+
+	Change to WfiAnalysis
+		Added attribute aMsFeatures: FsFeatureStructure AND description.
+
+Nov 12 99 LHayashi
+	Change to Version
+		Deleted owning property pArchive.
+		Created new basic property pArchive and description. Signature: Unicode. Change requested by J.W. Wimbish.
+
+Nov 15 99 LHayashi
+	Added documentation to MoMorphoSyntaxInfo, MoDerivationalAffixMsi, MoInflectionalAffixMsi, MoStemMsi
+
+	Change to MoInflectionClass
+		Added iStemNames: seq of MoStemName
+		Documented Class and properties.
+
+	Change to LexInflectedVariant
+		Deleted pConditions property.
+		Added Features: FsFeatureStructure. Added description.
+
+	Change to WfiAnalysis
+		Added new reference pStems: seq of LexEntry and documentation.
+		* The added reference uses 'Backrefs' from CmObject.
+
+Nov 17 99 LHayashi
+	Check diagram of MoAffixForm
+		Is InflectionClasses a seq attr on visio diagram?
+
+	Change to MoInflAffixTemplate
+		Added pRegion: seq of FsFeatureStructure and documentation.
+
+	Change to MoCompoundRules
+		Added pLinker: ref to MoAffixForm and documentation.
+		* The added reference uses 'Backrefs' from CmObject.
+
+	Change to MoMorphologicalData
+		Added pPhoneEnvs: seq of PhPhonologicalContext
+		Documented class and properties.
+
+	Added documentation to MoStratum
+	Added documentation to MoMorphoSyntaxInfo, MoStemMsi, MoInflectionalAffixMsi, MoDerivationalAffixMsi
+
+	Add Class MoDerivationalStepMsi	and documentation for the following properties.
+		Added dPartOfSpeech
+		Added dMsFeatures
+		Added dInflectionFeatures
+		Added dInflectionClass
+
+
+	Added documentation to MoAdhocCoProhibition
+	Added documentation to MoMorphTypeList, MoMorphType
+	Added documentation to MoStemName, MoInflectionClass, MoReferralRule
+
+	Change to MoInflAffixTemplate
+		Added new Reference named pPrefixSlots: seq of MoInflAffixSlot.
+		* The added reference uses 'Backrefs' from CmObject.
+		Added new Reference named pSuffixSlots: seq of MoInflAffixSlot.
+		* The added reference uses 'Backrefs' from CmObject.
+
+Need to get M2 Phonology model from Mike. Need to section 10 of M3 document.
+
+Nov 19 99 Ken Zook
+
+	Change to MoDerivationalAffixMsi
+		Changed abbr to damsi to keep in line with MoDerivationalStepMsi being dsmsi.
+
+	Change to LexDb
+		Removed pInflectedConditions since nothing was using it anymore.
+
+Nov 30 99 Ken Zook
+
+	Change to MoStemMsi
+		Changed pPartOfSpeech to use pBackrefs instead of pStemMsis
+
+	Change to PartOfSpeech
+		Removed pStemMsis
+
+Dec 16 99 Rand Burgett
+
+	Change to MoDerivationalStepMsi
+		Changed pInflectionClass to dInflectionClass
+
+	Add to LanguageProject
+		Added pStyle
+
+
+Mar 03 00 Larry Hayashi
+
+	Fixed and added the following classes for MSDE implementation model standards
+
+	MoRuleMapping num=66
+	MoCopyFromInput=67
+	MoInsertPhones=68
+	MoInsertNC=69
+	MoModifyFromInput=70
+
+	MoDerivationTrace=72
+		MoCompoundRuleApp=73
+		MoDerivationalAffixApp=74
+		MoInflAffixSlotApp=75
+		MoInflTemplateApp=76
+		MoPhonoRuleApp=77
+		MoStratumApp=78
+
+	Changed num=51 on PhPhonologicalContext to num=81 to group as follows
+
+	PhContextOrVar=80
+		PhPhonologicalContext=81
+			PhIterationContext=82
+			PhSequenceContext=83
+			PhSimpleContext=84
+				PhSimpleContextBdry=85
+				PhSimpleContextNC=86
+				PhSimpleContextSeg=87
+		PhVariable=88
+
+	PhPhonemeSet=89
+
+	PhTerminalUnit=90
+		PhBdryMarker=91
+		PhPhoneme=92
+
+	PhNaturalClass=93
+		PhNCFeatures=94
+		PhNCSegments=95
+
+	PhFeatureConstraint=96
+
+
+<January 19, 2001> Larry Hayashi and Ken Zook
+MoForm: has the Form attribute removed from subclasses and re-added on this superclass.
+
+MoItem has been deleted.
+MoStemAllomorph has been added (re-added actually from previous model).
+	Left and Right phoneEnviron changed to PhoneEnviron (which was changed from atomic to collection).
+
+MoAffixItem has been deleted.
+MoStemItem has been deleted.
+
+MoAffixForm has been re-added.
+
+MoAffixAllomorph has been re-added.
+	Left and Right phoneEnviron changed to PhoneEnviron (which was changed from atomic to collection).
+	Position attribute added to class.
+
+MoAffixProcess is added and remains the same.
+
+***************************************8
+The following additions/changes were made to the M3 documentation and XML class definitions:
+
+MoMorphologicalData: added AnalyzingAgents attribute: owns col of LgAnalyzingAgent.
+	added TestSets attribute: owns col of WfiWordSets
+Class WfiWordSet added.
+
+WfiAnalysis
+	Added attributes: Validating Sources, Invalidating Sources
+
+MoDerivationalAffixMsi:
+	Added attribute Defined: boolean
+
+******************************************************************8
+New changes to the LanguageProject:
+LanguageProject: added AnalyzingAgents attribute: owns col of CmAnalyzingAgent. (Cm because of code generator Load order).
+
+Added new class: CmAnalyzingAgent
+
+
+
+**************************************
+New changes to lexical database:
+Diagrams are in Doc\ImpDiagrams. XML files have been done but not checked in.
+
+Delete LexEntryOrSense abstract superclass.
+Add LexCrossRefEntryOrSense to replace above.
+Different attributes for LexEntry and LexSense. Only one of these can be used per CrossRefEntryOrSense (or alternatively, if the LexSense is filled in, it wins. IOW LexSense is optional).
+
+LexEntry: Allomorphs now owns MoForms instead of MoItem.
+Delete subclass Subentry and move attributes onto MajorEntry.
+
+Delete subclasses InflectedVariant and PhonologicalVariant and move attributes onto Minor Entry.
+I think we can actually get rid of phonologicalVariant anyhow because we deal with these in Allomorphs (and their conditions or PhoneEnvironments). Most minor entries will be InflectedVariants. We also have the attribute "OrthographicVariants" on LexEntry to handle what Minor entries in LinguaLinks were handled with. I have a question in this regard. If orthographic variants are to be used in the spelling check system, it would appear that there needs to be an object of:
+OrthographicVariant with attributes of Form: MoForm (owned). The condition could actually be captured as the name of the encoding used to capture the MoForm or we could have another attribute of condition (mstr) for spelling differences like colour (British standard spelling) and color (American revolutionist spelling).
+
+
+******************************************
+Added the following to CellarServer diagram:
+UserView classes
+CmOverlay classes.
+
+*****************************************
+Notes to self:
+Well, I think I now remember the reason for MoItem as I work to delete it.
+MoAffixProcesses are rare. The parser, 80% or more of the time will be working with Allomorphs - be it stem or affix allomorphs. We thought it would be easier to create an index of allomorphs so we created MoItem to capture StemAllomorphs(Items) and AffixAllomorphs(Items). I think we can easily create such an index in the original model with a union table of MoStemAllomorphs and MiAffixAllomorphs. There is no class to define this collection but I'll note it in the model.
+</January 19, 2001>
+
+******************************************
+2/12/2008 Ann B/Steve Miller
+Renamed Change class name CmDomainQuestion to CmDomainQ
+						  FsFeatureDefn	to FsFeatDefn
+						  FsFeatureStructure to	FsFeatStruc
+						  FsFeatureStructureDisJunction to FsFeatStrucDisj
+						  FsFeatureStructureType to FsFeatStrucType
+						  FsSymbolicFeatureValue to FsSymFeatVal
+						  LanguageProject to LangProject
+						  LexicalDatabase to LexDb
+						  LexReferenceType to LexRefType
+						  MoAdhocCoProhibition to MoAdhocProhib
+						  MoAdhocCoProhibitionGroup to MoAdhocProhibGR
+						  MoAllomorphAdhocCoProhibition to MoAlloAdhocProhib
+						  MoDerivation to MoDeriv
+						  MoDerivationalAffixApp to MoDerivAffApp
+						  MoDerivationalAffixMsa to MoDerivAffMsa
+						  MoDerivationalStepMSA to MoDerivStepMsa
+						  MoEndocentricCompound to MoEndoCompound
+						  MoExocentricCompound to MoExoCompound
+						  MoInflectionalAffixMsa to MoInflAffMsa
+						  MoInflectionClass to MoInflClass
+						  MoMorphemeAdHocCoProhibition to MoMorphAdhocProhib
+						  MoMorphologicalData to MoMorphData  
+						  MoMorphoSyntaxAnalysis to MoMorphSynAnalysis
+						  PhPhonologicalContext to PhPhonContext
+						  PhPhonologicalData to PhPhonData
+						  PubHeaderFooterSet to PubHFSet
+						  RnGenericRecord to RnGenericRec
+						  RnResearchNotebook to RnResearchNbk
+						  RnRoledParticipants to RnRoledPartic
+						  ScrImportSettings to ScrImportSet
+						  UserAppFeatureActivated to UserAppFeatAct
+						  WordformLookupItem to WordFormLookupFsFeatureStructure to FsFeatStruc
+*****************************************

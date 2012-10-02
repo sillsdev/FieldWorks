@@ -1,0 +1,25 @@
+Apart from the files listed below, this software is
+
+  Copyright (c) 1997-2004 Richard Tobin, Language Technology Group, HCRC,
+  University of Edinburgh.
+
+THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHOR OR THE UNIVERSITY OF EDINBURGH BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+The file catalog_dtd.c contains the XML Catalog DTD, and is
+
+  Copyright (c) 2000, 2001, 2002 OASIS Open, Inc. All Rights Reserved.
+
+The files nf16check.c, nf16check.h, nf16data.c, and nf16data.h are
+
+  Copyright (c) 2003 Martin J. Du"rst, W3C
+
+The data in nf16data.c is derived from the Unicode character database.
+
+See the notices at the start of these files for licence details.

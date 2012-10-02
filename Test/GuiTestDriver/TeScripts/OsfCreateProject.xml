@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- Delete Fieldworks Project -->
+		<click select="menubar/file/project-management/delete-fieldWorks-project"/>
+
+		<on-dialog title="Delete Fieldworks Project" until="10000" on-fail="skip">
+			<glimpse id="project_found" path="9:NAMELESS/34:MALVI OTHERSF IMPORT TEST" on-fail="skip"/>
+			<if>
+				<condition of="$project_found" is="true"/>
+				<then>
+					<click path="9:NAMELESS/34:MALVI OTHERSF IMPORT TEST"/>
+					<click path="9:Delete/43:Delete"/>
+					<click path="$Yes"/>
+					<click path="$Close"/>
+				</then>
+				<else>
+					<click path="$Close"/>
+				</else>
+			</if>
+		</on-dialog>
+		<!--=========================================================================-->
+
+		<!--<click select="menubar/file/project-management/fieldworks-project-properties"/>
+
+		<on-dialog title="FieldWorks Project Properties" until="10000" on-fail="skip">
+			<click path="37:Writing Systems"/>
+			<click path="9:Add[2]/43:Add"/>
+
+			<var id="Label" set="These are the languages used for translations, texts, lexical headwords, example sentences, people, location names, etc. Select, or define, a default vernacular language writing system."/>
+			<var id="CheckPath" set="9:$Label;[2]/41:$Label"/>
+			<click path="$CheckPath"/>
+			<var id="ExpectedValue" set="Malvi"/>
+			<include from="IncLangProjComboBox.xml"/>
+
+		</on-dialog>-->
+
+		<!--=========================================================================-->
+		<!-- New Fieldworks Project -->
+		<click select="menubar/file/new-fieldworks-project"/>
+
+		<on-dialog title="New FieldWorks Project" until="30000" >
+			<insert>MALVI OTHERSF IMPORT TEST</insert>
+			<!--<insert>{TAB}</insert>-->
+
+			<click path="9:Define New.../43:Define New..."/>
+			<on-dialog title="Writing System Wizard" until="10000" on-fail="skip">
+				<insert>MALVI</insert>
+				<insert>{TAB}</insert>
+				<insert>{ENTER}</insert>
+				<click path="9:Identify the language associated with the new writing system[2]/9:Find the language name in the list and click to choose it.[2]/34:Malvi"/>
+				<click path="$Next"/>
+				<click path="$Next"/>
+
+				<!--<on-dialog title="Writing System Already Exists" until="3000" on-fail="skip">
+					<click path="$Yes"/>
+				</on-dialog>-->
+
+				<var id="MappingName" set="9:Writing System Already Exists/18:Writing System Already Exists/9:Yes/43:Yes"/>
+				<glimpse id="DlgButtonExists" path="$MappingName" on-fail="skip"/>
+				<if>
+					<condition of="$DlgButtonExists" is="true"/>
+					<then>
+						<click path="$MappingName"/>
+					</then>
+					<else>
+						<click path="$Next"/>
+						<click path="$Finish"/>
+					</else>
+				</if>
+
+			</on-dialog>
+
+			<!--<var id="Label" set="These are the languages used for translations, texts, lexical headwords, example sentences, people, location names, etc. Select, or define, a default vernacular language writing system."/>
+			<var id="CheckPath" set="9:$Label;[2]/41:$Label"/>
+			<click path="$CheckPath"/>
+			<var id="ExpectedValue" set="Malvi"/>
+			<include from="IncLangProjComboBox.xml"/>-->
+
+			<insert>{TAB 3}</insert>
+			<insert>{ENTER}</insert>
+		</on-dialog>
+
+		<!-- Wait until the Project Creation has finished -->
+		<on-dialog title="Empty Scripture" until="3000000" on-fail="skip">
+			<click path="9:Show Blank Screen/43:Show Blank Screen"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

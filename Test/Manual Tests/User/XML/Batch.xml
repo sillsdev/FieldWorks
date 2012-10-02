@@ -1,0 +1,16 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="XML\Batch.xml">
+ <title tag="xmlBat">What is a batch file?</title>
+ <index>
+  <li>batch file</li>
+ </index>
+ <definition>
+  <p>On a Windows computer, a batch file is essentially a throw-back to the DOS era. It is a line-oriented set of DOS 6.2 commands (with a few new ones added). When executed, it performs its instructions line-by-line until there is an untrapped error or the instructions are exhausted.</p>
+<p>Here are some reasons we use batch files:</p>
+  <ul>
+   <li>Though somewhat archaic, every Windows operating system can run a batch file when it is double-clicked.</li>
+   <li>They tend to be only a few lines long and do simple things like launch a program with a specific set of parameters.</li>
+   <li>More complex, albeit small, programs would have to be written to do the same things otherwise.</li>
+  </ul>
+ </definition>
+</concept>

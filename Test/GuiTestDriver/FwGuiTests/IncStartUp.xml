@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+   <var id="ok" set="9:OK/43:OK"/>
+   <!-- Bff => Browse For Folder /-->
+   <var id="BffPANE" set="18:Browse For Folder/9:NAMELESS/9:NAMELESS/"/>
+
+	<on-startup>
+	   <on-dialog title="Backup Reminder" on-fail="skip">
+		  <click path="9:No/43:No"/>
+	   </on-dialog>
+	</on-startup>
+</include>

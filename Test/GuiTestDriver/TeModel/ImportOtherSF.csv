@@ -1,0 +1,43 @@
+Test Case,Scripture,Back Trans,Trans Notes,What to Import,Intro,Types of Data,Scr Intro,Scr,BT Intro,BT,Notes Intro,Notes,MRF Scr,MRF BT,MRF Notes,Test Plan,Version,Date,Run Test
+1,Scripture Malvi (MUPS1),(none),(none),Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,ImportOtherSF,1,Nov 21 2008,N
+2,Scripture Malvi (MUPS2),(none),(none),Entire Scripture Project,No,"F01 - Scripture, BT, Annotations",N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+3,Scripture Malvi (MUPS1),(none),(none),Entire Scripture Project,No,F02 - Scripture,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+4,Scripture Malvi (MUPS2),(none),(none),Entire Scripture Project,Yes,F02 - Scripture,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,,,,N
+5,Scripture Malvi (MUPS3),(none),(none),Entire Scripture Project,Yes,F03 - BT,N,N,,N,N,N,(none),(none),(none),,,,
+6,Scripture Malvi (MUPS4),(none),(none),Entire Scripture Project,No,F03 - BT,N,N,,N,N,N,(none),(none),(none),,,,
+7,Scripture Malvi (MUPS3),(none),(none),Entire Scripture Project,No,F04 - Annotations,N,N,,N,N,Y,(none),(none),(none),,,,
+8,Scripture Malvi (MUPS4),(none),(none),Entire Scripture Project,Yes,F04 - Annotations,N,N,,N,Y,Y,(none),(none),(none),,,,
+9,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN1),Entire Scripture Project,Yes,F05 - Scripture & BT,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,,,,N
+10,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN2),Entire Scripture Project,No,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+11,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN1),Entire Scripture Project,No,F06 - Scripture & Annotations,N,Y,,N,N,Y,MupScrNoIntro.sfm,(none),MupNotesP1.sfm,,,,N
+12,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN2),Entire Scripture Project,Yes,F06 - Scripture & Annotations,Y,Y,,N,Y,Y,MupScrIntro.sfm,(none),MupNotesP2.sfm,,,,N
+13,Scripture Malvi (MUPS1),(none),(none),Entire Scripture Project,Yes,F07 - BT & Annotations,N,N,,N,N,N,(none),(none),(none),,,,
+14,Scripture Malvi (MUPS2),(none),(none),Entire Scripture Project,No,F07 - BT & Annotations,N,N,,N,N,N,(none),(none),(none),,,,
+15,Scripture Malvi (MUPS3),(none),(none),Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",N,Y,,N,N,Y,MupScrNoIntro.sfm,(none),MupNotesJ1.sfm,,,,N
+16,Scripture Malvi (MUPS4),(none),(none),Entire Scripture Project,No,"F01 - Scripture, BT, Annotations",N,Y,,N,Y,Y,MupScrNoIntro.sfm,(none),MupNotesJ2.sfm,,,,N
+17,Scripture Malvi (MUPS3),(none),(none),Entire Scripture Project,No,F02 - Scripture,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+18,Scripture Malvi (MUPS4),(none),(none),Entire Scripture Project,Yes,F02 - Scripture,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,,,,N
+19,Scripture Malvi (MUPS1),(none),(none),Entire Scripture Project,No,F03 - BT,N,N,,N,N,N,(none),(none),(none),,,,
+20,Scripture Malvi (MUPS2),(none),(none),Entire Scripture Project,Yes,F03 - BT,N,N,,N,N,N,(none),(none),(none),,,,
+21,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN1),Entire Scripture Project,Yes,F04 - Annotations,N,N,,N,N,Y,(none),(none),(none),,,,
+22,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN2),Entire Scripture Project,No,F04 - Annotations,N,N,,N,Y,Y,(none),(none),(none),,,,
+23,Scripture Malvi (MUPS1),(none),(none),Entire Scripture Project,Yes,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+24,Scripture Malvi (MUPS2),(none),(none),Entire Scripture Project,No,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+25,Scripture Malvi (MUPS1),(none),(none),Entire Scripture Project,No,F06 - Scripture & Annotations,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+26,Scripture Malvi (MUPS2),(none),(none),Entire Scripture Project,Yes,F06 - Scripture & Annotations,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,,,,N
+27,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN1),Entire Scripture Project,No,F07 - BT & Annotations,N,N,,N,N,Y,(none),(none),(none),,,,
+28,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN2),Entire Scripture Project,Yes,F07 - BT & Annotations,N,N,,N,Y,Y,(none),(none),(none),,,,
+29,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN1),Entire Scripture Project,Yes,"F01 - Scripture, BT, Annotations",Y,Y,,N,N,Y,MupScrIntro.sfm,(none),MupNotesP1.sfm,,,,N
+30,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN2),Entire Scripture Project,No,"F01 - Scripture, BT, Annotations",N,Y,,N,Y,Y,MupScrNoIntro.sfm,(none),MupNotesP2.sfm,,,,N
+31,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN1),Entire Scripture Project,No,F02 - Scripture,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+32,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN2),Entire Scripture Project,Yes,F02 - Scripture,Y,Y,,N,N,N,MupScrIntro.sfm,(none),MupNotes0.sfm,,,,N
+33,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN1),Entire Scripture Project,Yes,F03 - BT,N,N,,N,N,N,(none),(none),(none),,,,
+34,Scripture Malvi (MUPS2),(none),Malvi Notes (MUPN2),Entire Scripture Project,No,F03 - BT,N,N,,N,N,N,(none),(none),(none),,,,
+35,Scripture Malvi (MUPS1),(none),(none),Entire Scripture Project,Yes,F04 - Annotations,N,N,,N,N,N,(none),(none),(none),,,,
+36,Scripture Malvi (MUPS2),(none),(none),Entire Scripture Project,No,F04 - Annotations,N,N,,N,N,N,(none),(none),(none),,,,
+37,Scripture Malvi (MUPS3),(none),(none),Entire Scripture Project,Yes,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+38,Scripture Malvi (MUPS4),(none),(none),Entire Scripture Project,No,F05 - Scripture & BT,N,Y,,N,N,N,MupScrNoIntro.sfm,(none),MupNotes0.sfm,,,,N
+39,Scripture Malvi (MUPS3),(none),(none),Entire Scripture Project,No,F06 - Scripture & Annotations,N,Y,,N,N,Y,MupScrNoIntro.sfm,(none),MupNotesJ1.sfm,,,,N
+40,Scripture Malvi (MUPS4),(none),(none),Entire Scripture Project,Yes,F06 - Scripture & Annotations,Y,Y,,N,Y,Y,MupScrIntro.sfm,(none),MupNotesJ2.sfm,,,,N
+41,Scripture Malvi (MUPS3),(none),(none),Entire Scripture Project,Yes,F07 - BT & Annotations,N,N,,N,N,Y,(none),(none),(none),,,,
+42,Scripture Malvi (MUPS4),(none),(none),Entire Scripture Project,No,F07 - BT & Annotations,N,N,,N,Y,Y,(none),(none),(none),,,,

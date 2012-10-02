@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Steve Miller">
+	<META NAME="CREATED" CONTENT="20070911;14410300">
+	<META NAME="CHANGEDBY" CONTENT="Steve Miller">
+	<META NAME="CHANGED" CONTENT="20070911;16442407">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<H1>SQL Unit Tests for FieldWorks</H1>
+<P><I>Steve Miller, last revised: 11 September, 2007</I></P>
+<P STYLE="font-style: normal">For many years, no unit tests existed
+for SQL code. In April 2003, I incorporated tsqlUnit to fill this
+void.</P>
+<P STYLE="font-style: normal">In April 2007, I started working on
+using Python for SQL unit tests. The main reason for that was to find
+a unit test framework that would work with both SQL Server and
+Firebird, which we plan to port to. Python has the added advantage of
+being cross-platform. The Python framework I ended up using was
+unittest, otherwise known as PyUnit.</P>
+<P STYLE="font-style: normal">As of this writing, the port from
+tsqlunit to PyUnit is largely incomplete.</P>
+<H2>tsqlunit</H2>
+<P><A HREF="http://tsqlunit.sourceforge.net/">tsqlunit</A> is an
+open-source testing framework for SQL Server. It has been abandoned
+by its author, but the summer of 2007, someone was working to revive
+it. In any case, it has been a solid testing framework for us for
+years now. An introduction can be found in <A HREF="http://msdn2.microsoft.com/en-us/library/aa175796(sql.80).aspx">an
+article</A> I published in 2004, which has since been sucked into
+MSDN.</P>
+<P>The tsqlunit unit tests for FieldWorks are:</P>
+<UL>
+	<LI><P>tsqlunit test framework: \Test\tsqlunit
+	</P>
+	<LI><P>Cellar SQL unit tests: \Src\Cellar\Test\ut_FwCore.sql and
+	ut_FwCore2.sql</P>
+	<LI><P>Language Project unit tests:
+	\Src\LangProj\Test\ut_LangProjSP.sql</P>
+	<LI><P>Linguistics unit tests: \Src\Ling\Test\ut_LingSP.sql</P>
+	<LI><P>Scripture unit tests: \Src\Scripture\Test\ut_Scripture.sql</P>
+	<LI><P>Ethnologue unit tests: \Src\Test\ut_ProcsFuncs.sql</P>
+</UL>
+<P>If want to run tsqlunit unit tests:</P>
+<OL>
+	<LI><P>In Management Studio, select the database you want to test.
+	(You'll have a mess you don't want to clean up if you install
+	tsqlunit in the master database.)</P>
+	<LI><P>Run \Test\tsqlunit\tsqlunit.sql. This sets up the framework.</P>
+	<LI><P>Create the unit test(s). Examples can be found in
+	\Src\Cellar\Test\ut_FwCore.sql. If you want only one, just create
+	the one stored procedure for it.
+	</P>
+	<LI><P>In Management Studio, execute: <B>exec tsu_RunTests</B>.</P>
+</OL>
+<P>This will run whatever tsqlunit unit tests you have installed in
+the database. There are variations on this theme, but this is what I
+most commonly do.</P>
+<P>tsqlunit has been incorporated as part of our complete build
+process. The NAnt command is: <B>NAnt mksql-tst</B>.</P>
+<H2>PyUnit</H2>
+<P>The Python unit test framework is made of several pieces. Both the
+SQL Server Python API (ipymssql) and the Firebird Python API conform
+to the <A HREF="http://www.python.org/dev/peps/pep-0249/">Python
+Database API Spec</A>. For more information how to use those APIs,
+see the API Spec documentation.</P>
+<UL>
+	<LI><P><A HREF="http://www.codeplex.com/Wiki/View.aspx?ProjectName=IronPython">IronPython</A>,
+	which runs on .NET. In order for it to have the standard libraries,
+	you must edit IronPython-1.1\Lib\site.py, according to these
+	instructions from ironpython-differences4.htm: &ldquo;IronPython
+	does not by default have the standard CPython libs on its path (for
+	example, . You can fix this by adding these two lines to the site.py
+	file in the IronPython lib directory:</P>
+</UL>
+<P STYLE="margin-left: 0.5in; margin-bottom: 0in"><FONT FACE="Courier New">import
+sys</FONT></P>
+<UL>
+	<P><FONT FACE="Courier New">sys.path.append(r&quot;c:\python24\lib&quot;)</FONT></P>
+	<LI><P><A HREF="http://docs.python.org/lib/module-unittest.html">unittest</A>,
+	otherwise known as PyUnit. I believe it comes as a standard part of
+	Python. As such, it is fully available once the above edit has been
+	made to site.py</P>
+	<LI><P><A HREF="http://sourceforge.net/projects/ipymssql/">ipymssql</A>,
+	an open source Python API created to support SQL Server, using the
+	.NET Framework Data Provider, and is <A HREF="http://www.python.org/dev/peps/pep-0249/">Python
+	Database API compliant</A>. The source code is stored at
+	\Test\ipymssql. For Python to see it, ipymssql\ipymssql.py must be
+	copied under Python25\Lib\site-packages. I also have an egg-info
+	file that goes in the site-packages directory, but I'm not yet
+	convinced it's necessary.</P>
+	<LI><P><A HREF="http://kinterbasdb.sourceforge.net/">Kinterbasdb</A>,
+	an API to support Firebird that is <A HREF="http://www.python.org/dev/peps/pep-0249/">Python
+	Database API compliant</A>. For Python to see it, it must be copied
+	under Python25\Lib\site-packages.</P>
+	<LI><P>Test\TestSql\ipymssqlfw.py, which uses ipymssql to connect to
+	FieldWorks databases.</P>
+	<LI><P>Test\TestSql\unittestasserts.py, a custom library which works
+	around a bug in unittest when running in IronPython, and it also has
+	a summary function.</P>
+</UL>
+<P>The PyUnit unit tests for FieldWorks currently are:</P>
+<UL>
+	<LI><P>Test\TestSql\CellarTest.py (replaces
+	\Src\Cellar\Test\ut_FwCore.sql)</P>
+	<LI><P>Test\TestSql\ScriptureTest.py (replaces
+	\Src\Scripture\Test\ut_Scripture.sql)</P>
+</UL>
+<P>To run unit tests, you would, for example:</P>
+<OL>
+	<LI><P>Open a command window</P>
+	<LI><P>Type the following. (ipy is the executes IronPython; py
+	executes standard Python):</P>
+</OL>
+<P STYLE="margin-left: 0.5in; margin-bottom: 0in"><FONT FACE="Courier New">ipy
+CellarTest.py</FONT></P>
+<UL>
+	<P></P>
+</UL>
+</BODY>
+</HTML>

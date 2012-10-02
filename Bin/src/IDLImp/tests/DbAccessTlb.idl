@@ -1,0 +1,791 @@
+#line 1 "c:\\fw\\Src\\DbAccess\\DbAccessTlb.idl"
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+#line 1 "c:\\fw\\Src\\Generic\\Common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 17 "c:\\fw\\Src\\DbAccess\\DbAccessTlb.idl"
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("AAB4A4A1-3C83-11d4-A1BB-00C04F0C9593") cpp_quote(",") cpp_quote("DbAccess") cpp_quote(");") [ uuid(AAB4A4A1-3C83-11d4-A1BB-00C04F0C9593), version(1.0), helpstring("DbAccess 1.0 Type Library") ] library DbAccess
+#line 21 "c:\\fw\\Src\\DbAccess\\DbAccessTlb.idl"
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+	importlib("FwKernelTlb.tlb");
+
+	#line 1 "c:\\fw\\src\\dbaccess\\DbAccess.idh"
+
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+
+typedef [v1_enum] enum SqlStmtType
+{
+	knSqlStmtNoResults = 0,
+	knSqlStmtSelectWithOneRowset = 1,
+	knSqlStmtStoredProcedure = 2,
+} SqlStmtType;
+
+
+interface IOleDbCommand;
+interface IOleDbEncap;
+interface IFwMetaDataCache;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbCommand") cpp_quote(",") cpp_quote("21993161-3E24-11d4-A1BD-00C04F0C9593") cpp_quote(");") [ uuid("21993161-3E24-11d4-A1BD-00C04F0C9593"), object, pointer_default(unique) ] interface IOleDbCommand : IUnknown
+{
+
+
+
+	HRESULT ColValWasNull(
+		[out] int * pfIsNull);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT ExecCommand(
+		[in] BSTR bstrSqlStatement,
+		[in] int nStatementType);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetColValue(
+		[in] ULONG iluColIndex,
+		[out, size_is(cbBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cbBufferLength,
+		[out] ULONG * pcbAmtBuffUsed,
+		[out] ComBool * pfIsNull,
+		[in] int cbPad);
+
+
+
+
+
+
+
+
+
+	HRESULT GetInt(
+		[in] int iColIndex,
+		[out] int * pnValue);
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetParameter(
+		[in] ULONG iluColIndex,
+		[out, size_is(cluBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cluBufferLength,
+		[out] ComBool * pfIsNull);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetRowset(
+		[in] int nRowsBuffered);
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] IUnknown * punkSession,
+		[in] IStream * pfistLog);
+
+
+
+	HRESULT NextRow(
+		[out] ComBool * pfMoreRows);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT SetParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in] WORD nDataType,
+		[in, size_is(cluBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cluBufferLength);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbEncap") cpp_quote(",") cpp_quote("AAB4A4A2-3C83-11d4-A1BB-00C04F0C9593") cpp_quote(");") [ uuid("AAB4A4A2-3C83-11d4-A1BB-00C04F0C9593"), object, pointer_default(unique) ] interface IOleDbEncap : IUnknown
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT BeginTrans();
+
+
+
+
+
+
+
+	HRESULT CommitTrans();
+
+
+
+
+
+	HRESULT CreateCommand(
+		[out] IOleDbCommand ** ppodc);
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pfistLog);
+
+
+
+	HRESULT IsTransactionOpen(
+		[out] ComBool * pfTransactionOpen);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT RollbackTrans();
+
+
+
+
+
+
+
+	HRESULT RollbackSavePoint(
+		[in] BSTR bstrSavePoint);
+
+
+
+
+
+
+
+
+	HRESULT SetSavePoint(
+		[out] BSTR * pbstr);
+
+
+
+
+
+	HRESULT SetSavePointOrBeginTrans(
+		[out] BSTR * pbstr);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT InitMSDE(
+		[in] IStream * pfistLog,
+		[in] ComBool fForce);
+
+
+
+	[propget] HRESULT Server(
+		[out, retval] BSTR * pbstrSvr);
+
+
+
+	[propget] HRESULT Database(
+		[out, retval] BSTR * pbstrDb);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwMetaDataCache") cpp_quote(",") cpp_quote("94CB14D1-46EF-11d4-A1C6-00C04F0C9593") cpp_quote(");") [ uuid("94CB14D1-46EF-11d4-A1C6-00C04F0C9593"), object, pointer_default(unique) ] interface IFwMetaDataCache : IUnknown
+{
+
+
+
+
+		HRESULT Init(
+		[in] IOleDbEncap * pode);
+
+
+
+
+
+
+
+	[propget] HRESULT FieldCount(
+		[out, retval] int * pcflid);
+
+
+
+
+
+
+	HRESULT GetFieldIds(
+		[in] int cflid,
+		[out] ULONG * rgflid);
+
+
+
+
+
+
+
+	HRESULT GetOwnClsName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrOwnClsName);
+
+
+
+
+
+
+
+
+	HRESULT GetDstClsName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrDstClsName);
+
+
+
+
+
+
+	HRESULT GetOwnClsId(
+		[in] ULONG luFlid,
+		[out] ULONG * pluOwnClsid);
+
+
+
+
+
+
+
+
+
+	HRESULT GetDstClsId(
+		[in] ULONG luFlid,
+		[out] ULONG * pluDstClsid);
+
+
+
+
+
+
+	HRESULT GetFieldName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldName);
+
+
+
+
+
+
+
+
+	HRESULT GetFieldType(
+		[in] ULONG luFlid,
+		[out] int * piType);
+
+
+
+
+
+
+
+	[propget] HRESULT IsValidClass(
+		[in] ULONG luFlid,
+		[in] ULONG luClid,
+		[out, retval] ComBool * pfValid);
+
+
+
+
+
+
+
+	[propget] HRESULT ClassCount(
+		[out, retval] int * pcclid);
+
+
+
+
+
+
+	HRESULT GetClassIds(
+		[in] int cclid,
+		[out] ULONG * rgclid);
+
+
+
+
+
+
+	HRESULT GetClassName(
+		[in] ULONG luClid,
+		[out] BSTR * pbstrClassName);
+
+
+
+
+
+
+	HRESULT GetAbstract(
+		[in] ULONG luClid,
+		[out] ComBool * pfAbstract);
+
+
+
+
+
+
+	HRESULT GetBaseClsId(
+		[in] ULONG luClid,
+		[out] ULONG * pluClid);
+
+
+
+
+
+
+
+	HRESULT GetBaseClsName(
+		[in] ULONG luClid,
+		[out] BSTR * pbstrBaseClsName);
+
+
+
+
+
+
+
+
+	HRESULT GetFields(
+		[in] ULONG luClid,
+		[in] ComBool fIncludeSuperclasses,
+		[in] int grfcpt,
+		[in] int cflidMax,
+		[out, size_is(cflidMax)] ULONG * prgflid,
+		[out] int * pcflid);
+}
+
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("AAB4A4A3-3C83-11d4-A1BB-00C04F0C9593") cpp_quote(",") cpp_quote("OleDbEncap") cpp_quote(");") [ uuid(AAB4A4A3-3C83-11d4-A1BB-00C04F0C9593) ] coclass OleDbEncap
+{
+	interface IOleDbEncap;
+};
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1D9C1D81-46F0-11d4-A1C6-00C04F0C9593") cpp_quote(",") cpp_quote("FwMetaDataCache") cpp_quote(");") [ uuid(1D9C1D81-46F0-11d4-A1C6-00C04F0C9593) ] coclass FwMetaDataCache
+{
+	interface IFwMetaDataCache;
+};
+#line 657 "c:\\fw\\src\\dbaccess\\DbAccess.idh"
+#line 27 "c:\\fw\\Src\\DbAccess\\DbAccessTlb.idl"
+};

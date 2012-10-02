@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for glimpse-extra instruction.
+-->
+
+<accil on-fail="assert">
+ <on-application on-fail="assert">
+  <glimpse-extra path="menu:View" names="Views/Filters/Sort Methods/#NONE/Status Bar/Side Bar/#NONE/Header//Footer Setup.../#NONE/Footnotes/Toolbars/Notes/Style Pane" on-fail="assert">
+   1) An extra <data of="$.path"/> child named '<data of="$.extra"/>' was found.
+  </glimpse-extra>
+  <glimpse-extra path="menu:View" names="Views/Sort Methods/#NONE/Status Bar/Side Bar/#NONE/Header//Footer Setup.../#NONE/Footnotes/Toolbars/Notes" on-pass="assert">
+   2) An extra <data get="$.path"/> child named 'Filters' was NOT found.
+  </glimpse-extra>
+
+  <glimpse-extra select="//menubar/button[@name='View']" on-fail="assert">
+   3) An extra <data of="$.path"/> child named '<data of="$.extra"/>' was found.
+  </glimpse-extra>
+
+  <!-- Must click on views (if not done already) to construct the accessible objects -->
+  <click path="tray:Views" />
+  <click path="tray:Filters" />
+  <glimpse-extra select="//sidebar/tray[@name='Views']" on-fail="assert">
+   4) An extra <data of="$.path"/> child named '<data of="$.extra"/>' was found.
+  </glimpse-extra>
+
+ </on-application>
+</accil>

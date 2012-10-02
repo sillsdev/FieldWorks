@@ -1,0 +1,408 @@
+<<!-- _______________________________________________________________ -->
+<!--                                                                 -->
+<!--        MagicDraw Extensions                                     -->
+<!-- _______________________________________________________________ -->
+
+<!ELEMENT PropertyVisitorAcceptor (mdElement*)>
+<!ELEMENT mdOwnedDiagrams (mdElement*)>
+<!ELEMENT mdOwnedWindows (mdElement*)>
+<!ELEMENT mdOwnedViews (mdElement*)>
+<!ELEMENT options (tipsStyle?, docsStyle?, interfaceStyle?, browserVisible?, browserBounds?)>
+<!ELEMENT componentView (Model_Management.Package*)>
+<!ATTLIST componentView	%XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT number EMPTY>
+<!ATTLIST number xmi.value CDATA #REQUIRED>
+
+<!ELEMENT assignable EMPTY>
+<!ATTLIST assignable xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT dataTypes (Model_Management.Package*)>
+<!ATTLIST dataTypes	%XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT StateMachine.StateAttributes (StateMachine.attribute*)>
+<!ELEMENT StateMachine.attribute (#PCDATA)>
+
+<!ELEMENT typeModifier (#PCDATA)>
+<!ELEMENT reverseIcon (#PCDATA)>
+
+
+<!ELEMENT mdElement (Foundation.Core.ModelElement.name?, name?, default?, propertyID?, value?, type?, lowRange?,
+					highRange?, parentID?, format?, choice?, index?, fontName?, size?, style?, firstOperation?, attributes?, type?,
+					mdElement*, elementID?, properties?, editable?, visible?, linkFirstEndID?, linkSecondEndID?,
+					geometry?, maximized?, treeID?, operations?, firstShapeID?, linkNameID?, linkConstraintID?,
+					nameVisible?, zoomFactor?, mdOwnedViews?, text?, baseShape?, verticalBarX?, verticalBarY?,
+					horizontalBarLeft?, horizontalBarRight?, horizontalBarY?, implicitlySetY?, type?, firstShapeID?,
+					firstShapeWeight?, splitID?, secondShapeID?, secondShapeWeight?, mainSplitID?,
+					lifeLineHidden?, lifeLineConcurrent?, lifeLineDestroyed?, isCreated?, roleNameID?,
+					roleMultiplicityID?, roleConstraintsID?, linkStereotypeID?, branchMessage?, topMessageID?,
+					diagonalMessage?, recursiveMessage?, associationFirstEndID?, associationSecondEndID?)?>
+ <!ATTLIST mdElement	%XMI.element.att; %XMI.link.att; elementClass CDATA #IMPLIED>
+
+<!ELEMENT maximized EMPTY>
+<!ATTLIST maximized xmi.value (true | false) #REQUIRED>
+
+
+<!ELEMENT treeID (mdElement*)>
+<!ATTLIST treeID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT verticalBarX  EMPTY>
+<!ATTLIST verticalBarX  xmi.value CDATA #REQUIRED>
+
+<!ELEMENT verticalBarY EMPTY>
+<!ATTLIST verticalBarY xmi.value CDATA #REQUIRED>
+
+<!ELEMENT horizontalBarLeft EMPTY>
+<!ATTLIST horizontalBarLeft xmi.value CDATA #REQUIRED>
+
+<!ELEMENT horizontalBarRight EMPTY>
+<!ATTLIST horizontalBarRight xmi.value CDATA #REQUIRED>
+
+<!ELEMENT implicitlySetY EMPTY>
+<!ATTLIST implicitlySetY xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT horizontalBarY EMPTY>
+<!ATTLIST horizontalBarY xmi.value CDATA #REQUIRED>
+
+<!ELEMENT properties (mdElement*)>
+<!ATTLIST properties %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT baseShape (mdElement*)>
+<!ATTLIST baseShape %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT topMessageID (mdElement*)>
+<!ATTLIST topMessageID	%XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT mainSplitID (mdElement*)>
+<!ATTLIST mainSplitID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT secondShapeID (mdElement*)>
+<!ATTLIST secondShapeID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT operations (mdElement*)>
+<!ATTLIST operations %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT secondShapeWeight EMPTY>
+<!ATTLIST secondShapeWeight xmi.value CDATA #REQUIRED>
+
+<!ELEMENT firstOperation (mdElement*)>
+<!ATTLIST firstOperation %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT firstShapeWeight EMPTY>
+<!ATTLIST firstShapeWeight xmi.value CDATA #REQUIRED>
+
+<!ELEMENT splitID (mdElement*)>
+<!ATTLIST splitID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT isCreated EMPTY>
+<!ATTLIST isCreated 	xmi.value (true | false) #REQUIRED>
+<!ELEMENT branchMessage EMPTY>
+<!ATTLIST branchMessage	xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT lifeLineDestroyed EMPTY>
+<!ATTLIST lifeLineDestroyed	xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT diagonalMessage EMPTY>
+<!ATTLIST diagonalMessage xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT recursiveMessage EMPTY>
+<!ATTLIST recursiveMessage xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT lifeLineHidden EMPTY>
+<!ATTLIST lifeLineHidden xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT lifeLineConcurrent EMPTY>
+<!ATTLIST lifeLineConcurrent xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT firstShapeID (mdElement*)>
+<!ATTLIST firstShapeID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT mainDiagram (mdElement*)>
+<!ATTLIST mainDiagram %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT tipsStyle EMPTY>
+<!ATTLIST tipsStyle	xmi.value CDATA #REQUIRED>
+
+<!ELEMENT lowRange EMPTY>
+<!ATTLIST lowRange xmi.value CDATA #REQUIRED>
+
+<!ELEMENT choice EMPTY>
+<!ATTLIST choice xmi.value CDATA #REQUIRED>
+
+<!ELEMENT index EMPTY>
+<!ATTLIST index	xmi.value CDATA #REQUIRED>
+
+<!ELEMENT highRange EMPTY>
+<!ATTLIST highRange	xmi.value CDATA #REQUIRED>
+
+<!ELEMENT fontName (#PCDATA)>
+
+<!ELEMENT size EMPTY>
+<!ATTLIST size xmi.value CDATA #REQUIRED>
+
+<!ELEMENT style (#PCDATA)>
+<!ATTLIST style xmi.value CDATA #REQUIRED>
+
+<!ELEMENT value (#PCDATA)>
+<!ATTLIST value xmi.value CDATA #IMPLIED>
+
+<!ELEMENT browserVisible EMPTY>
+<!ATTLIST browserVisible xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT docsStyle EMPTY>
+<!ATTLIST docsStyle xmi.value CDATA #REQUIRED>
+
+<!ELEMENT browserBounds (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+
+<!ELEMENT default EMPTY>
+<!ATTLIST default xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT elementClass (#PCDATA)>
+<!ELEMENT propertyID (#PCDATA)>
+<!ELEMENT format (#PCDATA)>
+
+<!ELEMENT elementID (mdElement?)>
+<!ATTLIST elementID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT interfaceStyle EMPTY>
+<!ATTLIST interfaceStyle xmi.value CDATA #REQUIRED>
+
+<!ELEMENT parentID (Model_Management.Model?)>
+<!ATTLIST parentID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT type (#PCDATA)>
+<!ATTLIST type xmi.value CDATA #IMPLIED>
+
+<!ELEMENT zoomFactor (#PCDATA)>
+<!ATTLIST zoomFactor xmi.value CDATA #REQUIRED>
+
+<!ELEMENT geometry (#PCDATA)>
+<!ELEMENT text (#PCDATA)>
+
+<!ELEMENT linkFirstEndID (mdElement*)>
+<!ATTLIST linkFirstEndID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT linkSecondEndID (mdElement*)>
+<!ATTLIST linkSecondEndID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT linkNameID (mdElement*)>
+<!ATTLIST linkNameID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT linkConstraintID (mdElement*)>
+<!ATTLIST linkConstraintID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT nameVisible EMPTY>
+<!ATTLIST nameVisible xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT editable EMPTY>
+<!ATTLIST editable xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT visible EMPTY>
+<!ATTLIST visible xmi.value (true | false) #REQUIRED>
+
+<!ELEMENT roleNameID (mdElement*)>
+<!ATTLIST roleNameID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT roleMultiplicityID (mdElement*)>
+<!ATTLIST roleMultiplicityID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT roleConstraintsID (mdElement*)>
+<!ATTLIST roleConstraintsID	%XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT linkStereotypeID (mdElement*)>
+<!ATTLIST linkStereotypeID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT associationFirstEndID (mdElement*)>
+<!ATTLIST associationFirstEndID	%XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT associationSecondEndID (mdElement*)>
+<!ATTLIST associationSecondEndID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT Behavioral_Elements.State_Machines.CompositeState.isRegion EMPTY>
+<!ATTLIST Behavioral_Elements.State_Machines.CompositeState.isRegion xmi.value (true | false) #REQUIRED>
+<!ATTLIST secondShapeID %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT operations (mdElement*)>
+<!ATTLIST operations %XMI.element.att; %XMI.link.att;>
+
+<!ELEMENT secondShapeWeight EMPTY>
+<!ATTLIST secondShapeWeight xmi.value CDATA #REQUIRED>
+
+<!ELEMENT firstOperation (mdElement*)>
+<!ATTLIST firstOperation
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT firstShapeWeight EMPTY>
+<!ATTLIST firstShapeWeight
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT splitID (mdElement*)>
+<!ATTLIST splitID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT isCreated EMPTY>
+<!ATTLIST isCreated 	xmi.value (true | false) #REQUIRED>
+<!ELEMENT branchMessage EMPTY>
+<!ATTLIST branchMessage
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT lifeLineDestroyed EMPTY>
+<!ATTLIST lifeLineDestroyed
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT diagonalMessage EMPTY>
+<!ATTLIST diagonalMessage
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT recursiveMessage EMPTY>
+<!ATTLIST recursiveMessage
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT lifeLineHidden EMPTY>
+<!ATTLIST lifeLineHidden
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT lifeLineConcurrent EMPTY>
+<!ATTLIST lifeLineConcurrent
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT firstShapeID (mdElement*)>
+<!ATTLIST firstShapeID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ATTLIST mdElement
+	%XMI.element.att; %XMI.link.att;
+	elementClass CDATA #IMPLIED
+>
+<!ELEMENT mainDiagram (mdElement*)>
+<!ATTLIST mainDiagram
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT tipsStyle EMPTY>
+<!ATTLIST tipsStyle
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT lowRange EMPTY>
+<!ATTLIST lowRange
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT choice EMPTY>
+<!ATTLIST choice
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT index EMPTY>
+<!ATTLIST index
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT highRange EMPTY>
+<!ATTLIST highRange
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT fontName (#PCDATA)>
+<!ELEMENT size EMPTY>
+<!ATTLIST size
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT style (#PCDATA)>
+<!ATTLIST style
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT value EMPTY>
+<!ATTLIST value
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT browserVisible EMPTY>
+<!ATTLIST browserVisible
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT docsStyle EMPTY>
+<!ATTLIST docsStyle
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT browserBounds (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT default EMPTY>
+<!ATTLIST default
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT elementClass (#PCDATA)>
+<!ELEMENT propertyID (#PCDATA)>
+<!ELEMENT elementID (mdElement?)>
+<!ATTLIST elementID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT interfaceStyle EMPTY>
+<!ATTLIST interfaceStyle
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT parentID (Model_Management.Model?)>
+<!ATTLIST parentID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT type (#PCDATA)>
+<!ATTLIST type
+	xmi.value CDATA #IMPLIED
+>
+<!ELEMENT zoomFactor (#PCDATA)>
+<!ATTLIST zoomFactor
+	xmi.value CDATA #REQUIRED
+>
+<!ELEMENT geometry (#PCDATA)>
+<!ELEMENT text (#PCDATA)>
+<!ELEMENT linkFirstEndID (mdElement*)>
+<!ATTLIST linkFirstEndID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT linkSecondEndID (mdElement*)>
+<!ATTLIST linkSecondEndID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT linkNameID (mdElement*)>
+<!ATTLIST linkNameID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT linkConstraintID (mdElement*)>
+<!ATTLIST linkConstraintID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT nameVisible EMPTY>
+<!ATTLIST nameVisible
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT editable EMPTY>
+<!ATTLIST editable
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT visible EMPTY>
+<!ATTLIST visible
+	xmi.value (true | false) #REQUIRED
+>
+<!ELEMENT roleNameID (mdElement*)>
+<!ATTLIST roleNameID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT roleMultiplicityID (mdElement*)>
+<!ATTLIST roleMultiplicityID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT roleConstraintsID (mdElement*)>
+<!ATTLIST roleConstraintsID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT linkStereotypeID (mdElement*)>
+<!ATTLIST linkStereotypeID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT associationFirstEndID (mdElement*)>
+<!ATTLIST associationFirstEndID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT associationSecondEndID (mdElement*)>
+<!ATTLIST associationSecondEndID
+	%XMI.element.att; %XMI.link.att;
+>
+<!ELEMENT Behavioral_Elements.State_Machines.CompositeState.isRegion EMPTY>
+<!ATTLIST Behavioral_Elements.State_Machines.CompositeState.isRegion
+	xmi.value (true | false) #REQUIRED
+>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for SelectString instruction.
+-->
+
+<accil on-fail="assert">
+ <on-application gui="TE" on-fail="assert">
+  <click path="button:Views" />
+  <click path="button:Draft" />
+  <select-text id="snip" path="window:DraftViewWrapper/view:Root" loc="view:Draft/b:1/s:5/p:1" at="36" run="21"/>
+ </on-application>
+</accil>

@@ -1,0 +1,18 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="Source\overview.xml">
+ <title tag="src">Manual source</title>
+ <index>
+  <li>Manual: source overview</li>
+ </index>
+ <introduction>
+  <p>The manual source is organized into directories and subdirectories that isolate the building of the manual from the sources that create it. Further structure builds on theme and purpose within tasks and information needed to perform them.</p>
+ </introduction>
+ <moduleGroup>
+  <li><link uri="Structure.xml" type="module">Test manual structure</link></li>
+  <li><link uri="ProjFiles.xml" type="module">HTML Help project files</link></li>
+  <li><link uri="TcContent.xml" type="module">What is test case content?</link></li>
+  <li><link uri="UserContent.xml" type="module">What is user content?</link></li>
+  <li><link uri="HelpFile.xml" type="module">HelpFile directory structure</link></li>
+  <li><link uri="DocControl.xml" type="module">What is the document control system?</link></li>
+ </moduleGroup>
+</overview>

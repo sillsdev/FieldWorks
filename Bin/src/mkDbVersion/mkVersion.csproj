@@ -1,0 +1,101 @@
+<VisualStudioProject>
+	<CSHARP
+		ProjectType = "Local"
+		ProductVersion = "7.10.3077"
+		SchemaVersion = "2.0"
+		ProjectGuid = "{377B580D-4D4F-4935-B628-B1533E94F27C}"
+		SccProjectName = "Perforce Project"
+		SccLocalPath = "."
+		SccProvider = "MSSCCI:Perforce SCM"
+	>
+		<Build>
+			<Settings
+				ApplicationIcon = "App.ico"
+				AssemblyKeyContainerName = ""
+				AssemblyName = "mkDbVersion"
+				AssemblyOriginatorKeyFile = ""
+				DefaultClientScript = "JScript"
+				DefaultHTMLPageLayout = "Grid"
+				DefaultTargetSchema = "IE50"
+				DelaySign = "false"
+				OutputType = "Exe"
+				PreBuildEvent = ""
+				PostBuildEvent = ""
+				RootNamespace = "SIL.FieldWorks.Tools"
+				RunPostBuildEvent = "OnBuildSuccess"
+				StartupObject = ""
+			>
+				<Config
+					Name = "Debug"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "DEBUG;TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "true"
+					NoStdLib = "false"
+					NoWarn = ""
+					Optimize = "false"
+					OutputPath = "bin\Debug\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+				<Config
+					Name = "Release"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					NoStdLib = "false"
+					NoWarn = ""
+					Optimize = "true"
+					OutputPath = "bin\Release\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+			</Settings>
+			<References>
+				<Reference
+					Name = "System"
+					AssemblyName = "System"
+					HintPath = "c:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
+				/>
+				<Reference
+					Name = "System.Windows.Forms"
+					AssemblyName = "System.Windows.Forms"
+					HintPath = "c:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+				/>
+			</References>
+		</Build>
+		<Files>
+			<Include>
+				<File
+					RelPath = "App.ico"
+					BuildAction = "Content"
+				/>
+				<File
+					RelPath = "AssemblyInfo.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "mkDbVersion.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+			</Include>
+		</Files>
+	</CSHARP>
+</VisualStudioProject>

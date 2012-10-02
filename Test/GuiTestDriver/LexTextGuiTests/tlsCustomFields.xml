@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- This tests the Custom Fields dialog in Tools / Custom Fields... -->
+<!-- Creates a couple fields and entries -->
+<!-- Browse custom fields in columns and sorts -->
+
+<accil on-fail="assert">
+
+<!-- Needs a new data base since the 1st and subsequent custom field adds are different -->
+ <var id="projectName" set="CustomFields"/>
+
+ <on-application args="-db $projectName" run="yes" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+	  <var id="add" set="9:Add/43:Add"/>
+<!-- Add a first custom field to an Entry -->
+<!-- In the Navigation Pane, click Lexicon, and then select Lexicon Edit or Browse, or Bulk Edit Entries or Bulk Edit Senses. -->
+	<click path="$vwLexEdit" />
+
+<!-- On the Tools menu, click Custom Fields. -->
+	<click path="$menuTOOLS;menu:Custom Fields..." />
+
+<!-- The Custom Fields dialog box appears. -->
+	<on-dialog title="Custom Fields">
+
+<!-- In the dialog box, do the following steps: -->
+	  <click path="$add"/>
+<!-- In the Settings pane, for the first custom field, click name, enter a name and description, select the writing system(s). -->
+	  <click path="9:Settings /20:Settings /$NL;42:NAMELESS"/><!-- click the name -->
+	  <insert wait="500">{HOME}+{END}</insert><!-- select the default name -->
+
+<!-- For subsequent custom fields, add, enter a name in the Custom Field Name box then enter a description and select the writing system(s). -->
+	  <insert wait="500">Frequency</insert>
+	  <click path="9:Settings /20:Settings /9:Description:[2]/42:Description:"/>
+	  <insert wait="300">Cycles of pressure fluctuation per second. Measured in Hertz.</insert>
+<!-- The name you enter becomes the label for the custom field. (You can rename the custom field later.) -->
+<!-- In the Writing System(s) box, select the writing system(s) you want for the custom field. -->
+	  <click path="9:Settings /20:Settings /9:Writing System(s):[2]/41:Writing System(s):"/>
+	  <insert wait="300">~</insert>
+<!-- Click OK. -->
+	  <click path="$ok" />
+	</on-dialog>
+
+<!-- Check that the custom field is in the Entry edit area -->
+	<glimpse id="NoFreq" path="$multiEdFIELD;9:autocustom/$sp;1/9:Frequency"/>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+
+<!-- Add some frequencies -->
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">A</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>220.00</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">A+{3}</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>233.08</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">B</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>246.94</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">C</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>130.81</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">C+{3}</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>138.59</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">d</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>293.66</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">D</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>146.83</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">D+{3}</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>155.56</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">E</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>164.81</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">F</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>174.61</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">F+{3}</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>185.00</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">G</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>196.00</insert>
+
+	<click path="$insEntry"/>
+	<on-dialog title="New Entry">
+	  <insert wait="300">G+{3}</insert>
+	  <click path="$neCategory"/>
+	  <insert wait="300">n~</insert>
+	  <click path="$create"/>
+	</on-dialog>
+	<click path="$multiEdFIELD;9:autocustom/$sp;2/20:Frequency"/>
+	<insert>207.65</insert>
+
+<!-- Turn off Lexeme Form, Glosses and Grammatical Information -->
+	<click path="$multiBrColChange"/>
+	<insert wait="200">l</insert>
+	<click path="$multiBrColChange"/>
+	<insert wait="200">g~</insert>
+	<click path="$multiBrColChange"/>
+	<insert wait="200">gg~</insert>
+
+<!-- Turn on Allomorphs and Frequency -->
+	<click path="$multiBrColChange"/>
+	<insert wait="200">m</insert>
+	<on-dialog name="ColumnConfigureDialog" title="Configure Columns...">
+	  <click path="9:Writing System[2]/34:Allomorphs"/>
+	  <click path="9:Add >>/43:Add >>"/>
+	  <click path="9:Writing System[2]/43:Page down"/>
+	  <click path="9:Writing System[2]/34:Frequency"/>
+	  <click path="9:Add >>/43:Add >>"/>
+	  <click path="$ok"/>
+	</on-dialog>
+
+<!-- Sort by frequency -->
+	<click path="$EditRecHEAD;25:Frequency"/>
+
+<!-- Add another custom field to an Entry -->
+<!-- In the Navigation Pane, click Lexicon, and then select Lexicon Edit or Browse, or Bulk Edit Entries or Bulk Edit Senses. -->
+<!-- On the Tools menu, click Custom Fields. -->
+<!-- The Custom Fields dialog box appears. -->
+<!-- In the dialog box, do the following steps: -->
+<!-- In the Add, Modify, or Delete Custom Field in box, select Entry. -->
+<!-- The custom field will appear at the entry level (above the first sense), and in the Configure Dictionary dialog box when Entry (top level) is selected. -->
+<!-- For subsequent custom fields, change the content in the Custom Field Name box and then click Add to make the Description and Writing System(s) boxes available. Then, enter a description and select the writing system(s). -->
+<!-- The name you enter becomes the label for the custom field. (You can rename the custom field later.) -->
+<!-- In the Writing System(s) box, select the writing system(s) you want for the custom field. -->
+<!-- Click OK. -->
+
+
+<!-- Add a first custom field to a Sense -->
+<!-- In the Navigation Pane, click Lexicon, and then select Lexicon Edit or Browse, or Bulk Edit Entries or Bulk Edit Senses. -->
+	<click path="$vwLexEdit"/>
+
+<!-- On the Tools menu, click Custom Fields. -->
+	<click path="$menuTOOLS;menu:Custom Fields..." />
+
+<!-- The Custom Fields dialog box appears. -->
+	<on-dialog title="Custom Fields">
+<!-- In the dialog box, do the following steps: -->
+	 <click path="$add" />
+	  <click path="9:Settings /20:Settings /$NL;42:NAMELESS"/><!-- click the name -->
+	  <insert wait="500">{HOME}+{END}</insert><!-- select the default name -->
+	  <insert>Ordinal Value</insert>
+
+<!-- In the Add, Modify, or Delete Custom Field in box, select Sense. -->
+	 <click path="9:Settings /20:Settings /9:Location:[2]/41:Location:"/>
+	 <insert wait="300">s~</insert>
+<!-- The custom field will appear in every sense (of all entries), and in the Configure Dictionary dialog box when Sense is selected. -->
+
+<!-- In the Settings pane, enter a name and description, select the writing system(s). -->
+<!-- For subsequent custom fields, change the content in the Custom Field Name box and then click Add to make the Description and Writing System(s) boxes available. Then, enter a description and select the writing system(s). -->
+	  <click path="9:Settings /20:Settings /9:Description:[2]/42:Description:"/>
+	  <insert wait="300">Number corresponding to sort order of letter.</insert>
+<!-- The name you enter becomes the label for the custom field. (You can rename the custom field later.) -->
+<!-- In the Writing System(s) box, select the writing system(s) you want for the custom field. -->
+	  <click path="9:Settings /20:Settings /9:Writing System(s):[2]/41:Writing System(s):"/>
+	  <insert>~</insert>
+<!-- Click OK. -->
+	  <click path="$ok" />
+	</on-dialog>
+
+<!-- Check that the custom field is in the Sense edit area -->
+	<glimpse id="NoOrdinal" path="$multiEdFIELD;9:autocustom[2]/$sp;1/9:Ordinal Value"/>
+	<click path="$multiEdFIELD;9:autocustom[2]/$sp;2/20:Ordinal Value"/>
+
+<!-- Add a sense to an entry and check it -->
+	<click path="$EditRec;[*]/$Col;[1]/$Text;/value:C#"/>
+	<click side="right" path="$multiEdFIELD;9:summary/$sp;2/9:Slice_unknown/20:Root/20:Div/$Text;/value:Sense 1"/>
+	<insert wait="300">s</insert>
+	<glimpse wait="1000" id="NoOrdinal2" path="$multiEdFIELD;9:autocustom[3]/$sp;1/9:Ordinal Value"/>
+	<click path="$multiEdFIELD;9:autocustom[3]/$sp;2/20:Ordinal Value"/>
+	<insert>2020</insert>
+
+<!-- Enter data in browse view -->
+	<click path="$menuLEXICON;menu:Browse"/>
+<!-- Turn off Lexeme Form, Glosses, Definition and Grammatical Information -->
+	<click path="$LxBrColChange"/>
+	<insert wait="200">l</insert>
+	<click path="$LxBrColChange"/>
+	<insert wait="200">g~</insert>
+	<click path="$LxBrColChange"/>
+	<insert wait="200">gg~</insert>
+	<click path="$LxBrColChange"/>
+	<insert wait="200">d</insert>
+	<click path="$LxBrColChange"/>
+	<insert wait="200">o</insert><!-- turn on Ordinal Value -->
+
+<!-- Turn on Allomorphs and Frequency -->
+	<click path="$LxBrColChange"/>
+	<insert wait="200">m</insert>
+	<on-dialog name="ColumnConfigureDialog" title="Configure Columns...">
+	  <click path="9:Writing System[2]/34:Allomorphs"/>
+	  <click path="9:Add >>/43:Add >>"/>
+	  <click path="9:Writing System[2]/43:Page down"/>
+	  <click path="9:Writing System[2]/34:Frequency"/>
+	  <click path="9:Add >>/43:Add >>"/>
+	  <click path="$ok"/>
+	</on-dialog>
+
+<!-- Sort by frequency -->
+	<click path="$lxBRO;25:Frequency"/>
+
+<!-- Add data in the new custom field and check the sort -->
+	<click path="$lxBrowseRec;[1]/$Col;[3]"/>
+	<insert>3</insert>
+	<glimpse id="noNote" path="$lxBrowseRec;[1]/$Col;[1]/$Text" prop="value" expect="Note" />
+	<click path="$lxBrowseRec;[3]/$Col;[3]"/>
+	<insert>4</insert>
+	<glimpse id="noC#" path="$lxBrowseRec;[3]/$Col;[1]/$Text" prop="value" expect="C#" />
+	<click path="$lxBrowseRec;[5]/$Col;[3]"/>
+	<insert>5</insert>
+	<glimpse id="noD#" path="$lxBrowseRec;[5]/$Col;[1]/$Text" prop="value" expect="D#" />
+	<click path="$lxBrowseRec;[6]/$Col;[3]"/>
+	<insert>6</insert>
+	<glimpse id="noE" path="$lxBrowseRec;[6]/$Col;[1]/$Text" prop="value" expect="E" />
+	<click path="$lxBrowseRec;[8]/$Col;[3]"/>
+	<insert>7</insert>
+	<glimpse id="noF#" path="$lxBrowseRec;[8]/$Col;[1]/$Text" prop="value" expect="F#" />
+	<click path="$lxBrowseRec;[10]/$Col;[3]"/>
+	<insert>1</insert>
+	<glimpse id="noG#" path="$lxBrowseRec;[10]/$Col;[1]/$Text" prop="value" expect="G#" />
+	<click path="$lxBrowseRec;[12]/$Col;[3]"/>
+	<insert>2</insert>
+	<glimpse id="noA#" path="$lxBrowseRec;[12]/$Col;[1]/$Text" prop="value" expect="A#" />
+	<click path="$lxBrowseRec;[13]/$Col;[3]"/>
+	<insert>11</insert>
+	<glimpse id="noB" path="$lxBrowseRec;[13]/$Col;[1]/$Text" prop="value" expect="B" />
+
+ </on-application>
+</accil>
+
+<!--
+ Note  Frequency (Hz) Wavelength (cm)
+C0 16.35 2100.
+C#0/Db0 17.32 1990.
+D0 18.35 1870.
+D#0/Eb0 19.45 1770.
+E0 20.60 1670.
+F0 21.83 1580.
+F#0/Gb0 23.12 1490.
+G0 24.50 1400.
+G#0/Ab0 25.96 1320.
+A0 27.50 1250.
+A#0/Bb0 29.14 1180.
+B0 30.87 1110.
+C1 32.70 1050.
+C#1/Db1 34.65 996.
+D1 36.71 940.
+D#1/Eb1 38.89 887.
+E1 41.20 837.
+F1 43.65 790.
+F#1/Gb1 46.25 746.
+G1 49.00 704.
+G#1/Ab1 51.91 665.
+A1 55.00 627.
+A#1/Bb1 58.27 592.
+B1 61.74 559.
+C2 65.41 527.
+C#2/Db2 69.30 498.
+D2 73.42 470.
+D#2/Eb2 77.78 444.
+E2 82.41 419.
+F2 87.31 395.
+F#2/Gb2 92.50 373.
+G2 98.00 352.
+G#2/Ab2 103.83 332.
+A2 110.00 314.
+A#2/Bb2 116.54 296.
+B2 123.47 279.
+
+C3 130.81 264.
+C#3/Db3 138.59 249.
+D3 146.83 235.
+D#3/Eb3 155.56 222.
+E3 164.81 209.
+F3 174.61 198.
+F#3/Gb3 185.00 186.
+G3 196.00 176.
+G#3/Ab3 207.65 166.
+A3 220.00 157.
+A#3/Bb3 233.08 148.
+B3 246.94 140.
+
+C4 261.63 132.
+C#4/Db4 277.18 124.
+D4 293.66 117.
+D#4/Eb4 311.13 111.
+E4 329.63 105.
+F4 349.23 98.8
+F#4/Gb4 369.99 93.2
+G4 392.00 88.0
+G#4/Ab4 415.30 83.1
+A4 440.00 78.4
+A#4/Bb4 466.16 74.0
+B4 493.88 69.9
+C5 523.25 65.9
+C#5/Db5 554.37 62.2
+D5 587.33 58.7
+D#5/Eb5 622.25 55.4
+E5 659.26 52.3
+F5 698.46 49.4
+F#5/Gb5 739.99 46.6
+G5 783.99 44.0
+G#5/Ab5 830.61 41.5
+A5 880.00 39.2
+A#5/Bb5 932.33 37.0
+B5 987.77 34.9
+C6 1046.50 33.0
+C#6/Db6 1108.73 31.1
+D6 1174.66 29.4
+D#6/Eb6 1244.51 27.7
+E6 1318.51 26.2
+F6 1396.91 24.7
+F#6/Gb6 1479.98 23.3
+G6 1567.98 22.0
+G#6/Ab6 1661.22 20.8
+A6 1760.00 19.6
+A#6/Bb6 1864.66 18.5
+B6 1975.53 17.5
+C7 2093.00 16.5
+C#7/Db7 2217.46 15.6
+D7 2349.32 14.7
+D#7/Eb7 2489.02 13.9
+E7 2637.02 13.1
+F7 2793.83 12.3
+F#7/Gb7 2959.96 11.7
+G7 3135.96 11.0
+G#7/Ab7 3322.44 10.4
+A7 3520.00 9.8
+A#7/Bb7 3729.31 9.3
+B7 3951.07 8.7
+C8 4186.01 8.2
+C#8/Db8 4434.92 7.8
+D8 4698.64 7.3
+D#8/Eb8 4978.03 6.9
+
+ -->

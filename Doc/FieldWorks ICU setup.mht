@@ -1,0 +1,2915 @@
+MIME-Version: 1.0
+Content-Type: multipart/related; boundary="----=_NextPart_01C9A0D0.94088D80"
+
+This document is a Single File Web Page, also known as a Web Archive file.  If you are seeing this message, your browser or editor doesn't support Web Archive files.  Please download a browser that supports Web Archive, such as Windows® Internet Explorer®.
+
+------=_NextPart_01C9A0D0.94088D80
+Content-Location: file:///C:/91645F10/FieldWorksICUsetup.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="us-ascii"
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml"
+xmlns:o=3D"urn:schemas-microsoft-com:office:office"
+xmlns:w=3D"urn:schemas-microsoft-com:office:word"
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml"
+xmlns:st1=3D"urn:schemas-microsoft-com:office:smarttags"
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<meta name=3DProgId content=3DWord.Document>
+<meta name=3DGenerator content=3D"Microsoft Word 12">
+<meta name=3DOriginator content=3D"Microsoft Word 12">
+<link rel=3DFile-List href=3D"FieldWorksICUsetup_files/filelist.xml">
+<title>FieldWorks Build Process</title>
+<o:SmartTagType namespaceuri=3D"urn:schemas-microsoft-com:office:smarttags"
+ name=3D"country-region"/>
+<o:SmartTagType namespaceuri=3D"urn:schemas-microsoft-com:office:smarttags"
+ name=3D"City"/>
+<o:SmartTagType namespaceuri=3D"urn:schemas-microsoft-com:office:smarttags"
+ name=3D"place"/>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Ken Zook</o:Author>
+  <o:LastAuthor>Ken Zook</o:LastAuthor>
+  <o:Revision>81</o:Revision>
+  <o:TotalTime>6971</o:TotalTime>
+  <o:Created>2003-08-13T16:30:00Z</o:Created>
+  <o:LastSaved>2009-03-09T21:03:00Z</o:LastSaved>
+  <o:Pages>16</o:Pages>
+  <o:Words>5392</o:Words>
+  <o:Characters>30736</o:Characters>
+  <o:Company>SIL International</o:Company>
+  <o:Lines>256</o:Lines>
+  <o:Paragraphs>72</o:Paragraphs>
+  <o:CharactersWithSpaces>36056</o:CharactersWithSpaces>
+  <o:Version>12.00</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<link rel=3DthemeData href=3D"FieldWorksICUsetup_files/themedata.thmx">
+<link rel=3DcolorSchemeMapping
+href=3D"FieldWorksICUsetup_files/colorschememapping.xml">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:View>Print</w:View>
+  <w:Zoom>127</w:Zoom>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:DoNotPromoteQF/>
+  <w:LidThemeOther>EN-US</w:LidThemeOther>
+  <w:LidThemeAsian>ZH-CN</w:LidThemeAsian>
+  <w:LidThemeComplexScript>AR-SA</w:LidThemeComplexScript>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:SplitPgBreakAndParaMark/>
+   <w:DontVertAlignCellWithSp/>
+   <w:DontBreakConstrainedForcedTables/>
+   <w:DontVertAlignInTxbx/>
+   <w:Word11KerningPairs/>
+   <w:CachedColBalance/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+  <m:mathPr>
+   <m:mathFont m:val=3D"Cambria Math"/>
+   <m:brkBin m:val=3D"before"/>
+   <m:brkBinSub m:val=3D"--"/>
+   <m:smallFrac m:val=3D"off"/>
+   <m:dispDef/>
+   <m:lMargin m:val=3D"0"/>
+   <m:rMargin m:val=3D"0"/>
+   <m:defJc m:val=3D"centerGroup"/>
+   <m:wrapIndent m:val=3D"1440"/>
+   <m:intLim m:val=3D"subSup"/>
+   <m:naryLim m:val=3D"undOvr"/>
+  </m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState=3D"false" DefUnhideWhenUsed=3D"false"
+  DefSemiHidden=3D"false" DefQFormat=3D"false" LatentStyleCount=3D"267">
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"Normal"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"heading 1"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"heading 2"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"heading 3"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"heading 4"/>
+  <w:LsdException Locked=3D"false" SemiHidden=3D"true" UnhideWhenUsed=3D"tr=
+ue"
+   QFormat=3D"true" Name=3D"heading 5"/>
+  <w:LsdException Locked=3D"false" SemiHidden=3D"true" UnhideWhenUsed=3D"tr=
+ue"
+   QFormat=3D"true" Name=3D"heading 6"/>
+  <w:LsdException Locked=3D"false" SemiHidden=3D"true" UnhideWhenUsed=3D"tr=
+ue"
+   QFormat=3D"true" Name=3D"heading 7"/>
+  <w:LsdException Locked=3D"false" SemiHidden=3D"true" UnhideWhenUsed=3D"tr=
+ue"
+   QFormat=3D"true" Name=3D"heading 8"/>
+  <w:LsdException Locked=3D"false" SemiHidden=3D"true" UnhideWhenUsed=3D"tr=
+ue"
+   QFormat=3D"true" Name=3D"heading 9"/>
+  <w:LsdException Locked=3D"false" SemiHidden=3D"true" UnhideWhenUsed=3D"tr=
+ue"
+   QFormat=3D"true" Name=3D"caption"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"Title"/>
+  <w:LsdException Locked=3D"false" Priority=3D"1" Name=3D"Default Paragraph=
+ Font"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"Subtitle"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"Strong"/>
+  <w:LsdException Locked=3D"false" QFormat=3D"true" Name=3D"Emphasis"/>
+  <w:LsdException Locked=3D"false" Priority=3D"99" Name=3D"No List"/>
+  <w:LsdException Locked=3D"false" Priority=3D"99" SemiHidden=3D"true"
+   Name=3D"Placeholder Text"/>
+  <w:LsdException Locked=3D"false" Priority=3D"1" QFormat=3D"true" Name=3D"=
+No Spacing"/>
+  <w:LsdException Locked=3D"false" Priority=3D"60" Name=3D"Light Shading"/>
+  <w:LsdException Locked=3D"false" Priority=3D"61" Name=3D"Light List"/>
+  <w:LsdException Locked=3D"false" Priority=3D"62" Name=3D"Light Grid"/>
+  <w:LsdException Locked=3D"false" Priority=3D"63" Name=3D"Medium Shading 1=
+"/>
+  <w:LsdException Locked=3D"false" Priority=3D"64" Name=3D"Medium Shading 2=
+"/>
+  <w:LsdException Locked=3D"false" Priority=3D"65" Name=3D"Medium List 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"66" Name=3D"Medium List 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"67" Name=3D"Medium Grid 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"68" Name=3D"Medium Grid 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"69" Name=3D"Medium Grid 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"70" Name=3D"Dark List"/>
+  <w:LsdException Locked=3D"false" Priority=3D"71" Name=3D"Colorful Shading=
+"/>
+  <w:LsdException Locked=3D"false" Priority=3D"72" Name=3D"Colorful List"/>
+  <w:LsdException Locked=3D"false" Priority=3D"73" Name=3D"Colorful Grid"/>
+  <w:LsdException Locked=3D"false" Priority=3D"60" Name=3D"Light Shading Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"61" Name=3D"Light List Accen=
+t 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"62" Name=3D"Light Grid Accen=
+t 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"63" Name=3D"Medium Shading 1=
+ Accent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"64" Name=3D"Medium Shading 2=
+ Accent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"65" Name=3D"Medium List 1 Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"99" SemiHidden=3D"true" Name=
+=3D"Revision"/>
+  <w:LsdException Locked=3D"false" Priority=3D"34" QFormat=3D"true"
+   Name=3D"List Paragraph"/>
+  <w:LsdException Locked=3D"false" Priority=3D"29" QFormat=3D"true" Name=3D=
+"Quote"/>
+  <w:LsdException Locked=3D"false" Priority=3D"30" QFormat=3D"true"
+   Name=3D"Intense Quote"/>
+  <w:LsdException Locked=3D"false" Priority=3D"66" Name=3D"Medium List 2 Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"67" Name=3D"Medium Grid 1 Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"68" Name=3D"Medium Grid 2 Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"69" Name=3D"Medium Grid 3 Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"70" Name=3D"Dark List Accent=
+ 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"71" Name=3D"Colorful Shading=
+ Accent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"72" Name=3D"Colorful List Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"73" Name=3D"Colorful Grid Ac=
+cent 1"/>
+  <w:LsdException Locked=3D"false" Priority=3D"60" Name=3D"Light Shading Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"61" Name=3D"Light List Accen=
+t 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"62" Name=3D"Light Grid Accen=
+t 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"63" Name=3D"Medium Shading 1=
+ Accent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"64" Name=3D"Medium Shading 2=
+ Accent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"65" Name=3D"Medium List 1 Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"66" Name=3D"Medium List 2 Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"67" Name=3D"Medium Grid 1 Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"68" Name=3D"Medium Grid 2 Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"69" Name=3D"Medium Grid 3 Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"70" Name=3D"Dark List Accent=
+ 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"71" Name=3D"Colorful Shading=
+ Accent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"72" Name=3D"Colorful List Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"73" Name=3D"Colorful Grid Ac=
+cent 2"/>
+  <w:LsdException Locked=3D"false" Priority=3D"60" Name=3D"Light Shading Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"61" Name=3D"Light List Accen=
+t 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"62" Name=3D"Light Grid Accen=
+t 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"63" Name=3D"Medium Shading 1=
+ Accent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"64" Name=3D"Medium Shading 2=
+ Accent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"65" Name=3D"Medium List 1 Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"66" Name=3D"Medium List 2 Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"67" Name=3D"Medium Grid 1 Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"68" Name=3D"Medium Grid 2 Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"69" Name=3D"Medium Grid 3 Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"70" Name=3D"Dark List Accent=
+ 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"71" Name=3D"Colorful Shading=
+ Accent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"72" Name=3D"Colorful List Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"73" Name=3D"Colorful Grid Ac=
+cent 3"/>
+  <w:LsdException Locked=3D"false" Priority=3D"60" Name=3D"Light Shading Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"61" Name=3D"Light List Accen=
+t 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"62" Name=3D"Light Grid Accen=
+t 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"63" Name=3D"Medium Shading 1=
+ Accent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"64" Name=3D"Medium Shading 2=
+ Accent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"65" Name=3D"Medium List 1 Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"66" Name=3D"Medium List 2 Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"67" Name=3D"Medium Grid 1 Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"68" Name=3D"Medium Grid 2 Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"69" Name=3D"Medium Grid 3 Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"70" Name=3D"Dark List Accent=
+ 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"71" Name=3D"Colorful Shading=
+ Accent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"72" Name=3D"Colorful List Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"73" Name=3D"Colorful Grid Ac=
+cent 4"/>
+  <w:LsdException Locked=3D"false" Priority=3D"60" Name=3D"Light Shading Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"61" Name=3D"Light List Accen=
+t 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"62" Name=3D"Light Grid Accen=
+t 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"63" Name=3D"Medium Shading 1=
+ Accent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"64" Name=3D"Medium Shading 2=
+ Accent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"65" Name=3D"Medium List 1 Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"66" Name=3D"Medium List 2 Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"67" Name=3D"Medium Grid 1 Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"68" Name=3D"Medium Grid 2 Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"69" Name=3D"Medium Grid 3 Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"70" Name=3D"Dark List Accent=
+ 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"71" Name=3D"Colorful Shading=
+ Accent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"72" Name=3D"Colorful List Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"73" Name=3D"Colorful Grid Ac=
+cent 5"/>
+  <w:LsdException Locked=3D"false" Priority=3D"60" Name=3D"Light Shading Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"61" Name=3D"Light List Accen=
+t 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"62" Name=3D"Light Grid Accen=
+t 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"63" Name=3D"Medium Shading 1=
+ Accent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"64" Name=3D"Medium Shading 2=
+ Accent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"65" Name=3D"Medium List 1 Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"66" Name=3D"Medium List 2 Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"67" Name=3D"Medium Grid 1 Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"68" Name=3D"Medium Grid 2 Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"69" Name=3D"Medium Grid 3 Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"70" Name=3D"Dark List Accent=
+ 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"71" Name=3D"Colorful Shading=
+ Accent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"72" Name=3D"Colorful List Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"73" Name=3D"Colorful Grid Ac=
+cent 6"/>
+  <w:LsdException Locked=3D"false" Priority=3D"19" QFormat=3D"true"
+   Name=3D"Subtle Emphasis"/>
+  <w:LsdException Locked=3D"false" Priority=3D"21" QFormat=3D"true"
+   Name=3D"Intense Emphasis"/>
+  <w:LsdException Locked=3D"false" Priority=3D"31" QFormat=3D"true"
+   Name=3D"Subtle Reference"/>
+  <w:LsdException Locked=3D"false" Priority=3D"32" QFormat=3D"true"
+   Name=3D"Intense Reference"/>
+  <w:LsdException Locked=3D"false" Priority=3D"33" QFormat=3D"true" Name=3D=
+"Book Title"/>
+  <w:LsdException Locked=3D"false" Priority=3D"37" SemiHidden=3D"true"
+   UnhideWhenUsed=3D"true" Name=3D"Bibliography"/>
+  <w:LsdException Locked=3D"false" Priority=3D"39" SemiHidden=3D"true"
+   UnhideWhenUsed=3D"true" QFormat=3D"true" Name=3D"TOC Heading"/>
+ </w:LatentStyles>
+</xml><![endif]--><!--[if !mso]><object
+ classid=3D"clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=3Dieooui></objec=
+t>
+<style>
+st1\:*{behavior:url(#ieooui) }
+</style>
+<![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"MS Mincho";
+	panose-1:2 2 6 9 4 2 5 8 3 4;
+	mso-font-alt:"\FF2D\FF33 \660E\671D";
+	mso-font-charset:128;
+	mso-generic-font-family:modern;
+	mso-font-pitch:fixed;
+	mso-font-signature:-1610612033 1757936891 16 0 131231 0;}
+@font-face
+	{font-family:Batang;
+	panose-1:2 3 6 0 0 1 1 1 1 1;
+	mso-font-alt:\BC14\D0D5;
+	mso-font-charset:129;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:-1342176593 1775729915 48 0 524447 0;}
+@font-face
+	{font-family:Vrinda;
+	panose-1:1 1 6 0 1 1 1 1 1 1;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:65539 0 0 0 1 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:1;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:0 0 0 0 0 0;}
+@font-face
+	{font-family:"\@Batang";
+	panose-1:2 3 6 0 0 1 1 1 1 1;
+	mso-font-charset:129;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:-1342176593 1775729915 48 0 524447 0;}
+@font-face
+	{font-family:"\@MS Mincho";
+	panose-1:2 2 6 9 4 2 5 8 3 4;
+	mso-font-charset:128;
+	mso-generic-font-family:modern;
+	mso-font-pitch:fixed;
+	mso-font-signature:-1610612033 1757936891 16 0 131231 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:Batang;}
+h1
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 1 Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 2 Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-style:italic;}
+h3
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 3 Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h4
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 4 Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{mso-style-unhide:no;
+	mso-style-link:"Header Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:Batang;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-unhide:no;
+	mso-style-link:"Footer Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:Batang;}
+p.MsoListNumber, li.MsoListNumber, div.MsoListNumber
+	{mso-style-unhide:no;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:.25in;
+	text-indent:-.25in;
+	mso-pagination:widow-orphan;
+	mso-list:l0 level1 lfo1;
+	tab-stops:list .25in;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:Batang;}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Title Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:Batang;
+	mso-bidi-font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{mso-style-unhide:no;
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-unhide:no;
+	color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:14.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading4Char
+	{mso-style-name:"Heading 4 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 4";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;
+	font-style:italic;}
+span.HeaderChar
+	{mso-style-name:"Header Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Header;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Batang","serif";
+	mso-ascii-font-family:Batang;
+	mso-fareast-font-family:Batang;
+	mso-hansi-font-family:Batang;}
+span.FooterChar
+	{mso-style-name:"Footer Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Footer;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Batang","serif";
+	mso-ascii-font-family:Batang;
+	mso-fareast-font-family:Batang;
+	mso-hansi-font-family:Batang;}
+span.TitleChar
+	{mso-style-name:"Title Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Title;
+	mso-ansi-font-size:26.0pt;
+	mso-bidi-font-size:26.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#17365D;
+	mso-themecolor:text2;
+	mso-themeshade:191;
+	letter-spacing:.25pt;
+	mso-font-kerning:14.0pt;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;}
+ /* Page Definitions */
+ @page
+	{mso-footnote-separator:url("FieldWorksICUsetup_files/header.htm") fs;
+	mso-footnote-continuation-separator:url("FieldWorksICUsetup_files/header.h=
+tm") fcs;
+	mso-endnote-separator:url("FieldWorksICUsetup_files/header.htm") es;
+	mso-endnote-continuation-separator:url("FieldWorksICUsetup_files/header.ht=
+m") ecs;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-footer:url("FieldWorksICUsetup_files/header.htm") f1;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:-120;
+	mso-list-type:simple;
+	mso-list-template-ids:1222642046;}
+@list l0:level1
+	{mso-level-style-link:"List Number";
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:173809303;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-381007096 67698703 67698713 67698715 67698703 67698=
+713 67698715 67698703 67698713 67698715;}
+@list l1:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:527138476;
+	mso-list-type:hybrid;
+	mso-list-template-ids:949665372 67698703 67698713 67698715 67698703 676987=
+13 67698715 67698703 67698713 67698715;}
+@list l2:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:742340474;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-447986562 67698703 67698713 67698715 67698703 67698=
+713 67698715 67698703 67698713 67698715;}
+@list l3:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:1392386519;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1766969434 67698703 67698713 67698715 67698703 6769=
+8713 67698715 67698703 67698713 67698715;}
+@list l4:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5
+	{mso-list-id:1863207119;
+	mso-list-type:hybrid;
+	mso-list-template-ids:259183114 67698703 67698713 67698715 67698703 676987=
+13 67698715 67698703 67698713 67698715;}
+@list l5:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6
+	{mso-list-id:2042437039;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-759425884 67698703 67698713 67698715 67698703 67698=
+713 67698715 67698703 67698713 67698715;}
+@list l6:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+table.MsoTableGrid
+	{mso-style-name:"Table Grid";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-unhide:no;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin-top:0in;
+	mso-para-margin-right:0in;
+	mso-para-margin-bottom:6.0pt;
+	mso-para-margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext=3D"edit" spidmax=3D"4098"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext=3D"edit">
+  <o:idmap v:ext=3D"edit" data=3D"1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=3DEN-US link=3Dblue vlink=3Dpurple style=3D'tab-interval:.5in'>
+
+<div class=3DSection1>
+
+<p class=3DMsoTitle>FieldWorks ICU Setup</p>
+
+<p class=3DMsoNormal align=3Dcenter style=3D'text-align:center'>9 Mar 2009<=
+/p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Background<o:=
+p></o:p></span></h1>
+
+<p class=3DMsoNormal>ICU data includes Unicode character definitions, local=
+es,
+transducers, converters, break iterators, etc. This data is defined in a se=
+t of
+textual data files (20 Mb disk space for full set). There are basically 3 w=
+ays
+to package the data for access by FieldWorks and other programs.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l2 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>1.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>By default the ICU bu=
+ild
+process uses a make process to produce icudt26l.dll, which holds all of the
+data within a dll. This works fine if you don&#8217;t want the end user to
+modify the data.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l2 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>2.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>We can use a slightly
+modified version to build a stub icudt26l.dll with a separate icudt26l.dat =
+file
+that holds the actual data. ICU provides DOS tools (420Kb disk space) that =
+allow
+end-users to break this file down into individual resource files, modify the
+resource files (from the source txt files) and rebuild the single dat file.
+It&#8217;s also possible to use a make utility to rebuild the .dat file usi=
+ng
+mk files provided with the data.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l2 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>3.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Similar to step 2, but
+instead of installing the single .dat file, we install all of the resource
+files. This makes modifications simpler, since we don&#8217;t need to break=
+ the
+.dat file into individual files and then join them back together again. It =
+ultimately
+saves disk space since we don&#8217;t need to have a copy of the single .dat
+file as well.</p>
+
+<p class=3DMsoNormal>We have the choice of using either of the last two opt=
+ions.
+I ran some tests on a 500Mhz PentiumIII machine with the following results
+running the Notebook program:</p>
+
+<table class=3DMsoTableGrid border=3D1 cellspacing=3D0 cellpadding=3D0
+ style=3D'border-collapse:collapse;border:none;mso-border-alt:solid windowt=
+ext .5pt;
+ mso-yfti-tbllook:480;mso-padding-alt:0in 5.4pt 0in 5.4pt'>
+ <tr style=3D'mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=3D115 valign=3Dtop style=3D'width:1.2in;border:solid windowtext=
+ 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal><o:p>&nbsp;</o:p></p>
+  </td>
+  <td width=3D108 valign=3Dtop style=3D'width:81.0pt;border:solid windowtex=
+t 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>opt 2. .dat file</p>
+  </td>
+  <td width=3D120 valign=3Dtop style=3D'width:1.25in;border:solid windowtex=
+t 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>opt 3. split files</p>
+  </td>
+  <td width=3D247 valign=3Dtop style=3D'width:185.4pt;border:solid windowte=
+xt 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>comparison</p>
+  </td>
+ </tr>
+ <tr style=3D'mso-yfti-irow:1'>
+  <td width=3D115 valign=3Dtop style=3D'width:1.2in;border:solid windowtext=
+ 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:s=
+olid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>Disk usage</p>
+  </td>
+  <td width=3D108 valign=3Dtop style=3D'width:81.0pt;border-top:none;border=
+-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>8.393 Mb</p>
+  </td>
+  <td width=3D120 valign=3Dtop style=3D'width:1.25in;border-top:none;border=
+-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>9,523 Mb</p>
+  </td>
+  <td width=3D247 valign=3Dtop style=3D'width:185.4pt;border-top:none;borde=
+r-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>split 13% bigger (1.1 Mb)</p>
+  </td>
+ </tr>
+ <tr style=3D'mso-yfti-irow:2'>
+  <td width=3D115 valign=3Dtop style=3D'width:1.2in;border:solid windowtext=
+ 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:s=
+olid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>Memory usage</p>
+  </td>
+  <td width=3D108 valign=3Dtop style=3D'width:81.0pt;border-top:none;border=
+-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>21.892 Mb</p>
+  </td>
+  <td width=3D120 valign=3Dtop style=3D'width:1.25in;border-top:none;border=
+-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>21.844 Mb</p>
+  </td>
+  <td width=3D247 valign=3Dtop style=3D'width:185.4pt;border-top:none;borde=
+r-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>split 0.2% smaller (48 Kb)</p>
+  </td>
+ </tr>
+ <tr style=3D'mso-yfti-irow:3;mso-yfti-lastrow:yes'>
+  <td width=3D115 valign=3Dtop style=3D'width:1.2in;border:solid windowtext=
+ 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:s=
+olid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>Load speed</p>
+  </td>
+  <td width=3D108 valign=3Dtop style=3D'width:81.0pt;border-top:none;border=
+-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>8,376 ms</p>
+  </td>
+  <td width=3D120 valign=3Dtop style=3D'width:1.25in;border-top:none;border=
+-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>8,422 ms</p>
+  </td>
+  <td width=3D247 valign=3Dtop style=3D'width:185.4pt;border-top:none;borde=
+r-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1=
+.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid window=
+text .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=3DMsoNormal>split 0.5% slower (46 ms)</p>
+  </td>
+ </tr>
+</table>
+
+<p class=3DMsoNormal>These tests indicate that there is essentially no diff=
+erence
+between the two approaches. Although the disk space is a little bigger for
+individual files, it will take less space overall, since modifying the sing=
+le
+.dat file involves creating all of the individual files as part of the proc=
+ess.</p>
+
+<p class=3DMsoNormal>On the above machine, it takes 2 seconds to join the f=
+iles
+into a single .dat file, and 6 seconds to split the .dat file into individu=
+al
+files. Choice 3 eliminates this overhead when modifying the data.</p>
+
+<p class=3DMsoNormal>As a result, we have chosen to distribute individual f=
+iles.</p>
+
+<p class=3DMsoNormal>We&#8217;ve chosen to include all locales distributed =
+with
+ICU, but have removed all but the built-in converters since the vast majori=
+ty
+of these are covered by Windows code pages which we can use instead. This s=
+aves
+around 15Mb of disk space. We are including the original files in the mappi=
+ngs
+directory on the distribution CD, so if someone finds they need to add one,=
+ it
+can be added using the process described below.</p>
+
+<p class=3DMsoNormal>We have also added SIL Corporate PUA characters to
+UnicodeData.txt and DerivedBidiClass.txt in the data\unidata directory.</p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Installation<=
+o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>We have the following directory structure for ICU data=
+. The
+base directory is an icu directory which is off of the RootDir (e.g.,
+fw\DistFiles\icu for developer machines, and Program Files\FieldWorks\icu f=
+or
+end-users). It contains the following:</p>
+
+<p class=3DMsoNormal>icu: Holds the compiled resource files used by FieldWo=
+rks
+(3.7Mb)</p>
+
+<p class=3DMsoNormal>icu\data: Unicode Character Database.htm.</p>
+
+<p class=3DMsoNormal>icu\data\brkitr: Source files for break iteration (160=
+Kb)</p>
+
+<p class=3DMsoNormal>icu\data\locales: Source files for locales (2.4Mb)</p>
+
+<p class=3DMsoNormal>icu\data\mappings: Source files for conversion mappings
+(57Kb)</p>
+
+<p class=3DMsoNormal>icu\data\misc: Source files for time zones, etc. (118K=
+b)</p>
+
+<p class=3DMsoNormal>icu\data\translit: Source files for transliterators (7=
+99Kb)</p>
+
+<p class=3DMsoNormal>icu\data\unidata: Source files for Unicode character d=
+ata
+(3.1Mb)</p>
+
+<p class=3DMsoNormal>icu\tools: ICU utility programs for modifying data (1.=
+1Mb)</p>
+
+<p class=3DMsoNormal>To generate these directories for check-in to Perforce=
+:</p>
+
+<ol style=3D'margin-top:0in' start=3D1 type=3D1>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Make
+	 any customizations to icu data files required by NRSI to achieve our d=
+efault
+	 delivery system (PUA characters, new locales, eliminating any extra fi=
+les,
+	 etc.)</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Use
+	 the build process recommended in fw\lib\src\icu\FwBuild Notes.txt, mak=
+ing
+	 sure you build the tools in release mode using the \MT compiler option=
+.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Copy
+	 all of the subdirectories under source\data to the above directories
+	 except the out directory. Leave that directory blank.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Copy
+	 source\data\out\build\res_index.txt to icu\data\locales. We will modify
+	 this for our customization instead of building it from scratch. Remove=
+ the
+	 first line from this file saying it is automatically generated.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Copy
+	 all of the .exe programs from bin to icu\tools. Also copy icutu26.dll =
+to
+	 icu\tools.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Copy
+	 icudt26l.dat to the icu directory.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'><st1:City
+	 w:st=3D"on"><st1:place w:st=3D"on">Split</st1:place></st1:City> the
+	 icudt26l.dat file using the following command executed from the FieldW=
+orks
+	 RootDir directory:<br>
+	 <span style=3D'mso-spacerun:yes'>&nbsp; </span>icu\tools\decmn &#8211;=
+d icu
+	 icu\icudt26l.dat</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Delete
+	 icudt26l.dat from the icu directory.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l5 level1 lfo3;tab-stops:list .5in=
+'>Check
+	 in all files in the icu directory structure, removing any older files.=
+</li>
+</ol>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Adding a new =
+locale<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>Note: Some of the tools (e.g., genrb) need access to t=
+he
+various icu*.dll files. Either they need to be in the default directory, or=
+ on
+the path. We are assuming they are available on the path.</p>
+
+<p class=3DMsoNormal>Note, ICU will not interpret country and variant names
+correctly unless they are uppercase.</p>
+
+<p class=3DMsoNormal>To manually add a new locale (e.g., xyz1_PH_IPA), foll=
+ow
+these steps:</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l3 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>1.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Create a new text fil=
+e in
+icu\data\locales (xyz1_PH_IPA.txt). As a minimum it needs to have the full
+locale abbreviation and a LocaleID:int that is the closest Windows lcid for
+this writing system. Here&#8217;s a minimal sample:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>xyz1_PH_IPA {<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Version{ &quot;2.0&quot; }<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>LocaleID:int { 0x0423 }<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>}<br>
+Much more could be added to this file, depending on what is needed.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l3 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>2.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Modify
+icu\data\locales\root.txt. Make sure the language, country, and variant
+abbreviations are listed in the appropriate location with an English name.
+E.g., <br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>// each variant =
+name
+that occurs in locales...<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>....<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>&quot;%%IPA&quot=
+; {
+&quot;International Phonetic Alphabet&quot; }<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>....<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>Countries {<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>....<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>PH { &#8220;<st1:country-region w:st=3D"on"><st1:place w:st=3D"on">P=
+hilippines</st1:place></st1:country-region>&#8221;
+}<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>....<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>}<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>Languages {<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>....<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>xyz1 { &#8220;My Language&#8221; }<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>....<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>}</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l3 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>3.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Modify
+icu\data\locales\res_index.txt by adding the new locale abbreviation to the=
+ end
+of the list. E.g.,<br>
+res_index {<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>InstalledLocales=
+ {<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>....<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>xyz1_PH_IPA {&#8220;&#8221;}<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>}<br>
+}<br>
+Note: this file could be generated from locale .txt files. It was originally
+generated from resfiles.mk and reslocal.mk through the make process.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l3 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>4.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Compile the 3 files j=
+ust
+modified using genrb. Open a DOS box on the FieldWorks root directory (e.g.,
+fw\DistFiles for developer machines, and Program Files\FieldWorks for
+end-users) and give the following command:<br>
+icu40\tools\genrb -k -d Icu40\icudt40l -i Icu40\icudt40l -s Icu40\data\loca=
+les
+res_index.txt root.txt en.txt xyz1_PH_IPA.txt <br>
+Note: this uses UCARules.txt. For each input file, it will produce an
+icudt26l_*.res file where * is the name of the input file without the
+extension.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l3 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>5.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Any programs using IC=
+U will
+need to be stopped and restarted for the new locale to be available.</p>
+
+<p class=3DMsoNormal>The new locale will show up using the following C++ co=
+de:</p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:0in;
+margin-left:.5in;margin-bottom:.0001pt;mso-layout-grid-align:none;text-auto=
+space:
+none'><span style=3D'font-size:10.0pt;font-family:"Courier New";mso-fareast=
+-font-family:
+"Times New Roman"'>StrUtil::InitIcuDataDir();<span style=3D'color:green'><b=
+r>
+</span>int32_t cloc;<br>
+const Locale * rgloc =3D Locale::getAvailableLocales(cloc);<br>
+for (int iloc =3D 0; iloc &lt; cloc; ++iloc)<br>
+{<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Local=
+e loc
+=3D rgloc[iloc];<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Unico=
+deString
+ustName;<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>int l=
+cid =3D
+loc.getLCID();<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>loc.g=
+etDisplayName(ustName);<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>const=
+ char
+* rgch =3D loc.getName();<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>StrUn=
+i stu;<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>stu.F=
+ormat(L&quot;%s,
+%S, %d\n&quot;, ustName.getBuffer(), rgch, lcid);<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Outpu=
+tDebugString(stu.Chars());<br>
+}<br style=3D'mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style=3D'mso-special-character:line-bre=
+ak'>
+<![endif]><o:p></o:p></span></p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Deleting a lo=
+cale<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>Deleting a locale can be done with the following steps=
+.</p>
+
+<ol style=3D'margin-top:0in' start=3D1 type=3D1>
+ <li class=3DMsoNormal style=3D'mso-list:l4 level1 lfo5;tab-stops:list .5in=
+'>Modify
+	 icu\data\locales\res_index.txt by removing the line with the locale
+	 abbreviation from the file.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l4 level1 lfo5;tab-stops:list .5in=
+'>Delete
+	 the locale .txt file from icu\data\locales</li>
+ <li class=3DMsoNormal style=3D'mso-list:l4 level1 lfo5;tab-stops:list .5in=
+'>Remove
+	 any special language/country/variant definitions from
+	 icu\data\locales\root.txt that are not used by some other locale.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l4 level1 lfo5;tab-stops:list .5in=
+'>Remove
+	 the .res file in icu that was used for this locale, as well as any rel=
+ated
+	 files in icu\data\out.</li>
+ <li class=3DMsoNormal style=3D'mso-list:l4 level1 lfo5;tab-stops:list .5in=
+'>Compile
+	 res_index.txt using genrb. Open a DOS box on the FieldWorks root direc=
+tory
+	 (e.g., fw\DistFiles for developer machines, and Program Files\FieldWor=
+ks
+	 for end-users) and give the following command:<br>
+	 <span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\g=
+enrb
+	 -k -p ICUDATA -d icu -s icu\data\locales -i icu res_index.txt root.txt=
+<br>
+	 Note: this uses UCARules.txt. For each input file, it will produce an
+	 icudt26l_*.res file where * is the name of the input file without the
+	 extension.</li>
+</ol>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l4 level1 lfo5;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>6.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Any programs using IC=
+U will
+need to be stopped and restarted for the locale to be removed.</p>
+
+<p class=3DMsoNormal>Steps 2-4 are optional, but leave things in a cleaner =
+state.
+The important thing is that the index file get updated.</p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Adding a PUA
+character<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>Suppose we want to add the following two characters:</=
+p>
+
+<p class=3DMsoNormal>F170 COMBINING SNAKE BELOW</p>
+
+<p class=3DMsoNormal>F210 LATIN SMALL LETTER P WITH STROKE</p>
+
+<p class=3DMsoNormal>The first step is to determine all of the Unicode prop=
+erties
+for this character. The description for each field is described at <span
+class=3DMsoHyperlink><a href=3D"http://www.unicode.org/Public/UNIDATA/UCD.h=
+tml">http://www.unicode.org/Public/UNIDATA/UCD.html</a></span>.
+For designing new characters, it is best to get help from the Non Roman Scr=
+ipt
+Initiative (NRSI), Dallas, SIL International. If that is not possible, find=
+ an
+existing definition in UnicodeData.txt and use it as a sample. Let&#8217;s
+assume the following data:</p>
+
+<p class=3DMsoNormal>F170; COMBINING SNAKE BELOW;Mn;202;NSM;;;;;N;;;;;</p>
+
+<p class=3DMsoNormal>F210; LATIN SMALL LETTER P WITH STROKE;Ll;0;L;;;;;N;;;=
+;;</p>
+
+<p class=3DMsoListNumber><![if !supportLists]><span style=3D'mso-fareast-fo=
+nt-family:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>1.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Add the characters to
+icu\data\unidata\UnicodeData.txt<br>
+orignal:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>E000;&lt;Private=
+ Use,
+First&gt;;Co;0;L;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>F8FF;&lt;Private=
+ Use,
+Last&gt;;Co;0;L;;;;;N;;;;;<br>
+modified:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>E000;&lt;Private Use,
+First&gt;;Co;0;L;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F16F;&lt;Private Use,
+Last&gt;;Co;0;L;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F170; COMBINING SNAKE
+BELOW;Mn;202;NSM;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F171;&lt;Private Use,
+First&gt;;Co;0;L;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F20F;&lt;Private Use,
+Last&gt;;Co;0;L;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F210; LATIN SMALL LETT=
+ER P
+WITH STROKE;Ll;0;L;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F211;&lt;Private Use,
+First&gt;;Co;0;L;;;;;N;;;;;<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F8FF;&lt;Private Use,
+Last&gt;;Co;0;L;;;;;N;;;;;<br>
+Note that every codepoint must be accounted for. Where codepoints are
+undefined, a first and last range indicator must be included.<br>
+If we try to compile at this point, we get a genprops error: &#8220;differe=
+nt
+bidi class in DerivedBidiClass.txt field 1 at L&#8221;. This is telling us =
+that
+F170 is listed as having the L property in DerivedBidiClass.txt while it has
+NSM in UnicodeData.txt</p>
+
+<p class=3DMsoListNumber><![if !supportLists]><span style=3D'mso-fareast-fo=
+nt-family:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>2.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Because F170 has some=
+thing
+other than L in field 4, we need to modify DerivedBidiClass.txt.<br>
+original:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>E000..F8FF<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>; L # Co [6400]<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>...<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>3099..309A<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>; NSM # Mn<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>[2] COMBINING KATAKANA....<b=
+r>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>FB1E<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;
+</span>; NSM # Mn<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>HEBR=
+EW
+POINT JUDEO-SPANISH VARIKA<br>
+modified:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>E000..F16F<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>; L # Co [6400] <br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F171..F8FF<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>; L<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>...<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>3099..309A<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>; NSM # Mn<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>[2] COMBINING KATAKANA....<b=
+r>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>F170<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;
+</span>; NSM<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>FB1E<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;
+</span>; NSM # Mn<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>HEBR=
+EW
+POINT JUDEO-SPANISH VARIKA<br>
+Note ranges in this file are indicated using the .. syntax. Everything foll=
+owing
+# in this file is a comment and can be ignored.</p>
+
+<p class=3DMsoListNumber><![if !supportLists]><span style=3D'mso-fareast-fo=
+nt-family:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>3.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Compile the Unicode
+properties using genprops. Open a DOS box on the FieldWorks root directory
+(e.g., fw\DistFiles for developer machines, and Program Files\FieldWorks for
+end-users) and give the following command:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;
+</span>icu36\tools\genprops.exe -u 5.0 -s icu36\data\unidata -d icu36\icudt=
+36l
+-i icu36\icudt36l<br>
+Note: this compiles UnicodeData.txt, DerivedBidiClass.txt, plus numerous ot=
+her
+data files to produce icudt36l\uprops.icu.<br>
+In order to get the new names registered properly, you also need to run the
+following command:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;
+</span>icu36\tools\gennames.exe -1 -u 5.0 -d icu36\icudt36l
+icu36\data\unidata\UnicodeData. <br>
+Note: this compiles UnicodeData.txt to produce icudt36l\unames.icu.</p>
+
+<p class=3DMsoListNumber><![if !supportLists]><span style=3D'mso-fareast-fo=
+nt-family:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>4.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Any programs using IC=
+U will
+need to be stopped and restarted for the new character definitions to be
+available.</p>
+
+<p class=3DMsoNormal>At this point, your new characters are ready to be use=
+d,
+assuming you have a font that displays them correctly.</p>
+
+<p class=3DMsoNormal>This can be tested in C++ with the code:</p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:0in;
+margin-left:.5in;margin-bottom:.0001pt;mso-layout-grid-align:none;text-auto=
+space:
+none'><span style=3D'font-size:10.0pt;font-family:"Courier New";mso-fareast=
+-font-family:
+"Times New Roman"'>StrUtil::InitIcuDataDir();<br>
+char pch[200];<br>
+UErrorCode uerr =3D U_ZERO_ERROR;<br>
+u_charName(0xF170, U_UNICODE_CHAR_NAME, pch, isizeof(pch), &amp;uerr);<br>
+// pch =3D COMBINING SNAKE BELOW<br>
+u_charName(0xF210, U_UNICODE_CHAR_NAME, pch, isizeof(pch), &amp;uerr);<br>
+// pch =3D LATIN SMALL LETTER P WITH STROKE<br>
+UCharDirection ucd;<br>
+ucd =3D u_charDirection(0xF170); // ucd =3D U_DIR_NON_SPACING_MARK =3D 17<b=
+r>
+ucd =3D u_charDirection(0xF210); <span style=3D'color:green'>// ucd =3D
+U_LEFT_TO_RIGHT =3D 0<br style=3D'mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style=3D'mso-special-character:line-bre=
+ak'>
+<![endif]><o:p></o:p></span></span></p>
+
+<p class=3DMsoNormal>Depending on the properties of your new characters, yo=
+u may
+need to modify other files in the data\unidata directory as well.</p>
+
+<p class=3DMsoNormal>Here&#8217;s a summary for compiling Unicode data file=
+s:</p>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt'>Out of date:</span><sp=
+an
+style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";mso-fareast=
+-font-family:
+Batang;mso-font-kerning:0pt;font-weight:normal'> Read in UCA collation text
+data and write out the binary collation data.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genuca
+&#8211;i icu &#8211;s icu\data\unidata &#8211;d icu FractionalUCA.txt<br>
+Input: FractionalUCA.txt, Output: icudt26l_ucadata.icu, icudt26l_invuca.icu=
+<o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt'>Out of date:</span><sp=
+an
+style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";mso-fareast=
+-font-family:
+Batang;mso-font-kerning:0pt;font-weight:normal'> Creates a data file for
+Unicode property names<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genpna=
+me
+&#8211;d icu<br>
+Input: uchar.h, uscript.h, Blocks.txt, PropertyAliases.txt,
+PropertyValueAliases.txt (note this is precompiled and the program needs no
+input data during execution), Output: icudt26l_pnames.icu<o:p></o:p></span>=
+</h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt'>Out of date:</span><sp=
+an
+style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";mso-fareast=
+-font-family:
+Batang;mso-font-kerning:0pt;font-weight:normal'> Read the timezone file
+produced by tz.pl and create the binary timezone data<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\gentz
+&#8211;d icu icu\data\misc\timezone.txt<br>
+Input: timezone.txt, Output: icudt26l_tz.icu<o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt'>Out of date:</span><sp=
+an
+style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";mso-fareast=
+-font-family:
+Batang;mso-font-kerning:0pt;font-weight:normal'> Read source files and crea=
+te a
+binary file with the normalization data.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genidna
+&#8211;s icu\data &#8211;d icu<br>
+Input: misc\rfc3454*.txt, unidata\NormalizationCorrections.txt, Output:
+icudt26l_uidna.icu<o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt'>Out of date:</span><sp=
+an
+style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";mso-fareast=
+-font-family:
+Batang;mso-font-kerning:0pt;font-weight:normal'> Read source file and creat=
+e a
+binary file with character names<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\gennam=
+es -1
+&#8211;u 4 &#8211;d icu icu\data\unidata\UnicodeData.txt<br>
+Input: UnicodeData.txt, Output: icudt26l_unames.icu<o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt;font-weight:normal'>Read
+source information and create a binary file with normalization data.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu36\tools\genn=
+orm.exe
+-u 5.0 -s icu36\data\unidata -d icu36\icudt36l -i icu36\icudt36l<br>
+Input: UnicodeData.txt, DerivedNormalizationProps.txt, Output:
+icudt36l\unorm.icu<o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt;font-weight:normal'>Read
+source information and create a binary file with character properties.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu36\tools\genp=
+rops.exe
+-u 5.0 -s icu36\data\unidata -d icu36\icudt36l -i icu36\icudt36l<br>
+Input: BidiMirroring.txt, CaseFolding.txt, DerivedAge.txt,
+DerivedBidiClass.txt, DerivedCoreProperties.txt, DerivedJoiningGroup.txt,
+DerivedJoiningType.txt, DerivedNumericValues.txt, EastAsianWidth.txt,
+LineBreak.txt, PropList.txt, Scripts.txt, SpecialCasing.txt, UnicodeData.tx=
+t,
+Output: icudt36l\uprops.icu <o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt'>Out of date:</span><sp=
+an
+style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";mso-fareast=
+-font-family:
+Batang;mso-font-kerning:0pt;font-weight:normal'> Read time zone information=
+ and
+store in a binary file.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\gentz
+&#8211;d icu icu\data\misc\timezone.txt<br>
+Input: timezone.txt, Output: icudt26l_tz.icu.<o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt;font-weight:normal'>Rea=
+d ?
+information and store in a binary file.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;
+</span>icu36\tools\genbidi.exe -u 5.0 -s icu36\data\unidata -d icu36\icudt3=
+6l
+-i icu36\icudt36l<br>
+Input: ?, Output: icudt26l\ubidi.icu.<o:p></o:p></span></h1>
+
+<h1><span style=3D'font-size:12.0pt;font-family:"Times New Roman","serif";
+mso-fareast-font-family:Batang;mso-font-kerning:0pt;font-weight:normal'>Rea=
+d ?
+information and store in a binary file.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;
+</span>icu36\tools\gencase.exe -u 5.0 -s icu36\data\unidata -d icu36\icudt3=
+6l
+-i icu36\icudt36l<br>
+Input: ?, Output: icudt26l\ucase.icu.<o:p></o:p></span></h1>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Adding a conv=
+ersion
+mapping<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>To manually add a new conversion mapping (e.g., xyz), =
+follow
+these steps:</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l6 level1 lfo6;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>1.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Create a new text fil=
+e in
+icu\data\mappings (xyz.ucm). Follow the format of a similar .ucm file. See
+http://oss.software.ibm.com/icu/userguide/conversion-data.html for informat=
+ion
+on the .ucm file format.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l6 level1 lfo6;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>2.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Modify
+icu\data\mappings\convrtrs.txt by adding the new mapping name (xyz) to the =
+end
+of the file.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l6 level1 lfo6;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>3.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Compile the new conve=
+rter
+(xyz.ucm) using makeconv. Open a DOS box on the FieldWorks root directory
+(e.g., fw\DistFiles for developer machines, and Program Files\FieldWorks\ f=
+or
+end-users) and give the following command:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\makeco=
+nv
+&#8211;p ICUDATA &#8211;d icu icu\data\mapping\xyz.ucm<br>
+This will create a new file in the icu directory, icudt26l_xyz.cnv.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l6 level1 lfo6;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>4.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Compile the updated
+convrtrs.txt file using gencnval. Open a DOS box on the FieldWorks root
+directory (e.g., fw\DistFiles for developer machines, and Program
+Files\FieldWorks\ for end-users) and give the following command:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\gencnv=
+al
+&#8211;s icu\data\mappings &#8211;d icu<br>
+This will create a new file in the icu directory, icudt26l_cnvalias.icu.</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l6 level1 lfo6;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>5.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Any programs using IC=
+U will
+need to be stopped and restarted for the new converter to be available.</p>
+
+<p class=3DMsoNormal>The new converter will show up using the following C++=
+ code:</p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:0in;
+margin-left:.5in;margin-bottom:.0001pt;mso-layout-grid-align:none;text-auto=
+space:
+none'><span style=3D'font-size:10.0pt;font-family:"Courier New";mso-bidi-fo=
+nt-family:
+"Times New Roman"'>StrUtil::InitIcuDataDir();<br>
+OutputDebugString(L&quot;*****Start of Converters\n&quot;);<br>
+int ccnv =3D ucnv_countAvailable();<br>
+for (int icnv =3D 0; icnv &lt; ccnv; ++icnv)<br>
+{<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Unico=
+deString
+ust;<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>ust =
+=3D
+ucnv_getAvailableName(icnv);<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>StrUni
+stu(ust.getBuffer(), ust.length());<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>stu.A=
+ppend(L&quot;\n&quot;);<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Outpu=
+tDebugString(stu.Chars());<br>
+} <br style=3D'mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style=3D'mso-special-character:line-bre=
+ak'>
+<![endif]><o:p></o:p></span></p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Adding a
+transliterator<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>See http://oss.software.ibm.com/icu/userguide/Transfor=
+m.html
+and http://oss.software.ibm.com/icu/userguide/TransformRule.html for backgr=
+ound
+information and summary of Rule-Based Transliterators.</p>
+
+<p class=3DMsoNormal>To add a new transliterator, follow these steps (based=
+ on
+FW5.4 with ICU3.6):</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l1 level1 lfo7;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>1.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Create a new translit=
+erator
+source file (e.g., MyTrans.txt) in icu36\data\translit. This is basically a
+collection of rules, one per line. If this involves non-ASCII characters, t=
+he
+file should be a UTF-8 file with a BOM. Example: <br>
+<span lang=3DBN style=3D'font-family:Vrinda;mso-ascii-font-family:"Times Ne=
+w Roman";
+mso-hansi-font-family:"Times New Roman";mso-bidi-language:BN'>&#2503;&#2494=
+;</span>&gt;\uE04B;
+# VOWEL SIGN O<br>
+<span lang=3DBN style=3D'font-family:Vrinda;mso-ascii-font-family:"Times Ne=
+w Roman";
+mso-hansi-font-family:"Times New Roman";mso-bidi-language:BN'>&#2503;&#2519=
+;</span>&gt;\uE04C;
+# VOWEL SIGN AU<br>
+\u0981&gt;\uE001; # SIGN CANDRABINDU<br>
+<span lang=3DBN style=3D'font-family:Vrinda;mso-ascii-font-family:"Times Ne=
+w Roman";
+mso-hansi-font-family:"Times New Roman";mso-bidi-language:BN'>&#2434;</span=
+>&gt;\uE002;
+# SIGN ANUSVARAAdd your new transliterator to <br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>...</p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l1 level1 lfo7;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>2.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Add your transliterat=
+or to
+icu36\data\translit\root.txt as follows:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>MyTrans {<br>
+<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;
+</span>file {<br>
+<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>resource:process(transliterator) {&quot; MyTrans.txt&quot;}<br>
+<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>direction {&quot;FORWARD&quot;}<br>
+<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;
+</span>}<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>}<br>
+Note: If the transliterator is to show up in the list for users, it should =
+use
+&#8216;file&#8217;. If it is only internal for other transliterators to use,
+then it should use &#8216;internal&#8217;. For example, the Indic converters
+have the following:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp; </span>internal: Bengali-InterIndic=
+<br>
+<span style=3D'mso-spacerun:yes'>&nbsp; </span>internal: InterIndic-Bengali=
+<br>
+<span style=3D'mso-spacerun:yes'>&nbsp; </span>file: Bengali-Latin (calls
+Bengali-InterIndic then InterIndic-Latin)<br>
+<span style=3D'mso-spacerun:yes'>&nbsp; </span>file: Latin-Bengali (calls
+Latin-InterIndic then InterIndic-Bengali)<br>
+The user then sees Bengali-Latin and Latin-Bengali.<br style=3D'mso-special=
+-character:
+line-break'>
+<![if !supportLineBreakNewLine]><br style=3D'mso-special-character:line-bre=
+ak'>
+<![endif]></p>
+
+<p class=3DMsoListNumber style=3D'margin-left:.5in;mso-list:l1 level1 lfo7;
+tab-stops:list .5in'><![if !supportLists]><span style=3D'mso-fareast-font-f=
+amily:
+"Times New Roman"'><span style=3D'mso-list:Ignore'>1.<span style=3D'font:7.=
+0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span dir=3DLTR></span>Compile the new
+transliterator files using genrb. Open a DOS box on the FieldWorks root
+directory (e.g., fw\DistFiles for developer machines, and Program
+Files\SIL\FieldWorks\ for end-users) and give the following command:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu36\tools\genr=
+b -k
+-d icu36\icudt36l\translit -s icu36\data\translit -i icu36\icudt36l root.txt
+el.txt en.txt<br>
+This will update root.res, el.res, and en.res in the icu36\icudt36l\translit
+directory.</p>
+
+<p class=3DMsoNormal>The new transliterator will show up using the followin=
+g C++
+code:</p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:0in;
+margin-left:.5in;margin-bottom:.0001pt;mso-layout-grid-align:none;text-auto=
+space:
+none'><span style=3D'font-size:10.0pt;font-family:"Courier New";mso-fareast=
+-font-family:
+"Times New Roman"'>StrUtil::InitIcuDataDir();<span style=3D'color:green'><b=
+r>
+</span>OutputDebugString(L&quot;*****Start of IDS\n&quot;);<br>
+<span style=3D'color:blue'>int</span> ctrns =3D
+Transliterator::countAvailableIDs();<br>
+<span style=3D'color:blue'>for</span> (<span style=3D'color:blue'>int</span=
+> itrns
+=3D 0; itrns &lt; ctrns; ++itrns)<br>
+{<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Unico=
+deString
+ust;<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>ust =
+=3D
+Transliterator::getAvailableID(itrns);<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>StrUni
+stu(ust.getBuffer(), ust.length());<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>stu.A=
+ppend(L&quot;\n&quot;);<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Outpu=
+tDebugString(stu.Chars());<br>
+}<br style=3D'mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style=3D'mso-special-character:line-bre=
+ak'>
+<![endif]><o:p></o:p></span></p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Modifying a b=
+reak
+iterator<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>Read input files and create binary break iterators.<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genbrk
+&#8211;r icu\data\brkitr\char.txt &#8211;d icu &#8211;i icu &#8211;o
+icudt26l_char.brk<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genbrk
+&#8211;r icu\data\brkitr\line.txt &#8211;d icu &#8211;i icu &#8211;o
+icudt26l_line.brk<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genbrk
+&#8211;r icu\data\brkitr\line_th.txt &#8211;d icu &#8211;i icu &#8211;o
+icudt26l_line_th.brk<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genbrk
+&#8211;r icu\data\brkitr\sent.txt &#8211;d icu &#8211;i icu &#8211;o
+icudt26l_sent.brk<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genbrk
+&#8211;r icu\data\brkitr\title.txt &#8211;d icu &#8211;i icu &#8211;o
+icudt26l_title.brk<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genbrk
+&#8211;r icu\data\brkitr\word.txt &#8211;d icu &#8211;i icu &#8211;o
+icudt26l_word.brk<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\genbrk
+&#8211;r icu\data\brkitr\word_th.txt &#8211;d icu &#8211;i icu &#8211;o
+icudt26l_word_th.brk</p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Single .dat f=
+ile<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>You can combine resources into a single .dat file. Ope=
+n a
+DOS box on the FieldWorks root directory (e.g., fw\DistFiles for developer
+machines, and Program Files\FieldWorks\ for end-users). The first step is to
+produce a list of files that need to be combined. There are various ways to=
+ do
+this. One way in Windows XP is using the following command in the dos box:<=
+br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>dir/b/a-d icu\*.*
+&gt;files.lst<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;</span>This produces a file, files.l=
+st
+that contains a list of all of the files in the icu directory. We need the
+entire path for each file, so files.lst needs to be edited using a replace
+command to add the path in front of each file name. Once files.lst is corre=
+ct,
+give the following command:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\gencmn
+&#8211;d icu 500000 files.lst<br>
+This will combine the files into a single file: icu\icudt26l.dat.</p>
+
+<p class=3DMsoNormal>You can split a single .dat file into individual resou=
+rce
+files. Open a DOS box on the FieldWorks root directory (e.g., fw\DistFiles =
+for
+developer machines, and Program Files\FieldWorks\ for end-users) and give t=
+he
+following command:<br>
+<span style=3D'mso-spacerun:yes'>&nbsp;&nbsp;&nbsp; </span>icu\tools\decmn
+&#8211;d icu icu\icudt26l.dat<br>
+This will split the input file, icu\icudt26l.dat into around 450 individual
+files in the icu directory.</p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>Questions/Iss=
+ues<o:p></o:p></span></h1>
+
+<p class=3DMsoNormal>If we check all of the resource files into Perforce in
+DistFiles\icu, then whenever a developer creates a new language, it will ba=
+lk
+because it needs to overwrite files such as root.txt and icudt26l_root.res.=
+ How
+do we resolve this problem so that developers can get the latest when chang=
+es
+are made, but not wipe out any of their own information? One option is to c=
+heck
+in a zip file of icu and icu\data directories, and then unzip the file up on
+dev machines. We might do the same on end-user machines. The extra zip file
+could be considered a backup in case the res or source files ever get badly
+broken. This approach does take an extra 9Mb of disk space.</p>
+
+<p class=3DMsoNormal>We have a similar problem when an end-user upgrades to=
+ a new
+version. Somehow we need to get all of their ICU resource files updated whi=
+le
+preserving their customizations. The plan to do this is on uninstall all fi=
+les
+in the icu directory are deleted, but language definition xml files in the
+languages directory are not. After reinstallation, the installer runs Insta=
+llLanguage.exe
+&#8211;o. This goes through all language definition files and updates the I=
+CU
+files accordingly.</p>
+
+<p class=3DMsoNormal>It is not possible to run genprops to regenerate ICU
+compiled property files when FW is running since the files are locked by FW.
+You&#8217;ll get an error: &#8220;unable to create data memory,
+U_FILE_ACCESS_ERROR&#8221;. At this point it is possible to regenerate loca=
+le
+files with genrb while FW is running, but FW will probably not see the chan=
+ges
+until it is stopped and restarted.</p>
+
+<h1><span style=3D'mso-fareast-font-family:"Times New Roman"'>ICU data sour=
+ce
+files<o:p></o:p></span></h1>
+
+<h2><span style=3D'mso-fareast-font-family:"Times New Roman"'>icu\data\brki=
+tr
+directory<o:p></o:p></span></h2>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>char.txt</b> =
+-&gt;
+ICU Character Break Rules, also known as Grapheme Cluster Boundaries. See
+Unicode Standard Annex #29, www.unicode.org/reports/tr29/. No need to change
+this file. Tool for compiling: genbrk.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>line.txt</b> =
+-&gt;
+Line Breaking Rules. Implements default line breaking as defined by Unicode=
+ TR
+14, www.unicode.org/reports/tr14/. No need to change this file. Tool for
+compiling: genbrk.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>line_th.txt</=
+b> -&gt;
+Line Breaking Rules. Implements Thai line breaking as defined by Unicode TR=
+ 14,
+www.unicode.org/reports/tr14/. No need to change this file unless you create
+new Thai characters??? Tool for compiling: genbrk.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>sent.txt</b> =
+-&gt;
+Sentence Break Rules. Implements default sentence breaking rules defined by
+Unicode Standard Annex #29, http://www.unicode.org/reports/tr29/. No need to
+change this file. Tool for compiling: genbrk.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>thaidict.brk<=
+/b>
+-&gt; This is a binary file, apparently containing some form of Thai dictio=
+nary
+for computing word breaks. It is not compiled into a .brk file like the oth=
+er
+files. Instead, it is included by the th.txt locale resource, and brkiter.c=
+pp
+has some special handling when it is being used.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>title.txt</b>=
+ -&gt;
+Title Casing Break Rules. No need to change this file. Tool for compiling:
+genbrk.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>word.txt</b> =
+-&gt;
+Word Break Rules. Implements default word breaking rules defined by Unicode
+Standard Annex #29, http://www.unicode.org/reports/tr29/. No need to change
+this file. Tool for compiling: genbrk.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>word_th.txt</=
+b> -&gt;
+Thai Word Break Rules. Implements Thai word breaking rules defined by Unico=
+de
+Standard Annex #29, http://www.unicode.org/reports/tr29/. No need to change
+this file. Tool for compiling: genbrk.exe.</p>
+
+<h2><span style=3D'mso-fareast-font-family:"Times New Roman"'>icu\data\loca=
+les
+directory<o:p></o:p></span></h2>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>en.txt, en_GB=
+.txt,
+en_GB_EURO.txt</b> -&gt; Many files with this format. Each one represents a
+locale with the format LANG_CTRY_VARIANT where country and variant are
+optional. Files with country and variant options need only add things uniqu=
+e to
+that country or variant. Otherwise, the files inherit things from the
+&quot;super&quot; locale. In other words, en_GB_EURO inherits everything fr=
+om
+en_GB, which inherits everything from en. Tool for compiling: genrb.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>res_index.txt=
+</b>
+-&gt; This is an index of all of the locale names. This is not part of the
+original ICU distribution, but is generated by the build process. It could =
+be generated
+automatically from the individual local names, but we are maintaining it
+separately here. This needs to be updated any time a new locale is added or
+deleted. Tool for compiling: genrb.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>root.txt</b> =
+-&gt;
+This is the root locale that provides inheritance information to all other
+locales. It defines the names for languages, countries, and variants, and n=
+eeds
+to be modified any time languages, countries, or variants are added or dele=
+ted
+in locale files. Tool for compiling: genrb.exe.</p>
+
+<p class=3DMsoNormal>For a formal description of locale resource files, see=
+ <a
+href=3D"http://oss.software.ibm.com/cvs/icu/~checkout~/icuhtml/design/bnf_r=
+b.txt">http://oss.software.ibm.com/cvs/icu/~checkout~/icuhtml/design/bnf_rb=
+.txt</a>.
+Locale files contain resources (most listed below) with the contents for ea=
+ch
+resource enclosed in curly braces. To merge a sub-locale file (e.g., en_GB.=
+txt)
+with its super-locale (e.g., en.txt) we need to copy all of the information
+from the super-locale and then replace any resources that are specified in =
+the sub-locale
+file. Comments (// and /**/) should be ignored.<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>AmPmMarkers<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>CollationElements<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>Countries<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>Currencies<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DateTimeElements:intvector<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DateTimePatterns<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DateTimePatterns_buddhist<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DateTimePatterns_japanese<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DateTimePatterns_japanese:array<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DayAbbreviations<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DayNames<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DefaultCalendar<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>DurationRules<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>Eras<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>Eras_buddhist:array<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>Eras_japanese<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>ExemplarCharacters<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>Languages<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>LocaleID:int<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>LocaleScript<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>LocaleScript:array<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>localPatternChars<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>MonthAbbreviations<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>MonthNames<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>NumberElements<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>NumberPatterns<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>OrdinalRules<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>SpelloutRules<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>TransliteratorNamePattern<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>Version<br>
+<span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp; </span>zoneStrings</p>
+
+<h2><span style=3D'mso-fareast-font-family:"Times New Roman"'>icu\data\mapp=
+ings
+directory<o:p></o:p></span></h2>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>convrtrs.txt<=
+/b>
+-&gt; This is a master list of converters that are currently installed. It
+needs to be modified any time you add a new converter file. Tool for
+compliling: gencnval.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>*.ucm</b> -&g=
+t; Each
+.ucm file defines a conversion mapping. See
+http://oss.software.ibm.com/icu/userguide/conversion-data.html for details =
+on
+the file format. Tool for compiling: makeconv.exe.</p>
+
+<h2><span style=3D'mso-fareast-font-family:"Times New Roman"'>icu\data\misc
+directory<o:p></o:p></span></h2>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>rfc3454*.txt<=
+/b>
+-&gt; These files are generated by filterRFC3454.pl. Tool for compiling:
+genidna.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>icudata.rc</b=
+> -&gt;
+DLL version information? This doesn't need to change. Compiled with rc.exe.=
+</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>timezone.txt<=
+/b>
+-&gt; This file is generated from tz.pl and contains information for global=
+ timezones.
+This doesn't need to change. Tool for compiling: gentz.exe</p>
+
+<h2><span style=3D'mso-fareast-font-family:"Times New Roman"'>icu\data\tran=
+slit
+directory<o:p></o:p></span></h2>
+
+<p class=3DMsoNormal>See http://oss.software.ibm.com/icu/userguide/Transfor=
+m.html
+and http://oss.software.ibm.com/icu/userguide/TransformRule.html for backgr=
+ound
+information and summary of Rule-Based Transliterators.</p>
+
+<p class=3DMsoNormal>The real sources are in ICU4J. You can get the real so=
+urces
+from http://oss.software.ibm.com/cvs/icu4j/icu4j/src/com/ibm/icu/impl/data/=
+ The
+dumpicurules.bat file can be downloaded from http://oss.software.ibm.com/cv=
+s/icu4j/icu4j/src/com/ibm/icu/dev/tool/translit/</p>
+
+<p class=3DMsoNormal>In general, it's not easy to add a transliterator to t=
+he ICU
+default distribution.<span style=3D'mso-spacerun:yes'>&nbsp; </span>There a=
+re
+service registration APIs that you can use instead.<span
+style=3D'mso-spacerun:yes'>&nbsp; </span>You could start looking at the Tra=
+nsliterator::registerFactory()
+and Transliterator::registerInstance().</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>t_xxx_yyy.txt=
+</b>
+-&gt; UTF-8 transliterator file (with BOM) generated from dumpicurules.bat
+which uses Perl with a built-in Perl script to convert a regular rule-based
+transliterator file into this format. The Perl script basically puts each l=
+ine
+in double quotes, quotes characters such as \, changes # comment markers to=
+ //,
+and encloses the rules in a special bracketed format. Tool for compiliing:
+genrb.exe.</p>
+
+<p class=3DMsoNormal>Format of Transliterator_xxx_yyy.txt file prior to Perl
+processing:</p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:0in;
+margin-left:.5in;margin-bottom:.0001pt'><span style=3D'font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New";mso-bidi-font-family:"T=
+imes New Roman"'>#
+Variables<br>
+$space =3D ' ' ;<br>
+$single =3D \' ; # define single quote variable<br>
+# fix multiple spaces and hyphens<br>
+$space {$space} &gt; ;<br>
+'--' &lt;&gt; </span><span lang=3DZH-CN style=3D'font-size:10.0pt;mso-bidi-=
+font-size:
+12.0pt;font-family:"MS Mincho";mso-ascii-font-family:"Courier New";mso-hans=
+i-font-family:
+"Courier New";mso-bidi-font-family:"MS Mincho"'>&#65431;</span><span
+style=3D'font-size:10.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier Ne=
+w";
+mso-bidi-font-family:"Times New Roman"'> ; # dash =3D u+097<br style=3D'mso=
+-special-character:
+line-break'>
+<![if !supportLineBreakNewLine]><br style=3D'mso-special-character:line-bre=
+ak'>
+<![endif]><o:p></o:p></span></p>
+
+<p class=3DMsoNormal>Format for t_xxx_yyy.txt file:</p>
+
+<p class=3DMsoNormal style=3D'margin-top:0in;margin-right:0in;margin-bottom=
+:0in;
+margin-left:.5in;margin-bottom:.0001pt'><span style=3D'font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New";mso-bidi-font-family:"T=
+imes New Roman"'>t_MyRules
+{<br>
+Rule {<br>
+// Variables<br>
+&quot;$space =3D ' ' ;&quot;<br>
+&quot;$single =3D \\\' ;&quot; // Define single quote variable<br>
+// fix multiple spaces and hyphens<br>
+&quot;$space {$space} &gt; ;&quot;<br>
+&quot;'--' &lt;&gt; </span><span lang=3DZH-CN style=3D'font-size:10.0pt;mso=
+-bidi-font-size:
+12.0pt;font-family:"MS Mincho";mso-ascii-font-family:"Courier New";mso-hans=
+i-font-family:
+"Courier New";mso-bidi-font-family:"MS Mincho"'>&#65431;</span><span
+style=3D'font-size:10.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier Ne=
+w";
+mso-bidi-font-family:"Times New Roman"'> ;&quot; // dash =3D u+097<br>
+}}<br style=3D'mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style=3D'mso-special-character:line-bre=
+ak'>
+<![endif]><o:p></o:p></span></p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>translit_inde=
+x.txt</b>
+-&gt; This file is used by ICU when listing available transliterators. It n=
+eeds
+to be updated any time you add a new transliterator. Tool for compiling:
+genrb.exe.</p>
+
+<h2><span style=3D'mso-fareast-font-family:"Times New Roman"'>icu\data\unid=
+ata
+directory<o:p></o:p></span></h2>
+
+<p class=3DMsoNormal>Various files are derived from UnicodeData.txt and pos=
+sibly
+others as well. ICU has some JAVA programs that have grown up over time for
+generating these files. Mark Davis says it is &#8220;really gorpy code, so
+it&#8217;s &#8216;user beware&#8217;&#8221;. These programs are available at
+http://oss.software.ibm.com/cvs/icu4j/unicodetools/com/ibm/.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>BidiMirroring=
+.txt</b>
+-&gt; This file is an informative supplement to the UnicodeData file. It li=
+sts
+characters that have the mirrored property where there is another Unicode
+character that typically has a glyph that is the mirror image of the origin=
+al
+character's glyph. See UAX #9. For example, U+0028 left parenthesis<span
+lang=3DZH-CN style=3D'font-family:"MS Mincho";mso-bidi-font-family:"MS Minc=
+ho"'>&#65431;</span>which
+is interpreted in the Unicode Standard as an opening parenthesis<span
+lang=3DZH-CN style=3D'font-family:"MS Mincho";mso-bidi-font-family:"MS Minc=
+ho"'>&#65431;</span>appears
+as &quot;(&quot; when its bidi resolved level is even, and as the mirrored
+glyph &quot;)&quot; when its bidi resolved level is odd. Tool for compiling:
+genprops.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>Blocks.txt</b=
+> -&gt;
+List of block names, which are arbitrary names for ranges of code points. We
+don't need to change this file. See Chapter 16 in Unicode Standard. This is
+used when compiling genpname.exe (see preparse.pl), but is not used as inpu=
+t to
+the program.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>CaseFolding.t=
+xt</b>
+-&gt; This file provides a case folding mapping generated from UnicodeData.=
+txt.
+If all characters are mapped according to the full mapping in this file, th=
+en
+case differences (according to UnicodeData.txt and SpecialCasing.txt) are
+eliminated. For information on case folding, see UTR #21 Case Mappings, at
+www.unicode.org/unicode/reports/tr21/. Tool for compiling: genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>DerivedAge.tx=
+t</b>
+-&gt; This file shows when various code points were designated/assigned in
+successive versions of the Unicode standard. We don't need to change this f=
+ile.
+For details on the contents of each version, see
+www.unicode.org/versions/enumeratedversions.html. Tool for compiling:
+genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>DerivedBidiCl=
+ass.txt</b>
+-&gt; Generated algorithmically from UnicodeData.txt field 4. For
+documentation, see www.unicode.org/Public/UNIDATA/UCD.html. Tool for compil=
+ing:
+genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>DerivedCorePr=
+operties.txt</b>
+-&gt; Generated algorithmically from UnicodeData.txt. For documentation, see
+www.unicode.org/Public/UNIDATA/UCD.html.</p>
+
+<p class=3DMsoNormal>This looks troublesome???: 1D400..1D454 is listed as a=
+ Math
+category, but there isn't any property in UnicodeData.txt that indicates th=
+at!
+Tool for compiling: genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>DerivedJoinin=
+gGroup.txt</b>
+-&gt; Generated algorithmically from UnicodeData.txt. For documentation, see
+www.unicode.org/Public/UNIDATA/UCD.html. Derived from ArabicShaping.txt, fi=
+eld
+2. All code points not explicitly listed in this file have the property val=
+ue:
+NO_JOINING_GROUP. Since ICU doesn't use ArabicShaping.txt, this is probably
+unused. Tool for compiling: genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>DerivedJoinin=
+gType.txt</b>
+-&gt; Generated algorithmically from UnicodeData.txt. For documentation, see
+www.unicode.org/Public/UNIDATA/UCD.html. Derived from ArabicShaping.txt, fi=
+eld
+1. Type T is derived, as described in ArabicShaping.txt. All code points not
+explicitly listed in this file have the property value: U. Since ICU doesn't
+use ArabicShaping.txt, this is probably unused. Tool for compiling:
+genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>DerivedNormal=
+izationProps.txt</b>
+-&gt; Generated algorithmically from UnicodeData.txt. For documentation, see
+www.unicode.org/Public/UNIDATA/UCD.html. Derived Property: FC_NFKC_Closure.
+Generated from computing: b =3D NFKC(Fold(a)); c =3D NFKC(Fold(b)); Then if=
+ (c !=3D
+b) add the mapping from a to c to the set of mappings that constitute the
+FC_NFKC_Closure list. Uses the full case folding from CaseFolding.txt, with=
+out
+the T option. Tool for compiling: gennorm.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>DerivedNumeri=
+cValues.txt</b>
+-&gt; Generated algorithmically from UnicodeData.txt. For documentation, see
+www.unicode.org/Public/UNIDATA/UCD.html. Derived from UnicodeData.txt field=
+ 8.
+Tool for compiling: genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>EastAsianWidt=
+h.txt</b>
+-&gt; This file is a supplement to UnicodeData.txt. It contains informative
+data only. Properties for determining the choice of wide vs. narrow glyphs =
+in
+East Asian contexts. Property values are described in UAX #11 www.unicode.o=
+rg/reports/tr11/.
+Tool for compiling: genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>FractionalUCA=
+.txt</b>
+-&gt; This table defines the sort keys for codepoints, based on the Unicode
+Collation Algorithm. See www.unicode.org/reports/tr10/ for background, and =
+ICU
+documentation for their customizations. Do we need to modify this for PUA
+characters, or can collation just be specified as tailorings for PUA
+characters??? Tool for compiling: genuca.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>LineBreak.txt=
+</b>
+-&gt; Properties for line breaking. For more information, see UAX #14,
+www.unicode.org/reports/tr14/. PUA characters are presently classified as XX
+while normal letters/symbols are AL. Do these perform the same? Or do we ne=
+ed
+to modify this for alphabetic characters??? Tool for compiling: genprops.ex=
+e</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>Normalization=
+Corrections.txt</b>
+-&gt; This holds a few normalization corrections that were due to accidental
+errors in the unicode standard. It does not need to be modified. Tool for
+compiling: genidna </p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>Normalization=
+Test.txt</b>
+-&gt; Test file for conformance to Unicode Normalization Forms. see UAX #15,
+www.unicode.org/reports/tr15/. It does not need to be modified. This is only
+used for testing normalization.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>PropertyAlias=
+es.txt</b>
+-&gt; Property names and abbreviations. These names can be used for XML for=
+mats
+of UCD data, for regular-expression property tests, and other programmatic
+textual descriptions of Unicode data. It does not need to be modified. This=
+ is
+used when compiling genpname.exe (see preparse.pl), but is not used as inpu=
+t to
+the program.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>PropertyValue=
+Aliases.txt</b>
+-&gt; Property value names and abbreviations. These names can be used for X=
+ML
+formats of UCD data, for regular-expression property tests, and other
+programmatic textual descriptions of Unicode data. It does not need to be
+modified. This is used when compiling genpname.exe (see preparse.pl), but is
+not used as input to the program.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>PropList.txt<=
+/b>
+-&gt; Unicode Character Database: Extended Properties. For documentation, s=
+ee
+www.unicode.org/Public/UNIDATA/UCD.html. Do we need to change this??? Tool =
+for
+compiling: genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>Scripts.txt</=
+b> -&gt;
+Default script values for use in regular expressions. For more information,=
+ see
+UTR #24, www.unicode.org/reports/tr24/. It does not need to be modified. To=
+ol
+for compiling: genprops.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>SpecialCasing=
+.txt</b>
+-&gt; Contains additional information about the casing of Unicode character=
+s.
+(For compatibility, the UnicodeData.txt file only contains case mappings for
+characters where they are 1-1, and does not have locale-specific mappings.)=
+ For
+more information, see the discussion of Case Mappings in the Unicode Standa=
+rd.
+Tool for compiling: genprops.exe.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>UCARules.txt<=
+/b>
+-&gt; This file contains the UCA tables for the given version, but transfor=
+med
+into rule syntax. This is a UTF-8 file. This defines default collation and
+probably doesn't need to be modified??? Tool for compiling: genrb.exe</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>ucdterms.txt<=
+/b>
+-&gt; Gives terms for distribution. Must be included with distribution. Not
+necessary for compilation.</p>
+
+<p class=3DMsoNormal><b style=3D'mso-bidi-font-weight:normal'>UnicodeData.t=
+xt</b>
+-&gt; Basic Unicode property data for all codepoints. Tool for compiling:
+genprops.exe.</p>
+
+<p class=3DMsoNormal>If you add a pair of punctuation characters that have =
+the
+Bidi_Mirrored property set to Y, then you should normally include this pair=
+ in
+BidiMirroring.txt.</p>
+
+<p class=3DMsoNormal>If you add letters with upper/lowercase equivalents, t=
+hese
+also need to be added to CaseFolding.txt. If they are not simple 1-1 mappin=
+gs,
+or if they are locale specific, they also need to be added to
+SpecialCasing.txt.</p>
+
+<p class=3DMsoNormal>If you add a character with something other than L in =
+field
+4, then DerivedBidiClass.txt must be updated as well.</p>
+
+<p class=3DMsoNormal>DerivedCoreProperties.txt???</p>
+
+<p class=3DMsoNormal>If you add a character that takes special normalizatio=
+n, it
+probably needs to be added to DerivedNormalizationProps.txt.</p>
+
+<p class=3DMsoNormal>If you add a character that represents a numeric value=
+, it
+needs to be added to DerivedNumericValues.txt</p>
+
+<p class=3DMsoNormal>If you add East Asian characters, you may need to upda=
+te
+EastAsianWidth.txt</p>
+
+</div>
+
+</body>
+
+</html>
+
+------=_NextPart_01C9A0D0.94088D80
+Content-Location: file:///C:/91645F10/FieldWorksICUsetup_files/themedata.thmx
+Content-Transfer-Encoding: base64
+Content-Type: application/vnd.ms-officetheme
+
+UEsDBBQABgAIAAAAIQCCirwT+gAAABwCAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbKyRy2rDMBBF
+94X+g9C22HK6KKXYzqJJd30s0g8Y5LEtao+ENAnJ33fsuFC6CC10IxBizpl7Va6P46AOGJPzVOlV
+XmiFZH3jqKv0++4pu9cqMVADgyes9AmTXtfXV+XuFDApmaZU6Z45PBiTbI8jpNwHJHlpfRyB5Ro7
+E8B+QIfmtijujPXESJzxxNB1+SoLRNegeoPILzCKx7Cg8Pv5DCSAmAtYq8czYVqi0hDC4CywRDAH
+an7oM9+2zmLj7X4UaT6DF9jNBDO/XGD1P+ov5wZb2A+stkfp4lx/xCH9LdtSay6Tc/7Uu5AuGC6X
+t7Rh5r+tPwEAAP//AwBQSwMEFAAGAAgAAAAhAKXWp+fAAAAANgEAAAsAAABfcmVscy8ucmVsc4SP
+z2rDMAyH74W9g9F9UdLDGCV2L6WQQy+jfQDhKH9oIhvbG+vbT8cGCrsIhKTv96k9/q6L+eGU5yAW
+mqoGw+JDP8to4XY9v3+CyYWkpyUIW3hwhqN727VfvFDRozzNMRulSLYwlRIPiNlPvFKuQmTRyRDS
+SkXbNGIkf6eRcV/XH5ieGeA2TNP1FlLXN2Cuj6jJ/7PDMMyeT8F/ryzlRQRuN5RMaeRioagv41O9
+kKhlqtQe0LW4+db9AQAA//8DAFBLAwQUAAYACAAAACEAa3mWFoMAAACKAAAAHAAAAHRoZW1lL3Ro
+ZW1lL3RoZW1lTWFuYWdlci54bWwMzE0KwyAQQOF9oXeQ2TdjuyhFYrLLrrv2AEOcGkHHoNKf29fl
+44M3zt8U1ZtLDVksnAcNimXNLoi38Hwspxuo2kgcxSxs4ccV5ul4GMm0jRPfSchzUX0j1ZCFrbXd
+INa1K9Uh7yzdXrkkaj2LR1fo0/cp4kXrKyYKAjj9AQAA//8DAFBLAwQUAAYACAAAACEAlrWt4pYG
+AABQGwAAFgAAAHRoZW1lL3RoZW1lL3RoZW1lMS54bWzsWU9v2zYUvw/YdyB0b2MndhoHdYrYsZst
+TRvEboceaYmW2FCiQNJJfRva44ABw7phhxXYbYdhW4EW2KX7NNk6bB3Qr7BHUpLFWF6SNtiKrT4k
+Evnj+/8eH6mr1+7HDB0SISlP2l79cs1DJPF5QJOw7d0e9i+teUgqnASY8YS0vSmR3rWN99+7itdV
+RGKCYH0i13Hbi5RK15eWpA/DWF7mKUlgbsxFjBW8inApEPgI6MZsablWW12KMU08lOAYyN4aj6lP
+0FCT9DZy4j0Gr4mSesBnYqBJE2eFwQYHdY2QU9llAh1i1vaAT8CPhuS+8hDDUsFE26uZn7e0cXUJ
+r2eLmFqwtrSub37ZumxBcLBseIpwVDCt9xutK1sFfQNgah7X6/W6vXpBzwCw74OmVpYyzUZ/rd7J
+aZZA9nGedrfWrDVcfIn+ypzMrU6n02xlsliiBmQfG3P4tdpqY3PZwRuQxTfn8I3OZre76uANyOJX
+5/D9K63Vhos3oIjR5GAOrR3a72fUC8iYs+1K+BrA12oZfIaCaCiiS7MY80QtirUY3+OiDwANZFjR
+BKlpSsbYhyju4ngkKNYM8DrBpRk75Mu5Ic0LSV/QVLW9D1MMGTGj9+r596+eP0XHD54dP/jp+OHD
+4wc/WkLOqm2chOVVL7/97M/HH6M/nn7z8tEX1XhZxv/6wye//Px5NRDSZybOiy+f/PbsyYuvPv39
+u0cV8E2BR2X4kMZEopvkCO3zGBQzVnElJyNxvhXDCNPyis0klDjBmksF/Z6KHPTNKWaZdxw5OsS1
+4B0B5aMKeH1yzxF4EImJohWcd6LYAe5yzjpcVFphR/MqmXk4ScJq5mJSxu1jfFjFu4sTx7+9SQp1
+Mw9LR/FuRBwx9xhOFA5JQhTSc/yAkArt7lLq2HWX+oJLPlboLkUdTCtNMqQjJ5pmi7ZpDH6ZVukM
+/nZss3sHdTir0nqLHLpIyArMKoQfEuaY8TqeKBxXkRzimJUNfgOrqErIwVT4ZVxPKvB0SBhHvYBI
+WbXmlgB9S07fwVCxKt2+y6axixSKHlTRvIE5LyO3+EE3wnFahR3QJCpjP5AHEKIY7XFVBd/lbobo
+d/ADTha6+w4ljrtPrwa3aeiINAsQPTMR2pdQqp0KHNPk78oxo1CPbQxcXDmGAvji68cVkfW2FuJN
+2JOqMmH7RPldhDtZdLtcBPTtr7lbeJLsEQjz+Y3nXcl9V3K9/3zJXZTPZy20s9oKZVf3DbYpNi1y
+vLBDHlPGBmrKyA1pmmQJ+0TQh0G9zpwOSXFiSiN4zOq6gwsFNmuQ4OojqqJBhFNosOueJhLKjHQo
+UcolHOzMcCVtjYcmXdljYVMfGGw9kFjt8sAOr+jh/FxQkDG7TWgOnzmjFU3grMxWrmREQe3XYVbX
+Qp2ZW92IZkqdw61QGXw4rxoMFtaEBgRB2wJWXoXzuWYNBxPMSKDtbvfe3C3GCxfpIhnhgGQ+0nrP
++6hunJTHirkJgNip8JE+5J1itRK3lib7BtzO4qQyu8YCdrn33sRLeQTPvKTz9kQ6sqScnCxBR22v
+1VxuesjHadsbw5kWHuMUvC51z4dZCBdDvhI27E9NZpPlM2+2csXcJKjDNYW1+5zCTh1IhVRbWEY2
+NMxUFgIs0Zys/MtNMOtFKWAj/TWkWFmDYPjXpAA7uq4l4zHxVdnZpRFtO/ualVI+UUQMouAIjdhE
+7GNwvw5V0CegEq4mTEXQL3CPpq1tptzinCVd+fbK4Ow4ZmmEs3KrUzTPZAs3eVzIYN5K4oFulbIb
+5c6vikn5C1KlHMb/M1X0fgI3BSuB9oAP17gCI52vbY8LFXGoQmlE/b6AxsHUDogWuIuFaQgquEw2
+/wU51P9tzlkaJq3hwKf2aYgEhf1IRYKQPShLJvpOIVbP9i5LkmWETESVxJWpFXtEDgkb6hq4qvd2
+D0UQ6qaaZGXA4E7Gn/ueZdAo1E1OOd+cGlLsvTYH/unOxyYzKOXWYdPQ5PYvRKzYVe16szzfe8uK
+6IlZm9XIswKYlbaCVpb2rynCObdaW7HmNF5u5sKBF+c1hsGiIUrhvgfpP7D/UeEz+2VCb6hDvg+1
+FcGHBk0Mwgai+pJtPJAukHZwBI2THbTBpElZ02atk7ZavllfcKdb8D1hbC3ZWfx9TmMXzZnLzsnF
+izR2ZmHH1nZsoanBsydTFIbG+UHGOMZ80ip/deKje+DoLbjfnzAlTTDBNyWBofUcmDyA5LcczdKN
+vwAAAP//AwBQSwMEFAAGAAgAAAAhAA3RkJ+2AAAAGwEAACcAAAB0aGVtZS90aGVtZS9fcmVscy90
+aGVtZU1hbmFnZXIueG1sLnJlbHOEj00KwjAUhPeCdwhvb9O6EJEm3YjQrdQDhOQ1DTY/JFHs7Q2u
+LAguh2G+mWm7l53JE2My3jFoqhoIOumVcZrBbbjsjkBSFk6J2TtksGCCjm837RVnkUsoTSYkUigu
+MZhyDidKk5zQilT5gK44o49W5CKjpkHIu9BI93V9oPGbAXzFJL1iEHvVABmWUJr/s/04GolnLx8W
+Xf5RQXPZhQUoosbM4CObqkwEylu6usTfAAAA//8DAFBLAQItABQABgAIAAAAIQCCirwT+gAAABwC
+AAATAAAAAAAAAAAAAAAAAAAAAABbQ29udGVudF9UeXBlc10ueG1sUEsBAi0AFAAGAAgAAAAhAKXW
+p+fAAAAANgEAAAsAAAAAAAAAAAAAAAAAKwEAAF9yZWxzLy5yZWxzUEsBAi0AFAAGAAgAAAAhAGt5
+lhaDAAAAigAAABwAAAAAAAAAAAAAAAAAFAIAAHRoZW1lL3RoZW1lL3RoZW1lTWFuYWdlci54bWxQ
+SwECLQAUAAYACAAAACEAlrWt4pYGAABQGwAAFgAAAAAAAAAAAAAAAADRAgAAdGhlbWUvdGhlbWUv
+dGhlbWUxLnhtbFBLAQItABQABgAIAAAAIQAN0ZCftgAAABsBAAAnAAAAAAAAAAAAAAAAAJsJAAB0
+aGVtZS90aGVtZS9fcmVscy90aGVtZU1hbmFnZXIueG1sLnJlbHNQSwUGAAAAAAUABQBdAQAAlgoA
+AAAA
+
+------=_NextPart_01C9A0D0.94088D80
+Content-Location: file:///C:/91645F10/FieldWorksICUsetup_files/colorschememapping.xml
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/xml
+
+<?xml version=3D"1.0" encoding=3D"UTF-8" standalone=3D"yes"?>
+<a:clrMap xmlns:a=3D"http://schemas.openxmlformats.org/drawingml/2006/main"=
+ bg1=3D"lt1" tx1=3D"dk1" bg2=3D"lt2" tx2=3D"dk2" accent1=3D"accent1" accent=
+2=3D"accent2" accent3=3D"accent3" accent4=3D"accent4" accent5=3D"accent5" a=
+ccent6=3D"accent6" hlink=3D"hlink" folHlink=3D"folHlink"/>
+------=_NextPart_01C9A0D0.94088D80
+Content-Location: file:///C:/91645F10/FieldWorksICUsetup_files/header.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="us-ascii"
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml"
+xmlns:o=3D"urn:schemas-microsoft-com:office:office"
+xmlns:w=3D"urn:schemas-microsoft-com:office:word"
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml"
+xmlns:st1=3D"urn:schemas-microsoft-com:office:smarttags"
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<meta name=3DProgId content=3DWord.Document>
+<meta name=3DGenerator content=3D"Microsoft Word 12">
+<meta name=3DOriginator content=3D"Microsoft Word 12">
+<link id=3DMain-File rel=3DMain-File href=3D"../FieldWorksICUsetup.htm">
+<![if IE]>
+<base href=3D"file:///C:\91645F10\FieldWorksICUsetup_files\header.htm"
+id=3D"webarch_temp_base_tag">
+<![endif]><o:SmartTagType
+ namespaceuri=3D"urn:schemas-microsoft-com:office:smarttags" name=3D"countr=
+y-region"/>
+<o:SmartTagType namespaceuri=3D"urn:schemas-microsoft-com:office:smarttags"
+ name=3D"City"/>
+<o:SmartTagType namespaceuri=3D"urn:schemas-microsoft-com:office:smarttags"
+ name=3D"place"/>
+</head>
+
+<body lang=3DEN-US link=3Dblue vlink=3Dpurple>
+
+<div style=3D'mso-element:footnote-separator' id=3Dfs>
+
+<p class=3DMsoNormal><span style=3D'mso-special-character:footnote-separato=
+r'><![if !supportFootnotes]>
+
+<hr align=3Dleft size=3D1 width=3D"33%">
+
+<![endif]></span></p>
+
+</div>
+
+<div style=3D'mso-element:footnote-continuation-separator' id=3Dfcs>
+
+<p class=3DMsoNormal><span style=3D'mso-special-character:footnote-continua=
+tion-separator'><![if !supportFootnotes]>
+
+<hr align=3Dleft size=3D1>
+
+<![endif]></span></p>
+
+</div>
+
+<div style=3D'mso-element:endnote-separator' id=3Des>
+
+<p class=3DMsoNormal><span style=3D'mso-special-character:footnote-separato=
+r'><![if !supportFootnotes]>
+
+<hr align=3Dleft size=3D1 width=3D"33%">
+
+<![endif]></span></p>
+
+</div>
+
+<div style=3D'mso-element:endnote-continuation-separator' id=3Decs>
+
+<p class=3DMsoNormal><span style=3D'mso-special-character:footnote-continua=
+tion-separator'><![if !supportFootnotes]>
+
+<hr align=3Dleft size=3D1>
+
+<![endif]></span></p>
+
+</div>
+
+<div style=3D'mso-element:footer' id=3Df1>
+
+<p class=3DMsoFooter>FieldWorks ICU Setup<span style=3D'mso-tab-count:1'>&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp; </span><!--[if supportFields]><span
+style=3D'mso-element:field-begin'></span> PAGE<span
+style=3D'mso-spacerun:yes'>&nbsp;&nbsp; </span>\* MERGEFORMAT <span
+style=3D'mso-element:field-separator'></span><![endif]--><span style=3D'mso=
+-no-proof:
+yes'>10</span><!--[if supportFields]><span style=3D'mso-element:field-end'>=
+</span><![endif]-->/<span
+style=3D'mso-field-code:" NUMPAGES   \\* MERGEFORMAT "'><span style=3D'mso-=
+no-proof:
+yes'>16</span></span><span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><!--[if supportField=
+s]><span
+style=3D'mso-element:field-begin'></span> SAVEDATE<span
+style=3D'mso-spacerun:yes'>&nbsp; </span>\@ &quot;M/d/yyyy&quot;<span
+style=3D'mso-spacerun:yes'>&nbsp; </span>\* MERGEFORMAT <span style=3D'mso-=
+element:
+field-separator'></span><![endif]--><span style=3D'mso-no-proof:yes'>11/20/=
+2008</span><!--[if supportFields]><span
+style=3D'mso-element:field-end'></span><![endif]--></p>
+
+</div>
+
+</body>
+
+</html>
+
+------=_NextPart_01C9A0D0.94088D80
+Content-Location: file:///C:/91645F10/FieldWorksICUsetup_files/filelist.xml
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/xml; charset="utf-8"
+
+<xml xmlns:o=3D"urn:schemas-microsoft-com:office:office">
+ <o:MainFile HRef=3D"../FieldWorksICUsetup.htm"/>
+ <o:File HRef=3D"themedata.thmx"/>
+ <o:File HRef=3D"colorschememapping.xml"/>
+ <o:File HRef=3D"header.htm"/>
+ <o:File HRef=3D"filelist.xml"/>
+</xml>
+------=_NextPart_01C9A0D0.94088D80--

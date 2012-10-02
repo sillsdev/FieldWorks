@@ -1,0 +1,111 @@
+<VisualStudioProject>
+	<CSHARP
+		ProjectType = "Local"
+		ProductVersion = "7.0.9372"
+		SchemaVersion = "1.0"
+		ProjectGuid = "{BC602F8A-3BD3-4E93-92E6-9230427DD532}"
+	>
+		<Build>
+			<Settings
+				ApplicationIcon = ""
+				AssemblyKeyContainerName = ""
+				AssemblyName = "CollectionGenerator"
+				AssemblyOriginatorKeyFile = ""
+				DefaultClientScript = "JScript"
+				DefaultHTMLPageLayout = "Flow"
+				DefaultTargetSchema = "IE32Nav30"
+				DelaySign = "false"
+				OutputType = "WinExe"
+				RootNamespace = "CollectionGenerator"
+				StartupObject = ""
+			>
+				<Config
+					Name = "Debug"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "0"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "DEBUG;TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					Optimize = "false"
+					OutputPath = "bin\Debug\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+				<Config
+					Name = "Release"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "0"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "false"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					Optimize = "true"
+					OutputPath = "bin\Release\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+			</Settings>
+			<References>
+				<Reference
+					Name = "mscorlib"
+					AssemblyName = "mscorlib"
+				/>
+				<Reference
+					Name = "System"
+					AssemblyName = "System"
+				/>
+				<Reference
+					Name = "System.Drawing"
+					AssemblyName = "System.Drawing"
+				/>
+				<Reference
+					Name = "System.Data"
+					AssemblyName = "System.Data"
+				/>
+				<Reference
+					Name = "Microsoft.JScript"
+					AssemblyName = "Microsoft.JScript"
+				/>
+				<Reference
+					Name = "System.Windows.Forms"
+					AssemblyName = "System.Windows.Forms"
+				/>
+			</References>
+		</Build>
+		<Files>
+			<Include>
+				<File
+					RelPath = "AssemblyInfo.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "TypedCollectionDialog.cs"
+					SubType = "Form"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "TypedCollectionDialog.resx"
+					DependentUpon = "TypedCollectionDialog.cs"
+					BuildAction = "EmbeddedResource"
+				/>
+				<File
+					RelPath = "TypedCollectionGenerator.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+			</Include>
+		</Files>
+	</CSHARP>
+</VisualStudioProject>

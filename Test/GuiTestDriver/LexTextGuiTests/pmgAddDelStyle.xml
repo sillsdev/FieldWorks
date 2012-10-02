@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+  <!-- Tests add and delete styles -->
+  <!--  Assumes original Kalaba database-->
+  <!--  -->
+
+<accil on-fail="assert">
+   <bug id="lt-6808" desc="delete a style get a crash"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+<!-- Go to View/Texts/Edit -->
+	<click select="menubar/view/texts-words/interlinear-texts"/>
+
+<!-- Go to Format/Styles -->
+	<click select="menubar/format/styles"/>
+
+<!--create new style, test tabs-->
+  <on-dialog title="Styles">
+   <click path="9:Add"/>
+   <insert>{DOWN}</insert>
+   <insert>~</insert>
+   <click path="9:Styles:[2]/60:Styles:/9:General/$NL;9:Name:[2]/42:Name:"/>
+	 <insert>{END}+{HOME}</insert>
+	 <insert>Of Course I Have Style</insert>
+   <click path="9:Styles:[2]/pagetab:General"/>
+   <click path="9:Styles:[2]/pagetab:Font"/>
+   <click path="9:Styles:[2]/pagetab:Paragraph"/>
+   <click path="9:Styles:[2]/pagetab:Bullets and Numbering"/>
+   <click path="9:Styles:[2]/pagetab:Border"/>
+   <click path="$ok"/>
+  </on-dialog>
+
+  <!--on-dialog title="Beta Notice"-->
+   <!--click path="$ok"/-->
+  <!--/on-dialog-->
+
+<!-- Go to Format/Styles -->
+	<click select="menubar/format/styles"/>
+
+<!-- delete new style -->
+  <on-dialog title="Styles">
+   <click path="$NL2;34:Of Course I Have Style"/>
+   <glimpse id="check" path="9:Styles:[2]/60:Styles:/9:General/$NL;9:Name:[2]/42:Name:" prop="value" expect="Of Course I Have Style"/>
+   <click path="9:Delete"/>
+   <insert wait="3000">{UP}</insert> <!-- wait for the deletion to finish -->
+   <click path="$ok"/>
+  </on-dialog>
+
+  <!--on-dialog title="Deleting Style">
+   <click path="9:Yes"/>
+  </on-dialog-->
+
+  </on-application>
+</accil>

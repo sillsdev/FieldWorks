@@ -1,0 +1,2601 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>FwTasks</name>
+	</assembly>
+	<members>
+		<member name="T:SIL.FieldWorks.Build.Tasks.AssemblyLinkerTaskEx">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Extends the AssemblyLinkerTask. It adds the name of the resource file as namespace.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.AssemblyLinkerTaskEx.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Generates an assembly manifest.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.AssemblyLinkerTaskEx.Name">
+			------------------------------------------------------------------------------------
+			<summary>
+			The name of the task.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.CacheNewFiles">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CacheNewFiles.ExecuteTask">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Executes the task.
+			</summary>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CacheNewFiles.HandlePropertyName">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the name of the property that holds the handle to the file cache.
+			</summary>
+			<value>The property.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CacheNewFiles.Output">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the output files.
+			</summary>
+			<value>The output files.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.CircularReferencesTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Checks for circular references
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.m_Cache">
+			<summary>The cache of references</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.CircularReferencesTask"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.LoadReferences">
+			------------------------------------------------------------------------------------
+			<summary>
+			Load the reference cache
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.CheckAssembly(SIL.FieldWorks.Build.Tasks.XmlAssembly,System.Collections.Hashtable,System.Collections.Stack)">
+			------------------------------------------------------------------------------------
+			<summary>
+			<para>
+			Performs a single step in a recursive depth-first-search traversal
+			of the target reference tree.
+			</para>
+			<para>
+			The current target is first set to the "visiting" state, and pushed
+			onto the "visiting" stack.
+			</para>
+			<para>
+			An exception is then thrown if any child of the current node is in
+			the visiting state, as that implies a circular dependency. The
+			exception contains details of the cycle, using elements of the
+			"visiting" stack.
+			</para>
+			<para>
+			If any child has not already been "visited", this method is called
+			recursively on it.
+			</para>
+			<para>
+			The current target is set to the "visited" state.
+			</para>
+			</summary>
+			<param name="assembly">The assembly to inspect.</param>
+			<param name="states">A mapping from targets to states. The states in question are
+			<see cref="F:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.State.Visiting"/> or <see cref="F:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.State.Visited"/>. Must not be
+			<see langword="null"/>.</param>
+			<param name="visiting">A stack of targets which are currently being visited. Must
+			not be <see langword="null"/>.</param>
+			<returns><c>false</c> if circular reference was detected, otherwise <c>true</c>.
+			</returns>
+			<exception cref="T:NAnt.Core.BuildException">A circular dependency is detected.</exception>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Check for circular references
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.CreateCircularString(System.String,System.Collections.Stack)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Builds an appropriate description detailing a specified circular
+			dependency.
+			</summary>
+			<param name="end">The dependency to stop at. Must not be <see langword="null"/>.</param>
+			<param name="stack">A stack of dependencies. Must not be <see langword="null"/>.</param>
+			<returns>
+			A <see cref="T:NAnt.Core.BuildException"/> detailing the specified circular
+			dependency.
+			</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.ReferenceCacheName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the name of the reference cache file
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.State">
+			<summary>The visiting state</summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.State.None">
+			<summary>Not yet visited</summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.State.Visiting">
+			<summary>Processing not yet finished</summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CircularReferencesTask.State.Visited">
+			<summary>Already checked</summary>
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.ClWorkaround">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ClWorkaround.PrepareProcess(System.Diagnostics.Process)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Updates the <see cref="T:System.Diagnostics.ProcessStartInfo"/> of the specified
+			<see cref="T:System.Diagnostics.Process"/>.
+			</summary>
+			<param name="process">The <see cref="T:System.Diagnostics.Process"/> of which
+			the <see cref="T:System.Diagnostics.ProcessStartInfo"/> should be updated.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.COMRegisterExTask">
+			<summary>Register COM servers or typelibraries.</summary>
+			<remarks>
+				<para>COM register task will try and register any type of COM related file that needs registering. .exe files will be registered as exe servers, .tlb files registered with RegisterTypeLib and for all other filetypes it will attempt to register them as dll servers.</para>
+			</remarks>
+			<example>
+			  <para>Register a single dll server.</para>
+			  <code><![CDATA[<comregister file="myComServer.dll"/>]]></code>
+			  <para>Register a single exe server </para>
+			  <code><![CDATA[<comregister file="myComServer.exe"/>]]></code>
+			  <para>Register a set of COM files at once.</para>
+			  <code>
+			<![CDATA[
+			<comregister unregister="false">
+				<fileset>
+					<includes name="an_ExeServer.exe"/>
+					<includes name="a_TypeLibrary.tlb"/>
+					<includes name="a_DllServer.dll"/>
+					<includes name="an_OcxServer.ocx"/>
+				</fileset>
+			</comregister>
+			]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.LoadTypeLib(System.String,System.Object@)">
+			<summary></summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.RegisterTypeLib(System.Object,System.String,System.String)">
+			<summary></summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.LoadLibrary(System.String)">
+			<summary></summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.FreeLibrary(System.IntPtr)">
+			<summary></summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.GetProcAddress(System.IntPtr,System.String)">
+			<summary></summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the job.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.RegisterDllServer(System.String)">
+			<summary>
+			Register an inproc COM server, usually a .dll or .ocx
+			</summary>
+			<param name="path"></param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.RegisterTypelib(System.String)">
+			<summary>
+			Register a COM type library
+			</summary>
+			<param name="path"></param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.RegisterExeServer(System.String)">
+			<summary>
+			Register exe servers
+			</summary>
+			<param name="path"></param>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.COMRegisterExTask.FileName">
+			<summary>The name of the file to register.  This is provided as an alternate to using the task's fileset.</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.COMRegisterExTask.Unregister">
+			<summary>Unregistering this time. ( /u paramater )Default is "false".</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.COMRegisterExTask.COMRegisterFileSet">
+			<summary>the set of files to register..</summary>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.COMRegisterExTask.DynamicPInvoke">
+			<summary>
+			Helper class to dynamically build an assembly with the correct
+			P/Invoke signature
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.COMRegisterExTask.DynamicPInvoke.DynamicDllFuncInvoke(System.String,System.String)">
+			<summary>
+			register a given dll path
+			</summary>
+			<param name="dll"></param>
+			<param name="entrypoint"></param>
+			<returns></returns>
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.ConcatExTask">
+			<summary>
+			A task that concatenates a set of files.
+			Loosely based on Ant's Concat task.
+			</summary>
+			<remarks>
+			This task takes a set of input files in a fileset
+			and concatenates them into a single file. You can
+			either replace the output file, or append to it
+			by using the append attribute.
+
+			The order the files are concatenated in is not
+			especified.
+			</remarks>
+			<example>
+			  <code><![CDATA[
+			  <concat destfile="${outputdir}/Full.txt">
+				 <fileset>
+					<includes name="${outputdir}/Test-*.txt" />
+				 </fileset>
+			  </concat>
+
+			  <concat destfile="${outputdir}/Full.txt" append="true" file="${outputdir}/Test1.txt"/>
+			  ]]></code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.ConcatExTask.InitializeTask(System.Xml.XmlNode)">
+			<summary>
+			Initializes task and ensures the supplied attributes are valid.
+			</summary>
+			<param name="taskNode">Xml node used to define this task instance.</param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.ConcatExTask.GetOutputPath">
+			------------------------------------------------------------------------------------
+			<summary>
+			<summary>Gets the complete output path.</summary>
+			</summary>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.ConcatExTask.NeedsCompiling">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines if we have to compile
+			</summary>
+			<returns><c>true</c> if compilation is necessary, otherwise <c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.ConcatExTask.ExecuteTask">
+			<summary>
+			This is where the work is done
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.ConcatExTask.OpenDestinationFile">
+			<summary>
+			Opens the destination file according
+			to the specified flags
+			</summary>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.ConcatExTask.AppendFiles(System.IO.Stream)">
+			<summary>
+			Appends all specified files
+			</summary>
+			<param name="output">File to write to</param>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.ConcatExTask.Destination">
+			<summary>
+			Name of Destination file. If this is not specified, the output goes to the console.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.ConcatExTask.Append">
+			<summary>
+			Whether to append to the destination file (true),
+			or replace it (false). Default is false.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.ConcatExTask.SmartLines">
+			<summary>
+			Whether to display all lines (false) or display same consecutive lines
+			only once and the number of occurences in a second line. Default is false.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.ConcatExTask.RemoveLeadingWhitespace">
+			<summary>
+			Whether to remove the leading whitespace from the file. Default is false.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.ConcatExTask.FileSet">
+			<summary>
+			Set of files to use as input
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.ConcatExTask.Filename">
+			------------------------------------------------------------------------------------
+			<summary>
+			Single file as input
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.ConcatExTask.Force">
+			------------------------------------------------------------------------------------
+			<summary>
+			Force concatenating even if not out of date
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask">
+			<summary>
+			Copies an assembly or set of assemblies and all non-GAC referenced assemblies to a directory.
+			</summary>
+			<remarks>
+			  <para>
+			  The target directory is emptied out first, and then the Files are copied.
+			  </para>
+			  <para>
+			  A <see cref="T:NAnt.Core.Types.FileSet"/> can be used to select several assemblies to copy.
+			  </para>
+			</remarks>
+			<example>
+			  <para>Copy a one assembly and all non-GAC referenced assemblies to a directory.</para>
+			  <code>
+				<![CDATA[
+			<copyasmrefs todir="${installer.dir}">
+				<fileset basedir="${fwroot}/Output/${config}">
+					<includes name="Te.exe" />
+				</fileset>
+			</copyasmrefs>
+				]]>
+			  </code>
+			  <para>Copy a several assemblies and all non-GAC referenced assemblies to a directory.
+			  Copy any related files, as well.</para>
+			  <code>
+				<![CDATA[
+			<copyasmrefs todir="${installer.dir}" copyrelated="true">
+				<fileset basedir="${fwroot}/Output/${config}">
+					<!-- Main assembly. -->
+					<includes name="LexEd.exe" />
+					<!-- Non-referenced, but required, runtime assemblies. -->
+					<includes name="AdapterLibrary.dll" />
+					<includes name="LingCmnDlgs.dll" />
+				</fileset>
+			</copyasmrefs>
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.m_toDirectory">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.m_fileset">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.m_assemblyNames">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.m_skipAssemblyNames">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.m_copyRelated">
+			<summary></summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.InitializeTask(System.Xml.XmlNode)">
+			<summary>
+			Checks whether the 'file' attribute and the 'fileset' element have both been set.
+			</summary>
+			<param name="taskNode">The <see cref="T:System.Xml.XmlNode"/> used to initialize the task.</param>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.ExecuteTask">
+			<summary>
+			Executes the Copy task.
+			</summary>
+			<exception cref="T:NAnt.Core.BuildException">A assembly that has to be copied does not exist or could not be copied.</exception>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.CopyFile(System.String,System.String@)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copy a single file
+			</summary>
+			<param name="pathname">path name of file to copy from</param>
+			<param name="name">returns the name of the file copied</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.ProcessAssembly(System.String)">
+			<summary>
+			Process one assembly.
+			</summary>
+			<param name="filename">The filename of the assembly to process, without its path.</param>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.ToDirectory">
+			<summary>
+			The directory to copy to.
+			</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.CopyFileSet">
+			<summary>
+			Used to select the files to copy. To use a <see cref="T:NAnt.Core.Types.FileSet"/>,
+			the <see cref="P:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.ToDirectory"/> attribute must be set.
+			</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.CopyRelated">
+			<summary>
+			Copy related files, such as .pdb and .xml. These will use the pattern foo.*.
+			The default is <see langword="false" />.
+			</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyAsmRefsTask.AssemblyNames">
+			<summary>
+			Get the collection of assembly names.
+			</summary>
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.CopyFromCache">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyFromCache.ExecuteTask">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Executes the task.
+			</summary>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyFromCache.HandlePropertyName">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the name of the property that holds the handle to the file cache.
+			</summary>
+			<value>The property.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyFromCache.OutputDir">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the output dir.
+			</summary>
+			<value>The output dir.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.CopyReferencesTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Copy references to todir
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.m_fForce">
+			<summary>Set to <c>true</c> to force processing all files. Defaults to <c>false</c>.
+			Used by the <see cref="T:SIL.FieldWorks.Build.Tasks.DelReferencesTask"/>.</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Executes the Copy task.
+			</summary>
+			<exception cref="T:NAnt.Core.BuildException">A file that has to be copied does not exist or
+			could not be copied.</exception>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.DoFileOperations">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copy files and unset read-only attribute
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.BaseDoFileOperations">
+			<summary>
+			Actually does the file copies.
+			</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.AddAssemblyAndRelatedFiles(SIL.FieldWorks.Build.Tasks.XmlAssembly,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Add the referenced assembly to the list of assemblies, resolve any referenced
+			assemblies, and add the XML and PDB files.
+			</summary>
+			<param name="xmlAssembly">The assembly</param>
+			<param name="referenceName">The name (and path) of the referenced assembly</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.CreateDirectories(System.IO.DirectoryInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Create any specified directories that weren't created during the copy (ie: empty
+			directories).
+			</summary>
+			<param name="srcBaseInfo">Base directory</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.SaveReferences">
+			------------------------------------------------------------------------------------
+			<summary>
+			Save the reference cache
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.LoadReferences">
+			------------------------------------------------------------------------------------
+			<summary>
+			Load the reference cache
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.ResolveReferences(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Resolve references of a reference
+			</summary>
+			<param name="referencePath">Path to the referenced assembly</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.AddFile(System.String,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Add a file to the list of files to copy. The filename is built from the assembly
+			name and the new extension.
+			</summary>
+			<param name="srcName">Path and name of file</param>
+			<param name="newExtension">New extension</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.ResolveAssemblies">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copying of assemblies that the referenced assemblies reference.
+			Defaults to <c>true</c>.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.Append">
+			------------------------------------------------------------------------------------
+			<summary>
+			Set to true to append to the existing list of references for this assembly.
+			Defaults to <c>false</c>.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.CopyReferencesTask.ReferenceCacheName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the name of the reference cache file
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.DbVersionTask">
+			<summary>
+			Creates the DbVersion.cs file
+			</summary>
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.FwBaseTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Base class for FwTasks
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.FwBaseTask.FileUpdated(System.Collections.Specialized.StringCollection)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Check if one of the <paramref name='files'/> has changed since the last compile.
+			</summary>
+			<param name="files">Name of files</param>
+			<returns><c>true</c> if one of the files has changed, otherwise <c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.FwBaseTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the generation
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FwBaseTask.ClassNameRegex">
+			<summary>
+			Gets the class name regular expression for the language of the
+			current compiler.
+			</summary>
+			<value>
+			Class name regular expression for the language of the current
+			compiler.
+			</value>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FwBaseTask.NamespaceRegex">
+			<summary>
+			Gets the namespace regular expression for the language of the current compiler.
+			</summary>
+			<value>
+			Namespace regular expression for the language of the current
+			compiler.
+			</value>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FwBaseTask.OutputTarget">
+			------------------------------------------------------------------------------------
+			<summary>
+			Override this attribute. We don't use it, but it is marked as "required" in the
+			base class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.DbVersionTask.#ctor">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.DbVersionTask"/> class.
+			</summary>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.DbVersionTask.NeedsCompiling">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines if we have to compile
+			</summary>
+			<returns><c>true</c> if compilation is necessary, otherwise <c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.DbVersionTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the generation
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.DbVersionTask.Include">
+			------------------------------------------------------------------------------------
+			<summary>
+			The name of the include file
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.DbVersionTask.Extension">
+			------------------------------------------------------------------------------------
+			<summary>
+			Returns the file Extension required by the current compiler
+			</summary>
+			<returns>Returns the file Extension required by the current compiler</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.DelReferencesTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Delete references
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.DelReferencesTask.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Creates a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.DelReferencesTask"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.DelReferencesTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Executes the Copy task.
+			</summary>
+			<exception cref="T:NAnt.Core.BuildException">A file that has to be deleted could not be
+			deleted.</exception>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.DelReferencesTask.DoFileOperations">
+			------------------------------------------------------------------------------------
+			<summary>
+			Does the actual copying/deleting of files
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.FilesCached">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Determines if files are stored in FileCache.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.FilesCached.ExecuteTask">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Executes the task.
+			</summary>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FilesCached.PropertyName">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the name of the property.
+			</summary>
+			<value>The property.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FilesCached.HandlePropertyName">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the name of the property that holds the handle to the file cache.
+			</summary>
+			<value>The property.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FilesCached.Parameters">
+			------------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the name of the optional parameters.
+			</summary>
+			<value>The parameters.</value>
+			------------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FilesCached.Files">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the files.
+			</summary>
+			<value>The files.</value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.FwInitProject">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Initialize project variable with name of *.??proj file for use with VS-convert
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.FwInitProject.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the job
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.FwRootTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Set the FwRoot property if not already set.
+			</summary>
+			<example>
+			<para>Set the fwroot property. If set use the environment variable FWROOT, otherwise
+			calculate the base directory from the directory where the build file is located.</para>
+			<code><![CDATA[
+			<fwroot test="bld/SetupInclude.xml"/>
+			]]></code>
+			</example>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.FwRootTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the job
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.FwRootTask.FindFwRoot(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Find the fwroot directory
+			</summary>
+			<param name="pathToStartWith">Path that we use to start the search</param>
+			<returns>The fwroot, or <c>string.Empty</c> if not found.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.FwRootTask.TestFile">
+			------------------------------------------------------------------------------------
+			<summary>
+			The name of the file that must be found in the given relative position to fwroot.
+			</summary>
+			<remarks>If the environment variable FWROOT is not set, the fwroot task looks in
+			the directory of the current build file for the test file. If it is not found there
+			it looks in the parent directory and so on.</remarks>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:NAnt.DotNet.Tasks.FwSandcastleTask">
+			<summary>
+			Runs Sandcastle 2.4.10115 (1/16/2008) to create documentation.
+			</summary>
+			<remarks>
+			  <para>
+			  See the <see href="http://www.codeplex.com/Sandcastle">Sandcastle home page</see> for more
+			  information.
+			  </para>
+			</remarks>
+			<example>
+			  <para>
+			  Document two assemblies using Sandcastle.
+			  </para>
+			  <code>
+				<![CDATA[
+					<target name="sandcastle-VS2005"
+						description="Builds VS2005-style class documentation using Sandcastle">
+						<property name="sandcastledoctype" value="vs2005"/>
+						<call target="sandcastle" cascade="true"/>
+					</target>
+					<target name="sandcastle-Hana"
+						description="Builds Hana-style class documentation using Sandcastle">
+						<property name="sandcastledoctype" value="Hana"/>
+						<call target="sandcastle" cascade="true"/>
+					</target>
+					<target name="sandcastle-Prototype"
+						description="Builds class documentation using Sandcastle">
+						<property name="sandcastledoctype" value="Prototype"/>
+						<call target="sandcastle" cascade="true"/>
+					</target>
+					<target name="sandcastle">
+						<fwsandcastle
+							verbose="${verbose}"
+							documenttype="${sandcastledoctype}"
+							sandcastlepath="${fwroot}/bin/Sandcastle"
+							hhpath="C:/Program Files/HTML Help Workshop"
+							outputpath="${dir.fwoutput}/docs/HTML/FieldWorks">
+							<assemblies basedir="${dir.fwoutput}/${config}">
+								<include name="BasicUtils.dll"/>
+								<include name="ZipUtils.dll"/>
+							</assemblies>
+						</fwsandcastle>
+						<if test="${file::exists('${dir.fwoutput}/docs/FieldWorks_Classes/Chm/FieldWorks_Classes.chm')}">
+							<copy
+								file="${dir.fwoutput}/docs/FieldWorks_Classes/Chm/FieldWorks_Classes.chm"
+								tofile="${dir.fwoutput}/docs/FieldWorks_Classes.chm"/>
+						</if>
+					</target>
+				]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.InitializeTask(System.Xml.XmlNode)">
+			<summary>
+			Initializes the task.
+			</summary>
+			<param name="taskNode"><see cref="T:System.Xml.XmlNode"/> containing the XML fragment used to define this task instance.</param>
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.ExecuteTask">
+			<summary>
+			Builds the documentation with Sandcastle.
+			</summary>
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.GetXMLCommentsFilePath(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Get the XML comments file path for a specified assembly.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.BuildDocumentation">
+			------------------------------------------------------------------------------------
+			<summary>
+			Build documentation.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.SetStartInfo(System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Set start information (e.g., working directory, environment variables) for
+			sandcastle processes.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.RunMRefBuilder(System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Compile assembly reflection report using the MRefBuilder utility.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.ApplyXSLT(System.String[],System.String,System.String,System.String,System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Apply an XSLT using the XSLTransform utility.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.CopySupportingFiles(System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copy supporting files (icons, scripts and styles) for generating HTML.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.CopyComments">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copy XML comments file.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.RunBuildAssembler(System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Generate HTML using BuildAssembler utility.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.SetupChmFolder">
+			------------------------------------------------------------------------------------
+			<summary>
+			Create the Chm folder and copy supporting files.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.RunChmBuilder(System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Build the HTML Help project files using the ChmBuilder utility.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.RunDBCSFix(System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Fix Unicode code point problems using the RunDBCSFix utility.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.CompileChmFile(System.Diagnostics.ProcessStartInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Build the CHM using the HTML Help compiler.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:NAnt.DotNet.Tasks.FwSandcastleTask.CaptureStdOut(System.Diagnostics.Process,System.Boolean)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Capture Standard Output and optionally display it in the NAnt log.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:NAnt.DotNet.Tasks.FwSandcastleTask.Assemblies">
+			<summary>
+			The set of assemblies to document.
+			</summary>
+		</member>
+		<member name="P:NAnt.DotNet.Tasks.FwSandcastleTask.DocumentType">
+			<summary>
+			Type of documentation to generate.
+			</summary>
+		</member>
+		<member name="P:NAnt.DotNet.Tasks.FwSandcastleTask.SandcastlePath">
+			<summary>
+			Path to Sandcastle location.
+			</summary>
+		</member>
+		<member name="P:NAnt.DotNet.Tasks.FwSandcastleTask.HHPath">
+			<summary>
+			Path to HTML Help Workshop location.
+			</summary>
+		</member>
+		<member name="P:NAnt.DotNet.Tasks.FwSandcastleTask.OutputPath">
+			<summary>
+			Path to location to generate documentation into.
+			</summary>
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.GetTypeLibTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Gets the required information about a type library from the registry
+			</summary>
+			<example>
+			<para>Find the path for the COM object with the specified <c>guid</c> (and version
+			numbers/lcid) and store the result in the named property <c>DbAccess.path</c></para>
+			<code><![CDATA[
+			<gettypelib guid="{AAB4A4A1-3C83-11D4-A1BB-00C04F0C9593}" propertyname="DbAccess.path"
+			versionmajor="1" versionminor="0" lcid="0"/>
+			]]></code>
+			</example>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.GetTypeLibTask.#ctor">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.GetTypeLibTask"/> class.
+			</summary>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.GetTypeLibTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the job
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.GetTypeLibTask.Guid">
+			------------------------------------------------------------------------------------
+			<summary>
+			Guid of the type library
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.GetTypeLibTask.PropertyName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Name of the property where the path is stored
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.GetTypeLibTask.VersionMajor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Major version number for type library
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.GetTypeLibTask.VersionMinor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Minor version number for type library
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.GetTypeLibTask.Lcid">
+			------------------------------------------------------------------------------------
+			<summary>
+			LCID for type library
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.IdlImpTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Imports the interfaces of an IDL file.
+			</summary>
+			<example>
+			<para>Import the types specified in <c>idlfile</c> and create a C# file <c>output</c>.
+			The type will be put in <c>namespace</c>, and the <c>using</c> namespaces will be put
+			at the beginning of the file.</para>
+			<code><![CDATA[
+			<idlimp output="${dir.srcProj}\DbAccess.cs" idlfile="${dir.outputBase}\Common\DbAccessTlb.idl"
+				namespace="SIL.FieldWorks.Common.COMInterfaces">
+				<using name="FwKernelLib" />
+				<using name="FwDbAccess" />
+			</idlimp>
+			]]></code>
+			</example>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.IdlImpTask.#ctor">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.IdlImpTask"/> class.
+			</summary>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.IdlImpTask.m_refFiles">
+			<summary>List of files for resolving referenced types</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.IdlImpTask.NeedsCompiling">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines if we have to compile
+			</summary>
+			<returns><c>true</c> if compilation is necessary, otherwise <c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.IdlImpTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the import
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.Namespace">
+			<summary>Namespace.</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.ConfigFile">
+			------------------------------------------------------------------------------------
+			<summary>
+			Configuration file
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.UsingNamespaces">
+			------------------------------------------------------------------------------------
+			<summary>
+			Additional namespaces that are used.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.IdhFiles">
+			------------------------------------------------------------------------------------
+			<summary>
+			Source IDH files used to retrieve comments from.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.ReferenceFiles">
+			------------------------------------------------------------------------------------
+			<summary>
+			Reference metadata from the specified assembly files.
+			</summary>
+			<value></value>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.CreateXmlComments">
+			------------------------------------------------------------------------------------
+			<summary>
+			Creation of dummy XML comments. Defaults to <c>true</c>.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.IdlFile">
+			------------------------------------------------------------------------------------
+			<summary>
+			The name of the IDL file
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.Extension">
+			------------------------------------------------------------------------------------
+			<summary>
+			Returns the file Extension required by the current compiler
+			</summary>
+			<returns>Returns the file Extension required by the current compiler</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.IdlImpTask.UsingNamespace">
+			------------------------------------------------------------------------------------
+			<summary>
+			Class used for storing the referenced namespaces - basically a string
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.IdlImpTask.UsingNamespace.#ctor">
+			--------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.IdlImpTask.UsingNamespace"/> class.
+			</summary>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.UsingNamespace.Namespace">
+			--------------------------------------------------------------------------------
+			<summary>
+			The namespace
+			</summary>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.IdlImpTask.SourceIdhFile">
+			------------------------------------------------------------------------------------
+			<summary>
+			Class used for storing the source IDH files - basically a string
+			</summary>
+			<remarks>It should be possible to get the names of the IDH files directly from
+			the IDL file - the preprocessor embedds information about line numbers and source
+			files in it, but for now doing it this way is easier.</remarks>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.IdlImpTask.SourceIdhFile.IdhFile">
+			--------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the idh file.
+			</summary>
+			<value>The idh file.</value>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.ImportRegistryTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Import registry entires from a file. This is similar to what regedit.exe does, but it
+			doesn't require
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Executes the task.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.DeleteKeys">
+			------------------------------------------------------------------------------------
+			<summary>
+			Deletes the keys.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.ReadLine">
+			------------------------------------------------------------------------------------
+			<summary>
+			Reads the next line.
+			</summary>
+			<returns>The next line, or <c>null</c> if EOF</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.UnreadLine(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Unreads a line.
+			</summary>
+			<param name="line">The line.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.GetHive(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the hive.
+			</summary>
+			<param name="hiveName">Name of the hive.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.ProcessKey(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the key.
+			</summary>
+			<param name="line">The line.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.ProcessValue(Microsoft.Win32.RegistryKey,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes the value.
+			</summary>
+			<param name="key">The key.</param>
+			<param name="line">The line.</param>
+			<returns><c>true</c> if we set the default value. This is an indication that we
+			created the key, otherwise we might just set values on an existing key.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.Unregister">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets a value indicating whether to register or unregister.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.RegistryFile">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the registry file.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.PerUser">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the PerUser flag. If this value is <c>true</c> all references to
+			HKEY_CLASSES_ROOT are replaced with HKEY_CURRENT_USER\Software\Classes.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.DeleteKeyInfo">
+			<summary>Contains information about a key for delete</summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.DeleteKeyInfo.Hive">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.DeleteKeyInfo.KeyName">
+			<summary></summary>
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.DeleteKeyInfo.IsCreated">
+			<summary></summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.DeleteKeyInfo.#ctor(Microsoft.Win32.RegistryKey,System.String,System.Boolean)">
+			--------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.ImportRegistryTask.DeleteKeyInfo"/> struct.
+			</summary>
+			<param name="hive">The hive.</param>
+			<param name="keyName">Name of the key.</param>
+			<param name="fCreated">created</param>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.MakeMSMFileListsTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Summary description for MakeMSMFileListsTask.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.MakeMSMFileListsTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.MakeMSMFileListsTask.CountAssemblyReferencesAndReloadFileList">
+			------------------------------------------------------------------------------------
+			<summary>
+			Iterate through each collection of assembly names to gather a count of references
+			to each assembly.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.MakeMSMFileListsTask.BuildAssemblyFileLists">
+			------------------------------------------------------------------------------------
+			<summary>
+			Creates text files containing the assemblies required for each merge module.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.MakeMSMFileListsTask.AddFileName(System.IO.StreamWriter,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Adds the assembly name to the file list. If CopyRelated is set to true we also
+			add the related files.
+			</summary>
+			<param name="currFile">File list stream</param>
+			<param name="asmName">Current assembly name</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.MakeMSMFileListsTask.AssemblyNames">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the current collection of assembly names.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:NAnt.Contrib.Tasks.MidlExTask">
+			<summary>
+			This tasks allows you to run MIDL.exe.
+			</summary>
+			<remarks>
+			This task only supports a small subset of the
+			MIDL.EXE command line switches, but you can use
+			the options element to specify any other
+			unsupported commands you want to specify.
+			</remarks>
+			<example>
+			  <code><![CDATA[
+			  <midl
+				 env="win32"
+				 Oi="cf"
+				 tlb="${outputdir}\TempAtl.tlb"
+				 header="${outputdir}\TempAtl.h"
+				 iid="${outputdir}\TempAtl_i.c"
+				 proxy="${outputdir}\TempAtl_p.c"
+				 filename="TempAtl.idl"
+			  >
+				 <defines>
+					<option name="_DEBUG"/>
+					<option name="WIN32" value="1"/>
+				 </defines>
+				 <options>
+					<option name="/mktyplib203"/>
+					<option name="/error" value="allocation"/>
+				 </options>
+			  </midl>
+			  ]]></code>
+			</example>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MidlExTask.InitializeTask(System.Xml.XmlNode)">
+			<summary>
+			Initializes task and ensures the supplied attributes are valid.
+			</summary>
+			<param name="taskNode">Xml node used to define this task instance.</param>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MidlExTask.ExecuteTask">
+			<summary>
+			This is where the work is done
+			</summary>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MidlExTask.NeedsCompiling">
+			<summary>
+			Check output files to see if we need rebuilding.
+			</summary>
+			<returns>true if a rebuild is needed</returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MidlExTask.NeedsCompiling(System.String)">
+			<summary>
+
+			</summary>
+			<param name="outputFile"></param>
+			<returns></returns>
+		</member>
+		<member name="M:NAnt.Contrib.Tasks.MidlExTask.WriteRSP(System.IO.TextWriter)">
+			<summary>
+
+			</summary>
+			<param name="writer"></param>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Acf">
+			<summary>
+			The /acf switch allows the user to supply an
+			explicit ACF file name. The switch also
+			allows the use of different interface names in
+			the IDL and ACF files.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Align">
+			<summary>
+			The /align switch is functionally the same as the
+			MIDL /Zp option and is recognized by the MIDL compiler
+			solely for backward compatibility with MkTypLib.
+			</summary>
+			<remarks>The alignment value can be 1, 2, 4, or 8.</remarks>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.AppConfig">
+			<summary>
+			The /app_config switch selects application-configuration
+			mode, which allows you to use some ACF keywords in the
+			IDL file. With this MIDL compiler switch, you can omit
+			the ACF and specify an interface in a single IDL file.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Char">
+			<summary>
+			The /char switch helps to ensure that the MIDL compiler
+			and C compiler operate together correctly for all char
+			and small types.
+			</summary>
+			<remarks>Can be one of signed | unsigned | ascii7 </remarks>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Client">
+			<summary>
+			The /client switch directs the MIDL compiler to generate
+			client-side C source files for an RPC interface
+			</summary>
+			<remarks>can be one of stub | none</remarks>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.CStub">
+			<summary>
+			The /cstub switch specifies the name of the client
+			stub file for an RPC interface.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.DllData">
+			<summary>
+			The /dlldata switch is used to specify the file
+			name for the generated dlldata file for a proxy
+			DLL. The default file name Dlldata.c is used if
+			the /dlldata switch is not specified.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Env">
+			<summary>
+			The /env switch selects the
+			environment in which the application runs.
+			</summary>
+			<remarks>It can take the values win32 and win64</remarks>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Oi">
+			<summary>
+			The /Oi switch directs the MIDL compiler to
+			use a fully-interpreted marshaling method.
+			The /Oic and /Oicf switches provide additional
+			performance enhancements.
+			</summary>
+			<remarks>
+			If you specify the Oi attribute, you must set it to
+			one of the values:
+			- Oi=""
+			- Oi="c"
+			- Oi="f"
+			- Oi="cf"
+			</remarks>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Tlb">
+			<summary>
+			The /tlb switch specifies a file name
+			for the type library generated by the MIDL compiler.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Header">
+			<summary>
+			The /header switch specifies the name of the header file.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Iid">
+			<summary>
+			The /iid switch specifies the name of the
+			interface identifier file for a COM interface,
+			overriding the default name obtained by
+			adding _i.c to the IDL file name.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Proxy">
+			<summary>
+			The /proxy switch specifies the name of
+			the interface proxy file for a COM interface.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Filename">
+			<summary>
+			Name of .IDL file to process.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Rawoptions">
+			<summary>
+			Raw options
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.OutputDir">
+			<summary>Output directory for the compilation target.</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Options">
+			<summary>
+			Additional options to pass to midl.exe.
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.Defines">
+			<summary>
+			Macro definitions to pass to mdil.exe.
+			Each entry will generate a /D
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.ProgramFileName">
+			<summary>
+			Filename of program to execute
+			</summary>
+		</member>
+		<member name="P:NAnt.Contrib.Tasks.MidlExTask.ProgramArguments">
+			<summary>
+			Arguments of program to execute
+			</summary>
+		</member>
+		<member name="T:NAnt.Core.Tasks.NAntExTask">
+			<summary>
+			Runs NAnt on a supplied build file. This can be used to build subprojects.
+			</summary>
+			<example>
+			  <para>Build the BuildServer project located in a different directory but only if the <c>debug</c> property is not true.</para>
+			  <code><![CDATA[<nant unless="${debug}" buildfile="${src.dir}/Extras/BuildServer/BuildServer.build"/>]]></code>
+			</example>
+		</member>
+		<member name="M:NAnt.Core.Tasks.NAntExTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do it! - identical to that in NantTask.cs, but unfortunately NantTask.RunBuild is
+			private so that we can't override it.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:NAnt.Core.Tasks.NAntExTask.PassByRef">
+			------------------------------------------------------------------------------------
+			<summary>
+			Properties that are passed to the called build file and are passed back, i.e.
+			modified in this build file. Comparable to passing parameters by reference.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:NAnt.NUnit2.Tasks.NUnit2ExTask">
+			<summary>Runs tests using the NUnit framework.</summary>
+			<remarks>
+			  <para>See the <a href="http://nunit.sf.net">NUnit home page</a> for more information.</para>
+			</remarks>
+			<example>
+			  <para>Run tests in the <c>MyProject.Tests.dll</c> assembly.</para>
+			  <code>
+			<![CDATA[
+			<nunit2>
+				<test assemblyname="MyProject.Tests.dll"/>
+			</nunit2>
+			]]>
+			  </code>
+			  <para>Run all tests in files listed in the <c>tests.txt</c> file.</para>
+			  <code>
+			<![CDATA[
+			<nunit2>
+				<test>
+					<includesList name="tests.txt" />
+				</test>
+			</nunit2>
+			]]>
+			  </code>
+			</example>
+		</member>
+		<member name="M:NAnt.NUnit2.Tasks.NUnit2ExTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:NAnt.NUnit2.Tasks.NUnit2ExTask.ExcludedCategories">
+			------------------------------------------------------------------------------------
+			<summary>
+			Excluded categories for tests.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:NAnt.NUnit2.Tasks.NUnit2ExTask.UseX86">
+			<summary>
+			Gets or sets a value indicating whether to use the X86 version of nunit.
+			</summary>
+			<value></value>
+		</member>
+		<member name="P:NAnt.NUnit2.Tasks.NUnit2ExTask.Tests">
+			<summary>
+			Tests to run.
+			</summary>
+		</member>
+		<member name="P:NAnt.NUnit2.Tasks.NUnit2ExTask.ProgramFileName">
+			------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:NAnt.NUnit2.Tasks.NUnit2ExTask.ProgramArguments">
+			------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:NAnt.NUnit2.Tasks.NUnit2ExTaskWorkaround">
+			<summary>Runs tests using the NUnit framework.</summary>
+			<remarks>
+			  <para>See the <a href="http://nunit.sf.net">NUnit home page</a> for more information.</para>
+			</remarks>
+			<example>
+			  <para>Run tests in the <c>MyProject.Tests.dll</c> assembly.</para>
+			  <code>
+			<![CDATA[
+			<nunit2>
+				<test assemblyname="MyProject.Tests.dll"/>
+			</nunit2>
+			]]>
+			  </code>
+			  <para>Run all tests in files listed in the <c>tests.txt</c> file.</para>
+			  <code>
+			<![CDATA[
+			<nunit2>
+				<test>
+					<includesList name="tests.txt" />
+				</test>
+			</nunit2>
+			]]>
+			  </code>
+			</example>
+		</member>
+		<member name="P:NAnt.NUnit2.Tasks.NUnit2ExTaskWorkaround.ProgramFileName">
+			------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:NAnt.NUnit2.Tasks.NUnit2ExTaskWorkaround.ProgramArguments">
+			------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.PropertyDeleteTask">
+			<summary>
+			Delete a property
+			</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.PropertyDeleteTask.#ctor">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.PropertyDeleteTask"/> class.
+			</summary>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.PropertyDeleteTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the job
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.PropertyDeleteTask.PropName">
+			<summary>the name of the property to delete.</summary>
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.RegFreeCreator">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Creates the necessary entries that allows later to use an assembly without registering
+			it.
+			</summary>
+			<remarks>At the time this class gets called, the assembly needs to be registered!
+			</remarks>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="F:SIL.FieldWorks.Build.Tasks.RegFreeCreator.m_BaseDirectory">
+			<summary>The directory where the type library resides</summary>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.#ctor(System.Xml.XmlDocument)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.RegFreeCreator"/> class.
+			</summary>
+			<param name="doc">The XML document.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.#ctor(System.Xml.XmlDocument,System.Boolean)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.RegFreeCreator"/> class.
+			</summary>
+			<param name="doc">The XML document.</param>
+			<param name="fDisplayWarnings">set to <c>true</c> to display warnings, otherwise
+			<c>false</c>.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.Dispose">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs application-defined tasks associated with freeing, releasing, or resetting
+			unmanaged resources.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.Dispose(System.Boolean)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Releases unmanaged and - optionally - managed resources
+			</summary>
+			<param name="fDisposing"><c>true</c> to release both managed and unmanaged
+			resources; <c>false</c> to release only unmanaged resources.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.CreateExeInfo(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Creates the info for the executable. The info consist of:
+			<list type="bullet">
+				<item>name (from file name)</item>
+				<item>version info (from assembly)</item>
+				<item>type (hardcoded as "win32" for now)</item>
+			</list>
+			This method also adds the root element with all necessary namespaces.
+			</summary>
+			<param name="fileName">Name of the file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.ProcessTypeLibrary(System.Xml.XmlElement,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Creates the entries for the type library and all classes defined in this type
+			library. We can get the necessary information for the file element (file name and
+			size) directly from the file. We get the information for the type library from
+			the type library itself.
+			</summary>
+			<param name="parent">The parent node.</param>
+			<param name="fileName">Name (and path) of the file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.AddFragmentInternal(System.Xml.XmlNode,System.String,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Adds the fragment to the manifest.
+			</summary>
+			<param name="parent">The parent.</param>
+			<param name="fileName">Name of the file.</param>
+			<param name="elementName">Name of the element.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.AddFragment(System.Xml.XmlElement,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Adds the fragment.
+			</summary>
+			<param name="parent">The parent node.</param>
+			<param name="fileName">Name (and path) of the fragment manifest file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.AddAsIs(System.Xml.XmlElement,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Adds a fragment "as is".
+			</summary>
+			<param name="parent">The parent node.</param>
+			<param name="fileName">Name (and path) of the fragment manifest file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.ProcessTypeInfo(System.Xml.XmlNode,System.Guid,System.Runtime.InteropServices.ComTypes.ITypeInfo)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Processes one type info. We get the necessary information from the type library
+			and also from the registry.
+			</summary>
+			<param name="parent">The parent element.</param>
+			<param name="tlbGuid">The guid of the type library.</param>
+			<param name="typeInfo">The type info.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.GetOrCreateFileNode(System.Xml.XmlNode,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the or create file node.
+			</summary>
+			<param name="parent">The parent node.</param>
+			<param name="filePath">The file name with full path.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.RedirectRegistry">
+			------------------------------------------------------------------------------------
+			<summary>
+			Temporarily redirects access to HKCR to a subkey under HKCU.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.EndRedirection">
+			------------------------------------------------------------------------------------
+			<summary>
+			Ends the redirection.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.LoadLibrary(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			The LoadLibrary function maps the specified executable module into the address
+			space of the calling process.
+			</summary>
+			<param name="fileName">The name of the executable module (either a .dll or .exe
+			file).</param>
+			<returns>If the function succeeds, the return value is a handle to the module. If
+			the function fails, the return value is IntPtr.Zero.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.FreeLibrary(System.IntPtr)">
+			------------------------------------------------------------------------------------
+			<summary>
+			The FreeLibrary function decrements the reference count of the loaded dynamic-link
+			library (DLL). When the reference count reaches zero, the module is unmapped from
+			the address space of the calling process and the handle is no longer valid.
+			</summary>
+			<param name="hModule">The handle to the loaded DLL module.</param>
+			<returns></returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.GetProcAddress(System.IntPtr,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			The GetProcAddress function retrieves the address of an exported function or
+			variable from the specified dynamic-link library (DLL).
+			</summary>
+			<param name="hModule">A handle to the DLL module that contains the function or
+			variable.</param>
+			<param name="lpProcName">The function or variable name, or the function's ordinal
+			value.</param>
+			<returns>If the function succeeds, the return value is the address of the exported
+			function or variable. If the function fails, the return value is IntPtr.Zero.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.ApiInvoke(System.String,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Dynamically invokes a method in a dll.
+			</summary>
+			<param name="fileName">Name of the file.</param>
+			<param name="methodName">Name of the method.</param>
+			<returns><c>true</c> if successfully invoked method, otherwise <c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.Register(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Temporarily registers the specified file.
+			</summary>
+			<param name="fileName">Name of the file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeCreator.Unregister(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Unregisters the specified file.
+			</summary>
+			<param name="fileName">Name of the file.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.RegFreeTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Creates a manifest file for the specified executable that allows the given DLLs to be
+			used without having to be registered.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeTask.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.RegFreeTask"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.RegFreeTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Executes the task.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.RegFreeTask.Executable">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the executable.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.RegFreeTask.Dlls">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the assemblies that should be processed.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.RegFreeTask.Fragments">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets manifest fragment files that will be included in the resulting manifest
+			file. This can be used to pre-process the manifest files for some rarely changing
+			Dlls.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.RegFreeTask.AsIs">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets fragment files that will be included "as is".
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.ResGenTaskEx">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Extended ResGenTask that allows to set a working/base directory to locate embedded
+			resources.
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ResGenTaskEx.BaseDir">
+			------------------------------------------------------------------------------------
+			<summary>
+			The base/working directory.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ResGenTaskEx.BaseDirectory">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the working directory for the application.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ResGenTaskEx.Name">
+			------------------------------------------------------------------------------------
+			<summary>
+			The name of the task.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.SetEnvTask">
+			<summary>
+			Summary description for SetEnvTask.
+			</summary>
+			<developernote>This task hides the setenv task provided with NAnt</developernote>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.SetEnvTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the job
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.SetEnvTask.SetSingleEnvironmentVariable(System.String,System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Sets a single environment variable.
+			</summary>
+			<param name="variableName">Name of the variable.</param>
+			<param name="value">The value.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.SetEnvTask.SetGlobalEnvironmentVariables">
+			------------------------------------------------------------------------------------
+			<summary>
+			Sets the global environment variables.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.SetEnvTask.VariableName">
+			<summary>The name of the environment variable</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.SetEnvTask.Value">
+			<summary>The name of the environment variable</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.SetEnvTask.EnvironmentVariables">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the environment variables.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.SetEnvTask.Global">
+			------------------------------------------------------------------------------------
+			<summary>
+			If <c>true</c> make the changes for the entire system, otherwise only for the
+			current build. Default is <c>false</c>.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.UserFunctions">
+			----------------------------------------------------------------------------------------
+			<summary>
+
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.UserFunctions.#ctor(NAnt.Core.Project,NAnt.Core.PropertyDictionary)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.UserFunctions"/> class.
+			</summary>
+			<param name="project">The project.</param>
+			<param name="properties">The properties.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.UserFunctions.IsAdmin">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines whether the current user is an administrator.
+			</summary>
+			<returns><c>true</c> if current user has administrator privileges, otherwise
+			<c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.VersionExTask">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Generate a file from a template and expand variables.
+			</summary>
+			<example>
+			<para>Generate the file <c>GeneratedAssemblyInfo.cs</c> from the file <c>AssemblyInfo.cs
+			</c>. Generation will happen if <c>GeneratedAssemblyInfo.cs</c> doesn't exist, or if one
+			of <c>AssemblyInfo.cs</c>, <c>ArrayPtr.cs</c> or <c>DbAccessInterop.dll</c> have
+			changed.</para>
+			<code><![CDATA[
+			<version output="${dir.srcProj}\GeneratedAssemblyInfo.cs" template="${dir.srcProj}\AssemblyInfo.cs">
+				<sources basedir="${dir.srcProj}">
+					<includes name="ArrayPtr.cs" />
+				</sources>
+				<references basedir="${dir.srcProj}">
+					<includes name="${dir.buildOutput}/DbAccessInterop.dll" />
+				</references>
+			</version>
+			]]></code>
+			</example>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.VersionExTask.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.VersionExTask"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.VersionExTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the generation
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.VersionExTask.Template">
+			------------------------------------------------------------------------------------
+			<summary>
+			The name of the template file
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.VersionExTask.Extension">
+			------------------------------------------------------------------------------------
+			<summary>
+			Returns the file Extension required by the current compiler
+			</summary>
+			<returns>Returns the file Extension required by the current compiler</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.WriteRegistryTask">
+			<summary>
+			A task that writes a value to the Windows Registry
+			</summary>
+			<remarks>
+				<p>
+					Do not use a leading slash on the key value.
+				</p>
+				<p>
+					Hive values can be one of the following values from the RegistryHive enum<see cref="T:Microsoft.Win32.RegistryHive"/>
+					<table>
+						<tr><td>LocalMachine</td><td></td></tr>
+						<tr><td>CurrentUser</td><td></td></tr>
+						<tr><td>Users</td><td></td></tr>
+						<tr><td>ClassesRoot</td><td></td></tr>
+					</table>
+				</p>
+			</remarks>
+			<example>
+				<para>Writes a single value from the registry</para>
+				<code><![CDATA[<writeregistry value="sdkRoot" key="SOFTWARE\Microsoft\.NETFramework\sdkInstallRoot" hive="LocalMachine" />]]></code>
+			</example>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.WriteRegistryTask.ExecuteTask">
+			------------------------------------------------------------------------------------
+			<summary>
+			Do the job
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.WriteRegistryTask.OpenRegKey(System.String,Microsoft.Win32.RegistryHive)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Open the registry key. If the key doesn't exist it will be created.
+			</summary>
+			<param name="key">Registry sub key</param>
+			<param name="hive">Registry hive</param>
+			<returns>registry key</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.WriteRegistryTask.GetHiveKey(Microsoft.Win32.RegistryHive)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Returns the registry key that corresponds to the passed in hive
+			</summary>
+			<param name="hive">Hive</param>
+			<returns>registry key</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.WriteRegistryTask.RegistryKey">
+			<summary>
+			<p>The registry key to read.</p>
+			</summary>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.WriteRegistryTask.RegistryHiveName">
+			<summary>The registry hive to use.</summary>
+			<remarks>
+				<seealso cref="T:Microsoft.Win32.RegistryHive"/>
+			</remarks>
+			<value>
+				The enum of type <see cref="T:Microsoft.Win32.RegistryHive"/> values including LocalMachine, Users, CurrentUser and ClassesRoot.
+			</value>
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.WriteRegistryTask.Value">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the value of the registry entry
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.Reference">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Represents one reference of an assembly
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.Reference.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.Reference"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.Reference.#ctor(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.Reference"/> class.
+			</summary>
+			<param name="name">The name and path of the reference</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.Reference.Name">
+			------------------------------------------------------------------------------------
+			<summary>
+			Sets the reference
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.XmlAssembly">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Represents one assembly
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssembly.#ctor">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> class.
+			</summary>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssembly.#ctor(System.String)">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> class.
+			</summary>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssembly.#ctor(System.String,System.Collections.Hashtable)">
+			-----------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> class.
+			</summary>
+			-----------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssembly.Add(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Adds a new reference to the assembly
+			</summary>
+			<param name="reference">Name and path of the reference</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssembly.Equals(System.Object)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Determines whether the specified assembly is equal to the current assembly
+			</summary>
+			<param name="obj">The assembly to compare with the current assembly</param>
+			<returns><c>true</c> if the assemblies are the same, otherwise <c>false</c>.</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssembly.GetHashCode">
+			------------------------------------------------------------------------------------
+			<summary>
+			Serves as hash function
+			</summary>
+			<returns>A hash code for the current assembly</returns>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.XmlAssembly.AssemblyName">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the name of the assembly
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.XmlAssembly.References">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets the references for this assembly
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.ReferenceCache">
+			----------------------------------------------------------------------------------------
+			<summary>
+			Contains a map of all the references
+			</summary>
+			----------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ReferenceCache.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of the <see cref="T:SIL.FieldWorks.Build.Tasks.ReferenceCache"/> class.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.ReferenceCache.Add(SIL.FieldWorks.Build.Tasks.XmlAssembly)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Add an assembly
+			</summary>
+			<param name="assembly">The assembly</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ReferenceCache.Assemblies">
+			------------------------------------------------------------------------------------
+			<summary>
+			The list of assemblies
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.ReferenceCache.Item(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets the assembly
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection">
+			<summary>
+			A collection that stores <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> objects.
+			</summary>
+			<seealso cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/>
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.#ctor">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/>.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.#ctor(SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> based on another <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/>.
+			</summary>
+			<param name="value">
+			A <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> from which the contents are copied
+			</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.#ctor(SIL.FieldWorks.Build.Tasks.XmlAssembly[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> containing any array of <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> objects.
+			</summary>
+			<param name="value">
+			A array of <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> objects with which to intialize the collection
+			</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Add(SIL.FieldWorks.Build.Tasks.XmlAssembly)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Adds a <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> with the specified value to the
+			<see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> .
+			</summary>
+			<param name="value">The <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> to add.</param>
+			<returns>The index at which the new element was inserted.</returns>
+			<seealso cref="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.AddRange(SIL.FieldWorks.Build.Tasks.XmlAssembly[])"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.AddRange(SIL.FieldWorks.Build.Tasks.XmlAssembly[])">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copies the elements of an array to the end of the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/>.
+			</summary>
+			<param name="value">
+			An array of type <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> containing the objects to add to the collection.
+			</param>
+			<seealso cref="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Add(SIL.FieldWorks.Build.Tasks.XmlAssembly)"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.AddRange(SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Adds the contents of another <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> to the end of the collection.
+			</summary>
+			<param name="value">
+			A <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> containing the objects to add to the collection.
+			</param>
+			<seealso cref="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Add(SIL.FieldWorks.Build.Tasks.XmlAssembly)"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Contains(SIL.FieldWorks.Build.Tasks.XmlAssembly)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets a value indicating whether the
+			<see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> contains the specified <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/>.
+			</summary>
+			<param name="value">The <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> to locate.</param>
+			<returns>
+			<c>true</c> if the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> is contained in the collection;
+			otherwise, <c>false</c>.
+			</returns>
+			<seealso cref="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.IndexOf(SIL.FieldWorks.Build.Tasks.XmlAssembly)"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.CopyTo(SIL.FieldWorks.Build.Tasks.XmlAssembly[],System.Int32)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Copies the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> values to a one-dimensional <see cref="T:System.Array"/> instance at the
+			specified index.
+			</summary>
+			<param name="array">The one-dimensional <see cref="T:System.Array"/> that is the destination of the values copied from <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> .</param>
+			<param name="index">The index in <paramref name="array"/> where copying begins.</param>
+			<exception cref="T:System.ArgumentException"><para><paramref name="array"/> is multidimensional.</para> <para>-or-</para> <para>The number of elements in the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> is greater than the available space between <paramref name="arrayIndex"/> and the end of <paramref name="array"/>.</para></exception>
+			<exception cref="T:System.ArgumentNullException"><paramref name="array"/> is <see langword="null"/>. </exception>
+			<exception cref="T:System.ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than <paramref name="array"/>'s lowbound. </exception>
+			<seealso cref="T:System.Array"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.IndexOf(SIL.FieldWorks.Build.Tasks.XmlAssembly)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Returns the index of a <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> in
+			the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> .
+			</summary>
+			<param name="value">The <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> to locate.</param>
+			<returns>
+			The index of the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> of <paramref name="value"/> in the
+			<see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/>, if found; otherwise, -1.
+			</returns>
+			<seealso cref="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Contains(SIL.FieldWorks.Build.Tasks.XmlAssembly)"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Insert(System.Int32,SIL.FieldWorks.Build.Tasks.XmlAssembly)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Inserts a <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> into the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> at the specified index.
+			</summary>
+			<param name="index">The zero-based index where <paramref name="value"/> should be inserted.</param>
+			<param name=" value">The <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> to insert.</param>
+			<seealso cref="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Add(SIL.FieldWorks.Build.Tasks.XmlAssembly)"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.GetEnumerator">
+			------------------------------------------------------------------------------------
+			<summary>
+			Returns an enumerator that can iterate through
+			the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> .
+			</summary>
+			<seealso cref="T:System.Collections.IEnumerator"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Remove(SIL.FieldWorks.Build.Tasks.XmlAssembly)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Removes a specific <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> from the
+			<see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> .
+			</summary>
+			<param name="value">The <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> to remove from the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> .</param>
+			<exception cref="T:System.ArgumentException"><paramref name="value"/> is not found in the Collection. </exception>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.OnInsert(System.Int32,System.Object)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs additional custom processes before inserting a new element into the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> instance .
+			</summary>
+			<param name="index">The zero-based index at which to insert <paramref name="value"/>.</param>
+			<param name="value">The new value of the element at <paramref name="index"/>.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.OnRemove(System.Int32,System.Object)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs additional custom processes before removing an element from the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> instance.
+			</summary>
+			<param name="index">The zero-based index at which to insert <paramref name="value"/>.</param>
+			<param name="value">The new value of the element at <paramref name="index"/>.</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.OnClear">
+			------------------------------------------------------------------------------------
+			<summary>
+			Performs additional custom processes before clearing the contents of the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> instance.
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Item(System.Int32)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Represents the entry at the specified index of the <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/>.
+			</summary>
+			<param name="index">The zero-based index of the entry to locate in the collection.</param>
+			<value>
+			The entry at the specified index of the collection.
+			</value>
+			<exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index"/> is outside the valid range of indexes for the collection.</exception>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.Item(System.String)">
+			------------------------------------------------------------------------------------
+			<summary>
+			Gets or sets an assembly
+			</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="E:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.BeforeInsert">
+			<summary>Occurs before a <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> is inserted in the collection.</summary>
+		</member>
+		<member name="E:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.BeforeRemove">
+			<summary>Occurs before a <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssembly"/> is removed from the collection.</summary>
+		</member>
+		<member name="E:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.BeforeClear">
+			<summary>Occurs before the collection is cleared.</summary>
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.CollectionChange">
+			------------------------------------------------------------------------------------
+			<summary>
+			Represents the method that will handle the
+			<see cref="E:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.BeforeInsert"/> and <see cref="E:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.BeforeRemove"/> events.
+			</summary>
+			<param name="index">Index of item in collection that will change</param>
+			<param name="value">New value of object</param>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.CollectionClear">
+			------------------------------------------------------------------------------------
+			<summary>Represents the method that will handle the
+			<see cref="E:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.BeforeClear"/> event.</summary>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator">
+			------------------------------------------------------------------------------------
+			<summary>
+			The enumerator for <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> objects.
+			</summary>
+			<seealso cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/>
+			------------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator.#ctor(SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection)">
+			--------------------------------------------------------------------------------
+			<summary>
+			Initializes a new instance of <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator"/>.
+			</summary>
+			<param name="mappings">The <see cref="T:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection"/> that we enumerate</param>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator.MoveNext">
+			--------------------------------------------------------------------------------
+			<summary>
+			Advances the enumerator to the next element of the collection.
+			</summary>
+			<returns><c>true</c> if the enumerator was successfully advanced to the next element;
+			<c>false</c> if the enumerator has passed the end of the collection.</returns>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator.System#Collections#IEnumerator#MoveNext">
+			--------------------------------------------------------------------------------
+			<summary>
+			Advances the enumerator to the next element of the collection.
+			</summary>
+			<returns><c>true</c> if the enumerator was successfully advanced to the next element;
+			<c>false</c> if the enumerator has passed the end of the collection.</returns>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator.Reset">
+			--------------------------------------------------------------------------------
+			<summary>
+			Sets the enumerator to its initial position, which is before the first element in the collection.
+			</summary>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="M:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator.System#Collections#IEnumerator#Reset">
+			--------------------------------------------------------------------------------
+			<summary>
+			Sets the enumerator to its initial position, which is before the first element in the collection.
+			</summary>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator.Current">
+			--------------------------------------------------------------------------------
+			<summary>
+			Gets the current element in the collection.
+			</summary>
+			<value>The current element in the collection.</value>
+			--------------------------------------------------------------------------------
+		</member>
+		<member name="P:SIL.FieldWorks.Build.Tasks.XmlAssemblyCollection.XmlAssemblyEnumerator.System#Collections#IEnumerator#Current">
+			--------------------------------------------------------------------------------
+			<summary>
+			Gets the current element in the collection.
+			</summary>
+			<value>The current element in the collection.</value>
+			--------------------------------------------------------------------------------
+		</member>
+	</members>
+</doc>

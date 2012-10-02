@@ -1,0 +1,227 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{C6783865-65DF-4AB3-8C40-895BA7292CEB}</ProjectGuid>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccProvider>SAK</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>Utils</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.Common.Utils</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>SAK</SccAuxPath>
+	<OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\Utils.XML</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="Accessibility">
+	  <Name>Accessibility</Name>
+	</Reference>
+	<Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="Enchant.Net, Version=1.3.1.1, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Enchant.Net.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources">
+	  <Name>FwResources</Name>
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="stdole">
+	  <Name>stdole</Name>
+	  <HintPath>..\..\..\..\Program Files\Microsoft.NET\Primary Interop Assemblies\stdole.dll</HintPath>
+	  <AssemblyFolderKey>hklm\primary interop assemblies</AssemblyFolderKey>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.configuration" />
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Design">
+	  <Name>System.Design</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Management">
+	  <Name>System.Management</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+	<Compile Include="AlphaOutline.cs" />
+	<Compile Include="Benchmark.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="BidirHashtable.cs" />
+	<Compile Include="ColorStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>ColorStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="ColorUtil.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DirectoryFinder.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DriveUtil.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ExceptionHelper.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FileUtils.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FindFileStatusDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwTempFile.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="InstallationException.cs" />
+	<Compile Include="LcidHelper.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MeasurementUtils.cs" />
+	<Compile Include="MergeSort.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="OLEConvert.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="PrinterUtils.cs" />
+	<Compile Include="ReflectionHelper.cs" />
+	<Compile Include="RomanNumerals.cs" />
+	<Compile Include="ScreenUtils.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ScriptMaker.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SelectionEvents.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Surrogates.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="TextWriterStream.cs" />
+	<Compile Include="Unicode.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Utils.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="UtilsStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>UtilsStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="ViewSizeEvents.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WaitCursor.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<EmbeddedResource Include="ColorStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>ColorStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FindFileStatusDialog.resx">
+	  <DependentUpon>FindFileStatusDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UtilsStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>UtilsStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

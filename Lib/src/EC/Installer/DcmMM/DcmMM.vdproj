@@ -1,0 +1,281 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:DcmMM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_05F05A2CE5F8419695EDDE812A4F0129"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_AA52A1518F8E462EBE0AD659CB522795"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\DcmMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\DcmDotMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_05F05A2CE5F8419695EDDE812A4F0129"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Data Conversion Macro 0300.dot"
+			"TargetName" = "8:Data Conversion Macro 0300.dot"
+			"Tag" = "8:"
+			"Folder" = "8:_67DD1501F68445C1924F3F521EAB93B8"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AA52A1518F8E462EBE0AD659CB522795"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\Data Conversion Macro 0300.dot"
+			"TargetName" = "8:Data Conversion Macro 0300.dot"
+			"Tag" = "8:"
+			"Folder" = "8:_78B00B37A61447A3890485564BB0ADFF"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_67DD1501F68445C1924F3F521EAB93B8"
+			{
+			"DefaultLocation" = "8:[CommonAppDataFolder]Microsoft\\Templates"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+				}
+			}
+			"{994432C3-9487-495D-8656-3E829A8DBDDE}:_78B00B37A61447A3890485564BB0ADFF"
+			{
+			"DefaultLocation" = "8:[AppDataFolder]Microsoft\\Word\\STARTUP"
+			"Name" = "8:Word DOT Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:WORD_DOT_FOLDER"
+				"Folders"
+				{
+				}
+			}
+			"{1525181F-901A-416C-8A58-119130FE478E}:_BC300E20F0E94CE8AD341D311DF2FC4B"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_6AC50E00123F4B1FB5AD96AD28A4D196"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_45CDE45B63E649C7842099F7E8943B63"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_339552A3C6B84ACF82234A8CA2699A5A"
+							{
+							"Name" = "8:Help"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_B188E05634FE41ADA59C020F4FA18826"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:DcmMergeModule.9B273BB494FA4F7BA668CDD740E479BF"
+		"Version" = "8:3.0.0.0"
+		"Title" = "8:DcmMergeModule"
+		"Subject" = "8:Document Template for using EncConverters in MS Word"
+		"Author" = "8:SIL"
+		"Keywords" = "8:SILConverters; Encoding Conversion in MS Word"
+		"Comments" = "8:Data Conversion Macro Word document template"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_112F25F2220F493EBC412AB6EADF7BA6"
+			{
+			"Name" = "8:Help for the Data Conversion Macro"
+			"Arguments" = "8:"
+			"Description" = "8:Help information for the Data Conversion Macro MS Word document template"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_05F05A2CE5F8419695EDDE812A4F0129"
+			"Folder" = "8:_339552A3C6B84ACF82234A8CA2699A5A"
+			"WorkingFolder" = "8:_67DD1501F68445C1924F3F521EAB93B8"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT Abbr24 (Uni)?>
+<!-- FieldWorks: (AUni)* -->
+<!ELEMENT Abbr25 (Uni)?>
+<!ELEMENT BasedOn17 (Uni | Link)?>
+<!-- FieldWorks: (Link)? -->
+<!ELEMENT Body (Entry | StTxtPara)+>
+<!ATTLIST Body
+	docRightToLeft CDATA #REQUIRED
+>
+<!ELEMENT Boolean EMPTY>
+<!ATTLIST Boolean
+	val (false | true) #REQUIRED
+>
+<!ELEMENT BottomMargin9999 (Integer)>
+<!ELEMENT BulNumFontInfo EMPTY>
+<!ATTLIST BulNumFontInfo
+	backcolor CDATA #IMPLIED
+	bold (on | off | invert) #IMPLIED
+	fontsize CDATA #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (on | off | invert) #IMPLIED
+	offset CDATA #IMPLIED
+	superscript (off | sub | super) #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (none | dotted | dashed | single | double | squiggle) #IMPLIED
+	fontFamily CDATA #IMPLIED
+>
+<!ELEMENT Code25 (Integer)?>
+<!ELEMENT Contents16 (Str)?>
+<!ELEMENT DefaultMonospace25 (Uni)>
+<!ELEMENT DefaultSansSerif25 (Uni)>
+<!ELEMENT DefaultSerif25 (Uni)>
+<!ELEMENT Description25 (Str)>
+<!-- FieldWorks: (AStr)* -->
+<!ELEMENT Encoding24 (Integer)?>
+<!ELEMENT Entry (StTxtPara | Entry | Field)+>
+<!ATTLIST Entry
+	level CDATA #REQUIRED
+>
+<!ELEMENT Field (Run | Item | StTxtPara)*>
+<!ATTLIST Field
+	name CDATA #REQUIRED
+	type CDATA #IMPLIED
+>
+<!ELEMENT FontVariation25 (Uni)>
+<!ELEMENT Footer9999 (Str)>
+<!ELEMENT FooterMargin9999 (Integer)>
+<!ELEMENT Guid EMPTY>
+<!ATTLIST Guid
+	val CDATA #REQUIRED
+>
+<!ELEMENT Header9999 (Str)>
+<!ELEMENT HeaderMargin9999 (Integer)>
+<!ELEMENT Integer EMPTY>
+<!ATTLIST Integer
+	val CDATA #REQUIRED
+>
+<!ELEMENT IsBuiltIn17 (Boolean)?>
+<!ELEMENT IsModified17 (Boolean)?>
+<!ELEMENT IsPublishedTextStyle17 (Boolean)?>
+<!ELEMENT Item (Run)>
+<!ELEMENT KeyboardType25 (Uni)>
+<!ELEMENT Label16 (Str)?>
+<!ELEMENT LangId25 (Integer)>
+<!ELEMENT Languages (LgEncoding+)>
+<!ELEMENT LeftMargin9999 (Integer)>
+<!ELEMENT LgEncoding (Abbr24 | Encoding24 | Locale24 | Name24 | WritingSystemDef24 | WritingSystems24)*>
+<!-- FieldWorks also has:  Custom | CustomLink | CustomObj | CustomStr -->
+<!ATTLIST LgEncoding
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT LgWritingSystem (Abbr25 | Code25 | DefaultSerif25 | DefaultSansSerif25 | DefaultMonospace25 | Description25 | FontVariation25 | KeyboardType25 | LangId25 | Name25 | Renderer25 | RendererInit25 | RendererType25 | RightToLeft25)*>
+<!-- FieldWorks also has:  Custom | CustomLink | CustomObj | CustomStr -->
+<!ATTLIST LgWritingSystem
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Link EMPTY>
+<!ATTLIST Link
+	target IDREF #REQUIRED
+	class CDATA #IMPLIED
+	ord CDATA #IMPLIED
+	db CDATA #IMPLIED
+>
+<!ELEMENT Locale24 (Integer)?>
+<!ELEMENT Name17 (Uni)?>
+<!ELEMENT Name24 (Uni)?>
+<!-- FieldWorks: (AUni)* -->
+<!ELEMENT Name25 (Str)>
+<!-- FieldWorks: (AUni)* -->
+<!ELEMENT Next17 (Uni | Link)?>
+<!-- FieldWorks: (Link)? -->
+<!ELEMENT PageHeight9999 (Integer)>
+<!ELEMENT PageInfo (TopMargin9999?, BottomMargin9999?, LeftMargin9999?, RightMargin9999?, HeaderMargin9999?, FooterMargin9999?, PageSize9999?, PageHeight9999?, PageWidth9999?, PageOrientation9999?, Header9999?, Footer9999?)>
+<!ELEMENT PageOrientation9999 (Integer)>
+<!ELEMENT PageSetup (PageInfo)>
+<!ELEMENT PageSize9999 (Integer)>
+<!ELEMENT PageWidth9999 (Integer)>
+<!ELEMENT Prop (BulNumFontInfo | WsStyles9999)*>
+<!ATTLIST Prop
+	align (leading | left | center | right | trailing | justify) #IMPLIED
+	backcolor CDATA #IMPLIED
+	bold (on | off | invert) #IMPLIED
+	borderBottom CDATA #IMPLIED
+	borderColor CDATA #IMPLIED
+	borderLeading CDATA #IMPLIED
+	borderTop CDATA #IMPLIED
+	borderTrailing CDATA #IMPLIED
+	bulNumFontInfo CDATA #IMPLIED
+	bulNumScheme CDATA #IMPLIED
+	bulNumStartAt CDATA #IMPLIED
+	bulNumTxtAft CDATA #IMPLIED
+	bulNumTxtBef CDATA #IMPLIED
+	charStyle CDATA #IMPLIED
+	enc CDATA #IMPLIED
+	encBase CDATA #IMPLIED
+	firstIndent CDATA #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (on | off | invert) #IMPLIED
+	leadingIndent CDATA #IMPLIED
+	lineHeight CDATA #IMPLIED
+	lineHeightUnit (mpt | rel) #IMPLIED
+	marginTop CDATA #IMPLIED
+	namedStyle CDATA #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit (mpt | rel) #IMPLIED
+	padBottom CDATA #IMPLIED
+	padLeading CDATA #IMPLIED
+	padTop CDATA #IMPLIED
+	padTrailing CDATA #IMPLIED
+	paracolor CDATA #IMPLIED
+	rightToLeft CDATA #IMPLIED
+	spaceAfter CDATA #IMPLIED
+	spaceBefore CDATA #IMPLIED
+	superscript (off | sub | super) #IMPLIED
+	tabDef CDATA #IMPLIED
+	trailingIndent CDATA #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (none | dotted | dashed | single | double | squiggle) #IMPLIED
+	ws CDATA #IMPLIED
+	wsBase CDATA #IMPLIED
+>
+<!ELEMENT Renderer25 (Guid)?>
+<!ELEMENT RendererInit25 (Uni)?>
+<!ELEMENT RendererType25 (Uni)>
+<!ELEMENT RightMargin9999 (Integer)>
+<!ELEMENT RightToLeft25 (Boolean)>
+<!ELEMENT Rules17 (Prop?)>
+<!ELEMENT Run (#PCDATA)>
+<!ATTLIST Run
+	type (chars | picture) #IMPLIED
+	backcolor CDATA #IMPLIED
+	bold (on | off | invert) #IMPLIED
+	enc CDATA #IMPLIED
+	encBase CDATA #IMPLIED
+	externalLink CDATA #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (on | off | invert) #IMPLIED
+	link CDATA #IMPLIED
+	namedStyle CDATA #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit CDATA #IMPLIED
+	superscript (sub | super) #IMPLIED
+	tabList CDATA #IMPLIED
+	tags IDREFS #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (dashed | dotted | double | none | single) #IMPLIED
+	ws CDATA #IMPLIED
+	wsBase CDATA #IMPLIED
+>
+<!ELEMENT StStyle (BasedOn17 | IsBuiltIn17 | IsModified17 | IsPublishedTextStyle17 | Name17 | Next17 | Rules17 | Type17)*>
+<!-- FieldWorks also has:  Custom | CustomLink | CustomObj | CustomStr -->
+<!ATTLIST StStyle
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT StTxtPara (Contents16 | StyleRules15)*>
+<!-- FieldWorks also has: AnalyzedTextObjects16 | Custom | CustomLink | CustomObj | CustomStr | Label16 | ObjRefs16 | StyleName15 | TextObjects16 | Translations16 -->
+<!ATTLIST StTxtPara
+	id ID #IMPLIED
+	ord CDATA #IMPLIED
+>
+<!ELEMENT Str (Run | Field | Item)*>
+<!ELEMENT StyleName15 (Uni)?>
+<!ELEMENT StyleRules15 (Prop)>
+<!ELEMENT Styles (StStyle+)>
+<!ELEMENT TopMargin9999 (Integer)>
+<!ELEMENT Type17 (Integer)?>
+<!ELEMENT Uni (#PCDATA)>
+<!ELEMENT WpDoc (Languages, Styles, Body, PageSetup)>
+<!ATTLIST WpDoc
+	xmlVersion CDATA #REQUIRED
+>
+<!ELEMENT WritingSystemDef24 (Link)?>
+<!ELEMENT WritingSystems24 (LgWritingSystem)*>
+<!ATTLIST WritingSystems24
+	size CDATA #IMPLIED
+>
+<!ELEMENT WsProp EMPTY>
+<!ATTLIST WsProp
+	enc CDATA #REQUIRED
+	ws CDATA #REQUIRED
+	backcolor CDATA #IMPLIED
+	bold (on | off | invert) #IMPLIED
+	fontFamily CDATA #IMPLIED
+	fontsize CDATA #IMPLIED
+	fontsizeUnit (mpt | rel) #IMPLIED
+	forecolor CDATA #IMPLIED
+	italic (on | off | invert) #IMPLIED
+	offset CDATA #IMPLIED
+	offsetUnit (mpt | rel) #IMPLIED
+	superscript (off | sub | super) #IMPLIED
+	undercolor CDATA #IMPLIED
+	underline (none | dotted | dashed | single | double | squiggle) #IMPLIED
+>
+<!ELEMENT WsStyles9999 (WsProp)*>

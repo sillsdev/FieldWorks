@@ -1,0 +1,727 @@
+=== charset.[ch] ===
+
+This defines the 8- and 16- bit character types and their encodings.
+
+ int init_charset(void);
+
+This function must be called to initialise the library (but is called
+by init_parser()).  Returns -1 on error.
+
+ void deinit_charser(void);
+
+May be called to free memory when the library is no longer required.
+It is called by deinit_parser().
+
+The 8-bit type is char8, which is a typedef for char.  We would have
+liked to use unsigned char, but this tends to produce innumerable
+warnings from compilers.  The 16-bit type is char16, which is a typedef
+for unsigned short.  We didn't use C wide character mechanism for various
+reasons; we can't remember what they all were but one was that they are
+typically 32 bits and we didn't want to double the size of everything.
+
+The type Char is used for all character data returned by the parser.
+It is a typedef for either char8 or char16, depending on how the
+system was compiled.
+
+The type CharacterEncoding is an enumeration (expect it to become a
+pointer to a structure in some future release).  Currently supported
+values include CE_UTF_8, CE_ISO_8859_x for 1<=x<=9, and CE_UTF_16[BL]
+where B or L indicates big- or little-endian.
+
+If the system is compiled in 16-bit mode, the internal encoding (the
+encoding used for the type Char) is CE_UTF_16B or CE_UTF_16L - UTF-16
+in native byte order.  If the system is compiled in 8-bit mode, the
+internal encoding is CE_unspecified_ascii_superset - an unspecified
+superset of ASCII in which all codes >= 0xa0 are treated as valid
+name characters, and no character set translation is done on input
+or output.  Do not attempt to output 16-bit characters when compiled
+in 8-bit mode; the results are wrong.
+
+ extern CharacterEncoding InternalCharacterEncoding
+
+This variable reflects the internal encoding and should not be
+assigned to.
+
+ extern const char8 *CharacterEncodingName[CE_enum_count];
+ extern const char8 *CharacterEncodingNameAndByteOrder[CE_enum_count];
+
+These arrays map CharacterEncodings to their names, with and without
+suffixes indicating the byte order.
+
+ CharacterEncoding FindEncoding(char8 *name);
+
+This function looks up an encoding by name.  It understands various
+aliases (ISO-Latin-1 for ISO-8859-1 for example).  It returns
+CE_unknown if the name is not recognised.
+
+=== ctype.[ch] ===
+
+This provides macros related to character types.
+
+ int init_ctype16(void);
+
+This function must be called to initialise the library (but is called
+by init_parser()).  Returns -1 on error.
+
+ void deinit_ctype16(void);
+
+May be called to free memory when the library is no longer required.
+It is called by deinit_parser().
+
+The following macros may evaluate their argument more than once, so
+don't do is_xml_namestart(*c++).
+
+ #define is_xml_legal(c) ...
+
+True if c is a legal XML character.
+
+ #define is_xml_namechar(c) ...
+ #define is_xml_namestart(c) ...
+
+True if c is an XML name character or name start character
+respectively.
+
+ #define is_xml_whitespace(c) ...
+
+True if c is an XML white space character.
+
+=== string16.[ch] ===
+
+This provides functions corresponding to the usual C library string
+functions.
+
+ char16 *strchr16(const char16 *, int);
+ char8 *strchr8(const char8 *, int);
+ Char *strchr16(const Char *, int);
+
+These are versions of strchr() for char8, char16, and Char
+respectively.  There are similar functions corresponding to strdup(),
+strlen(), strcmp(), strncmp(), strcpy(), strncpy(), strcat(),
+strcasecmp(), strncasecmp(), and strstr().
+
+ void translate_latin1_utf16(const char8 *from, char16 *to);
+ void translate_utf16_latin1(const char16 *from, char8 *to);
+ char16 *translate_latin1_utf16_m(const char8 *from, char16 *to);
+ char8 *translate_utf16_latin1_m(const char16 *from, char8 *to);
+
+These functions convert between 8- and 16-bit characters.  The
+conversion is trivial.  For 8-to-16, the value is unchanged, so it is
+right for Latin-1.  For 16-to-8, the value is unchanged if it is <=
+255, and is replaced by 'X' for other values.  They are useful for
+converting a URL read from an XML document (and therefore represented
+as a string of Char) to a string usable with url_open(), and for
+converting a command-line argument.
+
+The _m versions realloc() the destination buffer, so you can pass a
+null argument or an exisiting malloc()ed string which will be expanded
+if necessary; the (possibly new) destination buffer is returned.
+
+The functions char8tochar16 and char16tochar8, and the macros
+char8toChar and Chartochar8 have been removed because they were not
+thread safe.  Use the functions described above instead.
+
+=== stdio16.[ch] ===
+
+This provides a partial implementation of the standard i/o library that
+handles 16-bit characters.  So far much more is implemented for output
+than input.
+
+ int init_stdio16(void);
+
+This function must be called to initialise the library (but is called
+by init_parser()).  Returns -1 on error.
+
+ void deinit_stdio16(void);
+
+May be called to free memory when the library is no longer required.
+It is called by deinit_parser().
+
+The central datatype is the FILE16 which corresponds to the usual FILE
+structure.  Each FILE16 has an associated encoding; characters are
+translated to this encoding on output (and will be translated from it
+on input when this is implemented).
+
+There are three predefined FILE16s: Stdin, Stdout and Stderr.  By
+default their encoding is ISO-Latin-1.
+
+ int Fprintf(FILE16 *file, const char *format, ...);
+ int Vfprintf(FILE16 *file, const char *format, va_list args);
+ int Printf(const char *format, ...);
+ int Vprintf(const char *format, va_list args);
+ int Sprintf(void *buf, CharacterEncoding enc, const char *format, ...);
+ int Vsprintf(void *buf, CharacterEncoding enc, const char *format,
+			  va_list args);
+
+These correspond to the usual stdio functions.  There are two additional
+format specifiers: %ls and %S.  %ls expects a string of char16.  %S
+expects a string of Char - that is, it expects 8- or 16- bit characters
+depending on which the system is compiled for.
+
+ int Fclose(FILE16 *file);
+ int Fflush(FILE16 *file);
+ int Fseek(FILE16 *file, long offset, int ptrname);
+
+Again, these correspond to the usual stdio functions.
+
+ CharacterEncoding GetFileEncoding(FILE16 *file);
+ void SetFileEncoding(FILE16 *file, CharacterEncoding encoding);
+
+These get and set the character encoding associated with a file.
+
+ void SetCloseUnderlying(FILE16 *file, int cu);
+
+FILE16s typically have some underlying mechanism that does the i/o.
+For example, it may use an ordinary FILE, or it may write to a string.
+This function controls whether a close operation is performed on
+the underlying structure when the FILE16 is closed.  For a FILE this
+would be calling fclose(), for a string it would be free().
+
+ int Readu(FILE16 *file, unsigned char *buf, int max_count);
+ int Writeu(FILE16 *file, unsigned char *buf, int count);
+
+These perform low-level read and write on the FILE16.  No character
+translation is done.
+
+ FILE16 *MakeFILE16FromFILE(FILE *f, const char *type);
+ FILE16 *MakeFILE16FromString(void *buf, long size, const char *type);
+ FILE16 *MakeFILE16FromGzip(gzFile file, const char *type);
+ FILE16 *MakeFILE16FromWinsock(int sock, const char *type);
+
+These functions create FILE16s.  MakeFILE16FromGzip uses a LIBZ stream
+to read or write compressed files.  MakeFILE16FromWinsock is only used
+under MS Windows, where sockets seem to work differently from oridinary
+file descriptors.
+
+On systems where it makes a difference (not Unix), FILEs used in
+FILE16s are set to binary mode when the FILE16 is first read or
+written, so that the standard i/o library doesn't translate bytes that
+happen to look like linefeeds in cr-lf, and vice versa.  Note that
+using Stdin/out/err will therefore put stdin/out/err into binary mode.
+
+=== url.[ch] ===
+
+This defines functions for accessing URLs.
+
+ int init_url(void);
+
+This function must be called to initialise the library (but is called
+by init_parser()).  Returns -1 on error.
+
+ void deinit_url(void);
+
+May be called to free memory when the library is no longer required.
+It is called by deinit_parser().
+
+ char8 *url_merge(const char8 *url, const char8 *base,
+						char8 **scheme, char8 **host, int *port, char8 **path);
+
+This merges a URL with a base URL.  The merged URL is returned.  If
+base, scheme, host, port and path are non-null, the parts of the
+merged URL are returned in them.  The caller should free the returned
+strings when they are no longer required.
+
+ char8 *default_base_url(void);
+
+This returns a default base URL that can be used when no better choice
+is available.  It returns a file: URL referring to the current
+directory (file:`pwd`/).  The caller should free the returned string
+when it is no longer required.
+
+extern FILE16 *url_open(const char8 *url, const char8 *base,
+						const char8 *type, char8 **merged_url);
+
+This returns a FILE16 connected to the specified URL.  The URL is
+first merged with the specified base URL, or with the default base URL
+if it is null.  If you want relative URLs to fail, give a base URL
+of "".  The type should be "r" for reading, "w" for writing.
+
+=== input.[ch] ===
+
+This defines structures and functions related to reading from
+entities.  Some of the functionality of this file - relating to
+character encoding translation - should (and probably will) be moved
+to stdio16.c.
+
+An InputSource is an entity that is open for reading.  To parse an
+entity, it is opened and the resulting source is pushed onto
+the parser's input stack.
+
+ InputSource EntityOpen(Entity e);
+
+This takes an entity and returns an source.
+
+ InputSource SourceFromFILE16(const char8 *description, FILE16 *file16);
+ InputSource SourceFromStream(const char8 *description, FILE *file);
+
+These are ways of getting a source when what you have is not an entity
+but an existing open stream (such as stdin).  A fake entity is created
+with the description as its system ID.  If the description contains
+a slash character, it will be used as the entity's base URL, so if you
+know where the stream came from you can pass in its URL as the
+dscription; otherwise use something like "stdin" so that the user
+gets reasonable error messages.
+
+ void SourceClose(InputSource source);
+
+This closes and frees a source.  Usually the parser will call this when
+it comes to the end of the source.
+
+ InputSource NewInputSource(Entity e, FILE16 *f16);
+
+This creates an input source referring to a given entity and stream.
+It is only intended for direct use by the user if the parser's
+entity opener has been set (for example to implement a public ID
+catalogue).
+
+ int SourceTell(InputSource s);
+ int SourceSeek(InputSource s, int offset);
+
+These correspond to the standard fseek() and ftell() functions.  They
+should be used with extreme care since arbitrary seeking will
+typically result in parse errors.  Note that the offset is in bytes,
+not characters.
+
+=== dtd.[ch] ===
+
+This defines structures and functions related to a document's DTD.
+Much of it is private to the implementation, and most of the
+structures it defines are created and destroyed by the parser rather
+than the user.
+
+A DTD is represented by a Dtd structure.  This contains the name given
+in the DOCTYPE declaration and the entities, element types, attribute
+definitions and notations defined.  Even if a document does not have a
+DOCTYPE declaration, it has a Dtd; this contains dummy declarations
+for the elements and attributes mentioned in the document.
+
+ void FreeDtd(Dtd dtd)
+
+This frees a Dtd.  Even though the Dtd is created automatically,
+the user should free it; see FreeParser().
+
+Entities are represented by Entity structures.  All entities have a
+name (except for top-level entities and the dummy entity created to
+represent the internal DTD part).  An entity is either internal or
+external.  External entities have a system ID (a URL) which is used to
+open them and optionally a public ID.  Internal entities contain their
+text as Char string in the internal encoding.
+
+ Entity NewExternalEntity(const Char *name,
+						  const char8 *publicid, const char8 *systemid,
+						  NotationDefinition notation,
+						  Entity parent);
+
+This creates a new external entity.  It is called directly by the user
+only to create a top-level entity for parsing, in which case the
+notation and parent should be null, and the name and public ID may be
+null.  The name and IDs are copied.
+
+ void FreeEntity(Entity e);
+
+This frees an entity.
+
+ const char8 *EntityURL(Entity e);
+
+This returns the URL of an entity, obtained by merging its system ID
+with the URL of any parent entity.
+
+ const char8 *EntityBaseURL(Entity e);
+ void EntitySetBaseURL(Entity e, const char8 *url);
+
+These get and set the base URL for an entity (that is, the base URL
+used when interpreting URLs that appear in the entity).
+
+Element types are represented by ElementDefinition structures.  These
+contain the name of the element ("name" field), and its declared
+content and attributes.  The "prefix" field contains the prefix if the
+name contains a colon (otherwise null), and the "local" field contains
+the part of the name after the colon (or the whole name if there is
+no colon).
+
+Attribute definitions are represented by AttributeDefinition structures.
+These contain the name of the attribute, its declared type, allowed values
+and default.  The "name", "prefix" and "local" fields are the same as
+for ElementDefinition.
+
+Notation definitions are represented by NotationDefinition structures.
+These contain the name of the notation, and its system and public IDs.
+
+=== namespaces.[ch] ===
+
+This defines structures analogous to those in dtd.[ch], but for elements
+and attributes within a namespace rather than a DTD.
+
+ void init_namespaces(void);
+
+This function must be called to initialise the library (but is called
+by init_parser()).  Returns -1 on error.
+
+ void deinit_namespaces(void);
+
+May be called to free memory when the library is no longer required.
+It is called by deinit_parser().
+
+A namespace is represented by a Namespace structure.  This contains
+the URI of the the namespace ("nsname" field), and lists of the element
+types and global attributes in the namespace.  Each element type has a
+list of per-element-type (ie unqualified) attributes.
+
+(Before version 1.4.0 the nsname field was called "uri".  In 1.4.0
+it was changed from char8 * to Char * in order to accommodate IRIs,
+and the field name was changed to so that old programs wouldn't
+compile without being updated.)
+
+It is natural that namespaces are shared between documents.  If two
+documents refer to an element type with the same name and namespace,
+the structures representing them should be equal, and likewise for
+attributes.  This poses a problem for storage allocation: if a process
+(say a server of some kind) repeatedly reads documents, it will
+accumulate namespaces.  If it is treating the documents independently,
+this is undesirable.  To accommodate this, namespaces are grouped into
+"namespace universes" of type NamespaceUniverse.  By default, all
+instances of the parser use a common namespace universe, which can be
+specified by passing a null argument to functions that take a
+NamespaceUniverse.  For server applications that do not want to
+accumulate namespaces, it is possible to set the namespace universe of
+each parser instance to a new universe, and free it after freeing the
+parser (XXX how to do this is not yet described).  Alternatively the
+common namespace universe can be cleared by calling
+reinit_namespaces().
+
+Element types in a namespace are represented by NSElementDefinition
+structures.  These contain the (unqualified) name of the element
+("name" field) and the namespace itself ("namespace" field).
+
+Attribute definitions in a namespace are represented by
+NSAttributeDefinition structures.  These contain the (unqualified)
+name of the attribute ("name" field) and the namespace itself
+("namespace" field).  Per-element-type attributes also contain
+the NSElementDefinition they are associated with ("element" field);
+this field is null for global attributes.
+
+Unfortunately "namespace" turns out to be a reserved word in C++.
+If __cplusplus is defined, the include files use "name_space"
+instead.  You should of course compile the RXP library as C code,
+even if your program is in C++.
+
+=== xmlparser.[ch] ===
+
+This defines structures and functions for parsing an XML document.
+
+ int init_parser(void)
+
+This function must be called to initialise the library, and it calls
+the other init_* functions.  It is called by NewParser(), but if you
+call any other functions before NewParser() you should call
+init_parser() yourself first.  Returns -1 on error.
+
+ void deinit_parser(void);
+
+May be called to free memory when the library is no longer required.
+It calls the other deinit_* functions.
+
+An instance of the parser is represented by a Parser structure.  It
+contains the current state of the parse.
+
+ Parser NewParser(void);
+
+The creates a new parser instance.
+
+ void FreeParser(Parser p);
+
+This frees a parser.  It does not free the Dtd structure, because this
+could conceivably be shared between parsers (though this documentation
+does not explain how to do that).  You should normally free the Dtd
+when you free the Parser by doing FreeDtd(p->dtd).
+
+ void ParserSetFlag(Parser p,  ParserFlag flag, int value);
+ #define ParserGetFlag(p, flag) ...
+
+There are numerous flags that can be applied to a parser.  ParserSetFlag
+sets the specified flag to a value which should be non-zero to set it,
+zero to clear it.  ParserGetFlag returns zero or non-zero (not necessarily
+one!) according to whether the flag is clear or set.
+
+The (documented) flags are
+
+	ExpandCharacterEntities
+	ExpandGeneralEntities
+
+If these are set, entity references are expanded.  If not, the
+references are treated as text, in which case any text returned that
+starts with an ampersand must be an entity reference (and provided
+MergePCData is off, all entity references will be returned as separate
+pcdata XBits).  On by default.
+
+	NormaliseAttributeValues (also NormalizeAttributeValues)
+
+If this is set, attributes are normalised according to the standard.
+You might want to not normalise if you are writing something like an
+editor.  On by default.
+
+	ErrorOnBadCharacterEntities
+
+If this is set, character entities which expand to illegal values are
+an error, otherwise they are ignored with a warning.  Off by default
+(should probably be on).
+
+	ErrorOnUndefinedEntities
+
+If this is set, undefined general entity references are an error,
+otherwise a warning is given and a fake entity constructed whose value
+looks the same as the entity reference.  Off by default (should probably
+be on).
+
+	ReturnComments
+
+If this is set, comments are returned as XBits, otherwise they are ignored.
+Off by default.
+
+	ErrorOnUndefinedElements
+	ErrorOnUndefinedAttributes
+
+If these are set and there is a DTD, references to undeclared elements
+and attributes are an error.  Off by default.
+
+	WarnOnRedefinitions
+
+If this is on, a warning is given for redeclared elements, attributes,
+entities and notations.  On by default.
+
+	TrustSDD
+	ProcessDTD
+
+If TrustSDD is set and a DOCTYPE declaration is present, the internal
+part is processed and if the document was not declared standalone or
+if Validate is set the external part is processed.  Otherwise, whether
+the DOCTYPE is automatically processed depends on ProcessDTD; if
+ProcessDTD is not set the user must call ParseDtd() if desired.
+
+	ReturnDefaultedAttributes
+
+If this is set, the returned attributes will include ones defaulted as
+a result of ATTLIST declarations, otherwise missing attributes will not
+be returned.  Off by default.
+
+	MergePCData
+
+If this is set, text data will be merged across comments and entity
+references.  Off by default.
+
+	XMLStrictWFErrors
+
+If this is set, various well-formedness errors will be reported as errors
+rather than warnings.  Off by default.
+
+	Validate
+
+If this is on, the parser will validate the document.  Off by default.
+
+	NoNoDTDWarning
+
+Usually, if Validate is set, the parser will produce a warning if the
+document has no DTD.  This flag suppresses the warning (useful if you
+want to validate if possible, but not complain if not).  Off by default.
+
+	ErrorOnValidityErrors
+
+If this is on, validity errors will be reported as errors rather than
+warnings.  This is useful if your program wants to rely on the
+validity of its input.  Off by default.
+
+	XMLSpace
+
+If this is on, the parser will keep track of xml:space attributes
+(see below).
+
+	XMLNamespaces
+
+If this is on, the parser processes namespace declarations (see
+below).  Namespace declarations are *not* returned as part of the list
+of attributes on an element.
+
+ void ParserSetWarningCallback(Parser p, CallbackProc cb);
+ void ParserSetWarningCallbackArg(Parser p, void *arg);
+
+Usually warnings are printed (on the standard error stream).  This
+function allows you to set a function to be called instead.  The function
+should be declared like this:
+
+ void my_warning_proc(XBit bit, void *arg)
+
+The bit argument will contain a warning bit.  The arg argument will
+be null unless it is set with ParserSetWarningCallbackArg.
+
+ void ParserSetDtdCallback(Parser p, CallbackProc cb);
+ void ParserSetDtdCallbackArg(Parser p, void *arg);
+
+Usually comments and processing instructions inside the DOCTYPE
+declaration are ignored.  This function allows you to set a callback
+be called instead.  The function should be declared in the same way
+as the warning callback.
+
+ void ParserSetEntityOpener(Parser p, EntityOpenerProc opener);
+ void ParserSetEntityOpenerArg(Parser p, void *arg);
+
+Usually entities are opened by calling EntityOpen() on them.  This
+function allows you to intercept entity opening with a callback, for
+example to implement a catalogue.  The callback should declared like
+this:
+
+ InputSource my_entity_opener(Entity e, void *arg);
+
+If your entity opener decides not to handle the entity, it should
+return the result of calling EntityOpen(e).
+
+ void ParserPerror(Parser p, XBit bit);
+
+This function prints an error message according to the bit argument.
+You should probably call it when the parser returns an error XBit, and
+it may be useful to call it from a warning callback function.
+
+ int ParserPush(Parser p, InputSource source);
+
+This pushes an input source onto the parser's input stack.  The usual
+sequence for opening a document is to do:
+
+	p = NewParser();
+	ent = NewExternalEntity(0, 0, filename-or-url, 0, 0);
+	source = EntityOpen(ent);
+	ParserPush(p, source);
+
+
+The parser returns data as XBit structures.  You can read either
+single "bits" - start and end tags, text data and so on - or entire
+trees.  In the latter case the XBit structure returned contains
+pointers to child XBits.  Each XBit has a "type" field whose value is
+an XBitType enumeration which is one of the following:
+
+	XBIT_start
+	XBIT_empty
+
+Returned for start and empty tags.  The XBit's "element_definition"
+field points to the definition of the element.  The attributes field
+contains a linked list of Attribute structures, each of which has a
+"definition" field pointing to the attribute definition, a "value"
+field (string of Char) containing the value, and a "next" field
+pointing to the next attribute (or null).
+
+If the XMLSpace flag is set, the "wsm" field indicates the white-space
+processing mode for the element, determined from the value of the
+xml:space attribute if there is one or inherited if not.  Its value is
+a WhiteSpaceMode enumeration which is one of WSM_unspecified,
+WSM_default, or WSM_preserve.
+
+If the XMLNamespaces flag is set, the "ns_element_definition" field of
+the bit will contain the namespace version of the definition if the
+element name is qualified or a default namespace is in effect,
+otherwise null.  The ns_definition field of each attribute will
+similarly contain the namespace version of the attribute definition if
+the attribute name is qualified or belongs to a qulified element.  Two
+element or attributes with the same local name and namespace URI will
+have the same ns_[element_]definition even if they were read from
+different documents (provided that the two parser instances are using
+the same namespace universe).  The ns_dict field of the bit points to
+a linked list of currently active namespace bindings (not yet
+documented); for start bits these not freed until the corresponding
+*end* bit is freed.
+
+If the XMLNamespaces flag is not set, the ns_* fields do not contain
+useful values.
+
+	XBIT_end
+
+Returned for end tags.  The "element_definition" field points to the
+definition of the element.
+
+	XBIT_pcdata
+
+Returned for text.  The "pcdata_chars" field points to the text as a
+string of Char.
+
+	XBIT_comment
+
+Returned for comments.  The "comment_chars" field points to the
+comment text as a string of Char.
+
+	XBIT_cdsect
+
+Returned for CDATA sections.  The "cdsect_chars" field points to the
+comment text as a string of Char.
+
+	XBIT_pi
+
+Returned for processing instructions.  The "pi_name" field points to
+the target and the "pi_chars" field to the comment text, as strings of
+Char.
+
+	XBIT_dtd
+
+Returned for DOCTYPE declarations.  Two entities are created for the
+internal and external parts.  These are stored in the "internal_part"
+and "external_part" fields of the Dtd structure associated with the
+parser.  Whether the declaration is processed (rther than just read)
+is determined by the TrustSDD flag.
+
+	XBIT_eof
+
+Returned at the end of the document.
+
+	XBIT_error
+
+Returned when an error is detected.  The bit should normally be passed
+to ParserPerror().
+
+	XBIT_warning
+
+This is never returned, but bits with this type are passed to warning
+callbacks.
+
+ XBit ReadXBit(Parser p);
+
+This reads the next bit from a document.  Note that the parser may
+(and does) re-use the XBit structure itself next time ReadXBit is
+called.
+
+ XBit PeekXBit(Parser p);
+
+This reads the next bit wothout consuming it, so that ReadXBit() will
+return it again.
+
+ void FreeXBit(XBit xbit);
+
+This frees the memory associated with an XBit (but not the XBit
+structure itself).  It should be called after processing a bit, If you
+need to keep any of the data, you can set the relevant field in the
+bit to null before calling FreeXBit; it will then be your
+responsibility to free that data yourself.
+
+ XBit ReadXTree(Parser p);
+
+This reads a whole tree.  That is, if the next bit is a start bit,
+further bits are read until the end bit is encountered.  The
+"nchildren" field of the returned bit contains the number of children
+of the node, and they are stored in the children field as
+bit->children[0] ... bit->children[bit->nchildren-1], and so on
+recursively.
+
+ void FreeXTree(XBit tree);
+
+This frees a tree of XBits.
+
+ XBit ParseDtd(Parser p, Entity e);
+
+This processes entities representing the DOCTYPE declaration, created
+when an XBIT_dtd but is returned.  You will typically use code something
+like this:
+
+	if(bit->type == XBit_dtd)
+	{
+	XBit b;
+	b = ParseDtd(sf->pstate, p->dtd->internal_part);
+	if(b->type == XBIT_error)
+			...
+	b = ParseDtd(sf->pstate, p->dtd->external_part);
+	if(b->type == XBIT_error)
+			...
+	}

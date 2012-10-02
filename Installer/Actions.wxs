@@ -1,0 +1,137 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Fragment Id="ActionsFragment">
+		<CustomAction Id="CheckForResidueFiles" Impersonate="no" BinaryKey="WixHelperDll" DllEntry="CheckForFwResidueFiles" />
+		<CustomAction Id="CheckCoreFeatures" Return="check" BinaryKey="WixHelperDll" DllEntry="CheckCoreFeatures" />
+		<CustomAction Id="SetLocalAppFolderPathSIL" Return="check" Property="LocalAppFolder" Value="[LocalAppDataFolder]\SIL International\Language Explorer" />
+		<CustomAction Id="InitSqlServer" Return="ignore" Execute="commit" FileKey='InitSqlServer.exe' Impersonate="no" ExeCommand=""/>
+		<CustomAction Id="InstallDoulosFont" Impersonate="no" BinaryKey="Doulos.exe" ExeCommand="/S" Return="ignore" />
+		<CustomAction Id="InstallCharisFont" Impersonate="no" BinaryKey="Charis.exe" ExeCommand="/S" Return="ignore" />
+		<CustomAction Id="InstallEzraFont" Impersonate="no" BinaryKey="Ezra.exe" ExeCommand="/S" Return="ignore" />
+		<CustomAction Id="InstallGalatiaFont" Impersonate="no" BinaryKey="Galatia.exe" ExeCommand="/S" Return="ignore" />
+		<CustomAction Id="SetDelIcuDataFlag" Return="check" Property="SIL_ICU_DEL_DATA" Value="1" />
+		<CustomAction Id="RemoveSampleDBs" Return="ignore" BinaryKey="WixHelperDll" DllEntry="RemoveSampleDatabases" />
+		<CustomAction Id="SetFirewallDataTE" Return="check" Property="SetupFirewallTE" Value="[#TE.exe]*FieldWorks Translation Editor*" />
+		<CustomAction Id="SetFirewallDataFlex" Return="check" Property="SetupFirewallFlex" Value="[#Flex.exe]*FieldWorks Language Explorer*" />
+		<CustomAction Id="SetFirewallData" Return="check" Property="SetupFirewall" Value="[SetupFirewallTE][SetupFirewallFlex]" />
+		<CustomAction Id="SetupFirewall" Return="ignore" Execute="deferred" Impersonate="no" Script="vbscript">
+			<![CDATA[
+Option Explicit
+dim ExemptedApplicationData
+ExemptedApplicationData = Session.Property("CustomActionData")
+Dim errornum
+errornum = 0
+Do While Len(ExemptedApplicationData) > 0
+	Dim FirstBreakIndex
+	Dim SecondBreakIndex
+	FirstBreakIndex = InStr(ExemptedApplicationData, "*")
+	SecondBreakIndex = InStr(FirstBreakIndex + 1, ExemptedApplicationData, "*")
+	if SecondBreakIndex = Len(SecondBreakIndex) then
+		SecondBreakIndex = SecondBreakIndex - 1
+	end if
+	if SecondBreakIndex = 0 then
+		SecondBreakIndex = 1 + Len(ExemptedApplicationData)
+	end if
+	Const NET_FW_PROFILE_DOMAIN = 0
+	Const NET_FW_PROFILE_STANDARD = 1
+	Const NET_FW_SCOPE_ALL = 0
+	Const NET_FW_IP_VERSION_ANY = 2
+	Dim fwMgr
+	Set fwMgr = CreateObject("HNetCfg.FwMgr")
+	Dim profile
+	Set profile = fwMgr.LocalPolicy.CurrentProfile
+	Dim app
+	Set app = CreateObject("HNetCfg.FwAuthorizedApplication")
+	app.ProcessImageFileName = Left(ExemptedApplicationData, FirstBreakIndex - 1)
+	app.Name = Mid(ExemptedApplicationData, FirstBreakIndex + 1, SecondBreakIndex - FirstBreakIndex - 1)
+	app.Scope = NET_FW_SCOPE_ALL
+	app.IpVersion = NET_FW_IP_VERSION_ANY
+	app.Enabled = FALSE
+	On Error Resume Next
+	profile.AuthorizedApplications.Add app
+	errornum = Err.Number
+	ExemptedApplicationData = Mid(ExemptedApplicationData, SecondBreakIndex + 1)
+Loop
+return errornum
+]]>
+		</CustomAction>
+
+		<Binary Id="WixHelperDll" SourceFile="WIX Helper DLL\release\WIX Helper DLL.dll"/>
+
+		<InstallUISequence>
+			<Custom Action="CheckCoreFeatures" After="MigrateFeatureStates" />
+		</InstallUISequence>
+		<!-- WIX currently omits a number of standard actions that we have to have, so we name them explicitly: -->
+		<AdvertiseExecuteSequence>
+			<RegisterClassInfo />
+			<RegisterExtensionInfo />
+			<RegisterProgIdInfo />
+			<RegisterMIMEInfo />
+			<PublishComponents />
+		</AdvertiseExecuteSequence>
+		<InstallExecuteSequence>
+			<DuplicateFiles />
+			<IsolateComponents/>
+			<MigrateFeatureStates/>
+			<UnpublishComponents />
+			<MsiUnpublishAssemblies />
+			<UnregisterComPlus />
+			<SelfUnregModules />
+			<UnregisterTypeLibraries />
+			<UnregisterClassInfo />
+			<UnregisterExtensionInfo />
+			<UnregisterProgIdInfo />
+			<UnregisterMIMEInfo />
+			<UnregisterFonts/>
+			<RemoveDuplicateFiles />
+			<MoveFiles />
+			<RegisterClassInfo />
+			<RegisterExtensionInfo />
+			<RegisterProgIdInfo />
+			<RegisterMIMEInfo />
+			<RegisterTypeLibraries />
+			<SelfRegModules />
+			<RegisterComPlus />
+			<PublishComponents />
+			<Custom Action="SetLocalAppFolderPathSIL" After="CostFinalize" />
+			<!-- Deleting the ICU data in the following action is connected with setting the InitIcu registry data, which happens for each main application feature -->
+			<Custom Action="SetDelIcuDataFlag" After="CostFinalize"><![CDATA[NOT Installed]]></Custom>
+			<Custom Action="InitSqlServer" Before="InstallFinalize"><![CDATA[(NOT REMOVE) AND (&TE=3 OR &TLE=3 OR &FLEX=3 OR &DN=3) AND (SQL_SERVER_FOUND = "9.00.2047.00" OR SQL_SERVER_FOUND = "9.00.3042.00" OR SQL_SERVER_FOUND = "9.00.4035.00")]]></Custom>
+			<Custom Action="InstallDoulosFont" After="RegisterFonts"><![CDATA[NOT Installed]]></Custom>
+			<Custom Action="InstallCharisFont" After="RegisterFonts"><![CDATA[NOT Installed]]></Custom>
+			<Custom Action="InstallEzraFont" After="RegisterFonts"><![CDATA[NOT Installed]]></Custom>
+			<Custom Action="InstallGalatiaFont" After="RegisterFonts"><![CDATA[NOT Installed]]></Custom>
+			<Custom Action="RemoveSampleDBs" After="UnpublishFeatures"><![CDATA[REMOVE~="ALL"]]></Custom>
+			<Custom Action="SetupFirewall" Before="RegisterProduct"><![CDATA[(NOT REMOVE) AND SetupFirewall AND VersionNT >= 501]]></Custom>
+			<Custom Action="SetFirewallData" Before="InstallInitialize"><![CDATA[(SetupFirewallFlex OR SetupFirewallTE) AND VersionNT >= 501]]></Custom>
+			<Custom Action="SetFirewallDataTE" Before="SetFirewallData"><![CDATA[(NOT REMOVE) AND &TE=3 AND VersionNT >= 501]]></Custom>
+			<Custom Action="SetFirewallDataFlex" Before="SetFirewallData"><![CDATA[(NOT REMOVE) AND &FLEX=3 AND VersionNT >= 501]]></Custom>
+		</InstallExecuteSequence>
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="StopSILFWOnUninstall" Guid="D5549DE6-2A5F-4448-BFDF-FFBB7ADDA72E" KeyPath="yes">
+				<ServiceControl Id="StopSILFWOnUninstall" Name="MSSQL$SILFW" Stop="uninstall" Wait="yes" />
+			</Component>
+		</DirectoryRef>
+		<Property Id="SIL_NEWER_XCEED_FOUND">
+			<DirectorySearch Id="SearchXceedZipDll" Path="[System32]" Depth="0">
+				<FileSearch Id="SearchXceedZipDll" Name="XceedZip.dll" MinVersion="4.5.77" />
+			</DirectorySearch>
+		</Property>
+		<Property Id="SIL_UNISCRIBE_DLL_FOUND">
+			<DirectorySearch Id="SearchUsp10Dll" Path="[SystemFolder]" Depth="0">
+				<FileSearch Id="SearchUsp10Dll" Name="usp10.dll" MinVersion="1.626.6001.18000" />
+			</DirectorySearch>
+		</Property>
+		<Property Id="SQL_SERVER_FOUND">
+			<RegistrySearch Id="SearchSqlServer" Root="HKLM" Key="SOFTWARE\Microsoft\Microsoft SQL Server\SILFW\MSSQLServer\CurrentVersion" Name="CurrentVersion" Type="raw" />
+		</Property>
+		<Property Id="SCR_CHECKS_REG_FOUND">
+			<RegistrySearch Id="SearchScrChecksReg" Root="HKLM" Key="SOFTWARE\ScrChecks\1.0\Settings_Directory" Type="raw" />
+		</Property>
+
+		<Binary Id="Doulos.exe" SourceFile="Binary\DoulosSIL4.106.exe" />
+		<Binary Id="Charis.exe" SourceFile="Binary\CharisSIL4.106.exe" />
+		<Binary Id="Ezra.exe" SourceFile="Binary\EzraSIL251.exe" />
+		<Binary Id="Galatia.exe" SourceFile="Binary\GalatiaSIL-2.0.1.exe" />
+	</Fragment>
+</Wix>

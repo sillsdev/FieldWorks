@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- RADIO BUTTON BEHAVIOR -->
+<!-- This code will select 1 radio button in a 2 radio button group -->
+<!-- Use this code in the following example as a guideline: -->
+
+<!--<var id="GuiRadioBtn1" set="45:The entire Scripture project"/>
+<var id="GuiRadioBtn2" set="45:The range between"/>
+<var id="RB1_DesiredState" set="$EntireScriptureProject"/>
+<include from="IncRadioButton.xml"/>-->
+
+<include>
+
+	<if>
+		<condition of="$RB1_DesiredState" is="TRUE"/>
+		<then>
+			<!-- Select radio button 1 -->
+			<click path="$GuiRadioBtn1"/>
+		</then>
+		<else>
+			<!-- Select radio button 2 -->
+			<click path="$GuiRadioBtn2"/>
+		</else>
+	</if>
+
+</include>

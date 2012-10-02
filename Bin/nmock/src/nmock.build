@@ -1,0 +1,68 @@
+<project name="NMock" default="release">
+
+	<property name="nunit.output" value="Plain"/>
+
+	<target name="init">
+		<mkdir dir="build"/>
+	</target>
+
+	<target name="compile" description="Compiles all assemblies" depends="init">
+		<call target="compile.core"/>
+		<call target="compile.test"/>
+	</target>
+
+	<target name="compile.core" description="Compiles core assembly" depends="init">
+		<csc target="library" output="build/nmock.dll" debug="true">
+			<sources>
+				<includes name="src/**.cs"/>
+			</sources>
+		</csc>
+	</target>
+
+	<target name="compile.test" description="Compiles core assembly" depends="compile.core">
+		<csc target="library" output="build/nmock.test.dll" debug="true">
+			<sources>
+				<includes name="test/**.cs"/>
+				<includes name="sample/**.cs"/>
+			</sources>
+			<references>
+				<includes name="build/nmock.dll"/>
+				<includes name="lib/*.dll"/>
+			</references>
+			<arg value="/nowarn:0679,1591"/>
+		</csc>
+		<copy file="lib\nunit.framework.dll" todir="build" />
+	</target>
+
+	<target name="test" depends="compile" description="Run unit tests">
+		<nunit2>
+			  <test assemblyname="build\nmock.test.dll" fork="true" type="${nunit.output}"/>
+		</nunit2>
+	</target>
+
+	<target name="clean" description="Clean up built files">
+		<!-- the delete task fails if the dir doesn't exist, so mkdir just in case -->
+		<mkdir dir="build"/>
+		<mkdir dir="dist"/>
+		<delete dir="build"/>
+		<delete dir="dist"/>
+	</target>
+
+	<target name="release" depends="clean, test" description="Generate release">
+		<mkdir dir="dist"/>
+		<!-- recompile cleaner dll, without tests and samples and no debug symbols -->
+		<csc target="library" output="dist/nmock.dll" debug="false">
+			<sources>
+				<includes name="src/**.cs"/>
+			</sources>
+		</csc>
+		<echo message="*********************************"/>
+		<echo message="* Release built: dist/nmock.dll *"/>
+		<echo message="*********************************"/>
+	</target>
+
+	<target name="cruise">
+		<property name="nunit.output" value="Xml"/>
+		<call target="release"/>
+	</target>
+</project>

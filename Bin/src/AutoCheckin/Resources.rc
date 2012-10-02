@@ -1,0 +1,23 @@
+#include <windows.h>
+#include "resource.h"
+
+IDD_DIALOG_USER_INFO DIALOGEX 0, 0, 400, 110
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+FONT 10, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+	RTEXT           "Changelist:", -1,10,5,150,8
+	COMBOBOX        IDC_CBB_CHANGELIST,162,3,100,50, CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "Attempt auto-merge",IDC_CB_AUTORESOLVE,"Button",
+					BS_AUTOCHECKBOX | WS_TABSTOP,265,4,70,10
+	LTEXT           "Comment to be used in Check-in History file and Perforce:",
+					-1,10,17,380,8
+	EDITTEXT        IDC_EDIT_COMMENT,10,27,380,12, ES_AUTOHSCROLL | WS_TABSTOP
+	RTEXT           "Name to be used in Check-in History file:", -1,10,44,150,8
+	EDITTEXT        IDC_EDIT_NAME,162,42,100,12, ES_AUTOHSCROLL | WS_TABSTOP
+	RTEXT           "Date to be used in Check-in History file:", -1,10,59,150,8
+	EDITTEXT        IDC_EDIT_DATE,162,57,100,12, ES_AUTOHSCROLL | WS_TABSTOP
+	RTEXT           "FieldWorks root folder:", -1,10,74,150,8
+	EDITTEXT        IDC_EDIT_ROOT,162,72,100,12, ES_AUTOHSCROLL | WS_TABSTOP
+	DEFPUSHBUTTON   "&OK",IDOK,175,90,50,14, WS_TABSTOP
+END

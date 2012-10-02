@@ -1,0 +1,945 @@
+/*-----------------------------------------------------------------------------------*//*:Ignore
+Copyright 2001, SIL International. All rights reserved.
+
+File: DbAccess.idh
+Responsibility: Paul Panek
+Last reviewed: never
+
+-------------------------------------------------------------------------------*//*:End Ignore*/
+import "unknwn.idl";
+
+typedef [v1_enum] enum SqlStmtType
+{
+	knSqlStmtNoResults = 0,
+	knSqlStmtSelectWithOneRowset = 1,
+	knSqlStmtStoredProcedure = 2,
+} SqlStmtType;
+
+typedef [v1_enum] enum OdeLockTimeoutMode
+{
+	koltNone,
+	koltMsgBox,
+	koltReturnError
+} OdeLockTimeoutMode;
+
+typedef [v1_enum] enum OdeLockTimeoutValue
+{
+	koltvForever = -1,			// SQL Server's default if not set explicitly
+	koltvNoWait = 0,
+	koltvFwDefault = 20000		// Our default: twenty seconds
+} OdeLockTimeoutValue;
+
+
+interface IOleDbCommand;
+interface IOleDbEncap;
+interface IFwMetaDataCache;
+
+
+/***********************************************************************************************
+	Interface OleDbCommand
+
+	This interface encapsulates one or more SQL statements and allows them to be executed
+	against a given database (as specified by the OleDbEncap object with which the OleDbCommand
+	object is initialized).  These SQL statements may generate one or more rowsets which can
+	be obtained sequentially (only) by calling the GetRowset method.  Rows on a rowset can
+	be obtained sequentially by calling NextRow.  Individual field information can be retrieved
+	via the GetColValue method.
+
+	Note: DbAccess.idh is included in FwKernelTlb.idl. This is how it becomes available to C#
+	programs. Therefore, to make a new or modified interface available without remakefw,
+	you must cc mkfwk-nodep, than do a clean COMInterfaces-nodep, then build COMInterfaces-nodep.
+
+	@b{Notes}
+	@list{
+	Parameters can only be set (or retrieved) for @b{one} of the SQL statements that is
+	contained in the given SQL statement string.}
+	@list{
+	Output parameters can only be retrieved @b{after} all rowsets have been exhausted.}
+
+	@h3{Restrictions}
+	@list{
+	This code is NOT thread-safe.  Multiple threads cannot use the same OleDbCommand object and
+	expect to obtain consistent results as this would allow for database manipulation commands
+	to be interleaved within in a single database transaction.}
+	@list{
+	Default results sets are implemented rather than Dynamic cursors. Thus, for example,
+	backwards fetching and fetching blocks of rows is not supported.}
+	@list{
+	Multiple SQL statements with parameters cannot be executed.  This functionality could be
+	added later, but if you would like to do this now, simple issue separate commands.  (It is
+	just a bit of a nuisance to do all the parameter bindings.)}
+	@list{
+	After a SQL command is executed, OleDbCommand holds a smart pointer to an IRowset interface.
+	If you try to execute a new SQL command without releasing this IRowset, the execute command
+	will fail. There isn't any obvious place where we can automatically release this IRowset
+	since the user is free to get next or previous rows as long as they want. When you execute
+	a new command on the same OleDbCommand, we automatically release the old information so it
+	works fine. However, if you have a smart pointer on IOleDbCommand (qodc) and then want to
+	use a different IOleDbCommand (qodc1), you will get a failure unless you first release the
+	smart pointer on qodc (qodc.Clear()).}
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	To execute one or more SQL statements and retrieve data from rowsets (or parameters) that
+	result.
+
+	@h3{How to obtain an instance}
+	Use the CreateCommand method on the OleDbEncap object.
+
+	@h3{Hungarian: odc}
+***********************************************************************************************/
+DeclareInterface(OleDbCommand, Unknown, E77E6DE4-5F5A-4b21-8864-060C7A4F26BD)
+{
+	// Indicates that the column value just retrieved was NULL.
+	// @param pfIsNull Value is set "true" if the last column value that was retrieved equals
+	// NULL.
+	HRESULT ColValWasNull(
+		[out] int * pfIsNull);
+
+	// Executes one or more SQL statements as given in the "bstrSqlStatement" parameter.  (i.e.
+	// select, insert, update, delete, or stored procedure calls).  Note that each of these
+	// SqlStatements should be separated by a @b{semi-colon}.  (e.g.  "declare @id int;
+	// set @id=1; select @id")
+	//
+	// After this call has been made, rowsets can be extracted by the GetRowSet method (if
+	// appropriate from the SQL statement) and if the calling code specified a
+	// @i{nStatementType} with a value of @i{"knSqlStmtSelectWithOneRowset"} or
+	// @i{"knSqlStmtStoredProcedure"}.  If there are several SQL statements (or a stored
+	// procedure call) that return a result set, the value of the second parameter,
+	// @i{(nStatementType)}, should be set to @i{"knSqlStmtStoredProcedure"}.
+	//
+	// @param bstrSqlStatement SQL statement(s) to be executed
+	// @param nStatementType Type of SQL statement(s) as defined by the SqlStmtType
+	// ennumeration (which is declared in ~FWROOT/Src/DbAccess/DbAccess.idh).
+	HRESULT ExecCommand(
+		[in] BSTR bstrSqlStatement,
+		[in] int nStatementType);
+
+	// Retrieves the value of the designated column from the current row of a rowset.
+	//
+	// @b{Notes}
+	// @list{
+	// Column indexes are @b{1-based}, not zero-based.  This is done to be reasonably similar
+	// to ADO or ODBC and also to allow for bookmark columns to be easily added in the future
+	// if that is desired.}
+	// @param iluColIndex Index of the column value to be retrieved.  Note that this is
+	// @b{1-based}, not zero based.
+	// @param prgbDataBuffer Memory buffer allocated by the caller in which the column value
+	// is placed.
+	// @param cbBufferLength Size of the allocated buffer.
+	// @param pcbAmtBuffUsed Size of the column value being retrieved.  If this value is greater
+	// than or equal to the cbBufferLength value, it indicates that the amount of data (plus
+	// padding) is too large for the buffer and so the caller should try to retrieve the
+	// information again with a larger buffer.
+	// @param pfIsNull Set to "true" if the column value in the database equals NULL.
+	// @param cbPad Indicates how many trailing bytes of nulls should be appended to the
+	// retrieved data value.  This should be set to zero except for wType DBTYPE_IUNKNOWN,
+	// DBTYPE_WSTR (usually = 2), or DBTYPE_STR (usually = 1).  The reason for it is to make
+	// null termination optional for WSTR and STR, and so we can tell how (and whether) to do
+	// it for IUNKNOWN, which could be either type of string or binary.
+	HRESULT GetColValue(
+		[in] ULONG iluColIndex,
+		[out, size_is(cbBufferLength)] BYTE * prgbDataBuffer,
+		[in] ULONG cbBufferLength,
+		[out] ULONG * pcbAmtBuffUsed,
+		[out] ComBool * pfIsNull,
+		[in] int cbPad);
+
+	// Retrieves the value of an integer column from the current row of a rowset.  This is
+	// simply an "adapter" method over the ${IOleDbCommand#GetColValue} method and is intended
+	// for VisualBasic programs that cannot deal with pointers.
+	// @param iColIndex Index of the column value to be retrieved.  Note that this is
+	// @b{1-based}, not zero-based.
+	// @param pnValue Integer value retrieved from the database.  If the column value in the
+	// database is NULL, this will be set to zero.  Thus, callers should use the
+	// ${IOleDbCommand#ColValWasNull} method to determine if the value is actually zero or NULL.
+	HRESULT GetInt(
+		[in] int iColIndex,
+		[out] int * pnValue);
+
+	// Returns the value of a parameter designated in an SQL statement.  If the value is NULL,
+	// the pfIsNull flag will be set to true.  This is (of course) only applicable to output or
+	// input/output parameters.
+	// @param iluColIndex Index of the parameter to retrieve.  Note that this is @b{1-based},
+	// not zero-based.
+	// @param prgbDataBuffer Memory buffer allocated by the caller in which the column value
+	// is placed.
+	// @param cluBufferLength Size of the allocated buffer.
+	// @param pfIsNull Set to "true" if the column value in the database equals NULL.
+	HRESULT GetParameter(
+		[in] ULONG iluColIndex,
+		[out, size_is(cluBufferLength)] BYTE * prgbDataBuffer,
+		[in] ULONG cluBufferLength,
+		[out] ComBool * pfIsNull);
+
+	// Gets the next rowset (or the first one, if this is the first time the method was called)
+	// that has been produced by the SQL command(s) of an OleDbCommand object.
+	//
+	// @b{Note}
+	// @list{
+	// BLOB columns are bound as ISequentialStream objects (i.e.  a type of stream pointer).
+	// Only one BLOB column is allowed per SQL "select" statement with SQL Server.
+	// (See @i{"BLOBs and OLE Objects"} in the SQL Server documentation @i{"Books On-Line"})}
+	// @param nRowsBuffered Number of row handles that should be retrieved from the database
+	// at one time.  The more row handles that are retrieved, the more a dynamic cursor will
+	// behave like a static cursor, however, less disk I/O is required to retrieve data in bulk.
+	// The fewer the number of rows retrieved, the more current the data will be, however,
+	// more round-trips to the database are required.  @b{NOTE: Currently, this feature has not
+	// been implemented.  Only one row handle is retrieved at a time.}
+	HRESULT GetRowset(
+		[in] int nRowsBuffered);
+
+	// Initializes the OleDbCommand object after it has been created.  This is a @b{mandatory}
+	// step, before the object can be used.  This operation must be done separately because the
+	// database cannot be given to the OleDbCommand object as part of its creation process.
+	// @param punkOde OLE DB database encapsulation (as defined in the OleDbEncap object).
+	// @param pfistLog Pointer to the logging stream (may be NULL).
+	HRESULT Init(
+		[in] IUnknown * punkOde,
+		[in] IStream * pfistLog);
+
+	// Sets the row marker to point to the next row in the current rowset.
+	// @param pfMoreRows Set to "true" if there is a next row, otherwise "false".
+	HRESULT NextRow(
+		[out] ComBool * pfMoreRows);
+
+	// Sets a single parameter in an SQL command.  Note that parameter indexes are @b{1-based}
+	// just like rowset columns, to avoid confusion.
+	//
+	// The following bitmasks describe the parameter characteristics and should be bitwise-OR'ed
+	// together in the method call of the client code to designate the type of parameter (ie.
+	// dwFlags).  These will be used to set the DBPARAMBINDINFO and DBBINDING structures.
+	//
+	// So far, I have found that only DBPARAMFLAGS_ISINPUT and DBPARAMFLAGS_ISOUTPUT are
+	// required.  The rest seem to be redundant.
+	// @table{
+	// @row{
+	//	@cell{@b{DBPARAMFLAGS_ISINPUT}}
+	//	@cell{The parameter accepts values on input. Not set if this is unknown.}
+	// }
+	// @row{
+	//	@cell{@b{DBPARAMFLAGS_ISOUTPUT}}
+	//	@cell{The parameter returns values on output. Not set if this is unknown.
+	//	Providers support only those parameter types that make sense for their data store.}
+	// }
+	// @row{
+	//	@cell{DBPARAMFLAGS_ISSIGNED}
+	//	@cell{The parameter is signed. This is ignored if the type is inherently signed,
+	//	such as DBTYPE_I2 or if the sign does not apply to the type, such as DBTYPE_BSTR.
+	//	It is generally used in ICommandWithParameters::SetParameterInfo so that the consumer
+	//	can tell the provider if a provider-specific type name refers to a signed or unsigned
+	//	type.}
+	// }
+	// @row{
+	//	@cell{DBPARAMFLAGS_ISNULLABLE}
+	//	@cell{The parameter accepts NULLs. If nullability is unknown, this flag is set.}
+	// }
+	// @row{
+	//	@cell{DBPARAMFLAGS_ISLONG}
+	//	@cell{The parameter contains a BLOB (i.e.  contains very long data). The definition
+	//	of very long data is provider specific. The flag setting corresponds to the value of
+	//	the IS_LONG column in the PROVIDER_TYPES schema rowset for the data type.
+	//
+	//	When this flag is set, the BLOB is best manipulated through one of the storage
+	//	interfaces. Although such BLOBs can be sent in a single piece with
+	//	ICommand::Execute, there can be provider-specific problems in doing so. For
+	//	example, the BLOB might be truncated due to machine limits on memory. Furthermore,
+	//	when this flag is set, the provider might not be able to accurately return the
+	//	maximum length of the BLOB data in ulParamSize in
+	//	ICommandWithParameters::GetParameterInfo.
+	//
+	//	When this flag is not set, the BLOB can be accessed either through
+	//	ICommand::Execute or through a storage interface.}
+	//	}
+	// @row{
+	//	@cell{DBPARAMFLAGS_SCALEISNEGATIVE}
+	//	@cell{Set if the parameter type is DBTYPE_VARNUMERIC and bScale represents the absolute
+	//	value of the negative scale of the parameter. This flag is used when setting data in
+	//	a DBTYPE_VARNUMERIC parameter.}}}
+	//
+	// The following table gives the possible data types for the parameter.  Typically, only
+	// the values in bold are used.
+	// @table{
+	// @row{@cell{DBTYPE_BOOL}	@cell{bit}}
+	// @row{@cell{DBTYPE_DBTIMESTAMP}	@cell{smalldatetime}}
+	// @row{@cell{DBTYPE_GUID}	@cell{uniqueidentifier}}
+	// @row{@cell{DBTYPE_I1}	@cell{bit}}
+	// @row{@cell{DBTYPE_UI1}	@cell{unsigned int, 1 byte}}
+	// @row{@cell{DBTYPE_I2}	@cell{signed smallint, 2 bytes}}
+	// @row{@cell{DBTYPE_UI2}	@cell{unsigned smallint, 2 bytes}}
+	// @row{@cell{@b{DBTYPE_I4}}	@cell{@b{signed int, 4 bytes}}}
+	// @row{@cell{DBTYPE_UI4}	@cell{unsigned int, 4 bytes}}
+	// @row{@cell{DBTYPE_I8}	@cell{signed int, 8 bytes}}
+	// @row{@cell{DBTYPE_UI8}	@cell{unsigned int, 8 bytes}}
+	// @row{@cell{DBTYPE_DECIMAL}	@cell{double?}}
+	// @row{@cell{DBTYPE_DATE}	@cell{date?}}
+	// @row{@cell{DBTYPE_DBDATE}	@cell{date?}}
+	// @row{@cell{DBTYPE_NUMERIC}	@cell{double?}}
+	// @row{@cell{DBTYPE_R4}	@cell{double?, 4 byte}}
+	// @row{@cell{DBTYPE_R8}	@cell{double?, 8 byte}}
+	// @row{@cell{@b{DBTYPE_BYTES}}	@cell{@b{binary, timestamp, varbinary}}}
+	// @row{@cell{DBTYPE_BSTR}	@cell{BSTR}}
+	// @row{@cell{@b{DBTYPE_STR}}	@cell{@b{char, varchar}}}
+	// @row{@cell{@b{DBTYPE_WSTR}}	@cell{@b{nchar, nvarchar, sysname}}}
+	// }
+	//
+	// @param iluParamIndex Index of the parameter to be set.  Note that this value is
+	// @b{1-based}, not zero based.
+	// @param dwFlags Flag(s) that identify what type of parameter this is.  (See the
+	// comments made above.)  These can be "OR-ed" together.
+	// @param bstrParamName Name of the parameter if there is a desire to refer to it.
+	// @i{This is optional and is usually set to @b{NULL}.}
+	// @param nDataType Data type of the parameter.  (See the table in the comments above.)
+	// @param prgluDataBuffer Data buffer from which the parameter value is obtained.
+	// @param cluBufferLength Length (in bytes) of the prgluDataBuffer data buffer.
+	HRESULT SetParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in] WORD nDataType,
+		[in, size_is(cluBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cluBufferLength);
+
+	// Sets a single byte-buffer parameter in an SQL command. Similar to the above
+	// SetParameter method, but makes life easier in .Net.
+	//
+	// @param iluParamIndex Index of the parameter to be set.  Note that this value is
+	// @b{1-based}, not zero based.
+	// @param dwFlags Flag(s) that identify what type of parameter this is.  (See the
+	// comments made above.)  These can be "OR-ed" together.
+	// @param bstrParamName Name of the parameter if there is a desire to refer to it.
+	// @b{@i{This is optional and is usually set to @b{NULL}.}}
+	// @param prgbDataBuffer Data buffer from which the parameter value is obtained.
+	// @param cluBufferLength Length (in bytes) of the prgbDataBuffer data buffer.
+	HRESULT SetByteBuffParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in, size_is(cluBufferLength)] BYTE * prgbDataBuffer,
+		[in] ULONG cluBufferLength);
+
+	// Sets a string parameter in an SQL command. Similar to the above
+	// SetParameter method, but makes life easier in .Net.
+	//
+	// @param iluParamIndex Index of the parameter to be set.  Note that this value is
+	// @b{1-based}, not zero based.
+	// @param dwFlags Flag(s) that identify what type of parameter this is.  (See the
+	// comments made above.)  These can be "OR-ed" together.
+	// @param bstrParamName Name of the parameter if there is a desire to refer to it.
+	// @b{@i{This is optional and is usually set to @b{NULL}.}}
+	// @param prgchDataBuffer Data buffer from which the parameter value is obtained.
+	// @param cluBufferLength Length (in bytes) of the prgchDataBuffer data buffer.
+	HRESULT SetStringParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in, size_is(cluBufferLength)] OLECHAR * prgchDataBuffer,
+		[in] ULONG cluBufferLength);
+	// When a command is kept around in order to reuse parameters on repeated calls
+	// (e.g., in an SqlUndoAction), it is important to release all resources like
+	// row sets, otherwise, OleDb eventually starts returning E_OUTOFMEMORY.
+	HRESULT ReleaseExceptParams();
+}
+
+
+/***********************************************************************************************
+	Interface OleDbEncap
+
+	Encapsulates raw OLE DB routines to provide database transaction support and the ability to
+	create OleDbCommand objects which allow for SQL data manipulation and query commands to be
+	made against a SQL Server (or MSDE) database.  This interface should be used instead of
+	ODBC or ADO.  (ADO is actually just a shell over OLE DB.  It converts all database values
+	to "variants" and then from "variants" to the desired data types in the application.  The
+	standard implementation of the IOleDbEncap interface eliminates this conversion step.)
+	See the "Platform SDK\Data Services\Microsoft OLE DB" section in the MSDN documentation for
+	more details on OLE DB.
+
+	@h3{Restrictions}
+	@list{
+	This code is NOT thread-safe.  Multiple threads cannot use the same OleDbEncap object and
+	expect to obtain consistent results, as this would allow for database manipulation commands
+	to be interleaved within in a single database transaction.}
+	@list{
+	See the @i{Restrictions} section in the IOleDbCommand interface description for additional
+	issues of concern.}
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	To access the (SQL Server or MSDE) relational database.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_ActionHandler or CreateInstance on a smart pointer.
+
+	@h3{Hungarian: ode}
+***********************************************************************************************/
+DeclareInterface(OleDbEncap, Unknown, 45A8CF79-E944-4cbb-BAAA-68349DAE1DDF)
+{
+	// Opens a database transaction.  (See @i{"Begin Transaction (T-SQL)"} in the SQL Server
+	// Documentation, @i{"Books On-line"} for more details.)  By default, a database "session"
+	// is set to auto-commit mode, which means that every SQL statement is automatically
+	// committed to the database immediately.  By opening a database transaction, SQL commands
+	// are applied to the database but are not committed until the ${IOleDbEncap#CommitTrans}
+	// method is called.  (See the ${IOleDbEncap#SetSavePointOrBeginTrans} method as well.)
+	// @h3{Notes}
+	// @list{
+	// SQLOLEDB (i.e.  the OLE DB provider for SQL Server) does NOT support nested
+	// transactions.}
+	// @list{
+	// In order to make the standard implementation of OleDbEncap thread safe, one would have
+	// to return a transaction "handle" from this method to the client code, which could then
+	// be given to other OleDbEncap methods to avoid mixing in commands from other users with
+	// the first database transaction.  If this were not done, some commands could get rolled
+	// back with others that are not related to them.  As well, a mutex/semaphore would have to
+	// be added to this method to ensure that only one client receives a transaction handle at
+	// any one time.  After the transaction is committed or rolled back, other clients would
+	// then be able to call methods or begin a transaction.}
+	HRESULT BeginTrans();
+
+	// Commits (or closes) an open database transaction.
+	//
+	// @h3{Note}
+	// @list{
+	// SQLOLEDB (i.e.  the OLE DB provider for SQL Server) does NOT support nested
+	// transactions.}
+	HRESULT CommitTrans();
+
+	// Creates a OleDbCommand object which then can be used to specify SQL statements.
+	// OleDbCommand objects can be reused for different SQL commands.
+	// @param ppodc Address of a IOleDbCommand pointer to a newly created OleDbCommand
+	// object.
+	HRESULT CreateCommand(
+		[out] IOleDbCommand ** ppodc);
+
+	// Initializes the OleDbEncap object after it has been created.  This is a @b{mandatory}
+	// step, before the object can be used.  It establishes a connection to the specified
+	// database.
+	// @param bstrServer Name of the database server (e.g. "LS-SOMESERVER")
+	// @param bstrDatabase Name of the (database) catalogue.  (e.g. "TestLangProj")
+	// @param pfistLog Pointer to the logging stream (may be NULL).
+	// @param olt Timeout mode for locking conflicts.
+	// @param nmsTimeout Length of timeout for locking conflicts, in milliseconds.
+	HRESULT Init(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pfistLog,
+		[in] OdeLockTimeoutMode olt,
+		[in] int nmsTimeout);
+
+	// Indicates if a database tranaction is currently open on the OleDbEncap object.
+	// @param pfTransactionOpen Set to "true" if a database transaction is open.
+	HRESULT IsTransactionOpen(
+		[out,retval] ComBool * pfTransactionOpen);
+
+	// Rolls back the database transaction that was opened with a call to the BeginTrans method.
+	// This reverses @b{all} data manipulation commands that have been applied to the database
+	// on this database connection since the BeginTrans method was called.  (See
+	// @i{"Rollback Transaction (T-SQL)"} in the SQL Server Documentation, @i{"Books On-line"}
+	// for more details.)  After this, the database session automatically reverts to
+	// auto-commit mode.  This means that any SQL statements issued after this will be
+	// immediately applied and committed to the database unless a new database transaction is
+	// opened via the BeginTrans method.
+	//
+	// @h3{Notes}
+	// @list{
+	// SQLOLEDB (i.e.  the OLE DB provider for SQL Server) does NOT support nested
+	// transactions.}
+	HRESULT RollbackTrans();
+
+	// Rolls back the database transaction (that is currently open for the OleDbEncap object)
+	// to the designated SavePoint.  This requires that the caller must keep track of the
+	// savepoint name when it was set via the ${IOleDbEncap#SetSavePoint} or
+	// ${IOleDbEncap#SetSavePointOrBeginTrans} methods.
+	// @param bstrSavePoint Name of the SavePoint to which the database transaction is to be
+	// rolled back.
+	HRESULT RollbackSavePoint(
+		[in] BSTR bstrSavePoint);
+
+	// Sets a database transaction SavePoint.  (See @i{"Save Transaction (T-SQL)"} in the SQL
+	// Server Documentation, @i{"Books On-line"} for more details.)
+	// @param pbstr Name of the SavePoint set by the OleDbEncap object.  The SavePoint name
+	// cannot be set by the caller.  The nomenclature of these SavePoints is the string "SP"
+	// followed by a non-negative integer.  This value keeps going up and never goes back down.
+	// Thus, there is a theoretical limit of 2.1+ billion SavePoints per session.  I believe
+	// the first user who reaches this limit will receive a free t-shirt.
+	HRESULT SetSavePoint(
+		[out] BSTR * pbstr);
+
+	// Begins a new database transaction if one is not already open and sets a SavePoint.
+	// (See ${IOleDbEncap#BeginTrans} and ${IOleDbEncap#SetSavePoint})
+	// @param pbstr Name of the SavePoint set by the OleDbEncap object.  The SavePoint name
+	// cannot be set by the caller.
+	HRESULT SetSavePointOrBeginTrans(
+		[out] BSTR * pbstr);
+
+	// Initialize MSDE for use by FieldWorks. This should normally be called at the beginning of
+	// every program that uses MSDE. It checks a flag in the registry that is set by the setup
+	// program. If clear, it does nothing. If set, it does the following:
+	// 	* Starts up MSDE if it is not running
+	// 	* Changes the sa password to inscrutible
+	// 	* Creates FWDeveloper account with careful password
+	// 	* Creates FWGuest account with welcome password
+	// 	* Adds sp_GetFWDBs stored procedure to master
+	// 	* If it finds any .new database files in the SampleData directory, it detaches the
+	// 	  old file, if present, renames it, renames the .new files, and attaches them.
+	// It redoes the master changes even if they were done previously, so that we know we have
+	// current information.
+	// @param pfistLog Pointer to the logging stream (may be NULL).
+	// @kparam fForce If true, it forces initialization regardless of the registry flag.
+	HRESULT InitMSDE(
+		[in] IStream * pfistLog,
+		[in] ComBool fForce);
+
+	// Return the server name associated with this instance.
+	// @param pbstrSvr Pointer to a BSTR to accept the server string.
+	[propget] HRESULT Server(
+		[out, retval] BSTR * pbstrSvr);
+
+	// Return the database name associated with this instance.
+	// @param pbstrDb Pointer to a BSTR to accept the database name string.
+	[propget] HRESULT Database(
+		[out, retval] BSTR * pbstrDb);
+
+	// Returns the free space left in the database log file.
+	// @param pnKbFree Free Space left in KilloBytes.
+	HRESULT GetFreeLogKb(
+		[in] int nReservespace,
+		[out] int * pnKbFree);
+
+	// Reinitializes the OleDbEncap object. It reestablishes a connection to the current
+	// database.
+	HRESULT Reinit();
+
+	// Return the database session associated with this instance.
+	// @param ppunkSession database session
+	HRESULT GetSession(
+		[out] IUnknown ** ppunkSession);
+}
+
+
+/***********************************************************************************************
+	Interface FwMetaDataCache
+
+	Used to cache FieldWorks metadata information.  Since this type of data only changes
+	when a user adds, edits, or deletes a custom field (which should happen very rarely),
+	this interface allows the data to be brought into memory all at once (upon initialization
+	of an FwMetaDataCache object) and thereafter, data can be randomly accessed, very quickly.
+	Since there is not too much metadata for FieldWorks, the data does not take up a lot of
+	memory.
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	It is beneficial to make use of a FwMetaDataCache to provide quick, random access to
+	FieldWorks metadata information particularly if that information is frequently required by
+	many different parts of an application.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_ActionHandler or CreateInstance on smart pointer.
+
+	@h3{Hungarian: mdc}
+***********************************************************************************************/
+DeclareInterface(FwMetaDataCache, Unknown, 81E4AEF4-8E22-4343-ACAE-93FCA999C0D9)
+{
+	// Initializes the FwMetaDataCache object after has been created.  This is a @b{mandatory}
+	// step before the object can be used.  It sets the connection to the database and caches
+	// all the FieldWorks metadata from the database.
+	// This can be called at any time. Each time it is called, it reloads metadata information
+	// from the database.
+	// @param pode Pointer to an OleDbEncap COM object that provides access to the database.
+	HRESULT Init(
+		[in] IOleDbEncap * pode);
+
+	// (Re)Initializes the FwMetaDataCache object.  If the flag is true, then any existing
+	// virtual properties are kept in the cache.  Otherwise, they are flushed, making this
+	// essentially idential to callin Init() a second time.
+	HRESULT Reload(
+		[in] IOleDbEncap * pode,
+		[in] ComBool fKeepVirtuals);
+
+	// Alternative way to initialize, passing an XML file (like Ling.cm).
+	//<class num="int" id="className" base="baseClassName" abstract="true">
+	//	<props>
+	//		<basic num="int" id="FieldName" sig="Boolean/Integer/Time/String/MultiString/MultiUnicode" />
+	//		<rel/owning num="int" id="FieldName" card="atomic/seq/col" sig="classname"/>
+	// currently doesn't initialize some less essential stuff like help strings and labels.
+	// Set fClearPrevCache to false to read in multiple XML files.
+	// Enhance JohnT: support attributes to handle these.
+	HRESULT InitXml(
+		[in] BSTR bstrPathname,
+		[in] ComBool fClearPrevCache);
+
+	//:>****************************************************************************************
+	//:> Field access methods
+	//:>****************************************************************************************
+
+	// Gets the number of "fields" defined for this conceptual model.
+	// @param pcflid Points to the output count of fields.
+	[propget] HRESULT FieldCount(
+		[out, retval] int * pcflid);
+
+	// Gets the list of field identification numbers (in no particular order).  If the array
+	// provided is too small, only an arbitrary set of cflid values is returned.  If the array
+	// provided is too large, the excess entries are set to zero.
+	// @param cflid The size of the output array.
+	// @param rgflid An integer array for returning the field identification numbers.
+	HRESULT GetFieldIds(
+		[in] int cflid,
+		[out, size_is(cflid)] ULONG * rgflid);
+
+	// Gets the name of the class that contains this field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrOwnClsName Points to the output name of the class that contains the field.
+	// In the database, this is the "Name" column in the Class$ table that corresponds to the
+	// Class column in the Field$ table.
+	HRESULT GetOwnClsName(
+		[in] ULONG luFlid,
+		[out, retval] BSTR * pbstrOwnClsName);
+
+	// Gets the name of the destination class that corresponds to this field.  This is the name
+	// of the class that is either owned or referred to by another class.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrDstClsName Points to the output name of the destination class.  In the
+	// database, this is the "Name" column in  the Class$ table that corresponds to the DstCls
+	// column in the Field$ table.
+	HRESULT GetDstClsName(
+		[in] ULONG luFlid,
+		[out, retval] BSTR * pbstrDstClsName);
+
+	// Gets the "Id" value of the class that contains this field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pluOwnClsid Points to the output "Id" of the class that contains the field.  In
+	// the database, this corresponds to the Class column in the Field$ table.
+	HRESULT GetOwnClsId(
+		[in] ULONG luFlid,
+		[out, retval] ULONG * pluOwnClsid);
+
+	// Gets the "Id" of the destination class that corresponds to this field.  This is the "Id"
+	// of the class that is either owned or referred to by another class.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pluDstClsid Points to the output "Id" of the class that contains the field.  In
+	// the database, this corresponds to the DstCls column in the Field$ table. If it is NULL,
+	// (ULONG)-1 is returned, which indicates the field holds a basic value instead of an
+	// object.
+	HRESULT GetDstClsId(
+		[in] ULONG luFlid,
+		[out, retval] ULONG * pluDstClsid);
+
+	// Gets the name of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldName Points to the output name of the field.  In the database, this
+	// corresponds to the "Name" column in the Field$ table.
+	HRESULT GetFieldName(
+		[in] ULONG luFlid,
+		[out, retval] BSTR * pbstrFieldName);
+
+	// Gets the user label of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldLabel Points to the output Label of the field.  In the database, this
+	// corresponds to the "UserLabel" column in the Field$ table.
+	HRESULT GetFieldLabel(
+		[in] ULONG luFlid,
+		[out, retval] BSTR * pbstrFieldLabel);
+
+	// Gets the help string of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldHelp Points to the output help string of the field.  In the database, this
+	// corresponds to the "HelpString" column in the Field$ table.
+	HRESULT GetFieldHelp(
+		[in] ULONG luFlid,
+		[out, retval] BSTR * pbstrFieldHelp);
+
+	// Gets the Xml UI of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldXml Points to the output name of the field.  In the database, this
+	// corresponds to the "XmlUI" column in the Field$ table.
+	HRESULT GetFieldXml(
+		[in] ULONG luFlid,
+		[out, retval] BSTR * pbstrFieldXml);
+
+	// Gets the listRoot of the field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param piListRoot Points to the output field ListRoot.  In the database, this
+	// corresponds to the "ListRootId" column in the Field$ table.
+	HRESULT GetFieldListRoot(
+		[in] ULONG luFlid,
+		[out, retval] int * piListRoot);
+
+	// Gets the Ws of the field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param piWs Points to the output field Ws.  In the database, this
+	// corresponds to the "WsSelector" column in the Field$ table.
+	HRESULT GetFieldWs(
+		[in] ULONG luFlid,
+		[out, retval] int * piWs);
+
+	// Gets the type of the field.  This value indicates if the field is a primitive data type
+	// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+	// between two classes (i.e. owning/reference and atomic/collection/sequence).  These
+	// numeric values are defined in the @b{~FWROOT\src\cellar\lib\CmTypes.h} file.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// Historical note: at one point, the result could include the virtual bit, kcptVirtual, or'd
+	// with one of the other kcpt values. This caused endless bugs and has been removed.
+	// @param piType Points to the output field type.
+	HRESULT GetFieldType(
+		[in] ULONG luFlid,
+		[out, retval] int * piType);
+
+	// Given a field id and a class id, this returns true it it is legal to store this class of
+	// object in the field.
+	// @param luFlid Field identification number.
+	// @param luClid Class identification number.
+	// @param pfValid Points to the output boolean set to true if luClid can be stored in
+	// luFlid, else set to false.
+	[propget] HRESULT IsValidClass(
+		[in] ULONG luFlid,
+		[in] ULONG luClid,
+		[out, retval] ComBool * pfValid);
+
+	//:>****************************************************************************************
+	//:> Class access methods
+	//:>****************************************************************************************
+
+	// Gets the number of "classes" defined for this conceptual model.
+	// @param pcclid Points to the output count of classes.
+	[propget] HRESULT ClassCount(
+		[out, retval] int * pcclid);
+
+	// Gets the list of class identification numbers (in no particular order).  If the array
+	// provided is too small, only an arbitrary subset of cclid values is returned.  If the
+	// array provided is too large, the excess entries are set to zero.
+	// @param cclid The size of the output array.
+	// @param rgclid An integer array for returning the class identification numbers.
+	HRESULT GetClassIds(
+		[in] int cclid,
+		[out, size_is(cclid)] ULONG * rgclid);
+
+	// Gets the name of the class.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pbstrClassName Points to the output name of the class with the given
+	// identification number.  In the database, this is the "Name" column in the Class$ table.
+	HRESULT GetClassName(
+		[in] ULONG luClid,
+		[out, retval] BSTR * pbstrClassName);
+
+	// Indicates whether a class is abstract or concrete.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pfAbstract Points to the output boolean set to "true" if abstract, or set to
+	// "false" for concrete.
+	HRESULT GetAbstract(
+		[in] ULONG luClid,
+		[out, retval] ComBool * pfAbstract);
+
+	// Gets the base class id for a given class.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pluClid Points to the output base class identification number.  In the database,
+	// this corresponds to  the "Base" column in the Class$ table.
+	HRESULT GetBaseClsId(
+		[in] ULONG luClid,
+		[out, retval] ULONG * pluClid);
+
+	// Gets the name of the base class for a given class.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pbstrBaseClsName Points to the output name of the base class.  In the database,
+	// this is the "Name" column in the (base) Class$ table that corresponds to the Base column
+	// in the (given) Class$ table.
+	HRESULT GetBaseClsName(
+		[in] ULONG luClid,
+		[out, retval] BSTR * pbstrBaseClsName);
+
+	// Gets a list of the fields for the specified class.
+	// Gets all fields whose types match the specified argument, which should be a combination
+	// of the fcpt values defined in CmTypes.h, e.g., to get all owning properties
+	// pass kfcptOwningCollection | kfcptOwningAtom | kfcptOwningSequence.
+	// Returns E_FAIL if the array is too small. cflidMax 0 may be passed to obtain the required
+	// size.
+	// Fields of superclasses are also returned, if the relevant flag is true.
+	// [Note: The special CmObject fields are not returned, for now,
+	// but the plan to include them before too long.]
+	HRESULT GetFields(
+		[in] ULONG luClid,
+		[in] ComBool fIncludeSuperclasses,
+		[in] int grfcpt,
+		[in] int cflidMax,
+		[out, size_is(cflidMax)] ULONG * prgflid,
+		[out, retval] int * pcflid);
+
+	//:>****************************************************************************************
+	//:> Reverse access methods
+	//:>****************************************************************************************
+
+	// Get the ID of the class having the specified name. Returns 0 if not found.
+	HRESULT GetClassId(
+		[in] BSTR bstrClassName,
+		[out, retval] ULONG * pluClid);
+
+	// Gets the field ID given the class and field names. Returns 0 if not found.
+	// Searches superclasses as well as actual class given.
+	HRESULT GetFieldId(
+		[in] BSTR bstrClassName,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] ULONG * pluFlid);
+
+	// This is more efficient if the client already has the classID specified classID and field name.
+	// Returns 0 if not found.
+	// Searches superclasses as well as actual class given.
+	HRESULT GetFieldId2(
+		[in] ULONG luClid,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] ULONG * pluFlid);
+	// Gets the direct subclasses of the given class (not including itself).
+	HRESULT GetDirectSubclasses(
+		[in] ULONG luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax)] ULONG * prgluSubclasses);
+	// Gets all subclasses of the given class, including itself (which is always the first
+	// result in the list, so it can easily be skipped if desired). The list is therefore
+	// a complete list of the classes which are valid to store in a property whose
+	// signature is the class identified by luClid.
+	HRESULT GetAllSubclasses(
+		[in] ULONG luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax)] ULONG * prgluSubclasses);
+
+	// Note a virtual property. The type is the simulated type, one of the original types,
+	// NOT with the virtual bit OR'd in.
+	HRESULT AddVirtualProp(
+		[in] BSTR bstrClass,
+		[in] BSTR bstrField,
+		[in] ULONG luFlid,
+		[in] int type);
+
+	[propget] HRESULT IsVirtual(
+		[in] ULONG luFlid,
+		[out, retval] ComBool * pfVirtual);
+
+	// Gets the name of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldName Points to the output name of the field.  In the database, this
+	// corresponds to the "Name" column in the Field$ table.
+	// This version is allowed to return null (with S_OK) if the field is unknown.
+	HRESULT GetFieldNameOrNull(
+		[in] ULONG luFlid,
+		[out, retval] BSTR * pbstrFieldName);
+
+}
+
+/***********************************************************************************************
+	Interface DbAdmin
+
+	Used to perform high-level database administration tasks.
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	Use whenever attaching, detaching, copying databases.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_DbAdmin or CreateInstance on smart pointer.
+
+	@h3{Hungarian: dba}
+***********************************************************************************************/
+DeclareInterface(DbAdmin, Unknown, 70D6EBB2-9529-45B1-8F86-345E0179D024)
+{
+	// Copy a (detached) database to a (detached) destination.
+	// Source path is the full name without extension of the mdf file.
+	// This does not attach the database or change its internal name.
+	// Nor does it copy the log file. (Seems to work best if we don't do this for SQL Server.)
+	HRESULT CopyDatabase(
+		[in] BSTR bstrSrcPathName,
+		[in] BSTR bstrDstPathName);
+
+	// Attach a database so it can be used.
+	// The first argument gives the internal name to be assigned to the database.
+	// The second gives the full path (excluding any extension) to the mdf/log file pair.
+	HRESULT AttachDatabase(
+		[in] BSTR bstrDatabaseName,
+		[in] BSTR bstrPathName);
+
+	// Detach a database.
+	HRESULT DetachDatabase(
+		[in] BSTR bstrDatabaseName);
+
+	// Rename a database.
+	// The database is found in bstrDirName\bstrOldName.{mdf,log}.
+	// These files are renamed to bstrDirName\bstrNewName.{mdf,log}.
+	// If the database is attached to begin with, set fDetachBefore to get it
+	// detached before the files are renamed.
+	// Set fAttachAfter to attach the database afterwards and give it the
+	// internal name bstrNewName.
+	HRESULT RenameDatabase(
+		[in] BSTR bstrDirName,
+		[in] BSTR bstrOldName,
+		[in] BSTR bstrNewName,
+		[in] ComBool fDetachBefore,
+		[in] ComBool fAttachAfter);
+
+	// Set a log stream that can be used to report errors.
+	[propputref] HRESULT LogStream(
+		[in] IStream * pstrm);
+
+	// Get the FW root directory
+	[propget] HRESULT FwRootDir(
+		[out, retval] BSTR * pbstr);
+	// Get the FW directory that holds data migration scripts.
+	[propget] HRESULT FwMigrationScriptDir(
+		[out, retval] BSTR * pbstr);
+	// Get the FW directory that holds FW databases
+	[propget] HRESULT FwDatabaseDir(
+		[out, retval] BSTR * pbstr);
+	// Get the FW directory that holds templates (e.g., BlankLangProj)
+	[propget] HRESULT FwTemplateDir(
+		[out, retval] BSTR * pbstr);
+
+	// Rename a database, detaching the one given by bstrOldName, renaming its files in place
+	// to bstrNewName.  This renames and attaches the log file along with the data file.
+	HRESULT SimplyRenameDatabase(
+		[in] BSTR bstrOldName,
+		[in] BSTR bstrNewName);
+};
+
+/***********************************************************************************************
+	CoClass definitions.
+***********************************************************************************************/
+#ifndef NO_COCLASSES
+DeclareCoClass(OleDbEncap, AAB4A4A3-3C83-11d4-A1BB-00C04F0C9593)
+{
+	interface IOleDbEncap;
+	interface IUndoGrouper;
+};
+
+DeclareCoClass(FwMetaDataCache, 3A1B1AC6-24C5-4ffe-85D5-675DB4B9FCBB)
+{
+	interface IFwMetaDataCache;
+};
+
+DeclareCoClass(DbAdmin, D584A725-8CF4-4699-941F-D1337AC7DB5C)
+{
+	interface IDbAdmin;
+};
+
+#endif

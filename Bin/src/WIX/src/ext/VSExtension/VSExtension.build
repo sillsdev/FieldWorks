@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="vsextension" default="vsextension.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	vsextension.build - Builds the vsextension project
+  </description>
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- extension directories -->
+  <property name="vsextension.wixext.dir.src" value="${dir.src.ext}\vsextension\wixext" readonly="true" />
+  <property name="vsextension.wixlib.dir.src" value="${dir.src.ext}\vsextension\wixlib" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="vsextension.build" description="Peforms a full rebuild (clean then build)" depends="vsextension.clean, vsextension.inc" />
+
+  <!-- Clean -->
+  <target name="vsextension.clean" description="Cleans the build">
+	<delete dir="${dir.build.ext.vsextension}" failonerror="false" if="${directory::exists(dir.build.ext.vsextension)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="WixVSExtension.dll" />
+		<include name="WixVSExtension.pdb" />
+		<include name="vs.wixlib" />
+		<include name="vs.xsd" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="vsextension.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Copy the xsd file to the target directory -->
+	<copy file="${vsextension.wixext.dir.src}\Xsd\vs.xsd" todir="${dir.target.wix}" />
+
+	<!-- Flatten all of the xml/xsd files -->
+	<foreach item="File" property="flattenxml.source">
+	  <in>
+		<items>
+		  <include name="${vsextension.wixext.dir.src}\Data\tables.xml" />
+		  <include name="${vsextension.wixext.dir.src}\Xsd\vs.xsd" />
+		</items>
+	  </in>
+	  <do>
+		<property name="flattenxml.target" value="${dir.build.ext.vsextension}\${path::get-file-name(flattenxml.source)}" />
+		<call target="flattenXml" />
+	  </do>
+	</foreach>
+
+	<!-- Pull in the wix tools NAnt tasks -->
+	<loadtasks assembly="${file.nanttasks}" />
+
+	<!-- Build the wixlib -->
+	<candle out="${dir.build.ext.vsextension}\vs.wixobj" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <sources basedir="${vsextension.wixlib.dir.src}">
+		<include name="VSExtension.wxs" />
+	  </sources>
+	</candle>
+	<lit out="${dir.target.wix}\vs.wixlib" exedir="${dir.target.wix}" warningsaserrors="true">
+	  <sources basedir="${dir.build.ext.vsextension}">
+		<include name="vs.wixobj" />
+	  </sources>
+	</lit>
+
+	<csc
+	  target="library"
+	  output="${dir.target.wix}\WixVSExtension.dll"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${vsextension.wixext.dir.src}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="Properties\AssemblyInfo.cs" />
+		<include name="VSCompiler.cs" />
+	  </sources>
+	  <references basedir="${dir.target.wix}">
+		<include name="wix.dll" />
+	  </references>
+	  <resources failonempty="true" basedir="${dir.build.ext.vsextension}" prefix="Microsoft.Tools.WindowsInstallerXml.Extensions.Xsd">
+		<include name="vs.xsd" />
+	  </resources>
+	  <resources failonempty="true"  basedir="${dir.build.ext.vsextension}" prefix="Microsoft.Tools.WindowsInstallerXml.Extensions.Data">
+		<include name="tables.xml" />
+	  </resources>
+	</csc>
+  </target>
+
+</project>

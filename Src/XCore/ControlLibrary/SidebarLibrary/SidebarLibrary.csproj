@@ -1,0 +1,329 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{EF17DE45-C757-48BF-BE3B-FD8E1D72E154}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>SidebarLibrary</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SidebarLibrary</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Design">
+	  <Name>System.Design</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Collections\CollectionWithEvents.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Collections\MenuCommandCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Collections\OutlookBarBandCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Collections\OutlookBarItemCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Collections\RebarBandCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Collections\ToolBarItemCollection.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CommandBarUnused\ChevronMenu.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CommandBarUnused\CommandBarMenu.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="CommandBarUnused\Rebar.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="CommandBarUnused\ToolBarEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="CommandBarUnused\ToolBarItem.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="General\ColorUtil.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="General\DoubleBuffer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="General\Enumerations.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="General\GDIUtil.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="General\ResourceUtil.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="General\TextUtil.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MenuUnused\ColorGroup.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MenuUnused\DrawCommand.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MenuUnused\MenuCommand.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="MenuUnused\MenuControl.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="MenuUnused\MenuControlDesigner.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MenuUnused\MenuItemEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="MenuUnused\PopupMenu.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Win32\Enums.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Win32\Functions.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Win32\RegistryUtil.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Win32\Structs.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="WinControls\BorderLabel.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\ButtonEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\CheckBoxEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\ColorComboBox.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\ColorListBox.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\ColorPicker.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\ColorPickerDropDown.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="WinControls\ComboBoxBase.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\CustomColorDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="WinControls\ImageComboBox.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\ListViewEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\NumericTextBox.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\OutlookBar.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\ProgressBarEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\RadioButtonEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\TextBoxEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\TextComboBox.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="WinControls\TreeViewEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Content Include="licenses.licx" />
+	<EmbeddedResource Include="CommandBarUnused\ChevronMenu.resx">
+	  <DependentUpon>ChevronMenu.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="CommandBarUnused\CommandBarMenu.resx">
+	  <DependentUpon>CommandBarMenu.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="CommandBarUnused\Rebar.resx">
+	  <DependentUpon>Rebar.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="CommandBarUnused\ToolBarEx.resx">
+	  <DependentUpon>ToolBarEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MenuUnused\MenuCommand.resx">
+	  <DependentUpon>MenuCommand.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MenuUnused\MenuControl.resx">
+	  <DependentUpon>MenuControl.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MenuUnused\MenuItemEx.resx">
+	  <DependentUpon>MenuItemEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Resources\Controls.resX" />
+	<EmbeddedResource Include="Resources\DragCursor.cur" />
+	<EmbeddedResource Include="Resources\ImagesColorPicker.resX" />
+	<EmbeddedResource Include="Resources\ImagesMenu.resX">
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Resources\SortedListView.resX" />
+	<EmbeddedResource Include="WinControls\BorderLabel.resx">
+	  <DependentUpon>BorderLabel.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ButtonEx.resx">
+	  <DependentUpon>ButtonEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\CheckBoxEx.resx">
+	  <DependentUpon>CheckBoxEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ColorComboBox.resx">
+	  <DependentUpon>ColorComboBox.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ColorListBox.resx">
+	  <DependentUpon>ColorListBox.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ColorPicker.resx">
+	  <DependentUpon>ColorPicker.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ColorPickerDropDown.resx">
+	  <DependentUpon>ColorPickerDropDown.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ComboBoxBase.resx">
+	  <DependentUpon>ComboBoxBase.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\CustomColorDlg.resx">
+	  <DependentUpon>CustomColorDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ListViewEx.resx">
+	  <DependentUpon>ListViewEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\NumericTextBox.resx">
+	  <DependentUpon>NumericTextBox.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\OutlookBar.resx">
+	  <DependentUpon>OutlookBar.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\ProgressBarEx.resx">
+	  <DependentUpon>ProgressBarEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\RadioButtonEx.resx">
+	  <DependentUpon>RadioButtonEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\TextBoxEx.resx">
+	  <DependentUpon>TextBoxEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\TextComboBox.resx">
+	  <DependentUpon>TextComboBox.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WinControls\TreeViewEx.resx">
+	  <DependentUpon>TreeViewEx.cs</DependentUpon>
+	</EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

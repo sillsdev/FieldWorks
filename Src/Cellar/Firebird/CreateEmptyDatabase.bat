@@ -1,0 +1,1 @@
+C:\firebird\bin\isql -u sysdba -p inscrutable -i C:\Fw\Src\Cellar\Firebird\CreateEmptyDatabase.sql -q

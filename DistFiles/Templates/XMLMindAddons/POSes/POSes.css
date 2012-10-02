@@ -1,0 +1,145 @@
+/* POSes.css
+ * XMLMind style sheet for displaying category catalog information.
+ */
+Abbreviation:before
+{
+	display: table-cell;
+}
+Abbreviation
+{
+	display: table-cell;
+	   border: 1 solid black;
+	   padding: 2;
+	color: Blue;
+}
+
+Category:before
+{
+	content:collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box)) "  " attr(id) "      "
+	check-box(attribute, use4newLangProjects,
+				  label, "Use in new FieldWorks projects",
+				  unchecked-value, "no",
+				  checked-value, "yes"
+				  color, olive, font-size, medium, font-weight, normal);
+/*	color:silver; */
+}
+Category
+{
+	collapsible: yes;
+	collapsed: no;
+	not-collapsible-head: 1;
+	display:block;
+	padding-left: 0.125in;
+	font-weight: bold;
+	font-size: large;
+}
+
+Citation:before
+{
+	display: table-cell;
+}
+Citation
+{
+	display:table-cell;
+	   border: 1 solid black;
+	   padding: 2;
+	color: Green;
+}
+
+Citations:before
+{
+	content: "cites : " ;
+	color:silver;
+}
+Citations
+{
+/*	collapsible: yes;
+	collapsed: no;
+	not-collapsible-head: 1;
+	padding-left: 0.125in;
+	*/
+	display:block;
+	   border: 1 solid black;
+}
+
+Description:before
+{
+	display: table-cell;
+}
+Description
+{
+	display:table-cell;
+	   border: 1 solid black;
+	   padding: 2;
+	color: Black;
+}
+
+LangCode:before
+{
+	display: table-cell;
+}
+LangCode
+{
+	display: table-cell;
+	   border: 1 solid black;
+	   padding: 2;
+	color: Black;
+}
+
+Language:before
+{
+	display: table-row;
+}
+Language
+{
+	display:table-row;
+	font-weight: normal;
+	font-size: medium;
+}
+
+Languages:before
+{
+	display: table-row-group;
+	content: 	row(cell("Code", width, 5ex), cell("Name", width, 10ex),
+				 cell("Abbreviation",width, 10ex), cell("Description", width, 40ex),
+				 cell("Citations", width, 15ex),
+				 font-size, medium,
+				 font-weight, bold, color, olive,
+				 padding-top, 2, padding-right, 2,
+				 padding-bottom, 2, padding-left, 2,
+				 border-width, 1, border-style, solid);
+}
+Languages
+{
+	padding-left: 0.25in;
+	display:table;
+	border: 1 solid black;
+	padding: 2;
+	border-spacing: 2;
+}
+
+Name:before
+{
+	display: table-cell;
+}
+Name
+{
+	display:table-cell;
+	   border: 1 solid black;
+	   padding: 2;
+	color: Maroon;
+}
+
+SubCategory:before
+{
+	content: "subcat : " collapser() ;
+	color:silver;
+}
+SubCategory
+{
+	collapsible: yes;
+	collapsed: no;
+	not-collapsible-head: 1;
+	display:block;
+	padding-left: 0.125in;
+}

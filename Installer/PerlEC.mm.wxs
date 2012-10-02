@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Module Id="SILPERL5100B" Guid="1855F924-5ADC-43e0-8FFE-009FE75D1EA6" Language="1033" Version="3.1.0.0">
+	<Package Id="????????-????-????-????-????????????" Keywords="Perl, Encoding Conversion, SILConverters" Description="Perl EncConverter merge module" Comments="Merge module containing the Perl EncConverter DLLs" Manufacturer="SIL" InstallerVersion="200" Platforms="Intel" Languages="1033" SummaryCodepage="1252" />
+	<Directory Id="TARGETDIR" Name="SourceDir">
+	  <Component Id="PerlRemoveOldShortcuts" Guid="68676BD7-83D4-482D-860F-267D60783E30" KeyPath="yes">
+		<RemoveFolder Id="PerlRemoveOldShortcuts1" Directory="PFSILConvertersFolder" On="uninstall" />
+		<RemoveFolder Id="PerlRemoveOldShortcuts2" Directory="SILConvHelp" On="uninstall" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExpr1" Guid="4FBA933C-E445-44ca-B992-830AC7A72DF7">
+		<Registry Id="AddPerlRecentPerlExpr1" Root="HKCU" Key="Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strInOut =~ s/[^aeiou ]/C/g; $strInOut =~ s/[aeiou]/V/g;" Type="string" KeyPath="yes" Value="Convert all (English) vowels to V and consonants to C" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExpr2" Guid="8F061882-8E53-403a-AFDC-72A3E3817A99">
+		<Registry Id="AddPerlRecentPerlExpr2" Root="HKCU" Key="Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strOut = lc($strIn);" Type="string" KeyPath="yes" Value="Convert a string to lower case" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExpr3" Guid="296E85BF-3FAA-4480-A710-EC3E3136715F">
+		<Registry Id="AddPerlRecentPerlExpr3" Root="HKCU" Key="Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strOut = reverse($strIn);" Type="string" KeyPath="yes" Value="Reverse a string of characters" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExpr4" Guid="1371B5A9-822F-46c0-8CF6-58627DEE89A9">
+		<Registry Id="AddPerlRecentPerlExpr4" Root="HKCU" Key="Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strOut = uc($strIn);" Type="string" KeyPath="yes" Value="Convert a string to upper case" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExprHKUremove" Guid="03F53744-50AC-4796-804D-47CBBDE0A8B1">
+		<Registry Id="AddPerlRecentPerlExprHKUremove" Root="HKU" Key=".Default\Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression" Action="removeKeyOnUninstall" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExprHKU1" Guid="370011BA-C81E-46f9-A4A8-A3B9C9D3E49A">
+		<Registry Id="AddPerlRecentPerlExprHKU1" Root="HKU" Key=".Default\Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strInOut =~ s/[^aeiou ]/C/g; $strInOut =~ s/[aeiou]/V/g;" Type="string" KeyPath="yes" Value="Convert all (English) vowels to V and consonants to C" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExprHKU2" Guid="ECB9B197-4C86-4d1e-91D5-66D08E871E3A">
+		<Registry Id="AddPerlRecentPerlExprHKU2" Root="HKU" Key=".Default\Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strOut = reverse($strIn);" Type="string" KeyPath="yes" Value="Reverse a string of characters" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExprHKU3" Guid="58F48980-08B5-486a-904A-6F2676DC2D1F">
+		<Registry Id="AddPerlRecentPerlExprHKU3" Root="HKU" Key=".Default\Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strOut = uc($strIn);" Type="string" KeyPath="yes" Value="Convert a string to upper case" />
+	  </Component>
+	  <Component Id="PerlRecentPerlExprHKU4" Guid="70A925EC-95E8-4f80-AB86-9B314FB6BF66">
+		<Registry Id="AddPerlRecentPerlExprHKU4" Root="HKU" Key=".Default\Software\SIL\SilEncConverters31\ConvertersSupported\SIL.PerlExpression\RecentlyUsed" Name="$strOut = lc($strIn);" Type="string" KeyPath="yes" Value="Convert a string to lower case" />
+	  </Component>
+	  <Directory Id="CommonFilesFolder" Name="Common">
+		<Directory Id="SIL" Name="SIL">
+		  <Directory Id="MSVCRT90VersionsDir" Name="EC_VS9~1.307" LongName="EC_VS9.0.30729Libs">
+			<Component Id="C_MSVCRT90perl510.dll" Guid="20AE5412-0A4E-49dd-B97D-76FA65A21C5B">
+			  <File Id="MSVCRT90perl510.dll" Name="perl510.DLL" LongName="perl510.dll" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="DistFiles\perl510.dll"/>
+			</Component>
+			<Component Id="C_MSVCRT90PerlEC5100b.dll" Guid="CD5A098A-7370-467f-AF1A-E786AABC62C3">
+			  <File Id="MSVCRT90PerlEC5100b.dll" Name="PERLEC~1.DLL" LongName="PerlEC5100b.dll" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\PerlEC5100b.dll"/>
+			</Component>
+			<Component Id="C_MSVCRT90PXPerlWrapu.dll" Guid="5D5A0442-FAFE-40b1-9F51-5B4BDF10AB5F">
+			  <File Id="MSVCRT90PXPerlWrapu.dll" Name="PXPERL~1.DLL" LongName="PXPerlWrap510b-u.dll" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="DistFiles\PXPerlWrap510b-u.dll"/>
+			</Component>
+			<Component Id="C_MSVCRT90PerlEC5100b.tlb" Guid="C0DB23FE-EFB6-4bc8-9291-B93A01943540">
+			  <File Id="MSVCRT90PerlEC5100b.tlb" Name="PERLEC~1.TLB" LongName="PerlEC5100b.tlb" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\PerlEC5100b.tlb"/>
+			  <TypeLib Id="85811A3D-27F5-4141-9A24-50914E87A964" Language="0" MajorVersion="3" MinorVersion="1" Description="Perl IEncConverter implementation 3.1 Type Library" Cost="0" />
+			</Component>
+			<Component Id="C_MSVCRT90PATH" Guid="11655B5B-5565-4245-A6F4-AE3443999781">
+			  <Environment Id="MSVCRT90PATH" Name="PATH" Action="set" System="yes" Part="first" Value="[CommonFilesFolder]SIL\EC_VS9.0.30729Libs" />
+			</Component>
+		  </Directory>
+		  <Directory Id="Help" Name="Help">
+			<Component Id="PerlExpressionPluginAboutbox" Guid="8D58D219-4BE6-9EAE-AEBE-3C74F2D97146">
+			  <File Id="PerlExpressionPluginAboutbox" Name="PERLEX~1.HTM" LongName="Perl Expression Plug-in About box.htm" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box.htm"/>
+			</Component>
+			<Directory Id="PerlExpressionPluginAboutboxFiles" Name="PERLEX~1" LongName="Perl Expression Plug-in About box_files">
+			  <Component Id="PerlExpressionPluginAboutboxFilesfilelist.xml" Guid="D76BEB7D-0631-EC30-CCEA-D619D2D51589">
+				<File Id="PerlExpressionPluginAboutboxFilesfilelist.xml" Name="FILELIST.XML" LongName="filelist.xml" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\filelist.xml" />
+			  </Component>
+			  <Component Id="PerlExpressionPluginAboutboxFilesimage003.png" Guid="64EBEC77-AD7F-739F-62AF-871FCF9E5794">
+				<File Id="PerlExpressionPluginAboutboxFilesimage003.png" Name="IMAGE003.PNG" LongName="image003.png" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\image003.png"/>
+			  </Component>
+			  <Component Id="PerlExpressionPluginAboutboxFilesimage001.png" Guid="F617C4DC-9098-C24D-DB5E-6D9D9DFE82AF">
+				<File Id="PerlExpressionPluginAboutboxFilesimage001.png" Name="IMAGE001.PNG" LongName="image001.png" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\image001.png"/>
+			  </Component>
+			  <Component Id="PerlExpressionPluginAboutboxFilesimage004.jpg" Guid="EE705524-0A03-8035-DAB9-C9598A33A533">
+				<File Id="PerlExpressionPluginAboutboxFilesimage004.jpg" Name="IMAGE004.JPG" LongName="image004.jpg" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\image004.jpg"/>
+			  </Component>
+			  <Component Id="PerlExpressionPluginAboutboxFilesheader.htm" Guid="2E64AB91-42D1-DE29-B3EE-10C97C96A240">
+				<File Id="PerlExpressionPluginAboutboxFilesheader.htm" Name="HEADER.HTM" LongName="header.htm" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\header.htm"/>
+			  </Component>
+			  <Component Id="PerlExpressionPluginAboutboxFilesimage007.jpg" Guid="B589D24C-4370-E93F-6BA9-660721912A11">
+				<File Id="PerlExpressionPluginAboutboxFilesimage007.jpg" Name="IMAGE007.JPG" LongName="image007.jpg" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\image007.jpg"/>
+			  </Component>
+			  <Component Id="PerlExpressionPluginAboutboxFilesimage005.png" Guid="FFACC7CC-CFD0-524F-C596-3BCD7291E14A">
+				<File Id="PerlExpressionPluginAboutboxFilesimage005.png" Name="IMAGE005.PNG" LongName="image005.png" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\image005.png"/>
+			  </Component>
+			  <Component Id="PerlExpressionPluginAboutboxFilesimage006.jpg" Guid="3FCFC80F-73D3-86F0-9F30-9AFCA8C475C9">
+				<File Id="PerlExpressionPluginAboutboxFilesimage006.jpg" Name="IMAGE006.JPG" LongName="image006.jpg" ReadOnly="yes" Vital="yes" KeyPath="yes" Source="Lib\${config}\Help\Perl Expression Plug-in About box_files\image006.jpg"/>
+			  </Component>
+			</Directory>
+		  </Directory>
+		</Directory>
+	  </Directory>
+	  <Directory Id="ProgramMenuFolder" SourceName="USER'S~1" LongSource="User's Programs Menu">
+		<Directory Id="PFSILConvertersFolder" Name="SILCON~1" LongName="SIL Converters">
+		  <Directory Id="SILConvHelp" Name="HELP" LongName="Help">
+			<Component Id="HelpShortcuts" Guid="BD7147FF-EB93-447b-9310-A490E2F9ACD3" KeyPath="yes">
+			  <Shortcut Id="PerlExpressionPluginHelp" Directory="SILConvHelp" Name="HELPFO~1" LongName="Help for Perl Expression Plug-in" Target="[#PerlExpressionPluginAboutbox]" Hotkey="0" IconIndex="0" Show="normal" WorkingDirectory="Help"/>
+			</Component>
+		  </Directory>
+		</Directory>
+	  </Directory>
+	  <Directory Id="CommonAppDataFolder" SourceName="AppData">
+		<Directory Id="AppDataSIL" Name="SIL">
+		  <Directory Id="ECFolder" Name="EC">
+			<Directory Id="PluginsFolder" Name="PLUGINS" LongName="Plugins">
+			  <Directory Id="IEC3100" Name="IEC3.1~1" LongName="IEC3.1.0.0">
+				<Component Id="PerlEC510_3.1.0.0PluginDetails.xml" Guid="E7FE92EC-A2FB-425f-A6F9-521ACD360DEC">
+				  <File Id="PerlEC510_3.1.0.0PluginDetails.xml" Name="PERLEC~2.XML" LongName="PerlEC510 3.1.0.0 Plugin Details.xml" Vital="yes" KeyPath="yes" Source="Lib\release\Plugins\IEC3.1.0.0\PerlEC510 3.1.0.0 Plugin Details.xml"/>
+				</Component>
+			  </Directory>
+			</Directory>
+		  </Directory>
+		</Directory>
+	  </Directory>
+	</Directory>
+	<UI />
+  </Module>
+</Wix>

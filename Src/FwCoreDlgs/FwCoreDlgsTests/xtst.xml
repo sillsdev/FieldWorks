@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LgWritingSystem id="xtst" language="tst - TestOnly" type="OTHER">
+	<Name24>
+	  <AUni ws="en">TestOnly</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Tst</AUni>
+	</Abbr24>
+	<Locale24><Integer val="1033"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>Courier</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>xtst</Uni></ICULocale24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<LegacyMapping24><Uni>&lt;None&gt;</Uni></LegacyMapping24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1033"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+<LocaleName>TestOnly</LocaleName>
+  <LocaleCountry />
+  <LocaleVariant />
+  <Keyboard />
+  <EncodingConverter />
+</LanguageDefinition>

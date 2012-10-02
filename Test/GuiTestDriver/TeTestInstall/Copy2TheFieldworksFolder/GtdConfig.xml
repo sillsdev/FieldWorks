@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+ <app id="TE" path="C:\Program Files\SIL\FieldWorks" exe="TE.exe">
+  <scripts>
+	<path>C:\fw\Test\GuiTestDriver\TeScripts</path>
+  </scripts>
+  <model main="TE.xml">
+	<path>C:\fw\Test\GuiTestDriver\TeModel</path>
+  </model>
+ </app>
+</config>

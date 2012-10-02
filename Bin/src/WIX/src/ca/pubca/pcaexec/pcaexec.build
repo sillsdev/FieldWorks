@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="pcaexec" default="pcaexec.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	scaexec.build - Builds scaexec.dll
+	2005.12.09 fregro Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- pcaexec-specific properties -->
+  <property name="pcaexec.file.targetPdb" value="${path::change-extension(file.target.pcaexec, '.pdb')}" readonly="true" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="pcaexec.build" description="Peforms a full rebuild (clean then build)" depends="pcaexec.clean, pcaexec.inc" />
+
+  <!-- Clean -->
+  <target name="pcaexec.clean" description="Cleans the build">
+	<delete dir="${dir.build.pcaexec}" failonerror="false" if="${directory::exists(dir.build.pcaexec)}" />
+	<delete file="${file.target.pcaexec}" failonerror="false" if="${file::exists(file.target.pcaexec)}" />
+	<delete file="${pcaexec.file.targetPdb}" failonerror="false" if="${file::exists(pcaexec.file.targetPdb)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="pcaexec.inc" description="Performs an incremental build" depends="makeDirs">
+	<fileset id="compileCpp.fileset.sources" basedir="${dir.src.ca.pubca}\pcaexec">
+	  <include name="cpiappexec.cpp" />
+	  <include name="cpiapproleexec.cpp" />
+	  <include name="cpiasmexec.cpp" />
+	  <include name="cpipartexec.cpp" />
+	  <include name="cpipartroleexec.cpp" />
+	  <include name="cpisubsexec.cpp" />
+	  <include name="cpiutilexec.cpp" />
+	  <include name="mqiexec.cpp" />
+	  <include name="pcautilexec.cpp" />
+	  <include name="pcaexec.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.pcaexec}" />
+	<property name="compileCpp.file.precomp.h" value="${dir.src.ca.pubca}\pcaexec\precomp.h" />
+	<property name="compileCpp.additionalOptions" value="-I&quot;${dir.src.ca.wcautil}&quot;" />
+	<property name="compileCpp.file.rc" value="${dir.src.ca.pubca}\pcaexec\pcaexec.rc" />
+	<property name="makeNativeDll.file.target" value="${file.target.pcaexec}" />
+	<property name="makeNativeDll.file.def" value="${dir.src.ca.pubca}\pcaexec\pcaexec.def" />
+	<property name="makeNativeDll.additionalLibs" value='"${file.target.wcautil}" "${file.target.dutil}" "${dir.platformsdk.lib}\msi.lib" "${dir.platformsdk.lib}\uuid.lib"' />
+
+	<!-- Make scaexec.dll -->
+	<call target="makeNativeDll" />
+  </target>
+
+</project>

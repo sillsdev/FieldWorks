@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>Windows Installer XML (WiX) toolset has released as Open Source on SourceForge.net </title>
+</head>
+<body>
+<h1><a href='http://blogs.msdn.com/robmen/archive/2004/04/05/107709.aspx'>Windows Installer XML (WiX) toolset has released as Open Source on SourceForge.net</a></h1>
+<P>The <A href="http://sourceforge.net/projects/wix">Windows Installer Xml (WiX) toolset</A> (pronounced &#8220;wicks toolset&#8221;) appears to have finished propagating around the <A href="http://sourceforge.net/">SourceForge.net</A> CVS servers, so I can finally start writing this blog entry.&nbsp; As promised in my blog <A href="http://blogs.msdn.com/robmen/archive/2003/12/23/56517.aspx">here</A>, <A href="http://blogs.msdn.com/robmen/archive/2004/02/03/66535.aspx">here</A>, <A href="http://blogs.msdn.com/robmen/archive/2004/02/05/68303.aspx">here</A>, <A href="http://blogs.msdn.com/robmen/archive/2004/03/06/85072.aspx">here</A>, and <A href="http://blogs.msdn.com/robmen/archive/2004/03/16/90307.aspx">here</A> the WiX toolset and all of its source code has been released so that you can build Windows Installer databases (MSI and MSM files) the same way most groups inside <A href="http://www.microsoft.com/">Microsoft</A> do.&nbsp; However, a <A href="http://www.imdb.com/Title?0060438">funny thing happened</A> on the way to the <A href="http://www.gotdotnet.com/">forum</A>.&nbsp; WiX became the first project from Microsoft to be released under an <A href="http://opensource.org/licenses/">OSS approved license</A>, namely the <A href="http://opensource.org/licenses/cpl.php">Common Public License</A>.</P>
+<P>Before everyone gets sidetracked by the Open Source implications, let&#8217;s talk about exactly what WiX is.&nbsp; WiX is a toolset composed of a compiler, a linker, a lib tool and a decompiler.&nbsp; The compiler, called candle, is used to compile XML source code into object files that contain symbols and references to symbols.&nbsp; The linker, called light, is fed one or more object files and links the references in the object files to the appropriate symbols in other object files.&nbsp; Light is also responsible for collecting all of the binaries, packaging them appropriately, and generating the final MSI or MSM file.&nbsp; The lib tool, called lit, is an optional tool that can be used to combine multiple object files into libraries that can be consumed by light.&nbsp; Finally, the decompiler, called dark, can take existing MSI and MSM files and generate XML source code that represents the package.</P>
+<P>So, let me step through a real quick example before sending you off to the <A href="http://sourceforge.net/projects/wix">SourceForge project</A> to get the binaries and source code.&nbsp; First, the below is a complete source file that will create a MSI file that installs a test .NET Assembly into the &#8220;Program Files\Test Assembly&#8221; directory.</P><PRE>&lt;?xml version='1.0'?&gt;
+&lt;Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'&gt;
+   &lt;Product Id='000C1109-0000-0000-C000-000000000046' Name='TestAssemblyProduct' Language='1033' Version='0.0.0.0' Manufacturer='Microsoft Corporation'&gt;
+	  &lt;Package Id='000C1109-0000-0000-C000-000000000046' Description='Test Assembly in a Product' Comments='Test from: wix\examples\test\assembly\product.wxs' InstallerVersion='200' Compressed='yes' /&gt;
+
+	  &lt;Media Id='1' Cabinet='product.cab' EmbedCab='yes' /&gt;
+
+	  &lt;Directory Id='TARGETDIR' Name='SourceDir'&gt;
+		 &lt;Directory Id='ProgramFilesFolder' Name='PFiles'&gt;
+			&lt;Directory Id='TestAssemblyProductDirectory' Name='testassm' LongName='Test Assembly'&gt;
+			   &lt;Component Id='TestAssemblyProductComponent' Guid='00030829-0000-0000-C000-000000000046'&gt;
+				  &lt;File Id='TestAssemblyProductFile' Name='assembly.dll' essembly='.net' KeyPath='yes' DiskId='1' src='$(env.WIX)\examples\data\assembly.dll'/&gt;
+			   &lt;/Component&gt;
+			&lt;/Directory&gt;
+		 &lt;/Directory&gt;
+	  &lt;/Directory&gt;
+
+	  &lt;Feature Id='TestAssemblyProductFeature' Title='Test "ssembly Product Feature' Level='1'&gt;
+		 &lt;ComponentRef Id='TestAssemblyProductComponent' /&gt;
+	  &lt;/Feature&gt;
+   &lt;/Product&gt;
+&lt;/Wix&gt;
+</PRE>
+<P>Now, to build the MSI file we compile and link the source code like so:</P><PRE>E:\wix\examples\test\assembly&gt; candle.exe product.wxs
+Microsoft (R) Windows Installer Xml Compiler version 2.0.1510.0
+Copyright (C) Microsoft Corporation 2003. All rights reserved.
+
+product.wxs
+
+E:\wix\examples\test\assembly&gt; light.exe product.wixobj
+Microsoft (R) Windows Installer Xml Linker version 2.0.1510.0
+Copyright (C) Microsoft Corporation 2003. All rights reserved.
+
+E:\wix\examples\test\assembly&gt; dir
+
+Volume in drive E is New Volume
+Volume Serial Number is 8AC4-6AD2
+Directory of E:\wix\examples\test\assembly
+
+04/05/2004 05:04 &lt;DIR&gt;        .
+04/05/2004 05:04 &lt;DIR&gt;        ..
+02/23/2004 09:55                891 module.wxs
+04/05/2004 05:04             52,736 product.msi
+04/05/2004 05:04              4,976 product.wixobj
+02/23/2004 09:55              1,281 product.wxs
+			  4 File(s) 59,884 bytes
+			  2 Dir(s) 90,014,191,616 bytes free
+
+E:\wix\examples\test\assembly&gt;
+</PRE>
+<P>I&#8217;ll discuss more complicated examples in future blog entries and update the documentation (WiX.chm) by distilling any discussions here.&nbsp; While we&#8217;re on the topic of documentation, let&#8217;s discuss where WiX is in its product life-cycle.</P>
+<P>First of all, I would say that the WiX toolset is pretty close to Beta2 quality.&nbsp; That means core scenarios (compiling/linking) are very solid, less core scenarios (lib&#8217;ing/decompiling) still have some bugs, and the documentation leaves much to be desired.&nbsp; Part of my motivation for pushing the toolset external to Microsoft is to encourage me (and maybe find others) to update the documentation.&nbsp; I&#8217;ll talk more about that in future blog entries.</P>
+<P>That said production quality MSI and MSM files can be produced from the WiX toolset today.&nbsp; Internally, teams such as <A href="http://office.microsoft.com/">Office</A>, <A href="http://www.microsoft.com/sql/">SQL Server</A>, <A href="http://www.microsoft.com/biztalk/">BizTalk</A>, <A href="http://www.microsoft.com/windowsxp/virtualpc/">Virtual PC</A>, <A href="http://messenger.msn.com/Default.aspx">Instant Messenger</A>, several <A href="http://www.msn.com/">msn.com properties</A>, and many others use WiX to build their MSI and MSM files today.&nbsp; When someone encounters a bug, the community tracks the issue down and fixes it.&nbsp; Now, via <A href="http://sourceforge.net/">SourceForge.net</A>, you have an opportunity to be a part of the community as well.</P>
+<P>Now, let&#8217;s talk about why WiX was released as Open Source.&nbsp; First, working on WiX has never been a part of my job description or review goals.&nbsp; I work on the project in my free time.&nbsp; Second, WiX is a very developer oriented project and thus providing source code access increases the pool of available developers.&nbsp; Today, there are five core developers (Robert, K, Reid, and Derek, thank you!) regularly working on WiX in their free time with another ten submitting fixes occasionally.&nbsp; Finally, many parts of the Open Source development process appeal to me. &nbsp;Back in 1999 and 2000, I did not feel that many people inside Microsoft understood what the Open Source community was really about and I wanted to improve that understanding by providing an example.</P>
+<P>After four and a half years of part-time development, the WiX design (and most of the code) matured to a point where I was comfortable trying to release it externally.&nbsp; So, last October I started looking for a means to release not only the tools but the source code as well.&nbsp; I thought <A href="http://www.gotdotnet.com/">GotDotNet</A> was the place.&nbsp; However, at that time, none of the existing <A href="http://www.microsoft.com/resources/sharedsource/Licensing/default.mspx">Shared Source licenses</A> were flexible enough to accept contributions from the community.&nbsp; Then, in February, I was introduced to <A href="http://www.osbc2004.com/speakers_stephen_walli.html">Stephen Walli</A> who was also working to improve Microsoft&#8217;s relationship with the Open Source community.&nbsp; Fortunately, Stephen was much farther along than I and had the step-by-step plan how to release an Open Source project from Microsoft using an approved OSS license.</P>
+<P>Today, via <A href="http://sourceforge.net/projects/wix">WiX on SourceForge</A>, you get to see the results of many people&#8217;s efforts to improve Microsoft from the inside out.&nbsp; I&#8217;m not exactly sure what is going to happen next but I&#8217;m sure there are quite a few people who are interested to see where this leads.&nbsp; Personally, all I hope is that if you find the WiX toolset useful then you&#8217;ll join the community and help us improve the toolset.</P>
+<p><i>Copyright © Rob Mensching</i></p>
+</body>
+</html>

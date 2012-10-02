@@ -1,0 +1,696 @@
+# Default uSFM Stylesheet for TEV99
+# Updated by Ed Peters June 25, 2002
+# Updated by Ed Peters September 12, 2002
+# Add TextType for Note markers xo, xt, etc by Nathan Miles September 26, 2002
+
+# File Identification
+
+\Marker id
+\TextType Other
+\TextProperties paragraph nonpublishable nonvernacular book
+\Name File - ID
+\Description The ID line - usually includes 3 letter ID keyboarder, edit date
+\StyleType Paragraph
+\FontSize 10
+
+\Marker cc
+\TextType Other
+\TextProperties paragraph nonpublishable nonvernacular
+\OccursUnder id
+\Name File - Consistent Changes Scripts run on the text
+\Description The CC Line - cct name, date run, text programmer
+\StyleType Paragraph
+\FontSize 10
+\Rank 1
+
+\Marker h
+\TextType Other
+\TextProperties paragraph publishable nonvernacular
+\Rank 1
+\OccursUnder id
+\Name File - Running Header
+\Description The text to use for the running header for this book
+\StyleType Paragraph
+\FontSize 10
+\TEStyleName Header & Footer
+
+# Introduction
+
+\Marker is
+\TextType Section
+\TextProperties paragraph publishable vernacular
+\Rank 3
+\OccursUnder id
+\NotRepeatable
+\Name Introduction - Section Title
+\Description The section title for the introduction prose material
+\StyleType Paragraph
+\FontSize 10
+\Bold
+\Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
+
+\Marker iot
+\TextType Other
+\TextProperties paragraph publishable vernacular
+\OccursUnder id
+\Rank 4
+\Name Introduction - Outline Title
+\Description - The title for the introduction outline
+\StyleType Paragraph
+\FontSize 10
+\Bold
+\Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
+\TEStyleName Background Section Heading
+
+\Marker io1
+\TextType Other
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder id
+\Rank 4
+\Name Introduction - Outline Level 1
+\Description Introduction outline text at the first level indent
+\StyleType paragraph
+\FontSize 9
+\LeftMargin .5
+\FirstLineIndent -.25   # 1/8 inch first line indent
+\TEStyleName Background Outline 1
+
+\Marker io2
+\TextType Other
+\TextProperties paragraph publishable vernacular level_2
+\OccursUnder id
+\Rank 4
+\Name Introduction - Outline Level 2
+\Description Introduction outline text at the first level indent
+\StyleType paragraph
+\FontSize 9
+\LeftMargin .5
+\FirstLineIndent -.125   # 1/4 inch second line indent
+\TEStyleName Background Outline 2
+
+\Marker ip
+\TextType Other
+\TextProperties paragraph publishable vernacular
+\OccursUnder id
+\Rank 4
+\Name Introduction - Paragraph
+\Description A standard introduction prose paragraph
+\StyleType Paragraph
+\FontSize 9
+\FirstLineIndent .125   # 1/8 inch first line indent
+\TEStyleName Background Paragraph
+
+# Chapters and Verses
+
+\Marker c
+\TextType ChapterNumber
+\TextProperties chapter
+\OccursUnder id
+\Rank 5
+\Name Chapter
+\Description A chapter number
+\StyleType Paragraph
+\Bold
+\FontSize 18
+\SpaceBefore 8
+\SpaceAfter 4
+\TEStyleName Chapter Number
+
+\Marker v
+\TextType VerseNumber
+\TextProperties verse
+\OccursUnder p pi mi m q q1 q2 q3 qc li tb1 ip
+\Name Verse Number
+\Description A new verse number
+\StyleType Character
+\FontSize 12
+\Superscript
+\TEStyleName Verse Number
+
+# Paragraphs
+
+\Marker p
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Paragraph - Normal
+\Description A standard paragraph
+\StyleType Paragraph
+\FontSize 10
+\FirstLineIndent .125   # 1/8 inch first line indent
+\TEStyleName Paragraph
+
+\Marker pi
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Paragraph - Indented (first line indent)
+\Description An indented paragraph; often used for discourse
+\StyleType Paragraph
+\FontSize 10
+\FirstLineIndent .125   # 1/8 inch first line indent
+\LeftMargin .25
+\RightMargin .25
+\TEStyleName Quote
+
+\Marker mi
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Paragraph - Indented (no first line indent)
+\Description An indented paragraph; often used for discourse
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin .25
+\RightMargin .25
+\TEStyleName Quote Continuation
+
+\Marker m
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Paragraph - Margin
+\Description Paragraph text without first line indent (may occurs after poetry)
+\StyleType Paragraph
+\FontSize 10
+\TEStyleName Paragraph Continuation
+
+# Poetry
+
+\Marker q
+\TextType VerseText
+\TextProperties paragraph publishable vernacular poetic level_1
+\OccursUnder c
+\Name Poetry - First Level
+\Description Poetry text at the first level indent
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin 1
+\FirstLineIndent -.75  # 1/4 inch indent, 1 inch wrap
+\TEStyleName Poetry 1
+
+\Marker q1
+\TextType VerseText
+\TextProperties paragraph publishable vernacular poetic level_1
+\OccursUnder c
+\Name Poetry - First Level
+\Description Poetry text at the first level indent
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin 1
+\FirstLineIndent -.75  # 1/4 inch indent, 1 inch wrap
+\TEStyleName Poetry 1
+
+\Marker q2
+\TextType VerseText
+\TextProperties paragraph publishable vernacular poetic level_2
+\OccursUnder c
+\Name Poetry - Second Level
+\Description Poetry text at the second level indent
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin 1
+\FirstLineIndent -.5  # 1/2 inch indent, 1 inch wrap
+\TEStyleName Poetry 2
+
+\Marker q3
+\TextType VerseText
+\TextProperties paragraph publishable vernacular poetic level_3
+\OccursUnder c
+\Name Poetry - Third level
+\Description Poetry text at the third level indent
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin 1
+\FirstLineIndent -.25 # 3/4 inch indent, 1 inch wrap
+\TEStyleName Poetry 3
+
+\Marker qc
+\TextType VerseText
+\TextProperties paragraph publishable vernacular poetic
+\OccursUnder c
+\Name Poetry - Centered
+\Description Centered poetry text
+\StyleType Paragraph
+\FontSize 10
+\Justification Center
+\TEStyleName Poetry Centered
+
+\Marker qr
+\TextType VerseText
+\TextProperties paragraph publishable vernacular poetic
+\OccursUnder c
+\Name Poetry - Right Adjusted
+\Description Right Adjusted poetry text
+\StyleType Paragraph
+\FontSize 10
+\Justification Right
+
+\Marker qs
+\TextType VerseText
+\TextProperties paragraph publishable vernacular poetic
+\OccursUnder c
+\Name Poetry - Right Adjusted, Same Line (Selah)
+\Description Right Adjusted Same Line poetry text
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\Justification Right
+
+\Marker b
+\TextProperties paragraph publishable vernacular poetic
+\TextType VerseText
+\OccursUnder c
+\Name Blank Line
+\FontSize 5
+\Description - A blank line
+\StyleType paragraph
+
+# Title/Heading
+
+\Marker mt
+\TextProperties paragraph publishable vernacular level_1
+\TextType Title
+\OccursUnder id
+\Rank 2
+\Name Title/Heading - Main Title
+\Description The main title of the book
+\StyleType Paragraph
+\FontSize 20
+\Bold
+\Justification Center
+\TEStyleName Book Title
+
+\Marker mt1
+\TextProperties paragraph publishable vernacular level_1
+\TextType Title
+\OccursUnder id
+\Rank 2
+\Name Title/Heading - Main Title
+\Description The main title of the book
+\StyleType Paragraph
+\FontSize 20
+\Bold
+\Justification Center
+\TEStyleName Book Title Secondary
+
+\Marker mt2
+\TextProperties paragraph publishable vernacular level_2
+\TextType Title
+\OccursUnder id
+\Rank 2
+\Name Title/Heading - Secondary Title 1
+\Description A secondary title occurring before the Main Title
+\StyleType Paragraph
+\FontSize 16
+\Italic
+\Justification Center
+\SpaceAfter 2
+\TEStyleName Book Title Secondary
+
+\Marker mt3
+\TextProperties paragraph publishable vernacular level_3
+\TextType Title
+\OccursUnder id
+\Rank 2
+\Name Title/Heading - Secondary Title 2
+\Description A secondary title occurring after the Main Title
+\StyleType Paragraph
+\FontSize 16
+\Bold
+\Justification Center
+\SpaceBefore 2
+\SpaceAfter 2
+\TEStyleName Book Title Secondary
+
+\Marker mt4
+\TextProperties paragraph publishable vernacular level_4
+\TextType Title
+\OccursUnder id
+\Rank 2
+\Name Title/Heading - Secondary Title 3
+\Description A small secondary title sometimes occurring within parentheses
+\StyleType Paragraph
+\FontSize 12
+\Justification Center
+\SpaceBefore 2
+\SpaceAfter 2
+\TEStyleName Book Title Secondary
+
+\Marker s
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder c
+\Name Title/Heading - Section
+\Description A standard section heading
+\StyleType Paragraph
+\FontSize 10
+\Bold
+\Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
+\TEStyleName Section Heading
+
+\Marker s1
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder c
+\Name Title/Heading - Section
+\Description A standard section heading
+\StyleType Paragraph
+\FontSize 10
+\Bold
+\Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
+
+\Marker s2
+\TextType Section
+\TextProperties paragraph publishable vernacular level_2
+\OccursUnder c
+\Name Title/Heading - Sub-Section 1
+\Description A first level sub-section heading (e.g. Proverbs 22-24)
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
+
+\Marker s3
+\TextType Section
+\TextProperties paragraph publishable vernacular level_3
+\OccursUnder c
+\Name Title/Heading - Sub-Section 2
+\Description A second level sub-section heading (e.g. Genesis "The First Day")
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\Justification Left
+\SpaceBefore 6
+
+\Marker r
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder s s1
+\NotRepeatable
+\Name Title/Heading - Reference
+\Description Parallel reference(s)
+\StyleType Paragraph
+\FontSize 9
+\Italic
+\Justification Center
+\SpaceAfter 4
+\TEStyleName Section Cross Reference
+
+\Marker ms
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder c
+\Name Title/Heading - Division
+\StyleType Paragraph
+\Description A heading to indicate a section division
+\FontSize 14
+\Bold
+\Justification Center
+\SpaceBefore 16
+\SpaceAfter 4
+
+\Marker ms1
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder c
+\Name Title/Heading - Division
+\StyleType Paragraph
+\Description A heading to indicate a section division
+\FontSize 14
+\Bold
+\Justification Center
+\SpaceBefore 16
+\SpaceAfter 4
+
+
+\Marker mr
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder ms
+\Name Title/Heading - Main Reference
+\Description The reference(s) corresponding to a section division (d)
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\Justification Center
+\SpaceAfter 4
+
+\Marker sp
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder c
+\Name Title/Heading - Speaker
+\Description A heading to indicate a speaker's identity
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\Justification Left
+
+# spd is used in Deuteronomy for the divisions of Moses' speech
+
+\Marker spd
+\TextType Section
+\TextProperties paragraph publishable vernacular level_1
+\OccursUnder c
+\Name Title/Heading - Speech Section Division
+\Description A heading to indicate the divisions of a speech discourse
+\StyleType Paragraph
+\FontSize 12
+\Bold
+\Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
+
+# Tables
+
+\Marker th1
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Table - Column 1 Heading
+\Description The first column of a table
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\LeftMargin .5
+\FirstLineIndent -.375  # 6/16 inch
+\SpaceBefore 8
+
+\Marker th2
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Table - Column 2 Heading
+\Description The second column of a table
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\LeftMargin 1.5
+\FirstLineIndent -.375  # 6/16 inch
+
+\Marker th3
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Table - Column 3 Heading
+\Description The third column of a table
+\StyleType Paragraph
+\FontSize 10
+\Italic
+\LeftMargin 2.5
+\FirstLineIndent -.375  # 6/16 inch
+
+\Marker tb1
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Table - Column 1
+\Description The first column of a table
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin .5
+\FirstLineIndent -.375  # 6/16 inch
+
+\Marker tb2
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Table - Column 2
+\Description The second column of a table
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin 1.5
+\FirstLineIndent -.375  # 6/16 inch
+
+\Marker tb3
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name Table - Column 3
+\Description The third column of a table
+\StyleType Paragraph
+\FontSize 10
+\LeftMargin 2.5
+\FirstLineIndent -.375  # 6/16 inch
+
+# Lists
+
+\Marker li
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder c
+\Name List Item - First Level
+\Description An item in a list - first level indent
+\StyleType paragraph
+\FontSize 10
+\LeftMargin .625
+\FirstLineIndent -.375 # 1/4 inch indent, 5/8 inch wrap
+
+# Footnote Text
+
+\Marker f
+\TextProperties publishable vernacular note
+\TextType NoteText
+\OccursUnder p pi mi m q q1 q2 q3 qc li s s1 s2 s3 tb1 tb2 tb3 sp ip
+\Name Note Text - Footnote
+\Description Footnote text
+\Styletype Note
+\Endmarker f*
+\FontSize 10
+
+\Marker fr
+\TextType NoteText
+\TextProperties publishable vernacular
+\OccursUnder ip f x
+\Name Note Text - Footnote Reference
+\Description A reference within the note text
+\StyleType Character
+\FontSize 10
+\Bold
+
+\Marker fk
+\Endmarker fk*
+\TextProperties publishable vernacular note
+\TextType NoteText
+\OccursUnder f
+\Name Note Text - Footnote Keyterm Text
+\Description Footnote Keyterm Text
+\StyleType Character
+\FontSize 10
+
+\Marker ft
+\Endmarker ft*
+\TextProperties publishable vernacular note
+\TextType NoteText
+\OccursUnder f
+\Name Note Text - Footnote Text
+\Description Footnote Text
+\StyleType Character
+\FontSize 10
+\Italic
+
+\Marker fq
+\Endmarker fq*
+\TextProperties publishable vernacular note
+\TextType NoteText
+\OccursUnder f
+\Name Note Text - Footnote Scripture text and/or Alternate rendering
+\Description Footnote Scripture text and/or Alternate rendering
+\StyleType Character
+\FontSize 10
+
+\Marker fv
+\Endmarker fv*
+\TextProperties publishable vernacular note
+\TextType NoteText
+\OccursUnder f
+\Name Note Text - Verse Number
+\Description A verse number within the note text
+\StyleType Character
+\FontSize 12
+\Superscript
+
+# Cross Reference Text
+
+\Marker x
+\TextProperties publishable vernacular note crossreference
+\TextType NoteText
+\OccursUnder p pi mi m q q1 q2 q3 qc li tb1 tb2 tb3 sp s s1 s2 s3
+\Name Note Text - Cross-Reference
+\Description Cross-reference text
+\Styletype Note
+\Endmarker x*
+\FontSize 10
+
+\Marker xo
+\TextProperties publishable vernacular note
+\OccursUnder x
+\Name Note Text - Origin Reference
+\Description Origin reference in a cross reference
+\StyleType Character
+\FontSize 10
+\Bold
+
+\Marker xt
+\TextProperties publishable vernacular note
+\TextType NoteText
+\OccursUnder x
+\Name Note Text - Target Reference
+\Description Protocanon Target reference in a cross reference
+\StyleType Character
+\FontSize 10
+
+\Marker xdc
+\TextProperties publishable vernacular note
+\TextType NoteText
+\OccursUnder x
+\Name Note Text - Deuterocanon reference
+\Description Deuterocanon Target references in a cross reference
+\Endmarker xdc*
+\StyleType Character
+\FontSize 10
+
+# Font Styles
+
+\Marker it
+\TextType NoteText
+\TextProperties publishable vernacular
+\OccursUnder ip f x p pi mi m q q1 q2 q3 qc li sp
+\Name Font Style - Italics
+\Endmarker it*
+\Description Use italic font for the text within these codes
+\StyleType Character
+\FontSize 10
+\Italic
+
+\Marker bw
+\TextType NoteText
+\TextProperties publishable vernacular
+\OccursUnder ip f x
+\Name Font Style - Bold
+\Endmarker bw*
+\Description Use bold font for the text within these codes
+\StyleType Character
+\FontSize 10
+\Bold
+
+\Marker nd
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\OccursUnder ip p pi mi m q q1 q2 q3 qc li f x s s1 s2 s3 sp
+\Endmarker nd*
+\Description Name of Diety, use small caps
+\Name Font Style - Small Caps
+\StyleType Character
+\FontSize 10

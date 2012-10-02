@@ -1,0 +1,531 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>FwCoreDlgs</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.FwCoreDlgs</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<SccAuxPath>
+	</SccAuxPath>
+	<OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\FwCoreDlgs.XML</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>true</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>true</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\Output\debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="Controls.Design, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="DetailControls, Version=5.5.0.25738, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Lib\debug\ECInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="Enchant.Net, Version=1.4.2.1, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="Filters">
+	  <Name>Filters</Name>
+	  <HintPath>..\..\Output\Debug\Filters.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls">
+	  <Name>FwControls</Name>
+	  <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgControls">
+	  <Name>FwCoreDlgControls</Name>
+	  <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources">
+	  <Name>FwResources</Name>
+	  <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils">
+	  <Name>FwUtils</Name>
+	  <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="Reporting, Version=1.0.2327.30181, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite">
+	  <Name>RootSite</Name>
+	  <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Lib\debug\SilEncConverters30.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="SimpleRootSite">
+	  <Name>SimpleRootSite</Name>
+	  <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Web" />
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\Output\Debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="Widgets">
+	  <Name>Widgets</Name>
+	  <HintPath>..\..\Output\Debug\Widgets.dll</HintPath>
+	</Reference>
+	<Reference Include="xCoreInterfaces">
+	  <Name>xCoreInterfaces</Name>
+	  <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLUtils">
+	  <Name>XMLUtils</Name>
+	  <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="AddCnvtrDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="AddConverterDlgStrings.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>AddConverterDlgStrings.resx</DependentUpon>
+	</Compile>
+	<Compile Include="AddConverterResources.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>AddConverterResources.resx</DependentUpon>
+	</Compile>
+	<Compile Include="AddNewUserDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="AdvancedEncProps.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="CharContextCtrl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="CharContextCtrl.Designer.cs">
+	  <DependentUpon>CharContextCtrl.cs</DependentUpon>
+	</Compile>
+	<Compile Include="ChooserTreeView.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="CnvtrPropertiesCtrl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="CnvtrTypeComboItem.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ConverterTest.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="FwStylesModifiedDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwStylesModifiedDlg.Designer.cs">
+	  <DependentUpon>FwStylesModifiedDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwUpdateReportDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwUpdateReportDlg.Designer.cs">
+	  <DependentUpon>FwUpdateReportDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="MergeToExistingWsDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MergeToExistingWsDlg.Designer.cs">
+	  <DependentUpon>MergeToExistingWsDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="MoveOrCopyFilesDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MoveOrCopyFilesDlg.Designer.cs">
+	  <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="PunctuationDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="PunctuationDlg.Designer.cs">
+	  <DependentUpon>PunctuationDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwApplyStyleDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwApplyStyleDlg.Designer.cs">
+	  <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="DuplicateProjectFoundDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ErrorMessage.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="FindReplaceCollectorEnv.cs" />
+	<Compile Include="FwChooserDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwCoreDlgs.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>FwCoreDlgs.resx</DependentUpon>
+	</Compile>
+	<Compile Include="FWCoreDlgsErrors.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>FWCoreDlgsErrors.resx</DependentUpon>
+	</Compile>
+	<Compile Include="FwDeleteProjectDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwFindReplaceDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwFontDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwFontDialog.Designer.cs">
+	  <DependentUpon>FwFontDialog.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwHelpAbout.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwNewLangProject.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwNewLangProjectCreator.cs" />
+	<Compile Include="FwProjPropertiesDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwSplashScreen.cs">
+	</Compile>
+	<Compile Include="FwStylesDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="FwStylesDlg.Designer.cs">
+	  <DependentUpon>FwStylesDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FwUserProperties.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="HelperMenu.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="IUtility.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="LanguageSelectionDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MorphBreakHelperMenu.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="NoProjectFoundDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="PicturePropertiesDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="Properties\Resources.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	</Compile>
+	<Compile Include="PUACharacterDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="RealSplashScreen.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="RegexHelperMenu.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<Compile Include="UtilityDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ValidCharactersDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ValidCharactersDlg.Designer.cs">
+	  <DependentUpon>ValidCharactersDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="WritingSystemPropertiesDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="WritingSystemWizard.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<EmbeddedResource Include="AddCnvtrDlg.resx">
+	  <DependentUpon>AddCnvtrDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="AddConverterDlgStrings.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>AddConverterDlgStrings.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="AddConverterResources.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>AddConverterResources.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="AddNewUserDlg.resx">
+	  <DependentUpon>AddNewUserDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="AdvancedEncProps.resx">
+	  <DependentUpon>AdvancedEncProps.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="CharContextCtrl.resx">
+	  <DependentUpon>CharContextCtrl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="CnvtrPropertiesCtrl.resx">
+	  <DependentUpon>CnvtrPropertiesCtrl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ConverterTest.resx">
+	  <DependentUpon>ConverterTest.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwStylesModifiedDlg.resx">
+	  <DependentUpon>FwStylesModifiedDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwUpdateReportDlg.resx">
+	  <DependentUpon>FwUpdateReportDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MergeToExistingWsDlg.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>MergeToExistingWsDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MoveOrCopyFilesDlg.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="PunctuationDlg.resx">
+	  <DependentUpon>PunctuationDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwApplyStyleDlg.resx">
+	  <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
+	  <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwChooserDlg.resx">
+	  <DependentUpon>FwChooserDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwCoreDlgs.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>FwCoreDlgs.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FWCoreDlgsErrors.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>FWCoreDlgsErrors.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwDeleteProjectDlg.resx">
+	  <DependentUpon>FwDeleteProjectDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwFindReplaceDlg.resx">
+	  <DependentUpon>FwFindReplaceDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwFontDialog.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FwFontDialog.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwHelpAbout.resx">
+	  <DependentUpon>FwHelpAbout.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwNewLangProject.resx">
+	  <DependentUpon>FwNewLangProject.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwProjPropertiesDlg.resx">
+	  <DependentUpon>FwProjPropertiesDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwStylesDlg.resx">
+	  <SubType>Designer</SubType>
+	  <DependentUpon>FwStylesDlg.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="FwUserProperties.resx">
+	  <DependentUpon>FwUserProperties.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="LanguageSelectionDlg.resx">
+	  <DependentUpon>LanguageSelectionDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="NoProjectFoundDlg.resx">
+	  <DependentUpon>NoProjectFoundDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="PicturePropertiesDialog.resx">
+	  <DependentUpon>PicturePropertiesDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Properties\Resources.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="PUACharacterDlg.resx">
+	  <DependentUpon>PUACharacterDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="RealSplashScreen.resx">
+	  <DependentUpon>RealSplashScreen.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UtilityDlg.resx">
+	  <DependentUpon>UtilityDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ValidCharactersDlg.resx">
+	  <DependentUpon>ValidCharactersDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WritingSystemPropertiesDialog.resx">
+	  <DependentUpon>WritingSystemPropertiesDialog.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WritingSystemWizard.resx">
+	  <DependentUpon>WritingSystemWizard.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\FwCopyRight.gif" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\ButtonDropDownArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\UpArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="Resources\DownArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+	<Folder Include="res\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

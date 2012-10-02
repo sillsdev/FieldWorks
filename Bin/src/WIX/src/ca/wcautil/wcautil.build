@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="wcautil" default="wcautil.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	wcautil.build - Builds WiX custom action utility library - wcautil.lib.
+	2005.09.18 bobarnso Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="wcautil.build" description="Peforms a full rebuild (clean then build)" depends="wcautil.clean, wcautil.inc" />
+
+  <!-- Clean -->
+  <target name="wcautil.clean" description="Cleans the build">
+	<delete dir="${dir.build.wcautil}" failonerror="false" if="${directory::exists(dir.build.wcautil)}" />
+	<delete file="${file.target.wcautil}" failonerror="false" if="${file::exists(file.target.wcautil)}" />
+	<delete file="${file.target.caerr.wxi}" if="${file::exists(file.target.caerr.wxi)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="wcautil.inc" description="Performs an incremental build" depends="makeDirs">
+	<fileset id="compileCpp.fileset.sources" basedir="${dir.src.ca.wcautil}">
+	  <include name="wcalog.cpp" />
+	  <include name="wcautil.cpp" />
+	  <include name="wcawrap.cpp" />
+	  <include name="qtexec.cpp" />
+	</fileset>
+	<property name="compileCpp.dir.build" value="${dir.build.wcautil}" />
+	<property name="compileCpp.file.precomp.h" value="${dir.src.ca.wcautil}\precomp.h" />
+	<property name="makeNativeLib.file.target" value="${file.target.wcautil}" />
+	<!-- Make wcautil.lib -->
+	<call target="makeNativeLib" />
+
+	<!-- Generate caerrs.wxi... -->
+	<mkdir dir="${path::get-directory-name(file.target.caerr.wxi)}" />
+	<exec program="${tool.generatewixinclude}">
+	  <arg value="-nologo" />
+	  <arg file="${dir.src.ca.wcautil}\custommsierrors.h" />
+	  <arg file="${file.target.caerr.wxi}" />
+	</exec>
+  </target>
+</project>

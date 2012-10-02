@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?-->
+
+<accil>
+
+   <!-- Test discourse view (Text &amp; Words/Interlinear Texts/Text Chart)
+		 add a row with a word in each column (2 in verb)
+		 delete half the row
+		 add another row
+		 mark some words
+		 move the first word forward then move it back
+		 delete the table
+-->
+
+	<!--Start FLEx with "Sena 3" project loaded -->
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+	<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+ <on-application run = "yes" args = "-db $projectName" on-fail = "assert">
+
+   <click select="menubar/view/texts-words/interlinear-texts"/>
+
+   <model select="interlinear-texts[@role='view']/text/text-chart">
+
+	   <click select="tab"/>
+	   <var id="nagger" select="dialog/@name" />
+	   <var id="bye" select="dialog/@dismiss" />
+	   <on-dialog title="$nagger">
+		   <click wait="3000" path="$bye"/>
+	   </on-dialog>
+
+	<!-- add a row -->
+	   <click select="chart/footer/outer/button"/>
+	   <var id="row" set="1"/>
+	   <var id="col" set="2"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="headOuter" select="chart/header" path="Outer"/>
+	   <glimpse id="Pisapha" select="chart/cell/text/row" prop="value" expect="Pisapha" />
+	   <glimpse id="estas" select="chart/cell/text/row" path="[2]" prop="value" expect="estas coisas doem" />
+	   <glimpse id="headSubject" select="chart/header" path="Subject"/>
+	   <var id="col" set="4"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="dashSubject" select="chart/cell/text" prop="value" expect="---" />
+	   <glimpse id="headVerb" select="chart/header" path="Verb"/>
+	   <var id="col" set="5"/>
+	   <glimpse id="dashVerb" select="chart/cell/text" prop="value" expect="---" />
+
+	   <click select="chart/footer/inner/button"/>
+	   <var id="row" set="1"/>
+	   <var id="col" set="3"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="headInner" select="chart/header" path="Inner"/>
+	   <glimpse id="mbwenye" select="chart/cell/text/row" prop="value" expect="mbwenye" />
+	   <var id="col" set="4"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="dashSubject2" select="chart/cell/text" prop="value" expect="---" />
+	   <var id="col" set="5"/>
+	   <glimpse id="dashVerb2" select="chart/cell/text" prop="value" expect="---" />
+
+	   <click select="chart/footer/subject/button"/>
+	   <var id="row" set="1"/>
+	   <var id="col" set="4"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="pinafunika" select="chart/cell/text/row" prop="value" expect="pinafunika" />
+	   <glimpse id="o-que" select="chart/cell/text/row" path="[2]" prop="value" expect="rexp#o que" />
+	   <var id="col" set="5"/>
+	   <glimpse id="dashVerb3" select="chart/cell/text" prop="value" expect="---" />
+
+	   <var id="col" set="2"/>
+	   <var id="row" set="1"/>
+	   <click select="chart/text"/>
+	   <var id="col" set="5"/>
+	   <click select="chart/footer/verb/button"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="khuphata" select="chart/cell/text/row" prop="value" expect="n'khuphata" />
+	   <var id="ind" set="2"/>
+	   <glimpse id="ntima" select="chart/cell/text/row" prop="value" expect="ntima" />
+
+	   <glimpse id="headSubject2" select="chart/header" path="O//C"/>
+	   <var id="col" set="6"/>
+	   <click select="chart/footer/o-c/button"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="Tonsene" select="chart/cell/text/row" prop="value" expect="Tonsene" />
+	   <glimpse id="todos" select="chart/cell/text/row" path="[2]" prop="value" expect="rexp#todos" />
+
+	   <glimpse id="headO-C" select="chart/header" path="O//C"/>
+	   <var id="col" set="6"/>
+	   <click select="chart/footer/o-c/button"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="Tonsene2" select="chart/cell/text/row" prop="value" expect="Tonsene" />
+	   <glimpse id="todos2" select="chart/cell/text/row" path="[2]" prop="value" expect="rexp#todos" />
+
+	   <glimpse id="headInner2" select="chart/header" path="Inner[2]"/>
+	   <var id="col" set="7"/>
+	   <click select="chart/footer/inner2/button"/>
+	   <var id="col" set="6"/>
+	   <var id="ind" set="2"/>
+	   <glimpse id="njira" select="chart/cell/text/row" prop="value" expect="njira" />
+
+	   <var id="col" set="1"/>
+	   <var id="row" set="1"/>
+	   <click select="chart/text"/>
+	   <glimpse id="headOuter2" select="chart/header" path="Outer[2]"/>
+	   <var id="col" set="8"/>
+	   <click select="chart/footer/outer2/button"/>
+	   <var id="col" set="7"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="yathu" select="chart/cell/text/row" prop="value" expect="yathu" />
+	   <var id="col" set="8"/>
+	   <glimpse id="ndjeneyi" select="chart/cell/text/row" prop="value" expect="ndjeneyi" />
+
+	   <glimpse id="headNotes" select="chart/header" path="Notes"/>
+	   <click select="chart/notes/empty"/>
+	   <var id="note1" set="This is a test of the emergency note system!"/>
+	   <insert>$note1</insert>
+	   <glimpse id="Note" select="chart/notes/text" prop="value" expect="$note1" />
+
+	<!-- delete from Tonsene to end (but not notes) -->
+	   <var id="col" set="6"/>
+	   <var id="ind" set="1"/>
+	   <click id="Tonsene3" select="chart/cell/text/row" />
+	   <insert wait="300">{DOWN 11}~</insert>
+	   <on-dialog title="Warning">
+		   <click path="$yes"/>
+	   </on-dialog>
+
+	<!-- add a row -->
+	   <click id="NewRow" select="chart/cell" />
+	   <insert wait="300">{DOWN 6}~</insert>
+
+	   <click select="chart/footer/verb/button"/>
+	   <var id="row" set="2"/>
+	   <var id="col" set="5"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="Tonsene4" select="chart/cell/text/row" prop="value" expect="Tonsene" />
+	   <glimpse id="todos3" select="chart/cell/text/row" path="[2]" prop="value" expect="rexp#todos" />
+
+	   <var id="row" set="2"/>
+	   <var id="col" set="1"/>
+	   <glimpse id="1b" select="chart/cell/text" prop="value" expect="1b" />
+
+	   <click select="chart/footer/inner/button"/>
+	   <var id="row" set="3"/>
+	   <var id="col" set="3"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="njira2" select="chart/cell/text/row" prop="value" expect="njira" />
+
+	   <var id="row" set="3"/>
+	   <var id="col" set="1"/>
+	   <glimpse id="1c" select="chart/cell/text" prop="value" expect="1c" />
+
+	   <click select="chart/footer/o-c/button"/>
+	   <var id="col" set="6"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="yathu2" select="chart/cell/text/row" prop="value" expect="yathu" />
+
+	   <click select="chart/footer/outer2/button"/>
+	   <var id="col" set="8"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="ndjeneyi2" select="chart/cell/text/row" prop="value" expect="ndjeneyi" />
+
+	<!-- mark some words -->
+	   <!-- mbwenye preposed from verb -->
+	   <var id="row" set="1"/>
+	   <var id="col" set="3"/>
+	   <click id="mbwenye2" select="chart/cell" />
+	   <insert wait="300">{DOWN 2}{RIGHT}{DOWN}~</insert>
+	   <var id="col" set="5"/>
+	   <glimpse id="dblLeftArrow" select="chart/cell/text" path="/42:String" prop="value" expect="&lt;&lt;" />
+
+	   <!-- yathu timeless -->
+	   <var id="row" set="3"/>
+	   <var id="col" set="6"/>
+	   <click id="yathu3" select="chart/cell" />
+	   <insert wait="300">{DOWN 14}{RIGHT}{DOWN 4}{RIGHT}~</insert>
+	   <glimpse id="Timeless" select="chart/cell/text" prop="value" expect="rexp#(Timeless)" />
+
+	   <!-- move the first word forward (to the right) then move it back -->
+	   <var id="row" set="1"/>
+	   <var id="col" set="2"/>
+	   <click id="movePisapha" select="chart/cell" />
+	   <insert wait="300">{DOWN 5}{RIGHT}~</insert>
+	   <var id="col" set="3"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="Pisapha2" select="chart/cell/text/row" prop="value" expect="Pisapha" />
+	   <glimpse id="estas2" select="chart/cell/text/row" path="[2]" prop="value" expect="estas coisas doem" />
+	   <var id="ind" set="2"/>
+	   <glimpse id="mbwenye3" select="chart/cell/text/row" prop="value" expect="mbwenye" />
+	   <click id="backPisapha" select="chart/cell" />
+	   <insert wait="300">{DOWN 7}{RIGHT}{DOWN }~</insert>
+	   <var id="col" set="2"/>
+	   <var id="ind" set="1"/>
+	   <glimpse id="Pisapha3" select="chart/cell/text/row" prop="value" expect="Pisapha" />
+	   <glimpse id="estas3" select="chart/cell/text/row" path="[2]" prop="value" expect="estas coisas doem" />
+	   <var id="col" set="3"/>
+	   <glimpse id="mbwenye4" select="chart/cell/text/row" prop="value" expect="mbwenye" />
+
+   <!-- delete the table -->
+	   <var id="row" set="1"/>
+	   <var id="col" set="2"/>
+	   <click id="Pisapha4" select="chart/cell" />
+	   <insert wait="300">{DOWN 10}~</insert>
+	   <on-dialog title="Warning">
+		   <click path="$yes"/>
+	   </on-dialog>
+	   <var id="col" set="1"/>
+	   <var id="row" set="1"/>
+	   <glimpse id="emptyTable" select="chart/text" prop="value" expect="Pisapha"/>
+
+   </model>
+
+ <click select="menubar/view/lexicon/lexicon-edit"/>
+ <click select="toolbar/first-record"/>
+ <!-- Get the cursor off the toolbar so the next test won't die! -->
+ <click select="lexicon-edit[@role='view']/entry/slice/lexeme-form/data"/>
+ <sound frequency = "700" duration = "250"/>
+
+ </on-application>
+
+</accil>

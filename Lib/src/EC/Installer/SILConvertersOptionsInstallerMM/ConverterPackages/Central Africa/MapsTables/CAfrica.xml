@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="angb4 font to Unicode">
+			<autoInstall mappingName="angb4&lt;&gt;UNICODE" converterSpec="MapsTables\angb4.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-angb4-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\angb4.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\angb4.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="MarcelNgbaka font to Unicode">
+			<autoInstall mappingName="MarcelNgbaka&lt;&gt;UNICODE" converterSpec="MapsTables\MarcelNgbaka.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-MarcelNgbaka-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\MarcelNgbaka.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\MarcelNgbaka.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

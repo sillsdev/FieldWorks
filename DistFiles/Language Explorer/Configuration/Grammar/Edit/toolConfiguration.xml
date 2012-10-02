@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<root>
+	<clerks/>
+	<tools>
+		<tool label="Category Edit" value="posEdit" icon="EditView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-posEdit" collapse="144000">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<!-- TODO: notice this is currently called basicPlusFilter, though we did away with that label -->
+						<parameters area="grammar" clerk="categories" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="default"/>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="CategoryBrowse" label="Categories Browse" value="categoryBrowse" icon="BrowseView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="POSList">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+						<parameters area="grammar" id="POSList" clerk="categories" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" filterBar="true" editable="false">
+							<columns>
+								<column label="Name" width="16%" layout="Name" ws="$ws=best analysis" field="Name"/>
+								<column label="Abbreviation" width="16%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+								<column label="Description" width="17%" layout="Description" ws="$ws=best analysis" field="Description"/>
+								<column label="Subcategory" width="17%" multipara="true" layout="SubPOS"/>
+								<column label="Inflection Classes" width="17%" multipara="true" layout="inflClassesBest"/>
+								<column label="Default Inflection Class" width="17%" layout="defaultInflClassBest"/>
+							</columns>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="CompoundRuleEdit" label="Compound Rules" value="compoundRuleAdvancedEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="CompoundRuleItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="CompoundRuleList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural">
+									<columns>
+										<column label="Name" width="15%" layout="Name" ws="$ws=best analysis" field="Name"/>
+										<column label="Description" width="15%" layout="Description" ws="$ws=best analysis" field="Description"/>
+										<column label="Left Member" width="20%" layout="LeftMsa"/>
+										<column label="Right Member" width="20%" layout="RightMsa"/>
+										<column label="Headedness/Result" width="20%" layout="HeadednessOrResult"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-compoundRuleAdvancedEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters clerk="compoundRules" treeBarAvailability="NotAllowed" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="Edit"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="PhonemeEdit" label="Phonemes" value="phonemeEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="PhonemeItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="PhonemeList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="PhonemeList" filterBar="true" editable="false" clerk="phonemes" altTitleId="PhPhoneme-Plural">
+									<columns>
+										<column label="Refer to as" width="33%" layout="Name" ws="$ws=best vernacular" field="Name"/>
+										<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
+										<column label="Graphemes" width="34%" multipara="true" layout="Codes"/>
+										<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>
+										<column label="Phonological Features" width="33%" visibility="menu">
+											<span>
+												<obj field="Features" layout="PhonFeats"/>
+											</span>
+										</column>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonemeEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters clerk="phonemes" persistContext="edit" layout="Edit" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	<tool label="Phonological Features" value="phonologicalFeaturesAdvancedEdit" icon="SideBySideView">
+	  <control>
+		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+		<parameters area="grammar" id="PhonologicalFeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+		  <!-- this will fill the pane on the left -->
+		  <control>
+			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+			<parameters id="PhonologicalFeaturesList">
+			  <control>
+				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+				<parameters id="PhonologicalFeaturesList" filterBar="true" editable="false" clerk="phonologicalfeatures" altTitleId="FsFeatDefn-Phonological">
+				  <columns>
+					<column label="Name" width="13%" layout="Name" ws="$ws=best analysis" field="Name"/>
+					<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+					<column label="Description" width="77%" layout="Description" ws="$ws=best analysis" field="Description"/>
+					<column label="Values" width="24%" multipara="true" layout="TypeOrValues" visibility="menu"/>
+				  </columns>
+				</parameters>
+			  </control>
+			</parameters>
+		  </control>
+		  <!-- this will fill the pane on the right -->
+		  <control>
+			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+			<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" collapse="144000">
+			  <control>
+				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+				<parameters area="grammar" clerk="phonologicalfeatures" layout="PhonEdit" treeBarAvailability="NotAllowed" altTitleId="FsFeatDefn-PhonologicalValues"/>
+			  </control>
+			</parameters>
+		  </control>
+		</parameters>
+	  </control>
+	</tool>
+	<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassedit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="NaturalClassItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="NaturalClassList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="NaturalClassList" filterBar="true" editable="false" clerk="naturalClasses" altTitleId="PhNCSegments-Plural">
+									<columns>
+										<column label="Name" width="25%" layout="Name" ws="$ws=best analysis" field="Name"/>
+										<column label="Abbreviation" width="15%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+										<column label="Description" width="40%" layout="Description" ws="$ws=best analysis" field="Description"/>
+										<column label="Phonemes/Features" width="20%" layout="Segments"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-naturalClassedit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters clerk="naturalClasses" layout="Edit" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="EnvironmentEdit" label="Environments" value="EnvironmentEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="EnvironmentItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="EnvironmentList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="EnvironmentList" filterBar="true" editable="false" clerk="environments" altTitleId="PhEnvironment-Plural">
+									<columns>
+										<column label="Name" width="33%" layout="Name" ws="$ws=best analysis" field="Name"/>
+										<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
+										<column label="Representation" width="34%" layout="StringRepresentation"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-EnvironmentEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters clerk="environments" layout="Edit" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="PhonologicalRuleEdit" label="Phonological Rules" value="PhonologicalRuleEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="PhonologicalRuleItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="PhonologicalRuleList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="PhonologicalRuleList" filterBar="true" clerk="phonologicalRules" altTitleId="PhSegmentRule-Plural">
+									<columns>
+										<column label="Order" width="15%" layout="Order" editable="true"/>
+										<column label="Name" width="35%" layout="Name" ws="$ws=best analysis" field="Name"/>
+										<column label="Description" width="50%" layout="Description" ws="$ws=best analysis" field="Description"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-PhonologicalRuleEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters clerk="phonologicalRules" layout="Edit" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="AdhocCo-prohibitionEdit" label="Ad hoc Rules" value="AdhocCoprohibEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="AdhocCoprohibItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="AdhocCoprohibList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="AdhocCoprohibList" filterBar="true" editable="false" clerk="adhocCoprohibitions" altTitleId="MoAdhocProhib-Plural">
+									<columns>
+										<column label="Type" width="10%" layout="Type"/>
+										<column label="Key Item" width="35%" layout="KeyItem"/>
+										<column label="Cannot Occur" width="20%" layout="CannotOccur"/>
+										<column label="Other Items" width="35%" multipara="true" layout="OtherItems"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-AdhocCoprohibEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters clerk="adhocCoprohibitions" layout="Edit" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool label="Inflection Features" value="featuresAdvancedEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="FeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="FeaturesList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="FeaturesList" filterBar="true" editable="false" clerk="features" altTitleId="FsFeatDefn-Plural">
+									<columns>
+										<column label="Kind" width="10%" layout="Kind"/>
+										<column label="Name" width="13%" layout="Name" ws="$ws=best analysis" field="Name"/>
+										<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+										<column label="Description" width="43%" layout="Description" ws="$ws=best analysis" field="Description"/>
+										<column label="Type or Values" width="24%" multipara="true" layout="TypeOrValues"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-featuresAdvancedEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters area="grammar" clerk="features" layout="Edit" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool label='Exception "Features"' value="ProdRestrictEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="ProductivityRestrictionItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="ProdRestrictList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="ProdRestrictList" filterBar="true" editable="false" clerk="ProdRestrict" altTitleId="ProdRestrict-Plural">
+									<columns>
+										<column label="Name" width="20%" layout="Name" ws="$ws=best analysis" field="Name"/>
+										<column label="Abbreviation" width="20%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+										<column label="Description" width="60%" layout="Description" ws="$ws=best analysis" field="Description"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-ProdRestrictEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<!-- TODO: notice this is currently called basicPlusFilter, though we did away with that label -->
+								<parameters area="grammar" clerk="ProdRestrict" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="default" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool label="Grammar Sketch" value="grammarSketch" icon="DocumentView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.FxtViewer"/>
+				<parameters area="grammar" regKeyName="MorphSketchGen" dialogTitle="Generate Morphological Sketch" fileNameKey="MorphSketchFileName" stringsPath="Linguistics/Morphology/MorphSketch" saveButtonToolTip="Save Sketch as Webpage and also as XLingPaper file">
+					<fxtRetriever progressPrompt="Preparing data" file="M3SketchGen.fxt"/>
+					<transforms>
+						<transform progressPrompt="Processing data, step 1 of 2" file="FxtM3MorphologySketch.xsl" ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file" replaceDOCTYPE='lingPaper PUBLIC "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd"'>
+							<xsltParameters>
+								<!-- the value of "TransformDirectory" is a special key the FxtViewer.dll knows about -->
+								<param name="sWordWorksTransformPath" value="TransformDirectory"/>
+								<!-- the value of "prmIMaxMorphsInAppendices" is the maximum number of morphemes to show in each subsection of the appendices -->
+								<!-- NB that the prmSMaxMorphsInAppendices parameter below should be kept in sync with the prmIMaxMorphsInAppendices parameter. -->
+								<!-- if you want all the morphemes to appear, comment off the following line. -->
+								<param name="prmIMaxMorphsInAppendices" value="10"/>
+								<!-- the value of "prmSMaxMorphsInAppendices" is the analysis language's word(s) for the maximum number of morphemes to show in each subsection of the appendices -->
+								<param name="prmSMaxMorphsInAppendices" value="ten"/>
+								<!-- The name of "prmSDateTime" is a special key the FxtViewer.dll knows about; it gets the current date and time and then passes it to the transform as a parameter -->
+								<param name="prmSDateTime" value="fake"/>
+				<!-- The name of "prmVernacularFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the vernacular font -->
+				<param name="prmVernacularFontSize" value="fake"/>
+				<!-- The name of "prmGlossFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the analysis (gloss) font -->
+				<param name="prmGlossFontSize" value="fake"/>
+			  </xsltParameters>
+						</transform>
+						<transform progressPrompt="Processing data, step 2 of 2" file="XLingPap1.xsl" ext="htm"/>
+					</transforms>
+				</parameters>
+			</control>
+		</tool>
+		<tool label="Problems" value="lexiconProblems" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-lexiconProblems" collapse="144000">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<parameters area="grammar" clerk="lexProblems" persistContext="problems" layout="Edit"/>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

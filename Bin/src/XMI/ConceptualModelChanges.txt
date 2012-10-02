@@ -1,0 +1,1639 @@
+Changes to conceptual model
+Use this general format:
+
+Date checked in.
+Added, Changed, or Removed - Class:Attribute (sig:Signature) type_of_attribute cardinality_of_attribute
+*******************************************************
+March 13, 2009 Ann Bush,  FWM-164 Finish variant entry changes
+Add LexEntryRef: RefType : Integer (max 127).
+Clean up unused data.
+   CmPossibilityList owned in LexDb_EntryTypes
+   CmPossibilityList owned in LexDb_AllomorphConditions
+Remove LexEntry_Condition, LexEntry_EntryType, LexDb_EntryTypes,
+	   LexDb_AllomorphConditions, LexEntryType_Type
+******************************************************
+February 12, 2009 Ann Bush,  FWM-162 Support better importing/exporting on CmPicture class
+In Class CmPicture: Add fields Description (MultiBigString) (default: null), LayoutPos (int) (default: 0),
+ScaleFactor (int) (default: 100), LocationRangeType (int) (default: 0), LocationMin (int) (default: 0),
+LocationMax (int) (default: 0)
+In Class CmFile: Add field Copyright (MultiString) (default: null)
+
+FWM-160 Add properties to LgWritingSystem to support Quotation Marks and Capitalization check
+In class LgWritingSystem: Add field CapitalizationInfo (BigUnicode), and  QuotationMarks (BigUnicode)
+
+FWM-158 Update Descriptions In class LgWritingSystem for MatchedPairs, and PunctuationPatterns
+******************************************************
+February 12, 2009 Ann Bush,  FWM-159 Change for Syntactic Markup
+LangProject - Add TextMarkupTags: owning atomic to CmPossibilityList.
+Add new list, with 4 lists containing subpossibilities, add CmAnnotationDefn
+LT-7727 add-on Create LiftResidue Property in LexEntryRef
+FWM-156 add-on create FsFeatureSystem object pointed to by PhFeatureSystem (OA)
+******************************************************
+February 3, 2009 Ann Bush, Parser Model Changes per FWM-156
+LangProject - Add PhFeatureSystem: owning atomic to FsFeature System.
+PhPhonData - Add PhonRules: owning sequence to PhSegmentRule
+				 PhonRuleFeats: Owning atomic to CmPossibilityList
+				 FeatConstraints: Owning  sequence to PhFeatureConstraint
+PhPhoneme - Add Property BasicIPASymbol: String
+				Features: owning Atomic to FsFeatStruc
+New Class PhSegmentRule - Add property Description: MultiString
+							 Name: MultiUnicode
+							 Direction: Integer
+				ReferenceAttribute InitialStratum atomic to MoStratum
+				ReferenceAttribute FinalStratum atomic to MoStratum
+New Class PhRegularRule - Add OwningAttribute RightHandSides Sequence to PhSegRuleRHS
+				Add OwningAttribute StrucDesc Sequence to PhSimpleContext
+New Class PhMetathesisRule< - Add Property Description: MultiString
+								 Name: MultiUnicode
+								 StrucChange: String
+				Add OwningAttribute StrucDesc Sequence to PhSimpleContext<
+New Class PhSegRuleRHS - Add OwningAttribute LeftContext atomic to PhPhonContext
+			   Add OwningAttribute RightContext atomic to PhPhonContext
+			   Add OwningAttribute StrucChange sequence to PhSimpleContext
+			   Add ReferenceAttribute InputPOSes collection to PartOfSpeech
+			   Add ReferenceAttribute ExclRuleFeats collection to PhPhonRuleFeat
+			   Add ReferenceAttribute ReqRuleFeats collection to PhPhonRuleFeat
+New Class PhPhonRuleFeat - Add ReferenceAttribute Item atomic to CmObject
+
+******************************************************
+January 20, 2009 Ann Bush, per LT-7277
+LexEntry - Add EntryRefs: owning sequence of LexEntryRef.
+Add new LexEntryRef class, subclass of CmObject
+LexEntryRef - Add VariantEntryTypes: sequence reference to LexEntryType.
+LexEntryRef - Add ComplexEntryTypes sequence reference to LexEntryType.
+LexEntryRef - Add PrimaryLexemes: sequence reference to CmObject.
+LexEntryRef -  Add ComponentLexemes: sequence reference to CmObject.
+LexEntryRef -  Add HideMinorEntry: Integer.
+LexEntryRef -  Add Summary: MultiString.
+LexDb - Add VariantEntryTypes: atomic owning CmPossibilityList.
+LexDb - Add ComplexEntryTypes: atomic owning CmPossibilityList.
+
+******************************************************
+December 16, 2008 Ann Bush, per LT-8851
+Added field LiftResidue (BigUnicode) to LexEntry, LexEtymology,
+LexExampleSentence, LexPronunciation, LexReference, LexSense,
+MoForm, and MoMorphSynAnalysis.
+For Fwm-158, Add field MatchedPairs and PunctuationPatterns (both BigUnicode).
+
+*******************************************************
+August 13, 2008 by SteveMiller, per FWM-152, FWM-153,
+	FWM-154, and FWM-155.
+-------------------------------------------------------
+Added CmAnnotationDefn.MaxDupOccur: integer.
+Added ScrDraft.Protected: integer.
+Fixed CmAnnotation.ValidChars description misspelling.
+Added note to the Annotations diagram.
+
+*******************************************************
+August 6, 2008 by SteveMiller, per FWM-145, FWM-149.
+-------------------------------------------------------
+Added LgWritingSystem.SpellCheckDictionary: unicode
+Added ScrDraft.Type: int
+
+*******************************************************
+June 6, 2008 by SteveMiller, per FWM-141.
+-------------------------------------------------------
+Added class ChkRendering: CmObject.
+Added ChkRendering.SurfaceForm: atomic reference to WordForm.
+Added ChkRendering.Meaning: atomic reference to WfiGloss.
+Added ChkRendering.Explanation: multiUnicode.
+Changed class ChkItem to ChkTerm (effectively deleting one and adding one).
+Deleted ChkTerm.Senses.
+Added ChkTerm.SeeAlso: multiUnicode.
+Added ChkTerm.Renderings: owning collection of ChkRendering.
+Added ChkTerm.TermId integer.
+Changed class ChkRef: modified description.
+Added ChkRef.Location: integer.
+Changed ChkRef.Ref: modified description.
+Changed ChkRef.KeyWord: modified descripiton.
+Deleted ChkRef.Comment.
+
+*******************************************************
+June 3, 2008 by SteveMiller, per FWM-144.
+-------------------------------------------------------
+Added LgWritingSystem.ValidChars: bigUnicode.
+Deleted Three empty classes and an empty object.
+
+*******************************************************
+April 7, 2008 by SteveMiller/Ann Bush Shorten more names.
+-------------------------------------------------------
+Change ConvertCVNumsToEuropeanDigitsOnExport to ConvertCVDigitsOnExport.
+Change UserConfigAccount to UserConfigAcct
+Change RightGlossSeparator to RightGlossSep
+Change MinusConstraints to MinusConstr
+Change PlusConstraints to PlusConstr
+Change InflectionFeatures to InflFeats
+Change ConstChartTemplates to ConstChartTempl
+
+*******************************************************
+March 7, 2008 by SteveMiller/AnnBush Shorten Column names
+-------------------------------------------------------
+Change Column Names CurrentAnalysisWritingSystems to CurAnalysisWss
+CurrentPronunciationWritingSystems to CurPronunWss
+CurrentVernacularWritingSystems to CurVernWss
+VernacularWritingSystems to VernWss
+InflectionalFeatures to InflectionalFeats
+ProductivityRestrictions to ProdRestrict
+FeatureStructureFragment to FeatStructFrag
+FromProductivityRestrictions to FromProdRestrict
+ToProductivityRestrictions to ToProdRestrict
+DerivationalAffixApps to DerivAffApp
+InflectableFeatures to InflectableFeats
+InherentFeatureValues to InherFeatVal
+HeaderFooterSettings to HFSet
+ScriptureNoteCategories to NoteCategories
+InflectionalTemplateApps to InflTemplateApps
+RestOfAllomorphs to RestOfAllos
+RestOfMorphemes to RestOfMorphs
+LexicalDatabase to LexDb
+AnalysisWritingSystems to AnalysisWss
+AnnotationDefinitions to AnnotationDefs
+
+*******************************************************
+February 21, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed PhPhonologicalContext to PhPhonContext.
+Changed PhPhonologicalData to PhPhonData.
+Changed PubHeaderFooterSet to PubHFSet.
+Changed RnGenericRecord to RnGenericRec.
+Changed RnResearchNotebook to RnResearchNbk.
+Changed RnRoledParticipants to RnRoledPartic.
+Changed ScrImportSettings to ScrImportSet.
+Changed UserAppFeatureActivated to UserAppFeatAct.
+Changed WordformLookupItem to WordFormLookup.
+
+*******************************************************
+February 19, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed MoEndocentricCompound to MoEndoCompound
+Changed MoExocentricCompound to MoExoCompound
+Changed MoInflectionalAffixMsa to MoInflAffMsa
+Changed MoInflectionClass to MoInflClass
+Changed MoMorphemeAdHocCoProhibition to MoMorphAdhocProhib
+Changed MoMorphologicalData to MoMorphData
+Changed MoMorphoSyntaxAnalysis to MoMorphSynAnalysis
+
+*******************************************************
+February 18, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed MoAllomorphAdhocCoProhibition to MoAlloAdhocProhib
+Changed MoDerivationalAffixApp to MoDerivAffApp
+Changed MoDerivationalAffixMsa to MoDerivAffMsa
+Changed MoDerivationalStepMsa to MoDerivStepMsa
+Changed MoDerivationTrace to MoDerivTrace
+Changed MoDerivation to MoDeriv
+
+*******************************************************
+February 15, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed LexReferenceType to LexRefType
+Changed LexicalDatabase to LexDb
+Changed MoAdhocCoProhibition to MoAdhocProhib
+Changed MoAdhocCoProhibitionGroup to MoAdhocProhibGr
+
+*******************************************************
+February 12, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed FsSymbolicFeatureValue to FsSymFeatVal
+Changed LanguageProject to LangProject
+
+*******************************************************
+February 11, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed FsFeatureStructure to FsFeatStruc
+Changed FsFeatureStructureDisJunction to FsFeatStrucDisj
+Changed FsFeatureStructureType to FsFeatStrucType
+
+*******************************************************
+February 11, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed FsFeatureDefn to FsFeatDefn
+
+*******************************************************
+February 7, 2008 by SteveMiller/AnnBush Shorten names
+-------------------------------------------------------
+Changed CmDomainQuestion to CmDomainQ
+
+January 11, 2008 by EricP/SteveMiller - Discourse ChartMarkers
+-------------------------------------------------------
+Changed DsChart : to Abstract class
+Added DsDiscourseData.ChartMarkers : OwningAtomic of CmPossibilityList
+
+December 21, 2007 by EricP/SteveMiller per FWM-137 "Discourse Analysis stage one - Longacre/Levinsohn Constituent Chart"
+-------------------------------------------------------
+Changed CmIndirectAnnotation.AppliesTo: ReferenceSequence of CmAnnotation
+Added class DsChart : CmMajorObject
+Added DsChart.Template: ReferenceAtomic of CmPossibility
+Added class DsConstChart : DsChart
+Added DsConstChart.BasedOn : ReferenceAtomic of StText
+Added DsConstChart.Rows : ReferenceSequence of CmIndirectAnnotations
+Added class DsDiscourseData : CmObject
+Added DsDiscourseData.ConstChartTemplates : OwningAtomic of CmPossibilityList
+Added DsDiscourseData.Charts : OwningCollection of DsChart
+Added LanguageProject.DiscourseData : OwningAtomic of DsDiscourseData
+
+
+December 19, 2007 by Tom Bogle per FWM-136
+-------------------------------------------------------
+Changed (description) ScrBookAnnotations.Notes: Scripture notes for this book of Scripture.
+These annotations include consultant notes, translator notes and also "error" annotations
+generated by checking tools.
+Added ScrBookAnnotations.ChkHistRecs: owned collection of ScrCheckRun
+
+Added ScrCheckRun : class (CmObject)
+
+Added ScrCheckRun.CheckId : guid
+Added ScrCheckRun.RunDate : time
+Added ScrCheckRun.Result : integer
+
+*******************************************************
+August 10, 2007 by Mark Bostrom per FWM-127, FWM-128, FWM-129
+-------------------------------------------------------
+Added CmResource : class (CmObject) per FWM-128
+Added CmResource.Name : unicode
+Added CmResource.Version : guid
+
+Added Scripture.Resources : owned collection of CmResource per FWM-128
+Removed Scripture.StylesheetVersion per FWM-128
+
+Added LexicalDatabase.Resources : owned collection of CmResource per FWM-129
+Removed LexicalDatabase.StylesheetVersion per FWM-129
+
+Added Publication.BaseFontSize : integer per FWM-127
+Added Publication.BaseLineSpacing : integer per FWM-127
+
+*******************************************************
+July 30, 2007 by Mark Bostrom per FWM-87, FWM-116, FWM-126
+-------------------------------------------------------
+Added ChkSense : class  per FWM-87
+Added ChkSense.Explanation : multiUnicode per FWM-87
+Added ChkSense.Sense : atomic reference per FWM-87
+Added ChkItem.Senses : unordered collection per FWM-87
+
+Removed ScrBookGroup : class per FWM-116
+Removed ScrBookAnnotations.BookId : atomic reference per FWM-116
+Removed ScrBookRef.BookId : unicode per FWM-116
+
+Added Publication.PaperHeight : integer per FWM-126
+Added Publication.PaperWidth : integer per FWM-126
+Added Publication.BindingEdge : integer per FWM-126
+Added Publication.SheetLayout : integer per FWM-126
+Added Publication.SheetsPerSig : integer per FWM-126
+Changed (definition) Publication.PageHeight: integer per FWM-126
+Changed (definition) Publication.PageWidth : integer per FWM-126
+Added PubDivision.NumColumns : integer per FWM-126
+Removed PubPageLayout.MaxPosFootnote : integer per FWM-126
+
+*******************************************************
+May 25, 2007 by Mark Bostrom per FWM-115, FWM-117, FWM-125
+-------------------------------------------------------
+Added Scripture.DisplaySymbolInFootnote : boolean  per FWM-125
+Added Scripture.DisplaySymbolInCrossRef : boolean  per FWM-125
+Added ScrBook.CanonicalNum : integer  per FWM-115
+Added ScrScriptureNote.DateResolved : time  per FWM-117
+
+*******************************************************
+May 23, 2007 by Eric Pyle per LT-5855, LT-5611
+-------------------------------------------------------
+Added LanguageProject.GenreList : OwningAtomic to CmPossibilityList
+Added Text.Genres : ReferenceCollection of CmPossibility
+Added Text.Abbreviation : MultiUnicode
+Added Text.IsTranslated : Boolean
+
+Mar 28, 2007 by Eric Pyle per FWM-124
+-------------------------------------------------------
+Added MoStemMsa.FromPartsOfSpeech  : ReferenceCollection to PartOfSpeech
+
+Jan 24, 2007 by Mark Bostrom per FWM-122 (Add default body font properties)
+-------------------------------------------------------
+In Cellar:
+Added LgWritingSystem.DefaultBodyFont (unicode)
+Added LgWritingSystem.BodyFontFeatures (unicode)
+
+
+Jun 26, 2006 by Eric Pyle per FWM-118 (Migrate to ReversalIndexEntry.ReversalForm)
+-------------------------------------------------------
+Removed ReversalIndexEntry.Form
+Removed ReversalIndexEntry.WritingSystem
+
+Jun 19, 2006 by Eric Pyle per FWM-118
+-------------------------------------------------------
+Added ReversalIndexEntry.ReversalForm : MultiUnicode
+
+Jun 19, 2006 by Eric Pyle per FWM-113
+-------------------------------------------------------
+Added LexicalDatabase.StylesheetVersion : Guid
+
+June 7, 2006 by Mark Bostrom and Tom Bogle per FWM-110, FWM-111 and FWM-114
+Changes to several attributes in the Scripture module to support Cross-references and simplified
+choices for cross-references and footnotes:
+-------------------------------------------------------
+In Scripture:
+Removed DefaultDisplayFootnoteMarker (boolean)
+Renamed DefaultDisplayFootnoteReference (boolean) to DisplayFootnoteReference
+Renamed DefaultFootnoteMarker (unicode) to FootnoteMarkerSymbol
+Added FootnoteMarkerType (int enum)
+Added DisplayCrossRefReferences (boolean)
+Added CrossRefMarkerSymbol (unicode)
+Added CrossRefMarkerType (int enum)
+Added CrossRefsCombinedWithFootnotes (boolean)
+
+In ScrMarkerMapping:
+Removed FootnoteMarker
+Removed DisplayFootnoteMarker
+Removed DisplayFootnoteReference
+
+In ScrImportSettings:
+Removed FootnoteSettings
+
+Removed the ScrImportFootnoteSettings class
+
+April 19, 2006 by Mark Bostrom and Tom Bogle per FWM-108
+Corrections to error I made in specifying the data type for
+several attributes in the Scripture module:
+-------------------------------------------------------
+Changed ScrMarkerMapping.BeginMarker: string to Unicode
+Changed ScrMarkerMapping.EndMarker: string to Unicode
+Changed ScrMarkerMapping.ICULocale: string to Unicode
+Changed ScrImportSource.ICULocale: string to Unicode
+Changed ScrImportP6Project.ParatextID: string to Unicode
+
+Mar 1, 2006 by Eric Pyle per FWM-106
+-------------------------------------------------------
+Added WfiWordform_Checksum : Integer
+
+Feb 3, 2006 by Eric Pyle per FWM-102, FWM-103, FWM-104
+-------------------------------------------------------
+-- FWM-102 "Changes related to LexPronunciation" --
+Added class CmMedia : CmObject
+Added CmMedia_Label: MultiString
+Added CmMedia_MediaFile: ReferenceAtomic of CmFile
+Added LanguageProject_Media: OwningCollection of CmFolder
+Added LexPronunciation_Location: ReferenceAtomic to CmLocation
+Added LexPronunciation_MediaFiles: OwningSequence of CmMedia
+Added LexPronunciation_CVPattern: String
+Added LexPronunciation_Tone: String
+Deleted LexPronunciation_Sound
+Added LexEntry_Pronunciations: OwningSequence of LexPronunciation
+Deleted LexEntry_Pronunciation objects & field (data migration finished)
+-- FWM-103 "Change residue fields to big string" --
+Changed LexEntry_ImportResidue: Unicode to BigString
+Changed LexSense_ImportResidue: Unicode to BigString
+-- FWM-104 "Convert StringRepresentation to String"
+Changed PhEnvironment_StringRepresentation: Unicode to BigString
+
+Dec 29, 2005 by Mark Bostrom and John Wickberg per FWM-99 and FWM-100
+-------------------------------------------------------
+In Cellar:
+Added class StJournalText : StText
+Added StJournalText_DateCreated : time
+Added StJournalText_DateModified : time
+Added StJournalText_CreatedBy : atomic reference to CmPerson
+Added StJournalText_ModifiedBy : atomic reference to CmPerson
+
+In Scripture:
+Added class ScrScriptureNote : CmBaseAnnotation
+Added ScrScriptureNote_ResolutionStatus : integer (enum)
+Added ScrScriptureNote_Categories : sequence of references to CmPossibility
+Added ScrScriptureNote_Quote : owned atomic StJournalText
+Added ScrScriptureNote_Discussion : owned atomic StJournalText
+Added ScrScriptureNote_Recomendation : owned atomic StJournalText
+Added ScrScriptureNote_Resolution : owned atomic StJournalText
+Added ScrScriptureNote_Responses : sequence of StJournalText
+
+Added class ScrBookAnnotations : CmObject
+Added ScrBookAnnotations_BookID : atomic reference to ScrBookRef
+Added ScrBookAnnotations_Notes : owned sequence of CmScriptureNote
+
+Added Scripture_BookAnnotations : owned sequence of ScrBookAnnotations
+Added Scripture_ScriptureNoteCategories : owned atomic CmPossibilityList
+
+
+-------------------------------------------------------
+Dec 29, 2005 by Mark Bostrom and John Wickberg per FWM-96
+-------------------------------------------------------
+Change Scripture: OwningAtomic of ScrImportSettings to OwningCollection of ScrImportSettings.
+Added class ScrMarkerMapping : CmObject
+Added abstract class ScrImportSource : CmObject
+Added class ScrImportP6Project : ScrImportSource
+Added class ScrImportSFFiles : ScrImportSource
+Added ScrImportSettings_ScriptureMappings: OwningCollection of ScrMarkerMapping
+Added ScrImportSettings_NotesMappings: OwningCollection of ScrMarkerMapping
+Added ScrImportSettings_ScriptureSources: OwningCollection of ScrImportSource
+Added ScrImportSettings_BackTransSources: OwningCollection of ScrImportSource
+Added ScrImportSettings_NotesSources: OwningCollection of ScrImportSource
+Added ScrMarkerMappting_Style: ReferenceAtomic of StStyle
+Added ScrMarkerMapping_NoteType: ReferenceAtomic of CmAnnotationDefn
+Added ScrImportSource_NoteType: ReferenceAtomic of CmAnnotationDefn
+
+-------------------------------------------------------
+Dec 22, 2005 by Eric Pyle per FWM-97
+-------------------------------------------------------
+Change LexSense_Pictures: OwningSequence of LexPicture to OwningSequence of CmPicture
+Removed LexPicture
+
+-------------------------------------------------------
+Dec 22, 2005 by Eric Pyle per FWM-91
+-------------------------------------------------------
+Change CmPicture_Caption:String to MultiString
+
+-------------------------------------------------------
+Dec 22, 2005 by Eric Pyle per FWM-93
+-------------------------------------------------------
+Added MoEndocentricCompound_OverridingMsa: OwningAtomic of MoStemMsa
+
+-------------------------------------------------------
+Dec 22, 2005 by Eric Pyle per FWM-95
+-------------------------------------------------------
+Added MoMorphologicalData_ProductivityRestrictions: OwningAtomic of CmPossibilityList
+Added MoStemMsa_ProductivityRestrictions: ReferenceCollection of CmPossibility
+Added MoDerivationalAffixMsa_FromProductivityRestrictions: ReferenceCollection of CmPossibility
+Added MoDerivationalAffixMsa_ToProductivityRestrictions: ReferenceCollection of CmPossibility
+Added MoInflectionalAffixMsa_FromProductivityRestrictions: ReferenceCollection of CmPossibility
+Added MoCompoundRule_ToProductivityRestrictions: ReferenceCollection of CmPossibility
+Added MoDerivationalStepMsa_ProductivityRestrictions: ReferenceCollection of CmPossibility
+
+Removed MoStemMsa_ExceptionFeatures: OwningAtomic of FsFeatureStructure
+Removed MoDerivationalAffixMsa_FromExceptionFeature: OwningAtomic of FsFeatureStructure
+Removed MoDerivationalAffixMsa_ToExceptionFeatures: OwningAtomic of FsFeatureStructure
+Removed MoInflectionalAffixMsa_FromExceptionFeatures: OwningAtomic of FsFeatureStructure
+Removed MoCompoundRule_ToExceptionFeatures: OwningAtomic of FsFeatureStructure
+Removed MoDerivationalStepMsa_ExceptionFeatures: ReferenceAtomic of FsFeatureStructure
+
+*******************************************************
+Nov 10, 2005 by Mark Bostrom per FWM-72, FWM-83, FWM-92
+--------------------------------------------------
+Changed LanguageProject.CheckLists: OwningAtomic of CmPossibilityList to OwningCollection
+Added CmPossibilityList.ListVersion: guid
+Added ScrSection.VerseRefMin: integer
+Added ScrSection.VerseRefMax: integer
+
+*******************************************************
+Sep 8, 2005 by Eric Pyle per FWM-90
+--------------------------------------------------
+Removed LexEntry_Allomorphs : OwningSequence of MoForm
+Removed LexEntry_UnderlyingForm : OwningAtomic of MoForm
+
+*******************************************************
+Sep 1, 2005 by Eric Pyle per FWM-88
+--------------------------------------------------
+Added FsFeatureDefn.CatalogSourceId: unicode
+Added FsFeatureStructureType.CatalogSourceId: unicode
+Added FsSymbolicFeatureValue.CatalogSourceId: unicode
+--------------------------------------------------
+Added LexEntry_LexemeForm : OwningAtomic of MoForm
+Added LexEntry_AlternateForms : OwningSequence of MoForm
+
+*******************************************************
+Aug 15, 2005 by Eric Pyle per FWM-86
+--------------------------------------------------
+Changed MoInflectionalAffixMsa_InflectionFeatures: OwningCollection to OwningAtomic
+
+*******************************************************
+Aug 5, 2005 by Eric Pyle per FWM-85
+--------------------------------------------------
+Deleted MoInflectionalAffixMsa_Slot: Atomic reference to MoInflAffixSlot
+
+*******************************************************
+Aug 1, 2005 by Eric Pyle per FWM-85
+--------------------------------------------------
+Added MoInflectionalAffixMsa_Slots: ReferenceCollection of MoInflAffixSlot
+
+*******************************************************
+June 27, 2005 by Eric Pyle (w/SteveMc) per LT-1888
+--------------------------------------------------
+Added LexEntry.ImportResidue: unicode
+Added LexSense.ImportResidue: unicode
+
+*******************************************************
+June 23, 2005 by Eric Pyle (w/SteveMc) per LT-1770
+--------------------------------------------------
+Deleted class LexSetItem : CmObject
+Deleted class LexPair: CmObject
+Deleted class LexPairRelation: LexSet
+Deleted class LexScale : LexSet
+Deleted class LexSimpleSet: LexSet
+Deleted class LexTreeItem: CmObject
+Deleted class LexTreeRelation: LexSet
+Deleted class LexSet: CmObject
+
+Delete LexicalDatabase_LexicalRelations: OwningCollection of LexicalRelationGroup
+
+Deleted class LexicalRelationGroup : CmObject
+
+*******************************************************
+June 10, 2005 by Eric Pyle per LT-1758
+--------------------------------------
+Added class LexReference : CmObject
+Added LexReference.Name: multiUnicode
+Added LexReference.Comment: multiString
+Added LexReference_Targets: reference sequence to CmObject (LexSense or LexEntry)
+
+Added class LexReferenceType : CmPossibility
+Added LexReferenceType.ReverseName: multiUnicode
+Added LexReferenceType.ReverseAbbreviation: multiUnicode
+Added LexReferenceType.MappingType: integer (max=127) (used as enum).
+Added LexReferenceType_Members: owning collection of LexReference
+
+Added LexicalDatabase_References: atomic owning CmPossibilityList
+
+June 10, 2005 by Eric Pyle per LT-1759
+--------------------------------------
+Added PartOfSpeech.CatalogSourceId: Unicode
+
+Added FsFeatureSystem_Features: owning collection of FsFeatureDefn
+
+Changed FsFeatureStructureType.Features: owning sequence of FsFeatureDefn
+	to reference sequence of FsFeatureDefn
+
+*******************************************************
+June 7, 2005 by Eric Pyle per LT-1746
+Deleted class LexMinorEntry
+Deleted class LexMajorEntry
+Deleted class LexSubentry
+Deleted class LexSubentryType
+Deleted class LexVariant
+
+Deleted LexEntry.Variants
+Deleted LexEntry.IsIncludedAsHeadword
+Deleted LexicalDatabase.SubentryTypes
+
+Changed LexEntry.MainEntriesOrSenses2
+	 to LexEntry.MainEntriesOrSenses
+Changed LexEntry.SummaryDefinition2
+	 to LexEntry.SummaryDefinition
+Changed LexEntry.Comment2
+	 to LexEntry.Comment
+Changed LexEntry.Condition2
+	 to LexEntry.Condition
+
+Changed LexEntry.LiteralMeaning2
+	 to LexEntry.LiteralMeaning
+
+*******************************************************
+May 31, 2005 by Eric Pyle per LT-1622
+Added LexEntry.DoNotUseForParsing: boolean
+Added LexEntry.ExcludeAsHeadword: boolean
+Added LexEntry.Comment2: multiString
+
+May 26, 2005 by Eric Pyle per LT-1622
+Added class LexEntryType : CmPossibility
+Added LexEntryType.ReverseAbbr: multiUnicode
+Added LexEntryType.Type: integer (max = 127)
+Added LexicalDatabase.EntryTypes: atomic owning CmPossibilityList
+Added LexEntry.SummaryDefinition2: multiString
+Added LexEntry.LiteralMeaning2: multiString
+Added LexEntry.MainEntriesOrSenses2: reference sequence of CmObject
+Added LexEntry.Condition2: atomic reference to CmPossibility
+Added LexEntry.EntryType: atomic reference to LexEntryType
+
+*******************************************************
+May 6, 2005 by Eric Pyle per FWM-79
+Removed PartOfSpeechOrSlot association MoInflectionalAffixMsa CmObject
+
+
+*******************************************************
+May 6, 2005 by Eric Pyle per FWM-84
+Removed MoDerivationalAffixMsa.Defined
+
+*******************************************************
+April 22, 2005 by Eric Pyle per FWM-78
+Remove ReversalIndexEntry.Name
+
+*******************************************************
+March 24, 2005 by Steve Miller per FWM-76, FWM-77, FWM-74
+Remove LanguageProject.ReversalIndexes: ReversalIndex
+Add LexicalDatabase.ReversalIndexes: ReversalIndex owning collection
+Add ReversalIndexEntry.Form: Unicode
+Add ReversalIndexentry.WritingSystem: LgWritingSystem referencing atomic
+Add MoInflexionalAffixMsa.PartOfSpeech: PartOfSpeech referencing atomic
+Add MoInflexionalAffixMsa.Slot: MoInflAffixSlot referencing atomic
+*******************************************************
+March 24, 2005 by Steve Miller per FWM-73
+Added class MoUnclassifiedAffixMSa: MoMorphoSyntaxAnalysis
+Added MoUnclassifiedAffixMSa.PartOfSpeech: PartOfSpeech
+*******************************************************
+March 16, 2005 by Mark Bostrom and John Wickberg
+per FWM-27, FWM-47, FWM-67, FWM-70, FMW-71
+Removed Scripture.BookRevisions
+Changed CmAnnotation class to abstract
+Added Publication.FootnoteSepWidth: integer
+Added Scripture.ChapterLabel: string
+Added Scripture.PsalmsLabel: string
+Added ScrBook.UseChapterNumHeading: boolean
+Added Class to Linguistics module, ChkItem: CmPossibility
+Added Class to Linguistics module, ChkRef: CmObject
+Added ChkItem.Occurrences: ordered collection of ChkRef
+Added ChkRef.Ref: integer
+Added ChkRef.KeyWord: string
+Added ChkRef.Comment: multiString
+Added ChkRef.Status: integer
+Added ChkRef.Rendering: reference to one WfiWordForm
+Added LanguageProject.CheckLists: reference to CmPossibilityList
+*******************************************************
+Feb 17, 2005 by Mark Bostrom per FWM-43, FWM-46,
+FWM-50, FWM-61, FWM-62, FWM-63, FWM-65
+Removed ScrBook.RunningHeader
+Removed ScrSection.Footnotes
+Added Scripture.Versification: integer (enumeration)
+Added Scripture.VersePunct: unicode
+Added Scripture.StylesheetVersion: GUID
+Added ScrDraft.DateCreated: time
+Added CmAnnotation.DateCreated: time
+Added CmAnnotation.LastModified: time
+*******************************************************
+Feb 8, 2005 by Mark Bostrom
+Corrected association problem with
+LexicalDatabase.Styles: StStyle, was built as atomic,
+corrected to unordered collection.
+*******************************************************
+Jan 21, 2005 per JohnT, JohnH, and Ken Zook
+Add LexicalDatabase.Styles: StStyle
+*******************************************************
+Oct 25, 2004 per TE Team
+Remove StStyle.Role
+*******************************************************
+Oct 19, 2004 per Zook
+Change LexMinorEntry.MainEntryOrSense to (LexEntry)
+Change LexSubentry.MainEntriesOrSenses to (LexSense)
+Remove class LexRefEntryOrSense
+*******************************************************
+Oct 12, 2004
+Text was subclassed from both CmObject and
+CmMajorObject. Should only be subclassed from
+CmMajorObject. (FWM-56)
+*******************************************************
+Oct 5, 2004 per Mark Bostrom and TE (FWM-54)
+Add to StStyle:
+	Context:integer (will replace StStyle.Role)
+	Structure: integer
+	Function: integer
+	Usage: multiunicode
+*******************************************************
+Sep 23, 2004
+Changed LanguageProject.AnnotationDefinitions from
+	collection to atomic
+*******************************************************
+Sep 23, 2004 per various
+Remove the following classes:
+  CmFilename
+  CmFolderObject
+Modify CmFolder as follows:
+  Remove DateCreated
+*******************************************************
+Sep 22, 2004 per Zook
+Add class CmSemanticDomain : Subclass of CmPossibility with
+	LouwNidaCodes: Unicode
+	OcmCodes: Unicode
+	OcmRefs: reference collection CmAnthroItem
+	RelatedDomains: reference collection CmSemanticDomain
+	Questions: owning sequence CmDomainQuestion
+Add class CmDomainQuestion : Subclass of CmObject with
+	Question: multiUnicode
+	ExampleWords: multiUnicode
+	ExampleSentences: multiString
+class LexSense
+	Add SemanticDomains: reference collection CmSemanticDomain
+class LanguageProject
+	Add SemanticDomainList: atomic owning CmPossibilityList
+*******************************************************
+Sep 9, 2004 per Zook
+Add CmPossibility:IsProtected (Boolean)
+*******************************************************
+Sep 9, 2004 per Zook and crew (Ken's specs here)
+Add LexEntry_Bibliography: multiString
+Add LexEntry_Etymology owning atomic LexEtymology
+Add LexEntry_Restrictions: multiUnicode
+Add LexEntry_Variants: owning collection LexVariant
+Change LexEntry_Pronunciations from collection to atomic
+Remove LexEntry_OrthographicVariants
+
+Add LexExampleSentence_Reference: String
+
+Add LexicalDatabase_Status: owning atomic CmPossibilityList
+
+Add LexSense_AnthroNote: multiBigString
+Add LexSense_Bibliography: multiString
+Add LexSense_DiscourseNote: multiBigString
+Add LexSense_EncyclopedicInfo: multiBigString
+Add LexSense_GeneralNote: multiBigString
+Add LexSense_GrammarNote: multiBigString
+Add LexSense_PhonologyNote: multiBigString
+Add LexSense_Restrictions: multiUnicode
+Add LexSense_SemanticsNote: multiBigString
+Add LexSense_SocioLinguisticsNote: multiBigString
+Add LexSense_Source: String
+Add LexSense_Status: atomic ref to CmPossibility
+
+Add class: LexEtymology
+Add LexEtymology_Comment: multiBigString
+Add LexEtymology_Form: multiUnicode
+Add LexEtymology_Gloss: multiUnicode
+Add LexEtymology_Source: unicode
+
+Add class: LexVariant
+Add LexVariant_Comment: multiString
+Add LexVariant_Form: multiUnicode
+Add LexVariant_Pronunciation: atomic owning LexPronunciation
+*******************************************************
+August 27, 2004 (Hayashi)
+Added CmTranslation: Status (multiUnicode)
+Change as follows:
+Deleted StTxtPara: Translation (CmTranslation) num=7 type=reference
+Added StTxtPara: Translation (CmTranslation) num=8 type=owning
+*******************************************************
+July 23, 2004 (Hayashi, Bogle)
+
+Added CmMajorObject: HeaderFooterSets (owned collection of PubHeaderFooterSet objects) (FWM-45)
+Added CmAnnotation: Features (sig:FsFeatureStructure)
+Changed Module from FeatureSystem to Cellar and then changed class numbers.(FWM-26)
+	FsAbstractStructure 12 to 60
+	FsClosedFeature 2 to 50
+	FsClosedValue 3 to 51
+	FsComplexFeature 4 to 52
+	FsComplexValue 5 to 53
+	FsDisjunctiveValue 6 to 54
+	FsFeatureDefn 7 to 55
+	FsFeatureSpecification 8 to 56
+	FsFeatureStructure 9 to 57
+	FsFeatureStructureDisjunction 10 to 58
+	FsFeatureStructureType 11 to 59
+	FsFeatureSystem 1 to 49
+	FsNegatedValue 13 to 61
+	FsOpenFeature 14 to 62
+	FsOpenValue 15 to 63
+	FsSharedValue 16 to 64
+	FsSymbolicFeatureValue 17 to 65
+*******************************************************
+July 21, 2004 (Zook)
+Changed LanguageProject: Pictures (CmFile) to (CmFolder)
+*******************************************************
+June 29, 2004, per WW (Andy BLack)
+Added	MoAllomorphAdhocCoProhibition.FirstAllomorph (MoForm)
+Added	MoAllomorphAdhocCoProhibition.RestOfAllomorphs (MoForm)
+*******************************************************
+June 25, 2004, per TE (Mark Bostrom)
+Removed	LanguageProject.PageLayouts (CmPageLayout)
+Removed	CmPubDivision.PubDivisionPageLayout (CmPageLayout)
+*******************************************************
+June 24, 2004, per TE (Mark Bostrom)
+Changed	CmMajorObject.PageLayouts (CmPageLayout) to LanguageProject.PageLayouts
+Changed Scripture.Publications (CmPublication) to CmMajorObject.Publications
+Added	CmPublication.GutterMargin
+Added	CmPublication.GutterLoc
+Removed CmPubDivision.Name
+Removed	CmPubDivision.Description
+Changed CmPubDivision.DivisionStart to StartAt
+Changed CmPubDivision.PageLayout (CmPageLayout) to owning relationship
+Added	CmPubDivision.PubDivisionPageLayout (CmPageLayout)
+Added	CmPageLayout.IsBuiltIn
+Added	CmPageLayout.IsModified
+Removed	CmPageLayout.MarginGutter
+*******************************************************
+June 16, 2004, (Tom Bogle, John Thomson, Ken Zook)
+Added CmFile:
+	Name (unicode)
+	Description (bigstring)
+	OriginalPath (unicode)
+	InternalPath (unicode)
+Added CmPicture:
+	Caption (string)
+	PictureFile (CmFile)
+Added CmFolder.Files (CmFile)
+Added LanguageProject.Pictures (CmFolder)
+*******************************************************
+June 13, 2004, per TE (Mark Bostrom)
+Added PubHeader:
+	InsideAlignedText (string)
+	CenteredString (string)
+	OutsideAlingedString (string)
+Added PubHeaderFooterSet:
+	Name (unicode)
+	Description (bigstring)
+	DefaultHeader (PubHeader)
+	DefaultFooter (PubHeader)
+	FirstHeader (PubHeader)
+	FirstFooter (PubHeader)
+	EvenHeader (PubHeader)
+	EvenFooter (PubHeader)
+Added PubDivision.HeaderFooterSettings (PubHeaderFooterSet)
+*******************************************************
+June 14, 2004, per TE (Tom Bogle, Mark Bostrum)
+Changed	Scripture.UseScripDigits to UseScriptDigits (typo)
+Added	Scripture.ConvertCVNumsToEuropeanDigitsOnExport
+*******************************************************
+June 10, 2004, per TE (Tom Bogle)
+Added Scripture:Publications (CmPublication)
+Added CmPublication:
+	Name
+	Description
+	PageHeight
+	PageWidth
+	IsLandscape
+	Divisions (CmPubDivision)
+Added CmPubDivision:
+	Name
+	Description
+	DiffierentFirstHF
+	DifferentEvenHF
+	DivisionStart
+	PageLayout (CmPageLayout)
+Added CmPageLayout:
+	Name
+	Description
+	MarginTop
+	MarginBottom
+	MarginInside
+	MarginOutside
+	MarginGutter
+	PosHeader
+	POsFooter
+	MaxPosNote
+Added CmMajorObject:PageLayouts
+*******************************************************
+June 1, 2004, per TE (Mark Bostrom, John Thomson, Ken Zook)
+Added	CmBaseAnnotation.BeginRef (integer)
+Added	CmBaseAnnotation.EndRef (integer)
+*******************************************************
+June 1, 2004 as per WordWorks
+Added MoInflAffixTemplate:Final (boolean) - JIRA #FWM-30
+Added WfiAnalysis:CompoundRuleApps (ref to MoCompoundRule) JIRA #FWM-15
+Added WfiAnalysis:InflectionalTemplateApps (ref to MoInflAffixTemplate) JIRA #FWM-15
+Added PhNaturalClass: Abbreviation (multiUnicode) JIRA #FWM-12
+*******************************************************
+May 19, 2004 as per TE (Dave Edge)
+Added Scripture:UseScriptDigits
+Added Scripture:ScripDigitZero
+*******************************************************
+May 10, 2004 as per WordWorks
+Deleted WfiAnalysis: Msas
+Deleted WfiAnalysis: Morphs
+Deleted MoInflAffixSlot:Affixes
+*******************************************************
+May 6, 2004 as per WordWorks
+Deleted the following:
+	Text:Sections
+	TxtSection class
+	Text:Title
+	Text:Paragraphs
+	TxtParagraph class
+	TxtSegment class
+	TxtConstructInContext class
+	Text:Analysis
+	WfiInterpretation class
+	WfiWordform:FailedParsers
+	WfiWordform:AppliedParsers
+	WfiAnalysis:InvalidatingSources
+	WfiAnalysis:ValidatingSources
+	TxtWordformInContext class
+*******************************************************
+May 6, 2004 as per John Hatton
+Added Text:Contents (sig:StText)
+*******************************************************
+May 5, 2004 as per Andy Black and David Olson
+Added MoInflectionalAffixMsa:PartOfSpeechOrSlot (sig: MoInflAffixSlot)
+Changed ScrImportFootnoteSettings:FootnoteMarker from string to unicode
+*******************************************************
+May 3, 2004 as per David Olson
+Added ScrImportSettings:FootnoteSettings (sig:ScrImportFootnoteSettings)
+Added class ScrImportFootnoteSettings
+Deleted CanonOrd and SILBookId from ScrBook
+*******************************************************
+April 12, 2004 as per John Hatton
+Added LanguageProject: AnnotationDefinitions (CmAnnotationDefn)
+Made CmAnnotationDefn a subclass of CmPossibility
+Deleted CmAnnotationDefn:Name
+Delete CmAnnotationDefn: Description
+*******************************************************
+April 12, 2004 as per Tom Bogle
+Added UserConfigAccount
+Added UserAppFeatureActivated
+Added LanguageProject: ActivatedFeatures (UserAppFeatureActivated)
+Added LanguageProject: UserAccounts (UserConfigAccount)
+*******************************************************
+April 7, 2004 as per Tim Steenwyk
+Change Scripture:DisplayFootnoteMarker (boolean) to DefaultFootnoteMarker (boolean)-
+Change Scripture: DisplayFootnoteReference (boolean) to DefaultDisplayFootnoteReference (boolean)
+Add Scripture: RestartFootnoteSequence (boolean)
+Add Scripture: RestartFootnoteBoundary (integer)
+Change StFootnote:DisplayBackReference (boolean) to DisplayFootnoteReference (boolean)
+Add StFootnote:DisplayFootnoteMarker (boolean)
+*******************************************************
+April 2, 2004 as per John Hatton, Andy Black
+Added MoMorphologicalData: ParserParameters (unicode)
+*******************************************************
+April 1, 2004 as per Tom Bogle
+Added Scripture: DefaultFootnoteMarker (unicode)
+Added Scripture: DisplayFootnoteMarker (boolean)
+Added Scripture: DisplayFootnoteReference(boolean)
+Added StFootnote: DisplayBackReference (boolean)
+*******************************************************
+February 19, 2004 as per Thomson and Regnier
+1. add to WfiAnalysis a Meanings collection (of WfiGloss)
+2. add to WfiAnalysis a Morphs sequence (of some new class...Randy and I like WfiMorphBundle, or WfiMorphInContext).
+3. Implement WfiMorphBundle, which has
+	- Form (string)
+	- Morph (atomic ref to MoForm)
+	- Msa (atomic ref to MoMorphoSyntaxAnalysis)
+	- Sense (atomic ref to LexSense)
+
+Since the form of a WfiWordform is multilingual, maybe the form of a WfiMorphBundle should be, too...on the same argument of supporting multiple  writing systems (of the same language). On the other hand, this property will only be used for incomplete analyses, and I find it hard to imagne someone bothering to do multiple writing systems of an incomplete analysis. Actually, I find it hard to imagine someone bothering to do any analysis whatever in multiple  writing systems!
+******************************************************
+February 11, 2004 as per Ken Zook
+Added LgWritingSystem: LastModified (time)
+*******************************************************
+January 28, 2004 as per Eberhard and Dave Edge
+Added ScrDifference and associated attributes.
+Added ScrDraft and associated attributes.
+*******************************************************
+January 18, 2004 as per Black, Hatton
+Added MoMorphemeAdhocCoprohibition_FirstMorpheme (sig:MoMSA) ref atomic,
+Added MoMorphemeAdhocCoprohibition_RestOfMorphemes (sig:MoMSA) ref seq
+*******************************************************
+December 17, 2003 as per Hayashi and WordWorks
+Added Text, TxtSection classes. Refer to Vernacular Texts model.
+*******************************************************
+November 4, 2003 as per Zook
+Added LgWritingSystem: SansFontVariation (unicode)
+*******************************************************
+October 12, 2003 as per Bogle
+Added Scripture: BookRevisions (owning collection of type ScrBook)
+*******************************************************
+October 9, 2003
+Changes below for September 17 and 18th were finally checked in.
+*******************************************************
+September 18, 2003 as per Zook, McConnel
+CmPossibilityList_WsSelector : integer
+UserViewField_WsSelector : integer
+FsOpenFeature_WsSelector: integer
+CmBaseAnnotation_WsSelector:integer
+*******************************************************
+September 17, 2003 as per Zook, McConnel
+The following properties stored LgWritingSystem_Code (as integers). They were changed to be a reference to LgWritingSystem and given new num attribute values in the cm files.
+
+CmSortSpec_PrimaryWs 5 > 23
+CmSortSpec_SecondaryWs 11 > 24
+CmSortSpec_TertiaryWs  17 > 25
+CmPossibilityList_WritingSystem 16 > 17
+UserViewField_WritingSystem 10 > 13
+CmBaseAnnotation_LgWritingSystem 2 -> CmBaseAnnotation_WritingSystem 8
+FsOpenFeature_WritingSystem 1 > 2
+ScrImportMapping_WritingSystem 4 > 5
+ReversalIndex_WritingSystem 2 > 4
+WordformLookupList_WritingSystem 2 > 3
+
+CmSortSpec_PrimaryCollation 8 > 26
+CmSortSpec_SecondaryCollation 14 > 27
+CmSortSpec_TertiaryCollation 20 > 28
+
+Remove the following two properties:
+LgWritingSystem_Code
+LgCollation_Code
+
+*******************************************************
+August 19, 2003 as per Bogle, Hayashi, Zook, Thomson, Imrie
+Added StFootnote, owned by ScrBook and currently ScrSection. Decision to be made.
+*******************************************************
+August 15, 2003 as per Zook
+Added LgWritingSystem: LegacyMapping (unicode)
+*******************************************************
+August 7, 2003 as per Bogle
+Added CmAnnotation:Text (StText) to handle multiparagraph footnotes. Will probably need to delete the Comment attribute.
+*******************************************************
+July 29, 2003 as per Thomson
+Added LgWritingSystem: KeymanKeyboard
+*******************************************************
+July 22, 2003 as per Hayashi
+Temporary until permanent solution determined
+Removed CmAnnotation: FeatureStructure so that databases can load without problem.
+*******************************************************
+July 12, 2003 as per Hayashi, Simons, Bogle, Thomson (March 2003 mtg)
+Added CmAnnotation, CmAnnotationDefn, CmIndirectAnnotation, CmBaseAnnotation, CmMediaAnnotation and attributes
+*******************************************************
+June 10, 2003 as per Bogle
+Added StStyle:UserLevel(integer) and Role(integer)
+*******************************************************
+June 4, 2003 as per WordWorks
+Added PhEnvironment: StringRepresentation (unicode)
+*******************************************************
+May 28, 2003 as per Zook
+Removed LgWritingSystem:Renderer, RendererInit. No longer needed.
+*******************************************************
+May 13, 2003 as per Zook
+Removed CmSortSpec:Primary, Secondary and TertiaryOws. No longer needed.
+*******************************************************
+May 1, 2003 as per Zook
+Added to LgWritingSystem: ICULocale : Unicode
+Added to LgCollation: ICURules : BigUnicode
+Changed name of diagram Encoding and Writing Systems to Language Writing Systems
+
+May 1, 2003 as per Tim Steenwyk and Bogle
+Added Class: ScrBook
+- IdText (Unicode) - Id line from  SF files (needed for import/export)
+- RunningHeader (Unicode) - Running page header for published scriptures
+
+*******************************************************
+April 22, 2003 as per Zook
+Deleted LgOldWritingSystem and any attributes pointing to it.
+Deleted LgWritingSystem: WritingSystem (integer)
+Deleted LgWritingSystem: CharPropOverrides
+Deleted LgWritingSystem: LandId
+
+*******************************************************
+April 14, 2003 as per Eberhard Beilharz
+Changed StPara: Rules (sig:Binary to textPropBinary)
+*******************************************************
+April 8, 2003 as per TE/FDO team
+Added new data type of textPropBinary
+Changed StStyle:Rules (sig:Binary to textPropBinary).
+NOTE: THIS WILL NOT SHOW UP IN THE CM FILES!! Only for FDO.
+*******************************************************
+April 8, 2003 as per TE team
+Changed ScrImportSettings:ImportSettings (sig: unicode -> binary)
+*******************************************************
+April 3, 2003 as per Steve Miller
+Deleted class and relations for LgCollationFlid (note that the dtd still needs to be updated).
+
+*******************************************************
+April 2, 2003 LgEncoding to LgWritingSystem changes, LgWritingSystem to OldLgWritingSystem
+
+Changes to XML file and conceptual model
+
+ws= -> ows=
+enc= -> ws=
+AnalysisEncodings6001 -> AnalysisWritingSystems6001 on LanguageProject
+Encoding8 -> WritingSystem8  on CmPossibilityList
+PrimaryEnc31 -> PrimaryWs31 on CmSortSpec
+PrimaryWs31 -> PrimaryOws31 on CmSortSpec
+SecondaryEnc31 -> SecondaryWs31 on CmSortSpec
+SecondaryWs31 -> SecondaryOws31 on CmSortSpec
+TertiaryEnc31 -> TertiaryWs31 on CmSortSpec
+TertiaryWs31 -> TertiaryOws31 on CmSortSpec
+CurrentAnalysisEncs6001 -> CurrentAnalysisWritingSystems6001 on LanguageProject
+CurrentPronunciationEncs6001 -> CurrentPronunciationWritingSystems6001 on LanguageProject
+CurrentVernacularEncs6001 -> CurrentVernacularWritingSystems6001 on LanguageProject
+LgWritingSystem -> LgOldWritingSystem
+LgEncoding -> LgWritingSystem
+Encoding20 -> WritingSystem20 on UserViewField
+Encoding2014 -> WritingSystem2014 on FsOpenFeature
+Encoding24 -> WritingSystem24 on LgWritingSystem (new)
+Encoding3009 -> WritingSystem3009 on ScrImportMapping
+Encoding5052 -> WritingSystem5052 on ReversalIndex
+Encoding5065 -> WritingSystem5065 on WordformLookupList
+wsBase -> owsBase
+encBase -> wsBase
+VernacularEncoding6001 -> VernacularWritingSystems6001 on LanguageProject
+WritingSystemDef24 -> OldWritingSystemDef24 on LgWritingSystem (new)
+WritingSystems24 -> OldWritingSystems24 on LgWritingSystem (new)
+
+*******************************************************
+March 5, 2003 as per Regnier/Black/Simons
+Added MoAdhocCoProhibitionGroup
+Changed MoMorphType: postfix, prefix from string to unicode
+
+*******************************************************
+Feb 7, 2003 as per Burgett/Zook
+Added CmPossibilityList:Encoding (int)
+
+*******************************************************
+Feb 7, 2003 as per Miller
+Added class LgFlidCollation
+Added attributes: Flid (sig:integer), Enc (LgEncoding), CollationId (LgCollation)
+
+*******************************************************
+Feb 7, 2003 as per Black
+Added - MoGlossItem:EticID (unicode)
+*******************************************************
+January 4, 2003 as per Bogle
+
+Class: ScrImportSettings
+ADD property:
+- ImportSettings (Unicode) - XML data containing import settings
+- ImportProjToken (Unicode) - Token to be used for loading project using
+ScriptureObjects
+
+DELETE properties:
+- ParatextVernProj
+- ParatextBackTransProj
+- ParatextNotesProj
+- SfFilenames
+- StyleMappings
+
+DELETE Class: ScrImportMapping
+
+Reasons for change:
+Needed to implement Import spec.
+*******************************************************
+December 19, 2002 as per Bogle, Zook, Hayashi
+Deleted CmFilename: Pathname
+Deleted CmFilename: Extension
+Updated some diagrams in Morphology.
+*******************************************************
+December 10, 2002 as per Hayashi
+Added Class: CmFilename with attributes
+Deleted Class: ScrImportSfFile
+Changed ScrImportSettings:SfFilenames(Unicode) to (CmFilename) collection
+*******************************************************
+December 9, 2002 as per Bogle
+Added Class: ScrImportSfFile
+Changed ScrImportSettings:SfFilenames(Unicode) to (ScrImportSfFile) collection
+
+*******************************************************
+December 9, 2002 as per Bogle
+Added Scripture:ImportSettings (Owning Atomic ScrImportSettings)
+
+Added Class: ScrImportSettings
+:ImportType (Integer) - Enumeration: Paratext = 0; Other = 1
+:ParatextVernProj (Unicode) - Name of Paratext project containing the vernacular translation
+:ParatextBackTransProj (Unicode) - Name of Paratext project containing the back translation
+:ParatextNotesProj (Unicode) - Name of Paratext project containing the translation notes
+:SfFilenames (Unicode) - Standard Format filenames for non-Paratext projects
+:StyleMappings (Owning collection of ScrImportMapping) - Mappings of Standard Format Markers to TE Styles
+
+Added Class: ScrImportMapping
+:Marker (Unicode) - Standard Format (or XML, etc?) marker (no \, <, > or white space)
+:TeStyleName (Unicode) - Name of the TE style this marker should map to.
+:Domain (Integer) - Enumeration: Vernacular Scripture = 0; Back Translation = 1; Notes = 2
+:Encoding (Integer) - Language Encoding/Writing System to be applied to imported text
+*******************************************************
+December 2, 2002 as per Landon and Zook
+LgWritingSystem:CharPropOverrides : Unicode -> BigUnicode
+
+*******************************************************
+November 27, 2002 as per WordWorks team
+Did a search and replace in XMI file as follows to update MorphoSyntaxInfo to MorphoSyntaxAnalysis
+MorphoSyntaxInfo > MorphoSyntaxAnalysis
+MSI > MSA whole word, case
+MSI > Msa case
+Msi > Msa case
+msi > msi case
+MorphoSyntaxAnalysis > MorphoSyntaxAnalyses on LexEntry
+
+In TestLangProj.xml the above changes plus:
+MorphoSyntaxAnalysis5002 > MorphoSyntaxAnalyses5002
+*******************************************************
+November 25, 2002 as per WordWorks
+Added MoGlossSystem
+Added MoGlossItem and attributes
+Added MoMorphoSyntaxInfo: GlossString (sig:Unicode)
+Added MoMorphoSyntaxInfo: GlossBundle (sig:MoGlossItem)
+
+*******************************************************
+November 14, 2002 as per Zook
+Added LgWritingSystem: CharPropOverrides (sig: unicode)
+*******************************************************
+November 7, 2002 as per Hayashi/Hatton/WordWorks
+
+Changed CmAnalyzingAgent to CmAgent
+Added CmAgent:Evaluations (sig:CmAgentEvaluations) col
+
+Added class: CmAgentEvaluation
+Added CmAgentEvaluation:Target (sig:CmObject) atomic
+Added CmAgentEvaluation:DateCreated (sig:time)
+Added CmAgentEvaluation:Accepted (sig:boolean)
+Added CmAgentEvaluation:Details (sig:unicode)
+
+*******************************************************
+November 5, 2002 as per Hayashi/Hatton/WordWorks
+Temporarily going back to state of Model after checkin of October 2, 2002
+
+*******************************************************
+November 5, 2002 as per Hayashi/Hatton/WordWorks
+Deleted WfiAnalysis:ValidatingSources
+Deleted WfiAnalysis:InvalidatingSources
+Deleted WfiWordform: AppliedParsers
+Deleted WfiWordform: FailedParsers
+
+Moved documentation from above attributes on to CmAgentEvaluation
+
+Changed LanguageProject:AnalyzingAgents to Agents
+Changed MoMoprhologicalData:AnalyzingAgents to Agents
+
+*******************************************************
+November 5, 2002 as per Hayashi/Hatton/WordWorks
+
+Changed CmAnalyzingAgent to CmAgent
+Added CmAgent:Evaluations (sig:CmAgentEvaluations) col
+
+Added class: CmAgentEvaluation
+Added CmAgentEvaluation:Target (sig:CmObject) atomic
+Added CmAgentEvaluation:DateCreated (sig:time)
+Added CmAgentEvaluation:Accepted (sig:boolean)
+Added CmAgentEvaluation:Details (sig:unicode)
+
+*******************************************************
+October 2, 2002 as per Todd Jones
+Class: Scripture
+Add RefSepr (Unicode)
+Add ChapterVerseSepr (Unicode)
+Add VerseSepr (Unicode)
+Add Bridge (Unicode)
+
+*******************************************************
+July 29, 2002 as per Zook
+Added to CmProject:
+	DateModified: time
+	Description: multiBigString
+*******************************************************
+June 13, 2002 as per Zook/McConnel
+Added to CmSortSpec:
+	PrimaryWs
+	SecondaryWs
+	TertiaryWs
+Renumbered attributes so they cluster according to Primary, Secondary and Tertiary.
+Changed xxxCollation sig from Unicode to Integer
+Added LgCollation_Code: Integer
+
+
+*******************************************************
+June 13, 2002 as per Zook/McConnel
+Add to CmSortSpec:
+	IncludeSubentries: Boolean
+	ClassId: Integer
+	Name:Unicode
+	App:Guid
+	PrimaryField: Unicode
+	PrimaryEnc: Integer
+	PrimaryCollType: Integer
+	PrimaryCollation: Unicode
+	PrimaryReverse: Boolean
+	SecondaryField: Unicode
+	SecondaryEnc: Integer
+	SecondaryCollType: Integer
+	SecondaryCollation: Unicode
+	SecondaryReverse: Boolean
+	TertiaryField: Unicode
+	TertiaryEnc: Integer
+	TertiaryCollType: Integer
+	TertiaryCollation: Unicode
+	TertiaryReverse: Boolean
+
+*******************************************************
+June 12, 2002 as per Zook
+
+new properties on class LgWritingSystem:
+  Collations: owning seq of LgCollation
+  Locale: Integer
+
+(we'll remove Local from LgEncoding after C++ code is fixed)
+
+new class LgCollation (abbrev col)
+  Name: MultiUnicode
+  WinLCID: Integer
+  WinCollation: Unicode
+  IcuResourceName: Unicode
+  IcuResourceText: BigUnicode
+
+You should be able to make these changes and check them in since they shouldn't break any code.
+
+Ken
+
+*******************************************************
+April 8, 2002 as per McConnel
+Added LgWritingSystem: DefaultMonospace (Uni)
+			DefaultSansSerif (Uni)
+			DefaultSerif (Uni)
+			FontVariation (Uni)
+			KeyboardType (Uni)
+			LangId25 (Integer)
+			RendererType (Uni)
+			RightToLeft (Boolean)
+Also made some changes to CreateFWDataXSDStage1.xsl to handle changes on non-CM objects.
+*******************************************************
+April 2, 2002 L.S. Hayashi as per Zook
+Deleted  class CmOverlayTag
+Deleted CmOverlay:Items (sig:CmOverlayTag)
+
+*******************************************************
+March 21, 2002 L.S. Hayashi as per Zook
+Added LanguageProject: ExtLinkRootDir (sig: Unicode)
+
+*******************************************************
+March 13, 2002 L.S. Hayashi as per Hayashi
+Changed FsDisjunctiveValue: Values back to Value
+
+*******************************************************
+March 11, 2002 L.S. Hayashi as per Hayashi
+Deleted MorphologicalData: PhoneEnvs (redundant with attributes on PhonologicalData)
+Changed FsDisjunctiveValue: Value to Values
+Added subclass LexSubentry (sub of LexMajorEntry) num=7
+Moved LexMajorEntry: MainEntriesOrSenses to LexSubentry
+Moved LexMajorEntry: SubentryType to LexSubentry
+Moved LexMajorEntry: LiteralMeaning to LexSubentry
+Moved LexMajorEntry: IsBodyWithHeadword to LexSubentry
+
+*******************************************************
+March 11, 2002 L.S. Hayashi as per Simons and Hayashi
+Added FsFeatureDefn: GlossAbbreviation (multiUnicode)
+Added FsFeatureDefn: RightGlossSeparator (multiUnicode)
+Added FsFeatureDefn: ShowInGloss (boolean)
+Added FsFeatureDefn: DisplayToRightOfValues (boolean)
+
+Added FsSymbolicFeatureValue: GlossAbbreviation (multiUnicode)
+Added FsSymbolicFeatureValue: RightGlossSeparator (multiUnicode)
+Added FsSymbolicFeatureValue: ShowInGloss (boolean)
+
+*******************************************************
+February 25, 2002
+Changed FsFeatureStructureType:Features from col to ordered seq.
+
+*******************************************************
+February 15, 2002 NOTE:
+Larry Hayashi has given Tom a new DTD and Scripture.cm that reflect only the changes of today and not all the other changes. I still need to fix TestLangProj for other changes and notify Randy to make appropriate changes for previous changes in February.
+
+*******************************************************
+February 15, 2002 L.S. Hayashi as per Bogle
+Added ScrBookRef: BookName (MultiUnicode) - Full book name, e.g. 2 Corinthians
+Added ScrBookRef: BookAbbrev (MultiUnicode) - Standard human-readable book abbreviation,
+e.g. 2 Cor.
+Added ScrBookRef: BookNameAlt (MultiUnicode) - Alternate full book name, e.g. II Corinthians
+(Note: BookId will continue to store the standard SIL 3-letter code and the
+OwningOrd$ property gives the canonical order)
+
+*******************************************************
+February 7, 2002 L.S. Hayashi as per Hayashi
+Renamed MoStemAllomorph: PhoneEnviron to PhoneEnv for consistency.
+
+*******************************************************
+February 5, 2002 L.S. Hayashi as per Hayashi
+
+Moved Senses attribute from LexMajorEntry to LexEntry
+*******************************************************
+January 23, 2002 L.S. Hayashi as per synch Bryan Wussow
+
+Added StStyle: IsPUblishedTextStyle (boolean)
+Added StStyle: IsBUiltIn (boolean)
+Added StStyle: IsModified (boolean)
+
+*******************************************************
+January 23, 2002 L.S. Hayashi as per synch with Maxwell doc
+Changed name of MoStratumApp:PruleApps to PRuleApps
+Changed MoInflTemplateApp: Template (sig:MoInflTemplateApp) to (MoInflAffixTemplate)
+Changed MoInsertPhones: Content from owning to reference.
+Changed MoInflAffixTemplate: Region (owning col of FsFeatureStructure) to (atomic FsFeatureStructure)
+Changed name MoPhonoRuleApp to MoPhonolRuleApp
+
+*******************************************************
+January 22, 2002 L.S. Hayashi as per synch with Maxwell doc
+Changed name of MoAffixAllomorph:PhEnviron to PhEnv
+Changed MoInsertPhones: Content (PhBdryMarker) to (PhTerminalUnit)
+
+*******************************************************
+January 21, 2002 L.S. Hayashi as per synch with Maxwell doc
+
+Added MoCoordinateCompound and attributes
+Added MoCompoundRule: ToExceptionFeatures (FsFeatureStructure)
+Deleted MoCompoundRule: RightFeatures (FsFeatureStructure)
+Deleted MoCompoundRule: LeftFeatures (FsFeatureStructure)
+Deleted MoCompoundRule: LeftPartOfSpeech (POS)
+Deleted MoCompoundRule: RightPartOfSpeech (POS)
+Added MoBinaryCompoundRule:LeftMsi
+Added MoBinaryCompoundRule:RightMsi
+Added MoBinaryCompoundRule:Linker
+Deleted MoExocentricCompound:ToFeatures
+Deleted MoExocentricCompound:ToPartOfSpeech
+Added WfiWordform:FailedParsers (CmAnalyzingAgent)
+
+*******************************************************
+January 18, 2002 L.S. Hayashi as per synch with Maxwell doc
+
+Added MoInflectionalAffixMsi: FromExceptionFeature (FsFeatureStructure)
+Added MoDerivationalAffixMsi: FromStemName (MoStemName)
+Added MoDerivationalAffixMsi: ToExceptionFeatures (FsFeatureStructure)
+Added MoDerivationalStepMsi: ExceptionFeatures(FsFeaturestructure)
+
+*******************************************************
+November 19, 2001 L.S. Hayashi as per Bogle
+Class: ScrBook
+Add CanonOrd (integer) - indicates position of book within the canon
+Add SILBookId (unicode) - SIL 3-letter book code
+
+Reasons for change:
+We will be eliminating the ScrRefSystem. These changes are needed to
+prepare for that.
+
+*******************************************************
+November 12, 2001 L.S. Hayashi as per Bogle
+
+Class: ScrRef
+Remove this class
+
+Class: ScrBookRef
+Remove References property (owning sequence)
+
+Reasons for change:
+For performance reasons, we will just use the references on the
+TxtWordformInContext table when we need fast access to a verse based on its
+reference.
+*******************************************************
+November 5, 2001 L.S. Hayashi as per Maxwell
+MoCompoundRules changes. This will be explained in detail at a later date.
+*******************************************************
+November 1, 2001 L.S. Hayashi as per Zook
+Added to CmPossibility:
+  ForeColor (sig:int)
+  BackColor (sig:int)
+  UnderColor (sig:int)
+  UnderStyle (sig:int (0-127)
+  Hidden (sig:bool)
+
+Added CmOverlayTag_PossItems (sig:CmPossibility) ref collection
+*******************************************************
+October 30, 2001 L.S. Hayashi as per Zook
+Change to FwDatabase.xsd and FwDatabase.DTD: add str attribute to Integer element:
+The attribute str exists for the following reasons - 1. to make it possible for a user to specify the ethnologue code in the XML file for import rather than having to calculate the integer value for LgEncoding and 2. for human readability in the XML export whenever we calculate the integer value off of some other value.
+********************************************************
+October 30, 2001 L.S. Hayashi as per Zook, CARLA team
+Moved FurtherQuestions (sig:StText) from RnAnalysis to RnGenericRecord
+Added PhEnvironment_AmpleStringSegment (sig:Unicode)
+
+********************************************************
+October 9, 2001 L.S. Hayashi as per Olson, Bogle
+Changed max value of WfiWordform_SpellingStatus (sig:integer) from 127 to 2 because we currently only have 3 values.
+Changed ScrBook_Name (sig:multiString) -> (sig:multiUnicode) as per McGarvey
+Added ScrBook_Abbrev (sig:multiUnicode)
+********************************************************
+October 9, 2001 L.S. Hayashi as per Olson
+Added WfiWordform_SpellingStatus (sig:integer)
+Reason: We need to display and allow the changing of a word's status in 	the concordance view of the translation editor.
+********************************************************
+October 3, 2001 L.S. Hayashi as per Bogle
+Removed StTxtPara_Reference (sig:String)
+  Reason: This property is being superceded by the Start and End
+	references on the ScrSection table.
+********************************************************
+October 1, 2001 L.S. Hayashi as per Bogle, Regnier, Zook
+Made Scripture a subclass of CmMajorObject rather than CmObject
+*******************************************************
+September 23, 2001 L.S. Hayashi as per Bogle.
+Added ScrSection_VerseRefStart (sig:Integer)
+Added ScrSection_VerseRefEnd (sig:Integer)
+*******************************************************
+September 9, 2001 L.S. Hayashi Checked in September 23, 2001
+Added TxtParagraph_Segments (sig:TxtSegments) - there was some corruption in the UML file for some reason.
+Removed MoMorphologicalData_PhEnvironments (sig:PhPhonologicalContext)
+	Reason: PhPhonologicalContexts are already owned by PhPhonologicalData.
+Changed TxtWordformInContext_VerseRef (sig: String) -> VerseRefStart (sig: Integer)
+Added TxtWordformInContext_VerseRefEnd (sig: Integer)
+Added Scripture_Styles (sig: StStyle) owning collection
+Changed TxtWordformInContext_Form (sig:MultiUnicode) -> (sig:String)
+Added ScrBook_Title (sig: StText) owning atomic
+
+******************************************************
+August 21, 2001 L.S. Hayashi
+Changed	ScrRefSystem:Books (sig:ScrBookRef) collection -> sequence
+	Note: This was done before. I'm not sure why the change was lost.
+*******************************************************
+August 20, 2001 L. S. Hayashi
+Added PhPhonemeSet: Description (sig:multiString)
+Added PhNaturalClass: Description (sig:multiString)
+Added PhEnvironment: Name (sig:multiUnicode)
+Added PhEnvironment: Description (sig:multiString)
+Changed PhSequenceContext: Members owning -> reference
+Changed PhIterationContext: Member owning -> reference
+Changed CmAnalyzingAgent: Name (sig:multiString) -> (sig:MultiUnicode)
+Changed LpTranslation -> CmTranslation (moved from Ling module to Cellar module as well).
+Removed ScrRef: Book
+Removed ScrRef: Chapter
+Removed	ScrRef: Verse
+
+*****************************************************
+July 24, 2001 S. A. Miller, per Ken Zook, Erica Stewart
+Changed	ScrRefSystem:Books (sig:ScrBookRef) collection -> sequence
+*****************************************************
+July 20, 2001 S. A. Miller, per Ken Zook
+Changed	CmProject:TimeCreated -> CmProject:DateCreated
+Changed	LexEntry:Created -> DateCreated
+Changed	LexEntry:Modified -> DateModified
+*****************************************************
+July 16, 2001 L.S. Hayashi
+Changed MoAffixAllomorph:Position (sig:PhPhonologicalContext) ref collection -> (sig:PhEnvironment) ref seq
+Changed PhSimpleContextBdry:FeatureStructure (sig:PhTerminalUnit) ref atomic -> (sig:PhBdryMarker)
+Changed PhSimpleContextSeg:FeatureStructure (sig:PhBdryMarker) ref atom -> (sig:PhPhoneme)
+Changed FsFeatureStructureType:Features (sig:FsFeatureDefn) ref col -> own col
+*****************************************************
+July 16, 2001 S. A. Miller, per Erica Stewart/Tom Bogle
+Added	ScrRef:BBCCCVVV integer
+*****************************************************
+July 12, 2001 S. A. Miller, per Ken Zook
+Changed	RnAnalysis:SupercededBy (sig:RnGenericRecord) -> (sig:RnAnalysis)
+*****************************************************
+July 11, 2001 S. A. Miller, per Ken Zook
+Changed	StTxtPara:ScriptureRefs -> ObjRefs
+Changed StTxt:ObjRefs (sig:ScrRef) -> (sig:CmObject)
+*****************************************************
+July 10, 2001 S. A. Miller, per Ken Zook, from changes from NC
+Added	TxtWordFormInContext:ParaCharOffset integer
+Added	TxtWordFormInContext:VerseRef string
+*****************************************************
+July 9, 2001 S. A. Miller, per Ken Zook
+Added	StTextPara:AnalyzedTextObjects (sig: CmObject) owning sequence
+Added	StTextPara:ScriptureRefs (sig:ScrRef) reference collection
+*****************************************************
+July 6, 2001 S. A. Miller, per Ken Zook
+Changed WordformLookupItem:OcmCentral -> WordformLookupItem:AnthroCentral
+Changed	WordformLookupItem:OcmCodes -> WordformLookupItem:AnthroCodes
+Changed WordformLookupItem:AnthroCodes (sig:CmPossibility) -> (sig:CmAnthroItem)
+Changed	LexSense:OcmCodes -> LexSense:AnthroCodes
+Changed	LexSense:AnthroCodes (sig:CmPossibility) -> (sig:CmAnthroItem)
+Changed	TxtWordformInContext:Gloss -> TxtWordformInContext:Analysis
+Changed	CmOcmItem -> CmAnthroItem
+Changed	RnGenericRecord:OcmCodes -> RnGenericRecord:AnthroCodes
+Changed	RnGenericRecord:AnthroCodes (sig:CmPossibility) -> (sig:CmAnthroItem)
+Added	LgEncoding:Abbr:multiUnicode
+Changed	LanguageProject:OcmList -> LanguageProject:AnthroList
+Added	LanguageProject:VernacularEncodings (sig:LgEncoding) reference collection
+Changed	LanguageProject:ProjectEncodings -> LanguageProject:AnalysisEncodings
+*****************************************************
+June 15, 2001 S. A. Miller
+Added	TxtWordfromInContext reference relationship to CmObject
+Added	Min and Max text to Language Project
+*****************************************************
+June 14, 2001 S. A. Miller
+Removed	TxtWordFromInContext reference relationship to WfiGloss
+*****************************************************
+June 13, 2001 S. A. Miller
+Changed	Language Project diagram
+Added	TxtWordFormInContext to Scripture diagram per Ken Zook
+Changed	Scripture diagram layout
+Added	Text Analysis Diagram (still needs much work)
+*****************************************************
+May 29, 2001
+Changed RnAnalysis:SupercededBy (sig:RnGenericRecord) reference atomic -> reference collection
+Changed MoAdHocCoProhibition:Morpheme (sig:MoMSI) reference collection -> reference sequence
+Changed MoAllomorphAdhocCoProhibition:Adjacency moved to superclass MoAdhocCoProhibition
+*****************************************************
+May 25, 2001 Larry Hayashi
+As per Tom Bogle's instructions:
+Changed - Scripture: ScriptureBooks (sig:ScrBook) owning collection -> owning seq
+Added - ScrBook:BookId (sig:ScrBookRef) reference atomic attribute
+Removed - LanguageProject:Scripture (sig:StText) (this is superceded by TranslatedScripture).
+
+*****************************************************
+May 23, 2001 Larry Hayashi
+Added -  SecEnvConStraints:String to MoForm
+Added - CrossReference class to Cellar
+Added - RnGenericRecord:CrossReferences (sig:CrossReference) reference collection
+Added - ResearchNotebook:CrossReferences (sig: CrossReference) owning collection
+
+*****************************************************
+May 18, 2001   Larry Hayashi
+
+Task: Fix multiString and String signatures where necessary esp. wrt multiUnicode
+
+Changes:
+
+LexEntry:CitationForm:multiString -> multiUnicode
+LexEntry:OrthographicVariants:multiString -> multiUnicode
+LexPronunciation:Form:multString -> multiUnicode
+MoCompoundRule:Name:multiString -> multiUnicode
+MoDerivation:OutputForm:multiString -> multiUnicode
+MoForm:Form:multiString -> multiUnicode
+MoInflectionalAffixSlot:Name:multiString -> multiUnicode
+MoInflectionaltemplate:Name:multiString -> multiUnicode
+MoInflectionClass:Name:multiString -> multiUnicode
+MoInflectionClass:Abbreviation:multiString -> multiUnicode
+MoReferralRule:Name:multiString -> multiUnicode
+MoStemName:Name:multiString -> multiUnicode
+MoStemName:Abbreviation:multiString -> multiUnicode
+MoStratum:Name:multiString -> multiUnicode
+MoStratum:Abbreviation:multiString -> multiUnicode
+PhCode:Representation:multiString -> multiUnicode
+PhNaturalClass:Name:string -> multiUnicode
+PhPhonemeSet:Name:string -> multiUnicode
+PhPhonologicalContext:Name:unicode -> multiUnicode
+PhTerminalUnit: Name: string -> multiUnicode
+TxtWordformInContext:Form:multiString -> multiUnicode
+WfiGloss:Form:multiString -> multiUnicode
+WfiWordform:Form:multiString -> multiUnicode
+WfiWordSet:Name:multiString -> multiUnicode
+WfiWordSet:Description:multiUnicode -> multiString
+FsFeatureDefn: Name:multiString -> multiUnicode
+FsFeatureDefn: Abbreviation: multiString -> multiUnicode
+FsFeatureStructureType: Name:multiString -> multiUnicode
+FsFeatureStructureType: Abbreviation: multiString -> multiUnicode
+FsOpenValue: Value: multiString -> multiUnicode
+FsSymbolicFeatureValue: Name:multiString -> multiUnicode
+FsSymbolicFeatureValue: Abbreviation: multiString -> multiUnicode
+
+
+Skipped:
+
+LexRelationGroup
+LexPair
+LexPairRelation
+LexSet
+LexSetItem
+LexSimpleSet
+LexTreeRelation
+LexTreeItem
+WordformLookupItem
+WordformLookupList
+Scripture Module
+Notebook Module
+
+Need to do the following:
+Add dialects object.
+Change LexEntry:OrthographicVariants:multiString to an object to account for dialects.
+Go through Linguistic objects and determine whether or not Description:MultiString should be changed to Description: StText
+*********************************************************

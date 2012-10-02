@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="ResMimeType">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="Version">
+	<value>1.0.0.0</value>
+  </resheader>
+  <resheader name="Reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="Writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddReferenceDialogFilter">
+	<value>Component Files (*.dll;*.tlb;*.olb;*.ocx;*.exe)\0*.dll;*.tlb;*.olb;*.ocx;*.exe\0All Files (*.*)\0*.*\0\0</value>
+  </data>
+  <data name="AddReferenceDialogTitle">
+	<value>Add Reference</value>
+  </data>
+  <data name="BuildSettingsOutputNameDescription">
+	<value>The name of the output file that will be generated (/out).</value>
+  </data>
+  <data name="BuildSettingsOutputFileDescription">
+	<value>The name of the project's primary output file. This property reflects the current value of the Output Name property.</value>
+  </data>
+  <data name="BuildSettingsOutputFileDisplayName">
+	<value>Output File</value>
+  </data>
+  <data name="BuildSettingsOutputNameDisplayName">
+	<value>Output Name</value>
+  </data>
+  <data name="CategoryAdvanced">
+	<value>Advanced</value>
+  </data>
+  <data name="CategoryApplication">
+	<value>Application</value>
+	<comment>Category in the General property page</comment>
+  </data>
+  <data name="CategoryMisc">
+	<value>Misc</value>
+  </data>
+  <data name="CategoryProject">
+	<value>Project</value>
+	<comment>Category in the General property page</comment>
+  </data>
+  <data name="ConsultTraceLog">
+	<value>Please consult the trace log at '{0}' for more information.</value>
+  </data>
+  <data name="ErrorBlankCaption">
+	<value>You must enter a name.</value>
+	<comment>Shown when the user tries to enter a blank name for a hierarchy node.</comment>
+  </data>
+  <data name="ErrorFileNameCannotContainLeadingPeriod">
+	<value>File and folder names cannot contain a leading period.</value>
+  </data>
+  <data name="ErrorInvalidFileOrFolderName" xml:space="preserve">
+	<value>Files and folders cannot be empty strings nor can they contain only '.' or have any of the following characters:
+		/ ? : &amp;  \ * " &lt; &gt; | # %</value>
+  </data>
+  <data name="ErrorItemAlreadyExistsOnDisk" xml:space="preserve">
+	<value>A file or folder with the name '{0}' already exists on disk at this location. Please choose another name.
+
+If this file or folder does not appear in the Solution Explorer, then it is not currently part of your project. To view files which exist on disk, but are not in the project, select Show All Files from the Project menu.</value>
+  </data>
+  <data name="ErrorMissingService">
+	<value>The package requires that service '{0}' be installed.  Ensure that this service is available by repairing your Visual Studio installation.</value>
+  </data>
+  <data name="FileDoesNotExist">
+	<value>The file '{0}' does not exist.</value>
+  </data>
+  <data name="FilePropertiesClassName">
+	<value>File Properties</value>
+  </data>
+  <data name="FilePropertiesBuildAction">
+	<value>Build Action</value>
+  </data>
+  <data name="FilePropertiesBuildActionDescription">
+	<value>How the file relates to the build and deployment processes.</value>
+  </data>
+  <data name="FilePropertiesFileName">
+	<value>File Name</value>
+  </data>
+  <data name="FilePropertiesFileNameDescription">
+	<value>Name of the file or folder.</value>
+  </data>
+  <data name="FilePropertiesFullPath">
+	<value>Full Path</value>
+  </data>
+  <data name="FilePropertiesFullPathDescription">
+	<value>Location of the file.</value>
+  </data>
+  <data name="FolderPropertiesClassName">
+	<value>Folder Properties</value>
+  </data>
+  <data name="FolderPropertiesFolderName">
+	<value>Folder Name</value>
+  </data>
+  <data name="FolderPropertiesFolderNameDescription">
+	<value>Name of the folder.</value>
+  </data>
+  <data name="ProjectPropertiesClassName">
+	<value>Project Properties</value>
+  </data>
+  <data name="ProjectPropertiesProjectFile">
+	<value>Project File</value>
+  </data>
+  <data name="ProjectPropertiesProjectFileDescription">
+	<value>The name of the file containing build, configuration, and other information about the project.</value>
+  </data>
+  <data name="ProjectPropertiesProjectFolder">
+	<value>Project Folder</value>
+  </data>
+  <data name="ProjectPropertiesProjectFolderDescription">
+	<value>The location of the project file.</value>
+  </data>
+  <data name="ProjectUnavailable">
+	<value>The project file cannot be loaded.</value>
+	<comment>The text node underneath the project when the project can't be loaded.</comment>
+  </data>
+  <data name="PromptChangeExtension">
+	<value>If you change a file extension, the file may become unusable. Are you sure you want to change it?</value>
+  </data>
+  <data name="PropertyPageGeneral">
+	<value>General</value>
+  </data>
+  <data name="ReferenceFilePropertiesClassName">
+	<value>Reference Properties</value>
+  </data>
+  <data name="ReferenceFilePropertiesName">
+	<value>Name</value>
+  </data>
+  <data name="ReferenceFilePropertiesNameDescription">
+	<value>Display name of the reference.</value>
+  </data>
+  <data name="ReferenceFilePropertiesPath">
+	<value>Path</value>
+  </data>
+  <data name="ReferenceFilePropertiesPathDescription">
+	<value>Location of the file being referenced.</value>
+  </data>
+  <data name="ReferenceFolderCaption">
+	<value>References</value>
+  </data>
+  <data name="UnavailableCaption">
+	<value>{0} (unavailable)</value>
+	<comment>Shown next to the project's caption when the project is not available (not loaded). {0} is the caption.</comment>
+  </data>
+</root>

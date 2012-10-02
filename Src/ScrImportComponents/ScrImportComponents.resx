@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="GrayCheckBox" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADRJREFUOE9jYBg0
+		oKGh4T+pGMXxpGoGqcdqwIEDB/4TwjDLRg0YDUScCYmUFEndpDxguRoAo2fip5LtQacAAAAASUVORK5C
+		YII=
+</value>
+  </data>
+  <data name="GrayCheckBoxCheck" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAGVJREFUOE/Nk1kK
+		ACAIRDu6R/NmhR/CJOISQQX+5XPGZYxvHhHNbmziu8ny3wUw88xCi7UBkijwI4AmlQBaSa1gf8oAKxeh
+		qQVvItjYFIAyrZ2SBfTujbSkINqFENDZyLur/OyqF0140udDse3MAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="kstidSFFileBookChooserQuestion" xml:space="preserve">
+	<value>Which books are contained in {0}?</value>
+  </data>
+  <data name="kstidBrowseForPT5DlgTitle" xml:space="preserve">
+	<value>Browse for Paratext 5</value>
+  </data>
+  <data name="kstidImportWizFinish" xml:space="preserve">
+	<value>The importer has now been set up to import Scripture data into the {0} language project.
+
+You may return to this procedure at any time and adjust these settings, through the Source button in the File/Import dialog.
+
+We recommend you proceed as follows:
+1. Import a small portion of your data,
+2. Look at how it appears in the Translation Editor,
+3. If necessary, adjust these settings and re-import until it looks correct,
+4. Finally, import all of your data.</value>
+	<comment>This text appears for the last step of the standard format import wizard dialog.</comment>
+  </data>
+  <data name="kstidImportWizNoParatextProjFound" xml:space="preserve">
+	<value>No Paratext projects were found. This could mean one of the following:
+1)	There is no Paratext content on this computer, so there is nothing to import.
+2)	Paratext 6 is not installed.
+	Install Paratext, and then restore your Paratext files to the My Paratext Projects folder as needed.
+3)	Paratext content files exist, but the Paratext project files have been lost.
+	Either re-create the project files using Paratext or import the files as Other Standard Format.
+		 </value>
+  </data>
+  <data name="kstidImportWizNoProjType" xml:space="preserve">
+	<value>(none)</value>
+	<comment>This text appears in the Back translation and Translation notes combo boxes on the third step of the import wizard if the user chooses a paratext project from step two in the wizard</comment>
+  </data>
+  <data name="kstidImportWizOverview" xml:space="preserve">
+	<value>This Standard Format Import Setup procedure will help you supply some settings needed to be able to import your Standard Format Scripture data.
+
+You only need to do this procedure once for this {0} language project.
+
+To begin, click Next.</value>
+	<comment>This text appears for the first step of the standard format import wizard dialog.</comment>
+  </data>
+  <data name="kstidImportWizMappingDetailBackTrans" xml:space="preserve">
+	<value>Back Translation</value>
+	<comment>Appears in details column on import mapping page</comment>
+  </data>
+  <data name="kstidImportWizMappingDetailNotes" xml:space="preserve">
+	<value>Annotations</value>
+	<comment>Appears in details column on import mapping page</comment>
+  </data>
+  <data name="kstidImportWizCantLoadPTProj" xml:space="preserve">
+	<value>Paratext project {0} could not be loaded.</value>
+  </data>
+  <data name="kstidImportMappingsDuplicateWarning" xml:space="preserve">
+	<value>A mapping with Beginning Marker "{0}" already exists. Specify a different Beginning Marker.</value>
+  </data>
+  <data name="kstidImportMappingsBeginMarkerReqd" xml:space="preserve">
+	<value>A Beginning Marker is required.</value>
+  </data>
+  <data name="kstidImportMappingsEndMarkerReqd" xml:space="preserve">
+	<value>An Ending Marker is required.</value>
+  </data>
+  <data name="kstidImportMappingsNoBackslash" xml:space="preserve">
+	<value>An inline marker must not start with a backslash! Revise the marker "{0}".</value>
+  </data>
+  <data name="kstidImportMappingsNoSpace" xml:space="preserve">
+	<value>A space is only allowed at the end of a marker. Revise the marker "{0}".</value>
+  </data>
+  <data name="kstidExcludedData" xml:space="preserve">
+	<value>Data excluded from import</value>
+	<comment>This will appear in the import mappings listview when a marker is set to be excluded.</comment>
+  </data>
+  <data name="kstidImportBeginMarkerLowerANSI" xml:space="preserve">
+	<value>There is an invalid character in the Beginning Marker.
+The valid characters are a-z, A-Z, 0-9 and some punctuation.
+Space is a valid character but only at the end of the marker.</value>
+  </data>
+  <data name="kstidImportEndMarkerLowerANSI" xml:space="preserve">
+	<value>There is an invalid character in the Ending Marker.
+The valid characters are a-z, A-Z, 0-9 and some punctuation.
+Space is a valid character but only at the end of the marker.</value>
+  </data>
+  <data name="kstidInvalidMappingDialogCaption" xml:space="preserve">
+	<value>Additional Mapping</value>
+	<comment>This is the caption in the message box for errors with beginning or ending markers.</comment>
+  </data>
+  <data name="kstidTitleShortStyle" xml:space="preserve">
+	<value>Title Short (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Title Short field</comment>
+  </data>
+  <data name="kstidFigureStyle" xml:space="preserve">
+	<value>Figure - USFM Parameters (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the USFM Figure field</comment>
+  </data>
+  <data name="kstidChapterLabelStyle" xml:space="preserve">
+	<value>Chapter Label (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Chapter Label field</comment>
+  </data>
+  <data name="kstidImportWizMappingDetailFootnotes" xml:space="preserve">
+	<value>Footnotes</value>
+	<comment>Appears in details column on import mapping page</comment>
+  </data>
+  <data name="kstidImportWizMappingDetailBTFootnotes" xml:space="preserve">
+	<value>Footnote Back Translation</value>
+	<comment>Appears in details column on import mapping page</comment>
+  </data>
+  <data name="kstidFigureCaptionStyle" xml:space="preserve">
+	<value>Figure - Caption (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Figure Caption field</comment>
+  </data>
+  <data name="kstidFigureCopyrightStyle" xml:space="preserve">
+	<value>Figure - Copyright (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Figure Copyright field</comment>
+  </data>
+  <data name="kstidFigureDescriptionStyle" xml:space="preserve">
+	<value>Figure - Description (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Figure Description field</comment>
+  </data>
+  <data name="kstidFigureFilenameStyle" xml:space="preserve">
+	<value>Figure - File Name (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Figure File Name field</comment>
+  </data>
+  <data name="kstidFigureLayoutPositionStyle" xml:space="preserve">
+	<value>Figure - Layout Position (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Figure Layout Position field</comment>
+  </data>
+  <data name="kstidFigureRefRangeStyle" xml:space="preserve">
+	<value>Figure - Reference Range (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Figure Reference Range field</comment>
+  </data>
+  <data name="kstidFigureScaleStyle" xml:space="preserve">
+	<value>Figure - Scale Factor (property)</value>
+	<comment>Name of property (pseudo-style) for mapping the Scale Factor field</comment>
+  </data>
+</root>

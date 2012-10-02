@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+	Guids.wxi - Product and component guids for debug and ship builds.
+-->
+
+<Include>
+  <?if $(var.Flavor) = "debug" ?>
+  <?define DebugLetter = "D" ?>
+  <?define SpaceParenDebug = " (Debug)" ?>
+  <?define BinariesSource = "..\WixVsPkg\Debug" ?>
+
+  <?define UpgradeCode            = "45A22A61-8C79-40eb-B413-CE54DC8CC3AE" ?>
+
+  <?define CandleBinariesGuid     = "A4473BD2-EC34-4cb4-BBCF-19F1B03B5462" ?>
+  <?define CandleConfigGuid       = "DEC3354F-F81E-414D-BC0E-75F507C65EDF" ?>
+  <?define LightBinariesGuid      = "5E2F000C-11C4-40b0-80EA-1FA6748E97F9" ?>
+  <?define LightConfigGuid        = "C1A158F8-1A3D-4439-9FB1-5F78E7201E0A" ?>
+  <?define LitBinariesGuid        = "01D89793-D0CA-40b4-93C6-16564807E162" ?>
+  <?define LitConfigGuid          = "39CFE791-2BE2-4B1A-852F-5A14E6AC00BC" ?>
+  <?define WixBinariesGuid        = "20B53A0F-BEE4-40dd-A0B3-14F3C16B876F" ?>
+  <?define WixInteropBinariesGuid = "9E3450EA-143F-4fab-8A10-1EEC5D7A8274" ?>
+  <?define MergeModBinariesGuid   = "B9BD83B1-4106-428a-A1C1-1473041B739F" ?>
+  <?define DarkBinariesGuid       = "D5CA815E-0A94-4a91-BE53-1B1ED271DF10" ?>
+  <?define DarkConfigGuid         = "40340083-FDB0-437B-B172-E3011F50250F" ?>
+  <?define TallowBinariesGuid     = "96B9F8A5-F52B-4ca6-BFD5-1D943970F137" ?>
+  <?define TallowConfigGuid       = "FBE0F9FC-853D-4AB4-B849-284FEC7C48F8" ?>
+  <?define ScaLibBinariesGuid     = "0B1BDA07-1E40-4eb8-9B62-B1354B33C9E5" ?>
+  <?define WixCaLibBinariesGuid   = "F56C7AF8-13C8-49d5-85EB-4CAF576B0FAB" ?>
+  <?define WixUiLibBinariesGuid   = "1415ECB5-BABE-4a8b-BD8A-FFE6B22E64C6" ?>
+  <?define WixUiBitmapsGuid       = "C709F652-0A2A-4fb5-8243-F745E8166F16" ?>
+  <?define VsPackageCommonGuid    = "8D3A06FF-7EDB-44D8-AFC0-19FDE3ABBA3D" ?>
+  <?define VsPackageSconceGuid    = "3D582F8E-D68D-49db-8F78-EAA21857F063" ?>
+  <?define VsPackage2003Guid      = "9C331250-A3ED-4a4a-BCF9-376DC15419DA" ?>
+  <?define VsPackage2005Guid      = "E97739FF-52A2-4e88-84A1-B914BA573EE1" ?>
+  <?define VsResources1033Guid    = "02FE8BB5-85C6-4707-AD72-15A66CE817AF" ?>
+  <?define VsProjectItemsGuid     = "647008F8-DF4E-4A8C-8BB0-1EC64CA54F4B" ?>
+  <?define VsProjectItemsCodeGuid = "4C7E3258-FD99-4084-B8EE-101D3464AC48" ?>
+  <?define VsProjectItemsResGuid  = "0BCBF6C8-3BCA-41BD-ACDD-120866F43216" ?>
+  <?define VsProjectsGuid         = "41074398-C485-4AA4-BD01-14EB0E5DCD63" ?>
+
+  <?else ?>
+
+  <?define DebugLetter = "" ?>
+  <?define SpaceParenDebug = "" ?>
+  <?define BinariesSource = "..\WixVsPkg\Release" ?>
+
+  <?define UpgradeCode            = "3618724B-2523-44f9-A908-866AA619504D" ?>
+
+  <?define CandleBinariesGuid     = "A4473BD2-EC34-4cb4-BBCF-E9F1B03B5462" ?>
+  <?define CandleConfigGuid       = "DEC3354F-F81E-414D-BC0E-85F507C65EDF" ?>
+  <?define LightBinariesGuid      = "5E2F000C-11C4-40b0-80EA-2FA6748E97F9" ?>
+  <?define LightConfigGuid        = "C1A158F8-1A3D-4439-9FB1-6F78E7201E0A" ?>
+  <?define LitBinariesGuid        = "01D89793-D0CA-40b4-93C6-A6564807E162" ?>
+  <?define LitConfigGuid          = "39CFE791-2BE2-4B1A-852F-6A14E6AC00BC" ?>
+  <?define WixBinariesGuid        = "20B53A0F-BEE4-40dd-A0B3-54F3C16B876F" ?>
+  <?define WixInteropBinariesGuid = "9E3450EA-143F-4fab-8A10-FEEC5D7A8274" ?>
+  <?define MergeModBinariesGuid   = "B9BD83B1-4106-428a-A1C1-7473041B739F" ?>
+  <?define DarkBinariesGuid       = "D5CA815E-0A94-4a91-BE53-8B1ED271DF10" ?>
+  <?define DarkConfigGuid         = "40340083-FDB0-437B-B172-F3011F50250F" ?>
+  <?define TallowBinariesGuid     = "96B9F8A5-F52B-4ca6-BFD5-6D943970F137" ?>
+  <?define TallowConfigGuid       = "FBE0F9FC-853D-4AB4-B849-284FEC7C48F8" ?>
+  <?define LightManifestGuid      = "BA807FB2-B436-4b97-A053-EE17BD360FDE" ?>
+  <?define ScaLibBinariesGuid     = "3FC43EEF-C5B8-46e9-9640-36B647C95197" ?>
+  <?define WixCaLibBinariesGuid   = "828C4493-20D4-44dc-8714-9241C2DB017A" ?>
+  <?define WixUiLibBinariesGuid   = "E05A990C-7E04-4df9-BFC2-845D172B7ABA" ?>
+  <?define WixUiBitmapsGuid       = "47F88195-5595-40b3-BB32-6837C185AD5A" ?>
+  <?define VsPackageCommonGuid    = "8D3A06FF-7EDB-44D8-AFC0-49FDE3ABBA3D" ?>
+  <?define VsPackageSconceGuid    = "97760B35-5DFA-487b-8664-2E725160E8AF" ?>
+  <?define VsPackage2003Guid      = "63D64EEA-3F0F-4e8f-B1D5-C5E2FE0CD677" ?>
+  <?define VsPackage2005Guid      = "A1947047-971D-47df-81DC-17CA6D95E281" ?>
+  <?define VsResources1033Guid    = "02FE8BB5-85C6-4707-AD72-E5A66CE817AF" ?>
+  <?define VsProjectItemsGuid     = "647008F8-DF4E-4A8C-8BB0-8EC64CA54F4B" ?>
+  <?define VsProjectItemsCodeGuid = "4C7E3258-FD99-4084-B8EE-001D3464AC48" ?>
+  <?define VsProjectItemsResGuid  = "0BCBF6C8-3BCA-41BD-ACDD-B20866F43216" ?>
+  <?define VsProjectsGuid         = "41074398-C485-4AA4-BD01-F4EB0E5DCD63" ?>
+  <?endif ?>
+
+  <?define LicensingGuid          = "B871A32C-5620-4640-908C-1EB514F701FF" ?>
+  <?define WixChmGuid             = "0458E092-F02A-492c-9865-2AAF24251EB4" ?>
+  <?define WixSchemaGuid          = "95BD12FA-2B78-4125-82C9-9FA82DDF7F61" ?>
+  <?define WixLocSchemaGuid       = "C79B4FD7-9C59-4f5f-A3CF-CB97C15561B2" ?>
+  <?define WixVsPackageGuid       = "{B0AB1F0F-7B08-47FD-8E7C-A5C0EC855568}" ?>
+  <?define WixVsProjectGuid       = "{A49CE20D-CE64-4A08-9F24-92A6443D6699}" ?>
+  <?define XmlEditorGuid          = "{C76D83F8-A489-11D0-8195-00A0C91BBEE3}" ?>
+</Include>

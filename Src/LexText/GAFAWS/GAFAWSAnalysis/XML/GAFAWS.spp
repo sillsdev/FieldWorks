@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XML Files" ExtStr="xml;cml;math;mtx;rdf;smil;svg;wml" XSL_XMLUseSet="Yes" XSL_XMLUseFile=".\AffixPositionChart.xsl">
+		<File FilePath=".\TestA.xml" HomeFolder="Yes"/>
+		<File FilePath=".\TestA1.xml" HomeFolder="Yes"/>
+		<File FilePath=".\TestA2.xml" HomeFolder="Yes"/>
+		<File FilePath=".\TestB.xml" HomeFolder="Yes"/>
+		<File FilePath=".\TestC.xml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="XSL Files" ExtStr="xsl;xslt">
+		<File FilePath=".\AffixPositionChart.xsl" HomeFolder="Yes"/>
+		<File FilePath=".\Old Style.xsl" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="HTML Files" ExtStr="html;htm;xhtml;asp"/>
+	<Folder FolderName="DTD/Schemas" ExtStr="dtd;dcd;xdr;biz;xsd">
+		<File FilePath=".\GAFAWS.xsd" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="Entities" ExtStr="ent"/>
+	<Folder FolderName="Testing" XSL_XMLUseSet="Yes" XSL_XMLUseFile=".\AffixPositionChart.xsl" XSL_DestFileExtSet="Yes" XSL_DestFileExt=".htm">
+		<File FilePath=".\OUTtestA1.xml" HomeFolder="Yes"/>
+		<File FilePath=".\RT-OUThab1.xml" HomeFolder="Yes"/>
+		<File FilePath=".\RT-OUTtestA.xml" HomeFolder="Yes"/>
+		<File FilePath=".\RT-OUTtestA1.xml" HomeFolder="Yes"/>
+		<File FilePath=".\RT-OUTtestA2.xml" HomeFolder="Yes"/>
+		<File FilePath=".\RT-OUTtestB.xml" HomeFolder="Yes"/>
+		<File FilePath=".\RT-OUTtestC.xml" HomeFolder="Yes"/>
+	</Folder>
+</Project>

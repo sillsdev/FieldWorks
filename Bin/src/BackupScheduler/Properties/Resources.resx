@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorBlankPassword" xml:space="preserve">
+	<value>Unfortunately, Windows does not allow tasks to be scheduled by local users with no password. You cannot schedule a backup unless you first set a password for your logon account.</value>
+	<comment>Displayed if user has no Windows logon password.</comment>
+  </data>
+  <data name="ErrorInvalidPassword" xml:space="preserve">
+	<value>That password is not correct.</value>
+	<comment>Possible error message when testing user password.</comment>
+  </data>
+  <data name="ErrorMsgTitle" xml:space="preserve">
+	<value>Schedule Backup Error</value>
+	<comment>Title for all backup scheduler error message boxes.</comment>
+  </data>
+  <data name="ErrorValidatingPassword" xml:space="preserve">
+	<value> Therefore the password could not be tested.</value>
+	<comment>Possible error message when testing user password.</comment>
+  </data>
+  <data name="ERROR_ACCOUNT_LOCKED_OUT" xml:space="preserve">
+	<value>Your account is currently locked out and may not be logged on to.</value>
+	<comment>Possible error message when testing user password.</comment>
+  </data>
+  <data name="ERROR_DOMAIN_CONTROLLER_NOT_FOUND" xml:space="preserve">
+	<value>The domain controller for this domain could not be found.</value>
+	<comment>Possible error message when testing user password.</comment>
+  </data>
+  <data name="ERROR_PASSWORD_MUST_CHANGE" xml:space="preserve">
+	<value>The system has flagged your password as needing to be changed before logging on.</value>
+	<comment>Possible error message when testing user password.</comment>
+  </data>
+  <data name="MsgDeleteExistingTask" xml:space="preserve">
+	<value>Do you want to stop using the existing backup schedule? Press Yes to stop it, or No to leave it unchanged.</value>
+	<comment>Displayed when user presses cancel on backup task scheduler dialog.</comment>
+  </data>
+  <data name="MsgTitle" xml:space="preserve">
+	<value>Schedule Backup</value>
+	<comment>Title for all message backup scheduler message boxes.</comment>
+  </data>
+  <data name="ErrorNoScript" xml:space="preserve">
+	<value>The script file used to run the backup at scheduled times cannot be found. Backups cannot be scheduled.</value>
+	<comment>Displayed when backup.vbs is missing or unlocatable.</comment>
+  </data>
+  <data name="ErrorUnknownPasswordProblem" xml:space="preserve">
+	<value>Unknown error {0} while testing password.</value>
+	<comment>Possible error message when testing user password.</comment>
+  </data>
+  <data name="MsgCurrentSchedule" xml:space="preserve">
+	<value>Backups are currently scheduled to run as follows:</value>
+	<comment>Introduction to summary of current backup schedule.</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="SIL_Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>..\Resources\SIL.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ErrorSchedulerService" xml:space="preserve">
+	<value>Unable to ensure that the Windows Task Scheduler service is running. Therefore backups cannot be scheduled.</value>
+	<comment>Message displayed for any problem while ensuring Task Scheduler is running (for FW backups).</comment>
+  </data>
+  <data name="ErrorNoTask" xml:space="preserve">
+	<value>Could not create a backup schedule.</value>
+	<comment>Displayed when a new scheduled task could not be created.</comment>
+  </data>
+  <data name="MsgOtherSchedulers" xml:space="preserve">
+	<value>The following users have already scheduled backups:</value>
+	<comment>Displayed when other users are discovered to have created backup schedules.</comment>
+  </data>
+  <data name="MsgOtherSchedulersAddendum" xml:space="preserve">
+	<value>(If you wish to edit or delete the other schedules, you should open Scheduled Tasks via the Control Panel, or see a system administrator.)</value>
+	<comment>Displayed when other users are discovered to have created backup schedules.</comment>
+  </data>
+  <data name="MsgOtherSchedulersAndMe" xml:space="preserve">
+	<value>Press OK to edit just your schedule. Press Cancel if you do not wish to edit your schedule.</value>
+	<comment>Displayed when other users are discovered to have created backup schedules.</comment>
+  </data>
+  <data name="MsgOtherSchedulersMe" xml:space="preserve">
+	<value>You</value>
+	<comment>Displayed as part of a list of users who have created backup scedules.</comment>
+  </data>
+  <data name="MsgOtherSchedulersNotMe" xml:space="preserve">
+	<value>Press OK if you wish to create an additional schedule. Press Cancel if you do not wish to create an additional schedule.</value>
+	<comment>Displayed when other users are discovered to have created backup schedules.</comment>
+  </data>
+  <data name="MsgScheduleNotAccessible" xml:space="preserve">
+	<value>(Schedule not accessible)</value>
+	<comment>Displayed as part of a list of other users' backup schedules.</comment>
+  </data>
+</root>

@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="lblLookup.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblLookup.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblLookup.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblLookup.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 40</value>
+  </data>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>109, 17</value>
+  </metadata>
+  <metadata name="helpProvider1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblLookup.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblLookup.Size" type="System.Drawing.Size, System.Drawing">
+	<value>59, 13</value>
+  </data>
+  <data name="lblLookup.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblLookup.Text" xml:space="preserve">
+	<value>Search &amp;By:</value>
+  </data>
+  <data name="&gt;&gt;lblLookup.Name" xml:space="preserve">
+	<value>lblLookup</value>
+  </data>
+  <data name="&gt;&gt;lblLookup.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblLookup.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblLookup.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="txtFindPattern.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="txtFindPattern.HelpString" xml:space="preserve">
+	<value>Enter text to search for in the Ethnologue.</value>
+  </data>
+  <data name="txtFindPattern.Location" type="System.Drawing.Point, System.Drawing">
+	<value>136, 58</value>
+  </data>
+  <data name="txtFindPattern.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="txtFindPattern.Size" type="System.Drawing.Size, System.Drawing">
+	<value>188, 20</value>
+  </data>
+  <data name="txtFindPattern.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;txtFindPattern.Name" xml:space="preserve">
+	<value>txtFindPattern</value>
+  </data>
+  <data name="&gt;&gt;txtFindPattern.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtFindPattern.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtFindPattern.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="btnFind.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="btnFind.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="btnFind.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+	<value>System</value>
+  </data>
+  <data name="btnFind.HelpString" xml:space="preserve">
+	<value>Searches the Ethnologue according to the search criteria.</value>
+  </data>
+  <data name="btnFind.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnFind.Location" type="System.Drawing.Point, System.Drawing">
+	<value>329, 56</value>
+  </data>
+  <data name="btnFind.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="btnFind.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnFind.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="btnFind.Text" xml:space="preserve">
+	<value>&amp;Search</value>
+  </data>
+  <data name="&gt;&gt;btnFind.Name" xml:space="preserve">
+	<value>btnFind</value>
+  </data>
+  <data name="&gt;&gt;btnFind.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnFind.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnFind.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="lblFindPattern.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblFindPattern.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblFindPattern.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblFindPattern.Location" type="System.Drawing.Point, System.Drawing">
+	<value>133, 40</value>
+  </data>
+  <data name="lblFindPattern.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblFindPattern.Size" type="System.Drawing.Size, System.Drawing">
+	<value>62, 13</value>
+  </data>
+  <data name="lblFindPattern.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="lblFindPattern.Text" xml:space="preserve">
+	<value>Search &amp;For:</value>
+  </data>
+  <data name="&gt;&gt;lblFindPattern.Name" xml:space="preserve">
+	<value>lblFindPattern</value>
+  </data>
+  <data name="&gt;&gt;lblFindPattern.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFindPattern.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblFindPattern.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="lvFindResult.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <metadata name="hdrLanguageName.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="hdrLanguageName.Text" xml:space="preserve">
+	<value>Language Name</value>
+  </data>
+  <data name="hdrLanguageName.Width" type="System.Int32, mscorlib">
+	<value>150</value>
+  </data>
+  <metadata name="hdrCountry.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="hdrCountry.Text" xml:space="preserve">
+	<value>Country</value>
+  </data>
+  <data name="hdrCountry.Width" type="System.Int32, mscorlib">
+	<value>129</value>
+  </data>
+  <metadata name="hdrEthnologueCode.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="hdrEthnologueCode.Text" xml:space="preserve">
+	<value>Ethnologue Code</value>
+  </data>
+  <data name="hdrEthnologueCode.Width" type="System.Int32, mscorlib">
+	<value>100</value>
+  </data>
+  <data name="lvFindResult.HelpString" xml:space="preserve">
+	<value>Displays the results of the search.</value>
+  </data>
+  <data name="lvFindResult.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 108</value>
+  </data>
+  <data name="lvFindResult.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lvFindResult.Size" type="System.Drawing.Size, System.Drawing">
+	<value>404, 152</value>
+  </data>
+  <data name="lvFindResult.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;lvFindResult.Name" xml:space="preserve">
+	<value>lvFindResult</value>
+  </data>
+  <data name="&gt;&gt;lvFindResult.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lvFindResult.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lvFindResult.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <metadata name="grpCurrentLang.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <metadata name="lblCurrentEthCode.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblCurrentEthCode.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblCurrentEthCode.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblCurrentEthCode.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 56</value>
+  </data>
+  <data name="lblCurrentEthCode.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblCurrentEthCode.Size" type="System.Drawing.Size, System.Drawing">
+	<value>92, 13</value>
+  </data>
+  <data name="lblCurrentEthCode.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="lblCurrentEthCode.Text" xml:space="preserve">
+	<value>Ethnologue Code:</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCode.Name" xml:space="preserve">
+	<value>lblCurrentEthCode</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCode.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCode.Parent" xml:space="preserve">
+	<value>grpCurrentLang</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCode.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.HelpString" xml:space="preserve">
+	<value>Displays the Ethnologue code for the selected language.</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.Location" type="System.Drawing.Point, System.Drawing">
+	<value>116, 56</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.Size" type="System.Drawing.Size, System.Drawing">
+	<value>68, 13</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="lblCurrentEthCodeValue.Text" xml:space="preserve">
+	<value>(Unknown)</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCodeValue.Name" xml:space="preserve">
+	<value>lblCurrentEthCodeValue</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCodeValue.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCodeValue.Parent" xml:space="preserve">
+	<value>grpCurrentLang</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentEthCodeValue.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="lblCurrentLangName.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblCurrentLangName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblCurrentLangName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblCurrentLangName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 28</value>
+  </data>
+  <data name="lblCurrentLangName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblCurrentLangName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>77, 13</value>
+  </data>
+  <data name="lblCurrentLangName.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblCurrentLangName.Text" xml:space="preserve">
+	<value>&amp;Chosen Name:</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentLangName.Name" xml:space="preserve">
+	<value>lblCurrentLangName</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentLangName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentLangName.Parent" xml:space="preserve">
+	<value>grpCurrentLang</value>
+  </data>
+  <data name="&gt;&gt;lblCurrentLangName.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="txtCurrentLangName.HelpString" xml:space="preserve">
+	<value>Displays the selected language. Editable. This name should refer to the same language as the Ethnologue code and alternative language names.</value>
+  </data>
+  <data name="txtCurrentLangName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>116, 24</value>
+  </data>
+  <data name="txtCurrentLangName.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="txtCurrentLangName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>276, 20</value>
+  </data>
+  <data name="txtCurrentLangName.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;txtCurrentLangName.Name" xml:space="preserve">
+	<value>txtCurrentLangName</value>
+  </data>
+  <data name="&gt;&gt;txtCurrentLangName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtCurrentLangName.Parent" xml:space="preserve">
+	<value>grpCurrentLang</value>
+  </data>
+  <data name="&gt;&gt;txtCurrentLangName.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <metadata name="lblOtherNames.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblOtherNames.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblOtherNames.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblOtherNames.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 84</value>
+  </data>
+  <data name="lblOtherNames.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblOtherNames.Size" type="System.Drawing.Size, System.Drawing">
+	<value>72, 13</value>
+  </data>
+  <data name="lblOtherNames.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblOtherNames.Text" xml:space="preserve">
+	<value>Other Names:</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNames.Name" xml:space="preserve">
+	<value>lblOtherNames</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNames.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNames.Parent" xml:space="preserve">
+	<value>grpCurrentLang</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNames.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="lblOtherNamesList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="lblOtherNamesList.HelpString" xml:space="preserve">
+	<value>Lists other names for this language which are recorded in the Ethnologue. Includes names of dialects.</value>
+  </data>
+  <data name="lblOtherNamesList.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblOtherNamesList.Location" type="System.Drawing.Point, System.Drawing">
+	<value>116, 84</value>
+  </data>
+  <data name="lblOtherNamesList.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblOtherNamesList.Size" type="System.Drawing.Size, System.Drawing">
+	<value>276, 36</value>
+  </data>
+  <data name="lblOtherNamesList.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="lblOtherNamesList.Text" xml:space="preserve">
+	<value>(none)</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNamesList.Name" xml:space="preserve">
+	<value>lblOtherNamesList</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNamesList.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNamesList.Parent" xml:space="preserve">
+	<value>grpCurrentLang</value>
+  </data>
+  <data name="&gt;&gt;lblOtherNamesList.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="grpCurrentLang.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 264</value>
+  </data>
+  <data name="grpCurrentLang.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="grpCurrentLang.Size" type="System.Drawing.Size, System.Drawing">
+	<value>404, 124</value>
+  </data>
+  <data name="grpCurrentLang.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="grpCurrentLang.Text" xml:space="preserve">
+	<value>Current Language</value>
+  </data>
+  <data name="&gt;&gt;grpCurrentLang.Name" xml:space="preserve">
+	<value>grpCurrentLang</value>
+  </data>
+  <data name="&gt;&gt;grpCurrentLang.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpCurrentLang.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpCurrentLang.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="lblInstructions1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblInstructions1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblInstructions1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="lblInstructions1.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblInstructions1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>404, 40</value>
+  </data>
+  <data name="lblInstructions1.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblInstructions1.Text" xml:space="preserve">
+	<value>Find the language in the Ethnologue. You may search by language name, part of a language name, country, or Ethnologue code. </value>
+  </data>
+  <data name="&gt;&gt;lblInstructions1.Name" xml:space="preserve">
+	<value>lblInstructions1</value>
+  </data>
+  <data name="&gt;&gt;lblInstructions1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblInstructions1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblInstructions1.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="lblInstructions2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblInstructions2.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblInstructions2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblInstructions2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 88</value>
+  </data>
+  <data name="lblInstructions2.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="lblInstructions2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>272, 13</value>
+  </data>
+  <data name="lblInstructions2.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="lblInstructions2.Text" xml:space="preserve">
+	<value>Find the language name in the list and click to choose it.</value>
+  </data>
+  <data name="&gt;&gt;lblInstructions2.Name" xml:space="preserve">
+	<value>lblInstructions2</value>
+  </data>
+  <data name="&gt;&gt;lblInstructions2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblInstructions2.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblInstructions2.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="cboLookup.HelpString" xml:space="preserve">
+	<value>Specifies what you are searching for in the Ethnologue.</value>
+  </data>
+  <data name="cboLookup.ItemHeight" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="cboLookup.Items" xml:space="preserve">
+	<value>Language Name</value>
+  </data>
+  <data name="cboLookup.Items1" xml:space="preserve">
+	<value>Country Name</value>
+  </data>
+  <data name="cboLookup.Items2" xml:space="preserve">
+	<value>Ethnologue Code</value>
+  </data>
+  <data name="cboLookup.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 56</value>
+  </data>
+  <data name="cboLookup.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cboLookup.Size" type="System.Drawing.Size, System.Drawing">
+	<value>132, 21</value>
+  </data>
+  <data name="cboLookup.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;cboLookup.Name" xml:space="preserve">
+	<value>cboLookup</value>
+  </data>
+  <data name="&gt;&gt;cboLookup.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.22904, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboLookup.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboLookup.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>404, 388</value>
+  </data>
+  <data name="&gt;&gt;hdrLanguageName.Name" xml:space="preserve">
+	<value>hdrLanguageName</value>
+  </data>
+  <data name="&gt;&gt;hdrLanguageName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hdrCountry.Name" xml:space="preserve">
+	<value>hdrCountry</value>
+  </data>
+  <data name="&gt;&gt;hdrCountry.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hdrEthnologueCode.Name" xml:space="preserve">
+	<value>hdrEthnologueCode</value>
+  </data>
+  <data name="&gt;&gt;hdrEthnologueCode.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
+	<value>toolTip1</value>
+  </data>
+  <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Name" xml:space="preserve">
+	<value>helpProvider1</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>LanguageSetup</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

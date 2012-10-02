@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+<include from="IncKalaba.xml"/>
+
+<!-- Andy Black's demo sections F -->
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		<include from="IncStartUp.xml"/>
+		<include from="IncGrammar.xml"/>
+
+<!-- F.	Inflection -->
+
+<!-- 1.	Show the Orizaba Nahuatl possessed nominals PowerPoint slide. -->
+<!-- 2.	Say, "Suppose you're back in your SIL training and you're sitting in a
+		Grammar I class.  The teacher shows you this data.  What are the affixes here?" -->
+<!-- Answer: no- 1SgPoss, mo- 2SgPoss, i- 3SgPoss, to- 1PlPoss, amo- 2PlPoss, in- 3PlPoss,
+				van - PlPoss, and kal is house. -->
+<!-- 3.	Ask, "Is this derivational or inflectional morphology?"
+		(Inflectional ￢ﾀﾓ after all, that's the next section in the Grammar Sketch￢ﾀﾦ)
+		Describe the notion of an inflectional template and show the next PowerPoint
+		slide with that inflectional template for the data. -->
+<!-- 4.	Discuss the obligatory/optional nature of the prefix vs. the suffix slots. -->
+<!-- 5.	Let's create such a template for this data. -->
+<!-- 6.	Create the affix template: -->
+<!-- a.	Go to Grammar / Category Edit. -->
+  <click path="$menuGRAMMAR;menu:Category Edit" />
+
+<!-- b.	Navigate to possessive noun (find it in the Record List, under noun) -->
+  <click path="$RecTree"/>
+  <click path="$RecTree"/>
+  <insert wait="1000">{END}</insert>
+  <click path="$RecTree;/;olitem:possessive noun"/>
+
+<!-- c.	Right click on Affix Templates -->
+  <click side="right" path="$gmCeAfxTmpl"/>
+
+<!-- d.	Select Insert Affix Template -->
+  <insert>{DOWN}~</insert>
+
+<!-- e.	In the Name field, type "Possessive noun" -->
+  <click path="$gmCeField;Template Name"/>
+  <insert wait="100">^{END}+{HOME}</insert><!-- highlight content -->
+  <insert wait="100">possessive noun</insert>
+
+<!-- f.	In the Description filed, type, "A possessive noun has an obligatory person of possessor prefix slot and an optional plural possessive suffix slot." -->
+  <click path="$gmCeDesc"/>
+  <insert wait="100">^{END}+{HOME}</insert><!-- highlight content -->
+  <insert wait="100">A possessive noun has an obligatory person of possessor prefix slot and an optional plural possessive suffix slot.</insert>
+
+<!-- 7.	Create the Person of Possessor slot: -->
+
+<!-- a.	Right click on Stem. -->
+  <click side="right" path="$grmCeHeader;[*]/$Text;/42:String/value:rexp#STEM"/>
+
+<!-- b.	Select Insert slot before STEM -->
+	  <insert wait="200">~</insert>
+
+<!-- c.	Select "Create new obligatory slot" and click OK (or double click on "Create new obligatory slot"). -->
+  <on-dialog title="Choose Slot">
+	 <click path="$addObSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- d.	Select "Type slot name here-" and then type "Person of Possessor" -->
+  <click dx="50" path="$grmCeHeader;/$Text"/><!--;/value:Type slot name here-"/-->
+  <insert wait="500">^{END}+{HOME}</insert>
+  <insert wait="500">Person of </insert>
+  <insert wait="500">Possessor</insert>
+
+  <var id="Possessor" set="$grmCeHeader;/$Text;/value:rexp#Person of Possessor"/>
+
+<!-- 8.	Add affixes to Person of Possessor slot: -->
+<!-- a.	Right click on the slot name or just underneath it -->
+  <click side="right" path="$Possessor"/>
+
+<!-- b.	Select "Add inflectional morpheme to Person of Possessor" -->
+	  <insert>~</insert>
+
+<!-- c.	This brings up a chooser.  Select "Choose Inflectional Affixes" and click OK (or double click on "Choose Inflectional Affixes"). -->
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+
+<!-- d.	Brings up New Entry dialog.  Note that it already has the type and grammatical properties defaulted to what we want. -->
+  <on-dialog title="New Entry">
+
+<!-- e.	Press left arrow and then type "no" in the Form field (if you don't do it this way, it wreaks havoc with the defaults ￢ﾀﾓ JIRA issues LT-694 and LT-471 note this problem). -->
+   <insert wait="1000">no</insert>
+
+<!-- f.	Type "my" in the gloss field -->
+	<click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert wait="500">my</insert>
+
+<!-- g.	Click on the Create button. -->
+	<click path="9:Create/43:Create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- h.	Note how the newly created affix shows up in the slot. -->
+<!-- i.	Right click now on the newly created affix and note the context menu options. -->
+  <click side="right" path="$grmCeTABLE;row:Row[2]/cell:Cell/$Text;/42:String[*]/value:no"/>
+
+<!-- j.	Select  "Add  inflectional morpheme to Person of Possessor" -->
+  <insert wait="100">~</insert>
+
+<!-- k.	Select "Choose Inflectional Affixes" and click OK (or double click on "Choose Inflectional Affixes"). -->
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+
+<!-- l.	Type in the info for mo- ￢ﾀﾘyour (sg.)' and click on the Create button. -->
+  <on-dialog title="New Entry">
+   <insert wait="1000">mo</insert>
+	<click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert wait="500">your (sg.)</insert>
+	<click path="9:Create/43:Create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- m.	Repeat steps i-l for the other four prefixes. -->
+   <!-- i- 3SgPoss, to- 1PlPoss, amo- 2PlPoss, in- 3PlPoss -->
+  <click side="right" path="$Possessor"/>
+  <insert wait="100">~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+   <insert wait="1000">i</insert>
+	<click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert wait="500">his/her</insert>
+	<click path="9:Create/43:Create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+  <click side="right" path="$Possessor"/>
+  <insert wait="100">~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+   <insert wait="1000">to</insert>
+	<click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert wait="100">our</insert>
+	<click path="9:Create/43:Create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+  <click side="right" path="$Possessor"/>
+  <insert wait="100">~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+   <insert wait="1000">amo</insert>
+	<click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert wait="500">your (pl.)</insert>
+	<click path="9:Create/43:Create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+  <click side="right" path="$Possessor"/>
+  <insert wait="100">~</insert>
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+  <on-dialog title="New Entry">
+   <insert wait="1000">in</insert>
+	<click path="9:Gloss:[2]/20:RootSite/$Text"/>
+   <insert wait="100">their's</insert>
+	<click path="9:Create/43:Create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 9.	Create the Possessive Plural slot -->
+<!-- a.	Right-click on STEM (or underneath it) -->
+  <insert wait="500">{TAB}</insert>
+  <click side="right" path="$grmCeHeader;[*]/$Text;/42:String/value:rexp#STEM"/>
+
+<!-- b.	Select "Insert slot after STEM" -->
+  <insert wait="300">{DOWN}</insert>
+	  <insert wait="300">~</insert>
+  <var id="opSlot" set="Add an optional slot to noun"/>
+
+<!-- c.	Choose "Create new optional slot". -->
+  <on-dialog title="Choose Slot">
+	 <insert wait="500">{TAB}</insert>
+	 <click path="$addOpSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- d.	Select "￢ﾀﾓ(Type slot name here)" and type "Possessive Plural" -->
+  <click dx="50" path="$grmCeHeader;[3]/$Text"/><!--;/value:Type slot name here-"/-->
+  <insert wait="500">{HOME}+{END}</insert>
+  <insert wait="100">Possessive Plural</insert>
+
+  <var id="Possessive" set="$grmCeHeader;[*]/$Text;/value:rexp#Possessive Plural"/>
+
+<!-- 10.	Add affixes to Possessive Plural slot (and show MGA) -->
+<!-- a.	Right click in the new slot and select "Add new inflectional morpheme to Possessive Plural" -->
+  <click side="right" path="$Possessive"/>
+  <insert wait="100">~</insert>
+
+<!-- b.	Choose "Choose Inflectional Affixes". -->
+  <on-dialog title="Choose Inflectional Affixes">
+	 <click path="$grmCeNewInfAfx"/>
+  </on-dialog>
+<!-- c.	Press right arrow and then type "van" in the Form field (if you don't do it this way, it wreaks havoc with the defaults ￢ﾀﾓ JIRA issues LT-694 and LT-471 note this problem). -->
+  <on-dialog title="New Entry">
+   <insert wait="1000">van</insert>
+
+   <!--Affix Type is inflectional to enable the Gloss Assistant -->
+
+<!-- d.	Note the Assistant button by Gloss.  Click on it. -->
+   <click path="9:Assistant/43:Assistant"/>
+
+<!-- e.	This brings up the Morphosyntactic Glossing Assistant. -->
+   <on-dialog title="Morphosyntactic Gloss Assistant: Kalaba">
+
+<!-- 1.	Explain the ideas behind this help tool -->
+<!-- 2.	Click on "noun-related" -->
+	<insert wait="1000">{TAB}{HOME}{DOWN 3}</insert>
+
+<!-- 3.	Open up "noun-related" (click on the plus in the box). -->
+	<insert>{RIGHT}</insert>
+
+<!-- 4.	Click on "noun agreement".  Note the help (is missing), but if this is all you know about this morpheme, then you can still use it. -->
+	<insert>{DOWN}</insert>
+
+<!-- 5.	Open up "noun agreement" and click on number. -->
+	<insert>{RIGHT}</insert>
+
+<!-- 6.	Open up "number" and click on "plural" -->
+	<insert>{DOWN 2}{RIGHT}{DOWN 2} </insert>
+
+<!-- 7.	Click on the Insert button. -->
+	<click path="button:Insert >"/>
+
+<!-- 8.	Click on the Accept Gloss button -->
+	<click path="button:Accept Gloss"/>
+   </on-dialog>
+
+<!-- f.	Note the gloss from MGA now shows up in the gloss field. -->
+<!-- g.	Click on the Create button. -->
+	<click path="9:Create/43:Create"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+  </on-dialog>
+
+<!-- 11.	In the Record List, click on noun.  Note that the two slots we've added now show up here. -->
+  <click path="$RecTree;/olitem:noun"/>
+  <insert wait="100">{RIGHT}</insert>
+
+<!-- 12.	Go to Grammar Sketch and regenerate. -->
+  <click path="$menuGRAMMAR;menu:Grammar Sketch" />
+  <click path="$Generate" />
+
+<!-- 13.	Go to the Inflection section and find our newly added template. -->
+  <insert wait="1000">{PGDN 13}</insert>
+  <insert>{DOWN 3}</insert>
+
+ </on-application>
+</accil>

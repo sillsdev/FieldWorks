@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+	<!-- Restore TLP for the IText tests. Can't use the restoreTLP target here, so do the work manually -->
+	 <exec program="osql.exe"
+		  commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster  -Q&quot;sp_detach_db [TestLangProj]&quot; -n "
+		  failonerror="true" verbose="${verbose}"/>
+	<copy todir="${dir.sqlserverSILFWdata}" overwrite="true">
+	  <fileset basedir="${dir.safecopy}">
+		<include name="TestLangProj.mdf"/>
+		<include name="TestLangProj_log.ldf"/>
+	  </fileset>
+	</copy>
+	<property name="dbpathname" value="${dir.sqlserverSILFWdata}\TestLangProj"/>
+	<exec program="osql.exe"
+		  commandline="-S${computername}\SILFW -Usa -Pinscrutable -dmaster  -Q&quot;sp_attach_db @dbname = N'TestLangProj', @filename1 = N'${dbpathname}.mdf', @filename2 = N'${dbpathname}_log.ldf'&quot; -n "
+		  failonerror="true" verbose="true"/>
+  </pre-build>
+</include>

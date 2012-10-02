@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="generatewixinclude" default="generatewixinclude.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	generatewixinclude.build - Builds the generatewixinclude project (GenerateWixInclude.exe).
+	2005.12.25 robmen Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="generatewixinclude.build" description="Peforms a full rebuild (clean then build)" depends="generatewixinclude.clean, generatewixinclude.inc" />
+
+  <!-- Clean -->
+  <target name="generatewixinclude.clean" description="Cleans the build">
+	<delete dir="${dir.build.generatewixinclude}" failonerror="false" if="${directory::exists(dir.build.generatewixinclude)}" />
+	<delete failonerror="false">
+	  <fileset basedir="${dir.target.wix}">
+		<include name="GenerateWixInclude.exe" />
+		<include name="GenerateWixInclude.pdb" />
+		<include name="GenerateWixInclude.xml" />
+	  </fileset>
+	</delete>
+  </target>
+
+  <!-- Inc -->
+  <target name="generatewixinclude.inc" description="Performs an incremental build" depends="makeDirs, createKeyFile">
+	<!-- Build the generatewixinclude.exe -->
+	<csc
+	  target="exe"
+	  output="${dir.target.wix}\GenerateWixInclude.exe"
+	  debug="${csc.debug}"
+	  optimize="${ship}"
+	  define="${csc.defines}"
+	  doc="${dir.target.wix}\GenerateWixInclude.xml"
+	  warnaserror="true"
+	  warninglevel="4"
+	  checked="true"
+	>
+	  <sources basedir="${dir.src.generatewixinclude}">
+		<include name="${file.wixver}" />
+		<include name="${file.wixkey}" />
+		<include name="AssemblyInfo.cs" />
+		<include name="GenerateWixInclude.cs" />
+	  </sources>
+	</csc>
+  </target>
+
+</project>

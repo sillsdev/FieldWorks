@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="XLingPaper, align words" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="applySingleTransform" transform="xml2XLingPapConcatMorphemes.xsl">
+<p>Export to a basic XLingPaper document which can then be used to cut and paste into another XLingPaper document (e.g. the XLingPaper form of the Grammar Sketch).  XLingPaper is a way to write linguistic papers using XML technologies.  </p>
+<p>Some of us like using the freely available XMLmind XML Editor with the XLingPaper configuration files for XMLmind to do this editing.  See
+<a href="http://www.sil.org/~blacka/xlingpap/index.htm">http://www.sil.org/~blacka/xlingpap/index.htm</a> or the installation CD at D:\FieldWorks\XML Utilities\XLingPap.htm.</p>
+<p>The interlinear concatenates all the morphemes in a word together, so there are not separate morpheme columns within a word.</p>
+</FxtDocumentDescription>

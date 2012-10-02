@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblDefaultNormalFont.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblDefaultNormalFont.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblDefaultNormalFont.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblDefaultNormalFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>10, 6</value>
+  </data>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>168, 17</value>
+  </metadata>
+  <data name="lblDefaultNormalFont.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblDefaultNormalFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>65, 13</value>
+  </data>
+  <data name="lblDefaultNormalFont.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblDefaultNormalFont.Text" xml:space="preserve">
+	<value>Default font:</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultNormalFont.Name" xml:space="preserve">
+	<value>lblDefaultNormalFont</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultNormalFont.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultNormalFont.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultNormalFont.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="lblDefaultHeadingFont.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblDefaultHeadingFont.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="lblDefaultHeadingFont.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblDefaultHeadingFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>10, 108</value>
+  </data>
+  <data name="lblDefaultHeadingFont.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblDefaultHeadingFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>106, 13</value>
+  </data>
+  <data name="lblDefaultHeadingFont.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="lblDefaultHeadingFont.Text" xml:space="preserve">
+	<value>Default heading font:</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultHeadingFont.Name" xml:space="preserve">
+	<value>lblDefaultHeadingFont</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultHeadingFont.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultHeadingFont.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultHeadingFont.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="lblDefaultPubFont.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblDefaultPubFont.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="lblDefaultPubFont.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblDefaultPubFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>10, 57</value>
+  </data>
+  <data name="lblDefaultPubFont.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblDefaultPubFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>119, 13</value>
+  </data>
+  <data name="lblDefaultPubFont.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="lblDefaultPubFont.Text" xml:space="preserve">
+	<value>Default publication font:</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultPubFont.Name" xml:space="preserve">
+	<value>lblDefaultPubFont</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultPubFont.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultPubFont.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblDefaultPubFont.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="cbDefaultPubFont.HelpString" xml:space="preserve">
+	<value>Specifies the font to be used as a default in all “heading” styles when using this writing system.</value>
+  </data>
+  <data name="cbDefaultPubFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 74</value>
+  </data>
+  <data name="cbDefaultPubFont.MaxDropDownItems" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="cbDefaultPubFont.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cbDefaultPubFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>152, 21</value>
+  </data>
+  <data name="cbDefaultPubFont.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultPubFont.Name" xml:space="preserve">
+	<value>cbDefaultPubFont</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultPubFont.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.3.0.20485, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultPubFont.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultPubFont.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="cbDefaultNormalFont.HelpString" xml:space="preserve">
+	<value>Specifies the font to be used as a default in all “normal” styles when using this writing system.</value>
+  </data>
+  <data name="cbDefaultNormalFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 23</value>
+  </data>
+  <data name="cbDefaultNormalFont.MaxDropDownItems" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="cbDefaultNormalFont.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cbDefaultNormalFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>152, 21</value>
+  </data>
+  <data name="cbDefaultNormalFont.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultNormalFont.Name" xml:space="preserve">
+	<value>cbDefaultNormalFont</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultNormalFont.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.3.0.20485, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultNormalFont.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultNormalFont.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="cbDefaultHeadingFont.HelpString" xml:space="preserve">
+	<value>Specifies the font to be used as a default in all “heading” styles when using this writing system.</value>
+  </data>
+  <data name="cbDefaultHeadingFont.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 125</value>
+  </data>
+  <data name="cbDefaultHeadingFont.MaxDropDownItems" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="cbDefaultHeadingFont.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="cbDefaultHeadingFont.Size" type="System.Drawing.Size, System.Drawing">
+	<value>152, 21</value>
+  </data>
+  <data name="cbDefaultHeadingFont.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultHeadingFont.Name" xml:space="preserve">
+	<value>cbDefaultHeadingFont</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultHeadingFont.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.3.0.20485, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultHeadingFont.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbDefaultHeadingFont.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.HelpString" xml:space="preserve">
+	<value>Allows user to specify font features, when available in Graphite fonts.</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAACBJREFUKFNjYCAT
+		/Afqw4WxGolNMV67kTUQ5UiQBjoCAN8FD/GwrhGZAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.Location" type="System.Drawing.Point, System.Drawing">
+	<value>178, 74</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.Size" type="System.Drawing.Size, System.Drawing">
+	<value>95, 23</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.Text" xml:space="preserve">
+	<value>Font Features</value>
+  </data>
+  <data name="m_pubFontFeaturesBtn.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;m_pubFontFeaturesBtn.Name" xml:space="preserve">
+	<value>m_pubFontFeaturesBtn</value>
+  </data>
+  <data name="&gt;&gt;m_pubFontFeaturesBtn.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.FontFeaturesButton, FwCoreDlgControls, Version=5.3.0.24018, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_pubFontFeaturesBtn.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_pubFontFeaturesBtn.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.HelpString" xml:space="preserve">
+	<value>Allows user to specify font features, when available in Graphite fonts.</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAACBJREFUKFNjYCAT
+		/Afqw4WxGolNMV67kTUQ5UiQBjoCAN8FD/GwrhGZAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.Location" type="System.Drawing.Point, System.Drawing">
+	<value>178, 125</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.Size" type="System.Drawing.Size, System.Drawing">
+	<value>95, 23</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.Text" xml:space="preserve">
+	<value>Font Features</value>
+  </data>
+  <data name="m_headingFontFeaturesBtn.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;m_headingFontFeaturesBtn.Name" xml:space="preserve">
+	<value>m_headingFontFeaturesBtn</value>
+  </data>
+  <data name="&gt;&gt;m_headingFontFeaturesBtn.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.FontFeaturesButton, FwCoreDlgControls, Version=5.3.0.24018, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_headingFontFeaturesBtn.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_headingFontFeaturesBtn.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.HelpString" xml:space="preserve">
+	<value>Allows user to specify font features, when available in Graphite fonts.</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAACBJREFUKFNjYCAT
+		/Afqw4WxGolNMV67kTUQ5UiQBjoCAN8FD/GwrhGZAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.Location" type="System.Drawing.Point, System.Drawing">
+	<value>178, 23</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.Size" type="System.Drawing.Size, System.Drawing">
+	<value>95, 23</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.Text" xml:space="preserve">
+	<value>Font Features</value>
+  </data>
+  <data name="m_defaultFontFeaturesBtn.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontFeaturesBtn.Name" xml:space="preserve">
+	<value>m_defaultFontFeaturesBtn</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontFeaturesBtn.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.FontFeaturesButton, FwCoreDlgControls, Version=5.3.0.24018, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontFeaturesBtn.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_defaultFontFeaturesBtn.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>291, 160</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Name" xml:space="preserve">
+	<value>helpProvider1</value>
+  </data>
+  <data name="&gt;&gt;helpProvider1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>DefaultFontsControl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

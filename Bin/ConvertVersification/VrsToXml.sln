@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VrsToXml", "VrsToXml.csproj", "{A8F0354A-F6C9-47EC-B421-6FE7D30829BF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{A8F0354A-F6C9-47EC-B421-6FE7D30829BF}.Debug.ActiveCfg = Debug|.NET
+		{A8F0354A-F6C9-47EC-B421-6FE7D30829BF}.Debug.Build.0 = Debug|.NET
+		{A8F0354A-F6C9-47EC-B421-6FE7D30829BF}.Release.ActiveCfg = Release|.NET
+		{A8F0354A-F6C9-47EC-B421-6FE7D30829BF}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

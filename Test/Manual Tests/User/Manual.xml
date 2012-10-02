@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE modularbook SYSTEM "..\XSL\ModularBook.dtd" [
+	<!-- Module groups in this book -->
+	<!ENTITY tp SYSTEM "TitlePage.xml">
+	<!ENTITY stt SYSTEM "Starting\maintask.xml">
+	<!ENTITY use SYSTEM "Using\maintask.xml">
+	<!ENTITY app SYSTEM "Apps\maintask.xml">
+	<!ENTITY wrt SYSTEM "Writing\maintask.xml">
+	<!ENTITY bld SYSTEM "Building\maintask.xml">
+]>
+<?xml-stylesheet type="text/xsl" href="XSL\HelpFile.xsl" ?>
+<modularbook file="Manual.mbk">
+
+&tp;
+&stt;
+&use;
+&app;
+&wrt;
+&bld;
+
+</modularbook>

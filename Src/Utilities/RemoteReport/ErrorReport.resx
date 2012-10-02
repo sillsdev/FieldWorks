@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 296</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>320, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+	<value>19</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+	<value>Enter any comments about what made this problem appear.</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_comments.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_comments.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 320</value>
+  </data>
+  <data name="m_comments.Multiline" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_comments.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+	<value>Vertical</value>
+  </data>
+  <data name="m_comments.Size" type="System.Drawing.Size, System.Drawing">
+	<value>496, 88</value>
+  </data>
+  <data name="m_comments.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_comments.Text" xml:space="preserve">
+	<value>comments</value>
+  </data>
+  <data name="&gt;&gt;m_comments.Name" xml:space="preserve">
+	<value>m_comments</value>
+  </data>
+  <data name="&gt;&gt;m_comments.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_comments.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_comments.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 88</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>216, 16</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>17</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>Details:</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="radYes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>64, 448</value>
+  </data>
+  <data name="radYes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>392, 16</value>
+  </data>
+  <data name="radYes.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="radYes.Text" xml:space="preserve">
+	<value>&amp;Send this the next time I'm connected to the Internet.</value>
+  </data>
+  <data name="&gt;&gt;radYes.Name" xml:space="preserve">
+	<value>radYes</value>
+  </data>
+  <data name="&gt;&gt;radYes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;radYes.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;radYes.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_details.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_details.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_details.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 112</value>
+  </data>
+  <data name="m_details.Multiline" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_details.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+	<value>Both</value>
+  </data>
+  <data name="m_details.Size" type="System.Drawing.Size, System.Drawing">
+	<value>496, 104</value>
+  </data>
+  <data name="m_details.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_details.Text" xml:space="preserve">
+	<value>details</value>
+  </data>
+  <data name="&gt;&gt;m_details.Name" xml:space="preserve">
+	<value>m_details</value>
+  </data>
+  <data name="&gt;&gt;m_details.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_details.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_details.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 424</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>424, 23</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+	<value>May we have permission to email this report to the development team?</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+	<value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="radSelf.Location" type="System.Drawing.Point, System.Drawing">
+	<value>64, 472</value>
+  </data>
+  <data name="radSelf.Size" type="System.Drawing.Size, System.Drawing">
+	<value>456, 16</value>
+  </data>
+  <data name="radSelf.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="radSelf.Text" xml:space="preserve">
+	<value>&amp;Copy this message to the clipboard and I will paste it into an email message myself.</value>
+  </data>
+  <data name="&gt;&gt;radSelf.Name" xml:space="preserve">
+	<value>radSelf</value>
+  </data>
+  <data name="&gt;&gt;radSelf.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;radSelf.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;radSelf.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="btnContinue.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="btnContinue.Location" type="System.Drawing.Point, System.Drawing">
+	<value>448, 520</value>
+  </data>
+  <data name="btnContinue.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnContinue.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="btnContinue.Text" xml:space="preserve">
+	<value>&amp;Continue</value>
+  </data>
+  <data name="&gt;&gt;btnContinue.Name" xml:space="preserve">
+	<value>btnContinue</value>
+  </data>
+  <data name="&gt;&gt;btnContinue.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnContinue.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnContinue.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="btnExit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="btnExit.Location" type="System.Drawing.Point, System.Drawing">
+	<value>320, 520</value>
+  </data>
+  <data name="btnExit.Size" type="System.Drawing.Size, System.Drawing">
+	<value>112, 23</value>
+  </data>
+  <data name="btnExit.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="btnExit.Text" xml:space="preserve">
+	<value>E&amp;xit the application</value>
+  </data>
+  <data name="&gt;&gt;btnExit.Name" xml:space="preserve">
+	<value>btnExit</value>
+  </data>
+  <data name="&gt;&gt;btnExit.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnExit.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnExit.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 248</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>112, 16</value>
+  </data>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+	<value>20</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+	<value>Your email address:</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+	<value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_fromEmail.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Left, Right</value>
+  </data>
+  <data name="m_fromEmail.Location" type="System.Drawing.Point, System.Drawing">
+	<value>120, 248</value>
+  </data>
+  <data name="m_fromEmail.Size" type="System.Drawing.Size, System.Drawing">
+	<value>392, 20</value>
+  </data>
+  <data name="m_fromEmail.TabIndex" type="System.Int32, mscorlib">
+	<value>21</value>
+  </data>
+  <data name="m_fromEmail.Text" xml:space="preserve">
+	<value>textBox2</value>
+  </data>
+  <data name="&gt;&gt;m_fromEmail.Name" xml:space="preserve">
+	<value>m_fromEmail</value>
+  </data>
+  <data name="&gt;&gt;m_fromEmail.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_fromEmail.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_fromEmail.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_notification.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_notification.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="m_notification.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="m_notification.Multiline" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_notification.Size" type="System.Drawing.Size, System.Drawing">
+	<value>488, 56</value>
+  </data>
+  <data name="m_notification.TabIndex" type="System.Int32, mscorlib">
+	<value>22</value>
+  </data>
+  <data name="m_notification.Text" xml:space="preserve">
+	<value>notification msg</value>
+  </data>
+  <data name="&gt;&gt;m_notification.Name" xml:space="preserve">
+	<value>m_notification</value>
+  </data>
+  <data name="&gt;&gt;m_notification.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_notification.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_notification.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>552, 558</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>An error has occurred</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>ErrorReport</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

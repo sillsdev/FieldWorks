@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks>
+	</clerks>
+	<tools>
+		<tool label="Bulk Edit Wordforms" value="toolBulkEditWordforms" icon="BrowseView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="WordformsEdit">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+						<parameters area="textsWords" id="WordformsEdit" clerk="concordanceWords" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true"
+									bulkEditListItemsClasses="WfiWordform" selectColumn="true" altTitleId="WfiWordform-Plural" bulkDeleteIfZero="FullConcordanceCount">
+							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true"
+												enableBEOther="true"/>
+							<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">
+								<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
+								<overrides>
+									<column label="Form" width="80000" ws="$ws=vernacular" transduce="WfiWordform.Form" cansortbylength="true" editif="!FormIsUsedWithWs">
+										<string field="Form" ws="$ws=vernacular"/>
+									</column>
+									<column label="Word Glosses" width="80000"/>
+									<column label="Spelling Status" width="65000"/>
+								</overrides>
+							</include>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

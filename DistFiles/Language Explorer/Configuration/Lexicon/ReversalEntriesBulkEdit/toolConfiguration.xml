@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks>
+		<clerk id="AllReversalEntries">
+			<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk"/>
+			<recordList owner="ReversalIndex" property="AllEntries">
+				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList"/>
+			</recordList>
+			<filters/>
+			<sortMethods>
+				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+			</sortMethods>
+			<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
+		</clerk>
+	</clerks>
+	<tools>
+		<tool label="Bulk Edit Reversal Entries" value="reversalToolBulkEditReversalEntries" icon="BrowseView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="ReversalEntriesEdit" PaneBarGroupId="PaneBar-ReversalIndicesMenu">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+						<parameters area="lexicon" id="ReversalEntriesEdit" clerk="AllReversalEntries" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural">
+							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true" enableBEOther="true"/>
+							<columns>
+								<column label="Form" width="34%" ws="$ws=reversal" transduce="ReversalIndexEntry.ReversalForm" cansortbylength="true">
+									<span>
+										<properties>
+											<editable value="true"/>
+										</properties>
+										<string field="ReversalForm" ws="$ws=reversal"/>
+									</span>
+								</column>
+								<column label="Senses" width="33%" ws="vernacular" multipara="true">
+									<properties>
+										<editable value="false"/>
+									</properties>
+									<seq field="ReferringSenses" layout="empty">
+										<para>
+											<string field="FullReferenceName"/>
+										</para>
+									</seq>
+								</column>
+								<column label="Category" width="33%" bulkEdit="external">
+									<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.BulkReversalEntryPosEditor"/>
+									<properties>
+										<editable value="false"/>
+									</properties>
+									<span>
+										<properties>
+											<editable value="false"/>
+										</properties>
+										<obj class="ReversalIndexEntry" field="PartOfSpeech" layout="empty">
+											<string class="CmPossibility" field="Name" ws="best analysis"/>
+										</obj>
+									</span>
+								</column>
+							</columns>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

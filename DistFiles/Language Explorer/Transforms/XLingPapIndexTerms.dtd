@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- a list of index terms
+	   The version attribute is a way to document the set of index terms contained within this element.
+	   This is to facilitate reuse of lists of index terms.
+	   -->
+<!ELEMENT indexTerms (indexTerm*)>
+<!ATTLIST indexTerms
+	version CDATA #IMPLIED
+>
+<!-- a key term that might be used in an indexing scheme for a document.
+A given indexTerm may be expressed in more than one language (e.g. English, Spanish, French, etc.).  Thus it has multiple term elements.
+A given indexTerm may have other index terms nested under it.
+It only shows if there is an instance of a referring index element in the document
+   the id attribute uniquely identifies this index term so it can be referred to by indexedItem and IndexedRangeBegin
+   the see attribute refers to another term, allowing an entry in the index that refers the reader to the "real" data
+   the kind attribute indicates the kind of index it will be in (if the user decides to have multiple indexes)
+-->
+<!ELEMENT indexTerm (term+, indexTerms*)>
+<!ATTLIST indexTerm
+	id ID #REQUIRED
+	see IDREF #IMPLIED
+	kind (name | language | subject) "subject"
+>
+<!-- content of an index term;
+ note that this can be in different  languages so a given indexTerm element can be expressed in multiple languages.
+ this term is what will show in the index in the output.
+  -->
+<!ELEMENT term (#PCDATA | %embedded;)*>
+<!ATTLIST term
+	lang IDREF #IMPLIED
+	xml:lang CDATA #IMPLIED
+>

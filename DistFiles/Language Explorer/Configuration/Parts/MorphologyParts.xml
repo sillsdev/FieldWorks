@@ -1,0 +1,1908 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand crafted parts for Morphology related classes. -->
+<PartInventory>
+	<bin class="MoDerivAffMsa">
+		<part id="MoDerivAffMsa-Jt-PartsOfSpeech" type="jtview">
+			<para>
+				<span>
+					<properties>
+						<bold value="on"/>
+					</properties>
+					<choice>
+						<where field="FromPartOfSpeech" lengthatmost="0">
+							<choice>
+								<where field="ToPartOfSpeech" lengthatmost="0">
+									<lit>Unclassified affix</lit>
+								</where>
+								<otherwise>
+									<lit>??? &gt; </lit>
+									<obj field="ToPartOfSpeech" layout="BoldItalicAbbr"/>
+								</otherwise>
+							</choice>
+						</where>
+						<otherwise>
+							<obj field="FromPartOfSpeech" layout="BoldItalicAbbr"/>
+							<lit> &gt; </lit>
+							<choice>
+								<where field="ToPartOfSpeech" lengthatmost="0">
+									<lit>???</lit>
+								</where>
+								<otherwise>
+									<obj field="ToPartOfSpeech" layout="BoldItalicAbbr"/>
+								</otherwise>
+							</choice>
+						</otherwise>
+					</choice>
+				</span>
+			</para>
+		</part>
+		<part id="MoDerivAffMsa-Jt-Browse" type="jtview">
+			<choice>
+				<where field="FromPartOfSpeech" lengthatmost="0">
+					<choice>
+						<where field="ToPartOfSpeech" lengthatmost="0">
+							<para>
+								<properties>
+									<forecolor value="red"/>
+								</properties>
+								<lit>Unclassified affix</lit>
+							</para>
+						</where>
+						<otherwise>
+							<para>
+								<properties>
+									<forecolor value="gray"/>
+								</properties>
+								<lit>???</lit>
+								<lit> &gt; </lit>
+								<obj field="ToPartOfSpeech" layout="Abbreviation"/>
+							</para>
+						</otherwise>
+					</choice>
+				</where>
+				<otherwise>
+					<para>
+						<properties>
+							<forecolor value="gray"/>
+						</properties>
+						<obj field="FromPartOfSpeech" layout="Abbreviation"/>
+						<lit> &gt; </lit>
+						<choice>
+							<where field="ToPartOfSpeech" lengthatmost="0">
+								<lit>???.</lit>
+							</where>
+							<otherwise>
+								<obj field="ToPartOfSpeech" layout="Abbreviation"/>
+							</otherwise>
+						</choice>
+					</para>
+				</otherwise>
+			</choice>
+		</part>
+		<part id="MoDerivAffMsa-Jt-BrowseAbbr" type="jtview">
+			<choice>
+				<where field="FromPartOfSpeech" lengthatmost="0">
+					<choice>
+						<where field="ToPartOfSpeech" lengthatmost="0">
+							<para>
+								<properties>
+									<forecolor value="red"/>
+								</properties>
+								<lit>??? &gt; ???</lit>
+							</para>
+						</where>
+						<otherwise>
+							<para>
+								<properties>
+									<forecolor value="gray"/>
+								</properties>
+								<lit>???</lit>
+								<lit> &gt; </lit>
+								<obj field="ToPartOfSpeech" layout="Abbreviation"/>
+							</para>
+						</otherwise>
+					</choice>
+				</where>
+				<otherwise>
+					<para>
+						<properties>
+							<forecolor value="gray"/>
+						</properties>
+						<obj field="FromPartOfSpeech" layout="Abbreviation"/>
+						<lit> &gt; </lit>
+						<choice>
+							<where field="ToPartOfSpeech" lengthatmost="0">
+								<lit>???.</lit>
+							</where>
+							<otherwise>
+								<obj field="ToPartOfSpeech" layout="Abbreviation"/>
+							</otherwise>
+						</choice>
+					</para>
+				</otherwise>
+			</choice>
+		</part>
+		<part id="MoDerivAffMsa-Detail-ToInflectionClass" type="Detail">
+			<slice field="ToInflectionClass" label="To Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo flidTextParam="5031004" text="The following inflection classes are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoDerivAffMsa-Detail-FromInflectionClass" type="Detail">
+			<slice field="FromInflectionClass" label="From Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo flidTextParam="5031003" text="The following inflection classes are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoDerivAffMsa-Detail-FromMsFeatures" type="Detail">
+			<slice label="From Inflection Features" field="FromMsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+		</part>
+		<part id="MoDerivAffMsa-Detail-ToMsFeatures" type="Detail">
+			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+		</part>
+		<part id="MoDerivAffMsa-Detail-FromProdRestrict" type="Detail">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoDerivAffMsa-Detail-FromStemName" type="Detail">
+			<slice field="FromStemName" label="From Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo flidTextParam="5031003" text="The following stem names are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Stem Names for {0}" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoDerivAffMsa-Detail-ToProdRestrict" type="Detail">
+			<slice field="ToProdRestrict" label='To Exception "Features' editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoDerivAffMsa-Detail-ToPartOfSpeech" type="Detail">
+			<slice field="ToPartOfSpeech" label="To Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<part id="MoDerivAffMsa-Detail-FromPartOfSpeech" type="Detail">
+			<slice field="FromPartOfSpeech" label="From Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="analysis vernacular"/>
+			</slice>
+		</part>
+		<part id="MoDerivAffMsa-Jt-ConditionalArrow" type="jtview">
+			<!-- display the separating arrow if both POS attrs are set -->
+			<if field="FromPartOfSpeech" lengthatleast="1">
+				<if field="ToPartOfSpeech" lengthatleast="1">
+					<lit>&gt; </lit>
+				</if>
+			</if>
+		</part>
+	</bin>
+	<bin class="MoForm">
+		<part id="MoForm-Detail-AsLexemeForm" type="Detail">
+			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" weight="light"
+				   menu="mnuDataTree-LexemeForm" contextMenu="mnuDataTree-LexemeFormContext" helpTopicID="khtpField-LexEntry-LexemeForm" spell="no">
+				<properties>
+					<bold value="on"/>
+					<fontsize value="120%"/>
+				</properties>
+			</slice>
+			<!--TODO make these guys work.
+		[Observation from RandyR: They aren't added here, but in the calling layout.]
+		 -->
+			<part ref="IsAbstract" label="Is Abstract Form" visibility="never"/>
+			<part ref="PhoneEnv" label="Environments" visibility="ifData"/>
+		</part>
+
+		<part id="MoForm-Detail-IsAbstractBasic" type="Detail">
+			<slice field="IsAbstract" label="IsAbstract" editor="Checkbox" helpTopicID="khtpField-LexEntry-IsAbstract" />
+		</part>
+
+		<part id="MoForm-Detail-PhoneEnvBasic" type="Detail">
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert" helpTopicID="khtpField-LexEntry-Environments">
+				<deParams ws="analysis vernacular"/>
+				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
+					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoForm-Detail-PhoneEnv" type="Detail">
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert">
+				<deParams ws="analysis vernacular"/>
+				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
+					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+
+		<part id="MoForm-Detail-FormAllV" type="Detail">
+			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help"
+				   spell="no" helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-Form"/>
+		</part>
+		<part id="MoForm-Detail-FormAllVAffix" type="Detail">
+			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help"
+				   spell="no" helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-Form"/>
+		</part>
+
+		<part id="MoForm-Detail-MorphTypeBasic" type="Detail">
+			<slice field="MorphType" label="Morph Type" editor="MorphTypeAtomicReference" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-MorphType">
+				<deParams ws="best analysis"/>
+				<chooserInfo title="Choose Morpheme Type"/>
+			</slice>
+		</part>
+		<part id="MoForm-Detail-MorphType" type="Detail">
+			<slice field="MorphType" label="Morph Type" editor="MorphTypeAtomicReference" menu="mnuDataTree-Help"
+				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MorphType">
+				<deParams ws="best analysis" displayProperty="LongName"/>
+				<chooserInfo title="Choose Morpheme Type"/>
+			</slice>
+		</part>
+
+		<part id="MoForm-Detail-AsVariantForm" type="Detail">
+			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" weight="field" spell="no"
+				   menu="mnuDataTree-VariantForm" contextMenu="mnuDataTree-VariantFormContext"
+				   helpTopicID="khtpField-lexiconEdit-LexEntryRef-VariantLevel-MoStemAllomorph-Form">
+				<properties>
+					<bold value="on"/>
+					<fontsize value="120%"/>
+				</properties>
+			</slice>
+		</part>
+
+		<part id="MoForm-Jt-ListedForm" type="JtView">
+			<string field="Form" ws="vernacular"/>
+			<lit>; </lit>
+		</part>
+		<part id="MoForm-Jt-MoFormBrowsePara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="blue"/>
+				</properties>
+				<string field="LongNameTSS"/>
+			</para>
+		</part>
+		<part id="MoForm-Jt-MoFormBrowse" type="jtview">
+			<span>
+				<properties>
+					<forecolor value="blue"/>
+				</properties>
+				<string field="LongNameTSS"/>
+			</span>
+		</part>
+		<part id="MoForm-Jt-MoFormSummary" type="jtview">
+			<string field="ShortNameTSS"/>
+		</part>
+		<part id="MoForm-Jt-Allomorph" type="JtView">
+			<string field="Form" ws="vernacular"/>
+		</part>
+		<part id="MoForm-Jt-IsAbstractFormForAllomorph" type="jtview">
+			<if field="IsAbstract" intequals="0">
+				<lit>no</lit>
+			</if>
+			<if field="IsAbstract" intequals="-1">
+				<lit>yes</lit>
+			</if>
+		</part>
+		<part id="MoForm-Jt-MorphTypeForAllomorph" type="JtView">
+			<obj field="MorphType" layout="SimpleName"/>
+		</part>
+		<part id="MoForm-Jt-Environments" type="JtView">
+			<ifnot is="MoAffixProcess">
+				<seq field="PhoneEnv" layout="StringRepresentation"/>
+			</ifnot>
+		</part>
+		<part id="MoForm-Jt-InflectionClassForLexemeForm" type="JtView">
+			<if is="MoAffixForm">
+				<seq field="InflectionClasses" layout="Name"/>
+			</if>
+			<ifnot is="MoAffixForm">
+				<lit>n/a</lit>
+			</ifnot>
+		</part>
+		<part id="MoForm-Jt-InflectionClassForAffix" type="JtView">
+			<if is="MoAffixForm">
+				<seq field="InflectionClasses" layout="Name"/>
+			</if>
+		</part>
+		<part id="MoForm-Jt-RequiredFeatures" type="JtView">
+			<if is="MoAffixAllomorph">
+				<obj field="MsEnvFeatures" layout="Browse"/>
+			</if>
+		</part>
+		<part id="MoForm-Jt-SimpleForm" type="JtView">
+			<string field="Form" ws="vernacular"/>
+		</part>
+		<part id="MoForm-Jt-MorphTypeName" type="JtView">
+			<obj field="MorphType" layout="SimpleName"/>
+		</part>
+		<part id="MoForm-Jt-pubMorphTypePrefix">
+			<obj field="MorphType" layout="pubPrefix"/>
+		</part>
+		<part id="MoForm-Jt-pubMorphTypePostfix">
+			<obj field="MorphType" layout="pubPostfix"/>
+		</part>
+	</bin>
+	<bin class="MoAffixAllomorph">
+		<part id="MoAffixAllomorph-Detail-PhoneEnv" type="Detail">
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert"
+				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-PhoneEnv">
+				<deParams ws="analysis vernacular"/>
+				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
+					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoAffixAllomorph-Detail-AsPosition" type="Detail">
+			<!-- we want to display position only for infixes and infixing interfixes -->
+			<choice>
+				<where field="MorphType" guidequals="D7F713DA-E8CF-11D3-9764-00C04F186933" >
+					<!-- infix-->
+					<slice label="Infix Positions" field="Position" editor="phoneEnvReference" menu="mnuDataTree-Help">
+						<deParams ws="analysis vernacular"/>
+						<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
+							<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
+						</chooserInfo>
+					</slice>
+				</where>
+				<where field="MorphType" guidequals="18D9B1C3-B5B6-4C07-B92C-2FE1D2281BD4" >
+					<!-- infixing interfix -->
+					<slice label="Infix Positions" field="Position" editor="phoneEnvReference" menu="mnuDataTree-Help">
+						<deParams ws="analysis vernacular"/>
+						<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
+							<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
+						</chooserInfo>
+					</slice>
+				</where>
+			</choice>
+		</part>
+	<part id="MoAffixAllomorph-Detail-MsEnvFeatures" type="Detail">
+	  <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1">
+		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"
+			   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-MsEnvFeatures"/>
+	  </if>
+	</part>
+	<part id="MoAffixAllomorph-Detail-MsEnvFeaturesForLexemeForm" type="Detail">
+	  <if target="owner" field="MorphoSyntaxAnalyses" lengthatleast="1">
+		<slice label="Required Features" field="MsEnvFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice" helpTopicID="khtpField-LexemeForm-MsEnvFeatures"/>
+	  </if>
+	</part>
+  </bin>
+	<bin class="MoStemAllomorph">
+		<part id="MoStemAllomorph-Detail-PhoneEnv" type="Detail">
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert">
+				<deParams ws="analysis vernacular"/>
+				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
+					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoForm-Jt-FormPub">
+			<obj field="MorphType" layout="pubPrefix"/>
+			<configureMlString field="Form" />
+			<obj field="MorphType" layout="pubPostfix"/>
+		</part>
+		<part id="MoStemAllomorph-Detail-StemName" type="Detail">
+			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"
+				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-StemName">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following stem names are available for the currently chosen categories.">
+					<chooserLink type="goto" label="Edit the Stem Names for categories" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoStemAllomorph-Detail-StemNameForLexemeForm" type="Detail">
+			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"  helpTopicID="khtpField-LexemeForm-StemName">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following stem names are available for the currently chosen categories.">
+					<chooserLink type="goto" label="Edit the Stem Names for categories" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+	</bin>
+	<bin class="MoAffixForm">
+		<part id="MoAffixForm-Detail-InflectionClasses" type="Detail">
+			<slice field="InflectionClasses" label="Inflection Classes" editor="defaultVectorReference" menu="mnuDataTree-Help"
+				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-InflectionClasses">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following inflection classes are available for the currently chosen categories.">
+					<chooserLink type="goto" label="Edit the Inflection Classes for categories" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoAffixForm-Detail-InflectionClassesForLexemeForm" type="Detail">
+			<slice field="InflectionClasses" label="Inflection Classes" editor="defaultVectorReference" menu="mnuDataTree-Help" helpTopicID="khtpField-LexemeForm-InflectionClasses">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following inflection classes are available for the currently chosen categories.">
+					<chooserLink type="goto" label="Edit the Inflection Classes for categories" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+	</bin>
+	<bin class="MoAffixProcess">
+		<part id="MoAffixProcess-Detail-RuleFormula" type="detail">
+			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AffixRuleFormulaSlice"/>
+		</part>
+		<part id="MoAffixProcess-Detail-RuleFormulaBasic" type="detail">
+			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AffixRuleFormulaSlice" helpTopicID="khtpField-LexemeForm-RuleFormula"/>
+		</part>
+	</bin>
+	<bin class="MoUnclassifiedAffixMsa">
+		<part id="MoUnclassifiedAffixMsa-Detail-PartOfSpeech" type="Detail">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<part id="MoUnclassifiedAffixMsa-Jt-Browse" type="jtview">
+			<obj field="PartOfSpeech" layout="GreenNamePara"/>
+		</part>
+		<part id="MoUnclassifiedAffixMsa-Jt-BrowseAbbr" type="jtview">
+			<obj field="PartOfSpeech" layout="GreenAbbrPara"/>
+		</part>
+	</bin>
+	<bin class="MoInflAffMsa">
+		<part id="MoInflAffMsa-Detail-PartOfSpeech" type="Detail">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<part id="MoInflAffMsa-Detail-Slots" type="Detail">
+			<slice field="Slots" label="Slots" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following slots are available to category {0}" flidTextParam="5038005">
+					<chooserLink type="goto" label="Edit slots for {0}" target="TopPOS" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoInflAffMsa-Detail-InflFeats" type="Detail">
+			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+		</part>
+		<part id="MoInflAffMsa-Detail-FromProdRestrict" type="Detail">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoInflAffMsa-Jt-Browse" type="jtview">
+			<choice>
+				<where field="PartOfSpeech" lengthatmost="0">
+					<para>
+						<properties>
+							<forecolor value="red"/>
+						</properties>
+						<lit>Unmarked inflectional affix slot</lit>
+					</para>
+				</where>
+				<otherwise>
+					<para>
+						<obj field="PartOfSpeech" layout="Abbreviation"/>
+						<lit translate="do not translate">:</lit>
+						<seq field="Slots" sep="/" layout="BlueNamePara"/>
+					</para>
+				</otherwise>
+			</choice>
+		</part>
+		<part id="MoInflAffMsa-Jt-BrowseAbbr" type="jtview">
+			<choice>
+				<where field="PartOfSpeech" lengthatmost="0">
+					<para>
+						<properties>
+							<forecolor value="red"/>
+						</properties>
+						<lit>Unmk. infl. afx slot</lit>
+					</para>
+				</where>
+				<otherwise>
+					<para>
+						<obj field="PartOfSpeech" layout="Abbreviation"/>
+						<lit translate="do not translate">:</lit>
+						<seq field="Slots" sep="/" layout="BlueNamePara"/>
+						<!-- no abbreviation available -->
+					</para>
+				</otherwise>
+			</choice>
+		</part>
+	</bin>
+	<bin class="MoInflAffixSlot">
+		<part id="MoInflAffixSlot-Jt-BlueNamePara" type="jtview">
+			<span>
+				<properties>
+					<forecolor value="blue"/>
+				</properties>
+				<string field="Name" ws="best analysis"/>
+				<lit>&#32;</lit>
+			</span>
+		</part>
+		<part id="MoInflAffixSlot-Jt-BlueAbbrPara" type="jtview">
+			<span>
+				<properties>
+					<forecolor value="blue"/>
+				</properties>
+				<string field="Name" ws="best analysis"/>
+				<lit>&#32;</lit>
+			</span>
+		</part>
+	</bin>
+	<bin class="MoStemMsa">
+		<part id="MoStemMsa-Jt-basic" type="jtview">
+			<obj field="PartOfSpeech" layout="BoldItalicAbbr"/>
+		</part>
+		<part id="MoStemMsa-Jt-Browse" type="jtview">
+			<choice>
+				<where field="InflectionClass" lengthatmost="0">
+					<para>
+						<properties>
+							<forecolor value="green"/>
+						</properties>
+						<obj field="PartOfSpeech" layout="Name"/>
+						<lit>&#32;</lit>
+						<obj field="MsFeatures" layout="publication"/>
+					</para>
+				</where>
+				<otherwise>
+					<para>
+						<properties>
+							<forecolor value="green"/>
+						</properties>
+						<obj field="PartOfSpeech" layout="Name"/>
+						<lit translate="do not translate">&#32;&#32;(</lit>
+						<obj field="InflectionClass" layout="Abbreviation"/>
+						<lit translate="do not translate">)&#32;</lit>
+						<obj field="MsFeatures" layout="publication"/>
+					</para>
+				</otherwise>
+			</choice>
+		</part>
+		<part id="MoInflClass-Jt-Abbreviation" type="JtView">
+			<string field="Abbreviation" ws="best vernoranal"/>
+		</part>
+		<part id="MoStemMsa-Jt-BrowseAbbr" type="jtview">
+			<obj field="PartOfSpeech" layout="GreenAbbrPara"/>
+		</part>
+		<part id="MoStemMsa-Detail-InflectionClass" type="Detail">
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo flidTextParam="5001002" text="The following inflection classes are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoStemMsa-Detail-MsFeatures" type="Detail">
+			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+		</part>
+		<part id="MoStemMsa-Detail-ProdRestrict" type="Detail">
+			<slice field="ProdRestrict" label='Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoStemMsa-Detail-PartOfSpeech" type="Detail">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<part id="MoStemMsa-Detail-Category" type="Detail">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<part id="MoStemMsa-Jt-PartOfSpeech" type="jtview">
+			<obj field="PartOfSpeech" layout="Name"/>
+		</part>
+		<part id="MoStemMsa-Jt-PartOfSpeechBest" type="jtview">
+			<obj field="PartOfSpeech" layout="NameBest"/>
+		</part>
+		<part id="MoStemMsa-Detail-FromPartsOfSpeech" type="Detail">
+			<slice field="FromPartsOfSpeech" label="Attaches to Categories" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following categories are available.">
+					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+
+	</bin>
+	<bin class="CmPossibility">
+		<!-- Other parts are defined in CellarParts.xml. These are unique to possibility
+  items used in Morphology properties. -->
+		<part id="CmPossibility-Jt-AffixCategory" type="jtview">
+			<!-- enhance JohnT: could this become a layout using ifdata? -->
+			<ifnot field="Abbreviation" stringaltequals="" ws="analysis">
+				<lit>infl: </lit>
+				<string field="Abbreviation" ws="analysis"/>
+				<lit>.</lit>
+			</ifnot>
+			<if field="Abbreviation" stringaltequals="" ws="analysis">
+				<ifnot field="Name" stringaltequals="" ws="analysis">
+					<lit>infl: </lit>
+					<string field="Name" ws="analysis"/>
+					<lit>.</lit>
+				</ifnot>
+				<if field="Name" stringaltequals="" ws="analysis">
+					<lit>infl: ????</lit>
+				</if>
+			</if>
+		</part>
+	</bin>
+	<bin class="MoMorphSynAnalysis">
+		<part id="MoMorphSynAnalysis-Detail-MainEdit" type="Detail">
+			<!-- Implements what should be the first thing shown for all MSA classes,
+			which allows editing of an MSA in a dlg. -->
+			<slice label="Category Info." editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MSADlgLauncherSlice"/>
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-Unknown" type="jtview">
+			<!-- Implements the default layout which all classes should override -->
+			<lit>????</lit>
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-EntrySummaryAdHocPara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="green"/>
+				</properties>
+				<string class="MoMorphSynAnalysis" field="LongNameAdHocTs"/>
+			</para>
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-EntrySummary" type="jtview">
+			<span>
+				<properties>
+					<forecolor value="green"/>
+				</properties>
+				<string class="MoMorphSynAnalysis" field="LongNameTs"/>
+			</span>
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-EntrySummaryAdHoc" type="jtview">
+			<span>
+				<properties>
+					<forecolor value="green"/>
+				</properties>
+				<string class="MoMorphSynAnalysis" field="LongNameAdHocTs"/>
+			</span>
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-PlainEntrySummary" type="jtview">
+			<string class="MoMorphSynAnalysis" field="LongNameTs"/>
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-AffixName" type="jtview">
+			<para>
+				<properties>
+					<editable value="false" />
+				</properties>
+				<commandIcon/>
+				<lit>&#x2003;&#x2003;</lit>
+				<string field="ShortNameTSS"/>
+				<lit>&#xA0;&#xA0;</lit>
+			</para>
+		</part>
+	</bin>
+	<bin class="MoMorphType">
+		<part id="MoMorphType-Detail-Postfix" type="Detail">
+			<slice field="Postfix" label="Trailing Token" editor="string"/>
+		</part>
+		<part id="MoMorphType-Detail-Prefix" type="Detail">
+			<slice field="Prefix" label="Leading Token" editor="string"/>
+		</part>
+		<part id="MoMorphType-Detail-SecondaryOrder" type="Detail">
+			<slice field="SecondaryOrder" label="Secondary Order" editor="Integer"/>
+		</part>
+		<part id="MoMorphType-Detail-SecondaryOrder" type="Detail">
+			<slice field="SecondaryOrder" label="Secondary Order" editor="Integer" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoMorphType-Jt-SimpleName" type="jtview">
+			<string field="Name" ws="best analysis"/>
+		</part>
+		<part id="MoMorphType-Jt-pubPrefix" type="jtview">
+			<string field="Prefix"/>
+		</part>
+		<part id="MoMorphType-Jt-pubPostfix" type="jtview">
+			<string field="Postfix"/>
+		</part>
+	</bin>
+	<bin class="PartOfSpeech">
+		<part id="PartOfSpeech-Detail-AffixSlotsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-PartOfSpeech-AffixSlotsSection"/>
+		</part>
+		<part id="PartOfSpeech-Detail-AffixSlots" type="Detail">
+			<seq field="AffixSlots" layout="EditSlot"/>
+		</part>
+		<part id="PartOfSpeech-Detail-AffixTemplatesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-PartOfSpeech-AffixTemplatesSection"/>
+		</part>
+		<part id="PartOfSpeech-Detail-AffixTemplates" type="Detail">
+			<seq field="AffixTemplates" layout="default"/>
+		</part>
+		<part id="PartOfSpeech-Jt-ShowPartOfSpeech" type="jtview">
+			<ifnot field="Abbreviation" stringaltequals="" ws="analysis">
+				<string class="CmPossibility" field="Abbreviation" ws="analysis"/>
+				<lit>.</lit>
+			</ifnot>
+		</part>
+		<part id="PartOfSpeech-Detail-DefaultInflectionClass" type="Detail">
+			<slice field="DefaultInflectionClass" label="Default Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Inflection Classes for {0}." tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PartOfSpeech-Detail-InflectionClassesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-MoInflClass-InflectionClassInfo" />
+		</part>
+		<part id="PartOfSpeech-Detail-InflectionClasses" type="Detail">
+		   <seq field="InflectionClasses" layout="EditInflectionClass"/>
+		</part>
+		<part id="PartOfSpeech-Detail-StemNamesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-PartOfSpeech-StemNamesSection"/>
+		</part>
+		<part id="PartOfSpeech-Detail-StemNames" type="Detail">
+			<seq field="StemNames" layout="EditStemName"/>
+		</part>
+		<part id="PartOfSpeech-Jt-SubPOS" type="jtview">
+			<seq field="SubPossibilities" layout="Name"/>
+		</part>
+		<part id="PartOfSpeech-Jt-inflClasses" type="jtview">
+			<seq field="InflectionClasses" layout="Name"/>
+		</part>
+		<part id="PartOfSpeech-Jt-defaultInflClass" type="jtview">
+			<obj field="DefaultInflectionClass" layout="Name"/>
+		</part>
+		<part id="PartOfSpeech-Jt-inflClassesBest" type="jtview">
+			<seq field="InflectionClasses" layout="NameBest"/>
+		</part>
+		<part id="PartOfSpeech-Jt-defaultInflClassBest" type="jtview">
+			<obj field="DefaultInflectionClass" layout="NameBest"/>
+		</part>
+		<part id="PartOfSpeech-Jt-NameBest" type="jtview">
+			<string field="Name" ws="best analysis"/>
+		</part>
+		<part id="PartOfSpeech-Detail-InflectableFeatsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-posEdit-PartOfSpeech-Features" />
+		</part>
+		<part id="PartOfSpeech-Detail-InflectableFeats" type="Detail">
+			<slice field="InflectableFeats" label="Inflectable Features" editor="defaultVectorReference">
+				<deParams ws="best analysis"/>
+				<chooserInfo text="The following features have been defined." textparam="AnalWs">
+					<chooserLink type="goto" label="Edit the Features" tool="featuresAdvancedEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PartOfSpeech-Detail-SubCategoriesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+		</part>
+		<part id="PartOfSpeech-Detail-SubPossibilities" type="Detail">
+			<!-- We want to display the SubPossibilities field only if the owning list has depth greater than 1 -->
+			<choice>
+				<where target="owner" is="CmPossibilityList" field="Depth" intlessthan="2">
+					<!-- do nothing! -->
+				</where>
+				<otherwise>
+					<seq field="SubPossibilities" layout="SubCategories"/>
+				</otherwise>
+			</choice>
+		</part>
+		<part id="PartOfSpeech-Jt-InflectionTemplateSection" type="jtview">
+			<para>
+				<properties>
+					<fontfamily value="&lt;default sans serif&gt;"/>
+					<forecolor value="ControlDarkDark"/>
+					<bold value="on"/>
+				</properties>
+				<lit>Inflectional Template Info</lit>
+			</para>
+		</part>
+
+		<part id="PartOfSpeech-Jt-AbbreviationPub" type="jtview">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="PartOfSpeech-Jt-NamePub" type="jtview">
+			<configureMlString field="Name"/>
+		</part>
+	</bin>
+	<bin class="MoInflAffixSlot">
+		<part id="MoInflAffixSlot-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoInflAffixSlot-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoInflAffixSlot-Jt-SlotSummary" type="jtview">
+			<lit/>
+		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotName" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<lit>&#xA0;&#xA0;</lit>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">)</lit>
+					</if>
+					<lit translate="do not translate">-</lit>
+					<lit>&#xA0;&#xA0;</lit>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotName" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<lit>&#xA0;&#xA0;</lit>
+					<lit translate="do not translate">-</lit>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">)</lit>
+					</if>
+					<lit>&#xA0;&#xA0;</lit>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotNameRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#x200F;&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">&#x200E;)&#xA0;&#xA0;</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;-</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;-(</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotNameRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#x200F;&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#x200E;-&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">&#x200E;)-&#xA0;&#xA0;</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;(</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotNameLTRinRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">)-&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotNameLTRinRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#xA0;&#xA0;-</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">)&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotNameRTLinLTR" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#xA0;&#xA0;-</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">)&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotNameRTLinLTR" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">&#xA0;&#xA0;(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="0">
+						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="1">
+						<lit translate="do not translate">)-&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-SlotContents" type="jtview">
+			<cell>
+				<properties>
+					<bordertrailing value="3"/>
+				</properties>
+				<choice>
+					<where class="MoInflAffixSlot" field="Affixes" lengthatleast="1">
+						<seq class="MoInflAffixSlot" field="Affixes" layout="AffixName"/>
+					</where>
+					<otherwise>
+						<!-- the following empty literal forces a right-click to return the slot object instead of a neighboring infl affix msa in a different slot -->
+						<lit/>
+					</otherwise>
+				</choice>
+			</cell>
+		</part>
+	</bin>
+	<bin class="MoInflAffixTemplate">
+		<part id="MoInflAffixTemplate-Jt-TemplateSummary" type="jtview">
+			<lit/>
+		</part>
+		<part id="MoInflAffixTemplate-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoInflAffixTemplate-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
+			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
+				<deParams menu="mnuInflAffixTemplate-TemplateTable"/>
+			</slice>
+		</part>
+		<part id="MoInflAffixTemplate-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
+			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
+		</part>
+		<part id="MoInflAffixTemplate-Jt-SpecialNote" type="jtview">
+			<para>
+				<lit>To edit the template table: right-click on STEM, on a slot name, or on a morpheme.</lit>
+			</para>
+		</part>
+		<part id="MoInflAffixTemplate-Detail-Final" type="Detail">
+			<slice field="Final" label="Requires more derivation" editor="Checkbox"  toggleValue="true" />
+		</part>
+		<part id="MoInflAffixTemplate-Jt-TemplateTabley" type="jtview">
+			<table columns="%ColumnCount">
+				<properties>
+					<borderbottom value="3"/>
+				</properties>
+				<row>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotName"/>
+					<cell>
+						<properties>
+							<bold value="on"/>
+							<bordertrailing value="3"/>
+						</properties>
+						<para>
+							<lit>&#xA0;&#xA0;</lit>
+							<commandIcon visibility="focused"/>
+							<lit>STEM</lit>
+							<lit>&#xA0;&#xA0;</lit>
+						</para>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotName"/>
+				</row>
+				<row>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
+					<cell>
+						<properties>
+							<bordertrailing value="3"/>
+						</properties>
+						<lit/>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
+				</row>
+			</table>
+		</part>
+		<!-- the display is inherently Left-To-Right: RTL vernacular scripts require reversed handling of the columns -->
+		<!-- see LT-4317 for the bug report -->
+		<part id="MoInflAffixTemplate-Jt-TemplateTableyRTL" type="jtview">
+			<table columns="%ColumnCount">
+				<properties>
+					<borderbottom value="3"/>
+				</properties>
+				<row>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameRTL"/>
+					<cell>
+						<properties>
+							<bold value="on"/>
+							<bordertrailing value="3"/>
+						</properties>
+						<para>
+							<lit>&#xA0;&#xA0;</lit>
+							<commandIcon visibility="focused"/>
+							<lit>STEM</lit>
+							<lit>&#xA0;&#xA0;</lit>
+						</para>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameRTL"/>
+				</row>
+				<row>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContents"/>
+					<cell>
+						<properties>
+							<bordertrailing value="3"/>
+						</properties>
+						<lit/>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContents"/>
+				</row>
+			</table>
+		</part>
+		<!-- the vernacular ws is RTL, but the analysis ws is LTR.  See LT-6239. -->
+		<part id="MoInflAffixTemplate-Jt-TemplateTableyLTRinRTL" type="jtview">
+			<table columns="%ColumnCount">
+				<properties>
+					<borderbottom value="3"/>
+				</properties>
+				<row>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameLTRinRTL"/>
+					<cell>
+						<properties>
+							<bold value="on"/>
+							<bordertrailing value="3"/>
+						</properties>
+						<para>
+							<lit>&#xA0;&#xA0;</lit>
+							<commandIcon visibility="focused"/>
+							<lit>STEM</lit>
+							<lit>&#xA0;&#xA0;</lit>
+						</para>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameLTRinRTL"/>
+				</row>
+				<row>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContents"/>
+					<cell>
+						<properties>
+							<bordertrailing value="3"/>
+						</properties>
+						<lit/>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContents"/>
+				</row>
+			</table>
+		</part>
+		<!-- the vernacular ws is LTR, but the analysis ws is RTL.  It could happen!  See LT-6239. -->
+		<part id="MoInflAffixTemplate-Jt-TemplateTableyRTLinLTR" type="jtview">
+			<table columns="%ColumnCount">
+				<properties>
+					<borderbottom value="3"/>
+				</properties>
+				<row>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameRTLinLTR"/>
+					<cell>
+						<properties>
+							<bold value="on"/>
+							<bordertrailing value="3"/>
+						</properties>
+						<para>
+							<lit>&#xA0;&#xA0;</lit>
+							<commandIcon visibility="focused"/>
+							<lit>STEM</lit>
+							<lit>&#xA0;&#xA0;</lit>
+						</para>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameRTLinLTR"/>
+				</row>
+				<row>
+					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
+					<cell>
+						<properties>
+							<bordertrailing value="3"/>
+						</properties>
+						<lit/>
+					</cell>
+					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
+				</row>
+			</table>
+		</part>
+	</bin>
+	<bin class="MoStemName">
+		<part id="MoStemName-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoStemName-Detail-AbbreviationAllA" type="Detail">
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoStemName-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoStemName-Detail-StemNameRegionsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-PartOfSpeech-StemNameRegionsSection"/>
+		</part>
+		<part id="MoStemName-Detail-StemNameRegions" type="Detail">
+			<seq field="Regions" layout="EditStemNameRegion"/>
+		</part>
+	</bin>
+	<bin class="FsFeatStrucType">
+		<part id="FsFeatStrucType-Jt-SpecialNote" type="jtview">
+			<para>
+				<properties>
+					<bold value="on"/>
+					<fontsize value="120%"/>
+				</properties>
+				<lit>We recommend that you only change this after discussing it with a consultant.</lit>
+			</para>
+		</part>
+		<part id="FsFeatStrucType-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatStrucType-Detail-AbbreviationAllA" type="Detail">
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatStrucType-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatStrucType-Detail-Features" type="Detail">
+			<slice field="Features" label="Features" editor="defaultVectorReference">
+				<deParams ws="best analysis"/>
+				<chooserInfo text="The following features have been defined." textparam="AnalWs">
+					<chooserLink type="goto" label="Edit the Features" tool="featuresAdvancedEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="FsFeatStrucType-Jt-Features" type="JtView">
+			<seq field="Features" layout="Name"/>
+		</part>
+		<part id="FsFeatStrucType-Jt-FsFeatStrucTypeBrowsePara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="blue"/>
+				</properties>
+				<string field="ShortNameTSS"/>
+			</para>
+		</part>
+	</bin>
+	<bin class="FsFeatStruc">
+		<part id="FsFeatStruc-Detail-FeatureSpecs" type="Detail">
+			<slice label="Features" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+		</part>
+		<part id="FsFeatStruc-Detail-RegionFeatureSpecs" type="Detail">
+			<slice label="Region Features" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
+		</part>
+		<part id="FsFeatStruc-Detail-Type" type="Detail">
+			<slice field="Type" label="Feature Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following feature types are available.">
+					<chooserLink type="goto" label="Edit the Feature Types" tool="featureTypesAdvancedEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="FsFeatStruc-Jt-Browse" type="jtview">
+			<string field="ShortNameTSS"/>
+		</part>
+	</bin>
+	<bin class="FsFeatureSpecification">
+		<part id="FsFeatureSpecification-Detail-Feature" type="Detail">
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatureSpecification-Detail-FeatureSpecs" type="Detail">
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatureSpecification-Jt-FeatureSummary" type="jtview">
+			<lit/>
+		</part>
+	</bin>
+	<bin class="FsClosedValue">
+		<part id="FsClosedValue-Detail-Feature" type="Detail">
+			<slice field="Feature" label="Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsClosedValue-Detail-Value" type="Detail">
+			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsClosedValue-Detail-FeatureSpecs" type="Detail">
+			<!-- I don't know why the following just comes out as a plain old atomic ref chooser -->
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analysis"/>
+				<chooserInfo text="The following features are available.">
+					<chooserLink type="goto" label="Edit the Category Inflectable Features" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsClosedValue-Jt-FeatureSummary" type="jtview">
+			<lit/>
+		</part>
+	</bin>
+	<bin class="FsComplexValue">
+		<part id="FsComplexValue-Detail-Feature" type="Detail">
+			<slice field="Feature" label="Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsComplexValue-Detail-Value" type="Detail">
+			<obj field="Value" label="Nested Features" layout="NestedInflFeats"/>
+		</part>
+		<part id="FsComplexValue-Detail-FeatureSpecs" type="Detail">
+			<!-- I don't know why the following just comes out as a plain old atomic ref chooser -->
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analysis"/>
+				<chooserInfo text="The following features are available.">
+					<chooserLink type="goto" label="Edit the Category Inflectable Features" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsComplexValue-Jt-FeatureSummary" type="jtview">
+			<lit/>
+		</part>
+	</bin>
+	<bin class="FsFeatDefn">
+		<part id="FsFeatDefn-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatDefn-Detail-AbbreviationAllA" type="Detail">
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatDefn-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatDefn-Detail-GlossAbbreviationAllA" type="Detail" visibility="never">
+			<slice field="GlossAbbreviation" label="Gloss Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatDefn-Detail-RightGlossSepAllA" type="Detail">
+			<slice field="RightGlossSep" label="Right Gloss Separator" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsFeatDefn-Jt-FsFeatDefnSummary" type="jtview">
+			<string field="Name" ws="analysis"/>
+		</part>
+		<part id="FsFeatDefn-Jt-TypeOrValues" type="jtview">
+			<lit></lit><!-- Dummy part to get the C# test for valid column layout to work. (See LT-10048.) -->
+		</part>
+	</bin>
+	<bin class="FsComplexFeature">
+		<part id="FsComplexFeature-Jt-SpecialNote" type="jtview">
+			<para>
+				<properties>
+					<bold value="on"/>
+					<fontsize value="120%"/>
+				</properties>
+				<lit>We recommend that you only change this after discussing it with a consultant.</lit>
+			</para>
+		</part>
+		<part id="FsComplexFeature-Detail-Type" type="Detail">
+			<slice field="Type" label="Type" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsComplexFeature-Jt-Kind" type="jtview">
+			<lit>Complex Feature</lit>
+		</part>
+		<part id="FsComplexFeature-Jt-TypeOrValues" type="jtview">
+			<obj field="Type" layout="FsFeatStrucTypeBrowsePara"/>
+		</part>
+	</bin>
+	<bin class="FsClosedFeature">
+		<part id="FsClosedFeature-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
+			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-FsClosedFeature-Note" />
+		</part>
+		<part id="FsClosedFeature-Detail-SpecialNote" type="detail" paramType="JtLayoutsOfThisClass">
+			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-FsClosedFeature-SpecialNote" />
+		</part>
+		<part id="FsClosedFeature-Jt-SpecialNote" type="jtview">
+			<para>
+				<properties>
+					<bold value="on"/>
+					<fontsize value="120%"/>
+				</properties>
+				<lit>We recommend that you only change this after discussing it with a consultant.</lit>
+			</para>
+		</part>
+		<part id="FsClosedFeature-Detail-ValuesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
+				   helpTopicID="khtpField-phonologicalFeaturesAdvancedEdit-ValuesSection"/>
+		</part>
+		<part id="FsClosedFeature-Detail-InflectionFeaturesValuesSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
+				   helpTopicID="khtpField-featuresAdvancedEdit-FsSymFeatVal-ValuesSection"/>
+		</part>
+	<part id="FsClosedFeature-Detail-Values" type="Detail">
+	  <seq field="Values" layout="EditValue"/>
+	</part>
+	<part id="FsClosedFeature-Detail-PhonValues" type="Detail">
+	  <seq field="Values" layout="PhonEditValue"/>
+	</part>
+	<part id="FsClosedFeature-Jt-Kind" type="jtview">
+			<lit>Feature</lit>
+		</part>
+		<part id="FsClosedFeature-Jt-TypeOrValues" type="jtview">
+			<seq field="Values" layout="FsSymFeatValBrowsePara"/>
+		</part>
+	</bin>
+	<bin class="FsSymFeatVal">
+		<part id="FsSymFeatVal-Jt-ValueSummary" type="jtview">
+			<lit/>
+		</part>
+		<part id="FsSymFeatVal-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsSymFeatVal-Detail-AbbreviationAllA" type="Detail">
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsSymFeatVal-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsSymFeatVal-Detail-GlossAbbreviationAllA" type="Detail">
+			<slice field="GlossAbbreviation" label="Gloss Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsSymFeatVal-Detail-RightGlossSepAllA" type="Detail">
+			<slice field="RightGlossSep" label="Right Gloss Separator" abbr="rgs" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="FsSymFeatVal-Jt-FsSymFeatValBrowsePara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="blue"/>
+				</properties>
+				<string field="ShortNameTSS"/>
+			</para>
+		</part>
+	</bin>
+	<bin class="MoCompoundRule">
+		<part id="MoCompoundRule-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoCompoundRule-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="MoCompoundRule-Jt-LeftMsa" type="jtview">
+			<lit></lit><!-- Dummy part to get the C# test for valid column layout to work. (See LT-10048.) -->
+		</part>
+		<part id="MoCompoundRule-Jt-RightMsa" type="jtview">
+			<lit></lit><!-- Dummy part to get the C# test for valid column layout to work. (See LT-10048.) -->
+		</part>
+		<part id="MoCompoundRule-Jt-HeadednessOrResult" type="jtview">
+			<lit></lit><!-- Dummy part to get the C# test for valid column layout to work. (See LT-10048.) -->
+		</part>
+	</bin>
+	<bin class="MoBinaryCompoundRule">
+		<part id="MoBinaryCompoundRule-Detail-BlankRightMember" type="detail">
+			<slice label="This is a dummy label" editable="no" header="true" helpTopicID="khtpField-MoCompound-RightMember" />
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-BlankLeftMember" type="detail">
+			<slice label="This is a dummy label" editable="no" header="true" helpTopicID="khtpField-MoCompound-LeftMember"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-BlankOverrideHead" type="detail">
+			<slice label="This is a dummy label" editable="no" header="true" helpTopicID="khtpField-MoCompound-OverrideHead"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-BlankResult" type="detail">
+			<slice label="This is a dummy label" editable="no" header="true" helpTopicID="khtpField-MoCompound-Result"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-LeftMsa" type="Detail">
+			<obj field="LeftMsa" label="Left MSA" layout="LeftMsa"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-RightMsa" type="Detail">
+			<obj field="RightMsa" label="Right MSA" layout="RightMsa"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-LeftMember" type="Detail">
+			<obj field="LeftMsa" label="Category" layout="Category"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-RightMember" type="Detail">
+			<obj field="RightMsa" label="Category" layout="Category"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Jt-LeftMsa" type="jtview">
+			<obj field="LeftMsa" layout="PartOfSpeech"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Jt-RightMsa" type="jtview">
+			<obj field="RightMsa" layout="PartOfSpeech"/>
+		</part>
+	</bin>
+	<bin class="MoExoCompound">
+		<part id="MoExoCompound-Detail-Result" type="Detail">
+			<obj label="Result" field="ToMsa" layout="Result"/>
+		</part>
+		<part id="MoExoCompound-Jt-HeadednessOrResult" type="jtview">
+			<obj field="ToMsa" layout="PartOfSpeechBest"/>
+		</part>
+		<part id="MoExoCompound-Detail-ToProdRestrict" type="Detail">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+	</bin>
+	<bin class="MoEndoCompound">
+		<part id="MoEndoCompound-Jt-HeadednessOrResult" type="jtview">
+			<choice>
+				<where field="HeadLast" boolequals="0">
+					<lit>Left headed</lit>
+				</where>
+				<otherwise>
+					<lit>Right headed</lit>
+				</otherwise>
+			</choice>
+		</part>
+		<part id="MoEndoCompound-Detail-OverridingMember" type="Detail">
+			<obj field="OverridingMsa" layout="Category"/>
+		</part>
+		<part id="MoEndoCompound-Detail-OverridingMsa" type="Detail">
+			<obj field="OverridingMsa" label="Overriding MSA" layout="LeftMsa"/>
+		</part>
+		<part id="MoEndoCompound-Detail-ToProdRestrict" type="Detail">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="MoEndoCompound-Jt-OverridingMsa" type="jtview">
+			<obj field="OverridingMsa" layout="PartOfSpeech"/>
+		</part>
+	</bin>
+	<bin class="MoAlloAdhocProhib">
+		<part id="MoAlloAdhocProhib-Detail-SummaryAllomorph" type="detail" paramType="JtLayoutsOfThisClass">
+			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAlloAdhocProhib-Allomorph" />
+		</part>
+		<part id="MoAlloAdhocProhib-Detail-FirstAllomorph" type="Detail">
+			<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+				<deParams displayProperty="LongName" ws="vernacular"/>
+			</slice>
+		</part>
+		<part id="MoAlloAdhocProhib-Detail-RestOfAllos">
+			<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+				<deParams displayProperty="LongName" ws="vernacular"/>
+			</slice>
+		</part>
+		<part id="MoAlloAdhocProhib-Jt-SpecialNote" type="jtview">
+			<para>
+				<lit>Be sure to set all three fields below.</lit>
+			</para>
+		</part>
+		<part id="MoAlloAdhocProhib-Jt-Type" type="jtview">
+			<lit>Allomorph</lit>
+		</part>
+		<part id="MoAlloAdhocProhib-Jt-OtherItems" type="jtview">
+			<seq field="RestOfAllos" layout="MoFormBrowsePara"/>
+		</part>
+		<part id="MoAlloAdhocProhib-Jt-CannotOccur" type="jtview">
+			<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+			<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+		</part>
+		<part id="MoAlloAdhocProhib-Jt-KeyItem" type="jtview">
+			<obj field="FirstAllomorph" layout="MoFormBrowse"/>
+		</part>
+		<part id="MoAlloAdhocProhib-Jt-AlloAdhocSummary" type="jtview">
+			<lit/>
+		</part>
+	</bin>
+	<bin class="MoAdhocProhib">
+		<part id="MoAdhocProhib-Detail-Adjacency" type="Detail">
+			<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" menu="mnuDataTree-Help">
+				<deParams>
+					<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+					<stringList group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+				</deParams>
+			</slice>
+		</part>
+		<!-- The next 4 parts will not be used as the code will redirect to the corresponding parts on the subclasses -->
+		<!-- but they need to exist to get the browse view to initialize properly.  See LT-8992. -->
+		<part id="MoAdhocProhib-Jt-Type" type="jtview">
+			<lit>UNKNOWN (DO NOT TRANSLATE)</lit>
+		</part>
+		<part id="MoAdhocProhib-Jt-OtherItems" type="jtview">
+			<lit>UNKNOWN (DO NOT TRANSLATE)</lit>
+		</part>
+		<part id="MoAdhocProhib-Jt-CannotOccur" type="jtview">
+			<lit>UNKNOWN (DO NOT TRANSLATE)</lit>
+		</part>
+		<part id="MoAdhocProhib-Jt-KeyItem" type="jtview">
+			<lit>UNKNOWN (DO NOT TRANSLATE)</lit>
+		</part>
+	</bin>
+	<bin class="MoMorphAdhocProhib">
+		<part id="MoMorphAdhocProhib-Detail-SummaryMorpheme" type="detail" paramType="JtLayoutsOfThisClass">
+			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAlloAdhocProhib-Morpheme" />
+		</part>
+		<part id="MoMorphAdhocProhib-Jt-Type" type="jtview">
+			<lit>Morpheme</lit>
+		</part>
+		<part id="MoMorphAdhocProhib-Jt-OtherItems" type="jtview">
+			<seq field="RestOfMorphs" layout="EntrySummaryAdHocPara"/>
+		</part>
+		<part id="MoMorphAdhocProhib-Jt-CannotOccur" type="jtview">
+			<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+			<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+		</part>
+		<part id="MoMorphAdhocProhib-Jt-KeyItem" type="jtview">
+			<obj field="FirstMorpheme" layout="EntrySummaryAdHoc"/>
+		</part>
+		<part id="MoMorphAdhocProhib-Detail-FirstMorpheme" type="Detail">
+			<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+				<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
+			</slice>
+		</part>
+		<part id="MoMorphAdhocProhib-Detail-RestOfMorphs">
+			<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+				<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
+			</slice>
+		</part>
+		<part id="MoMorphAdhocProhib-Jt-SpecialNote" type="jtview">
+			<para>
+				<lit>Be sure to set all three fields below.</lit>
+			</para>
+		</part>
+		<part id="MoMorphAdhocProhib-Jt-MorphAdhocSummary" type="jtview">
+			<lit/>
+		</part>
+	</bin>
+	<bin class="MoAdhocProhibGr">
+		<part id="MoAdhocProhibGr-Jt-Type" type="jtview">
+			<lit>Group</lit>
+		</part>
+		<part id="MoAdhocProhibGr-Jt-OtherItems" type="jtview">
+			<lit>Group</lit>
+		</part>
+		<part id="MoAdhocProhibGr-Jt-CannotOccur" type="jtview">
+			<string field="Name" ws="analysis"/>
+		</part>
+		<part id="MoAdhocProhibGr-Jt-KeyItem" type="jtview">
+			<lit>Group</lit>
+		</part>
+	<part id="MoAdhocProhibGr-Detail-NestedGroupName" type="Detail">
+	  <slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
+	</part>
+		<part id="MoAdhocProhibGr-Detail-Name" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoAdhocProhibGr-Detail-Description" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoAdhocProhibGr-Detail-MembersSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-MembersSection" header="true"/>
+		</part>
+		<part id="MoAdhocProhibGr-Detail-Members" type="Detail">
+			<seq field="Members" layout="EditAdHocGroup"/>
+		</part>
+		<part id="MoAdhocProhibGr-Detail-IndentedMembers" type="Detail">
+			<seq field="Members" layout="EditAdHocGroup" indent="true"/>
+		</part>
+	</bin>
+	<bin class="MoInflClass">
+	   <part id="MoInflClass-Detail-NameAllA" type="Detail">
+		  <slice field="Name" label="Name" editor="multistring"  ws="all analysis" menu="mnuDataTree-Help"/>
+	   </part>
+	   <part id="MoInflClass-Detail-AbbreviationAllA" type="Detail">
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="MoInflClass-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+	   <part id="MoInflClass-Detail-SubClassesSection" type="Detail" paramType="LiteralString">
+		  <slice editor="summary" layout="default" editable="no" menu="mnuDataTree-Help" header="true" field="Subclasses"/>
+	   <!--   <slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/> -->
+	   </part>
+	   <part id="MoInflClass-Detail-SubClasses" type="Detail">
+		  <seq field="Subclasses" layout="SubClassesAllA"/>
+		  <!-- We want to display the SubPossibilities field only if the owning list has depth greater than 1 -->
+		  <!--  Do we need this here like in subcategories??
+		  <choice>
+			 <where target="owner" is="CmPossibilityList" field="Depth" intlessthan="2">
+		  -->
+				<!-- do nothing! -->
+		  <!--
+			 </where>
+			 <otherwise>
+				<seq field="SubPossibilities" layout="SubCategories"/>
+			 </otherwise>
+			 </choice>
+		  -->
+	   </part>
+	   <part id="MoInflClass-Jt-NameBest" type="jtview">
+		   <string field="Name" ws="best analysis"/>
+	   </part>
+
+
+	</bin>
+	<bin class="PhPhoneme">
+		<part id="PhPhoneme-Detail-NameAllV" type="Detail">
+			<slice field="Name" label="Refer to as" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help"/>
+		</part>
+	<part id="PhPhoneme-Detail-BasicIPASymbol" type="Detail">
+	  <slice field="BasicIPASymbol" label="IPA Symbol" editor="customWithParams" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.BasicIPASymbolSlice" ws="pronunciation" menu="mnuDataTree-Help"/>
+	</part>
+	<part id="PhPhoneme-Jt-BasicIPASymbol" type="jtview">
+	  <string field="BasicIPASymbol" />
+	</part>
+	<part id="PhPhoneme-Jt-Name" type="jtview">
+	  <span>
+	  <string field="Name" ws="vernacular"/>
+		<lit>  </lit> <!-- this is a non-breaking space so it will still show; regular spaces are eaten -->
+	  </span>
+	</part>
+	<part id="PhPhoneme-Detail-Features" type="Detail">
+	  <slice field="Features" label="Phonological Features" editor="customWithParams" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.PhonologicalFeatureListDlgLauncherSlice">
+		  <deParams ws="best vernacular"/>
+		<chooserInfo text="The following phonological features have been defined for {0}." textparam="VernWs" guicontrol="PhonologicalFeaturesFlatList">
+		  <chooserLink type="goto" label="Edit the Phonological Features" tool="phonologicalFeaturesAdvancedEdit"/>
+		</chooserInfo>
+	  </slice>
+	</part>
+	<part id="PhPhoneme-Detail-RepresentationsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+		</part>
+	</bin>
+	<bin class="PhNaturalClass">
+		<part id="PhNaturalClass-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis"/>
+		</part>
+		<part id="PhNaturalClass-Detail-AbbreviationAllA" type="Detail">
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis"/>
+		</part>
+		<part id="PhNaturalClass-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
+		</part>
+	</bin>
+	<bin class="PhNCSegments">
+		<part id="PhNCSegments-Detail-Segments" type="Detail">
+			<slice field="Segments" label="Phonemes" editor="defaultVectorReference">
+				<deParams ws="best vernacular"/>
+				<chooserInfo text="The following phonemes have been defined for {0}." textparam="VernWs" guicontrol="PhonemeFlatList">
+					<chooserLink type="goto" label="Edit the Phonemes" tool="phonemeEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhNCSegments-Jt-Segments" type="JtView">
+			<seq field="Segments" layout="Name"/>
+		</part>
+	</bin>
+
+  <bin class="PhNCFeatures">
+	<part id="PhNCFeatures-Detail-Features" type="Detail">
+	<slice field="Features" label="Phonological Features" editor="customWithParams" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.PhonologicalFeatureListDlgLauncherSlice">
+	  <deParams ws="best vernacular"/>
+	  <chooserInfo text="The following phonological features have been defined for {0}." textparam="VernWs" guicontrol="PhonologicalFeaturesFlatList">
+		<chooserLink type="goto" label="Edit the Phonological Features" tool="phonologicalFeaturesAdvancedEdit"/>
+	  </chooserInfo>
+	</slice>
+  </part>
+	<part id="PhNCFeatures-Jt-Segments" type="JtView">
+	  <span>
+	   <obj field="Features" layout="PhonFeats"/>
+	  </span>
+	</part>
+  </bin>
+
+  <bin class="PhEnvironment">
+		<part id="PhEnvironment-Detail-NameAllA" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis"/>
+		</part>
+		<part id="PhEnvironment-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
+		</part>
+		<part id="PhEnvironment-Detail-StringRepresentation" type="detail">
+			<slice field="StringRepresentation" label="String Representation" editor="CustomWithParams" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.PhEnvStrRepresentationSlice" menu="mnuDataTree-StringRepresentation-Insert">
+				<deParams ws="vernacular"/>
+			</slice>
+		</part>
+		<part id="PhEnvironment-Jt-StringRepresentation" type="JtView">
+			<string field="StringRepresentation" ws="vernacular"/>
+		</part>
+		<part id="PhEnvironment-Jt-publishEnvironment" type="JtView">
+			<string field="StringRepresentation"/>
+		</part>
+
+	</bin>
+
+	<bin class="PhSegmentRule">
+		<part id="PhSegmentRule-Jt-Order" type="jtview">
+			<int field="OrderNumber"/>
+		</part>
+		<part id="PhSegmentRule-Detail-NameAllA" type="detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis"/>
+		</part>
+		<part id="PhSegmentRule-Detail-DescriptionAllA" type="detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
+		</part>
+		<part id="PhSegmentRule-Detail-OrderNumber" type="detail">
+			<slice field="OrderNumber" label="Order Number" editor="int"/>
+		</part>
+		<part id="PhSegmentRule-Detail-Direction" type="detail">
+			<slice field="Direction" label="Direction" editor="enumComboBox">
+				<deParams>
+					<stringList group="Linguistics/Morphology/RuleDirection" ids="LeftToRightIterative, RightToLeftIterative, Simultaneous"/>
+				</deParams>
+			</slice>
+		</part>
+	</bin>
+
+	<bin class="PhRegularRule">
+		<part id="PhRegularRule-Detail-RuleFormulaSection" type="detail" paramType="LiteralString">
+			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
+				   helpTopicID="khtpField-PhonologicalRuleEdit-PhRegularRule-RuleFormulaSection"/>
+		</part>
+		<part id="PhRegularRule-Detail-RuleFormula" type="detail">
+			<seq field="RightHandSides" layout="Edit"/>
+		</part>
+	</bin>
+
+	<bin class="PhSegRuleRHS">
+		<part id="PhSegRuleRHS-Detail-RuleFormula" type="detail">
+			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RegRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhRegularRule-RuleFormula">
+				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="RuleEnvironmentFlatList">
+					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+	</bin>
+
+	<bin class="PhMetathesisRule">
+		<part id="PhMetathesisRule-Detail-RuleFormulaSection" type="detail" paramType="LiteralString">
+			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+		</part>
+		<part id="PhMetathesisRule-Detail-RuleFormula" type="detail">
+			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
+		</part>
+	</bin>
+
+	<bin class="PhTerminalUnit">
+		<part id="PhTerminalUnit-Jt-Name" type="JtView">
+			<string field="Name" ws="vernacular"/>
+		</part>
+		<part id="PhTerminalUnit-Detail-NameAllV" type="Detail">
+			<slice field="Name" label="Name" editor="multistring" ws="all vernacular"/>
+		</part>
+		<part id="PhTerminalUnit-Detail-DescriptionAllA" type="Detail">
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
+		</part>
+	</bin>
+	<bin class="PhCode">
+		<part id="PhCode-Detail-Representation" type="Detail">
+			<slice field="Representation" label="Grapheme" editor="multistring" ws="all vernacular" menu="mnuDataTree-Phoneme-Code"/>
+		</part>
+		<part id="PhCode-Jt-Representation" type="JtView">
+			<string field="Representation" ws="vernacular" menu="mnuDataTree-Phoneme-Code"/>
+		</part>
+	</bin>
+
+	<!-- STUFF ADDED FOR THE NEW CONFIGURATION -->
+
+	<bin class="MoForm">
+		<part id="MoForm-Jt-MorphTypeConfig">
+			<obj field="MorphType" layout="publishStemMorphType"/>
+		</part>
+		<part id="MoForm-Jt-FormEnvPub">
+			<ifnot is="MoAffixProcess">
+				<seq field="PhoneEnv" layout="publishEnvironment"/>
+			</ifnot>
+		</part>
+		<part id="MoForm-Jt-$fieldName" type="jtview">
+			<!-- for ChildPartGenerator -->
+			<obj class="MoForm" field="OwningEntry" layout="$fieldName"/>
+		</part>
+		<part id="MoForm-Jt-CustomMultiStringForAllomorph_$fieldName" type="jtview">
+			<string field="$fieldName" ws="$wsName"/>
+		</part>
+		<part id="MoForm-Jt-CustomSimpleStringForAllomorph_$fieldName" type="jtview">
+			<string field="$fieldName"/>
+		</part>
+	</bin>
+
+	<bin class="MoMorphSynAnalysis">
+		<part id="MoMorphSynAnalysis-Jt-PartOfSpeechPub" type="jtview">
+			<configureMlString field="MLPartOfSpeech" />
+		</part>
+
+		<part id="MoMorphSynAnalysis-Jt-SlotsConfig" type="jtview">
+			<seq field="Slots" layout="publishStem" inheritSeps="true" targetclass="MoInflAffixSlot"/>
+		</part>
+
+		<part id="MoMorphSynAnalysis-Jt-InflectionClassPub" type="jtview">
+			<configureMlString field="MLInflectionClass" />
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-FeaturesPub" type="jtview">
+			<string field="FeaturesTSS" />
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-ExceptionFeaturesPub" type="jtview">
+			<string field="ExceptionFeaturesTSS" />
+		</part>
+	</bin>
+
+	<bin class="MoMorphType">
+		<part id="MoMorphType-Jt-AbbreviationPub">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="MoMorphType-Jt-NamePub">
+			<configureMlString field="Name"/>
+		</part>
+	</bin>
+
+	<bin class="MoInflAffixSlot">
+		<part id="MoInflAffixSlot-Jt-NamePub" type="jtview">
+			<configureMlString class="MoInflAffixSlot" field="Name"/>
+		</part>
+	</bin>
+
+</PartInventory>

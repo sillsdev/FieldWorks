@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+	<Module Id="Set_PATH_Environment_Variable" Guid="CE24DB4B-6A1C-4BEC-91A8-432FB75AECE7" Language="0" Version="1.0">
+		<Package Id="????????-????-????-????-????????????" Keywords="MergeModule, MSI, PATH" Description="Sets the PATH Environment variable for Encoding Converters" Manufacturer="SIL International" InstallerVersion="110" Platforms="Intel" Languages="0" Compressed="yes" SummaryCodepage="1252" />
+		<IgnoreModularization Type="Directory" Name="CommonFilesFolder"/>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+		<Component Id="PATH" Guid="{0A0ABCDA-A90F-4207-818C-19C2FB83BA09}">
+			<Environment Id="PATH" Name="PATH" Action="set" System="yes" Part="first" Value="[CommonFilesFolder]SIL" />
+		</Component>
+		</Directory>
+	</Module>
+</Wix>

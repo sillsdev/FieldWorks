@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="khtpTeStylesGeneral" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Style/Style_General_tab.htm</value>
+	<comment>help topic ID for style dialog box, general tab</comment>
+  </data>
+  <data name="khtpTeStylesFont" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Style/Style_Font_tab.htm</value>
+	<comment>help topic ID for style dialog box, font tab</comment>
+  </data>
+  <data name="khtpTeStylesParagraph" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Style/Style_Paragraph_tab.htm</value>
+	<comment>help topic ID for style dialog box, paragraph tab</comment>
+  </data>
+  <data name="khtpTeStylesBullets" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Style/Style_Bullets_and_Numbering_tab.htm</value>
+	<comment>help topic ID for style dialog box, bullets/numbering tab</comment>
+  </data>
+  <data name="khtpTeStylesBorder" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Style/Style_Border_tab.htm</value>
+	<comment>help topic ID for style dialog box, border tab</comment>
+  </data>
+  <data name="khtpFwNewLangProjHelpTopic" xml:space="preserve">
+	<value>User_Interface/Menus/File/Create_a_new_Fieldworks_project.htm</value>
+	<comment>help topic for new language project dialog</comment>
+  </data>
+  <data name="khtpSFMWizardStep1" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Step_1_of_5_Overview.htm</value>
+	<comment>help topic ID for import standard format step 1</comment>
+  </data>
+  <data name="khtpSFMWizardStep2" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Step_2_of_5_Project_Type.htm</value>
+	<comment>help topic ID for speciying format of data to import</comment>
+  </data>
+  <data name="khtpSFMWizardStep3para" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Step_3_of_5_Project_Location.htm</value>
+  </data>
+  <data name="khtpSFMWizardStep3list" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Step_3_of_5_Project_Location.htm</value>
+	<comment>help topic ID for list of standard format files to import</comment>
+  </data>
+  <data name="khtpSFMWizardStep4Map" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Step_4_of_5_Mappings.htm</value>
+	<comment>help topic ID for specifying format marker mappings</comment>
+  </data>
+  <data name="khtpSFMWizardStep4Map-SingleAdditionalMapping" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Additional_Mapping.htm</value>
+	<comment>help topic ID for add character mappings dialog</comment>
+  </data>
+  <data name="khtpSFMWizardStep4Map-Modify" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Modify_Mapping.htm</value>
+	<comment>help topic ID for modifying character mappings</comment>
+  </data>
+  <data name="khtpSFMWizardStep5" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Standard_Format_Import_Setup/Step_5_of_5_Finish.htm</value>
+  </data>
+  <data name="khtpImportExistingBookOptions" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Options_for_Importing_Existing_Book.htm</value>
+	<comment>help topic ID for importing existing book options</comment>
+  </data>
+  <data name="UserHelpFile" xml:space="preserve">
+	<value>\Helps\FieldWorks_Translation_Editor_Help.chm</value>
+	<comment>Do not translate (if help file is localized and given a new name, then indicate the new name here)</comment>
+  </data>
+  <data name="khtpScrProp-ChapterVerseNum" xml:space="preserve">
+	<value>User_Interface/Menus/File/Properties/Scripture_Properties_Chapter_Verse_Numbers_tab.htm</value>
+	<comment>help topic ID for add chapter/verse numbers</comment>
+  </data>
+  <data name="khtpScrProp-Footnotes" xml:space="preserve">
+	<value>User_Interface/Menus/File/Properties/Scripture_Properties_Footnotes_tab.htm</value>
+	<comment>help topic ID for scripture properties footnotes dialog</comment>
+  </data>
+  <data name="khtpGoToReference" xml:space="preserve">
+	<value>User_Interface/Menus/Reference/Go_To_Reference.htm</value>
+	<comment>help topic ID for go to a reference dialog</comment>
+  </data>
+  <data name="khtpBookFilter" xml:space="preserve">
+	<value>User_Interface/Menus/View/Filter_by_Book.htm</value>
+	<comment>help topic ID for book filter dialog</comment>
+  </data>
+  <data name="khtpSymbolChoose" xml:space="preserve">
+	<value>User_Interface/Menus/File/Properties/Custom_Symbol.htm</value>
+	<comment>help topic ID for Custom Symbol dialog</comment>
+  </data>
+  <data name="khtpInsertNote" xml:space="preserve">
+	<value>Help_topic_does_not_exist.htm</value>
+	<comment>help topic ID for insert note dialog</comment>
+  </data>
+  <data name="khtpUserProperties-DataAccess" xml:space="preserve">
+	<value>Help_topic_does_not_exist.htm</value>
+  </data>
+  <data name="khtpFind" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_and_Replace/Find.htm</value>
+	<comment>help topic ID for find dialog</comment>
+  </data>
+  <data name="khtpReplace" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_and_Replace/Replace.htm</value>
+	<comment>help topic ID for replace dialog</comment>
+  </data>
+  <data name="khptBookProperties" xml:space="preserve">
+	<value>User_Interface/Menus/File/Properties/Book_Properties.htm</value>
+	<comment>help topic ID for book properties dialog</comment>
+  </data>
+  <data name="khtpOptionsDraftView" type="">
+	<value>User_Interface/Menus/Tools/Options/Options_Draft_View_tab.htm</value>
+	<comment>help topic ID for tools/options dialog</comment>
+  </data>
+  <data name="khtpOptionsStyle" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Options/Options_Styles_tab.htm</value>
+	<comment>help topic ID for tools/options dialog</comment>
+  </data>
+  <data name="khtpOptionsGeneral" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Options/Options_General_tab.htm</value>
+	<comment>help topic ID for tools/options dialog, Dialogs tab</comment>
+  </data>
+  <data name="khtpOptionsAdvanced" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Options/Options_Advanced_tab.htm</value>
+	<comment>help topic ID for tools/options dialog, Advanced tab</comment>
+  </data>
+  <data name="khtpECProperties" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Properties_tab.htm</value>
+	<comment>help topic ID for Encoding Converters dialog box, Properties tab</comment>
+  </data>
+  <data name="khtpECTest" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Test_tab.htm</value>
+	<comment>help topic ID for Encoding Converters dialog box, Test tab</comment>
+  </data>
+  <data name="khtpECAdvanced" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Advanced_tab.htm</value>
+	<comment>help topic ID for Encoding Converters dialog box, Advanced tab</comment>
+  </data>
+  <data name="khtpPrint" xml:space="preserve">
+	<value>User_Interface/Menus/File/Print.htm</value>
+	<comment>Do not translate</comment>
+  </data>
+  <data name="khtpExport" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_overview.htm</value>
+	<comment>help topic ID for Export</comment>
+  </data>
+  <data name="khtpExportRTF" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_Document_RTF.htm</value>
+	<comment>help topic ID for Export RTF</comment>
+  </data>
+  <data name="khtpExportTbxUSFM" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_Standard_Format_USFM-Toolbox.htm</value>
+	<comment>help topic ID for Export USFM-Toolbox</comment>
+  </data>
+  <data name="khtpExportPtxUSFM" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_Standard_Format_USFM-Paratext.htm</value>
+	<comment>help topic ID for Export USFM-Paratext</comment>
+  </data>
+  <data name="khtpExportXML" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_Open_XML_for_Editing_Scripture.htm</value>
+	<comment>help topic ID for Export XML</comment>
+  </data>
+  <data name="khtpExportXHTML" xml:space="preserve">
+	<value>Help_topic_does_not_exist.htm</value>
+	<comment>help topic ID for Export XHTML</comment>
+  </data>
+  <data name="khtpHeaderFooterSetup" xml:space="preserve">
+	<value>User_Interface/Menus/View/Header_Footer_Setup.htm</value>
+	<comment>help topic ID for the header footer setup dialog</comment>
+  </data>
+  <data name="khtpModifyHeaderFooterSet" xml:space="preserve">
+	<value>User_Interface/Menus/View/Modify_Headers_and_Footers.htm</value>
+	<comment>help topic ID for the header footer set modify dialog</comment>
+  </data>
+  <data name="khtpEmptyScripture" xml:space="preserve">
+	<value>User_Interface/Menus/File/Empty_Scripture.htm</value>
+	<comment>help topic ID for the empty scripture dialog</comment>
+  </data>
+  <data name="khtpImportDialog" xml:space="preserve">
+	<value>Beginning_Tasks/Import_Standard_Format/Import_Standard_Format.htm</value>
+	<comment>help topic ID for the import dialog</comment>
+  </data>
+  <data name="khtpSavedVersionsDialog" xml:space="preserve">
+	<value>Basic_Tasks/Comparing_and_Merging_Versions/Saved_and_Imported_Versions.htm</value>
+	<comment>help topic ID for Saved Versions dialog box</comment>
+  </data>
+  <data name="khtpImportReviewDifferences" xml:space="preserve">
+	<value>Basic_Tasks/Comparing_and_Merging_Versions/Compare_and_Merge_Original_and_Imported_Versions.htm</value>
+	<comment>help topic ID for Compare and Merge Original and Imported Versions dialog box</comment>
+  </data>
+  <data name="khtpArchiveReviewDifferences" xml:space="preserve">
+	<value>Basic_Tasks/Comparing_and_Merging_Versions/Compare_and_Merge_Versions.htm</value>
+	<comment>help topic ID for Compare and Merge Saved and Current Versions dialog box</comment>
+  </data>
+  <data name="khtpSaveVersionDialog" xml:space="preserve">
+	<value>Basic_Tasks/Comparing_and_Merging_Versions/Save_Version.htm</value>
+	<comment>help topic ID for Save Version dialog</comment>
+  </data>
+  <data name="khtpDictionaryEntry" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Find_in_Dictionary.htm</value>
+	<comment>help topic ID for the Dictionary Entry dialog (was User_Interface/Menus/Tools/Dictionary_entry.htm)</comment>
+  </data>
+  <data name="khtpBackTranslationWritingSystem" xml:space="preserve">
+	<value>User_Interface/Menus/View/Back_Translation_Views/Back_Translation_Writing_System.htm</value>
+	<comment>help topic ID for the dialog where user chooses the back translation writing system</comment>
+  </data>
+  <data name="khtpScrNoteCategoriesChooser" xml:space="preserve">
+	<value>Basic_Tasks/Consultant_and_Translator_Notes/Scripture_Note_Categories_Chooser.htm</value>
+	<comment>help topic ID for Scripture Note Categories Chooser dialog box</comment>
+  </data>
+  <data name="khtpPictureProperties" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Picture_Properties.htm</value>
+	<comment>help topic ID for the picture properties dialog</comment>
+  </data>
+  <data name="khtpMoveOrCopyFiles" xml:space="preserve">
+	<value>User_Interface/Menus/File/Project_Properties/Move_Or_Copy_Files.htm</value>
+	<comment>help topic ID for the Move or Copy Files? dialog</comment>
+  </data>
+  <data name="khtpMoveOrCopyFile" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Move_Or_Copy_File.htm</value>
+	<comment>help topic ID for the Move or Copy File? dialog</comment>
+  </data>
+  <data name="khtpScrProp-FootnoteSequenceOptions" xml:space="preserve">
+	<value>User_Interface/Menus/File/Properties/Footnote_Sequence_Options.htm</value>
+	<comment>help topic ID for Scripture Properties/Footnote/Footnote Sequence Options</comment>
+  </data>
+  <data name="khtpImportedBooks" xml:space="preserve">
+	<value>Beginning_Tasks/Imported_Books.htm</value>
+	<comment>help topic ID for the Merge Imported Scripture dialog</comment>
+  </data>
+  <data name="khtpScrChecks" xml:space="preserve">
+	<value>User_Interface/Menus/View/Checking_Views/Editorial_Checks_view.htm</value>
+	<comment>help topic ID for Scripture checks dialog</comment>
+  </data>
+  <data name="khtpAnnotationForIgnoredInconsistency" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Annotation_for_Ignored_Inconsistency.htm</value>
+	<comment>help topic ID for Annotation for Ignored Inconsistency dialog box (in Editorial Checks view)</comment>
+  </data>
+  <data name="khtpScrChecksChapterVerse" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Chapter_and_Verse_Numbers/Chapter_and_Verse_Numbers_check.htm</value>
+	<comment>help topic ID for Chapter Verse Check</comment>
+  </data>
+  <data name="khtpScrChecksCharacters" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Characters/Characters_check.htm</value>
+	<comment>help topic ID for Characters Scripture Check</comment>
+  </data>
+  <data name="khtpScrChecksMatchingPunctPairs" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Matching_Punctuation_Pairs/Matching_Punctuation_Pairs_check.htm</value>
+	<comment>help topic ID for Matching Punctuation Pairs Check</comment>
+  </data>
+  <data name="khtpScrChecksMixedCapitalization" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Mixed_Capitalization/Mixed_Capitalization_check.htm</value>
+	<comment>help topic ID for Mixed Capitalization Check</comment>
+  </data>
+  <data name="khtpScrChecksOverview" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Checking_Editorial_Consistency_overview.htm</value>
+	<comment>help topic ID for scripture checks overview topic</comment>
+  </data>
+  <data name="khtpScrChecksPunctuationPatterns" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Punctuation_Patterns/Punctuation_Patterns_check.htm</value>
+	<comment>help topic ID for Punctuation Patterns Check</comment>
+  </data>
+  <data name="khtpScrChecksRepeatedWords" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Repeated_Words/Repeated_Words_check.htm</value>
+	<comment>help topic ID for Repeated Words Check</comment>
+  </data>
+  <data name="khtpScrChecksCapitalization" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Capitalization/Capitalization_check.htm</value>
+	<comment>help topic ID for Uncapitalized Styles Check</comment>
+  </data>
+  <data name="khtpScrChecksUndocumented" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Undocumented_check.htm</value>
+	<comment>help topic ID for checks with no help topic</comment>
+  </data>
+  <data name="khtpScrChecksQuotationMarks" xml:space="preserve">
+	<value>Basic_Tasks/Checking_Editorial_Consistency/Quotation_Marks/Quotation_Marks_check.htm</value>
+	<comment>help topic ID for Quotation Marks Check</comment>
+  </data>
+  <data name="khtpScrNoteMultiCriteriaFilterChooser" xml:space="preserve">
+	<value>Basic_Tasks/Consultant_and_Translator_Notes/Filter_by_Multiple_Criteria.htm</value>
+	<comment>help topic ID for Scripture Note multiple criteria chooser filter dialog box</comment>
+  </data>
+  <data name="khtpPunctuationMatchingPairs" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Punctuation_Usage/Punctuation_Usage_Matching_Pairs_tab.htm</value>
+	<comment>Help topic ID for Punctuation dialog box, Matching Pairs tab</comment>
+  </data>
+  <data name="khtpPunctuationPatterns" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Punctuation_Usage/Punctuation_Usage_Punctuation_Patterns_tab.htm</value>
+	<comment>Help topic ID for Punctuation dialog box, Punctuation Patterns tab</comment>
+  </data>
+  <data name="khtpPunctuationQuotationMarks" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Punctuation_Usage/Punctuation_Usage_Quotation_Marks_tab.htm</value>
+	<comment>Help topic ID for Punctuation dialog box, Quotation Marks tab</comment>
+  </data>
+  <data name="khtpValidCharsTabBasedOn" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Valid_Characters/Valid_Characters_Based_On_tab.htm</value>
+	<comment>Help topic ID for valid characters dialog box</comment>
+  </data>
+  <data name="khtpValidCharsTabData" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Valid_Characters/Valid_Characters_From_Data_tab.htm</value>
+	<comment>Help topic ID for valid characters dialog box</comment>
+  </data>
+  <data name="khtpValidCharsTabManual" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Valid_Characters/Valid_Characters_Manual_Entry_tab.htm</value>
+	<comment>Help topic ID for valid characters dialog box</comment>
+  </data>
+  <data name="khtpImportXML" xml:space="preserve">
+	<value>Beginning_Tasks/Import_XML/Import_Open_XML_for_Editing_Scripture.htm</value>
+	<comment>help topic ID for Import XML</comment>
+  </data>
+  <data name="khtpWsConverters" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Converters_tab.htm</value>
+	<comment>help topic ID for writing system properties dialog box.</comment>
+  </data>
+  <data name="khtpWsFonts" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Fonts_tab.htm</value>
+	<comment>help topic ID for writing system properties dialog box.</comment>
+  </data>
+  <data name="khtpWsGeneral" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_General_tab.htm</value>
+	<comment>help topic ID for writing system properties dialog box.</comment>
+  </data>
+  <data name="khtpWsKeyboard" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Keyboard_tab.htm</value>
+	<comment>help topic ID for writing system properties dialog box.</comment>
+  </data>
+  <data name="khtpWsPUACharacters" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Writing_System_Properties_Characters_tab.htm</value>
+	<comment>help topic ID for writing system properties dialog box.</comment>
+  </data>
+  <data name="khtpTeNotesWndHelp" xml:space="preserve">
+	<value>Basic_Tasks/Consultant_and_Translator_Notes/Translation_Editor_Notes.htm</value>
+	<comment>help topic ID for the notes window.</comment>
+  </data>
+  <data name="khtpOptionsInterface" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Options/Options_Interface_tab.htm</value>
+	<comment>help topic ID for tools/options dialog, Interface tab</comment>
+  </data>
+  <data name="khtpCategoryFilterChooser" xml:space="preserve">
+	<value>Basic_Tasks/Consultant_and_Translator_Notes/Filter_by_Category.htm</value>
+	<comment>help topic ID for the filter by category dialog box.</comment>
+  </data>
+  <data name="khtpProblemsWithFootnotesOrPicturesDialog" xml:space="preserve">
+	<value>User_Interface/Menus/File/Problems_with_Footnotes_or_Pictures.htm</value>
+	<comment>Help topic ID for Problems with Footnotes or Pictures dialog box.</comment>
+  </data>
+  <data name="khtpWsFromPastedTextDlg" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Add_Writing_Systems_from_Pasted_Text.htm</value>
+	<comment>help topic ID for dialog that comes up when pasting text with writing systems not in the current project</comment>
+  </data>
+</root>

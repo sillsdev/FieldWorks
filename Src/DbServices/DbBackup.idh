@@ -1,0 +1,87 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: DbBackup.idh
+Responsibility: Alistair Imrie
+Last reviewed: Not yet.
+Description:
+	Defines the following interface:
+		DIFwBackupDb - Use this interface to implement Backup and Reminder functions.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+import "unknwn.idl";
+
+/*******************************************************************************************
+	Interface DIFwBackupDb (dual interface)
+
+	Use this interface to implement Backup and Reminder functions.
+
+	@h3{When to implement}
+	The standard implementation should suffice.
+
+	@h3{When to use}
+	When you want to do a backup, or let the user configure and/or invoke a backup or
+	restore.
+	This can also be used by Jscript and VBscript programs, which will be triggered by the
+	Windows Task Scheduler.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_FwBackup or CreateInstance() on a smart pointer.
+	Always use CLSCTX_INPROC_SERVER, so you can pass a pointer to your AfDbApp in Init().
+
+	@h3{Hungarian: bkup}
+*******************************************************************************************/
+DeclareDualInterface(FwBackupDb, BD550B83-40F0-48eb-966E-9EECB6D7AA98)
+{
+	// Initialize:
+	// @param pbkupd Pointer to a DbApp host application derived from IBackupDelegates.
+	// @param hwndParent Parent window to use for dialogs etc.
+	HRESULT Init(
+		[in] IBackupDelegates * pbkupd,
+		[in] int hwndParent);
+
+	// See if a scheduled backup has been missed, and offer to do it if so:
+	// @param phtprovHelpUrls pointer to an IHelpTopicProvider to retrieve app-specific help
+	// strings.
+	HRESULT CheckForMissedSchedules(
+		[in] IUnknown * phtprovHelpUrls);
+
+	// Perform backup of databases:
+	HRESULT Backup();
+
+	// Check if any projects need backing up, and if so, remind user it's time to back up.
+	HRESULT Remind();
+
+	// Allow user to configure backups, and/or do a restore:
+	// @param phtprovHelpUrls pointer to an IHelpTopicProvider to retrieve app-specific help
+	// strings.
+	// @param fShowRestore True if restore tab should be active initially.
+	// @param pnUserAction [out] Represents what happened. Values are:
+	//	0 - Unknown error,
+	//	1 - User closed dialog with no other action,
+	//	2 - User instigated a Backup which ran successfully,
+	//	3 - User instigated a Backup which failed,
+	//	4 - User instigated a Restore which ran successfully,
+	//	5 - User instigated a Restore which failed.
+	HRESULT UserConfigure(
+		[in] IUnknown * phtprovHelpUrls,
+		[in] ComBool fShowRestore,
+		[out,retval] int * pnUserAction);
+	// Must call when done, and before creating another instance.
+	HRESULT Close();
+};
+
+/***********************************************************************************************
+	CoClass definitions.
+***********************************************************************************************/
+#ifndef NO_COCLASSES
+
+DeclareCoClass(FwBackup, 0783E03E-5208-4d71-9D98-3D4974C8E633)
+{
+	interface DIFwBackupDb;
+};
+
+#endif // NO_COCLASSES

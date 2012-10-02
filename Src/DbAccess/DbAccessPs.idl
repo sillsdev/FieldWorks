@@ -1,0 +1,17 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: DbAccessPs.idl
+Responsibility: John Thomson
+Last reviewed:
+
+	Defines Language Services Interfaces for proxy / stub generation.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+
+#include "Common.idh"
+
+#define NO_COCLASSES
+
+#include "DbAccess.idh"

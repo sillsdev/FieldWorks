@@ -1,0 +1,257 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{B0923934-87E5-4712-8958-097A1262B48C}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>ScrImportComponents</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>SIL.FieldWorks.ScrImportComponents</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\..\Output\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>obj\ScrImportComponents.XML</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>..\..\Output\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="COMInterfaces">
+	  <Name>COMInterfaces</Name>
+	  <HintPath>..\..\Output\debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="Controls.Design">
+	  <Name>Controls.Design</Name>
+	  <HintPath>..\..\Output\debug\Controls.Design.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
+	  <Name>FDO</Name>
+	  <HintPath>..\..\Output\debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework">
+	  <Name>Framework</Name>
+	  <HintPath>..\..\Output\debug\Framework.dll</HintPath>
+	</Reference>
+	<Reference Include="FwControls">
+	  <Name>FwControls</Name>
+	  <HintPath>..\..\Output\debug\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgControls, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwResources">
+	  <Name>FwResources</Name>
+	  <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils">
+	  <Name>FwUtils</Name>
+	  <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="Interop.SCRIPTUREOBJECTSLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\DistFiles\Interop.SCRIPTUREOBJECTSLib.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite">
+	  <Name>RootSite</Name>
+	  <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="ScrControls">
+	  <Name>ScrControls</Name>
+	  <HintPath>..\..\Output\debug\ScrControls.dll</HintPath>
+	</Reference>
+	<Reference Include="ScrFDO">
+	  <Name>ScrFDO</Name>
+	  <HintPath>..\..\Output\Debug\ScrFDO.dll</HintPath>
+	</Reference>
+	<Reference Include="ScriptureUtils">
+	  <Name>ScriptureUtils</Name>
+	  <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="ScrUtilsInterfaces">
+	  <Name>ScrUtilsInterfaces</Name>
+	  <HintPath>..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Design">
+	  <Name>System.Design</Name>
+	</Reference>
+	<Reference Include="System.Drawing">
+	  <Name>System.Drawing</Name>
+	</Reference>
+	<Reference Include="System.Windows.Forms">
+	  <Name>System.Windows.Forms</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+	<Reference Include="TeDialogs">
+	  <Name>TeDialogs</Name>
+	  <HintPath>..\..\Output\Debug\TeDialogs.dll</HintPath>
+	</Reference>
+	<Reference Include="TeRegistrySettings">
+	  <Name>TeRegistrySettings</Name>
+	  <HintPath>..\..\Output\Debug\TeRegistrySettings.dll</HintPath>
+	</Reference>
+	<Reference Include="TeResources">
+	  <Name>TeResources</Name>
+	  <HintPath>..\..\Output\Debug\TeResources.dll</HintPath>
+	</Reference>
+	<Reference Include="Utils">
+	  <Name>Utils</Name>
+	  <HintPath>..\..\Output\debug\Utils.dll</HintPath>
+	</Reference>
+	<Reference Include="xCoreInterfaces">
+	  <Name>xCoreInterfaces</Name>
+	  <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="CharacterMappingSettings.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="GeneratedAssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="ImportWizard.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MappingDetailsCtrl.cs">
+	  <SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="ModifyMapping.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="Paratext5LocationUnknown.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ScrImportBackupMessage.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ScrImportComponents.Designer.cs">
+	  <AutoGen>True</AutoGen>
+	  <DesignTime>True</DesignTime>
+	  <DependentUpon>ScrImportComponents.resx</DependentUpon>
+	</Compile>
+	<Compile Include="ScrImportSetMessage.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<EmbeddedResource Include="CharacterMappingSettings.resx">
+	  <DependentUpon>CharacterMappingSettings.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ImportWizard.resx">
+	  <DependentUpon>ImportWizard.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MappingDetailsCtrl.resx">
+	  <DependentUpon>MappingDetailsCtrl.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ModifyMapping.resx">
+	  <DependentUpon>ModifyMapping.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Paratext5LocationUnknown.resx">
+	  <DependentUpon>Paratext5LocationUnknown.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ScrImportBackupMessage.resx">
+	  <DependentUpon>ScrImportBackupMessage.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ScrImportComponents.resx">
+	  <SubType>Designer</SubType>
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>ScrImportComponents.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ScrImportSetMessage.resx">
+	  <DependentUpon>ScrImportSetMessage.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<None Include="AssemblyInfo.cs">
+	  <SubType>Code</SubType>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<Folder Include="resources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

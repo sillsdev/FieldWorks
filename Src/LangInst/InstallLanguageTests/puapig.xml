@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LanguageDefinition SYSTEM "LanguageDefinition.dtd">
+<LanguageDefinition>
+  <LgWritingSystem id="pig">
+	<Name24>
+	  <AUni ws="en">Pig Latin</AUni>
+	</Name24>
+	<Description24>
+	  <AStr ws="en">
+		<Run ws="en"/>
+	  </AStr>
+	</Description24>
+	<RightToLeft24>
+	  <Boolean val="false"/>
+	</RightToLeft24>
+	<DefaultSerif24>
+	  <Uni>SILDoulos PigLatinDemo</Uni>
+	</DefaultSerif24>
+	<DefaultSansSerif24>
+	  <Uni>SILDoulos PigLatinDemo</Uni>
+	</DefaultSansSerif24>
+	<DefaultMonospace24>
+	  <Uni>SILDoulos PigLatinDemo</Uni>
+	</DefaultMonospace24>
+	<ICULocale24>
+	  <Uni>pig</Uni>
+	</ICULocale24>
+	<KeyboardType24>
+	  <Uni>standard</Uni>
+	</KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30>
+		  <Integer val="1033"/>
+		</WinLCID30>
+		<WinCollation30>
+		  <Uni>Latin1_General_CI_AI</Uni>
+		</WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <LocaleName>Piggy</LocaleName>
+  <PuaDefinitions><!-- These codes are intentionally out of order --><CharDef code="F136" data="PIGDASH;Mn;0;NSM;;;;;N;;;;;"/><CharDef code="F137" data="PIG Curlytail;Mn;0;NSM;;;;;N;;;;;"/><CharDef code="F139" data="PIG Jump;Ll;0;L;;;;;N;;;;;"/><CharDef code="F171" data="PIGCHARACTER UGLY;Ll;0;R;;;;;N;;;;;"/><!-- Tests all the fields:
+2: Sm (Mathematical symbol)
+3: 0 (is an ordinary spacing character)
+4: R ( is a right-to-left character )
+5: <compat> 0050 (is a decomposition of "P")
+6,7,8: Number field are not applicable for letter
+9: Y (mirrored in Bi-directional text)
+10: OLD NAME OF JIBBERISH (the "unicode 1.0" name of this character)
+11: NO COMMENT (ISO comment, technically it should be <none> but this is being used to test)
+12,13,14: 0050;0070;0050 (this character has an upper-case equivalent 0050, a lower-case equivelent 0070, and a title-case equivelent: 0050)
+--><CharDef code="F16F" data="JIBBERISH SMALL LETTER P WITH TWO STROKES;Sm;0;EN;&lt;compat&gt; 0050;;;;Y;OLD NAME OF JIBBERISH;NO COMMENT;0050;0070;0050"/>
+<CharDef code="E001" data="PIG NUMERAL 1;Nd;0;NSM;;;;;N;;;;;"/><CharDef code="E002" data="PIG NUMERAL 2;Nd;0;L;;;;;N;;;;;"/><CharDef code="F0EE" data="PIG NUMERAL 6;Nd;0;L;;;;;N;;;;;"/><!-- Tests all the fields:
+2: Nd (Number decimal digit)
+3: 228 (canonical combining: above left)
+4: EN ( Bidi Class value: is a European number character )
+5: <small> 0034 (is a decomposition of "4")
+6,7,8: 4;4;4; (Numeric equivalent is "4")
+9: N (Not mirrored in Bi-directional text)
+10: PIGGY 4 (the "unicode 1.0" name of this character)
+11: <none> (ISO comment)
+12,13,14: ;;; (no upper case equivelant)
+--><!--<OldCharDef code="F00E" data="PIG NUMERAL 4;Nd;228;EN;&lt;small&gt; 0034;4;4;4;N;PIGGY 4;&lt;none&gt;;;;"/> --><CharDef code="F00E" data="PIG NUMERAL 4;Mn;228;NSM;&lt;small&gt; 0034;4;4;4;N;PIGGY 4;&lt;none&gt;;;;"/>
+<CharDef code="F00D" data="PIG NUMERAL 3;Nd;228;EN;&lt;small&gt; 0033;3;3;3;N;PIGGY 3;&lt;none&gt;;;;"/><CharDef code="F0ED" data="PIG NUMERAL 5;Nd;0;L;;;;;N;;;;;"/><CharDef code="F12F" data="PIG NUMERAL 8;Nd;0;R;;;;;N;;;;;"/><CharDef code="F12E" data="PIG NUMERAL 7;Nd;0;L;;;;;N;;;;;"/></PuaDefinitions>
+</LanguageDefinition>

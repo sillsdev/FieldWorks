@@ -1,0 +1,1670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FwDatabase SYSTEM "FwDatabase.dtd">
+<FwDatabase version="200127">
+<AdditionalFields>
+<CustomField name="custom" flid="4004500" class="RnGenericRec" type="String"/>
+<CustomField name="custom3" flid="4004503" class="RnGenericRec" type="ReferenceAtom" target="CmPossibility" listRootId="I68442DBE-FD65-49C6-83EC-04236E7C715F" wsSelector="-1" userLabel="My Anthro" helpString="Help for my anthro is not very helpful">&lt;!-- XML UI code for My Anthro --&gt;</CustomField>
+<CustomField name="custom5" flid="4004505" class="RnGenericRec" type="ReferenceSequence" target="CmPossibility" listRootId="I57A1E75E-56B7-4C50-976B-7D58640F657A" wsSelector="-1" userLabel="My List" helpString="Help for my list is still not very helpful">&lt;!-- XML UI code for My List --&gt;</CustomField>
+</AdditionalFields>
+<LangProject id="I8164C7C1-1F60-4C94-AFD0-44DBC8C8F9F2">
+<DateCreated1><Time val="2003-06-02 10:16:37.767"/></DateCreated1>
+<DateModified1><Time val="2003-06-02 10:16:37.767"/></DateModified1>
+<EthnologueCode6001><Uni>UTP</Uni></EthnologueCode6001>
+<Name1>
+<AUni ws="en">UnitTestProj</AUni>
+</Name1>
+<AnalysisWss6001>
+<Link target="I572F9C44-CB40-4644-8627-03B1AB7AF6AA"/>
+</AnalysisWss6001>
+<CurVernWss6001>
+<Link target="ID741F72B-81F3-4975-811A-5B519A4C5F5A"/>
+</CurVernWss6001>
+<CurAnalysisWss6001>
+<Link target="I572F9C44-CB40-4644-8627-03B1AB7AF6AA"/>
+</CurAnalysisWss6001>
+<VernWss6001>
+<Link target="ID741F72B-81F3-4975-811A-5B519A4C5F5A"/>
+</VernWss6001>
+<AnthroList6001>
+<CmPossibilityList id="I68442DBE-FD65-49C6-83EC-04236E7C715F">
+</CmPossibilityList>
+</AnthroList6001>
+<WordformInventory6001>
+<WordformInventory id="I1475BA23-EF7C-4C6B-B751-07BF0FBC4886">
+<DateCreated5><Time val="2006-01-17 09:45:00.727"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.727"/></DateModified5>
+</WordformInventory>
+</WordformInventory6001>
+<LexDb6001>
+<LexDb id="I597D2A36-988F-4613-8703-DC868CEEAA9A">
+<DateCreated5><Time val="2006-01-17 09:45:00.650"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.650"/></DateModified5>
+<Name5>
+<AUni ws="en">Dictionary</AUni>
+</Name5>
+<SenseTypes5005>
+<CmPossibilityList id="I859A7D3A-6245-4DCA-8C2F-D5C894AFFA30">
+<DateCreated5><Time val="2006-01-17 09:45:00.930"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.930"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Sense Types</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">SenTyp</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</SenseTypes5005>
+<UsageTypes5005>
+<CmPossibilityList id="I518C1874-F7B4-4583-96D8-D9CA08A40996">
+<DateCreated5><Time val="2006-01-17 09:45:00.930"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.930"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Usage Types</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">UseTyp</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</UsageTypes5005>
+<DomainTypes5005>
+<CmPossibilityList id="I1704CB89-062B-44CD-A2E5-A5C690B5AFE5">
+<DateCreated5><Time val="2006-01-17 09:45:00.943"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.943"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Domain Types</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">DomTyp</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</DomainTypes5005>
+<MorphTypes5005>
+<CmPossibilityList id="ID7F713D8-E8CF-11D3-9764-00C04F186933">
+<DateCreated5><Time val="2006-01-17 09:45:00.943"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.943"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<IsClosed8><Boolean val="true"/></IsClosed8>
+<ItemClsid8><Integer val="5042"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Major Entry Types</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">MjeTyp</AUni>
+</Abbreviation8>
+<Possibilities8>
+<MoMorphType id="I56DB04BF-3D58-44CC-B292-4C8AA68538F4">
+<DateCreated7><Time val="2006-01-17 09:45:01.477"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.477"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Name7>
+<AUni ws="en">particle</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">part</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IEDC2EBA6-4F1F-4D51-AFCE-ADFCC2B377AB">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713DA-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.477"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.477"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Postfix5042><Uni>-</Uni></Postfix5042>
+<Prefix5042><Uni>-</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">infix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">ifx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I3FBCD11B-2FB8-463F-B84E-12915E3874D5">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713DB-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.477"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.477"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Postfix5042><Uni>-</Uni></Postfix5042>
+<Name7>
+<AUni ws="en">prefix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">pfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IBBD9052D-F74A-413A-931B-12CBFBAC6CC5">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713DC-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.477"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.477"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Postfix5042><Uni>=</Uni></Postfix5042>
+<Prefix5042><Uni>=</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">simulfix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">smfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I06BC98E0-CB41-4A14-8A85-3AF7441A8117">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713DD-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.477"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.477"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Prefix5042><Uni>-</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">suffix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">sfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I9A3EE447-5BBC-4A10-9A64-E1619755FABE">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713DE-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Postfix5042><Uni>~</Uni></Postfix5042>
+<Prefix5042><Uni>~</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">suprafix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">spfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IE58488CB-EA6B-42D5-90EC-B092291E251D">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713DF-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Name7>
+<AUni ws="en">circumfix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">cfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I39F95B8D-4A27-4F8A-91BF-B959A43760A1">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713E1-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Prefix5042><Uni>=</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">enclitic</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">enclit</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="ICA049698-ADDB-4093-B804-BCD62A5DA239">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713E2-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Postfix5042><Uni>=</Uni></Postfix5042>
+<Name7>
+<AUni ws="en">proclitic</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">proclit</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I23A39A2A-84DA-417C-B1B5-99BE34275A08">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713E4-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Prefix5042><Uni>*</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">bound root</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">bd root</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I33393499-2081-4C4A-B2E2-FE94E01F9587">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713E5-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Name7>
+<AUni ws="en">root</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">ubd root</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I286A2799-7F17-4687-B3AD-FA6CD5C2E3BA">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713E7-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Prefix5042><Uni>*</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">bound stem</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">bd stem</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I15FEB15D-3737-47CF-B228-A0CB7E7F41BF">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="ID7F713E8-E8CF-11D3-9764-00C04F186933">
+<DateCreated7><Time val="2006-01-17 09:45:01.490"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.490"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Name7>
+<AUni ws="en">stem</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">ubd stem</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I1513A1A3-AE55-40C3-B657-44EAE81D3350">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="I18D9B1C3-B5B6-4C07-B92C-2FE1D2281BD4">
+<DateCreated7><Time val="2006-01-17 09:45:01.507"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.507"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Postfix5042><Uni>-</Uni></Postfix5042>
+<Prefix5042><Uni>-</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">infixing interfix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">ifxnfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I8ED5FBF2-AC3A-4F56-8DAD-4C25FA12C65F">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="IAF6537B0-7175-4387-BA6A-36547D37FB13">
+<DateCreated7><Time val="2006-01-17 09:45:01.507"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.507"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Postfix5042><Uni>-</Uni></Postfix5042>
+<Name7>
+<AUni ws="en">prefixing interfix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">pfxnfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IAB3E659B-8180-4CCD-A072-6606926CE79A">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+<MoMorphType id="I3433683D-08A9-4BAE-AE53-2A7798F64068">
+<DateCreated7><Time val="2006-01-17 09:45:01.507"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.507"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Prefix5042><Uni>-</Uni></Prefix5042>
+<Name7>
+<AUni ws="en">suffixing interfix</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">sfxnfx</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="ID721E492-095C-4BFB-A237-B3C6D1E5F8DD">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</MoMorphType>
+</Possibilities8>
+</CmPossibilityList>
+</MorphTypes5005>
+<Introduction5005>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I150E56EC-6550-412F-B20A-8AB2F6FF7AD0">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Introduction5005>
+<Status5005>
+<CmPossibilityList id="IDFE22FD2-B20C-461F-9FA0-705B4193993F">
+<DateCreated5><Time val="2006-01-17 09:45:00.943"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.943"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Sense Status</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">SenStat</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</Status5005>
+<Styles5005>
+<StStyle id="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<IsModified17><Boolean val="true"/></IsModified17>
+<Rules17>
+<Prop align="leading" backcolor="white" bold="off" borderBottom="0" borderColor="black" borderLeading="0" borderTop="0" borderTrailing="0" bulNumScheme="0" bulNumStartAt="1" firstIndent="0" fontsize="10000" fontsizeUnit="mpt" forecolor="black" italic="off" leadingIndent="0" lineHeight="10000" lineHeightUnit="rel" offset="0" offsetUnit="mpt" rightToLeft="0" spaceAfter="6000" spaceBefore="0" superscript="off" trailingIndent="0" undercolor="black" underline="none" fontFamily="&lt;default serif&gt;">
+<BulNumFontInfo backcolor="white" bold="off" fontsize="0mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" fontFamily="Times New Roman"/>
+</Prop>
+</Rules17>
+<Name17><Uni>Normal</Uni></Name17>
+<Next17><Link target="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28"/></Next17>
+</StStyle>
+<StStyle id="IDC69AFDC-2052-4245-A840-5052B668D540">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop bold="invert" fontsize="14000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" fontFamily="&lt;default sans serif&gt;"/>
+</Rules17>
+<Name17><Uni>Heading 1</Uni></Name17>
+<BasedOn17><Link target="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28"/></BasedOn17>
+<Next17><Link target="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28"/></Next17>
+</StStyle>
+<StStyle id="I0B1A9792-0FB6-4BF8-B899-7635F36CF8C1">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop bold="invert" fontsize="12000" fontsizeUnit="mpt" italic="invert" spaceAfter="3000" spaceBefore="12000" fontFamily="&lt;default sans serif&gt;"/>
+</Rules17>
+<Name17><Uni>Heading 2</Uni></Name17>
+<BasedOn17><Link target="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28"/></BasedOn17>
+<Next17><Link target="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28"/></Next17>
+</StStyle>
+<StStyle id="I71B2233D-8B14-42D5-A625-AAC8EDE7503B">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop bold="off" fontsize="12000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" fontFamily="&lt;default sans serif&gt;"/>
+</Rules17>
+<Name17><Uni>Heading 3</Uni></Name17>
+<BasedOn17><Link target="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28"/></BasedOn17>
+<Next17><Link target="I6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28"/></Next17>
+</StStyle>
+<StStyle id="I97509992-852B-45DA-9740-F51161CA40BD">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop fontsize="10000" fontsizeUnit="mpt" italic="invert" spaceAfter="0"/>
+</Rules17>
+<Name17><Uni>Emphasized Text</Uni></Name17>
+</StStyle>
+<StStyle id="I64FF6BBA-704F-4591-AD86-6104BC8722E9">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop forecolor="blue" undercolor="blue" underline="single"/>
+</Rules17>
+<Name17><Uni>Internal Link</Uni></Name17>
+</StStyle>
+<StStyle id="IB26F65A7-B0AB-4641-9A9A-F45AA7746389">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop fontsize="8000" fontsizeUnit="mpt" forecolor="2f60ff"/>
+</Rules17>
+<Name17><Uni>Language Code</Uni></Name17>
+</StStyle>
+<StStyle id="I012C34B2-84C1-44F5-A0E3-2999A3860B73">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop forecolor="7f007f" undercolor="7f007f" underline="single"/>
+</Rules17>
+<Name17><Uni>External Link</Uni></Name17>
+</StStyle>
+</Styles5005>
+<ReversalIndexes5005>
+<ReversalIndex id="I66D54CE6-1B35-4B7C-A7A1-3303B2A6E4B1">
+<DateCreated5><Time val="2006-01-17 09:45:27.740"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:27.740"/></DateModified5>
+<WritingSystem5052><Link target="I572F9C44-CB40-4644-8627-03B1AB7AF6AA"/></WritingSystem5052>
+<Name5>
+<AUni ws="en">English</AUni>
+</Name5>
+<PartsOfSpeech5052>
+<CmPossibilityList id="I60E59CA8-DA18-4DE4-8525-E391FE35BDD3">
+<DateCreated5><Time val="2006-01-17 09:45:27.773"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:27.773"/></DateModified5>
+<ItemClsid8><Integer val="5049"/></ItemClsid8>
+</CmPossibilityList>
+</PartsOfSpeech5052>
+</ReversalIndex>
+</ReversalIndexes5005>
+<References5005>
+<CmPossibilityList id="I2ECF0B7A-7DA2-4E4A-A947-2A5C9E1A64D4">
+<DateCreated5><Time val="2006-01-17 09:45:00.943"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.943"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<PreventDuplicates8><Boolean val="true"/></PreventDuplicates8>
+<ItemClsid8><Integer val="5119"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Lexical Reference Types</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">RefTyp</AUni>
+</Abbreviation8>
+<Possibilities8>
+<LexRefType id="IEAB4B269-5F4A-4C2E-9F24-C3F4FE9F1112">
+<DateCreated7><Time val="2006-01-17 09:45:01.523"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.523"/></DateModified7>
+<MappingType5119><Integer val="3"/></MappingType5119>
+<Name7>
+<AUni ws="en">Parts</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">pt</AUni>
+</Abbreviation7>
+<ReverseAbbreviation5119>
+<AUni ws="en">wh</AUni>
+</ReverseAbbreviation5119>
+<ReverseName5119>
+<AUni ws="en">Whole</AUni>
+</ReverseName5119>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I3C12B091-0946-45F6-AA04-FC7A98557DF5">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</LexRefType>
+<LexRefType id="I37680CEA-3416-461A-B1CE-97DFE9F8EF19">
+<DateCreated7><Time val="2006-01-17 09:45:01.523"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.523"/></DateModified7>
+<MappingType5119><Integer val="3"/></MappingType5119>
+<Name7>
+<AUni ws="en">Specifics</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">spec</AUni>
+</Abbreviation7>
+<ReverseAbbreviation5119>
+<AUni ws="en">gen</AUni>
+</ReverseAbbreviation5119>
+<ReverseName5119>
+<AUni ws="en">Generic</AUni>
+</ReverseName5119>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I321FD89A-135A-4944-B7F2-6F26ED23F5AF">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</LexRefType>
+<LexRefType id="ID9F0F188-8043-4896-A8BD-BA767AB2E9D9">
+<DateCreated7><Time val="2006-01-17 09:45:01.523"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.523"/></DateModified7>
+<Name7>
+<AUni ws="en">Synonyms</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">syn</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IA71045E3-2DAA-484B-A58B-B4137DF16AB3">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</LexRefType>
+<LexRefType id="IBDA89B9F-5610-4FF1-BE85-268CAE2D9152">
+<DateCreated7><Time val="2006-01-17 09:45:01.540"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.540"/></DateModified7>
+<MappingType5119><Integer val="1"/></MappingType5119>
+<Name7>
+<AUni ws="en">Antonym</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">ant</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I53B16F36-5F6F-44A5-A418-E74D4610534E">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</LexRefType>
+<LexRefType id="IAD1F307A-8FF8-4CD7-9604-B7AA5AE8B696">
+<DateCreated7><Time val="2006-01-17 09:45:01.540"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.540"/></DateModified7>
+<MappingType5119><Integer val="4"/></MappingType5119>
+<Name7>
+<AUni ws="en">Calendar</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">cal</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I2E3F4FD8-9BAE-47AD-8256-550D037E9FAC">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</LexRefType>
+<LexRefType id="ID961DCB5-858E-45B8-A373-7EA5D1767297">
+<DateCreated7><Time val="2006-01-17 09:45:01.540"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.540"/></DateModified7>
+<MappingType5119><Integer val="5"/></MappingType5119>
+<Name7>
+<AUni ws="en">Compare</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">cf</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IBE98872F-7A92-4D86-AC26-3EA313564334">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</LexRefType>
+</Possibilities8>
+</CmPossibilityList>
+</References5005>
+</LexDb>
+</LexDb6001>
+<PartsOfSpeech6001>
+<CmPossibilityList>
+<Depth8><Integer val="127"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<UseExtendedFields8><Boolean val="true"/></UseExtendedFields8>
+<ItemClsid8><Integer val="5049"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Parts Of Speech</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Pos</AUni>
+</Abbreviation8>
+<Possibilities8>
+<PartOfSpeech>
+<Name7>
+<AUni ws="en">Adverb</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Adv</AUni>
+</Abbreviation7>
+<CatalogSourceId5049><Uni>Adverb</Uni></CatalogSourceId5049>
+</PartOfSpeech>
+<PartOfSpeech>
+<Name7>
+<AUni ws="en">Noun</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">N</AUni>
+</Abbreviation7>
+<CatalogSourceId5049><Uni>Noun</Uni></CatalogSourceId5049>
+</PartOfSpeech>
+<PartOfSpeech>
+<Name7>
+<AUni ws="en">Pronoun</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Pro</AUni>
+</Abbreviation7>
+<CatalogSourceId5049><Uni>Pronoun</Uni></CatalogSourceId5049>
+</PartOfSpeech>
+<PartOfSpeech>
+<Name7>
+<AUni ws="en">Verb</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">V</AUni>
+</Abbreviation7>
+<CatalogSourceId5049><Uni>Verb</Uni></CatalogSourceId5049>
+</PartOfSpeech>
+</Possibilities8>
+</CmPossibilityList>
+</PartsOfSpeech6001>
+<ResearchNotebook6001>
+<RnResearchNbk id="I457C896E-33A2-4961-835C-9DDFDB5CCA40">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Name5>
+<AUni ws="en">UnitTestProj Notebook</AUni>
+</Name5>
+<Records4001>
+<RnEvent id="I7FC3C53F-4834-4B64-9C1B-A97C7428B672">
+<DateCreated4004><Time val="2003-06-02 10:16:42.787"/></DateCreated4004>
+<DateModified4004><Time val="2003-06-02 10:16:42.787"/></DateModified4004>
+<Title4004>
+<Str>
+<Run ws="en">abcǞǞ</Run>
+<Run ws="en" bold="on">C̜̅XYZ˘GAP ̆QED𝆹𝅥</Run>
+</Str>
+</Title4004>
+<ExternalMaterials4004>
+<StText>
+<Paragraphs14>
+<StTxtPara id="ICEBD6714-E3CC-4E79-BF43-458B3535FD12">
+<StyleRules15>
+<Prop namedStyle="Normal"/>
+</StyleRules15>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</ExternalMaterials4004>
+<Description4006>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IA5C8FE52-E896-4584-B34C-E3F62FE814DC">
+<StyleRules15>
+<Prop namedStyle="Normal"/>
+</StyleRules15>
+<Contents16>
+<Str>
+<Run ws="en">abcǞǞ</Run>
+<Run ws="en" bold="on">C̜̅XYZ˘GAP ̆QED𝆹𝅥</Run>
+</Str>
+</Contents16>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Description4006>
+<PersonalNotes4006>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I9637EA99-6DD3-4735-B862-954B546B6C8B">
+<StyleRules15>
+<Prop namedStyle="Normal"/>
+</StyleRules15>
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</PersonalNotes4006>
+<Custom name="custom"><Str><Run ws="utp">This is a test!</Run></Str></Custom><CustomLink name="custom5">
+<Link target="I6C7BC4D8-48DF-4E65-AAB3-2C2A63C3CAE3"/><!-- abbr="1st" name="First Item" -->
+<Link target="I21494972-A3C3-4488-B496-FF4D5D9D3340"/><!-- abbr="5th" name="Fifth item" -->
+</CustomLink>
+</RnEvent>
+</Records4001>
+<EventTypes4001>
+<CmPossibilityList id="I4E527D1E-EF89-4EDC-9572-76B5C4EB800B">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Event Types</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Type</AUni>
+</Abbreviation8>
+<Possibilities8>
+<CmPossibility id="I14D5143D-A59E-40F1-95AA-4A68FEA09A9C">
+<DateCreated7><Time val="2003-06-02 10:16:37.767"/></DateCreated7>
+<DateModified7><Time val="2003-06-02 10:16:37.767"/></DateModified7>
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">abcǞǞC̜̅XYZ˘GAP ̆QED𝆹𝅥</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Con</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">abcǞǞ</Run>
+<Run ws="en" bold="on">C̜̅XYZ˘GAP ̆QED𝆹𝅥</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I7A48CDBC-D1BE-4308-8FA1-0EAC0F47FB70">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmPossibility>
+</Possibilities8>
+</CmPossibilityList>
+</EventTypes4001>
+</RnResearchNbk>
+</ResearchNotebook6001>
+<MsFeatureSystem6001>
+<FsFeatureSystem id="I265F06FF-04B7-4218-9280-4CEBBEDC339E">
+</FsFeatureSystem>
+</MsFeatureSystem6001>
+<MorphologicalData6001>
+<MoMorphData id="I76847127-E4DB-4E94-A8A1-E10892AA40E6">
+</MoMorphData>
+</MorphologicalData6001>
+<Styles6001>
+<StStyle id="I29D6D0E7-FFEB-4E5C-9064-D273C9115142">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop align="leading" spaceBefore="0" spaceAfter="6000" lineHeight="10000" lineHeightUnit="rel">
+<WsStyles9999>
+<WsProp ws="en" fontFamily="&lt;default serif&gt;" fontsize="10000" fontsizeUnit="mpt" />
+<WsProp ws="utp" fontFamily="&lt;default serif&gt;" fontsize="10000" fontsizeUnit="mpt" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Normal</Uni></Name17>
+<Next17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></Next17>
+</StStyle>
+<StStyle id="I9781C78B-9781-4E8F-AD7C-6C3C959F88B3">
+<Rules17>
+<Prop firstIndent="-18000" spaceBefore="0" spaceAfter="0" bulNumScheme="10" bulNumStartAt="1"/>
+</Rules17>
+<Name17><Uni>Numbered List</Uni></Name17>
+<BasedOn17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></BasedOn17>
+<Next17><Link target="I9781C78B-9781-4E8F-AD7C-6C3C959F88B3"/></Next17>
+</StStyle>
+<StStyle id="I40319990-7055-491D-B570-FBCFE1BF9601">
+<Rules17>
+<Prop firstIndent="-18000" trailingIndent="0" spaceAfter="0" bulNumScheme="101" bulNumStartAt="1"/>
+</Rules17>
+<Name17><Uni>Bulleted List</Uni></Name17>
+<BasedOn17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></BasedOn17>
+<Next17><Link target="I40319990-7055-491D-B570-FBCFE1BF9601"/></Next17>
+</StStyle>
+<StStyle id="IEE31FF51-F477-4C98-89A4-1E258B167FF7">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop spaceBefore="12000" spaceAfter="3000">
+<WsStyles9999>
+<WsProp ws="en" fontFamily="&lt;default sans serif&gt;" fontsize="14000" fontsizeUnit="mpt" bold="invert" />
+<WsProp ws="utp" fontFamily="&lt;default sans serif&gt;" fontsize="14000" fontsizeUnit="mpt" bold="invert" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Heading 1</Uni></Name17>
+<BasedOn17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></BasedOn17>
+<Next17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></Next17>
+</StStyle>
+<StStyle id="ID8C2F78D-0120-40F9-A7A3-9F684F983D4D">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop spaceBefore="12000" spaceAfter="3000">
+<WsStyles9999>
+<WsProp ws="en" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" bold="invert" italic="invert" />
+<WsProp ws="utp" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" bold="invert" italic="invert" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Heading 2</Uni></Name17>
+<BasedOn17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></BasedOn17>
+<Next17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></Next17>
+</StStyle>
+<StStyle id="IC4D8F799-59F9-4A26-BD83-B01B2D41B395">
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop spaceBefore="12000" spaceAfter="3000">
+<WsStyles9999>
+<WsProp ws="en" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" bold="off" />
+<WsProp ws="utp" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" bold="off" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Heading 3</Uni></Name17>
+<BasedOn17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></BasedOn17>
+<Next17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></Next17>
+</StStyle>
+<StStyle id="I37E1FEB7-1113-40DE-8E1A-647905F32861">
+<Rules17>
+<Prop firstIndent="0" leadingIndent="36000" trailingIndent="36000" spaceAfter="6000"/>
+</Rules17>
+<Name17><Uni>Block Quote</Uni></Name17>
+<BasedOn17><Link target="I29D6D0E7-FFEB-4E5C-9064-D273C9115142"/></BasedOn17>
+<Next17><Link target="I37E1FEB7-1113-40DE-8E1A-647905F32861"/></Next17>
+</StStyle>
+<StStyle id="I047744DA-241D-4A40-B554-EF5CBF09D142">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop align="leading" firstIndent="0" spaceBefore="0">
+<WsStyles9999>
+<WsProp ws="en" fontsize="12000" fontsizeUnit="mpt" bold="invert" />
+<WsProp ws="utp" fontsize="12000" fontsizeUnit="mpt" bold="invert" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Title Text</Uni></Name17>
+</StStyle>
+<StStyle id="IC96D1BD1-F94B-49C0-BC7B-DA17B3A5FD46">
+<Type17><Integer val="1"/></Type17>
+<Rules17>
+<Prop spaceAfter="0">
+<WsStyles9999>
+<WsProp ws="en" fontsize="10000" fontsizeUnit="mpt" italic="invert" />
+<WsProp ws="utp" fontsize="10000" fontsizeUnit="mpt" italic="invert" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Emphasized Text</Uni></Name17>
+</StStyle>
+<StStyle id="I9A383760-49DA-41F0-95E6-6674BD9DC0B6">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop>
+<WsStyles9999>
+<WsProp ws="en" forecolor="blue" undercolor="blue" underline="single" />
+<WsProp ws="utp" forecolor="blue" undercolor="blue" underline="single" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Internal Link</Uni></Name17>
+</StStyle>
+<StStyle id="I3B3E7792-4433-4551-8421-61F4F17918D9">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop>
+<WsStyles9999>
+<WsProp ws="en" fontsize="8000" fontsizeUnit="mpt" forecolor="00ff602f" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Language Code</Uni></Name17>
+</StStyle>
+<StStyle id="I27E3AC98-6F6D-4E54-9664-391EB0F6F7CE">
+<Type17><Integer val="1"/></Type17>
+<IsBuiltIn17><Boolean val="true"/></IsBuiltIn17>
+<Rules17>
+<Prop>
+<WsStyles9999>
+<WsProp ws="en" forecolor="007f007f" undercolor="007f007f" underline="single" />
+<WsProp ws="utp" forecolor="007f007f" undercolor="007f007f" underline="single" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>External Link</Uni></Name17>
+</StStyle>
+<StStyle id="I32A4D526-C6F6-440E-93BE-F365367DD4D9">
+<Type17><Integer val="1"/></Type17>
+<Rules17>
+<Prop>
+<WsStyles9999>
+<WsProp ws="en" forecolor="0060902f" undercolor="0060902f" underline="single" />
+<WsProp ws="utp" forecolor="0060902f" undercolor="0060902f" underline="single" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>Added Text</Uni></Name17>
+</StStyle>
+<StStyle id="I040D18A3-8024-4483-AC4A-0FBBA1EEAFFF">
+<Type17><Integer val="1"/></Type17>
+<Rules17>
+<Prop>
+<WsStyles9999>
+<WsProp ws="en" forecolor="red" undercolor="red" underline="dotted" />
+<WsProp ws="utp" forecolor="red" undercolor="red" underline="dotted" />
+</WsStyles9999>
+</Prop>
+</Rules17>
+<Name17><Uni>abcǞǞC̜̅XYZ˘GAP ̆QED𝆹𝅥</Uni></Name17>
+</StStyle>
+</Styles6001>
+<ConfidenceLevels6001>
+<CmPossibilityList id="I2C06037E-9CA4-48B0-A32F-2C805C1EDB1B">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Confidence Levels</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Conf</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</ConfidenceLevels6001>
+<Restrictions6001>
+<CmPossibilityList id="IAF857D6E-91BA-4B4B-B266-31001806BCC2">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Restrictions</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Res</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</Restrictions6001>
+<WeatherConditions6001>
+<CmPossibilityList id="I2FC5B977-6D24-4BC0-BE12-BEC02CB64A61">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Weather</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Wea</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</WeatherConditions6001>
+<Roles6001>
+<CmPossibilityList id="I4B84CB0D-12BE-4266-8216-5BBD229AADDD">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Roles</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Role</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</Roles6001>
+<AnalysisStatus6001>
+<CmPossibilityList id="I82F451E9-AC13-47A5-8979-6E4EA4A9E9EA">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Status</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Stat</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</AnalysisStatus6001>
+<Locations6001>
+<CmPossibilityList id="I9F870E81-EDE4-4B66-86A1-88407D497FE5">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<ItemClsid8><Integer val="12"/></ItemClsid8>
+<WsSelector8><Integer val="-6"/></WsSelector8>
+<Name5>
+<AUni ws="en">Locations</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Loc</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</Locations6001>
+<People6001>
+<CmPossibilityList id="IE457B871-9549-46CD-B904-863EFE1D3419">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<UseExtendedFields8><Boolean val="true"/></UseExtendedFields8>
+<ItemClsid8><Integer val="13"/></ItemClsid8>
+<WsSelector8><Integer val="-6"/></WsSelector8>
+<Name5>
+<AUni ws="en">People</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Part</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</People6001>
+<Education6001>
+<CmPossibilityList id="IF2A9FA54-7030-4B58-99D0-DD80FF260F65">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Education</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Ed</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</Education6001>
+<TimeOfDay6001>
+<CmPossibilityList id="I3F6824F6-0E4C-4610-8FDA-A86F41D8F299">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="127"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Time Of Day</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Time</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</TimeOfDay6001>
+<AffixCategories6001>
+<CmPossibilityList id="I2E7E7608-1B56-48A5-A4C2-91EB77344894">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+</CmPossibilityList>
+</AffixCategories6001>
+<Positions6001>
+<CmPossibilityList id="ICE8A0666-056E-4E1F-AA13-42808D6F8D27">
+<DateCreated5><Time val="2003-06-02 10:16:37.767"/></DateCreated5>
+<DateModified5><Time val="2003-06-02 10:16:37.767"/></DateModified5>
+<Depth8><Integer val="1"/></Depth8>
+<ItemClsid8><Integer val="7"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Positions</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">Posn</AUni>
+</Abbreviation8>
+</CmPossibilityList>
+</Positions6001>
+<Overlays6001>
+<CmOverlay id="ID994DF82-E513-488E-B9E3-DE615B6EED50">
+<Name21><Uni>Anthropology Categories</Uni></Name21>
+<PossList21><Link target="I68442DBE-FD65-49C6-83EC-04236E7C715F"/></PossList21>
+</CmOverlay>
+</Overlays6001>
+<AnnotationDefs6001>
+<CmPossibilityList id="IEA346C01-022F-4F34-B938-219CE7B65B73">
+<DateCreated5><Time val="2006-01-17 09:45:00.883"/></DateCreated5>
+<DateModified5><Time val="2006-01-17 09:45:00.883"/></DateModified5>
+<PreventDuplicates8><Boolean val="true"/></PreventDuplicates8>
+<ItemClsid8><Integer val="35"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">Annotation Definitions</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">AnnDefn</AUni>
+</Abbreviation8>
+<Description5>
+<AStr ws="en">
+<Run ws="en">Annotation types defined for use in FieldWorks.</Run>
+</AStr>
+</Description5>
+<Possibilities8>
+<CmAnnotationDefn id="I7FFC4EAB-856A-43CC-BC11-0DB55738C15B">
+<DateCreated7><Time val="2006-01-17 09:45:01.040"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.040"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<AllowsComment35><Boolean val="true"/></AllowsComment35>
+<UserCanCreate35><Boolean val="true"/></UserCanCreate35>
+<CanCreateOrphan35><Boolean val="true"/></CanCreateOrphan35>
+<CopyCutPastable35><Boolean val="true"/></CopyCutPastable35>
+<Multi35><Boolean val="true"/></Multi35>
+<Name7>
+<AUni ws="en">Note</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Nt</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnnotationDefn id="I56DE9B1A-1CE7-42A1-AA76-512EBEFF0DDA">
+<DateCreated7><Time val="2006-01-17 09:45:01.693"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.693"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<AllowsComment35><Boolean val="true"/></AllowsComment35>
+<UserCanCreate35><Boolean val="true"/></UserCanCreate35>
+<CanCreateOrphan35><Boolean val="true"/></CanCreateOrphan35>
+<PromptUser35><Boolean val="true"/></PromptUser35>
+<CopyCutPastable35><Boolean val="true"/></CopyCutPastable35>
+<ZeroWidth35><Boolean val="true"/></ZeroWidth35>
+<Name7>
+<AUni ws="en">Consultant Note</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">ConsNt</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I2CF7ED31-38C5-4EFE-967D-80445D8E858B">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I185400FA-489D-401C-8976-3E33F49EC0AB">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="I8D4CBD80-0DCA-4A83-8A1F-9DB3AA4CFF54">
+<DateCreated7><Time val="2006-01-17 09:45:01.040"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.040"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Name7>
+<AUni ws="en">Text</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Txt</AUni>
+</Abbreviation7>
+<SubPossibilities7>
+<CmAnnotationDefn id="IB63F0702-32F7-4ABB-B005-C1D2265636AD">
+<DateCreated7><Time val="2006-01-17 09:45:01.693"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.693"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<AllowsInstanceOf35><Boolean val="true"/></AllowsInstanceOf35>
+<InstanceOfSignature35><Integer val="16"/></InstanceOfSignature35>
+<UserCanCreate35><Boolean val="true"/></UserCanCreate35>
+<Name7>
+<AUni ws="en">Text Segment</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">TxtSeg</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I8C9C948C-C1CB-4EE9-B6B7-2B794CF6CA79">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="I9AC9637A-56B9-4F05-A0E1-4243FBFB57DB">
+<DateCreated7><Time val="2006-01-17 09:45:01.693"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.693"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<AllowsComment35><Boolean val="true"/></AllowsComment35>
+<AllowsInstanceOf35><Boolean val="true"/></AllowsInstanceOf35>
+<InstanceOfSignature35><Integer val="37"/></InstanceOfSignature35>
+<UserCanCreate35><Boolean val="true"/></UserCanCreate35>
+<CanCreateOrphan35><Boolean val="true"/></CanCreateOrphan35>
+<Multi35><Boolean val="true"/></Multi35>
+<Name7>
+<AUni ws="en">Free Translation</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">FT</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IAA5D5621-9297-4A02-9D69-B3021CAB91AC">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="IB0B1BB21-724D-470A-BE94-3D9A436008B8">
+<DateCreated7><Time val="2006-01-17 09:45:01.693"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.693"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<AllowsComment35><Boolean val="true"/></AllowsComment35>
+<AllowsInstanceOf35><Boolean val="true"/></AllowsInstanceOf35>
+<InstanceOfSignature35><Integer val="37"/></InstanceOfSignature35>
+<UserCanCreate35><Boolean val="true"/></UserCanCreate35>
+<CanCreateOrphan35><Boolean val="true"/></CanCreateOrphan35>
+<Multi35><Boolean val="true"/></Multi35>
+<Name7>
+<AUni ws="en">Literal Translation</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">LT</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I699732ED-B7F5-47BE-9437-2EA2CD5A1B91">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="I20CF6C1C-9389-4380-91F5-DFA057003D51">
+<DateCreated7><Time val="2006-01-17 09:45:01.693"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.693"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<CopyCutPastable35><Boolean val="true"/></CopyCutPastable35>
+<Name7>
+<AUni ws="en">Process Time</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">pt</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IB76B2AD3-5D0E-4D64-8C28-BC64FC6FBCD7">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="IEB92E50F-BA96-4D1D-B632-057B5C274132">
+<DateCreated7><Time val="2006-01-17 09:45:01.693"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.693"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<CopyCutPastable35><Boolean val="true"/></CopyCutPastable35>
+<Name7>
+<AUni ws="en">Wordform In Context</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">wfic</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I19FE2B0F-F885-42EE-B414-85B556F2D967">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="ICFECB1FE-037A-452D-A35B-59E06D15F4DF">
+<DateCreated7><Time val="2006-01-17 09:45:01.693"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.693"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<Name7>
+<AUni ws="en">Punctuation In Context</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">pic</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I02DF6258-FFA8-4F48-AD6B-68D533D32A73">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+</SubPossibilities7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="ID4A6D95B-4E36-4D79-AA2B-BB26B6B02E26">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="IF094A0B0-01B8-4621-97F1-4D775BC29CE7">
+<DateCreated7><Time val="2006-01-17 09:45:01.040"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.040"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<AllowsComment35><Boolean val="true"/></AllowsComment35>
+<UserCanCreate35><Boolean val="true"/></UserCanCreate35>
+<CanCreateOrphan35><Boolean val="true"/></CanCreateOrphan35>
+<CopyCutPastable35><Boolean val="true"/></CopyCutPastable35>
+<Multi35><Boolean val="true"/></Multi35>
+<Name7>
+<AUni ws="en">Comment</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Cmt</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="I7522CB8C-1E65-4BF6-98E5-CAD80F90C8E0">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+<CmAnnotationDefn id="I82E2FD92-48D8-43C9-BA84-CC4A2A5BEEAD">
+<DateCreated7><Time val="2006-01-17 09:45:01.040"/></DateCreated7>
+<DateModified7><Time val="2006-01-17 09:45:01.040"/></DateModified7>
+<IsProtected7><Boolean val="true"/></IsProtected7>
+<AllowsComment35><Boolean val="true"/></AllowsComment35>
+<UserCanCreate35><Boolean val="true"/></UserCanCreate35>
+<CanCreateOrphan35><Boolean val="true"/></CanCreateOrphan35>
+<CopyCutPastable35><Boolean val="true"/></CopyCutPastable35>
+<Multi35><Boolean val="true"/></Multi35>
+<Name7>
+<AUni ws="en">Errors</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">Err</AUni>
+</Abbreviation7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IA8A3EF39-C24C-4D48-A629-F217025A821C">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmAnnotationDefn>
+</Possibilities8>
+</CmPossibilityList>
+</AnnotationDefs6001>
+</LangProject>
+<LgWritingSystem id="I572F9C44-CB40-4644-8627-03B1AB7AF6AA">
+<Locale24><Integer val="1033"/></Locale24>
+<DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
+<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+<DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
+<ICULocale24><Uni>en</Uni></ICULocale24>
+<Name24>
+<AUni ws="en">English</AUni>
+</Name24>
+<Description24>
+<AStr ws="en">
+<Run ws="en">abcǞǞ</Run>
+<Run ws="en" bold="on">C̜̅XYZ˘GAP ̆QED𝆹𝅥</Run>
+</AStr>
+</Description24>
+<Collations24>
+<LgCollation id="I897FA32D-8299-489F-966E-13661F3AF8F6">
+<WinLCID30><Integer val="1033"/></WinLCID30>
+<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+<Name30>
+<AUni ws="en">Default Collation</AUni>
+</Name30>
+<IcuResourceText30>
+<Uni>abcǞǞC̜̅XYZ˘GAP ̆QED𝆹𝅥</Uni>
+</IcuResourceText30>
+</LgCollation>
+<LgCollation id="I00D8DEAE-374C-4ECD-8C53-4897BF9A0085">
+<WinLCID30><Integer val="1033"/></WinLCID30>
+<WinCollation30><Uni>Latin1_General_CS_AI</Uni></WinCollation30>
+<Name30>
+<AUni ws="en">Case Sensitive</AUni>
+</Name30>
+</LgCollation>
+</Collations24>
+</LgWritingSystem>
+<LgWritingSystem id="ID741F72B-81F3-4975-811A-5B519A4C5F5A">
+<Locale24><Integer val="1033"/></Locale24>
+<ICULocale24><Uni>utp</Uni></ICULocale24>
+<Name24>
+<AUni ws="en">UnitTestProj</AUni>
+</Name24>
+<Collations24>
+<LgCollation id="IC47CAAD9-C67B-4BFE-BD15-69FF599528AA">
+<WinLCID30><Integer val="1033"/></WinLCID30>
+<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+<Name30>
+<AUni ws="en">DefaultCollation</AUni>
+</Name30>
+</LgCollation>
+</Collations24>
+</LgWritingSystem>
+<CmPossibilityList id="I57A1E75E-56B7-4C50-976B-7D58640F657A">
+<DateCreated5><Time val="2004-08-31 10:56:45.363"/></DateCreated5>
+<DateModified5><Time val="2004-08-31 10:56:45.363"/></DateModified5>
+<IsSorted8><Boolean val="true"/></IsSorted8>
+<PreventDuplicates8><Boolean val="true"/></PreventDuplicates8>
+<ItemClsid8><Integer val="27"/></ItemClsid8>
+<WsSelector8><Integer val="-3"/></WsSelector8>
+<Name5>
+<AUni ws="en">My List</AUni>
+</Name5>
+<Abbreviation8>
+<AUni ws="en">New List</AUni>
+</Abbreviation8>
+<Description5>
+<AStr ws="en">
+<Run ws="en">New List</Run>
+</AStr>
+</Description5>
+<Possibilities8>
+<CmCustomItem id="I6C7BC4D8-48DF-4E65-AAB3-2C2A63C3CAE3">
+<DateCreated7><Time val="2004-12-18 14:11:13.377"/></DateCreated7>
+<DateModified7><Time val="2004-12-18 14:12:00.000"/></DateModified7>
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">First Item</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">1st</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">This is the first item in my list.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IDAEAB5E1-8459-43C1-BDB7-ECB8D9B00D74">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmCustomItem>
+<CmCustomItem id="I4E0E1FDF-B093-4987-AD08-16D19EF72577">
+<DateCreated7><Time val="2004-12-18 14:11:43.317"/></DateCreated7>
+<DateModified7><Time val="2004-12-18 14:11:43.317"/></DateModified7>
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Second Item</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">2nd</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">This is the second item in my list.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IE3032534-3025-490B-989B-9C99E446678F">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmCustomItem>
+<CmCustomItem id="I9CB4A9B3-5F42-40D0-96DD-FDA6D733272C">
+<DateCreated7><Time val="2004-12-18 14:12:01.033"/></DateCreated7>
+<DateModified7><Time val="2004-12-18 14:12:01.033"/></DateModified7>
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Third Item</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">3rd</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">This is the third item in my list.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IDE1CED82-F27B-4840-A2D6-BA0D3706B034">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmCustomItem>
+<CmCustomItem id="ICB854987-0497-4161-9740-D251572B9A86">
+<DateCreated7><Time val="2004-12-18 14:12:22.440"/></DateCreated7>
+<DateModified7><Time val="2004-12-18 14:13:00.000"/></DateModified7>
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Fourth Item</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">4th</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">This is the fourth item in my list.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="ID39A2299-2128-43B5-B1AB-1C582501AAFB">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmCustomItem>
+<CmCustomItem id="I21494972-A3C3-4488-B496-FF4D5D9D3340">
+<DateCreated7><Time val="2004-12-18 14:12:38.363"/></DateCreated7>
+<DateModified7><Time val="2004-12-18 14:12:38.363"/></DateModified7>
+<ForeColor7><Integer val="-1073741824"/></ForeColor7>
+<BackColor7><Integer val="-1073741824"/></BackColor7>
+<UnderColor7><Integer val="-1073741824"/></UnderColor7>
+<Name7>
+<AUni ws="en">Fifth item</AUni>
+</Name7>
+<Abbreviation7>
+<AUni ws="en">5th</AUni>
+</Abbreviation7>
+<Description7>
+<AStr ws="en">
+<Run ws="en">This is the fifth item in my list.</Run>
+</AStr>
+</Description7>
+<Discussion7>
+<StText>
+<Paragraphs14>
+<StTxtPara id="IC8AD9BAB-6758-4E0F-87B5-C4A17E9FEC55">
+</StTxtPara>
+</Paragraphs14>
+</StText>
+</Discussion7>
+</CmCustomItem>
+</Possibilities8>
+</CmPossibilityList>
+</FwDatabase>

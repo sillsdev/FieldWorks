@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+ <app id="LC" path="C:\fw\Output\Release" exe="Flex.exe">
+  <scripts>
+   <path>C:\fw\Test\GuiTestDriver\ContinuousLexTextGuiTests</path>
+  </scripts>
+  <model main="LT.xml">
+   <path>C:\fw\Test\GuiTestDriver\LtModel</path>
+  </model>
+ </app>
+ <app id="LT" path="C:\fw\Output\Debug" exe="Flex.exe">
+  <scripts>
+   <path>C:\fw\Test\GuiTestDriver\ContinuousLexTextGuiTests</path>
+  </scripts>
+  <model main="LT.xml">
+   <path>C:\fw\Test\GuiTestDriver\LtModel</path>
+  </model>
+ </app>
+ <app id="TE" path="C:\fw\Output\Debug" exe="TE.exe">
+  <scripts>
+   <path>C:\fw\Test\GuiTestDriver\FwGuiTests</path>
+  </scripts>
+  <model main="TE.xml">
+   <path>C:\fw\Test\GuiTestDriver\TeModel</path>
+  </model>
+ </app>
+ <!-- General Gui Test Driver Tests -->
+ <app id="FW" path="C:\fw\Output\Debug" exe="Flex.exe">
+  <scripts>
+   <path>C:\fw\Test\GuiTestDriver\GuiTestDriverTests</path>
+  </scripts>
+  <model main="LT.xml">
+   <path>C:\fw\Test\GuiTestDriver\LtModel</path>
+  </model>
+ </app>
+  <app id="NP" path="C:\WINDOWS\system32" exe="notepad.exe">
+  <scripts>
+   <path>C:\fw\Test\GuiTestDriver\GuiTestDriverTests</path>
+  </scripts>
+  <model main="LT.xml">
+   <path>C:\fw\Test\GuiTestDriver\LtModel</path>
+  </model>
+ </app>
+</config>

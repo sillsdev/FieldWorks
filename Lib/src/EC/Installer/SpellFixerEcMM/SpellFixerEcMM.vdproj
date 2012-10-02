@@ -1,0 +1,593 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:SpellFixerEcMM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_6E3647560842418AB92F0D69A92A445F"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_7CDEAA4DE4D94E829421A6DB1F2AD1F6"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_8F9401F6611F4DBF97C1E03484A89CB2"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_9F449770A6A842009D5C7907181356C5"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_C62DA4761618E77050517A71D52C0D7F"
+		"OwnerKey" = "8:_DB6C74D41C566583AE65AEC4DB906AA1"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_C88D7E8F74274EE533F2CA31F07EB7F9"
+		"OwnerKey" = "8:_6E3647560842418AB92F0D69A92A445F"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_C88D7E8F74274EE533F2CA31F07EB7F9"
+		"OwnerKey" = "8:_D30DBE955D834CC4992CC66F4C7867AC"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_C88D7E8F74274EE533F2CA31F07EB7F9"
+		"OwnerKey" = "8:_DB6C74D41C566583AE65AEC4DB906AA1"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_CA96C9B859A2751345963373C1112DF1"
+		"OwnerKey" = "8:_C88D7E8F74274EE533F2CA31F07EB7F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_D30DBE955D834CC4992CC66F4C7867AC"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_DB6C74D41C566583AE65AEC4DB906AA1"
+		"OwnerKey" = "8:_6E3647560842418AB92F0D69A92A445F"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_DB6C74D41C566583AE65AEC4DB906AA1"
+		"OwnerKey" = "8:_D30DBE955D834CC4992CC66F4C7867AC"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_6E3647560842418AB92F0D69A92A445F"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_D30DBE955D834CC4992CC66F4C7867AC"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_DB6C74D41C566583AE65AEC4DB906AA1"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_C88D7E8F74274EE533F2CA31F07EB7F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\SpellFixerEcMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\SpellFixerEcMM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6E3647560842418AB92F0D69A92A445F"
+			{
+			"AssemblyRegister" = "3:2"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SpellingFixerEC, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_6E3647560842418AB92F0D69A92A445F"
+					{
+					"Name" = "8:SpellingFixerEC.dll"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SpellingFixerEC.dll"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_AE735D12AC354FED96E247583C1F7B34"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7CDEAA4DE4D94E829421A6DB1F2AD1F6"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SpellFixer.dot"
+			"TargetName" = "8:SpellFixer.dot"
+			"Tag" = "8:"
+			"Folder" = "8:_5FF9565D502440D4B96A1BF4C3AA0E8E"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8F9401F6611F4DBF97C1E03484A89CB2"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SpellFixer.dot"
+			"TargetName" = "8:SpellFixer.dot"
+			"Tag" = "8:"
+			"Folder" = "8:_B5D70A5120284F2784F91B93834C0048"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9F449770A6A842009D5C7907181356C5"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SpellingFixerEC.tlb"
+			"TargetName" = "8:SpellingFixerEC.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_6122DCAD468A40619F20E3DA7859B821"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C62DA4761618E77050517A71D52C0D7F"
+			{
+			"SourcePath" = "8:SilEncConverters30.tlb"
+			"TargetName" = "8:SilEncConverters30.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_AE735D12AC354FED96E247583C1F7B34"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C88D7E8F74274EE533F2CA31F07EB7F9"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:ECInterfaces, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_C88D7E8F74274EE533F2CA31F07EB7F9"
+					{
+					"Name" = "8:ECInterfaces.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:ECInterfaces.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_AE735D12AC354FED96E247583C1F7B34"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CA96C9B859A2751345963373C1112DF1"
+			{
+			"SourcePath" = "8:ECInterfaces.tlb"
+			"TargetName" = "8:ECInterfaces.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_AE735D12AC354FED96E247583C1F7B34"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D30DBE955D834CC4992CC66F4C7867AC"
+			{
+			"AssemblyRegister" = "3:2"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SpellingFixerEC, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_D30DBE955D834CC4992CC66F4C7867AC"
+					{
+					"Name" = "8:SpellingFixerEC.dll"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SpellingFixerEC.dll"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_6122DCAD468A40619F20E3DA7859B821"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DB6C74D41C566583AE65AEC4DB906AA1"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SilEncConverters30, Version=3.1.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_DB6C74D41C566583AE65AEC4DB906AA1"
+					{
+					"Name" = "8:SilEncConverters30.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:SilEncConverters30.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_AE735D12AC354FED96E247583C1F7B34"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{1525181F-901A-416C-8A58-119130FE478E}:_1292CE6826DF49E0B0600876C23CAD12"
+			{
+			"Name" = "8:#1910"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:CommonFilesFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_016015D595B14EB38820B2F3BC6652A7"
+					{
+					"Name" = "8:SIL"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_6E8CA2CA1F44472F9BE0EC2A620F5354"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_6122DCAD468A40619F20E3DA7859B821"
+							{
+							"Name" = "8:EC3.1.0.0"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_20EC6DAD900240048EAC986E6966E885"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_5FF9565D502440D4B96A1BF4C3AA0E8E"
+			{
+			"DefaultLocation" = "8:[CommonAppDataFolder]Microsoft\\Templates"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+				}
+			}
+			"{1525181F-901A-416C-8A58-119130FE478E}:_93DB3A0A2B1A4CE8906ACC9195365935"
+			{
+			"Name" = "8:#1919"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:ProgramMenuFolder"
+				"Folders"
+				{
+					"{9EF0B969-E518-4E46-987F-47570745A589}:_B81112DC263B49D2B328A35BE5D97C6B"
+					{
+					"Name" = "8:SIL Converters"
+					"AlwaysCreate" = "11:FALSE"
+					"Condition" = "8:"
+					"Transitive" = "11:FALSE"
+					"Property" = "8:_20972C9B51E44333A3369858740128A2"
+						"Folders"
+						{
+							"{9EF0B969-E518-4E46-987F-47570745A589}:_50E50686A94A49CFB6D292E9D41CC8B4"
+							{
+							"Name" = "8:Help"
+							"AlwaysCreate" = "11:FALSE"
+							"Condition" = "8:"
+							"Transitive" = "11:FALSE"
+							"Property" = "8:_6875013EF8C84B9793B26101C52A08B4"
+								"Folders"
+								{
+								}
+							}
+						}
+					}
+				}
+			}
+			"{C7E34266-2C30-44B9-A9A3-4E394ABD6E18}:_AE735D12AC354FED96E247583C1F7B34"
+			{
+			"Name" = "8:#1927"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:GAC"
+				"Folders"
+				{
+				}
+			}
+			"{994432C3-9487-495D-8656-3E829A8DBDDE}:_B5D70A5120284F2784F91B93834C0048"
+			{
+			"DefaultLocation" = "8:[AppDataFolder]Microsoft\\Templates"
+			"Name" = "8:Word DOT Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:TRUE"
+			"Property" = "8:WORD_DOT_FOLDER"
+				"Folders"
+				{
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:SpellFixer30MergeModule.E4177EA6955447718C7BE57DD55787D0"
+		"Version" = "8:3.1.0.0"
+		"Title" = "8:SpellFixerMergeModule"
+		"Subject" = "8:Document Template for doing spelling corrections using EncConverters in MS Word"
+		"Author" = "8:SIL"
+		"Keywords" = "8:SILConverters; Spell Fixing in MS Word"
+		"Comments" = "8:SpellFixer Macro Word document template"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:"
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+			"{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_49E2003A0A854CDFAE0B9CCA8D935B45"
+			{
+			"Name" = "8:Help for the SpellFixer macro"
+			"Arguments" = "8:"
+			"Description" = "8:Help information for the SpellFixer MS Word document template"
+			"ShowCmd" = "3:1"
+			"IconIndex" = "3:0"
+			"Transitive" = "11:FALSE"
+			"Target" = "8:_7CDEAA4DE4D94E829421A6DB1F2AD1F6"
+			"Folder" = "8:_50E50686A94A49CFB6D292E9D41CC8B4"
+			"WorkingFolder" = "8:_5FF9565D502440D4B96A1BF4C3AA0E8E"
+			"Icon" = "8:"
+			"Feature" = "8:"
+			}
+		}
+	}
+}

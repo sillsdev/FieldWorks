@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <commands>
+	<!--any old object -->
+	<command id="CmdDataTree-Delete" label="Delete" message="DataTreeDelete" icon="Delete"/>
+	<command id="CmdDataTree-WritingSystemMenu-ShowAllRightNow" label="Show all right now" message="DataTreeWritingSystemsShowAll"/>
+	<command id="CmdDataTree-WritingSystemMenu-Configure" label="Configure..." message="DataTreeWritingSystemsConfigureDlg"/>
+  </commands>
+  <contextMenus>
+	<menu id="mnuDataTree-Object">
+		<!--<item command="CmdDataTree-Delete" />-->
+		<item label="-" translate="do not translate"/>
+		<menu id="mnuVisibility" label="Field Visibility">
+			<item command="CmdAlwaysVisible"/>
+			<item command="CmdIfData"/>
+			<item command="CmdNormallyHidden"/>
+		</menu>
+		<item command="CmdDataTree-Help"/>
+	</menu>
+	<menu id="mnuDataTree-MultiStringSlice">
+		<item label="-" translate="do not translate"/>
+		<!--Enhance so we don't have to copy the mnuVisibility <include path="CommonDataTreeInclude.xml" query="root/contextMenus/menu/menu[@id='mnuVisibility']"/> -->
+		<menu id="mnuVisibility" label="Field Visibility">
+			<item command="CmdAlwaysVisible"/>
+			<item command="CmdIfData"/>
+			<item command="CmdNormallyHidden"/>
+		</menu>
+		<menu id="DataTree-WritingSystemsMenu" label="Writing Systems">
+			<item command="CmdDataTree-WritingSystemMenu-ShowAllRightNow"/>
+			<menu list="WritingSystemOptionsForSlice" inline="true" emptyAllowed="true"
+				  behavior="singlePropertySequenceValue" property="SelectedWritingSystemHvosForCurrentContextMenu" defaultPropertyValue=""/>
+			<item command="CmdDataTree-WritingSystemMenu-Configure"/>
+		</menu>
+		<item command="CmdDataTree-Help"/>
+	 </menu>
+	  <!--A unique ShowHiddenFields menu is required for all tools so they can have their own boolProperty-->
+	<menu id="PaneBar-ShowHiddenFields-posEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-posEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-compoundRuleAdvancedEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-compoundRuleAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-phonemeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonemeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-naturalClassedit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassedit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-EnvironmentEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-EnvironmentEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-PhonologicalRuleEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-PhonologicalRuleEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-AdhocCoprohibEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" label="">
+	  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonologicalFeaturesAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-featuresAdvancedEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featuresAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-ProdRestrictEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-ProdRestrictEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-lexiconProblems" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconProblems" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-rapidDataEntry" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-rapidDataEntry" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-domainTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-domainTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-anthroEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-anthroEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-confidenceEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-confidenceEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-chartmarkEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-chartmarkEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-charttempEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-charttempEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-educationEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-educationEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-genresEdit" label="">
+	  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-genresEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-featureTypesAdvancedEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featureTypesAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-lexRefEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexRefEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-locationsEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-locationsEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-complexEntryTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-complexEntryTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-variantEntryTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-variantEntryTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-morphTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-morphTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-peopleEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-peopleEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-positionsEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-positionsEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-restrictionsEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-restrictionsEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-semanticDomainEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-semanticDomainEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-senseStatusEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-senseStatusEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-senseTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-senseTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-statusEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-statusEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-translationTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-translationTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+
+	<menu id="PaneBar-ShowHiddenFields-textMarkupTagsEdit" label="">
+	  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-textMarkupTagsEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+
+	<menu id="PaneBar-ShowHiddenFields-usageTypeEdit" label="">
+	  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-usageTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-reversalToolReversalIndexPOS" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalToolReversalIndexPOS" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-WordformDetail" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-WordsEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+  </contextMenus>
+	<defaultProperties>
+		<!-- These properties can be used to set the settingsGroup for context dependent properties. no need to persist these. -->
+		<property name="SliceSplitterBaseDistance" intValue="-1"  persist="false" settingsGroup="local"/>
+		<property name="ShowHiddenFields-" bool="false" persist="false" settingsGroup="local"/>
+		<property name="SelectedWritingSystemHvosForCurrentContextMenu" value="" persist="false" settingsGroup="local"/>
+	</defaultProperties>
+</root>

@@ -1,0 +1,18 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 2002, SIL International. All rights reserved.
+
+File: MigrateDataPs.idl
+Responsibility: Alistair Imrie
+Last reviewed:
+
+	Defines Language Services Interfaces for proxy / stub generation.
+----------------------------------------------------------------------------------------------*/
+import "oaidl.idl";
+import "ocidl.idl";
+import "DbAccessPs.idl";
+
+#include "Common.idh"
+
+#define NO_COCLASSES
+
+#include "MigrateData.idh"

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window label="Itinerary Maker" settingsId="xWindowUnitTest">
+  <commands>
+	<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable"/>
+	<command id="CmdClearFields" label="_Clear Fields" message="ClearFields"/>
+	<command id="CmdEnableTest" label="EnableTest" message="EnableTest"/>
+	<command id="CmdA" label="A" message="TypeLetter">
+	  <parameters text="A"/>
+	</command>
+	<command id="CmdB" label="B" message="TypeLetter">
+	  <parameters text="B"/>
+	</command>
+	<command id="CmdC" label="C" message="TypeLetter">
+	  <parameters text="C"/>
+	</command>
+  </commands>
+  <lists>
+	<list id="ListVowels">
+	  <item label="A" value="A"/>
+	  <item label="E" value="E"/>
+	  <item label="I" value="I"/>
+	  <item label="O" value="O"/>
+	  <item label="U" value="U"/>
+	</list>
+  </lists>
+  <menubar>
+	<menu label="_Type">
+	  <item command="CmdA"/>
+	  <item command="CmdB"/>
+	  <item command="CmdC"/>
+	  <menu list="ListVowels" id="SubVowels" label="_Vowels" behavior="singlePropertyAtomicValue" property="letter"/>
+	</menu>
+	<menu list="ListVowels" label="_Vowels" behavior="singlePropertyAtomicValue" property="letter"/>
+	<menu label="_Misc">
+	  <item id="toggle" label="Toggle Switch" boolProperty="toggleTest"/>
+	  <item id="enableTest" label="Enable Test" command="CmdEnableTest"/>
+	</menu>
+	<menu id="DebugMenu" label="_Debug">
+	  <item id="ClearFields" command="CmdClearFields"/>
+	  <item command="CmdListPropertiesTable"/>
+	</menu>
+  </menubar>
+<!--
+	<sidebar>
+		<tab label="Test">
+			<item command="CmdSubmitItinerary"/>
+			<item command="CmdListPropertiesTable"/>
+		</tab>
+		<tab label="Needs">
+			<item label='Wheelchr' boolProperty="wheelchair"/>
+		</tab>
+		<tab list="Cities" label="Departure Location" behavior="singlePropertyAtomicValue" property = "departure"/>
+		<tab list="Cities" label="Destination" behavior="singlePropertyAtomicValue" property = "destination"/>
+	</sidebar>
+
+	<toolbars>
+		<toolbar id="Actions">
+			<item command="CmdSubmitItinerary"/>
+			<item command="CmdListPropertiesTable"/>
+		</toolbar>
+	</toolbars>
+	-->
+<!-- The class which will  fill up the window (minus the sidebar, toolbars, and menubar). -->
+  <contentClass assemblyPath="xCoreTests.dll" class="XCore.Tester"/>
+</window>

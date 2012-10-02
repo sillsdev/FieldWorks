@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fileimpstd" num="2.1.8.1" abbr="flimst" file="FW\FileImportStandard.xml">
+<title tag="fileimpstd">File - Import &gt; Standard Format Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Standard Format Import Wizard is called in response to the File-Import &gt; Standard Format command. (To test the importing of an XML formatted file, use the <link uri="FileImport.xml" type="module">File-Import &gt; XML Format Tests</link>.)  This wizard is used to assist the user in importing files in the standard format (ie Shoebox). It can be run several times with the same database file to refine the way the import is done and user settings are saved and updated during the process. Details can be found in the specs below.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Import" type="doc">File - Import</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/StdFormatImportWizard/StdFormatImport.html" type="doc">Standard Format Import Wizard</link>
+</p>
+</introduction>
+
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Standard Format Import Wizard"</p>
+</context>
+
+<case id="flimstAct" num="1" order="any">
+<title tag="flimstAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Standard Format on the File - Import menu <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-Import" type="doc">Definition of File - Import.</link>
+<r>The first page of the Standard Format Import Wizard appears.</r>
+<p name="bug">Standard Format Import Wizard not working</p>
+</step>
+
+<step name="1.2" link="Bug">Use the images at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/StdFormatImportWizard/StdFormatImport.html" type="doc">Standard Format Import Wizard</link> to visually inspect the eight dialog boxes of this Wizard.
+ <r>Up to approximate size and position the two should be the same - especially any text and icons</r>
+ <p name="bug">Standard Format Import Wizard layout wrong</p>
+</step>
+</case>
+
+<case id="flimstDiac" num="2" order="any">
+<title tag="flimstDiac">Excercise dialog controls</title>
+<context>
+<p>When the Standard Format Import Wizard is running</p>
+</context>
+<p name="Note">Apply the this test case to all eight pages of the Wizard.</p>
+
+<step name="2.1">Use <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test the dialog's basic functionality.
+<r>
+<ul>
+<li>There is no OK button, What's this help widget nor resize widget.</li>
+<li>Report any failures as suggested using "Standard Format Import Wizard" as the name of the dialog.</li>
+</ul>
+</r>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Back, Next, and Finish buttons.
+<r>Report any failures as suggested using "Standard Format Import Wizard" as the name of the dialog.</r>
+</step>
+</case>
+
+
+<case id="flimstp1" num="3" order="any">
+<title tag="flimstp1">Overview - Page 1</title>
+<context>
+<p>When Page 1 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="3.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 1" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="flimstp2" num="4" order="any">
+<title tag="flimstp2">Save Settings - Page 2</title>
+<context>
+<p>When Page 2 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="4.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 2" as the name of the dialog.</r>
+</step>
+
+<step name="4.2" link="Bug">
+Use <link uri="../StdCtrls/ListBox.xml" type="module">List Box/Combo Box Tests</link> to test the <b>Get Settings from</b> combo box.
+<r>
+<ul>
+<li>Should contain the list of all settings currently available to the wizard.</li>
+<li>The default factory setting for this combo box when this wizard is first run is "Shoebox Anthropology Guide."</li>
+<li>On subsequent invocations of this wizard, the value in this combo box should be set to whatever was entered into the Save Settings To control the previous time.</li>
+<li>The Save Settings To combo box is automatically updated to reflect the choice (with some modifications for factory settings).</li>
+</ul>
+A description of the factory options and other details are described in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/StdFormatImportWizard/StdFormatImport.html" type="doc">Standard Format Import Wizard</link> specs.</r>
+<p name="bug">Standard Format Import Wizard Page 2 Get Settings from not working</p>
+</step>
+
+<step name="4.3" link="Bug">
+Use <link uri="../StdCtrls/ListBox.xml" type="module">List Box/Combo Box Tests</link> to test the <b>Save Settings to</b> combo box.
+<r>Contains the list of all settings currently available to the wizard which the user is allowed to change. The user can either choose from one of these, or enter something new (that is, this is not a closed combo box.) The default value is blank the first time the wizard is run; but thereafter remembers whatever the user entered</r>
+<p name="bug">Standard Format Import Wizard Page 2 Save Settings to not working</p>
+</step>
+
+</case>
+
+<case id="flimstp3" num="5" order="any">
+<title tag="flimstp3">Choose Database - Page 3</title>
+<context>
+<p>When Page 3 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="5.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 3" as the name of the dialog.</r>
+</step>
+
+<step name="5.2" link="Bug">
+Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the Browse.. button
+<r>
+<ul>
+<li>When clicked, brings up the standard "browse for file" dialog</li>
+   <li>The Files of type box in the "browse for file" dialog displays a file with a .db extension</li>
+   <li>If the file selected is a Shoebox for Windows database then a second Browse button is displayed below</li>
+   </ul>
+</r>
+<p name="bug">Standard Format Import Wizard Page 3 Database Browse button not working</p>
+</step>
+
+
+
+<step name="5.3" link="Bug">
+Select a Shoebox for Windows database file using the first Browse.. button.  Test the second Browse.. button that appears using <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link>.
+<r>
+<ul>
+<li>When clicked, brings up the standard "browse for file" dialog</li>
+   <li>The Files of type box in the "browse for file" dialog displays a file with a .prj extension</li>
+   <li>The box can be left empty and the user can continue on with the import process</li>
+</ul>
+</r>
+<p name="bug">Standard Format Import Wizard Page 3 Project Browse button not working</p>
+</step>
+
+<step name="5.4" link="Bug">
+When only the first Browse.. button is displayed (you may have to delete the file in the text box, press back and then click next), try putting in a file that is not a Shoebox for Windows database file.
+<r>The second Browse.. button should not appear.</r>
+<p name="bug">Standard Format Import Wizard Page 3 Project Browse button appears for non-Shoebox files.</p>
+</step>
+
+<step name="5.5" link="Bug">
+Try to click Next when no database file has been chosen (the Database filename text box is empty).
+<r>The Next button is disabled</r>
+<p name="bug">Standard Format Import Wizard Page 3 Next button not disabled when no Database filename selected</p>
+</step>
+
+</case>
+
+<case id="flimstp4" num="6" order="any">
+<title tag="flimstp4">Record Marker - Page 4</title>
+<context>
+<p>When Page 4 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="6.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 4" as the name of the dialog.</r>
+</step>
+
+<step name="6.2" link="Bug">
+Use <link uri="../StdCtrls/ListBox.xml" type="module">List Box/Combo Box Tests</link> to test the <i>Record Marker</i> combo box.
+
+<r>The combo box is populated with all the markers of the selected database.</r>
+<p name="bug">Standard Format Import Wizard Page 4 Record Marker combo box not working</p>
+</step>
+
+<step name="6.3" link="Bug">
+Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the <i>View the Database</i> button. The shortcut key for the button is &lt;alt&gt;&lt;v&gt;.
+<r>Word pad is launched so the user may view the database.</r>
+<p name="bug">Standard Format Import Wizard Page 4 View the Database button not working</p>
+</step>
+
+</case>
+
+<case id="flimstp5" num="7" order="any">
+<title tag="flimstp5">Content Mapping - Page 5</title>
+<context>
+<p>When Page 5 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="7.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 5" as the name of the dialog.</r>
+</step>
+
+<step name="7.2" link="Bug">
+Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the <i>Modify and Discard</i> buttons.
+<r>
+<ul>
+<li>
+<i>Modify</i> button. Brings up a dialog by which the marker, destination, and various other settings can be entered or modified.</li>
+<li>
+<i>Discard</i> button. Changes the Data Notebook Destination field to "(discard)"</li>
+</ul>
+</r>
+<p name="bug">Standard Format Import Wizard Page 5 Modify button not working</p>
+<p name="bug">Standard Format Import Wizard Page 5 Discard button not working</p>
+</step>
+
+<step name="7.3" link="Bug">
+Click on Modify for one of the markers.
+<r>The settings dialog appears with various controls depending on the destination data type. The general types of data include (with an example destination):
+<ul>
+<li>Structured Text (ex. Description)</li>
+ <li>Choices List (ex. Anthropology Categories)</li>
+<li>Simple Text (ex. Title)</li>
+<li>Date (ex. Date of Event)</li>
+<li>Link (ex. See Also)</li>
+<li>Discard (used for data not to include)</li>
+</ul>
+Several specific destinations may use the same general type (there are many categories that use Choices List). Some of the general types may have no import options (like Discard). </r>
+<p name="bug"> </p>
+</step>
+
+<step name="7.4" link="Bug">
+Exercise each type of settings dialog using the tests below.
+<r>Each dialog should work correctly.</r>
+<p name="bug">Standard Format Import Wizard Content Settings Structured Text dialog not working</p>
+<p name="bug">Standard Format Import Wizard Content Settings Choices List dialog not working</p>
+<p name="bug">Standard Format Import Wizard Content Settings Simple Text dialog not working</p>
+<p name="bug">Standard Format Import Wizard Content Settings Date dialog not working</p>
+<p name="bug">Standard Format Import Wizard Content Settings Link dialog not working</p>
+<p name="bug">Standard Format Import Wizard Content Settings Discard dialog not working</p>
+</step>
+
+<step name="7.4.0" link="Bug">
+Examine the Settings dialog visually and compare with <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/StdFormatImportWizard/StdFormatImport.html" type="doc">the specs</link>.
+<r>The dialog should agree with the one described in the specs with respect to layout, text and controls present.</r>
+<p name="bug">Standard Format Import Wizard Content Settings dialog visually incorrect</p>
+<p name="note">The specs may not include a visual of all the different types of settings dialogs.</p>
+</step>
+
+<step name="7.4.1">
+Test the Settings dialog's basic functionality using Case 2 from above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Content Settings" as the name of the dialog.</r>
+</step>
+
+<step name="7.4.2">
+Test all the List/Combo Boxes, Buttons, Check Boxes, Text Boxes and Radio Buttons that are present using: <link uri="../StdCtrls/ListBox.xml" type="module">List/Combo Box Tests</link>, <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link>, <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link>, <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link>, and <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link>.
+<r>Report any failures as suggested including the words "Standard Format Import Wizard Content Settings" as the first words of the report.</r>
+</step>
+
+<step name="7.4.3" link="Bug">
+Change some settings for one of the markers to be imported and remember what settings were adjusted.
+<r>On import, verify the changed settings were applied.</r>
+<p name="bug">Standard Format Import Wizard Page 5 settings not applied</p>
+<p name="note">Try to test as many different types of settings as possible, not necessarily every combination of settings.</p>
+</step>
+
+</case>
+
+<case id="flimstp6" num="8" order="any">
+<title tag="flimstp6">Character Mapping - Page 6</title>
+<context>
+<p>When Page 6 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="8.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 6" as the name of the dialog.</r>
+</step>
+
+<step name="8.2" link="Bug">
+Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the <i>Add, Modify, and Delete</i> buttons.
+<r>
+<ul>
+<li>
+<i>Add</i> button. Adds a new row and brings up the Character Mapping dialog for inputting its settings. (If the Character Mapping dialog is canceled, then a new row is not added.)</li>
+<li>
+<i>Modify</i> button. Brings up the Character Mapping dialog for the currently selected row. </li>
+<li>
+<i>Delete</i> button. Deletes the currently selected row.</li>
+</ul>
+</r>
+<p name="bug">Standard Format Import Wizard Page 6 Add button not working</p>
+<p name="bug">Standard Format Import Wizard Page 6 Modify button not working</p>
+<p name="bug">Standard Format Import Wizard Page 6 Delete button not working</p>
+</step>
+
+<step name="8.3">
+Inspect the Character Mapping dialog by clicking Add or Modify. Visually Inspect it and compare it to <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/StdFormatImportWizard/StdFormatImport.html" type="doc">the specs</link>. Test its basic functionality using Case 2 from above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Character Mapping" as the name of the dialog</r>
+</step>
+
+<step name="8.4">
+Use <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link>, <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link>, <link uri="../StdCtrls/TextBox.xml" type="module">Text Box Tests</link>, and <link uri="../StdCtrls/ListBox.xml" type="module">List/Combo Box Tests</link> to test the controls of the Character Mapping dialog.
+<r>Report any failures as suggested including the words "Standard Format Import Wizard Character Mapping" as the first words of the report.</r>
+</step>
+
+<step name="8.5" link="Bug">
+Change some settings for one or two of the markups to be imported and remember what settings were adjusted.
+<r>On import, verify the changed settings were applied.</r>
+<p name="bug">Standard Format Import Wizard Page 6 settings not applied</p>
+</step>
+
+</case>
+
+<case id="flimstp7" num="9" order="any">
+<title tag="flimstp7">Add or Replace Entries - Page 7</title>
+<context>
+<p>When Page 7 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="9.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 7" as the name of the dialog.</r>
+</step>
+
+<step name="9.2" link="Bug">
+Use <link uri="../StdCtrls/RadioBtn.xml" type="module">Radio Button Tests</link> to test the three radio button controls on this dialog (the third radio button, <i>Merge</i> may be disabled).
+<r>The radio buttons should work as defined in the tests and the import should be carried out based on the selection made(overwrite the entries, add the entries, or merge the entries).</r>
+<p name="bug">Standard Format Import Wizard Page 7 Add/Replace/Merge selection not working</p>
+<p name="note">Merge may not even be implemented in version one</p>
+</step>
+
+<step name="9.2.1" link="Bug">
+Verify the import process works correctly with Overwriting data.
+<r>Examine the new notebook after the import.<ul>
+<li>The import threw away all of the old entries in the notebook.</li>
+<li>It threw away all choice list items, and reinitialized them to their factory default settings</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="9.2.2" link="Bug">
+Verify the import process works correctly with Adding data.
+<r>Examine the new notebook after the import.<ul>
+<li>The import added the new data to the old.</li>
+<li>Choices Lists and Entries contain both old and new items</li>
+</ul>
+</r>
+<p name="bug">
+</p>
+</step>
+
+<step name="9.2.3" link="Bug">
+Verify the import process works correctly with Merging data.
+<r>
+<ul>
+<li>Merge is only allowed where there are \_guid fields in the data. This option should be disabled if such fields do not exist in the standard format database.</li>
+<li>During a merge, the mechanism outlined in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Networking/Networking.html" type="doc">Networking</link> document is used.</li>
+</ul> </r>
+<p name="bug">
+</p>
+<p name="note">Merge may not even be implemented in version one</p>
+</step>
+
+
+
+</case>
+
+<case id="flimstp8" num="10" order="any">
+<title tag="flimstp8">Ready to Import - Page 8</title>
+<context>
+<p>When Page 8 of the Standard Format Import Wizard is displayed</p>
+</context>
+
+<step name="10.1">
+Visually inspect the dialog and test its basic functionality using Cases 1 and 2 above.
+<r>Report any failures as suggested using "Standard Format Import Wizard Page 8" as the name of the dialog.</r>
+</step>
+
+<step name="10.2" link="Bug">
+Cancel the import process by clicking the Cancel button.
+<r>By this time, all settings defined on pages 3-6 for the cancelled import should have been saved. Verify this by reopening the import wizard and checking the settings (Page 2 settings default to the saved settings for the last import).</r>
+<p name="bug">Standard Format Import Wizard Page 8 Settings not saved on cancel</p>
+</step>
+
+<step name="10.3" link="Bug">
+Click the Finish button to begin the import process.
+<r>The data should be imported according to the user settings applied during the wizard process. Verify this.</r>
+<p name="bug">Standard Format Import Wizard Page 8 import process not working</p>
+</step>
+
+</case>
+
+
+<update date="Jun-07-02" author="RussD">Test script created.</update>
+<update date="Jun-28-02" author="RussD">Added a few tests.</update>
+</test>

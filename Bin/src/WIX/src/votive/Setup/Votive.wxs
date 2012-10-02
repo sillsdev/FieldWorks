@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) Microsoft Corporation.  All rights reserved.
+
+	The use and distribution terms for this software are covered by the
+	Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+	which can be found in the file CPL.TXT at the root of this distribution.
+	By using this software in any fashion, you are agreeing to be bound by
+	the terms of this license.
+
+	You must not remove this notice, or any other, from this software.
+
+  Votive.wxs - WiX installer file for the Votive Visual Studio Package MSI.
+-->
+
+<?include Guids.wxi ?>
+<?include WixVer.wxi ?>
+
+<!-- Preprocessor definitions -->
+<?define IDS_PROJECTFILES_FILTER = "111" ?>
+<?define IDS_ADDITEM_TEMPLATES_ENTRY = "122" ?>
+<?define IDS_PROJECTS_DISPLAYNAME = "150" ?>
+
+<?define VsVersion = "dummy"?>
+<?define VsRegPath = "dummy"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Fragment>
+	<Property Id="VS2003_SCHEMAS_DIR">
+	  <?undef VsVersion?>
+	  <?define VsVersion = "7.1"?>
+	  <?include SetVsRegPath.wxi?>
+	  <RegistrySearch Id="SearchForCommonDirPath2003" Root="HKLM" Key="$(var.VsRegPath)\Setup\VS" Name="VS7CommonDir" Type="raw">
+		<DirectorySearch Id="SearchForCommonPackagesPath2003" Path="Packages" Depth="1">
+		  <DirectorySearch Id="SearchForPackagesSchemasPath2003" Path="schemas" Depth="1">
+			<DirectorySearch Id="SearchForSchemasXmlPath2003" Path="xml" Depth="1" />
+		  </DirectorySearch>
+		</DirectorySearch>
+	  </RegistrySearch>
+	</Property>
+
+	<Property Id="VS2005_SCHEMAS_DIR">
+	  <?undef VsVersion?>
+	  <?define VsVersion = "8.0"?>
+	  <?include SetVsRegPath.wxi?>
+	  <RegistrySearch Id="SearchForCommonDirPath2005" Root="HKLM" Key="$(var.VsRegPath)\Setup\VS" Name="ProductDir" Type="raw">
+		<DirectorySearch Id="SearchForXmlPath2005" Path="Xml" Depth="1">
+		  <DirectorySearch Id="SearchForXmlSchemasPath2005" Path="Schemas" Depth="1" />
+		</DirectorySearch>
+	  </RegistrySearch>
+	</Property>
+
+	<!-- Directories -->
+	<Directory Id="TARGETDIR" Name="SourceDir">
+	  <Directory Id="ProgramFilesFolder" Name="PFILES" LongName="Program Files">
+		<Directory Id="INSTALLLOCATION" Name="WIX$(var.DebugLetter)" LongName="Windows Installer XML$(var.SpaceParenDebug)">
+		  <Directory Id="BinDir" Name="bin">
+			<Directory Id="BinUiBitmapsDir" Name="Bitmaps" />
+		  </Directory>
+		  <Directory Id="DocDir" Name="doc" />
+		  <Directory Id="VsDir" Name="VS" LongName="Visual Studio">
+			<Directory Id="VsDir_1033" Name="1033" />
+			<Directory Id="VsTemplatesDir" Name="TEMPLATE" LongName="Templates">
+			  <Directory Id="VsTemplatesProjectItemsDir" Name="PRJITEMS" LongName="Project Items">
+				<Directory Id="VsTemplatesProjectItemsCodeDir" Name="Code" />
+				<Directory Id="VsTemplatesProjectItemsResourcesDir" Name="RESOURCE" LongName="Resources" />
+			  </Directory>
+			  <Directory Id="VsTemplatesProjectsDir" Name="Projects" />
+			</Directory>
+		  </Directory>
+		</Directory>
+	  </Directory>
+	</Directory>
+
+	<!-- Components -->
+	<DirectoryRef Id="INSTALLLOCATION">
+	  <Component Id="Licensing" DiskId="1" Guid="$(var.LicensingGuid)">
+		<File Id="CPL.TXT" Name="CPL.TXT" Source="$(var.VotiveRoot)\Setup\CPL.TXT" Vital="yes" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="BinDir">
+	  <Component Id="CandleBinaries" DiskId="1" Guid="$(var.CandleBinariesGuid)">
+		<File Id="candle.exe" Name="candle.exe" Source="$(var.TargetDir)\candle.exe" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="CandleConfig" DiskId="1" Guid="$(var.CandleConfigGuid)">
+		<File Id="candle.exe.config" Name="candle.cfg" LongName="candle.exe.config" Source="$(var.TargetDir)\candle.exe.config" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="LightBinaries" DiskId="1" Guid="$(var.LightBinariesGuid)">
+		<File Id="light.exe" Name="light.exe" Source="$(var.TargetDir)\light.exe" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="LightConfig" DiskId="1" Guid="$(var.LightConfigGuid)">
+		<File Id="light.exe.config" Name="light.cfg" LongName="light.exe.config" Source="$(var.TargetDir)\light.exe.config" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="LitBinaries" DiskId="1" Guid="$(var.LitBinariesGuid)">
+		<File Id="lit.exe" Name="lit.exe" Source="$(var.TargetDir)\lit.exe" Checksum="yes" KeyPath="yes" />
+	  </Component>
+	  <Component Id="LitConfig" DiskId="1" Guid="$(var.LitConfigGuid)">
+		<File Id="lit.exe.config" Name="lit.cfg" LongName="lit.exe.config" Source="$(var.TargetDir)\lit.exe.config" Checksum="yes" KeyPath="yes" />
+	  </Component>
+	  <Component Id="WixBinaries" DiskId="1" Guid="$(var.WixBinariesGuid)">
+		<File Id="wix.dll" Name="wix.dll" Source="$(var.TargetDir)\wix.dll" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="WixInteropBinaries" DiskId="1" Guid="$(var.WixInteropBinariesGuid)">
+		<File Id="winterop.dll" Name="winterop.dll" Source="$(var.TargetDir)\winterop.dll" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="MergeModBinaries" DiskId="1" Guid="$(var.MergeModBinariesGuid)">
+		<File Id="mergemod.dll" Name="mergemod.dll" Source="$(var.TargetDir)\mergemod.dll" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="DarkBinaries" DiskId="1" Guid="$(var.DarkBinariesGuid)">
+		<File Id="dark.exe" Name="dark.exe" Source="$(var.TargetDir)\dark.exe" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="DarkConfig" DiskId="1" Guid="$(var.DarkConfigGuid)">
+		<File Id="dark.exe.config" Name="dark.cfg" LongName="dark.exe.config" Source="$(var.TargetDir)\dark.exe.config" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="TallowBinaries" DiskId="1" Guid="$(var.TallowBinariesGuid)">
+		<File Id="tallow.exe" Name="tallow.exe" Source="$(var.TargetDir)\tallow.exe" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="TallowConfig" DiskId="1" Guid="$(var.TallowConfigGuid)">
+		<File Id="tallow.exe.config" Name="tallow.cfg" LongName="tallow.exe.config" Source="$(var.TargetDir)\tallow.exe.config" Checksum="yes" KeyPath="yes" Vital="yes" />
+	  </Component>
+	  <Component Id="ScaLibBinaries" DiskId="1" Guid="$(var.ScaLibBinariesGuid)">
+		<File Id="scaexec.dll" Name="scaexec.dll" Source="$(var.TargetDir)\scaexec.dll" Checksum="yes" KeyPath="yes" Vital="yes" />
+		<File Id="scasched.dll" Name="scasched.dll" Source="$(var.TargetDir)\scasched.dll" Checksum="yes" Vital="yes" />
+		<File Id="sca.wixlib" Name="sca.wlb" LongName="sca.wixlib" Source="$(var.TargetDir)\sca.wixlib" Vital="yes" />
+	  </Component>
+	  <Component Id="WixCaLibBinaries" DiskId="1" Guid="$(var.WixCaLibBinariesGuid)">
+		<File Id="wixca.dll" Name="wixca.dll" Source="$(var.TargetDir)\wixca.dll" Checksum="yes" KeyPath="yes" Vital="yes" />
+		<File Id="wixca.wixlib" Name="wixca.wlb" LongName="wixca.wixlib" Source="$(var.TargetDir)\wixca.wixlib" Vital="yes" />
+	  </Component>
+	  <Component Id="WixUiLibBinaries" DiskId="1" Guid="$(var.WixUiLibBinariesGuid)">
+		<File Id="wixui.wixlib" LongName="WixUI.wixlib" Name="wixui.wlb" Source="$(var.TargetDir)\wixui.wixlib" Vital="yes" />
+		<File Id="License.rtf" Name="License.rtf" Source="License.rtf" Vital="yes" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="BinUiBitmapsDir">
+	  <Component Id="WixUiBitmaps" DiskId="1" Guid="$(var.WixUiBitmapsGuid)">
+		<File Id="bannrbmp.bmp" Name="bannrbmp.bmp" Source="Bitmaps\bannrbmp.bmp" Vital="yes" />
+		<File Id="dlgbmp.bmp" Name="dlgbmp.bmp" Source="Bitmaps\dlgbmp.bmp" Vital="yes" />
+		<File Id="exclamic.ico" Name="exclamic.ico" Source="Bitmaps\exclamic.ico" Vital="yes" />
+		<File Id="info.ico" Name="info.ico" Source="Bitmaps\info.ico" Vital="yes" />
+		<File Id="new.ico" Name="new.ico" Source="Bitmaps\new.ico" Vital="yes" />
+		<File Id="up.ico" Name="up.ico" Source="Bitmaps\up.ico" Vital="yes" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="DocDir">
+	  <Component Id="ChmDocumentation" DiskId="1" Guid="$(var.WixChmGuid)">
+		<File Id="WiX.chm" Name="WiX.chm" Source="$(var.TargetDir)\WiX.chm" KeyPath="yes" />
+	  </Component>
+	  <Component Id="WixSchema" DiskId="1" Guid="$(var.WixSchemaGuid)">
+		<File Id="wix.xsd" Name="wix.xsd" Source="$(var.TargetDir)\wix.xsd" />
+	  </Component>
+	  <Component Id="WixLocSchema" DiskId="1" Guid="$(var.WixLocSchemaGuid)">
+		<File Id="wixloc.xsd" Name="wixloc.xsd" Source="$(var.TargetDir)\wixloc.xsd" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="VsDir">
+	  <Component Id="VisualStudioPackageCommon" DiskId="1" Guid="$(var.VsPackageCommonGuid)">
+		<File Id="votive.dll" Name="votive.dll" Source="$(var.TargetDir)\votive.dll" KeyPath="yes" Checksum="yes" Vital="yes" />
+		<!-- File Extensions -->
+		<!-- Note that we're keeping the versioned progid the same -->
+		<ProgId Id="VisualStudio.wixprojfile.7.1" Description="WiX Project File" Icon="[#votive.dll]" IconIndex="0">
+		  <Extension Id="wixproj" ContentType="text/plain">
+			<Verb Id="WixprojOpen" Command="Open" Target="&quot;[DEVENV_LATEST_PATH]&quot;" Argument="&quot;%1&quot;" />
+		  </Extension>
+		</ProgId>
+		<ProgId Id="VisualStudio.wxsfile.7.1" Description="WiX Source File" Icon="[#votive.dll]" IconIndex="1">
+		  <Extension Id="wxs" ContentType="text/xml">
+			<Verb Id="WxsOpen" Command="Open" Target="&quot;[DEVENV_LATEST_PATH]&quot;" Argument="&quot;%1&quot;" />
+		  </Extension>
+		</ProgId>
+		<ProgId Id="VisualStudio.wxifile.7.1" Description="WiX Include File" Icon="[#votive.dll]" IconIndex="3">
+		  <Extension Id="wxi" ContentType="text/xml">
+			<Verb Id="WxiOpen" Command="Open" Target="&quot;[DEVENV_LATEST_PATH]&quot;" Argument="&quot;%1&quot;" />
+		  </Extension>
+		</ProgId>
+		<ProgId Id="VisualStudio.wxlfile.7.1" Description="WiX Language File" Icon="[#votive.dll]" IconIndex="5">
+		  <Extension Id="wxl" ContentType="text/xml">
+			<Verb Id="WxlOpen" Command="Open" Target="&quot;[DEVENV_LATEST_PATH]&quot;" Argument="&quot;%1&quot;" />
+		  </Extension>
+		</ProgId>
+	  </Component>
+
+	  <Component Id="VisualStudioPackageSconce" DiskId="1" Guid="$(var.VsPackageSconceGuid)">
+		<File Id="sconce.dll" Name="sconce.dll" Source="$(var.TargetDir)\sconce.dll" KeyPath="yes" Checksum="yes" Vital="yes" />
+
+		<!-- HKLM\SOFTWARE\Microsoft\VisualStudio\<ver>\CLSID\{85550E99-05E7-4778-BD7D-576FC334D522} -->
+		<Registry Id="RegClsidSconceGeneralPropertyPage$(var.VsVersion)" Root="HKLM" Key="$(var.VsRegPath)\CLSID\{85550E99-05E7-4778-BD7D-576FC334D522}" Value="Microsoft.Tools.WindowsInstallerXml.VisualStudioInfrastructure.GeneralPropertyPage" Type="string">
+		  <Registry Id="RegClsidSconceGeneralPropertyPageClass$(var.VsVersion)" Name="Class" Value="Microsoft.Tools.WindowsInstallerXml.VisualStudioInfrastructure.GeneralPropertyPage" Type="string" />
+		  <Registry Id="RegClsidSconceGeneralPropertyPageCodeBase$(var.VsVersion)" Name="CodeBase" Value="[#sconce.dll]" Type="string" />
+		  <Registry Id="RegClsidSconceGeneralPropertyPageInprocServer32$(var.VsVersion)" Name="InprocServer32" Value="[SystemFoloder]mscoree.dll" Type="string" />
+		  <Registry Id="RegClsidSconceGeneralPropertyPageThreadingModel$(var.VsVersion)" Name="ThreadingModel" Value="Both" Type="string" />
+		</Registry>
+	  </Component>
+
+	  <Component Id="VisualStudioPackage2003" DiskId="1" Guid="$(var.VsPackage2003Guid)">
+		<?undef VsVersion?>
+		<?define VsVersion = "7.1"?>
+		<?include SetVsRegPath.wxi?>
+		<?include RegPkgCommon.wxi?>
+
+		<!-- The VSCore interop DLLs are part of VS2005, so copy them only for VS2003 -->
+		<File Id="Microsoft.VisualStudio.Designer.Interfaces.dll" Name="MSVSDESI.DLL" LongName="Microsoft.VisualStudio.Designer.Interfaces.dll" Source="$(var.TargetDir)\Microsoft.VisualStudio.Designer.Interfaces.dll" Checksum="yes" Vital="yes" />
+		<File Id="Microsoft.VisualStudio.OLE.Interop.dll" Name="MSVSOLE.DLL" LongName="Microsoft.VisualStudio.OLE.Interop.dll" Source="$(var.TargetDir)\Microsoft.VisualStudio.OLE.Interop.dll" Checksum="yes" Vital="yes" />
+		<File Id="Microsoft.VisualStudio.Shell.Interop.dll" Name="MSVSSHL.DLL" LongName="Microsoft.VisualStudio.Shell.Interop.dll" Source="$(var.TargetDir)\Microsoft.VisualStudio.Shell.Interop.dll" Checksum="yes" Vital="yes" />
+		<CopyFile Id="CopyWixSchema2003" DestinationProperty="VS2003_SCHEMAS_DIR" FileId="wix.xsd" />
+		<CopyFile Id="CopyWixLocSchema2003" DestinationProperty="VS2003_SCHEMAS_DIR" FileId="wixloc.xsd" />
+	  </Component>
+
+	  <Component Id="VisualStudioPackage2005" DiskId="1" Guid="$(var.VsPackage2005Guid)">
+		<?undef VsVersion?>
+		<?define VsVersion = "8.0"?>
+		<!-- XML Editor GUID changed for VS2005 -->
+		<?undef XmlEditorGuid?>
+		<?define XmlEditorGuid = "{FA3CD31E-987B-443A-9B81-186104E8DAC1}" ?>
+		<?include SetVsRegPath.wxi?>
+		<?include RegPkgCommon.wxi?>
+
+		<CopyFile Id="CopyWixSchema2005" DestinationProperty="VS2005_SCHEMAS_DIR" FileId="wix.xsd" />
+		<CopyFile Id="CopyWixLocSchema2005" DestinationProperty="VS2005_SCHEMAS_DIR" FileId="wixloc.xsd" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="VsDir_1033">
+	  <Component Id="VsResources_1033" DiskId="1" Guid="$(var.VsResources1033Guid)">
+		<File Id="votiveui.dll_1033" Name="votiveui.dll" Source="$(var.TargetDir)\1033\votiveui.dll" KeyPath="yes" Checksum="yes" Vital="yes" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="VsTemplatesProjectItemsDir">
+	  <Component Id="VsProjectItems" DiskId="1" Guid="$(var.VsProjectItemsGuid)">
+		<File Id="ProjectItems.vsdir" Name="PRJITEMS.VSD" LongName="ProjectItems.vsdir" Source="$(var.VotiveTemplatesRoot)\ProjectItems\ProjectItems.vsdir" KeyPath="yes" Vital="yes" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="VsTemplatesProjectItemsCodeDir">
+	  <Component Id="VsProjectItemsCode" DiskId="1" Guid="$(var.VsProjectItemsCodeGuid)">
+		<File Id="Code.vsdir" Name="CODE.VSD" LongName="Code.vsdir" Source="$(var.VotiveTemplatesRoot)\ProjectItems\Code\Code.vsdir" KeyPath="yes" />
+		<File Id="Product.wxs" Name="Product.wxs" Source="$(var.VotiveTemplatesRoot)\ProjectItems\Code\Product.wxs" />
+		<File Id="BlankFile.wxs" Name="BLANK.WXS" LongName="BlankFile.wxs" Source="$(var.VotiveTemplatesRoot)\ProjectItems\Code\BlankFile.wxs" />
+		<File Id="IncludeFile.wxi" Name="INCLUDE.WXI" LongName="IncludeFile.wxi" Source="$(var.VotiveTemplatesRoot)\ProjectItems\Code\IncludeFile.wxi" />
+		<File Id="MergeModule.wxs" Name="MODULE.WXS" LongName="MergeModule.wxs" Source="$(var.VotiveTemplatesRoot)\ProjectItems\Code\MergeModule.wxs" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="VsTemplatesProjectItemsResourcesDir">
+	  <Component Id="VsProjectItemsRes" DiskId="1" Guid="$(var.VsProjectItemsResGuid)">
+		<File Id="Resources.vsdir" Name="RESOURCE.VSD" LongName="Resources.vsdir" Source="$(var.VotiveTemplatesRoot)\ProjectItems\Resources\Resources.vsdir" KeyPath="yes" />
+		<File Id="LanguageFile.wxl" Name="LANGUAGE.WXL" LongName="LanguageFile.wxl" Source="$(var.VotiveTemplatesRoot)\ProjectItems\Resources\LanguageFile.wxl" />
+	  </Component>
+	</DirectoryRef>
+
+	<DirectoryRef Id="VsTemplatesProjectsDir">
+	  <Component Id="VsProjects" DiskId="1" Guid="$(var.VsProjectsGuid)">
+		<File Id="Projects.vsdir" Name="PROJECTS.VDR" LongName="Projects.vsdir" Source="$(var.VotiveTemplatesRoot)\Projects\Projects.vsdir" KeyPath="yes" />
+		<File Id="ProjectsProduct.wxs" Name="Product.wxs" Source="$(var.VotiveTemplatesRoot)\Projects\Product.wxs" />
+		<File Id="ProjectsMergeModule.wxs" Name="MODULE.WXS" LongName="MergeModule.wxs" Source="$(var.VotiveTemplatesRoot)\Projects\MergeModule.wxs" />
+		<File Id="WixModuleProject.wixproj" Name="MODULE.WPJ" LongName="WixModuleProject.wixproj" Source="$(var.VotiveTemplatesRoot)\Projects\WixModuleProject.wixproj" />
+		<File Id="WixProject.wixproj" Name="PROJECT.WPJ" LongName="WixProject.wixproj" Source="$(var.VotiveTemplatesRoot)\Projects\WixProject.wixproj" />
+	  </Component>
+	</DirectoryRef>
+
+	<ComponentGroup Id="VotiveCommon">
+	  <ComponentRef Id="Licensing" />
+	  <ComponentRef Id="CandleBinaries" />
+	  <ComponentRef Id="CandleConfig" />
+	  <ComponentRef Id="LightBinaries" />
+	  <ComponentRef Id="LightConfig" />
+	  <ComponentRef Id="LitBinaries" />
+	  <ComponentRef Id="LitConfig" />
+	  <ComponentRef Id="WixBinaries" />
+	  <ComponentRef Id="WixInteropBinaries" />
+	  <ComponentRef Id="MergeModBinaries" />
+	  <ComponentRef Id="DarkBinaries" />
+	  <ComponentRef Id="DarkConfig" />
+	  <ComponentRef Id="TallowBinaries" />
+	  <ComponentRef Id="TallowConfig" />
+	  <ComponentRef Id="ScaLibBinaries" />
+	  <ComponentRef Id="WixCaLibBinaries" />
+	  <ComponentRef Id="WixUiLibBinaries" />
+	  <ComponentRef Id="WixUiBitmaps" />
+
+	  <ComponentRef Id="ChmDocumentation" />
+	  <ComponentRef Id="WixSchema" />
+	  <ComponentRef Id="WixLocSchema" />
+
+	  <ComponentRef Id="VisualStudioPackageCommon" />
+	  <ComponentRef Id="VisualStudioPackageSconce" />
+	  <ComponentRef Id="VsResources_1033" />
+	  <ComponentRef Id="VsProjectItems" />
+	  <ComponentRef Id="VsProjectItemsCode" />
+	  <ComponentRef Id="VsProjectItemsRes" />
+	  <ComponentRef Id="VsProjects" />
+	</ComponentGroup>
+  </Fragment>
+</Wix>

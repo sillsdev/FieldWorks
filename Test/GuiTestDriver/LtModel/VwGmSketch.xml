@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<grammar-sketch role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:FxtViewer/">
+  <var id="topPANEL" set="9:panelTop/"/>
+  <generate name="Generate" path="$topPANEL;9:btnGenerate/43:btnGenerate"/>
+  <back name="Back" path="$topPANEL;9:btnBack/43:btnBack"/>
+  <forward name="Forward" path="$topPANEL;9:btnForward/43:btnForward"/>
+  <save name="Save" path="$topPANEL;9:btnSaveAsHtml/43:btnSaveAsHtml"/>
+</grammar-sketch>

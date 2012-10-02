@@ -1,0 +1,54 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 2000, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: AfWizardDlg.rc
+Responsibility: John Wimbish
+Last reviewed: Not yet.
+
+Description:
+	Resources for the AfWizardDlg (a generic dialog for wizards).
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfWizardDlgRes.h"
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+
+/*----------------------------------------------------------------------------------------------
+	The Wizard dialog
+----------------------------------------------------------------------------------------------*/
+kridDlgWizard DIALOGEX 0, 0, 250, 400
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+CAPTION "Wizard"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "",kridWizLine,7,210,222,1,SS_SUNKEN
+	PUSHBUTTON      "< &Back",   kctidWizBack, 178, 215, 44, 15
+	DEFPUSHBUTTON   "&Next >",   kctidWizNext, 229, 215, 44, 15
+	PUSHBUTTON      "Cancel", kctidCancel,  280, 215, 44, 15
+	PUSHBUTTON      "Help",kctidHelp,    331, 215, 44, 15
+END
+
+
+/*----------------------------------------------------------------------------------------------
+	Button text for the "Next" button (It is the "Finish" button on the final page.)
+----------------------------------------------------------------------------------------------*/
+STRINGTABLE DISCARDABLE
+BEGIN
+	kridWizNext         "&Next >"
+	kridWizFinish       "&Finish"
+	kctidWizBack        "Takes you to the previous step."
+	kctidWizNext        "Takes you to the next step (Next) or saves settings and exits the wizard (Finish)."
+END
+
+
+#endif    // English (U.S.) resources

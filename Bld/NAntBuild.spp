@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Folder FolderName="XML Files" ExtStr="xml;cml;math;mtx;rdf;smil;svg;wml"/>
+	<Folder FolderName="XSL Files" ExtStr="xsl;xslt">
+		<File FilePath=".\TransformGlobalInclude.xslt" HomeFolder="Yes"/>
+		<File FilePath=".\VSConvert-csproj.xsl" HomeFolder="Yes"/>
+		<File FilePath=".\VSConvert-vcproj.xsl" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="HTML Files" ExtStr="html;htm;xhtml;asp"/>
+	<Folder FolderName="DTD/Schemas" ExtStr="dtd;dcd;xdr;biz;xsd"/>
+	<Folder FolderName="Entities" ExtStr="ent"/>
+	<Folder FolderName="NAnt Build Files" ExtStr="build">
+		<File FilePath=".\acceptancetests.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\autobuild.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\CacheLight.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\cm.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\FieldWorks.build" HomeFolder="Yes"/>
+		<File FilePath=".\GlobalInclude.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\GlobalInclude.xml" HomeFolder="Yes"/>
+		<File FilePath=".\Installer.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\LexText.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\mkall.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\OvernightBuildMachine.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\RBRPersonal.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\remake.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\Samples.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\SetupInclude.xml" HomeFolder="Yes"/>
+		<File FilePath=".\SpecialTargets.xml" HomeFolder="Yes"/>
+		<File FilePath=".\TE.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\UseThis.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\Version.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\VSConvert-shared.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\VSConvert.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\WordWorks.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\WordWorks_FXT.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\WordWorks_xCore.build.xml" HomeFolder="Yes"/>
+		<File FilePath=".\XMI.build.xml" HomeFolder="Yes"/>
+	</Folder>
+	<Folder FolderName="NAnt buildinclude Files" ExtStr="xml;cml;math;mtx;rdf;smil;svg;wml">
+		<File FilePath="D:\Dev\fw\Src\DbExtend\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\FDO\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\Common\ComFwDlgs\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\Common\COMInterfaces\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\Common\Framework\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\Common\Utils\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\WW-Parser\ParserCore\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\WW-GAFAWS\GAFAWSAnalysis\GAFAWSAnalysisTests\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\XCore\XCoreSample\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\XCore\xCoreTests\buildinclude.xml" HomeFolder="Yes"/>
+		<File FilePath="D:\Dev\fw\Src\XCore\xCoreOpenSourceAdapter\buildinclude.xml" HomeFolder="Yes"/>
+	</Folder>
+</Project>

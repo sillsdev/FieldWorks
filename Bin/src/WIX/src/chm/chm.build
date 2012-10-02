@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<project name="chm" default="chm.inc" xmlns="http://nant.sf.net/release/0.85-rc3/nant.xsd">
+  <description>
+	chm.build - Builds the help file (chm) project (wix.chm).
+	2005.09.12 jrock Created
+  </description>
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Properties
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Include the global build properties -->
+  <include buildfile="..\..\wix.include" unless="${property::exists('wix.properties.defined')}" />
+
+  <!-- Chm-specific properties -->
+  <property name="chm.file.tocSource" value="${dir.src.chm}\toc.xml" readonly="true" />
+  <property name="chm.file.tempTarget" value="${dir.build.chm}\WiX.chm" readonly="true" />
+  <property name="chm.file.target" value="${dir.target.wix}\WiX.chm" readonly="true" />
+
+  <!-- get the build number (regexes are the duct tape of build automation) -->
+  <loadfile file="${dir.wixroot.inc}\wixver.cs" property="dist.wixver.cs" />
+  <regex input="${dist.wixver.cs}" options="Multiline" pattern="^\[assembly: AssemblyVersion\(&quot;(?'wixver'.*)&quot;\)\]" />
+
+  <!--
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Targets
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+
+  <!-- Build -->
+  <target name="chm.build" description="Peforms a full rebuild (clean then build)" depends="chm.clean, chm.inc" />
+
+  <!-- Clean -->
+  <target name="chm.clean" description="Cleans the build">
+	<delete dir="${dir.build.chm}" failonerror="false" if="${directory::exists(dir.build.chm)}" />
+	<delete file="${chm.file.target}" failonerror="false" if="${file::exists(chm.file.target)}" />
+  </target>
+
+  <!-- Inc -->
+  <target name="chm.inc" description="Performs an incremental build" depends="makeDirs">
+	<if test="${not file::up-to-date(chm.file.tocSource, chm.file.target)}">
+	  <echo message="Compiling the WiX.chm file..." level="Info" />
+	  <!-- Compile the WiX.chm file to the build directory first since it dumps a bunch of extra files there. -->
+	  <exec program="${tool.doccompiler}" workingdir="${dir.src.chm}">
+		<arg value="-c:${tool.hhc}" />
+		<arg value="${chm.file.tocSource}" />
+		<arg value="${chm.file.tempTarget}" />
+		<arg value="-v:${wixver}" />
+	  </exec>
+	  <!-- Just copy the chm file to the target directory and leave all of the extra files in the build directory. -->
+	  <copy file="${chm.file.tempTarget}" tofile="${chm.file.target}" />
+	</if>
+  </target>
+
+</project>

@@ -1,0 +1,1198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidSideBarConfigureItem" xml:space="preserve">
+	<value>Configure...</value>
+	<comment>This text will appear on the sidebar context menu and the View menu below each list of sidebar tab items.</comment>
+  </data>
+  <data name="kstidInfoBarButtonTooltipFormat" xml:space="preserve">
+	<value>{0} - {1}</value>
+	<comment>This is the format string for displaying tooltips for info. bar buttons. Parameter 0 = the tab's text and parameter 1 = the current tab item's text.</comment>
+  </data>
+  <data name="kstidViews" xml:space="preserve">
+	<value>Views</value>
+	<comment>This text will appear as a tab in the task bar in the Notes window.</comment>
+  </data>
+  <data name="kstidFilters" xml:space="preserve">
+	<value>Filters</value>
+	<comment>This text will appear as a tab in the task bar in the Notes window.</comment>
+  </data>
+  <data name="kstidSort" xml:space="preserve">
+	<value>Sort Methods</value>
+	<comment>This text will appear as a tab in the task bar in the Notes window.</comment>
+  </data>
+  <data name="kstidReferenceSort" xml:space="preserve">
+	<value>Reference</value>
+	<comment>This text will appear as a button for a sort method in the Notes window.</comment>
+  </data>
+  <data name="kstidNoFilter" xml:space="preserve">
+	<value>No Filter</value>
+	<comment>This text will appear as a button for a filter in the Notes window.</comment>
+  </data>
+  <data name="kstidFilterConsultant" xml:space="preserve">
+	<value>Consultant</value>
+	<comment>This text appears as a button for a filter in the Notes window.</comment>
+  </data>
+  <data name="kstidFilterTranslator" xml:space="preserve">
+	<value>Translator</value>
+	<comment>This text appears as a button for a filter in the Notes window.</comment>
+  </data>
+  <data name="kstidFilterOpen" xml:space="preserve">
+	<value>Open</value>
+	<comment>This text appears as a button for a filter in the Notes window.</comment>
+  </data>
+  <data name="kstidFilterCategory" xml:space="preserve">
+	<value>Category</value>
+	<comment>This text appears as a button for a filter in the Notes window.</comment>
+  </data>
+  <data name="kstidFilterCategoryPrompt" xml:space="preserve">
+	<value>Choose the category of note to display</value>
+	<comment>This text appears as a prompt for the category filter in the Notes window.</comment>
+  </data>
+  <data name="kstidDiscussionLabel" xml:space="preserve">
+	<value>Discussion:</value>
+	<comment>This text will appear as a label for the Discussion text in the Notes window.</comment>
+  </data>
+  <data name="kstidQuoteLabel" xml:space="preserve">
+	<value>Quote:</value>
+	<comment>This text will appear as a label for the Quote text in the Notes window.</comment>
+  </data>
+  <data name="kstidSuggestionLabel" xml:space="preserve">
+	<value>Suggestion:</value>
+	<comment>This text will appear as a label for the Suggestion text in the Notes window.</comment>
+  </data>
+  <data name="kstidResolutionLabel" xml:space="preserve">
+	<value>Resolution:</value>
+	<comment>This text will appear as a label for the Resolution text in the Notes window.</comment>
+  </data>
+  <data name="kstidAuthorLabel" xml:space="preserve">
+	<value>Author:</value>
+	<comment>This text will appear as a label for the Author field in the Notes window.</comment>
+  </data>
+  <data name="kstidCreatedLabel" xml:space="preserve">
+	<value>Created:</value>
+	<comment>This text will appear as a label for the Created field in the Notes window.</comment>
+  </data>
+  <data name="kstidModifiedLabel" xml:space="preserve">
+	<value>Modified:</value>
+	<comment>This text will appear as a label for the Modified field in the Notes window.</comment>
+  </data>
+  <data name="kstidResolvedLabel" xml:space="preserve">
+	<value>Resolved:</value>
+	<comment>This text will appear as a label for the Resolved field in the Notes window.</comment>
+  </data>
+  <data name="kstidResponseLabel" xml:space="preserve">
+	<value>Responses:</value>
+	<comment>This text will appear as a label for the Responses field in the Notes window.</comment>
+  </data>
+  <data name="kstidNotes" xml:space="preserve">
+	<value>Data Entry</value>
+	<comment>This text will appear as a button on the Views tab in the Notes window.</comment>
+  </data>
+  <data name="kstidScrNoteCategoriesListName" xml:space="preserve">
+	<value>Scripture Note Categories</value>
+	<comment>The name of the Scripture Note Categories CmPossibilityList.</comment>
+  </data>
+  <data name="kstidScriptureTask" xml:space="preserve">
+	<value>Scripture</value>
+	<comment>This text will appear as a tab in the task bar.</comment>
+  </data>
+  <data name="kstidBackTransTask" xml:space="preserve">
+	<value>Back Translation</value>
+	<comment>This text will appear as a tab in the task bar.</comment>
+  </data>
+  <data name="kstidCheckingTask" xml:space="preserve">
+	<value>Checking</value>
+	<comment>This text will appear as a tab in the task bar.</comment>
+  </data>
+  <data name="kstidPublicationsTask" xml:space="preserve">
+	<value>Publications</value>
+	<comment>This text will appear as a tab in the task bar.</comment>
+  </data>
+  <data name="kstidDraftView" xml:space="preserve">
+	<value>Draft</value>
+	<comment>Scripture task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidPrintLayoutView" xml:space="preserve">
+	<value>Print Layout</value>
+	<comment>Scripture task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidTrialPublicationView" xml:space="preserve">
+	<value>Trial Publication</value>
+	<comment>Scripture task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidReviewLayoutView" xml:space="preserve">
+	<value>Review Layout</value>
+	<comment>Scripture task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidBackTransDraftView" xml:space="preserve">
+	<value>Draft</value>
+	<comment>Back Translation Task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidBackTransReviewView" xml:space="preserve">
+	<value>Consultant
+Check</value>
+	<comment>Back Translation Task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidBackTransPrintLayoutView" xml:space="preserve">
+	<value>Simple
+Print Layout</value>
+	<comment>Back Translation Task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidBackTransPrintLayoutSbsView" xml:space="preserve">
+	<value>Parallel
+Print Layout</value>
+	<comment>Vernacular and Back Translation Parallel Print Layout--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidDataEntryView" xml:space="preserve">
+	<value>Data Entry</value>
+	<comment>Notes Task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidKeyTermsView" xml:space="preserve">
+	<value>Biblical Terms</value>
+	<comment>Checking--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidCaptionWRefFormat" xml:space="preserve">
+	<value>{0} - {1}</value>
+	<comment>Format string for info bar caption; {0} is the basic caption, {1} is the book, chapter, verse reference</comment>
+  </data>
+  <data name="kstidCaptionInBackTrans" xml:space="preserve">
+	<value>{0} - {1} Back Translation</value>
+	<comment>Format string for info bar caption when focus in in back translation pane; {0} is the caption with or without ref, {1} is the name of the back translation writing system</comment>
+  </data>
+  <data name="kstidHelpText" xml:space="preserve">
+	<value>For help, press F1</value>
+	<comment>General-purpose context help string</comment>
+  </data>
+  <data name="kstidImport" xml:space="preserve">
+	<value>Import</value>
+	<comment>Undo/Redo string for File/Import</comment>
+  </data>
+  <data name="kstidSupportEmail" xml:space="preserve">
+	<value>fieldworks_te_bug@sil.org</value>
+	<comment>Email address for sending bug reports to</comment>
+  </data>
+  <data name="kstidImportNoBookError" xml:space="preserve">
+	<value>No Standard Format files were found for the import range {0}-{1}</value>
+	<comment>Message text when an import contains no books.</comment>
+  </data>
+  <data name="kstidImportingBook" xml:space="preserve">
+	<value>Importing {0}...</value>
+	<comment>Display for Progress Dialog when importing (Parameter will be a vernacular book name)</comment>
+  </data>
+  <data name="kstidImportingBackTranslation" xml:space="preserve">
+	<value>Importing back translation of {0}...</value>
+	<comment>Display for Progress Dialog when importing a back translation (Parameter will be a vernacular book name)</comment>
+  </data>
+  <data name="kstidImportingAnnotations" xml:space="preserve">
+	<value>Importing annotations for {0}...</value>
+	<comment>Display for Progress Dialog when importing Annotations (Parameter will be a vernacular book name)</comment>
+  </data>
+  <data name="kstidImportFinalizing" xml:space="preserve">
+	<value>Finalizing import...</value>
+	<comment>Status message in progress dialog when import is finishing and views are being refreshed</comment>
+  </data>
+  <data name="kstidImportProgressCaption" xml:space="preserve">
+	<value>Importing</value>
+	<comment>This is the text in the caption of the importing progress dialog box.</comment>
+  </data>
+  <data name="kstidImportInitializing" xml:space="preserve">
+	<value>Starting import...</value>
+	<comment>Status message in progress dialog when import is initializing</comment>
+  </data>
+  <data name="kstidBooksToExportSingularForm" xml:space="preserve">
+	<value>1 Book {0}{1}</value>
+	<comment>This is the text in the label of the Export USFM dialog box when only one book matches the filter.</comment>
+  </data>
+  <data name="kstidExportPT6Overwrite" xml:space="preserve">
+	<value>Paratext Project "{0}" exists. Do you want to update it?
+
+This will modify the Paratext project settings and language definition files
+and replace existing data files for the exported book(s).</value>
+	<comment>Message in confirmation dialog when exporting to Paratext project that already exists.</comment>
+  </data>
+  <data name="kstidExportPT6ProjReadOnly" xml:space="preserve">
+	<value>Paratext Project "{0}" is not editable.
+Choose another project or change "{0}" to be editable.</value>
+	<comment>Message in confirmation dialog when attempting to export to a Paratext project that is not editable.</comment>
+  </data>
+  <data name="kstidInsertBook" xml:space="preserve">
+	<value>Insert Book</value>
+	<comment>Undo/Redo string for Insert Book</comment>
+  </data>
+  <data name="kstidInsertFootnote" xml:space="preserve">
+	<value>Insert Footnote</value>
+	<comment>Undo/Redo string for Insert General Footnote</comment>
+  </data>
+  <data name="kstidInsertCrossReference" xml:space="preserve">
+	<value>Insert Cross Reference</value>
+	<comment>Undo/Redo string for Insert Cross Reference Footnote</comment>
+  </data>
+  <data name="kstidInsertSection" xml:space="preserve">
+	<value>Insert Section</value>
+	<comment>Undo/Redo string for Insert Section</comment>
+  </data>
+  <data name="kstidInsertVerseNumber" xml:space="preserve">
+	<value>Insert Verse Number</value>
+	<comment>Undo/Redo string for Insert Verse Number</comment>
+  </data>
+  <data name="kstidLoadingNoteCategoriesCaption" xml:space="preserve">
+	<value>Loading Scripture Note Categories</value>
+	<comment>This is the caption for the progress dialog used when loading factory (default) scripture note categories.</comment>
+  </data>
+  <data name="kstidLoadNoteCategoryInDBStatus" xml:space="preserve">
+	<value>Category: {0}</value>
+	<comment>This is the status text in the progress dialog shown as TE loads note categories into the DB for the first time.</comment>
+  </data>
+  <data name="kstidApplicationName" xml:space="preserve">
+	<value>Translation Editor</value>
+	<comment>This is used whenever an application name is needed by the program.</comment>
+  </data>
+  <data name="kstidImportDefaultError" xml:space="preserve">
+	<value>Unexpected problem.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="ksInvalidPublicationsVersion" xml:space="preserve">
+	<value>Publications version attribute invalid in {0}</value>
+	<comment>Error message when processing an XML file to create factory publications.</comment>
+  </data>
+  <data name="kstidCreatingBookNames" xml:space="preserve">
+	<value>Loading Scripture Book Names</value>
+	<comment>This is the caption for the progress dialog when loading book names during a new project</comment>
+  </data>
+  <data name="kstidCreatingBookNamesStatusMsg" xml:space="preserve">
+	<value>Loading {0}...</value>
+	<comment>This is the status message for the progress dialog when loading book names during a new project</comment>
+  </data>
+  <data name="kstidDiffStatusBarMsg" xml:space="preserve">
+	<value>Difference {0} of {1} </value>
+	<comment>This is the text of the Diff Dialog's status bar</comment>
+  </data>
+  <data name="kstidExitDiffMsg" xml:space="preserve">
+	<value>You still have {0} difference(s) left.  Are you sure you want to exit?</value>
+	<comment>This text will be displayed if a user tries to exit the diff dialog before all the differences have been taken care of.</comment>
+  </data>
+  <data name="kstidEndEdit" xml:space="preserve">
+	<value>End Ed&amp;it</value>
+	<comment>Diff dialog edit button text for leaving edit mode</comment>
+  </data>
+  <data name="kstidGotoPassageToolTip" xml:space="preserve">
+	<value>Go To Reference</value>
+	<comment>Tool tip for the Go To Reference control on the toolbar</comment>
+  </data>
+  <data name="kstidMergeDifferences" xml:space="preserve">
+	<value>Merge Differences</value>
+	<comment>Undo/Redo string for Merging Differences</comment>
+  </data>
+  <data name="kstidSavedVersionDescriptionImport" xml:space="preserve">
+	<value>Import of {0}</value>
+	<comment>Description for saved version containing import; {0} is typically a file name.</comment>
+  </data>
+  <data name="kstidLabelScrBookName" xml:space="preserve">
+	<value>Book name</value>
+	<comment>Userview label for ScrBook.Name</comment>
+  </data>
+  <data name="kstidLabelScrBookAbbrev" xml:space="preserve">
+	<value>Book abbreviation</value>
+	<comment>Userview label for ScrBook.Abbrev</comment>
+  </data>
+  <data name="kstidLabelScrBookSections" xml:space="preserve">
+	<value>Sections</value>
+	<comment>Userview label for ScrBook.Sections</comment>
+  </data>
+  <data name="kstidLabelBookId" xml:space="preserve">
+	<value>Book ID</value>
+	<comment>Userview label for ScrBook.BookId and ScrBookRef.BookId</comment>
+  </data>
+  <data name="kstidLabelVerseRefStart" xml:space="preserve">
+	<value>Start Reference</value>
+	<comment>Userview label for ScrSection.VerseRefStart</comment>
+  </data>
+  <data name="kstidLabelVerseRefEnd" xml:space="preserve">
+	<value>End Reference</value>
+	<comment>Userview label for ScrSection.VerseRefEnd</comment>
+  </data>
+  <data name="kstidLabelScrSectionContent" xml:space="preserve">
+	<value>Content</value>
+	<comment>Userview label for ScrSection.Content</comment>
+  </data>
+  <data name="kstidBookRefOwnOrd" xml:space="preserve">
+	<value>Canonical order</value>
+	<comment>Userview label for ScrBookRef.OwnOrd</comment>
+  </data>
+  <data name="kstidLabelScrBook" xml:space="preserve">
+	<value>Book</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelBookTitle" xml:space="preserve">
+	<value>Title</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelIdLine" xml:space="preserve">
+	<value>ID Line</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelRunningHeader" xml:space="preserve">
+	<value>Running Header</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelScrBookFootnotes" xml:space="preserve">
+	<value>Footnote</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelScrSectionHeading" xml:space="preserve">
+	<value>Section Heading</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelFootnoteParagraphs" xml:space="preserve">
+	<value>Footnote Paragraphs</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelFootnoteMarker" xml:space="preserve">
+	<value>Footnote Marker</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelFootnoteGUID" xml:space="preserve">
+	<value>Footnote GUID</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelScrRefSepr" xml:space="preserve">
+	<value>Reference Separator</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelChapterVerseSepr" xml:space="preserve">
+	<value>Chapter/Verse Separator</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelVerseSepr" xml:space="preserve">
+	<value>Verse Separator</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidLabelScrBridge" xml:space="preserve">
+	<value>Bridge</value>
+	<comment>Userview label</comment>
+  </data>
+  <data name="kstidDiffDlgRevertToOldUndoRedo" xml:space="preserve">
+	<value>Revert To Old</value>
+	<comment>Used for the Undo/Redo label for clicking on the Revert To Old button in the Diff. dialog.</comment>
+  </data>
+  <data name="kstidDiffDlgKeepCurrentUndoRedo" xml:space="preserve">
+	<value>Keep Current</value>
+	<comment>Used for the undo/redo label for clicking on the Keep Current button in the Diff. dialog.</comment>
+  </data>
+  <data name="kstidDiffDlgEditUndoRedo" xml:space="preserve">
+	<value>Edit</value>
+	<comment>Used for the undo/redo label for clicking on the Edit button in the Diff. dialog.</comment>
+  </data>
+  <data name="kstidInsertToolBarText" xml:space="preserve">
+	<value>Insert</value>
+	<comment>This is the name of the insert toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidGotoToolBarText" xml:space="preserve">
+	<value>Navigation</value>
+	<comment>This is the name of the navigation toolbar (i.e. the toolbar containing the go to passage control) as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidCheckingBarText" xml:space="preserve">
+	<value>Checking</value>
+	<comment>This is the name of the checking toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidInsertCategory" xml:space="preserve">
+	<value>Insert</value>
+	<comment>This is the insert category for toolbar items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidGotoCategory" xml:space="preserve">
+	<value>Go to</value>
+	<comment>This is the goto category for toolbar items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidCheckingCategory" xml:space="preserve">
+	<value>Checking</value>
+	<comment>This is the checking category for toolbar items. This string is used in the dialog that allows users to customize their toolbars.</comment>
+  </data>
+  <data name="kstidInsertChapterNumber" xml:space="preserve">
+	<value>Insert Chapter Number</value>
+	<comment>undo/redo string for Insert Chapter Number</comment>
+  </data>
+  <data name="kstidInsertChapterNumberToolTip" xml:space="preserve">
+	<value>Insert Chapter Number</value>
+	<comment>Tool tip for Insert Chapter Number toolbar button</comment>
+  </data>
+  <data name="kstidInsertSectionToolTip" xml:space="preserve">
+	<value>Insert Scripture Section</value>
+	<comment>Tool tip for Insert Section toolbar button</comment>
+  </data>
+  <data name="kstidInsertVerseNumbersToolTip" xml:space="preserve">
+	<value>Insert Verse Numbers Mode</value>
+	<comment>Tool tip for Insert Verse Numbers mode toolbar button</comment>
+  </data>
+  <data name="kstidInsertVerseNumberToolTip" xml:space="preserve">
+	<value>Insert Verse Number</value>
+	<comment>Tool tip for Insert Single Verse Number toolbar button</comment>
+  </data>
+  <data name="kstidInsertFootnoteToolTip" xml:space="preserve">
+	<value>Insert Footnote</value>
+	<comment>Tool tip for Footnote toolbar button</comment>
+  </data>
+  <data name="kstidInvalidPathCharToolTip" xml:space="preserve">
+	<value>A folder or file path cannot contain any of the following characters:
+{0}</value>
+	<comment>Tool tip when invalid path characters are entered in export dialog</comment>
+  </data>
+  <data name="kstidUndoDelFootnote" xml:space="preserve">
+	<value>Delete Footnote</value>
+	<comment>Undo/Redo text for delete footnote</comment>
+  </data>
+  <data name="kstidFilterBook" xml:space="preserve">
+	<value>Book</value>
+	<comment>The filter name for the book filter</comment>
+  </data>
+  <data name="kstidUndoFootnoteProperties" xml:space="preserve">
+	<value>Footnote Properties</value>
+	<comment>Undo/Redo tag for footnote properties</comment>
+  </data>
+  <data name="kstidParaHasNumbers" xml:space="preserve">
+	<value>Selected paragraph has chapter or verse numbers in it and cannot be changed into a  section heading.</value>
+	<comment>Used for message box when user tries to change a paragraph containing chapter or verse numbers into section head style.</comment>
+  </data>
+  <data name="kstidConfirmRemoveBook" xml:space="preserve">
+	<value>Are you sure that you want to delete {0}?</value>
+	<comment>Used to get user confirmation before removing book</comment>
+  </data>
+  <data name="kstidUndoRemoveBook" xml:space="preserve">
+	<value>Remove Book</value>
+	<comment>Undo/Redo text for removing a book</comment>
+  </data>
+  <data name="kstidBookTitleUserPrompt" xml:space="preserve">
+	<value>Type book title for {0} here</value>
+	<comment>Displayed as user prompt in an empty book title paragraph</comment>
+  </data>
+  <data name="kstidSectionHeadUserPrompt" xml:space="preserve">
+	<value>Type section head here</value>
+	<comment>Displayed as user prompt in an empty section head paragraph</comment>
+  </data>
+  <data name="kstidUndoRedoScriptureProperties" xml:space="preserve">
+	<value>Scripture Properties</value>
+	<comment>undo/redo tag for scripture properties changes</comment>
+  </data>
+  <data name="kstidNoDifferencesCaption" xml:space="preserve">
+	<value>No Differences Found</value>
+	<comment>Caption for message box displayed when Compare/Merge option of import finds no differences</comment>
+  </data>
+  <data name="kstidCreatingPublicationsCaption" xml:space="preserve">
+	<value>Initializing Page Setup information</value>
+	<comment>This is the status message for the progress dialog when creating publications and factory header/footer sets during a new project</comment>
+  </data>
+  <data name="kstidCreatingPublicationsStatusMsg" xml:space="preserve">
+	<value>Creating built-in publication settings</value>
+	<comment>This is the caption for the progress dialog when creating publications and factory header/footer sets during a new project</comment>
+  </data>
+  <data name="kstidBasedOnContext" xml:space="preserve">
+	<value>&lt;Based on Context&gt;</value>
+	<comment>This is the text in the WS combo box that tells the import to set the WS based on the context of the text.</comment>
+  </data>
+  <data name="kstidUndoRedoHeaderFooterSetup" xml:space="preserve">
+	<value>H/F Setup</value>
+	<comment>Undo/Redo text for the header/footer setup dialog</comment>
+  </data>
+  <data name="kstidInsertPicture" xml:space="preserve">
+	<value>Insert Picture</value>
+	<comment>Undo/Redo string for Insert Picture</comment>
+  </data>
+  <data name="kstidInsertSectionNotAllowed" xml:space="preserve">
+	<value>New sections cannot be inserted at the current location</value>
+	<comment>Message box comment when insert section is done with IP in an invalid location</comment>
+  </data>
+  <data name="kstidStyleFilterBasic" xml:space="preserve">
+	<value>Basic Styles</value>
+  </data>
+  <data name="kstidStyleFilterAllStyles" xml:space="preserve">
+	<value>All Styles</value>
+  </data>
+  <data name="kstidStyleFilterCustomList" xml:space="preserve">
+	<value>Custom List</value>
+  </data>
+  <data name="kstidBTNoCorrespondingParaDetails" xml:space="preserve">
+	<value>No vernacular paragraph could be found having style "{0}" and containing "{1}".</value>
+  </data>
+  <data name="kstidBTTextNotPartOfParaDetails" xml:space="preserve">
+	<value>{0}
+	(Style: {1})</value>
+  </data>
+  <data name="kstidBTStyleMismatchDetails" xml:space="preserve">
+	<value>The style "{0}" does not match the vernacular paragraph style "{1}".</value>
+  </data>
+  <data name="kstidBackTranslationUserPrompt" xml:space="preserve">
+	<value>Type back translation here</value>
+	<comment>user prompt for missing back translation content in the draft view</comment>
+  </data>
+  <data name="kstidBackTranslationUserPromptPrintLayout" xml:space="preserve">
+	<value>(Missing)</value>
+	<comment>user prompt for missing back translation content in the print layout view</comment>
+  </data>
+  <data name="kstidBibleNode" xml:space="preserve">
+	<value>Entire Bible</value>
+	<comment>text for Entire Bible node in Scripture tree controls (see Save Version and Book Filter dialog boxes)</comment>
+  </data>
+  <data name="kstidOtNode" xml:space="preserve">
+	<value>Old Testament</value>
+	<comment>text for OT node in Scripture tree controls (see Save Version and Book Filter dialog boxes)</comment>
+  </data>
+  <data name="kstidNtNode" xml:space="preserve">
+	<value>New Testament</value>
+	<comment>text for NT node in Scripture tree controls (see Save Version and Book Filter dialog boxes)</comment>
+  </data>
+  <data name="kstidUndoChangeVerseNumber" xml:space="preserve">
+	<value>Change Verse Number</value>
+	<comment>text for undo/redo changing a verse number with the edit box.</comment>
+  </data>
+  <data name="kstidDeletePicture" xml:space="preserve">
+	<value>Delete Picture</value>
+	<comment>undo/redo tag for deleting a picture</comment>
+  </data>
+  <data name="kstidUpdatePicture" xml:space="preserve">
+	<value>Update Picture Properties</value>
+	<comment>undo/redo tag for updating a picture's properties</comment>
+  </data>
+  <data name="kstidBackTransBarText" xml:space="preserve">
+	<value>Back Translation</value>
+	<comment>Name of back translation toolbar in the customize toolbar dialog</comment>
+  </data>
+  <data name="kstidBackTranslationCategory" xml:space="preserve">
+	<value>Back Translation</value>
+	<comment>The category for back translation toolbar</comment>
+  </data>
+  <data name="kstidUnTransToolTip" xml:space="preserve">
+	<value>Mark as Untranslated Word</value>
+	<comment>The tooltip for the Untranslated word toolbar button</comment>
+  </data>
+  <data name="kstidBtUnfinishedToolTip" xml:space="preserve">
+	<value>Mark Paragraph as Unfinished</value>
+	<comment>The tooltip for the back translation unfinished paragraph toolbar button</comment>
+  </data>
+  <data name="kstidBtFinishedToolTip" xml:space="preserve">
+	<value>Mark Paragraph as Finished</value>
+	<comment>The tooltip for the back translation paragraph finished toolbar button</comment>
+  </data>
+  <data name="kstidBtCheckedToolTip" xml:space="preserve">
+	<value>Mark Paragraph as Consultant Checked</value>
+	<comment>The tooltip for the back translation paragraph checked toolbar button</comment>
+  </data>
+  <data name="kstidBtPrevUnfinishedToolTip" xml:space="preserve">
+	<value>Go to Previous Unfinished Paragraph</value>
+	<comment>The tooltip for the back translation previous unfinished paragraph toolbar button</comment>
+  </data>
+  <data name="kstidBtNextUnfinishedToolTip" xml:space="preserve">
+	<value>Go to Next Unfinished Paragraph</value>
+	<comment>The tooltip for the back translation Next unfinished paragraph toolbar button</comment>
+  </data>
+  <data name="kstidViewBookFilterToolTip" xml:space="preserve">
+	<value>Filter by Book</value>
+	<comment>The tooltip for the toolbar button that toggles the book filter on and off.</comment>
+  </data>
+  <data name="kstidConfigureBookFilterItemName" xml:space="preserve">
+	<value>Configure...</value>
+	<comment>The text on the sub-item of the book filter toolbar button.</comment>
+  </data>
+  <data name="kstidUseAsRenderingToolTip" xml:space="preserve">
+	<value>Use selected text as Vernacular Equivalent</value>
+	<comment>The tooltip for the toolbar button that uses a word as a biblical term rendering.</comment>
+  </data>
+  <data name="kstidIgnoreUnrenderedToolTip" xml:space="preserve">
+	<value>Ignore specifying explicit rendering for biblical term.</value>
+	<comment>The tooltip for the toolbar button that ignores specifying a vernacular equivalent of a biblical term.</comment>
+  </data>
+  <data name="kstidInsertAnnotation" xml:space="preserve">
+	<value>Insert {0}</value>
+	<comment>Used for formatting the undo/redo labels for inserting annotations</comment>
+  </data>
+  <data name="kstidSetAnnotationCategory" xml:space="preserve">
+	<value>Set Annotation Category</value>
+	<comment>Used for formatting the undo/redo labels for setting annotation category</comment>
+  </data>
+  <data name="kstidDeleteAnnotation" xml:space="preserve">
+	<value>Delete Note</value>
+	<comment>Used for formatting the undo/redo labels for deleting notes</comment>
+  </data>
+  <data name="kstidImportAnnotations" xml:space="preserve">
+	<value>Import Notes</value>
+	<comment>Used for formatting the undo/redo labels for importing notes (OXESA file import)</comment>
+  </data>
+  <data name="kstidFilterNameTemplate" xml:space="preserve">
+	<value>Filter by {0}...</value>
+	<comment>Template for showing filter names in the filter menu</comment>
+  </data>
+  <data name="kstidLoadKeyTermsInDBCaption" xml:space="preserve">
+	<value>Loading Biblical Terms into Project</value>
+	<comment>This is the text in the caption of the progress dialog when TE starts up and loads biblical terms into the DB for the first time.</comment>
+  </data>
+  <data name="kstidLoadKeyTermsInDBStatus" xml:space="preserve">
+	<value>Loading Term: {0}</value>
+	<comment>This is the status text in the progress dialog shown as TE loads biblical terms into the DB for the first time.</comment>
+  </data>
+  <data name="kstidCreateResponse" xml:space="preserve">
+	<value>Insert Response</value>
+	<comment>Used for formatting the undo/redo labels for creating annotation responses</comment>
+  </data>
+  <data name="kstidProjectInaccessible" xml:space="preserve">
+	<value>Standard Format files are not available</value>
+	<comment>Error message when import cannot proceed due to inaccessible files.</comment>
+  </data>
+  <data name="kstidImportFilesAreUnavailable" xml:space="preserve">
+	<value>Project files are unavailable for import.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidStopImporting" xml:space="preserve">
+	<value>Stop Importing</value>
+	<comment>Cancel button text on the import progress dialog.</comment>
+  </data>
+  <data name="kstidStoppingImport" xml:space="preserve">
+	<value>Stopping import...</value>
+	<comment>Progress bar message</comment>
+  </data>
+  <data name="kstidConfirmStopImport" xml:space="preserve">
+	<value>If you stop importing right now, you will have successfully imported everything up to and including {0}.
+Are you sure you want to stop importing? (Click No to continue importing.)</value>
+	<comment>MessageBox prompt</comment>
+  </data>
+  <data name="kstidExportDlgFolderBrowserPrompt" xml:space="preserve">
+	<value>Specify Output Folder</value>
+	<comment>Prompt shown on folder browser dialog, brought up from the export usfm dialog.</comment>
+  </data>
+  <data name="kstidExportPtxDlgFolderBrowserPrompt" xml:space="preserve">
+	<value>Select a folder in which to place your project.</value>
+	<comment>Prompt shown on folder browser dialog, brought up from the export Paratext dialog.</comment>
+  </data>
+  <data name="kstidExportDlgParatext" xml:space="preserve">
+	<value>Paratext</value>
+	<comment>Label to be used in Export dialog when Paratext markup is selected</comment>
+  </data>
+  <data name="kstidExportDlgMultipleBooks" xml:space="preserve">
+	<value>: {0}</value>
+	<comment>Label to be used in Export dialog that gets added to the books, when there are less then 4 books</comment>
+  </data>
+  <data name="kstidExportDlgFiltered" xml:space="preserve">
+	<value>(filtered)</value>
+	<comment>Label to be used in Export dialog that gets added to the books, when there is a filter set</comment>
+  </data>
+  <data name="kstidExportDlgUnfiltered" xml:space="preserve">
+	<value>(unfiltered)</value>
+	<comment>Label to be used in Export dialog that gets added to the books, when there is not a filter set</comment>
+  </data>
+  <data name="kstidExportDlgToolbox" xml:space="preserve">
+	<value>Toolbox</value>
+	<comment>Label to be used in Export dialog when Toolbox markup is selected</comment>
+  </data>
+  <data name="kstidFileExists" xml:space="preserve">
+	<value>File already exists. Would you like to overwrite it?</value>
+	<comment>Text to be used in Export message dialog when specified file already exists.</comment>
+  </data>
+  <data name="kstidMissingBackTranslationText" xml:space="preserve">
+	<value>(missing back translation paragraph)</value>
+	<comment>Text that is shown for missing back translation paragraphs in an RTF export.</comment>
+  </data>
+  <data name="kstidExportRtfKtHeader" xml:space="preserve">
+	<value>Biblical Term Renderings</value>
+	<comment>Header text for the RTF Biblical Terms export</comment>
+  </data>
+  <data name="kstidExportRtfKtMissingRendering" xml:space="preserve">
+	<value>Missing rendering</value>
+	<comment>Text for the Missing Rendering category of biblical term references in the RTF export</comment>
+  </data>
+  <data name="kstidExportRtfKtIntentionallyNotRendered" xml:space="preserve">
+	<value>Intentionally not rendered</value>
+	<comment>Text for the Intentionally Not Rendered category of biblical term references in the RTF export</comment>
+  </data>
+  <data name="kstidExportUSFMMissingFileName" xml:space="preserve">
+	<value>Please enter a file name.</value>
+	<comment>Text for error message in USFM export dialog when file name is missing</comment>
+  </data>
+  <data name="kstidOpenSampleDbMsg" xml:space="preserve">
+	<value>Do you want to study the training course for Translation Editor?
+
+If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training, and then click Student Manual.
+
+To begin working in Translation Editor or to get quick-start help, click No.</value>
+	<comment>Yes/No question for first-time users to ask if they want to open the sample database</comment>
+  </data>
+  <data name="kstidGenerateSectionTemplate" xml:space="preserve">
+	<value>Generate Section Template</value>
+	<comment>Undo/Redo string for Generate Section Template</comment>
+  </data>
+  <data name="kstidDiffDlgUndoRedoEditNote" xml:space="preserve">
+	<value>Editing of Note</value>
+	<comment>Used for the Undo/Redo label when a note's edits are collapsed into one undo task.</comment>
+  </data>
+  <data name="kstidHelpTrainingFileNotFound" xml:space="preserve">
+	<value>The training file {0} could not be opened.</value>
+	<comment>Error message that shows when one of the training files could not be opened.</comment>
+  </data>
+  <data name="kstidUndoRedoAssignVern" xml:space="preserve">
+	<value>Assign Vernacular Equivalent</value>
+	<comment>Used for Undo/Redo label when assigning a vernacular equivalent in biblical terms view.</comment>
+  </data>
+  <data name="kstidMultipleStyleExportCodes" xml:space="preserve">
+	<value>The style {0} is mapped to multiple Standard Format markers for export. The first one ({1}) will be used.</value>
+	<comment>This error can only happen if someone sets up TeStyles.xml wrong</comment>
+  </data>
+  <data name="kstidSeparateCrossRef" xml:space="preserve">
+	<value>Separate cross-references</value>
+	<comment>This appears on the footnote tab of the scripture properties dialog when the cross references and the general footnotes are combined</comment>
+  </data>
+  <data name="kstidCombineCrossRef" xml:space="preserve">
+	<value>Combine cross-references</value>
+	<comment>This appears on the footnote tab of the scripture properties dialog when the cross references and the general footnotes are separated</comment>
+  </data>
+  <data name="kstidExportUsfmErrorTryReinstall" xml:space="preserve">
+	<value>{0}
+
+The FieldWorks software is not installed correctly.
+Please close FieldWorks Translation Editor, and then insert your FieldWorks CD and repair your installation.</value>
+	<comment>Error message that appears in a message box when USFM export throws an exception because installed file is missing or corrupt.</comment>
+  </data>
+  <data name="kstidExportUsfmFileError" xml:space="preserve">
+	<value>{0}
+
+Export failed.</value>
+	<comment>Error message that appears in a message box when USFM export fails unexpectedly.</comment>
+  </data>
+  <data name="kstidUndoRedoChangeBackTransStatus" xml:space="preserve">
+	<value>Change Back Translation Status</value>
+	<comment>Undo/Redo text for changing the back translation status</comment>
+  </data>
+  <data name="ksInvalidParagraphStyleContext" xml:space="preserve">
+	<value>Paragraph style {0} is illegally defined with context '{1}' in TeStyles.xml.</value>
+	<comment>Error message when processing TeStyles.xml file to create factory styles.</comment>
+  </data>
+  <data name="kstidCorrectionLayoutView" xml:space="preserve">
+	<value>Correction
+Printout</value>
+	<comment>Scripture task--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidCheckParatextInstallation" xml:space="preserve">
+	<value>Problem communicating with Paratext. Please ensure that Paratext is correctly installed."</value>
+	<comment>Error message when we are unable to load the Paratext objects required for importing a Paratext 6 project</comment>
+  </data>
+  <data name="kstidParatextProjectLoadFailure" xml:space="preserve">
+	<value>Paratext Project {0} could not be loaded. Please ensure that Paratext is correctly installed and that it can open this project.</value>
+	<comment>Error message when we are unable to load a Paratext project</comment>
+  </data>
+  <data name="kstidToolsToolBarText" xml:space="preserve">
+	<value>Lexicon</value>
+	<comment>This is the name of the Tools toolbar as it shows up in the toolbar configuration feature</comment>
+  </data>
+  <data name="kstidEditorialChecks" xml:space="preserve">
+	<value>Editorial Checks</value>
+	<comment>Checking--This text will appear in Sidebar, Views menu, and Information Bar</comment>
+  </data>
+  <data name="kstidHelpTopicAllStyles" xml:space="preserve">
+	<value>Redirect.htm#its:Using_Styles.chm::/Using_Styles/All_styles.htm</value>
+	<comment>Help topic that is displayed when no style is selected</comment>
+  </data>
+  <data name="kstidUndoRedoIgnoreVern" xml:space="preserve">
+	<value>Term not Rendered Explicitly</value>
+	<comment>Undo/Redo text for Keyterm Not Rendered Explicitly</comment>
+  </data>
+  <data name="kstidUndoRedoVernNotAssigned" xml:space="preserve">
+	<value>Unassign Vernacular Equivalent</value>
+	<comment>Undo/Redo text for Vernacular Equivalent of Keyterm not Assigned</comment>
+  </data>
+  <data name="kstidScrCheckNameFormat" xml:space="preserve">
+	<value>{0} ({1})</value>
+	<comment>Format string for the scripture checks displayed in the EditorialChecksControl tree. The first parameter is the check's name, the second is the date/time or the value of kstidScrCheckNeverRunMsg if the check was not run on one or more scripture books.</comment>
+  </data>
+  <data name="kstidScrCheckNeverRunMsg" xml:space="preserve">
+	<value>Last run: never</value>
+	<comment>Message displayed next to a scripture check name when the check has never been run on one or more scripture books. This is displayed  instead of the last date/time the check was run.</comment>
+  </data>
+  <data name="kstidScrCheckRunDateTimeFormat" xml:space="preserve">
+	<value>Last run: {0}</value>
+	<comment>Format string for displaying the date/time of the last run for a check. This is displayed next to the scripture check's name.</comment>
+  </data>
+  <data name="kstidScrChecksTreeNodeTipFormat" xml:space="preserve">
+	<value>{0} ({1})</value>
+  </data>
+  <data name="kstidUndoEditScrChkErrAnnotation" xml:space="preserve">
+	<value>Edit Annotation</value>
+	<comment>undo/redo text for editing a comment for an ignored scripture check inconsistency.</comment>
+  </data>
+  <data name="kstidScrChkNameSeparator" xml:space="preserve">
+	<value>; </value>
+	<comment>Text used to separate the names of the selected scripture checks in checking view when the checking toolbar is docked to the top. This separator should also include the space, if desired.</comment>
+  </data>
+  <data name="kstidUndoRedoResolutionStatusChange" xml:space="preserve">
+	<value>Checking Resolution Status Change</value>
+	<comment>Undo/Redo text for Ignoring/Not Ignoring Checking Resolution Status Change</comment>
+  </data>
+  <data name="ksChangeSpellingMultiple" xml:space="preserve">
+	<value>Change multiple occurrences</value>
+	<comment>Menu item in spelling correction popup menu</comment>
+  </data>
+  <data name="kstidEnglishVersification" xml:space="preserve">
+	<value>English</value>
+	<comment>Name of versification system</comment>
+  </data>
+  <data name="kstidOriginalVersification" xml:space="preserve">
+	<value>Original</value>
+	<comment>Name of versification system</comment>
+  </data>
+  <data name="kstidRussianOrthodoxVersification" xml:space="preserve">
+	<value>Russian Orthodox</value>
+	<comment>Name of versification system</comment>
+  </data>
+  <data name="kstidRussianProtestantVersification" xml:space="preserve">
+	<value>Russian Protestant</value>
+	<comment>Name of versification system</comment>
+  </data>
+  <data name="kstidSeptuagintVersification" xml:space="preserve">
+	<value>Septuagint</value>
+	<comment>Name of versification system</comment>
+  </data>
+  <data name="kstidVulgateVersification" xml:space="preserve">
+	<value>Vulgate</value>
+	<comment>Name of versification system</comment>
+  </data>
+  <data name="kstidCannotImport" xml:space="preserve">
+	<value>Cannot Import</value>
+	<comment>header for message box</comment>
+  </data>
+  <data name="kstidStyleFromImport" xml:space="preserve">
+	<value>(created by import from {0})</value>
+	<comment>format string for filling in usage field of a style creating during import.  {0} is the name of the file we imported.</comment>
+  </data>
+  <data name="kstidNoDeuteroCanonical" xml:space="preserve">
+	<value>Sorry, but Translation Editor does not handle Deutero-Canonical books.</value>
+	<comment>import warning message</comment>
+  </data>
+  <data name="kstidMigratingKeyTermReferences" xml:space="preserve">
+	<value>Copying data to the new biblical terms list</value>
+	<comment>This is the status text in the progress dialog shown as TE copies assigned vernacular equivalents form the old biblical terms list to the new one.</comment>
+  </data>
+  <data name="kstidImportXmlBadFile" xml:space="preserve">
+	<value>{0} is not a valid OXES file.</value>
+	<comment>{0} is a file pathname</comment>
+  </data>
+  <data name="kstidSavedVersionDescriptionOriginal" xml:space="preserve">
+	<value>Books replaced by import</value>
+	<comment>Name of saved version that is a copy of original books before import changed them.</comment>
+  </data>
+  <data name="kstidIdentical" xml:space="preserve">
+	<value>No differences found in vernacular text (back translation not compared)</value>
+	<comment>Status value displayed in Imported Book dialog when there are no differences between the imported version of a book and the current version</comment>
+  </data>
+  <data name="kstidNoDifferencesLeft" xml:space="preserve">
+	<value>All differences reviewed</value>
+	<comment>Status value displayed in Imported Book dialog when there are no more differences to be reviewed.</comment>
+  </data>
+  <data name="kstidNewBook" xml:space="preserve">
+	<value>New book</value>
+	<comment>Status value displayed in Imported Book dialog when the imported version of the book is the only one (no pre-existing versions of that book)</comment>
+  </data>
+  <data name="kstidImportXmlLangMismatch" xml:space="preserve">
+	<value>The project's vernacular language ({0}) does not match the OXES file's data language ({1}).  Should import continue?</value>
+	<comment>{0} and {1} are both language (writing system) identifiers</comment>
+  </data>
+  <data name="kstidInitialDifferences" xml:space="preserve">
+	<value>{0} Differences</value>
+	<comment>Status value displayed in Imported Book dialog when there are differences between the imported version of a book and the current version</comment>
+  </data>
+  <data name="kstidImportXmlLangMismatchCaption" xml:space="preserve">
+	<value>Import Language Mismatch</value>
+	<comment>message box caption</comment>
+  </data>
+  <data name="kstidImportXmlNotAFile" xml:space="preserve">
+	<value>{0} does not exist!</value>
+	<comment>{0} is supposedly a file pathname (but it's not!)</comment>
+  </data>
+  <data name="kstidOverwrittenFull" xml:space="preserve">
+	<value>Imported version has replaced current version</value>
+	<comment>Status value displayed in Imported Book dialog when user has chosen to replace the current version of a book with the imported version</comment>
+  </data>
+  <data name="kstidImportXmlWarning" xml:space="preserve">
+	<value>Warning</value>
+	<comment>message box caption</comment>
+  </data>
+  <data name="kstidIncompleteValidCharsForCharCheckMsg" xml:space="preserve">
+	<value>Before you can select the Characters check, you must add more characters in the Word Forming area of the Valid Characters dialog box. Would you like to do so now?</value>
+	<comment>Content for message box alerting the user that the valid characters list is incomplete. This message is shown in the editorial checks view when the user tries to select the characters check when the valid characters list is incomplete.</comment>
+  </data>
+  <data name="kstidImportNoOxesBookError" xml:space="preserve">
+	<value>No books were found in the OXES file for the import range {0}-{1}.</value>
+	<comment>Message text when an import contains no books.</comment>
+  </data>
+  <data name="kstidStandardFormatImportSvDesc" xml:space="preserve">
+	<value>Standard Format Import</value>
+	<comment>Default description for saved version created by standard format import.</comment>
+  </data>
+  <data name="kstidDetailsLabel" xml:space="preserve">
+	<value>Details:</value>
+	<comment>This text will appear as a label for the Details field for an ignored inconsistency in the Notes window.</comment>
+  </data>
+  <data name="kstidMessageLabel" xml:space="preserve">
+	<value>Message:</value>
+	<comment>This text will appear as a label for the Message field for an ignored inconsistency in the Notes window.</comment>
+  </data>
+  <data name="kstidOxesInvalidParaInsidePara" xml:space="preserve">
+	<value>Invalid context for &lt;p&gt; element in paragraph data just before line {0}.</value>
+	<comment>{0} is a number</comment>
+  </data>
+  <data name="kstidOxesUnexpectedInsideBook" xml:space="preserve">
+	<value>Found unexpected &lt;{0}&gt; inside &lt;book&gt; at line {1} character {2}.</value>
+	<comment>{0} is an XML element name, {1} and {2} are numbers</comment>
+  </data>
+  <data name="kstidOxesUnexpectedInsideParaData" xml:space="preserve">
+	<value>Found unexpected &lt;{0}&gt; in paragraph data just before line {1}.</value>
+	<comment>{0} is an XML element name and {1} is a number</comment>
+  </data>
+  <data name="kstidOxesUnexpectedInsideTrGroup" xml:space="preserve">
+	<value>Found unexpected &lt;{0}&gt; inside &lt;trGroup&gt; just before line {1}.</value>
+	<comment>{0} is an XML element name and {1} is a number</comment>
+  </data>
+  <data name="kstidOxesImportOf" xml:space="preserve">
+	<value>Import of {0}</value>
+	<comment>{0} is the description read from the OXES file</comment>
+  </data>
+  <data name="kstidExportingMessage" xml:space="preserve">
+	<value>Exporting {0}</value>
+	<comment>Exporting progress message for Biblical Terms export</comment>
+  </data>
+  <data name="kstidSelectingMessage" xml:space="preserve">
+	<value>Selecting terms for RTF file...</value>
+	<comment>Selecting message during export of Biblical Terms to RTF file progress</comment>
+  </data>
+  <data name="kstidEditorialChkVwStatusTextFmt" xml:space="preserve">
+	<value>{0}  To move to the next inconsistency, press Alt+Down Arrow.</value>
+	<comment>Status bar text when the user is in the editorial checks view. The parameter is the portion of the status bar text that's present for every view.</comment>
+  </data>
+  <data name="kstidKeyTermsVwStatusTextFmt" xml:space="preserve">
+	<value>{0}  To move to the next biblical term occurrence, press Alt+Down Arrow.</value>
+	<comment>Status bar text when the user is in the biblical terms view. The parameter is the portion of the status bar text that's present for every view.</comment>
+  </data>
+  <data name="kstidConfirmUseThisVersion" xml:space="preserve">
+	<value>Using this version will cause the highlighted text in the current version to be deleted. Are you sure you want to do this?</value>
+	<comment>MessageBox prompt used in Compare and Merge dialog box</comment>
+  </data>
+  <data name="kstidConfirmUseThisVersionCaption" xml:space="preserve">
+	<value>Confirm Deletion</value>
+	<comment>Message Box caption used in Compare and Merge dialog box</comment>
+  </data>
+  <data name="kstidDataLossCaption" xml:space="preserve">
+	<value>Unable to Replace Range</value>
+	<comment>Caption for message displayed in Imported Books dialog box and Saved and Imported Versions dialog box</comment>
+  </data>
+  <data name="kstidDataLossMsg" xml:space="preserve">
+	<value>Translation Editor cannot replace this range in {1} because section references do not align
+for verses that are missing in {0}.
+Translation Editor can only replace full sections in the current book.
+
+Details of content that would be deleted:
+{2}
+
+If you want to use this version, you will need to use Compare and Merge to manually merge the changes
+in section head locations.
+	</value>
+	<comment>Message displayed in Imported Books dialog box and Saved and Imported Versions dialog box (parameter 0 is "imported" or "saved"; parameter 1 is the name of the book, parameter 2 is the list of content that will be deleted)</comment>
+  </data>
+  <data name="kstidImported" xml:space="preserve">
+	<value>the imported version</value>
+	<comment>The article, adjective and noun are included to accomodate languages with different word order.</comment>
+  </data>
+  <data name="kstidSaved" xml:space="preserve">
+	<value>the saved version</value>
+	<comment>The article, adjective and noun are included to accomodate languages with different word order.</comment>
+  </data>
+  <data name="kstidUpdateKeyTermEquivalentsProgressCaption" xml:space="preserve">
+	<value>Updating Biblical Term Equivalents</value>
+	<comment>Progress dialog message</comment>
+  </data>
+  <data name="kstidUpdateKeyTermEquivalentsProgressLoading" xml:space="preserve">
+	<value>Loading biblical terms for updating</value>
+	<comment>Progress dialog message</comment>
+  </data>
+  <data name="kstidUpdateKeyTermEquivalentsProgressMessage" xml:space="preserve">
+	<value>Updating Biblical Term Equivalents in {0}</value>
+	<comment>Progress dialog message</comment>
+  </data>
+  <data name="kstidNoMatchedPairsForCheckMsg" xml:space="preserve">
+	<value>The Matching Punctuation Pairs list is empty. You must add pairs before you can run the Matching Punctuation Pairs Check. Would you like to do so now?</value>
+	<comment>Content for message box alerting the user that there are no matching punctuation pairs defined for the writing system. This message is shown in the editorial checks view when the user tries to select the Matching Punctuation Pairs check when none are defined.</comment>
+  </data>
+  <data name="kstidNoPuncPatternsForCheckMsg" xml:space="preserve">
+	<value>The Punctuation Patterns list is empty. You must add punctuation patterns before you can run the Punctuation Check. Would you like to do so now?</value>
+	<comment>Content for message box alerting the user that there are no punctuation patterns defined for the writing system. This message is shown in the editorial checks view when the user tries to select the punctuation check when no patterns are defined.</comment>
+  </data>
+  <data name="kstidNoQuotationMarksForCheckMsg" xml:space="preserve">
+	<value>There are no quotation marks specified. You must specify at least first level quotation marks before you can run the Quotations Check. Would you like to do so now?</value>
+	<comment>Content for message box alerting the user that there are no quotation marks defined for the writing system. This message is shown in the editorial checks view when the user tries to select the quotations check when none are defined.</comment>
+  </data>
+  <data name="kstidOneRemainingDifference" xml:space="preserve">
+	<value>1 unreviewed difference remaining</value>
+	<comment>Status value displayed in Imported Book dialog when there is one unreviewed differences between the imported version of a book and the current version after using the Compare and Merge dialog box.</comment>
+  </data>
+  <data name="kstidAutoMerged" xml:space="preserve">
+	<value>New section(s) successfully merged</value>
+	<comment>Status value displayed in Imported Book dialog box when the imported version of the book contains new material that has been merged in successfully (i.e., without having to replace any existing material).</comment>
+  </data>
+  <data name="kstidOneInitialDifference" xml:space="preserve">
+	<value>1 difference</value>
+	<comment>Status value displayed in Imported Book dialog when there is one difference between the imported version of a book and the current version</comment>
+  </data>
+  <data name="kstidOverwrittenPartial" xml:space="preserve">
+	<value>Imported section(s) have replaced {0} section(s) in current version</value>
+	<comment>Status value displayed in Imported Book dialog when user has chosen to replace the current version of a book with the imported version</comment>
+  </data>
+  <data name="kstidRemainingDifferences" xml:space="preserve">
+	<value>{0} unreviewed differences remaining</value>
+	<comment>Status value displayed in Imported Book dialog when there are still unreviewed differences between the imported version of a book and the current version after using the Compare and Merge dialog box.</comment>
+  </data>
+  <data name="kstidConfirmBookOverwriteAfterMerge" xml:space="preserve">
+	<value>You have reviewed some differences between the imported version and the current version of {0}.
+
+Do you want to replace the range in the current version with the imported version?
+
+To keep the decisions you made in the Compare and Merge Versions dialog box, click No.</value>
+	<comment>Message displayed in Imported Books dialog box (parameter 0 is the name of the book) if user clicks Overwrite button after using the Compare and Merge dialog box to merge one or more of the differences.</comment>
+  </data>
+  <data name="kstidConfirmOverwriteBackTransCaption" xml:space="preserve">
+	<value>Confirm Potential Loss of Back Translation</value>
+	<comment>Caption on message box displayed in Imported Books dialog box if user confirms that they want to Replace Range in a book even though they may lose back translation data.</comment>
+  </data>
+  <data name="kstidConfirmOverwriteBackTrans" xml:space="preserve">
+	<value>The current version has back translations that are absent in {0} for these writing systems:
+{1}
+By replacing {2}, you may lose the back translation for the following overlapping range:
+{3}
+Do you want to proceed and risk losing the current back translation when you replace this range?</value>
+	<comment>Message displayed in Imported Books dialog box if user confirms that they want to Replace Range in a book even though they may lose back translation data.
+	Parameter 0: "imported" or "saved", Parameter 1: language name, Parameter 2: book name, Parameter 3: Scripture references</comment>
+  </data>
+  <data name="kstidOverwriting" xml:space="preserve">
+	<value>Replacing Range in {0}...</value>
+	<comment>Progress dialog message displayed when overwriting the current version with the saved or imported version.</comment>
+  </data>
+  <data name="kstidConfirmBookOverwriteAfterMergeCaption" xml:space="preserve">
+	<value>Confirm Replace Merged Version</value>
+  </data>
+  <data name="kstidIntro" xml:space="preserve">
+	<value>(with intro)</value>
+	<comment>Text used to partially describe a book reference when the book contains an introduction along with a range of Scripture references (e.g. Imported Books dialog and Saved Versions dialog)</comment>
+  </data>
+  <data name="kstidIntroOnly" xml:space="preserve">
+	<value>(intro only)</value>
+	<comment>Text describing a book reference when the book contains only an introduction (e.g. Imported Books dialog and Saved Versions dialog)</comment>
+  </data>
+</root>

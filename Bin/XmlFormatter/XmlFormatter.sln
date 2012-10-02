@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlFormatter", "XmlFormatter.csproj", "{0DE55DFA-9554-4FCC-9170-9D605B25C3AC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{0DE55DFA-9554-4FCC-9170-9D605B25C3AC}.Debug.ActiveCfg = Debug|.NET
+		{0DE55DFA-9554-4FCC-9170-9D605B25C3AC}.Release.ActiveCfg = Release|.NET
+		{0DE55DFA-9554-4FCC-9170-9D605B25C3AC}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		XMLFormat.bat = XMLFormat.bat
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
