@@ -16,7 +16,6 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -25,7 +24,6 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -33,7 +31,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using XCore;
 
@@ -215,10 +212,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			m_wordformRepos = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			m_cache.DomainDataByFlid.AddNotification(this);
-			if (IsVernacularSpellingEnabled() && !EnchantHelper.DictionaryExists(m_cache.DefaultVernWs, m_cache.WritingSystemFactory))
-			{
-				OnAddWordsToSpellDict(null);
-			}
+			if (IsVernacularSpellingEnabled())
+				OnEnableVernacularSpelling();
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -353,10 +348,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
-				if (wsObj.SpellCheckingId == "<None>")
+				if (wsObj.SpellCheckingId == null || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
 					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
 			}
-			// This forces the default verancular WS spelling dictionary to exist, and updates
+			// This forces the default vernacular WS spelling dictionary to exist, and updates
 			// all existing ones.
 			OnAddWordsToSpellDict(null);
 		}
